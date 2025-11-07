@@ -26,6 +26,7 @@ import i18n from '@tap/i18n'
 import { checkConnectionName, submitForm, uuid } from '@tap/shared'
 import { isEmpty } from 'lodash-es'
 
+import { markRaw } from 'vue'
 import ConnectorDoc from '../../components/ConnectorDoc.vue'
 import mixins from '../../components/create-connection/mixins'
 import SceneDialog from '../../components/create-connection/SceneDialog.vue'
@@ -160,7 +161,7 @@ export default {
     }
   },
   mounted() {
-    this.schemaFormInstance = this.$refs.schemaToForm?.form // 获取表单的 form
+    this.schemaFormInstance = markRaw(this.$refs.schemaToForm?.form) // 获取表单的 form
     this.id = this.$route.params.id || ''
     const { fromPath } = this.$route.query
     if (fromPath) {
