@@ -104,6 +104,7 @@ const mapEdge = (edge: any, index: number) => {
     type: 'table',
     // markerEnd: 'figma-arrow-wide',
     markerEnd: 'custom-arrow',
+    animated: tasks[0]?.status === 'running',
     // markerEnd: {
     //   type: 'arrow',
     //   strokeWidth: 2,
