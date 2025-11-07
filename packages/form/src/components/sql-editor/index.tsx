@@ -1,3 +1,4 @@
+import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import { defineComponent } from 'vue'
 
 export const SqlEditor = defineComponent({
@@ -34,6 +35,7 @@ export const SqlEditor = defineComponent({
           class="border rounded-xl p-0"
           theme="chrome"
           value={props.value}
+          autoDark
           lang="sql"
           height={props.height}
           onBlur={onBlur}
