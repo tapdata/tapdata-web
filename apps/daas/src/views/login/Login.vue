@@ -101,7 +101,7 @@ export default {
       } catch (error) {
         this.loading = false
         this.form.password = oldPassword
-        this.errorMessage = error?.data?.message || error?.message
+        this.errorMessage = error?.message
       }
     },
     // 注册账号

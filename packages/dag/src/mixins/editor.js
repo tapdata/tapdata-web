@@ -2390,24 +2390,24 @@ export default {
     },
 
     handleError(error, msg = i18n.t('packages_dag_src_editor_chucuole')) {
-      const code = error?.data?.code
+      const code = error?.code
       if (code === 'Task.ListWarnMessage') {
         const names = []
-        if (error.data?.data) {
-          const keys = Object.keys(error.data.data)
+        if (error?.data) {
+          const keys = Object.keys(error.data)
           keys.forEach((key) => {
             const node = this.$store.state.dataflow.NodeMap[key]
             if (node) {
               names.push(node.name)
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: error.data.data[key][0].msg,
+                msg: error.data[key][0].msg,
               })
             }
           })
           if (!names.length && keys.length && msg) {
             // 兼容错误信息id不是节点id的情况
-            const msg = error.data.data[keys[0]][0]?.msg
+            const msg = error.data[keys[0]][0]?.msg
             if (msg) {
               this.$message.error(msg)
               return
@@ -2423,9 +2423,9 @@ export default {
       } else if (
         ['Task.ScheduleLimit', 'Task.ManuallyScheduleLimit'].includes(code)
       ) {
-        this.handleShowUpgradeDialog(error.data)
+        this.handleShowUpgradeDialog(error)
       } else {
-        showErrorMessage(error?.data)
+        showErrorMessage(error)
       }
     },
 

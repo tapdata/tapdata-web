@@ -2102,11 +2102,11 @@ export default defineComponent({
       error,
       msg = i18n.t('packages_dag_src_editor_chucuole'),
     ) => {
-      const code = error?.data?.code
+      const code = error?.code
       if (code === 'Task.ListWarnMessage') {
         const names = []
-        if (error.data?.data) {
-          const keys = Object.keys(error.data.data)
+        if (error.data) {
+          const keys = Object.keys(error.data)
           keys.forEach((key) => {
             const node = taskRef.value.dag.nodes.find(({ id }) => id === key)
             if (node) {
@@ -2115,7 +2115,7 @@ export default defineComponent({
           })
           if (!names.length && keys.length && msg) {
             // 兼容错误信息id不是节点id的情况
-            const msg = error.data.data[keys[0]][0]?.msg
+            const msg = error.data[keys[0]][0]?.msg
             if (msg) {
               Message.error(msg)
               return
@@ -2138,9 +2138,9 @@ export default defineComponent({
       } else if (
         ['Task.ScheduleLimit', 'Task.ManuallyScheduleLimit'].includes(code)
       ) {
-        handleShowUpgradeDialog(error.data)
+        handleShowUpgradeDialog(error)
       } else {
-        showErrorMessage(error?.data)
+        showErrorMessage(error)
       }
     }
 
