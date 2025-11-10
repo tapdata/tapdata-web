@@ -11,21 +11,8 @@ import VirtualTree from '@tap/component/src/virtual-tree'
 import NodeIcon from '@tap/dag/src/components/NodeIcon.vue'
 import { useResizeObserver } from '@vueuse/core'
 import { debounce } from 'lodash-es'
-import { defineComponent, h } from 'vue'
+import { defineComponent } from 'vue'
 import commonMix from './mixins/common'
-
-const NodeContent = defineComponent(
-  (props) => {
-    return () => {
-      const node = props.node
-      const { data, store } = node
-      return props.renderContent(h, { node, data, store })
-    }
-  },
-  {
-    props: ['renderContent', 'node', 'data'],
-  },
-)
 
 export default defineComponent({
   name: 'Source',
@@ -35,7 +22,6 @@ export default defineComponent({
     StageButton,
     IconButton,
     VEmpty,
-    NodeContent,
   },
   mixins: [commonMix],
   props: {
@@ -621,7 +607,6 @@ export default defineComponent({
           @handle-scroll="handleScroll"
         >
           <template #default="{ node, data }">
-            <!--<NodeContent :render-content="renderDefaultContent" :node="node" :data="data"></NodeContent>-->
             <span
               class="custom-tree-node flex align-items-center position-relative"
               :class="{
@@ -691,7 +676,6 @@ export default defineComponent({
             @handle-scroll="handleScroll"
           >
             <template #default="{ node, data }">
-              <!--<NodeContent :render-content="renderDefaultContent" :node="node" :data="data"></NodeContent>-->
               <span
                 class="custom-tree-node flex align-items-center position-relative"
                 :class="{
