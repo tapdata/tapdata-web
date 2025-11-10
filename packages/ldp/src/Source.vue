@@ -550,15 +550,6 @@ export default defineComponent({
 
       this.searchExpandedKeys = searchExpandedKeys
       this.filterTreeData = [...connectionMap.values()]
-      // console.log('searchExpandedKeys', this.filterTreeData)
-      // console.log('tree', this.$refs.tree, searchExpandedKeys)
-      // this.$nextTick(() => {
-      //   // this.$refs.tree?.setExpandedKeys(searchExpandedKeys)
-      //   console.log(this.$refs.tree.getNode(searchExpandedKeys[0]))
-      //   this.$refs.tree.expandNode(
-      //     this.$refs.tree.getNode(searchExpandedKeys[0]),
-      //   )
-      // })
     },
   },
   emits: ['preview', 'create-connection', 'node-drag-end', 'handle-connection'],
@@ -781,7 +772,6 @@ export default defineComponent({
                 grabbable: data.isObject,
                 'opacity-50': data.disabled,
               }"
-              @click="$emit('preview', data, node.parent?.data)"
             >
               <div
                 :id="
@@ -806,13 +796,6 @@ export default defineComponent({
                 <ElTag v-if="data.disabled" disable-transitions type="info">
                   {{ $t('public_status_invalid') }}
                 </ElTag>
-                <IconButton
-                  class="btn-menu"
-                  sm
-                  @click="$emit('preview', data, node.parent?.data)"
-                >
-                  view-details
-                </IconButton>
               </div>
             </div>
           </template>
