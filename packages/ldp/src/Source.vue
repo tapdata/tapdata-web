@@ -517,33 +517,48 @@ export default defineComponent({
       this.$emit('on-scroll')
     }, 200),
 
-    async searchByKeywordList(val = []) {
-      const searchExpandedKeys = []
-      this.filterTreeData = val.map((t) => {
-        searchExpandedKeys.push(t.connectionId)
-        return {
-          LDP_TYPE: 'connection',
-          id: t.connectionId,
-          name: t.connectionName,
-          pdkHash: t.pdkHash,
-          status: 'ready',
-          isLeaf: false,
-          level: 0,
-          disabled: false,
-          children: [
-            {
-              id: t.tableId,
-              name: t.table,
-              connectionId: t.connectionId,
-              isLeaf: true,
-              isObject: true,
-              type: 'table',
-              LDP_TYPE: 'table',
-            },
-          ],
+    searchByKeywordList(val = []) {
+      const searchExpandedKeys: string[] = []
+      const connectionMap = new Map()
+
+      val.forEach((t: any) => {
+        if (!connectionMap.has(t.connectionId)) {
+          searchExpandedKeys.push(t.connectionId)
+          connectionMap.set(t.connectionId, {
+            LDP_TYPE: 'connection',
+            id: t.connectionId,
+            name: t.connectionName,
+            pdkHash: t.pdkHash,
+            status: 'ready',
+            isLeaf: false,
+            level: 0,
+            disabled: false,
+            children: [],
+          })
         }
+
+        connectionMap.get(t.connectionId).children.push({
+          id: t.tableId,
+          name: t.table,
+          connectionId: t.connectionId,
+          isLeaf: true,
+          isObject: true,
+          type: 'table',
+          LDP_TYPE: 'table',
+        })
       })
+
       this.searchExpandedKeys = searchExpandedKeys
+      this.filterTreeData = [...connectionMap.values()]
+      // console.log('searchExpandedKeys', this.filterTreeData)
+      // console.log('tree', this.$refs.tree, searchExpandedKeys)
+      // this.$nextTick(() => {
+      //   // this.$refs.tree?.setExpandedKeys(searchExpandedKeys)
+      //   console.log(this.$refs.tree.getNode(searchExpandedKeys[0]))
+      //   this.$refs.tree.expandNode(
+      //     this.$refs.tree.getNode(searchExpandedKeys[0]),
+      //   )
+      // })
     },
   },
   emits: ['preview', 'create-connection', 'node-drag-end', 'handle-connection'],
@@ -742,7 +757,7 @@ export default defineComponent({
         v-loading="loading || searchIng"
         class="flex-fill min-h-0 p-1"
       >
-        <VirtualTree
+        <el-tree-v2
           key="searchTree"
           ref="tree"
           class="ldp-tree h-100"
@@ -752,17 +767,56 @@ export default defineComponent({
           draggable
           :height="treeHeight"
           wrapper-class-name="p-2"
-          :default-expanded-keys="searchExpandedKeys"
           :data="filterTreeData"
-          :render-content="renderContent"
+          :default-expanded-keys="searchExpandedKeys"
           :expand-on-click-node="false"
-          :allow-drag="(node) => node.data.isObject"
-          :allow-drop="() => false"
           @node-drag-start="handleDragStart"
           @node-drag-end="handleDragEnd"
-          @node-expand="handleNodeExpand"
           @handle-scroll="handleScroll"
-        />
+        >
+          <template #default="{ node, data }">
+            <div
+              class="custom-tree-node"
+              :class="{
+                grabbable: data.isObject,
+                'opacity-50': data.disabled,
+              }"
+              @click="$emit('preview', data, node.parent?.data)"
+            >
+              <div
+                :id="
+                  data.isObject
+                    ? `ldp_source_table_${data.connectionId}_${data.name}`
+                    : `connection_${data.id}`
+                "
+                class="inline-flex align-items-center overflow-hidden"
+              >
+                <NodeIcon
+                  v-if="!data.isObject"
+                  :node="data"
+                  :size="18"
+                  class="tree-item-icon mr-2"
+                />
+                <VIcon v-else class="tree-item-icon mr-2" size="18">
+                  table
+                </VIcon>
+                <span class="table-label" :title="data.name">
+                  {{ data.name }}
+                </span>
+                <ElTag v-if="data.disabled" disable-transitions type="info">
+                  {{ $t('public_status_invalid') }}
+                </ElTag>
+                <IconButton
+                  class="btn-menu"
+                  sm
+                  @click="$emit('preview', data, node.parent?.data)"
+                >
+                  view-details
+                </IconButton>
+              </div>
+            </div>
+          </template>
+        </el-tree-v2>
       </div>
     </div>
   </div>

@@ -468,8 +468,6 @@ export default {
             el.leaderLine.show('draw', { duration: 300 })
           }
         })
-
-        console.log(this.edgsLinks)
       }, 50)
     },
 
