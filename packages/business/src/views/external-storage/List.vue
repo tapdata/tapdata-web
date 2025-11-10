@@ -412,20 +412,17 @@ export default {
       this.$refs.form.validate(async valid => {
         if (valid) {
           const main = async () => {
-            let formValues = this.$refs.schemaToForm?.getFormValues?.()
+            const formValues = this.$refs.schemaToForm?.getFormValues?.() || {}
 
             this.loading = true
-            let { id, name, type, uri, defaultStorage } = this.form
-            let params = Object.assign(
-              {
-                id,
-                name,
-                type,
-                uri,
-                defaultStorage
-              },
-              formValues
-            )
+            const { id, name, type, uri, defaultStorage } = this.form
+            const params = Object.assign(formValues, {
+              id,
+              name,
+              type,
+              uri,
+              defaultStorage
+            })
             const catchFunc = () => {
               this.loading = false
             }
