@@ -45,8 +45,8 @@ export function fetchTasks(filter?: any, config?: any) {
   })
 }
 
-export function copyTask(id: string) {
-  return requestClient.put(`${BASE_URL}/copy/${id}`)
+export function copyTask(id: string, config?: any) {
+  return requestClient.put(`${BASE_URL}/copy/${id}`, null, config)
 }
 
 export function pauseTask(id: string) {

@@ -262,7 +262,7 @@ const actions = {
 
       commit('toggleTaskSaving', false) // 任务保存请求被cancel不希望设置为false
 
-      if (error?.data?.code === 'Task.OldVersion') {
+      if (error?.code === 'Task.OldVersion') {
         const confirmed = await Modal.confirm(
           i18n.t('packages_dag_task_old_version_confirm'),
           {
@@ -272,8 +272,8 @@ const actions = {
         if (confirmed) {
           location.reload()
         }
-      } else if (error?.data?.message) {
-        vm.$message.error(error.data.message)
+      } else if (error?.message) {
+        vm.$message.error(error.message)
       }
     }
   }, 50),
@@ -301,7 +301,7 @@ const actions = {
 
       commit('toggleTaskSaving', false) // 任务保存请求被cancel不希望设置为false
 
-      if (error?.data?.code === 'Task.OldVersion') {
+      if (error?.code === 'Task.OldVersion') {
         const confirmed = await Modal.confirm(
           i18n.t('packages_dag_task_old_version_confirm'),
           {
@@ -311,8 +311,8 @@ const actions = {
         if (confirmed) {
           location.reload()
         }
-      } else if (error?.data?.message) {
-        vm.$message.error(error.data.message)
+      } else if (error?.message) {
+        vm.$message.error(error.message)
       }
     }
   },

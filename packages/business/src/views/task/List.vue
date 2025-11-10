@@ -21,9 +21,10 @@ import i18n from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
 import dayjs from 'dayjs'
 import { escapeRegExp, isNumber, uniqBy } from 'lodash-es'
-
 import { h } from 'vue'
+
 import { DatabaseIcon } from '../../components/DatabaseIcon'
+import { showErrorMessage } from '../../components/error-message'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
 import SyncStatus from '../../components/SyncStatus.vue'
 import TablePage from '../../components/TablePage.vue'
@@ -672,10 +673,26 @@ export default {
     },
 
     copy(ids, node) {
-      copyTask(node.id).then(() => {
-        this.table.fetch()
-        this.$message.success(this.$t('public_message_copy_success'))
+      copyTask(node.id, {
+        skipErrorHandler: true,
       })
+        .then(() => {
+          this.table.fetch()
+          this.$message.success(this.$t('public_message_copy_success'))
+        })
+        .catch((error) => {
+          let msg
+
+          if (error?.code === 'Task.ListWarnMessage' && error.data) {
+            const keys = Object.keys(error.data)
+            msg = error.data[keys[0]]?.[0]?.msg
+          }
+
+          showErrorMessage({
+            msg: msg || error?.message || this.$t('public_message_copy_fail'),
+            stack: error?.stack,
+          })
+        })
     },
 
     initialize(ids, item = {}, canNotList) {
