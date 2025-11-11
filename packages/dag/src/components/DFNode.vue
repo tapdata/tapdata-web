@@ -424,6 +424,7 @@ export default {
   }
 }
 .df-node-text {
+  font-weight: 500;
   font-size: var(--font-base-title);
 }
 .df-node-text-tooltip {
@@ -468,12 +469,6 @@ export default {
     &.input {
       left: 0;
     }
-
-    //&:hover:before {
-    //  border-width: 2px;
-    //  width: 16px;
-    //  height: 16px;
-    //}
   }
 
   &:hover .node-anchor.output {

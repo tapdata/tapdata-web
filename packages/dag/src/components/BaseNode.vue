@@ -13,7 +13,8 @@ export default {
 <template>
   <div class="df-node">
     <div class="df-node-icon">
-      <NodeIcon :node="node" />
+      <NodeIcon class="df-node-icon-bg" :size="24" :node="node" />
+      <NodeIcon :size="24" :node="node" />
     </div>
     <slot :text="node.name" name="text">
       <div class="df-node-text">{{ node.name }}</div>
@@ -23,8 +24,8 @@ export default {
 </template>
 
 <style lang="scss">
-$width: 160px;
-$height: 30px;
+$width: 242px;
+$height: 52px;
 
 .layout-content .df-node {
   cursor: move;
@@ -39,25 +40,35 @@ $height: 30px;
   align-items: center;
   width: $width;
   height: $height;
-  background-color: var(--el-bg-color-overlay);
-  border: 1px solid #2c65ff;
-  border-radius: 10px;
+  padding: 0 12px;
+  // background-color: var(--el-bg-color-overlay);
+  background-color: #fcfcfd;
+  border: 1px solid transparent;
+  border-radius: 1rem;
   box-sizing: border-box;
   user-select: none;
+  box-shadow:
+    rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+    rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+    rgba(16, 24, 40, 0.05) 0px 1px 2px 0px;
+
+  &:hover {
+    box-shadow:
+      rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+      rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+      rgba(16, 24, 40, 0.03) 0px 4px 6px -2px,
+      rgba(16, 24, 40, 0.08) 0px 12px 16px -4px;
+
+    .df-node-icon-bg {
+      opacity: 1;
+    }
+  }
   &-icon {
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 28px;
-    height: 100%;
-    background-color: rgba(44, 101, 255, 0.2);
-    border-right-style: solid;
-    border-right-width: inherit;
-    border-color: inherit;
-    border-top-left-radius: 9px;
-    border-bottom-left-radius: 9px;
-    box-sizing: content-box;
+    margin-right: 8px;
 
     .icon-wrap {
       border-radius: 50%;
@@ -67,15 +78,19 @@ $height: 30px;
       color: #2c65ff;
       font-size: 24px;
     }
+  }
 
-    .el-image {
-      width: 14px;
-      height: 14px;
-    }
+  &-icon-bg {
+    position: absolute;
+    inset: 0;
+    border-radius: 100%;
+    opacity: 0;
+    filter: blur(12px);
+    pointer-events: none;
+    transform: scale(1);
   }
 
   &-text {
-    margin: 0 10px;
     flex: auto;
     width: 0;
     font-size: 12px;
@@ -118,39 +133,8 @@ $height: 30px;
     }
   }
 
-  &.node--data,
-  &.node--input {
-    border-color: #6236ff;
-    .df-node-icon {
-      background-color: rgba(98, 54, 255, 0.2);
-      &:before {
-        content: '';
-        position: absolute;
-        width: 22px;
-        height: 22px;
-        border: 1px solid #6236ff;
-        border-radius: 50%;
-        background: #fff;
-      }
-      .v-icon {
-        width: 14px;
-        height: 14px;
-        background-color: #6236ff;
-        color: #fff;
-        font-size: 14px;
-        border-radius: 100%;
-        .v-icon__svg {
-          width: 1em;
-          height: 1em;
-        }
-      }
-    }
-  }
-
   &.node--output {
-    border-color: #008eff;
     .df-node-icon {
-      background-color: rgba(0, 155, 255, 0.2);
       &:before {
         content: '';
         position: absolute;
