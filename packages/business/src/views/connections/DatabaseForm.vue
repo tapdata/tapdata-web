@@ -19,9 +19,9 @@ import {
   getProxyId,
   subscribeProxy,
 } from '@tap/api/src/core/proxy'
-
 import resize from '@tap/component/src/directives/resize'
 import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
+
 import i18n from '@tap/i18n'
 import { checkConnectionName, submitForm, uuid } from '@tap/shared'
 import { isEmpty } from 'lodash-es'
@@ -123,7 +123,6 @@ export default {
         total: 0,
       },
       showAgentIpAlert: false,
-      schemaFormInstance: null,
     }
   },
   computed: {
@@ -139,6 +138,12 @@ export default {
           ? 'io'
           : 'net'
       }/prerequisites/allow-access-network`
+    },
+
+    schemaFormInstance: {
+      get() {
+        return this.$refs.schemaToForm?.form
+      },
     },
   },
   async created() {
@@ -160,7 +165,6 @@ export default {
     }
   },
   mounted() {
-    this.schemaFormInstance = this.$refs.schemaToForm?.form // 获取表单的 form
     this.id = this.$route.params.id || ''
     const { fromPath } = this.$route.query
     if (fromPath) {
@@ -1586,7 +1590,7 @@ export default {
     },
 
     getForm() {
-      return this.schemaFormInstance
+      return this.$refs.schemaToForm?.form
     },
 
     handleDebug() {
