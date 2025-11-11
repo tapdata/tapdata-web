@@ -1811,6 +1811,12 @@ const schema = {
                 },
               },
               properties: {
+                key: {
+                  type: 'string',
+                  default: 'TASK_RETRY_WARN',
+                  'x-editable': true,
+                  'x-display': 'hidden',
+                },
                 times: {
                   type: 'number',
                   'x-component': RenderI18nT,
