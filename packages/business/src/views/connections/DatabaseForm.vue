@@ -114,7 +114,6 @@ export default {
         total: 0,
       },
       showAgentIpAlert: false,
-      schemaFormInstance: null,
     }
   },
   computed: {
@@ -130,6 +129,12 @@ export default {
           ? 'io'
           : 'net'
       }/prerequisites/allow-access-network`
+    },
+
+    schemaFormInstance: {
+      get() {
+        return this.$refs.schemaToForm?.form
+      },
     },
   },
   async created() {
@@ -151,7 +156,6 @@ export default {
     }
   },
   mounted() {
-    this.schemaFormInstance = this.$refs.schemaToForm?.form // 获取表单的 form
     this.id = this.$route.params.id || ''
     const { fromPath } = this.$route.query
     if (fromPath) {
@@ -1577,7 +1581,7 @@ export default {
     },
 
     getForm() {
-      return this.schemaFormInstance
+      return this.$refs.schemaToForm?.form
     },
 
     handleDebug() {

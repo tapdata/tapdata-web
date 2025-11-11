@@ -5,6 +5,7 @@ import {
   setValidateLanguage,
 } from '@formily/core'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
+import { shallowRef } from 'vue'
 import { Form } from './components'
 import { SchemaField } from './shared'
 
@@ -43,13 +44,15 @@ export default {
   },
   data() {
     return {
-      form: createForm(
-        this.value
-          ? {
-              values: this.value,
-              effects: this.useEffects,
-            }
-          : {},
+      form: shallowRef(
+        createForm(
+          this.value
+            ? {
+                values: this.value,
+                effects: this.useEffects,
+              }
+            : {},
+        ),
       ),
       objData: null,
     }
