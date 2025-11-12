@@ -13,8 +13,8 @@ export default {
 <template>
   <div class="df-node">
     <div class="df-node-icon">
-      <NodeIcon class="df-node-icon-bg" :size="24" :node="node" />
-      <NodeIcon :size="24" :node="node" />
+      <NodeIcon class="df-node-icon-bg" :node="node" />
+      <NodeIcon class="df-node-icon-img" :node="node" />
     </div>
     <slot :text="node.name" name="text">
       <div class="df-node-text">{{ node.name }}</div>
@@ -83,11 +83,25 @@ $height: 52px;
   &-icon-bg {
     position: absolute;
     inset: 0;
+    width: 28px;
+    height: 28px;
     border-radius: 100%;
-    opacity: 0;
-    filter: blur(12px);
+    opacity: 1;
+    filter: blur(8px);
     pointer-events: none;
-    transform: scale(1);
+    transform: scale(0.8);
+  }
+
+  &-icon-img {
+    width: 28px;
+    height: 28px;
+    background: rgb(255 255 255 / 25%);
+    border-radius: 8px;
+    backdrop-filter: blur(8px);
+    padding: 4px;
+    box-shadow:
+      0px 1px 1px 0px rgba(16, 24, 40, 0.06),
+      0px 1px 3px 0px rgba(16, 24, 40, 0.01);
   }
 
   &-text {

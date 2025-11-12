@@ -446,7 +446,7 @@ export default {
     display: none;
     width: 16px;
     height: 16px;
-    border-color: inherit;
+    border-color: var(--color-primary);
     position: absolute;
     cursor: crosshair;
     left: 100%;
@@ -462,8 +462,8 @@ export default {
       border-color: inherit;
       border-radius: 50%;
       background: var(--el-bg-color);
-      width: 12px;
-      height: 12px;
+      width: 16px;
+      height: 16px;
     }
 
     &.input {
