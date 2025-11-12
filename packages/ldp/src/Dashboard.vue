@@ -468,6 +468,9 @@ export default {
             el.leaderLine.show('draw', { duration: 300 })
           }
         })
+        this.$nextTick(() => {
+          this.repositionLeaderLines()
+        })
       }, 50)
     },
 
@@ -559,11 +562,15 @@ export default {
       this.$refs.target[0]?.createAPI(connection, tableOjb)
     },
 
+    repositionLeaderLines() {
+      this.edgsLinks.forEach((el) => {
+        el.leaderLine?.position()
+      })
+    },
+
     onScroll() {
       if (this.showParentLineage) {
-        this.edgsLinks.forEach((el) => {
-          el.leaderLine?.position()
-        })
+        this.repositionLeaderLines()
       }
     },
   },
