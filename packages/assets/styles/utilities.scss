@@ -388,6 +388,10 @@
   box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
 }
 
+.shadow-canvas {
+  box-shadow: 0px 0px .5px rgba(0, 0, 0, .3), 0px 1px 3px rgba(0, 0, 0, .15) !important;
+ }
+
 .shadow-none {
   box-shadow: none !important;
 }
@@ -417,6 +421,10 @@
   top: 0 !important;
 }
 
+.top-3 {
+  top: 0.75rem;
+}
+
 .top-50 {
   top: 50% !important;
 }
@@ -439,6 +447,10 @@
 
 .start-0 {
   left: 0 !important;
+}
+
+.start-3 {
+  left: 0.75rem;
 }
 
 .start-50 {
@@ -12660,6 +12672,14 @@
 
 .z-10 {
   z-index: 10 !important;
+}
+
+.z-20 {
+  z-index: 20 !important;
+}
+
+.z-30 {
+  z-index: 30 !important;
 }
 
 .list-decimal {

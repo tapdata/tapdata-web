@@ -4,6 +4,7 @@ import SettingLayout from '@/layouts/SettingLayout.vue'
 
 const FunctionForm = () => import('@/views/function/Form.vue')
 const DagEditor = () => import('@tap/dag/src/Editor.vue')
+const DagEditorView = () => import('@tap/dag/src/EditorView.vue')
 const MigrationEditor = () => import('@tap/dag/src/MigrationEditor.vue')
 const MigrationMonitor = () => import('@tap/dag/src/MigrationMonitor.vue')
 const MigrationMonitorViewer = () =>
@@ -105,6 +106,15 @@ export const routes = [
     path: '/node/editor/:id',
     name: 'NodeEditor',
     component: NodeEditor,
+  },
+  {
+    path: '/dataflow/canvas/:id',
+    name: 'DataflowCanvas',
+    component: DagEditorView,
+    meta: {
+      title: 'page_title_data_develop',
+      code: 'v2_data_flow_dag_edit',
+    },
   },
   {
     path: '/dataflow/editor',
