@@ -900,16 +900,20 @@ const handleTabChange = (tab: any) => {
   }
 }
 
+const logMiningCommandLoading = ref(false)
+
 const startLogMining = async (row: any) => {
   const confirmed = await Modal.confirm(
     `${t('cluster_confirm_text') + t('cluster_startServer')}?`,
   )
   if (!confirmed) return
 
+  logMiningCommandLoading.value = true
   await commandNineBridge(row.serviceId, 'start')
 
   fetchLogMiningData()
   ElMessage.success(t('public_message_operation_success'))
+  logMiningCommandLoading.value = false
 }
 
 const stopLogMining = async (row: any) => {
@@ -919,9 +923,11 @@ const stopLogMining = async (row: any) => {
 
   if (!confirmed) return
 
+  logMiningCommandLoading.value = true
   await commandNineBridge(row.serviceId, 'stop')
   fetchLogMiningData()
   ElMessage.success(t('public_message_operation_success'))
+  logMiningCommandLoading.value = false
 }
 
 const restartLogMining = async (row: any) => {
@@ -931,9 +937,11 @@ const restartLogMining = async (row: any) => {
 
   if (!confirmed) return
 
+  logMiningCommandLoading.value = true
   await commandNineBridge(row.serviceId, 'restart')
   fetchLogMiningData()
   ElMessage.success(t('public_message_operation_success'))
+  logMiningCommandLoading.value = false
 }
 
 const deleteLogMining = async (row: any) => {
@@ -943,9 +951,12 @@ const deleteLogMining = async (row: any) => {
 
   if (!confirmed) return
 
+  logMiningCommandLoading.value = true
+
   await deleteNieBridge(row.serviceId)
   fetchLogMiningData()
   ElMessage.success(t('public_message_operation_success'))
+  logMiningCommandLoading.value = false
 }
 
 const handleLogMiningCommand = (command: string, row: any) => {
@@ -1800,6 +1811,7 @@ const updateLogMiningLicense = (row: any) => {
                         v-if="item.reportedData.state === 'stop'"
                         text
                         type="primary"
+                        :loading="logMiningCommandLoading"
                         @click="startLogMining(item)"
                       >
                         <el-icon>
@@ -1811,6 +1823,7 @@ const updateLogMiningLicense = (row: any) => {
                         v-else-if="item.reportedData.state === 'sleep'"
                         text
                         type="danger"
+                        :loading="logMiningCommandLoading"
                         @click="stopLogMining(item)"
                       >
                         <el-icon>
@@ -1829,7 +1842,10 @@ const updateLogMiningLicense = (row: any) => {
                         </el-button>
                         <template #dropdown>
                           <el-dropdown-menu>
-                            <el-dropdown-item command="restart">
+                            <el-dropdown-item
+                              command="restart"
+                              :disabled="logMiningCommandLoading"
+                            >
                               <el-icon class="mr-2" size="16">
                                 <i-lucide-rotate-cw />
                               </el-icon>
