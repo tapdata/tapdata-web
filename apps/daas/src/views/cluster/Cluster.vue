@@ -8,7 +8,9 @@ import {
 } from '@tap/api/src/core/agentgroup'
 import {
   addClusterMonitor,
+  commandNineBridge,
   deleteClusterState,
+  deleteNieBridge,
   editClusterAgent,
   editClusterMonitor,
   fetchClusterStates,
@@ -35,6 +37,7 @@ import { useRoute, useRouter } from 'vue-router'
 import SetTag from '@/views/cluster/SetTag.vue'
 import AddServe from './AddServe.vue'
 import { STATUS_MAP } from './const'
+import UpdateLicense from './UpdateLicense.vue'
 
 const { t } = useI18n()
 
@@ -218,6 +221,10 @@ const draggingNodeImage = ref(null)
 const loading = ref(false)
 const logMiningLoading = ref(false)
 const logMiningData = ref<LogMiningMonitor[]>([])
+const updateLicenseDialog = reactive({
+  visible: false,
+  serviceId: '',
+})
 
 // constants
 const DataSourceMap = {
@@ -891,6 +898,73 @@ const handleTabChange = (tab: any) => {
   if (tab === 'logMining') {
     fetchLogMiningData()
   }
+}
+
+const startLogMining = async (row: any) => {
+  const confirmed = await Modal.confirm(
+    `${t('cluster_confirm_text') + t('cluster_startServer')}?`,
+  )
+  if (!confirmed) return
+
+  await commandNineBridge(row.serviceId, 'start')
+
+  fetchLogMiningData()
+  ElMessage.success(t('public_message_operation_success'))
+}
+
+const stopLogMining = async (row: any) => {
+  const confirmed = await Modal.confirm(
+    `${t('cluster_confirm_text') + t('cluster_closeSever')}?`,
+  )
+
+  if (!confirmed) return
+
+  await commandNineBridge(row.serviceId, 'stop')
+  fetchLogMiningData()
+  ElMessage.success(t('public_message_operation_success'))
+}
+
+const restartLogMining = async (row: any) => {
+  const confirmed = await Modal.confirm(
+    `${t('cluster_confirm_text') + t('cluster_restart_server')}?`,
+  )
+
+  if (!confirmed) return
+
+  await commandNineBridge(row.serviceId, 'restart')
+  fetchLogMiningData()
+  ElMessage.success(t('public_message_operation_success'))
+}
+
+const deleteLogMining = async (row: any) => {
+  const confirmed = await Modal.confirm(
+    `${t('cluster_confirm_text') + t('cluster_delete_server')}?`,
+  )
+
+  if (!confirmed) return
+
+  await deleteNieBridge(row.serviceId)
+  fetchLogMiningData()
+  ElMessage.success(t('public_message_operation_success'))
+}
+
+const handleLogMiningCommand = (command: string, row: any) => {
+  switch (command) {
+    case 'restart':
+      restartLogMining(row)
+      break
+    case 'updateLicense':
+      updateLogMiningLicense(row)
+      break
+    case 'delete':
+      deleteLogMining(row)
+      break
+  }
+}
+
+const updateLogMiningLicense = (row: any) => {
+  updateLicenseDialog.visible = true
+  updateLicenseDialog.serviceId = row.serviceId
 }
 </script>
 
@@ -1675,7 +1749,7 @@ const handleTabChange = (tab: any) => {
         >
           <el-row
             v-if="logMiningData.length"
-            class="waterfall"
+            class="waterfall h-auto"
             :gutter="24"
             style="row-gap: 24px"
           >
@@ -1693,25 +1767,98 @@ const handleTabChange = (tab: any) => {
                       class="mr-4 rounded-xl"
                       src="../../assets/static/serve.svg"
                     />
-                    <i
-                      class="circular mr-2 mt-2"
-                      :class="!item.isAlive ? 'bgred' : 'bggreen'"
-                    />
                     <div class="list-box-header-main">
-                      <h2 class="name fs-6 mb-1">{{ item.serviceId }}</h2>
+                      <h2 class="name fs-6 mb-1 flex align-center gap-2">
+                        <i
+                          class="circular"
+                          :class="!item.isAlive ? 'bgred' : 'bggreen'"
+                        />
+                        {{ item.serviceId }}
+                      </h2>
                       <span class="ip">{{ item.dataSource }}</span>
                     </div>
                   </div>
                   <div
                     class="flex flex-column align-items-end justify-content-between"
                   >
-                    <el-tag v-if="item.isAlive" type="success">{{
-                      $t('public_status_running')
-                    }}</el-tag>
-                    <el-tag v-else type="danger">{{
-                      $t('public_status_stop')
-                    }}</el-tag>
-                    <span class="font-color-light"
+                    <div>
+                      <el-tag
+                        v-if="item.reportedData.state === 'sleep'"
+                        type="success"
+                        >{{ $t('public_status_running') }}</el-tag
+                      >
+                      <el-tag
+                        v-else-if="item.reportedData.state === 'notExists'"
+                        type="info"
+                        >{{ $t('public_agent_status_offline') }}</el-tag
+                      >
+                      <el-tag v-else type="danger">{{
+                        $t('public_status_stop')
+                      }}</el-tag>
+                      <ElDivider direction="vertical" />
+                      <ElButton
+                        v-if="item.reportedData.state === 'stop'"
+                        text
+                        type="primary"
+                        @click="startLogMining(item)"
+                      >
+                        <el-icon>
+                          <i-lucide-play />
+                        </el-icon>
+                        <span>{{ $t('public_button_start') }}</span>
+                      </ElButton>
+                      <ElButton
+                        v-else-if="item.reportedData.state === 'sleep'"
+                        text
+                        type="danger"
+                        @click="stopLogMining(item)"
+                      >
+                        <el-icon>
+                          <i-lucide-square />
+                        </el-icon>
+                        <span>{{ $t('public_button_stop') }}</span>
+                      </ElButton>
+                      <ElDivider direction="vertical" />
+                      <el-dropdown
+                        @command="handleLogMiningCommand($event, item)"
+                      >
+                        <el-button text>
+                          <template #icon>
+                            <i-lucide-ellipsis />
+                          </template>
+                        </el-button>
+                        <template #dropdown>
+                          <el-dropdown-menu>
+                            <el-dropdown-item command="restart">
+                              <el-icon class="mr-2" size="16">
+                                <i-lucide-rotate-cw />
+                              </el-icon>
+                              {{
+                                $t('public_button_restart')
+                              }}</el-dropdown-item
+                            >
+                            <el-dropdown-item command="updateLicense">
+                              <el-icon class="mr-2" size="16">
+                                <i-lucide-file-key />
+                              </el-icon>
+                              {{ $t('license_renew_dialog') }}</el-dropdown-item
+                            >
+                            <el-dropdown-item
+                              divided
+                              class="is-danger"
+                              command="delete"
+                            >
+                              <el-icon class="mr-2" size="16">
+                                <i-lucide-trash-2 />
+                              </el-icon>
+                              {{ $t('public_button_delete') }}</el-dropdown-item
+                            >
+                          </el-dropdown-menu>
+                        </template>
+                      </el-dropdown>
+                    </div>
+
+                    <span class="font-color-sslight"
                       >{{ $t('packages_business_task_preview_startTime') }}:
                       {{ item.startTime }}</span
                     >
@@ -1719,13 +1866,13 @@ const handleTabChange = (tab: any) => {
                 </div>
                 <div class="list-box-main">
                   <div class="usageRate">
-                    <div class="fs-5 pb-1 fw-bolder">{{ item.cpuUsage }}</div>
+                    <div class="fs-5 pb-1 fw-bolder">{{ item.cpuUsage }}%</div>
                     CPU 使用率
                   </div>
                   <div class="line" />
                   <div class="usageRate">
                     <div class="fs-5 pb-1 fw-bolder">
-                      {{ item.memoryUsage }}
+                      {{ item.memoryUsage }}%
                     </div>
                     堆内存使用率
                   </div>
@@ -1887,6 +2034,12 @@ const handleTabChange = (tab: any) => {
         @saved="onSavedTag"
       />
     </section>
+
+    <UpdateLicense
+      v-model="updateLicenseDialog.visible"
+      :service-id="updateLicenseDialog.serviceId"
+      @success="fetchLogMiningData"
+    />
   </PageContainer>
 </template>
 

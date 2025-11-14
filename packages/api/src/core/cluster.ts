@@ -140,3 +140,28 @@ export function updateClusterState(where: any, attributes: any) {
     attributes,
   )
 }
+
+export function commandNineBridge(serverId: string, command: string) {
+  return requestClient.post(
+    `${BASE_URL}/nine-bridge?serverId=${serverId}&command=${command}`,
+  )
+}
+
+export function deleteNieBridge(serverId: string) {
+  return requestClient.delete(`${BASE_URL}/nine-bridge?serverId=${serverId}`)
+}
+
+export function updateNieBridgeLicense(serverId: string, file: File) {
+  const formData = new FormData()
+  formData.append('file', file)
+
+  return requestClient.post(
+    `${BASE_URL}/nine-bridge/upgrade-sn?serverId=${serverId}`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    },
+  )
+}
