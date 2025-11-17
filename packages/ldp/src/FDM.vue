@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import {
   CancelToken,
   discoveryApi,
@@ -6,23 +6,19 @@ import {
   metadataDefinitionsApi,
   taskApi,
 } from '@tap/api'
-import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
 import {
   makeDragNodeImage,
   makeStatusAndDisabled,
-  TASK_SETTINGS,
 } from '@tap/business/src/shared'
 import { VExpandXTransition } from '@tap/component/src/base/v-expand-x-transition'
 import VIcon from '@tap/component/src/base/VIcon.vue'
 import { IconButton } from '@tap/component/src/icon-button'
 import { validateCron } from '@tap/form/src/shared/validate'
 import { useI18n } from '@tap/i18n'
-import { generateId, uuid } from '@tap/shared'
 import { useResizeObserver } from '@vueuse/core'
 import { cloneDeep, debounce } from 'lodash-es'
 import {
   computed,
-  h,
   nextTick,
   onBeforeUnmount,
   onMounted,
@@ -278,27 +274,22 @@ function renderContent(h: any, { node, data }: { node: any; data: any }) {
     }
     actions.push(
       h(
-        'ElDropdown',
+        ElDropdown,
         {
           placement: 'bottom',
           trigger: 'click',
           onCommand: (command: string) => handleMoreCommand(command, data),
         },
         {
-          default: () =>
-            h(
-              IconButton,
-              { sm: true, class: 'ml-2' },
-              { default: () => 'more' },
-            ),
+          default: () => h(IconButton, { sm: true }, { default: () => 'more' }),
           dropdown: () =>
             h(
-              'ElDropdownMenu',
+              ElDropdownMenu,
               {},
               {
                 default: () =>
                   h(
-                    'ElDropdownItem',
+                    ElDropdownItem,
                     { command: 'edit' },
                     { default: () => t('public_button_edit') },
                   ),
@@ -315,8 +306,14 @@ function renderContent(h: any, { node, data }: { node: any; data: any }) {
     'div',
     {
       class: className,
+      style: '--btn-space: 8px;',
       onClick: () => {
-        data.isObject && emit('preview', data, props.fdmConnection)
+        data.isObject &&
+          emit(
+            'preview',
+            { ...data, id: data.id.split('_')[0] },
+            props.fdmConnection,
+          )
       },
       onDrop: handleTreeNodeDrop,
     },
@@ -822,12 +819,14 @@ function loadObjects(
     .then((res: any) => {
       return res.items.map((item: any) =>
         Object.assign(item, {
+          id: `${item.id}_${node.id}`,
           isLeaf: true,
           isObject: true,
           connectionId: item.sourceConId,
           LDP_TYPE: 'table',
           parent_id: node.id,
           isVirtual: item.status === 'noRunning',
+          listtags: [item.listtags[0]],
         }),
       )
     })
@@ -979,7 +978,7 @@ provide('treeData', treeData)
         <div
           v-if="showSearch"
           v-loading="searchIng"
-          class="search-view position-absolute top-0 left-0 w-100 h-100 bg-white"
+          class="search-view position-absolute top-0 left-0 w-100 h-100"
         >
           <ElTree
             ref="tree"
@@ -1080,9 +1079,7 @@ provide('treeData', treeData)
         </template>
       </div>
       <div v-else class="flex-1 min-h-0 position-relative">
-        <div
-          class="search-view position-absolute top-0 left-0 w-100 h-100 bg-white"
-        >
+        <div class="search-view position-absolute top-0 left-0 w-100 h-100">
           <ElTree
             ref="tree"
             class="ldp-tree h-100"
