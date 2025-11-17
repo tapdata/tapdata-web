@@ -32,9 +32,21 @@ provide('dag', dag)
         {{ dataflowStore.dataflow.name }}
       </div>
     </div>
+    <div class="w-100 h-0 position-absolute header z-10 flex align-center px-3">
+      <div class="flex-1" />
+      <div>
+        <ElButton class="ml-3 shadow-sm" type="primary">
+          {{ $t('public_button_start') }}
+        </ElButton>
+      </div>
+    </div>
     <NodesPanel />
     <Canvas />
   </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.header {
+  top: 28px;
+}
+</style>

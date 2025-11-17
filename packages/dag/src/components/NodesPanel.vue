@@ -66,6 +66,7 @@
 <style>
 .nodes-panel {
   top: 72px;
+  bottom: 12px;
   width: 260px;
 }
 </style>
