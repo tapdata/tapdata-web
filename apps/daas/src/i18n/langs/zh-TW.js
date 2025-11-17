@@ -2045,4 +2045,8 @@ export default {
   cluster_operation_success: '操作指令已發送，請稍後刷新查看結果',
   cluster_launcher_offline: '啟動器已離線',
   cluster_delete_confirm: '確定刪除該服務嗎？',
+  cluster_update_license_success: 'License 更新成功',
+  license_expired_today: 'License 今日到期',
+  license_expired_days: 'License 已過期 {val} 天',
+  license_expire_days: 'License 還有 {val} 天到期',
 }

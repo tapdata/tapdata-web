@@ -15,6 +15,7 @@ import {
   editClusterMonitor,
   fetchClusterStates,
   findRawServerInfo,
+  getNieBridgeLicense,
   removeClusterMonitor,
   updateClusterStatus,
 } from '@tap/api/src/core/cluster'
@@ -236,6 +237,7 @@ const logMiningCommandLoading = ref<{ [key: string]: boolean }>({})
 const logMiningOperationState = ref<{ [key: string]: 'starting' | 'stopping' }>(
   {},
 )
+const licenseExpireDays = ref<Record<string, number>>({})
 
 // constants
 const DataSourceMap = {
@@ -941,9 +943,32 @@ const handleTabChange = (tab: any) => {
     logMiningFirstLoading.value = true
     fetchLogMiningData().finally(() => {
       logMiningFirstLoading.value = false
+      fetchLogMiningLicense()
     })
   } else {
     cancelFetchLogMiningData()
+  }
+}
+
+const updateLicenseExpireDays = (serverId: string, item: any) => {
+  const diffDays = dayjs().startOf('day').diff(item.data.issueDate, 'd')
+  licenseExpireDays.value[serverId] = item.data.days - diffDays
+}
+
+const fetchLogMiningLicense = () => {
+  const serviceIds = logMiningData.value.map((item) => item.serviceId)
+  const fetchIds = serviceIds.filter((id) => !(id in licenseExpireDays.value))
+
+  Object.keys(licenseExpireDays.value).forEach((id) => {
+    if (!serviceIds.includes(id)) {
+      delete licenseExpireDays.value[id]
+    }
+  })
+
+  if (fetchIds.length) {
+    Promise.all(fetchIds.map((id) => getNieBridgeLicense(id))).then((res) => {
+      res.forEach((item, i) => updateLicenseExpireDays(fetchIds[i]!, item))
+    })
   }
 }
 
@@ -1027,6 +1052,13 @@ const handleLogMiningCommand = (command: string, row: any) => {
 const updateLogMiningLicense = (row: any) => {
   updateLicenseDialog.visible = true
   updateLicenseDialog.serviceId = row.serviceId
+}
+
+const onUpdateLicenseSuccess = () => {
+  fetchLogMiningData()
+  getNieBridgeLicense(updateLicenseDialog.serviceId).then((res) =>
+    updateLicenseExpireDays(updateLicenseDialog.serviceId, res),
+  )
 }
 </script>
 
@@ -1966,17 +1998,70 @@ const updateLogMiningLicense = (row: any) => {
                     >
                   </div>
                 </div>
+                <div
+                  v-if="licenseExpireDays[item.serviceId] < 8"
+                  class="px-4 pb-4"
+                >
+                  <el-alert
+                    v-if="licenseExpireDays[item.serviceId] < 1"
+                    :closable="false"
+                    type="error"
+                    show-icon
+                    class="fit-content"
+                  >
+                    <template #title>
+                      <div class="flex align-center justify-content-between">
+                        <span>
+                          {{
+                            licenseExpireDays[item.serviceId] === 0
+                              ? $t('license_expired_today')
+                              : $t('license_expired_days', {
+                                  val: Math.abs(
+                                    licenseExpireDays[item.serviceId],
+                                  ),
+                                })
+                          }}
+                        </span>
+                        <el-button text @click="updateLogMiningLicense(item)">
+                          {{ $t('license_renew_dialog') }}
+                        </el-button>
+                      </div>
+                    </template>
+                  </el-alert>
+                  <el-alert
+                    v-else
+                    :closable="false"
+                    type="warning"
+                    show-icon
+                    class="fit-content"
+                  >
+                    <template #title>
+                      <div class="flex align-center justify-content-between">
+                        <span>
+                          {{
+                            $t('license_expire_days', {
+                              val: licenseExpireDays[item.serviceId],
+                            })
+                          }}
+                        </span>
+                        <el-button text @click="updateLogMiningLicense(item)">
+                          {{ $t('license_renew_dialog') }}
+                        </el-button>
+                      </div>
+                    </template>
+                  </el-alert>
+                </div>
                 <div class="list-box-main">
                   <div class="usageRate">
                     <div class="fs-5 pb-1 fw-bolder">{{ item.cpuUsage }}%</div>
-                    CPU 使用率
+                    {{ $t('cluster_cpu_usage') }}
                   </div>
                   <div class="line" />
                   <div class="usageRate">
                     <div class="fs-5 pb-1 fw-bolder">
                       {{ item.memoryUsage }}%
                     </div>
-                    堆内存使用率
+                    {{ $t('cluster_heap_memory_usage') }}
                   </div>
                 </div>
               </div>
@@ -2140,7 +2225,7 @@ const updateLogMiningLicense = (row: any) => {
     <UpdateLicense
       v-model="updateLicenseDialog.visible"
       :service-id="updateLicenseDialog.serviceId"
-      @success="fetchLogMiningData"
+      @success="onUpdateLicenseSuccess"
     />
   </PageContainer>
 </template>

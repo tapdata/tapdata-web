@@ -2173,4 +2173,8 @@ export default {
     'Operation instruction has been sent, please refresh later to view the result',
   cluster_launcher_offline: 'Launcher is offline',
   cluster_delete_confirm: 'Are you sure you want to delete this service?',
+  cluster_update_license_success: 'License updated successfully',
+  license_expired_today: 'License expires today',
+  license_expired_days: 'License has expired {val} days',
+  license_expire_days: 'License expires in {val} days',
 }

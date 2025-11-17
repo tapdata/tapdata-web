@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { updateNieBridgeLicense } from '@tap/api/src/core/cluster'
 import { FileAddColorful, FileDocxColorful } from '@tap/component/src/icon'
+import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
 import { ref } from 'vue'
 
@@ -12,6 +13,7 @@ const emit = defineEmits<{
   success: []
 }>()
 
+const { t } = useI18n()
 const visible = defineModel<boolean>()
 const fileList = ref<any[]>([])
 const loading = ref<boolean>(false)
@@ -26,6 +28,7 @@ const upload = async () => {
     await updateNieBridgeLicense(props.serviceId, fileList.value[0]!.raw)
     visible.value = false
     emit('success')
+    ElMessage.success(t('cluster_update_license_success'))
   } catch (error) {
     console.error('Update license failed:', error)
   }

@@ -165,3 +165,7 @@ export function updateNieBridgeLicense(serverId: string, file: File) {
     },
   )
 }
+
+export function getNieBridgeLicense(serverId: string) {
+  return requestClient.get(`${BASE_URL}/nine-bridge/sn?serverId=${serverId}`)
+}
