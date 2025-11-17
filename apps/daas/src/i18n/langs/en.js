@@ -2171,4 +2171,6 @@ export default {
     'Server response has not been updated for {val}',
   cluster_operation_success:
     'Operation instruction has been sent, please refresh later to view the result',
+  cluster_launcher_offline: 'Launcher is offline',
+  cluster_delete_confirm: 'Are you sure you want to delete this service?',
 }

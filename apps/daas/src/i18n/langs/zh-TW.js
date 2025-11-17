@@ -2043,4 +2043,6 @@ export default {
   api_monitor_memory: '內存',
   api_monitor_server_ping_warning: '服務器響應已 {val} 未更新',
   cluster_operation_success: '操作指令已發送，請稍後刷新查看結果',
+  cluster_launcher_offline: '啟動器已離線',
+  cluster_delete_confirm: '確定刪除該服務嗎？',
 }

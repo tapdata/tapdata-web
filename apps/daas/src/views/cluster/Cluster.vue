@@ -24,6 +24,7 @@ import {
   queryAllBindWorker,
   unbindByProcessId,
 } from '@tap/api/src/core/workers'
+import { useRequest } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { dayjs, makeDragNodeImage } from '@tap/business/src/shared'
 import { FilterBar } from '@tap/component/src/filter-bar'
@@ -125,6 +126,12 @@ interface LogMiningMonitor {
   status: 'running' | 'stopped'
   cpuUsage: string
   memoryUsage: string
+  reportedData?: {
+    state: string
+    cpuPercent: number
+    memoryPercent: number
+    createTime?: string
+  }
 }
 
 // Router
@@ -219,12 +226,16 @@ const dragState = reactive<DragState>({
 })
 const draggingNodeImage = ref(null)
 const loading = ref(false)
-const logMiningLoading = ref(false)
-const logMiningData = ref<LogMiningMonitor[]>([])
 const updateLicenseDialog = reactive({
   visible: false,
   serviceId: '',
 })
+const logMiningFirstLoading = ref(false)
+const logMiningCommandLoading = ref<{ [key: string]: boolean }>({})
+// 记录正在操作的服务状态：'starting' | 'stopping'
+const logMiningOperationState = ref<{ [key: string]: 'starting' | 'stopping' }>(
+  {},
+)
 
 // constants
 const DataSourceMap = {
@@ -876,31 +887,65 @@ const handleTreeDrop = async (ev: DragEvent, data: any) => {
   }
 }
 
-const fetchLogMiningData = async () => {
-  logMiningLoading.value = true
-  const data = await findRawServerInfo()
+const {
+  data: logMiningData,
+  runAsync: fetchLogMiningData,
+  cancel: cancelFetchLogMiningData,
+  loading: logMiningLoading,
+} = useRequest<LogMiningMonitor[]>(
+  async () => {
+    const data = await findRawServerInfo()
+    const result = data.items.map((item) => {
+      item.timestamp = dayjs(item.timestamp).format('YYYY-MM-DD HH:mm:ss')
+      item.dataSource = DataSourceMap[item.dataSource]
+      item.cpuUsage = (item.reportedData.cpuPercent * 100).toFixed(2)
+      item.memoryUsage = (item.reportedData.memoryPercent * 100).toFixed(2)
+      item.startTime = item.reportedData.createTime
+        ? dayjs(item.reportedData.createTime).format('YYYY-MM-DD HH:mm:ss')
+        : '--'
+      return item
+    })
 
-  logMiningLoading.value = false
+    // 检查操作状态是否已完成
+    if (result && result.length) {
+      Object.keys(logMiningOperationState.value).forEach((serviceId) => {
+        const operationState = logMiningOperationState.value[serviceId]
+        const item = result.find((d) => d.serviceId === serviceId)
 
-  logMiningData.value = data.items.map((item) => {
-    item.timestamp = dayjs(item.timestamp).format('YYYY-MM-DD HH:mm:ss')
-    item.dataSource = DataSourceMap[item.dataSource]
-    item.cpuUsage = (item.reportedData.cpuPercent * 100).toFixed(2)
-    item.memoryUsage = (item.reportedData.memoryPercent * 100).toFixed(2)
-    item.startTime = dayjs(item.reportedData.createTime).format(
-      'YYYY-MM-DD HH:mm:ss',
-    )
-    return item
-  })
-}
+        if (item) {
+          const isRunning = item.reportedData?.state === 'sleep'
+
+          // 如果正在启动，且状态已变为运行中，清除操作状态
+          if (operationState === 'starting' && isRunning) {
+            delete logMiningOperationState.value[serviceId]
+          }
+          // 如果正在停止，且状态已变为停止，清除操作状态
+          else if (operationState === 'stopping' && !isRunning) {
+            delete logMiningOperationState.value[serviceId]
+          }
+        }
+      })
+    }
+
+    return result
+  },
+  {
+    manual: true,
+    pollingInterval: 5000,
+    initialData: [] as LogMiningMonitor[],
+  },
+)
 
 const handleTabChange = (tab: any) => {
   if (tab === 'logMining') {
-    fetchLogMiningData()
+    logMiningFirstLoading.value = true
+    fetchLogMiningData().finally(() => {
+      logMiningFirstLoading.value = false
+    })
+  } else {
+    cancelFetchLogMiningData()
   }
 }
-
-const logMiningCommandLoading = ref(false)
 
 const startLogMining = async (row: any) => {
   const confirmed = await Modal.confirm(
@@ -908,12 +953,15 @@ const startLogMining = async (row: any) => {
   )
   if (!confirmed) return
 
-  logMiningCommandLoading.value = true
-  await commandNineBridge(row.serviceId, 'start')
+  // 记录启动操作状态
+  logMiningOperationState.value[row.serviceId] = 'starting'
+  logMiningCommandLoading.value[row.serviceId] = true
+  await commandNineBridge(row.serviceId, 'start').finally(() => {
+    logMiningCommandLoading.value[row.serviceId] = false
+  })
 
   fetchLogMiningData()
-  ElMessage.success(t('public_message_operation_success'))
-  logMiningCommandLoading.value = false
+  ElMessage.success(t('cluster_operation_success'))
 }
 
 const stopLogMining = async (row: any) => {
@@ -923,11 +971,14 @@ const stopLogMining = async (row: any) => {
 
   if (!confirmed) return
 
-  logMiningCommandLoading.value = true
-  await commandNineBridge(row.serviceId, 'stop')
+  // 记录停止操作状态
+  logMiningOperationState.value[row.serviceId] = 'stopping'
+  logMiningCommandLoading.value[row.serviceId] = true
+  await commandNineBridge(row.serviceId, 'stop').finally(() => {
+    logMiningCommandLoading.value[row.serviceId] = false
+  })
   fetchLogMiningData()
-  ElMessage.success(t('public_message_operation_success'))
-  logMiningCommandLoading.value = false
+  ElMessage.success(t('cluster_operation_success'))
 }
 
 const restartLogMining = async (row: any) => {
@@ -937,26 +988,26 @@ const restartLogMining = async (row: any) => {
 
   if (!confirmed) return
 
-  logMiningCommandLoading.value = true
-  await commandNineBridge(row.serviceId, 'restart')
+  logMiningCommandLoading.value[row.serviceId] = true
+  await commandNineBridge(row.serviceId, 'restart').finally(() => {
+    logMiningCommandLoading.value[row.serviceId] = false
+  })
   fetchLogMiningData()
-  ElMessage.success(t('public_message_operation_success'))
-  logMiningCommandLoading.value = false
+  ElMessage.success(t('cluster_operation_success'))
 }
 
 const deleteLogMining = async (row: any) => {
-  const confirmed = await Modal.confirm(
-    `${t('cluster_confirm_text') + t('cluster_delete_server')}?`,
-  )
+  const confirmed = await Modal.confirm(t('cluster_delete_confirm'))
 
   if (!confirmed) return
 
-  logMiningCommandLoading.value = true
+  logMiningCommandLoading.value[row.serviceId] = true
 
-  await deleteNieBridge(row.serviceId)
+  await deleteNieBridge(row.serviceId).finally(() => {
+    logMiningCommandLoading.value[row.serviceId] = false
+  })
   fetchLogMiningData()
   ElMessage.success(t('public_message_operation_success'))
-  logMiningCommandLoading.value = false
 }
 
 const handleLogMiningCommand = (command: string, row: any) => {
@@ -1006,7 +1057,10 @@ const updateLogMiningLicense = (row: any) => {
       </el-tab-pane>
       <el-tab-pane name="logMining">
         <template #label>
-          <span>
+          <span
+            v-loading="logMiningLoading"
+            style="--el-loading-spinner-size: 24px"
+          >
             {{ $t('public_log_mining_monitor') }}
           </span>
         </template>
@@ -1755,7 +1809,7 @@ const updateLogMiningLicense = (row: any) => {
         </div>
         <div
           v-else-if="viewType === 'logMining'"
-          v-loading="logMiningLoading"
+          v-loading="logMiningFirstLoading"
           class="content flex-1"
         >
           <el-row
@@ -1791,12 +1845,24 @@ const updateLogMiningLicense = (row: any) => {
                   </div>
                   <div
                     class="flex flex-column align-items-end justify-content-between"
+                    style="--btn-space: 0"
                   >
-                    <div>
+                    <div class="flex align-center gap-2 mb-1">
                       <el-tag
                         v-if="item.reportedData.state === 'sleep'"
                         type="success"
-                        >{{ $t('public_status_running') }}</el-tag
+                      >
+                        <el-tooltip
+                          v-if="!item.isAlive"
+                          :content="$t('cluster_launcher_offline')"
+                          :enterable="false"
+                          placement="top"
+                        >
+                          <el-icon class="color-warning"
+                            ><i-lucide-triangle-alert
+                          /></el-icon>
+                        </el-tooltip>
+                        {{ $t('public_status_running') }}</el-tag
                       >
                       <el-tag
                         v-else-if="item.reportedData.state === 'notExists'"
@@ -1806,32 +1872,44 @@ const updateLogMiningLicense = (row: any) => {
                       <el-tag v-else type="danger">{{
                         $t('public_status_stop')
                       }}</el-tag>
-                      <ElDivider direction="vertical" />
                       <ElButton
-                        v-if="item.reportedData.state === 'stop'"
-                        text
-                        type="primary"
-                        :loading="logMiningCommandLoading"
-                        @click="startLogMining(item)"
-                      >
-                        <el-icon>
-                          <i-lucide-play />
-                        </el-icon>
-                        <span>{{ $t('public_button_start') }}</span>
-                      </ElButton>
-                      <ElButton
-                        v-else-if="item.reportedData.state === 'sleep'"
+                        v-if="item.reportedData.state === 'sleep'"
                         text
                         type="danger"
-                        :loading="logMiningCommandLoading"
+                        :loading="
+                          logMiningCommandLoading[item.serviceId] ||
+                          !!logMiningOperationState[item.serviceId]
+                        "
+                        :disabled="
+                          !item.isAlive ||
+                          !!logMiningOperationState[item.serviceId]
+                        "
                         @click="stopLogMining(item)"
                       >
-                        <el-icon>
+                        <template #icon>
                           <i-lucide-square />
-                        </el-icon>
+                        </template>
                         <span>{{ $t('public_button_stop') }}</span>
                       </ElButton>
-                      <ElDivider direction="vertical" />
+                      <ElButton
+                        v-else
+                        text
+                        type="primary"
+                        :loading="
+                          logMiningCommandLoading[item.serviceId] ||
+                          !!logMiningOperationState[item.serviceId]
+                        "
+                        :disabled="
+                          !item.isAlive ||
+                          !!logMiningOperationState[item.serviceId]
+                        "
+                        @click="startLogMining(item)"
+                      >
+                        <template #icon>
+                          <i-lucide-play />
+                        </template>
+                        <span>{{ $t('public_button_start') }}</span>
+                      </ElButton>
                       <el-dropdown
                         @command="handleLogMiningCommand($event, item)"
                       >
@@ -1840,11 +1918,15 @@ const updateLogMiningLicense = (row: any) => {
                             <i-lucide-ellipsis />
                           </template>
                         </el-button>
+
                         <template #dropdown>
                           <el-dropdown-menu>
                             <el-dropdown-item
+                              :disabled="
+                                !item.isAlive ||
+                                logMiningCommandLoading[item.serviceId]
+                              "
                               command="restart"
-                              :disabled="logMiningCommandLoading"
                             >
                               <el-icon class="mr-2" size="16">
                                 <i-lucide-rotate-cw />
@@ -1853,13 +1935,17 @@ const updateLogMiningLicense = (row: any) => {
                                 $t('public_button_restart')
                               }}</el-dropdown-item
                             >
-                            <el-dropdown-item command="updateLicense">
+                            <el-dropdown-item
+                              :disabled="!item.isAlive"
+                              command="updateLicense"
+                            >
                               <el-icon class="mr-2" size="16">
                                 <i-lucide-file-key />
                               </el-icon>
                               {{ $t('license_renew_dialog') }}</el-dropdown-item
                             >
                             <el-dropdown-item
+                              :disabled="item.reportedData.state === 'sleep'"
                               divided
                               class="is-danger"
                               command="delete"

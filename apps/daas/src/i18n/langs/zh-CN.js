@@ -2060,4 +2060,6 @@ export default {
   api_monitor_memory: '内存',
   api_monitor_server_ping_warning: '服务器响应已 {val} 未更新',
   cluster_operation_success: '操作指令已发送，请稍后刷新查看结果',
+  cluster_launcher_offline: '启动器已离线',
+  cluster_delete_confirm: '确定删除该服务吗？',
 }
