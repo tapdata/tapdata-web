@@ -251,7 +251,7 @@ export default {
   public_connection_type: '连接类型',
   public_connection_type_source: '源头',
   public_connection_type_target: '目标',
-  public_connection_type_source_and_target: '源头和目标',
+  public_connection_type_source_and_target: '源和目标',
   public_connection_information: '连接信息',
   public_connection_schema_status: 'Schema状态',
   public_connection_schema_status_tip: 'Schema加载完成的连接才可以正常创建任务',

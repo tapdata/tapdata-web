@@ -252,7 +252,7 @@ export default {
   packages_business_dataFlow_button_reset: '重置',
   packages_business_connection_type_source: '源头',
   packages_business_connection_type_target: '目标',
-  packages_business_connection_type_source_and_target: '源头和目标',
+  packages_business_connection_type_source_and_target: '源和目标',
   packages_business_task_preview_status_error: '错误',
   packages_business_task_preview_status_edit: '编辑中',
   packages_business_task_preview_status_wait_run: '启动中',

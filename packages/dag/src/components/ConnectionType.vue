@@ -1,5 +1,5 @@
-<script lang="jsx">
-import i18n from '@tap/i18n'
+<script lang="tsx">
+import { useI18n } from '@tap/i18n'
 import { defineComponent } from 'vue'
 
 export default defineComponent({
@@ -11,41 +11,46 @@ export default defineComponent({
   },
   setup(props) {
     return () => {
-      const { type } = props
+      const { t } = useI18n()
 
-      return (
-        <div class="connection-type-tag-wrap d-flex flex-nowrap flex-shrink-0 align-center gap-1">
-          {type.includes('source') && (
-            <el-tag class="type-source px-1" effect="plain" size="small">
-              {i18n.t('packages_business_connection_type_source')}
-            </el-tag>
-          )}
-          {type.includes('target') && (
-            <el-tag class="type-target px-1" effect="plain" size="small">
-              {i18n.t('packages_business_connection_type_target')}
-            </el-tag>
-          )}
-        </div>
-      )
+      const renderTag = () => {
+        return (
+          <el-tag
+            disable-transitions
+            class={`zoom-xs type-${props.type} px-1`}
+            effect="plain"
+            size="small"
+          >
+            {t(`packages_business_connection_type_${props.type}`)}
+          </el-tag>
+        )
+      }
+
+      return renderTag()
     }
   },
 })
 </script>
 
 <style lang="scss" scoped>
-.connection-type-tag-wrap {
-  .el-tag {
-    transform: scale(0.8333);
+.el-tag {
+  // transform: scale(0.8333);
 
-    &.type-source {
-      color: #6236ff;
-      border-color: rgba(98, 54, 255, 0.2);
-    }
+  &.type-source_and_target {
+    color: transparent;
+    background-image: linear-gradient(to right, #6236ff, #008eff);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
 
-    &.type-target {
-      color: #008eff;
-      border-color: rgba(0, 155, 255, 0.2);
-    }
+  &.type-source {
+    color: #6236ff;
+    border-color: rgba(98, 54, 255, 0.2);
+  }
+
+  &.type-target {
+    color: #008eff;
+    border-color: rgba(0, 155, 255, 0.2);
   }
 }
 </style>

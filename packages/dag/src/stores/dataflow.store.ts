@@ -1,7 +1,9 @@
+import { fetchCustomNodes } from '@tap/api/src/core/custom-node'
 import { getTaskById } from '@tap/api/src/core/task'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { markRaw, ref } from 'vue'
 import { DEFAULT_SETTINGS } from '../constants'
+import { CustomProcessor } from '../nodes/extends/CustomProcessor'
 
 const createEmptyDataflow = (): any => ({
   ...DEFAULT_SETTINGS,
@@ -14,6 +16,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     edges: [],
   })
   const allResourceIns = ref([])
+  const processorNodeTypes = ref([])
 
   function getResourceInsByNode(node) {
     return allResourceIns.value.find((ins) => ins.selector(node))
@@ -112,9 +115,57 @@ export const useDataflowStore = defineStore('dataflow', () => {
     setDataflow(dataflowData)
   }
 
+  function addProcessorNode(nodes) {
+    processorNodeTypes.value.push(...nodes)
+  }
+
+  function addResourceIns(data) {
+    allResourceIns.value.push(...data)
+  }
+
+  async function loadCustomNode() {
+    const { items } = await fetchCustomNodes({
+      limit: 1000,
+    })
+    const insArr = []
+
+    addProcessorNode(
+      items.map((item) => {
+        const node = {
+          name: item.name,
+          type: 'custom_processor',
+          customNodeId: item.id,
+        }
+
+        const ins = new CustomProcessor({
+          customNodeId: item.id,
+          formSchema: item.formSchema,
+        })
+
+        insArr.push(ins)
+
+        Object.defineProperty(node, '__Ctor', {
+          value: markRaw(ins),
+          enumerable: false,
+          configurable: true,
+        })
+
+        return node
+      }),
+    )
+
+    addResourceIns(insArr)
+  }
+
   return {
     dataflow,
     dag,
     fetchDataflow,
+    processorNodeTypes,
+
+    addProcessorNode,
+    addResourceIns,
+    loadCustomNode,
+    getResourceInsByNode,
   }
 })

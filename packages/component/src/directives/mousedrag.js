@@ -1,5 +1,4 @@
 import { appendHtml, off, on } from '@tap/shared'
-import Time from '@tap/shared/src/time'
 
 const EVENT = {
   mouse: {
@@ -59,7 +58,7 @@ export const mouseDrag = {
       }
       el._eventsFor = eventsFor
       GlobalState.startEvent = event
-      GlobalState.onMouseDownAt = Time.now()
+      GlobalState.onMouseDownAt = Date.now()
       if (event.button === 0) {
         const ifCancel = onStart?.(item)
         if (ifCancel === false) return false
@@ -78,7 +77,7 @@ export const mouseDrag = {
         event.pageX - GlobalState.startEvent.pageX,
         event.pageY - GlobalState.startEvent.pageY,
       )
-      const timeDelta = Time.now() - GlobalState.onMouseDownAt
+      const timeDelta = Date.now() - GlobalState.onMouseDownAt
 
       if (distance < 4 || timeDelta < 10 || event === GlobalState.startEvent) {
         return

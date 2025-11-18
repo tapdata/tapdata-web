@@ -10,8 +10,6 @@ import '@vue-flow/core/dist/theme-default.css'
 
 const dag = inject('dag')
 const { nodes, edges } = useCanvasMapping(dag)
-
-console.log('dag', nodes.value, nodes)
 </script>
 
 <template>

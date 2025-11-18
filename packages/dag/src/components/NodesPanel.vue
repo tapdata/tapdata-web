@@ -1,13 +1,197 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { fetchConnections } from '@tap/api/src/core/connections'
+import { fetchMetadataInstances } from '@tap/api/src/core/metadata-instances'
+import { mouseDrag as vDrag } from '@tap/component/src/directives/mousedrag'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
+import { escapeRegExp } from 'lodash-es'
+import { computed, nextTick, reactive, ref } from 'vue'
+import { useDataflowStore } from '../stores/dataflow.store'
+import BaseNode from './BaseNode.vue'
+import ConnectionType from './ConnectionType.vue'
+import NodeIcon from './NodeIcon.vue'
+import type { ScrollbarDirection } from 'element-plus'
+
+const dataflowStore = useDataflowStore()
+
+const pageSize = 20
+
+const connectionQuery = ref('')
+const connections = ref([])
+const connectionsLoading = ref(false)
+const connectionsCurrentPage = ref(1)
+const connectionsTotal = ref(0)
+const currentConnectionId = ref('')
+const tableState = reactive({
+  query: '',
+  currentPage: 1,
+  pageSize: 20,
+  total: 0,
+  items: [],
+  loading: false,
+})
+const tables = ref([])
+
+const connectionsTotalPage = computed(() =>
+  Math.ceil(connectionsTotal.value / pageSize),
+)
+
+const tableTotalPage = computed(() =>
+  Math.ceil(tableState.total / tableState.pageSize),
+)
+
+const getDragDom = async () => {
+  await nextTick()
+  return document.querySelector('#dragNode')
+}
+
+const handleSelectConnection = (item) => {
+  currentConnectionId.value = item.id
+  runFetchTables()
+}
+
+const handleFetchConnections = async () => {
+  connectionsLoading.value = true
+  const params = {
+    page: connectionsCurrentPage.value,
+    size: pageSize,
+    order: ['status DESC', 'name ASC'],
+    where: {
+      createType: {
+        $ne: 'System',
+      },
+    },
+  }
+  const query = escapeRegExp(connectionQuery.value.trim())
+
+  if (query) {
+    params.where.name = { like: query, options: 'i' }
+  }
+
+  const data = await fetchConnections(params).finally(() => {
+    connectionsLoading.value = false
+  })
+
+  connectionsTotal.value = data.total
+
+  return data.items.map((item: any) => {
+    item.databaseType = item.database_type
+    if (item.connectionString) {
+      item.connectionUrl = item.connectionString
+      return item
+    }
+
+    let connectionUrl = ''
+    if (item.config) {
+      if (item.config.uri) {
+        connectionUrl = item.config.uri
+      } else {
+        const { host, port, database, schema } = item.config
+        connectionUrl = host
+          ? `${host}${port ? `:${port}` : ''}${database ? `/${database}` : ''}${schema ? `/${schema}` : ''}`
+          : ''
+      }
+    }
+
+    item.connectionUrl = connectionUrl
+    return item
+  })
+}
+
+const runFetchConnections = async () => {
+  connectionsCurrentPage.value = 1
+  const items = await handleFetchConnections()
+  connections.value = items
+}
+
+const runFetchMoreConnections = async (direction: ScrollbarDirection) => {
+  if (
+    direction !== 'bottom' ||
+    connectionsCurrentPage.value >= connectionsTotalPage.value
+  )
+    return
+
+  connectionsCurrentPage.value++
+  const items = await handleFetchConnections()
+  connections.value.push(...items)
+}
+
+const handleFetchTables = async () => {
+  if (!currentConnectionId.value) return
+
+  const params = {
+    page: tableState.currentPage,
+    size: tableState.pageSize,
+    where: {
+      meta_type: {
+        in: ['collection', 'table', 'view'],
+      },
+      is_deleted: false,
+      sourceType: 'SOURCE',
+      'source.id': currentConnectionId.value,
+      taskId: dataflowStore.dataflow.id,
+      original_name: {
+        neq: '',
+      },
+    },
+    fields: {
+      id: true,
+      original_name: true,
+    },
+    order: ['original_name ASC'],
+  }
+  const txt = escapeRegExp(tableState.query)
+
+  if (txt) {
+    params.where.original_name = { like: txt, options: 'i' }
+  }
+
+  tableState.loading = true
+
+  const data = await fetchMetadataInstances(params).finally(() => {
+    tableState.loading = false
+  })
+
+  tableState.total = data.total
+
+  return data.items.map((tb) => ({
+    id: tb.id,
+    name: tb.original_name,
+    comment: tb.comment,
+  }))
+}
+
+const runFetchTables = async () => {
+  tableState.currentPage = 1
+  const items = await handleFetchTables()
+  tables.value = items
+}
+
+const runFetchMoreTables = async (direction: ScrollbarDirection) => {
+  if (direction !== 'bottom' || tableState.currentPage >= tableTotalPage.value)
+    return
+
+  tableState.currentPage++
+  const items = await handleFetchTables()
+  tables.value.push(...items)
+}
+
+runFetchConnections().then(() => {
+  if (connections.value.length) {
+    handleSelectConnection(connections.value[0])
+  }
+})
+</script>
 
 <template>
   <div
-    class="nodes-panel position-absolute start-3 rounded-2xl bg-card shadow-canvas z-10"
+    class="nodes-panel position-absolute start-3 rounded-2xl bg-card shadow-canvas z-10 flex flex-column"
   >
-    <div>
+    <div class="flex-1 min-h-0 flex flex-column">
       <div class="flex align-center p-3">
         <el-icon class="mr-2"><i-lucide-database /></el-icon>
-        <span class="flex-1 user-select-none text-truncate flex align-center">
+        <span
+          class="flex-1 user-select-none text-truncate flex align-center fw-sub"
+        >
           {{ $t('packages_dag_dag_connection') }}
         </span>
 
@@ -23,12 +207,48 @@
           </template>
         </el-button>
       </div>
+      <el-scrollbar
+        class="flex-1 min-h-0"
+        @end-reached="runFetchMoreConnections"
+      >
+        <div class="p-1">
+          <div
+            v-for="item in connections"
+            :key="item.id"
+            v-drag="{
+              item,
+              container: '#dfEditorContent',
+              getDragDom,
+              onStart,
+              onMove,
+              onDrop,
+              onStop,
+            }"
+            class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg grabbable"
+            :class="{
+              'is-active': currentConnectionId === item.id,
+            }"
+            @click="handleSelectConnection(item)"
+          >
+            <NodeIcon :size="20" :node="item" />
+            <OverflowTooltip
+              class="text-truncate"
+              placement="right"
+              :text="item.name"
+              :show-after="400"
+            />
+            <ConnectionType :type="item.connection_type" />
+          </div>
+        </div>
+      </el-scrollbar>
     </div>
-    <el-divider />
-    <div>
+    <el-divider class="m-0" />
+    <div class="flex-1 min-h-0 flex flex-column">
       <div class="flex align-center p-3">
         <el-icon class="mr-2"><i-lucide-table /></el-icon>
-        <span class="flex-1 user-select-none text-truncate flex align-center">
+        <span
+          class="flex-1 user-select-none text-truncate flex align-center fw-sub"
+        >
           <!--表-->
           {{ $t('packages_dag_dag_table') }}
         </span>
@@ -49,24 +269,89 @@
           </el-button>
         </ElTooltip>
       </div>
+      <el-scrollbar class="flex-1 min-h-0" @end-reached="runFetchMoreTables">
+        <div class="p-1">
+          <div
+            v-for="item in tables"
+            :key="item.id"
+            class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg grabbable"
+          >
+            <el-icon :size="16"><i-lucide-table /></el-icon>
+            <OverflowTooltip
+              class="text-truncate"
+              :text="item.name"
+              placement="right"
+              :show-after="400"
+            >
+              <span>
+                <span>{{ item.name }}</span>
+                <span v-if="item.comment" class="font-color-sslight">{{
+                  `(${item.comment})`
+                }}</span>
+              </span>
+            </OverflowTooltip>
+          </div>
+        </div>
+      </el-scrollbar>
     </div>
-    <el-divider />
-    <div>
+    <el-divider class="m-0" />
+    <div class="processor-container min-h-0 flex flex-column">
       <div class="flex align-center p-3">
         <el-icon class="mr-2"><i-lucide-workflow /></el-icon>
-        <span class="flex-1 user-select-none text-start">
+        <span class="flex-1 user-select-none text-start fw-sub">
           <!--处理节点-->
           {{ $t('public_node_processor') }}
         </span>
       </div>
+      <el-scrollbar class="flex-1 min-h-0">
+        <div class="p-1">
+          <div
+            v-for="(n, ni) in dataflowStore.processorNodeTypes"
+            :key="ni"
+            class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg grabbable"
+          >
+            <NodeIcon :size="20" class="flex-shrink-0" :node="n" />
+            <OverflowTooltip
+              :text="n.name"
+              popper-class="df-node-text-tooltip"
+              placement="top"
+              :open-delay="400"
+            />
+            <VIcon v-if="n.beta" class="ml-1" size="32">beta</VIcon>
+          </div>
+        </div>
+      </el-scrollbar>
     </div>
+
+    <!-- S 节点拖拽元素 -->
+    <BaseNode
+      v-if="dragStarting"
+      id="dragNode"
+      class="drag-node"
+      :node="dragNode"
+      :class="`node--${dragNode.__Ctor.group}`"
+    />
+    <!-- E 节点拖拽元素 -->
   </div>
 </template>
 
-<style>
+<style lang="scss" scoped>
 .nodes-panel {
   top: 72px;
   bottom: 12px;
   width: 260px;
+}
+
+.connection-item {
+  &:hover {
+    background-color: var(--el-fill-color-light);
+  }
+  &.is-active {
+    background-color: var(--primary-hover-light);
+  }
+}
+
+.processor-container {
+  max-height: 38.2%;
 }
 </style>
