@@ -1,7 +1,9 @@
 import { ref } from 'vue'
 import { useDataflowStore } from '../stores/dataflow.store'
+import { useUiStore } from '../stores/ui.store'
 
 export function useDnD(emit) {
+  const uiStore = useUiStore()
   const dataflowStore = useDataflowStore()
   const dragNode = ref(null)
   const dragStarting = ref(false)
@@ -44,11 +46,147 @@ export function useDnD(emit) {
     dragStarting.value = true
   }
 
-  const onDragMove = () => {
-    emit('move-node', ...arguments)
+  const onDragMove = (data, position, dragElement) => {
+    // console.log('onDragMove', ...args)
+    // emit('move-node', ...args)
+    const belowElem = document.elementFromPoint(...position)
+
+    if (document.querySelector('#node-canvas').contains(belowElem)) {
+      dragElement.style.transition = `transform 0.3s`
+      dragElement.style.transform = `scale(${uiStore.zoom})`
+      // const nw = dragElement.offsetWidth
+      // const nh = dragElement.offsetHeight
+      // const pos = this.$refs.paperScroller.getDropPositionWithinPaper(
+      //   position,
+      //   {
+      //     width: nw,
+      //     height: nh,
+      //   },
+      // )
+      // const diffPos = { x: 0, y: 0 }
+      // let horiArr = []
+      // let verArr = []
+      // let rangeX = 10
+      // let rangeY = 10
+
+      // this.allNodes.forEach((item) => {
+      //   const [x, y] = item.attrs.position
+      //   const _x = x - pos[0]
+      //   const _y = y - pos[1]
+      //   if (Math.abs(_x) <= Math.abs(rangeX)) {
+      //     if (_x === rangeX) {
+      //       verArr.push(y)
+      //     } else {
+      //       rangeX = _x
+      //       verArr = [y]
+      //     }
+      //     diffPos.x = rangeX
+      //   }
+      //   if (Math.abs(_y) <= Math.abs(rangeY)) {
+      //     if (_y === rangeY) {
+      //       horiArr.push(x)
+      //     } else {
+      //       rangeY = _y
+      //       horiArr = [x]
+      //     }
+      //     diffPos.y = rangeY
+      //   }
+      // })
+
+      // pos[0] += diffPos.x
+      // pos[1] += diffPos.y
+
+      // console.log('diffPos', diffPos.x, diffPos.y)
+      // el.style.left = `${Number.parseInt(el.style.left) + diffPos.x * this.scale}px`
+      // el.style.top = `${Number.parseInt(el.style.top) + diffPos.y * this.scale}px`
+
+      // let t = pos[1]
+      // let b = pos[1] + nh
+      // let l = pos[0]
+      // let r = pos[0] + nw
+      // verArr.forEach((y) => {
+      //   t = Math.min(y + nh, t)
+      //   b = Math.max(y, b)
+      // })
+      // horiArr.forEach((x) => {
+      //   l = Math.min(x + nw, l)
+      //   r = Math.max(x, r)
+      // })
+
+      // // 组装导航线
+      // if (t < pos[1]) {
+      //   const top = `${t}px`
+      //   const height = `${pos[1] - t}px`
+      //   lines.push(
+      //     {
+      //       top,
+      //       left: `${pos[0]}px`,
+      //       height,
+      //     },
+      //     {
+      //       top,
+      //       left: `${pos[0] + nw}px`,
+      //       height,
+      //     },
+      //   )
+      // }
+      // if (b > pos[1] + nh) {
+      //   const top = `${pos[1] + nh}px`
+      //   const height = `${b - pos[1] - nh}px`
+      //   lines.push(
+      //     {
+      //       top,
+      //       left: `${pos[0]}px`,
+      //       height,
+      //     },
+      //     {
+      //       top,
+      //       left: `${pos[0] + nw}px`,
+      //       height,
+      //     },
+      //   )
+      // }
+
+      // if (l < pos[0]) {
+      //   const left = `${l}px`
+      //   const width = `${pos[0] - l}px`
+      //   lines.push(
+      //     {
+      //       top: `${pos[1]}px`,
+      //       left,
+      //       width,
+      //     },
+      //     {
+      //       top: `${pos[1] + nh}px`,
+      //       left,
+      //       width,
+      //     },
+      //   )
+      // }
+
+      // if (r > pos[0] + nw) {
+      //   const left = `${pos[0] + nw}px`
+      //   const width = `${r - pos[0] - nw}px`
+      //   lines.push(
+      //     {
+      //       top: `${pos[1]}px`,
+      //       left,
+      //       width,
+      //     },
+      //     {
+      //       top: `${pos[1] + nh}px`,
+      //       left,
+      //       width,
+      //     },
+      //   )
+      // }
+    } else {
+      dragElement.style.transition = `transform 0.3s`
+      dragElement.style.transform = 'scale(1)'
+    }
   }
 
-  const onDrop = (item, position, rect)  => {
+  const onDrop = (item, position, rect) => {
     emit('drop-node', dragNode.value, position, rect)
   }
 

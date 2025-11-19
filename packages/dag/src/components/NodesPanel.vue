@@ -5,13 +5,18 @@ import { mouseDrag as vDrag } from '@tap/component/src/directives/mousedrag'
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { escapeRegExp } from 'lodash-es'
 import { computed, nextTick, reactive, ref } from 'vue'
+import { useDnD } from '../composables/useDnD'
 import { useDataflowStore } from '../stores/dataflow.store'
 import BaseNode from './BaseNode.vue'
 import ConnectionType from './ConnectionType.vue'
 import NodeIcon from './NodeIcon.vue'
 import type { ScrollbarDirection } from 'element-plus'
 
+const emit = defineEmits(['move-node', 'drop-node'])
+
 const dataflowStore = useDataflowStore()
+const { dragNode, dragStarting, onDragStart, onDragMove, onDragStop, onDrop } =
+  useDnD(emit)
 
 const pageSize = 20
 
@@ -219,12 +224,12 @@ runFetchConnections().then(() => {
               item,
               container: '#dfEditorContent',
               getDragDom,
-              onStart,
-              onMove,
+              onStart: onDragStart,
+              onMove: onDragMove,
               onDrop,
-              onStop,
+              onStop: onDragStop,
             }"
-            class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg grabbable"
+            class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg grabbable user-select-none"
             :class="{
               'is-active': currentConnectionId === item.id,
             }"
@@ -274,7 +279,7 @@ runFetchConnections().then(() => {
           <div
             v-for="item in tables"
             :key="item.id"
-            class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg grabbable"
+            class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg grabbable user-select-none"
           >
             <el-icon :size="16"><i-lucide-table /></el-icon>
             <OverflowTooltip
@@ -308,7 +313,7 @@ runFetchConnections().then(() => {
           <div
             v-for="(n, ni) in dataflowStore.processorNodeTypes"
             :key="ni"
-            class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg grabbable"
+            class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg grabbable user-select-none"
           >
             <NodeIcon :size="20" class="flex-shrink-0" :node="n" />
             <OverflowTooltip
@@ -327,9 +332,9 @@ runFetchConnections().then(() => {
     <BaseNode
       v-if="dragStarting"
       id="dragNode"
-      class="drag-node"
+      class="pe-none is-hover"
+      style="opacity: 0"
       :node="dragNode"
-      :class="`node--${dragNode.__Ctor.group}`"
     />
     <!-- E 节点拖拽元素 -->
   </div>

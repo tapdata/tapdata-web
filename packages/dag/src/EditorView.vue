@@ -28,7 +28,7 @@ const buttonShowMap = reactive({
 const dag = computed(() => dataflowStore.dag)
 const dataflow = computed(() => dataflowStore.dataflow)
 
-const hasFeature = (feature) => {
+const hasFeature = (feature: string) => {
   return !isDaas || store.getters['feature/hasFeature']?.(feature)
 }
 
