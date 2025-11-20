@@ -54,6 +54,7 @@ export default {
   public_is_null: 'is null',
   public_is_not_null: 'is not null',
   public_field_value: 'Field Value',
+  public_cache: 'Cache',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',

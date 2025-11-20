@@ -4,6 +4,7 @@ import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
 import { fetchSharedCache } from '@tap/api/src/core/shared-cache'
 import {
   batchStartTasks,
+  fetchMergeTaskCache,
   fetchTasks,
   forceStopTask,
   getNodeTableInfo,
@@ -1822,8 +1823,8 @@ export default {
       if (nodes.length > 1) return i18n.t('packages_dag_migrate_union_multiple')
     },
 
-    validateMergeTableProcessor() {
-      if (this.dataflow.syncType === 'migrate') return
+    async validateMergeTableProcessor() {
+      if (this.dataflow.syncType !== 'sync') return
 
       const nodes = this.allNodes.filter(
         (node) => node.type === 'merge_table_processor',
@@ -1896,6 +1897,26 @@ export default {
           return i18n.t('packages_dag_merge_table_table_not_allow_target', {
             val: targetNode.databaseType,
           })
+        }
+
+        if (this.mergeTableCacheValidated) continue
+
+        // check cache
+        const cache = await fetchMergeTaskCache(this.dataflow.id, node.id, true)
+        const needRebuild = cache.some((item) => item.needRebuild)
+
+        if (needRebuild) {
+          this.setNodeErrorMsg({
+            id: node.id,
+            msg: i18n.t('packages_dag_cache_expired'),
+          })
+          this.setActiveNode(node.id)
+          this.$nextTick(() => {
+            this.scope?.formTab?.setActiveKey('cacheTab')
+          })
+          // 标记验证过一次
+          this.mergeTableCacheValidated = true
+          return i18n.t('packages_dag_cache_expired')
         }
       }
     },
