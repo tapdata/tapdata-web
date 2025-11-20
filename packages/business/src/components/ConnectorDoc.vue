@@ -104,6 +104,8 @@ const pdkDocMap = {
   'mock-target': 'prerequisites/others/mock-target',
   dws: 'prerequisites/warehouses-and-lake/gaussdb',
   kafka_enhanced: 'prerequisites/mq-and-middleware/kafka-enhanced',
+  db2i: 'prerequisites/on-prem-databases/db2-for-i',
+  starrocks: 'prerequisites/warehouses-and-lake/starrocks',
 } as const
 
 // 维护一个DocMap还有一个NameDictionary的原因是，docMap从文档仓库直接复制过来，有些命名和pdkId不一致
