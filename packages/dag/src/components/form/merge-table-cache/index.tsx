@@ -20,16 +20,17 @@ export const MergeTableCache = defineComponent({
     const formRef = useForm()
     const form = formRef.value
     const SchemaExpressionScopeContext = inject(SchemaExpressionScopeSymbol)
-    const taskId = SchemaExpressionScopeContext!.value.$settings.id
+    const task = SchemaExpressionScopeContext!.value.$settings
+    const taskId = task.id
     const currentNodeId = ref('')
     const currentPath = ref('')
     const enableRebuild = ref(false)
 
     enum RebuildStatus {
-      PENDING = 'PENDING',
-      RUNNING = 'RUNNING',
-      DONE = 'DONE',
-      ERROR = 'ERROR',
+      PENDING = 'PENDING', // 待重建
+      RUNNING = 'RUNNING', // 运行中
+      DONE = 'DONE', // 完成
+      ERROR = 'ERROR', // 失败
     }
 
     const currentNodeCache = computed(() => {
@@ -70,6 +71,10 @@ export const MergeTableCache = defineComponent({
 
     const treeData = reactiveComputed(() => {
       return refreshTreeChildren(form.values.mergeProperties || [])
+    })
+
+    const showRebuild = reactiveComputed(() => {
+      return task.type === 'cdc' || !!task.attrs.syncProgress
     })
 
     const renderNode = (h, { data }) => {
@@ -140,10 +145,12 @@ export const MergeTableCache = defineComponent({
 
     const getCache = async () => {
       const res = await fetchMergeTaskCache(taskId, form.values.id, true)
-      const needRebuildId = res.find((item) => item.needRebuild)?.mergeNodeId
+      const needRebuildId = res.find(
+        (item) => item.needRebuild,
+      )?.mergeTablePropertiesId
 
       cacheMap.value = res.reduce((acc, cur) => {
-        acc[cur.mergeNodeId] = cur
+        acc[cur.mergeTablePropertiesId] = cur
         return acc
       }, {})
 
@@ -187,20 +194,22 @@ export const MergeTableCache = defineComponent({
                   ></ElAlert>
                 )}
 
-                <div class="flex align-center justify-content-between rounded-xl p-3 bg-gray-100">
-                  <div class="flex flex-column gap- lh-base">
-                    <span class="fw-sub">
-                      {t('packages_dag_rebuild_cache')}
-                    </span>
-                    <span class="text-xs font-color-sslight">
-                      {t('packages_dag_rebuild_cache_tips')}
-                    </span>
+                {showRebuild.value && (
+                  <div class="flex align-center justify-content-between rounded-xl p-3 bg-gray-100">
+                    <div class="flex flex-column gap- lh-base">
+                      <span class="fw-sub">
+                        {t('packages_dag_rebuild_cache')}
+                      </span>
+                      <span class="text-xs font-color-sslight">
+                        {t('packages_dag_rebuild_cache_tips')}
+                      </span>
+                    </div>
+                    <el-switch
+                      v-model={enableRebuild.value}
+                      onChange={updateRebuildState}
+                    ></el-switch>
                   </div>
-                  <el-switch
-                    v-model={enableRebuild.value}
-                    onChange={updateRebuildState}
-                  ></el-switch>
-                </div>
+                )}
                 {currentNodeCache.value.cacheStatisticsList.map((item) => (
                   <div class="bg-gray-100 rounded-xl p-1.5">
                     <div class="flex align-center gap-2 p-2 pt-1">
