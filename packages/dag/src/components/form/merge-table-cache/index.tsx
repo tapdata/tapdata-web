@@ -3,7 +3,10 @@ import { fetchMergeTaskCache } from '@tap/api/src/core/task'
 import { IconButton } from '@tap/component/src/icon-button'
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { useForm } from '@tap/form'
-import { computed as reactiveComputed } from '@tap/form/src/shared'
+import {
+  computed as reactiveComputed,
+  watch as reactiveWatch,
+} from '@tap/form/src/shared'
 import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared/src/number'
 import { computed, defineComponent, inject, ref } from 'vue'
@@ -20,11 +23,18 @@ export const MergeTableCache = defineComponent({
     const formRef = useForm()
     const form = formRef.value
     const SchemaExpressionScopeContext = inject(SchemaExpressionScopeSymbol)
+    const formTab = SchemaExpressionScopeContext!.value.formTab
     const task = SchemaExpressionScopeContext!.value.$settings
     const taskId = task.id
     const currentNodeId = ref('')
     const currentPath = ref('')
     const enableRebuild = ref(false)
+
+    console.log(
+      'formTab',
+      SchemaExpressionScopeContext.value.formTab,
+      SchemaExpressionScopeContext,
+    )
 
     enum RebuildStatus {
       PENDING = 'PENDING', // 待重建
@@ -33,10 +43,39 @@ export const MergeTableCache = defineComponent({
       ERROR = 'ERROR', // 失败
     }
 
+    const RebuildStatusMap = {
+      [RebuildStatus.PENDING]: {
+        text: t('packages_dag_cache_pending'),
+        type: 'info',
+      },
+      [RebuildStatus.RUNNING]: {
+        text: t('packages_dag_cache_running'),
+        type: 'primary',
+      },
+      [RebuildStatus.DONE]: {
+        text: t('packages_dag_cache_done'),
+        type: 'success',
+      },
+      [RebuildStatus.ERROR]: {
+        text: t('packages_dag_cache_error'),
+        type: 'danger',
+      },
+    }
+
     const currentNodeCache = computed(() => {
       if (!currentNodeId.value) return null
       return cacheMap.value[currentNodeId.value]
     })
+
+    reactiveWatch(
+      () => formTab.activeKey,
+      (v) => {
+        if (v === 'cacheTab') {
+          getCache()
+        }
+      },
+      { immediate: true },
+    )
 
     const initRebuildState = () => {
       const target = form.getValuesIn(`mergeProperties.${currentPath.value}`)
@@ -87,9 +126,14 @@ export const MergeTableCache = defineComponent({
 
       if (cache) {
         cache.cacheRebuildStatus &&
+          RebuildStatusMap[cache.cacheRebuildStatus] &&
           children.push(
-            <ElTag size="small" class="zoom-xs">
-              {cache.cacheRebuildStatus}
+            <ElTag
+              size="small"
+              class="zoom-xs"
+              type={RebuildStatusMap[cache.cacheRebuildStatus].type}
+            >
+              {RebuildStatusMap[cache.cacheRebuildStatus].text}
             </ElTag>,
           )
         cache.needRebuild &&
@@ -161,7 +205,7 @@ export const MergeTableCache = defineComponent({
       }
     }
 
-    getCache()
+    // getCache()
 
     return () => {
       return (
@@ -225,14 +269,16 @@ export const MergeTableCache = defineComponent({
                     <div class="bg-card shadow-xs rounded-xl p-3">
                       <div class="flex align-start gap-4">
                         <div class="flex flex-column flex-1 gap-1">
-                          <span class="font-color-light lh-base">缓存行数</span>
+                          <span class="font-color-light lh-base">
+                            {t('packages_dag_cache_count')}
+                          </span>
                           <div class="flex align-items-baseline gap-1">
                             <span class="fw-sub text-2xl">
-                              {calcUnit(item.count)}
+                              {item.count.toLocaleString()}
                             </span>
                             {item.countLimit && (
                               <span class="text-xs font-color-sslight">
-                                / {item.countLimit}
+                                / {item.countLimit.toLocaleString()}
                               </span>
                             )}
                           </div>
@@ -246,7 +292,9 @@ export const MergeTableCache = defineComponent({
                           )}
                         </div>
                         <div class="flex flex-column flex-1  gap-1">
-                          <span class="font-color-light lh-base">占用空间</span>
+                          <span class="font-color-light lh-base">
+                            {t('packages_dag_cache_size')}
+                          </span>
                           <span class="fw-sub text-2xl">
                             {calcUnit(item.size, 'byte')}
                           </span>

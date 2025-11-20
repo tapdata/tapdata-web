@@ -1008,4 +1008,10 @@ export default {
   packages_dag_rebuild_cache: '重建緩存',
   packages_dag_rebuild_cache_tips: '自動重建過期的緩存數據',
   packages_dag_connection_address: '連接地址',
+  packages_dag_cache_pending: '待重建',
+  packages_dag_cache_running: '運行中',
+  packages_dag_cache_done: '完成',
+  packages_dag_cache_error: '失敗',
+  packages_dag_cache_count: '緩存行數',
+  packages_dag_cache_space: '占用空間',
 }

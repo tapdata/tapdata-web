@@ -1024,4 +1024,10 @@ export default {
   packages_dag_rebuild_cache: '重建缓存',
   packages_dag_rebuild_cache_tips: '自动重建过期的缓存数据',
   packages_dag_connection_address: '连接地址',
+  packages_dag_cache_pending: '待重建',
+  packages_dag_cache_running: '运行中',
+  packages_dag_cache_done: '完成',
+  packages_dag_cache_error: '失败',
+  packages_dag_cache_count: '缓存行数',
+  packages_dag_cache_space: '占用空间',
 }
