@@ -603,6 +603,7 @@ export default {
   setting_job_cdc_record_ttl: 'Incremental event save time (days)',
   setting_job_cdc_record_ttl_doc: 'Incremental event save time (days)',
   setting_lagTime: 'incremental lag decision time (seconds)',
+  setting_Task_CPU_and_Memory_Metrics_Statistics: 'Task CPU and Memory Metrics Statistics',
   setting_connection_schema_update_hour: 'Data source schema update time',
   setting_connection_schema_update_interval:
     'Data source schema update interval (days)',

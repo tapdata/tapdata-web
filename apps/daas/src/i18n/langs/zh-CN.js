@@ -572,6 +572,7 @@ export default {
   setting_job_cdc_record_ttl: ' 增量事件保存时长(天)',
   setting_job_cdc_record_ttl_doc: ' 增量事件保存时长(天)',
   setting_lagTime: '增量滞后判定时间(秒)',
+  setting_Task_CPU_and_Memory_Metrics_Statistics: '任务CPU&内存指标统计',
   setting_connection_schema_update_hour: '数据源schema更新时间',
   setting_connection_schema_update_interval: '数据源schema更新周期（天）',
   setting_creatDuplicateSource: ' 允许创建重复数据源',
