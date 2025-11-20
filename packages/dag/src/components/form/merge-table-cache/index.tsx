@@ -1,5 +1,7 @@
 import { SchemaExpressionScopeSymbol } from '@formily/vue'
 import { fetchMergeTaskCache } from '@tap/api/src/core/task'
+import { useRequest } from '@tap/api/src/request'
+import CountUp from '@tap/component/src/CountUp.vue'
 import { IconButton } from '@tap/component/src/icon-button'
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { useForm } from '@tap/form'
@@ -9,7 +11,15 @@ import {
 } from '@tap/form/src/shared'
 import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared/src/number'
-import { computed, defineComponent, inject, ref } from 'vue'
+import { isNumber } from 'lodash-es'
+import {
+  computed,
+  defineComponent,
+  inject,
+  onBeforeUnmount,
+  ref,
+  watch,
+} from 'vue'
 import NodeIcon from '../../NodeIcon'
 
 import './style.scss'
@@ -29,12 +39,8 @@ export const MergeTableCache = defineComponent({
     const currentNodeId = ref('')
     const currentPath = ref('')
     const enableRebuild = ref(false)
-
-    console.log(
-      'formTab',
-      SchemaExpressionScopeContext.value.formTab,
-      SchemaExpressionScopeContext,
-    )
+    const disabled = ref(form.disabled)
+    const pollingInterval = ref(form.disabled ? 5000 : 0)
 
     enum RebuildStatus {
       PENDING = 'PENDING', // 待重建
@@ -67,15 +73,9 @@ export const MergeTableCache = defineComponent({
       return cacheMap.value[currentNodeId.value]
     })
 
-    reactiveWatch(
-      () => formTab.activeKey,
-      (v) => {
-        if (v === 'cacheTab') {
-          getCache()
-        }
-      },
-      { immediate: true },
-    )
+    const taskStatus = reactiveComputed(() => {
+      return task.status
+    })
 
     const initRebuildState = () => {
       const target = form.getValuesIn(`mergeProperties.${currentPath.value}`)
@@ -113,7 +113,9 @@ export const MergeTableCache = defineComponent({
     })
 
     const showRebuild = reactiveComputed(() => {
-      return task.type === 'cdc' || !!task.attrs.syncProgress
+      return (
+        (task.type === 'cdc' || !!task.attrs.syncProgress) && !disabled.value
+      )
     })
 
     const renderNode = (h, { data }) => {
@@ -188,24 +190,79 @@ export const MergeTableCache = defineComponent({
     }
 
     const getCache = async () => {
-      const res = await fetchMergeTaskCache(taskId, form.values.id, true)
+      const res = await fetchMergeTaskCache(
+        taskId,
+        form.values.id,
+        !disabled.value,
+      )
       const needRebuildId = res.find(
         (item) => item.needRebuild,
       )?.mergeTablePropertiesId
 
       cacheMap.value = res.reduce((acc, cur) => {
+        cur.cacheStatisticsList.forEach((t) => {
+          if (isNumber(t.size)) {
+            const sizeTxt = calcUnit(t.size, 'byte')
+            const match = sizeTxt.match(/^(\d+(?:\.\d+)?)([A-Z]+)?$/i)
+            t.sizeMap = match
+              ? {
+                  num: match[1],
+                  unit: ` ${match[2]}`,
+                }
+              : null
+          }
+        })
         acc[cur.mergeTablePropertiesId] = cur
         return acc
       }, {})
 
-      if (needRebuildId) {
-        handleSelectNode(treeRef.value.getNode(needRebuildId).data)
-      } else if (treeData.value[0].children.length) {
-        handleSelectNode(treeData.value[0].children[0])
+      if (!currentNodeId.value) {
+        if (needRebuildId) {
+          handleSelectNode(treeRef.value.getNode(needRebuildId).data)
+        } else if (treeData.value[0].children.length) {
+          handleSelectNode(treeData.value[0].children[0])
+        }
       }
     }
 
-    // getCache()
+    const { run: runGetCache, cancel: cancelGetCache } = useRequest(getCache, {
+      debounceInterval: 100,
+      manual: true,
+      pollingInterval,
+    })
+
+    let stopWatch
+
+    reactiveWatch(
+      () => formTab.activeKey,
+      (v) => {
+        if (v === 'cacheTab') {
+          taskStatus.value === 'running' ? runGetCache() : getCache()
+          stopWatch?.()
+          stopWatch = watch(
+            taskStatus,
+            (status, old) => {
+              console.log('status', status, old)
+              if (status === 'running') {
+                runGetCache()
+              } else {
+                cancelGetCache()
+              }
+            },
+            {
+              immediate: true,
+            },
+          )
+        } else {
+          cancelGetCache()
+        }
+      },
+      { immediate: true },
+    )
+
+    onBeforeUnmount(() => {
+      stopWatch?.()
+    })
 
     return () => {
       return (
@@ -226,7 +283,10 @@ export const MergeTableCache = defineComponent({
           </div>
           <div class="p-3 flex-1 flex flex-column gap-4 pr-0 overflow-y-auto">
             {!currentNodeCache.value ? (
-              <ElEmpty></ElEmpty>
+              <ElEmpty
+                description={t('packages_dag_cache_no_data')}
+                image-size={48}
+              ></ElEmpty>
             ) : (
               <>
                 {currentNodeCache.value.needRebuild && !enableRebuild.value && (
@@ -251,6 +311,7 @@ export const MergeTableCache = defineComponent({
                     <el-switch
                       v-model={enableRebuild.value}
                       onChange={updateRebuildState}
+                      disabled={disabled.value}
                     ></el-switch>
                   </div>
                 )}
@@ -274,29 +335,35 @@ export const MergeTableCache = defineComponent({
                           </span>
                           <div class="flex align-items-baseline gap-1">
                             <span class="fw-sub text-2xl">
-                              {item.count.toLocaleString()}
+                              <CountUp end-val={item.count} duration={0.5} />
                             </span>
-                            {item.countLimit && (
+                            {/* {item.countLimit && (
                               <span class="text-xs font-color-sslight">
                                 / {item.countLimit.toLocaleString()}
                               </span>
-                            )}
+                            )} */}
                           </div>
-                          {item.countLimit && (
+                          {/* {item.countLimit && (
                             <div class="flex flex-column gap-1">
                               <el-progress show-text={false} percentage={50} />
-                              {/* <span class="text-xs font-color-sslight ml-auto">
-                        53.9% Used
-                      </span> */}
                             </div>
-                          )}
+                          )} */}
                         </div>
                         <div class="flex flex-column flex-1  gap-1">
                           <span class="font-color-light lh-base">
-                            {t('packages_dag_cache_size')}
+                            {t('packages_dag_cache_space')}
                           </span>
                           <span class="fw-sub text-2xl">
-                            {calcUnit(item.size, 'byte')}
+                            {item.sizeMap ? (
+                              <CountUp
+                                end-val={item.sizeMap.num}
+                                suffix={item.sizeMap.unit}
+                                decimals={1}
+                                duration={0.5}
+                              />
+                            ) : (
+                              '-'
+                            )}
                           </span>
                         </div>
                       </div>

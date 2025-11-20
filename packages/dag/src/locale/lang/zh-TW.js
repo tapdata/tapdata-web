@@ -1014,4 +1014,5 @@ export default {
   packages_dag_cache_error: '失敗',
   packages_dag_cache_count: '緩存行數',
   packages_dag_cache_space: '占用空間',
+  packages_dag_cache_no_data: '暫無緩存數據',
 }

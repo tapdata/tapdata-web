@@ -1901,22 +1901,30 @@ export default {
 
         if (this.mergeTableCacheValidated) continue
 
-        // check cache
-        const cache = await fetchMergeTaskCache(this.dataflow.id, node.id, true)
-        const needRebuild = cache.some((item) => item.needRebuild)
+        try {
+          // check cache
+          const cache = await fetchMergeTaskCache(
+            this.dataflow.id,
+            node.id,
+            true,
+          )
+          const needRebuild = cache.some((item) => item.needRebuild)
 
-        if (needRebuild) {
-          this.setNodeErrorMsg({
-            id: node.id,
-            msg: i18n.t('packages_dag_cache_expired'),
-          })
-          this.setActiveNode(node.id)
-          this.$nextTick(() => {
-            this.scope?.formTab?.setActiveKey('cacheTab')
-          })
-          // 标记验证过一次
-          this.mergeTableCacheValidated = true
-          return i18n.t('packages_dag_cache_expired')
+          if (needRebuild) {
+            this.setNodeErrorMsg({
+              id: node.id,
+              msg: i18n.t('packages_dag_cache_expired'),
+            })
+            this.setActiveNode(node.id)
+            this.$nextTick(() => {
+              this.scope?.formTab?.setActiveKey('cacheTab')
+            })
+            // 标记验证过一次
+            this.mergeTableCacheValidated = true
+            return i18n.t('packages_dag_cache_expired')
+          }
+        } catch (error) {
+          console.error(error)
         }
       }
     },

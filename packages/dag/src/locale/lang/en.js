@@ -1176,4 +1176,5 @@ export default {
   packages_dag_cache_error: 'Error',
   packages_dag_cache_count: 'Cache Count',
   packages_dag_cache_space: 'Cache Space',
+  packages_dag_cache_no_data: 'No Cache Data',
 }
