@@ -1022,4 +1022,6 @@ export default {
   packages_dag_qpSshizhi3_tip:
     '查询范围大于等于24小时小于30天，取每小时的数据点计算平均和最大的QPS值',
   packages_dag_task_resource_usage: '任务资源占用',
+  packages_dag_batch_read_size_chart_title: '读取批次统计 (条/批)',
+  packages_dag_batch_read_size: '每批读取条数',
 }

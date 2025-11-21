@@ -1169,4 +1169,6 @@ export default {
   packages_dag_qpSshizhi3_tip:
     '24h ≤ Query < 30d: avg & max QPS from 1h data points',
   packages_dag_task_resource_usage: 'Task Resource Usage',
+  packages_dag_batch_read_size_chart_title: 'Batch Read Size (rows/batch)',
+  packages_dag_batch_read_size: 'Each batch read size',
 }
