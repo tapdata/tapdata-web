@@ -897,22 +897,32 @@ const {
 } = useRequest<LogMiningMonitor[]>(
   async () => {
     const data = await findRawServerInfo()
-    const result = data.items.map((item) => {
-      item.timestamp = dayjs(item.timestamp).format('YYYY-MM-DD HH:mm:ss')
-      item.dataSource = DataSourceMap[item.dataSource]
-      item.cpuUsage = (item.reportedData.cpuPercent * 100).toFixed(2)
-      item.memoryUsage = (item.reportedData.memoryPercent * 100).toFixed(2)
-      item.startTime = item.reportedData.createTime
-        ? dayjs(item.reportedData.createTime).format('YYYY-MM-DD HH:mm:ss')
-        : '--'
-      return item
-    })
+    const result = data.items
+      .map((item) => {
+        item.timestamp = dayjs(item.timestamp).format('YYYY-MM-DD HH:mm:ss')
+        item.dataSource = DataSourceMap[item.dataSource]
+        item.cpuUsage = (item.reportedData.cpuPercent * 100).toFixed(2)
+        item.memoryUsage = (item.reportedData.memoryPercent * 100).toFixed(2)
+        item.startTime = item.reportedData.createTime
+          ? dayjs(item.reportedData.createTime).format('YYYY-MM-DD HH:mm:ss')
+          : '--'
+        return item
+      })
+      .sort((a: any, b: any) => {
+        const aRunning = a.reportedData?.state === 'sleep'
+        const bRunning = b.reportedData?.state === 'sleep'
+
+        if (aRunning && !bRunning) return -1
+        if (!aRunning && bRunning) return 1
+
+        return a.serviceId.localeCompare(b.serviceId)
+      })
 
     // 检查操作状态是否已完成
     if (result && result.length) {
       Object.keys(logMiningOperationState.value).forEach((serviceId) => {
         const operationState = logMiningOperationState.value[serviceId]
-        const item = result.find((d) => d.serviceId === serviceId)
+        const item = result.find((d: any) => d.serviceId === serviceId)
 
         if (item) {
           const isRunning = item.reportedData?.state === 'sleep'
