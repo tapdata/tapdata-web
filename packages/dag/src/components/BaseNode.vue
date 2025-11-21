@@ -11,15 +11,18 @@ export default {
 </script>
 
 <template>
-  <div class="df-node">
-    <div class="df-node-icon">
-      <NodeIcon class="df-node-icon-bg" :node="node" />
-      <NodeIcon class="df-node-icon-img" :node="node" />
+  <div class="df-node pb-1">
+    <div class="flex flex-1 pt-3 pb-2 px-3 align-center">
+      <div class="df-node-icon">
+        <NodeIcon class="df-node-icon-bg" :node="node" />
+        <NodeIcon class="df-node-icon-img" :node="node" />
+      </div>
+      <slot :text="node.name" name="text">
+        <div class="df-node-text">{{ node.name }}</div>
+      </slot>
+      <slot />
     </div>
-    <slot :text="node.name" name="text">
-      <div class="df-node-text">{{ node.name }}</div>
-    </slot>
-    <slot />
+    <slot name="bottom" />
   </div>
 </template>
 
@@ -36,14 +39,13 @@ $height: 52px;
 .df-node {
   position: absolute;
   z-index: 5;
-  display: flex;
-  align-items: center;
+  // display: flex;
+  // align-items: center;
   width: $width;
-  height: $height;
-  padding: 0 12px;
+  // height: $height;
   // background-color: var(--el-bg-color-overlay);
-  background-color: #fcfcfd;
-  border: 1px solid transparent;
+  background-color: var(--bg-node);
+  // border: 1px solid transparent;
   border-radius: 1rem;
   box-sizing: border-box;
   user-select: none;
@@ -103,6 +105,10 @@ $height: 52px;
     box-shadow:
       0px 1px 1px 0px rgba(16, 24, 40, 0.06),
       0px 1px 3px 0px rgba(16, 24, 40, 0.01);
+
+    &:where(html.dark *) {
+      background: transparent;
+    }
   }
 
   &-text {
