@@ -61,6 +61,8 @@
   --bg-disactive: rgba(106, 161, 255, 0.1);
   --bg-tag: #009bff33;
   --bg-code: rgba(129, 139, 152, 0.12);
+  --bg-block: #f2f4f7;
+  --bg-node: #fcfcfd;
   
 
   --border-normal: #ddd;

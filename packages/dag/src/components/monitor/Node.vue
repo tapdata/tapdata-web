@@ -476,80 +476,82 @@ export default defineComponent({
             emit('drag-stop', ...args)
           }}
         >
-          <div>
-            <el-popover
-              ref="popover"
-              disabled={ifDragStart.value}
-              placement="bottom"
-              width="auto"
-              trigger="hover"
-              close-delay={0}
-              popper-class="node-statistic-popover"
-            >
-              {{
-                reference: () => (
-                  <div class="node-card rounded-xl px-2 pb-2 pt-4 mt-n2">
-                    <div class="flex align-center">
-                      <div class="node-card-content p-2 flex-1 rounded-lg">
-                        {renderStatistic()}
-                      </div>
-                      <button
-                        onClick={() => emit('open-detail')}
-                        class="ml-2 icon-btn"
-                      >
-                        <VIcon size="16">menu-left</VIcon>
-                      </button>
+          <el-popover
+            ref="popover"
+            disabled={ifDragStart.value}
+            placement="bottom"
+            width="auto"
+            trigger="hover"
+            close-delay={0}
+            popper-class="node-statistic-popover"
+          >
+            {{
+              reference: () => (
+                <div class="node-card px-3 pb-1">
+                  <div class="flex align-center">
+                    <div class="node-card-content p-2 flex-1 rounded-lg">
+                      {renderStatistic()}
                     </div>
-                    {isSource.value && hasInitalSync && (
-                      <ElProgress
-                        class="mt-2"
-                        show-text={false}
-                        percentage={initialSyncProcess.value}
-                      />
-                    )}
+                    <ElButton
+                      size="large"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        emit('open-detail')
+                      }}
+                      class="ml-2"
+                      icon={IconLucideList}
+                      text
+                    />
+                  </div>
+                  {isSource.value && hasInitalSync && (
+                    <ElProgress
+                      class="mt-2"
+                      show-text={false}
+                      percentage={initialSyncProcess.value}
+                    />
+                  )}
 
-                    {!!sharedCache.length && (
-                      <div class="fw-bold my-2 flex align-center">
-                        {i18n.t(
-                          'packages_dag_monitor_node_zhengzaishiyongdehuancun',
-                        )}{' '}
-                        <IconButton
-                          onClick={() => emit('refresh-shared-cache')}
-                          class="ml-0.5"
-                          sm
-                          clickAndRotate
-                        >
-                          refresh
-                        </IconButton>
-                      </div>
-                    )}
-                    {!!sharedCache.length && (
-                      <ul class="shared-cache-list rounded-4 p-2">
-                        {sharedCache.map((item) => (
-                          <li class="flex justify-content-between align-items-center pb-1">
-                            <ElLink
-                              type="primary"
-                              onClick={() => emit('open-shared-cache', item)}
-                            >
-                              {item.name}
-                            </ElLink>
-                            <TaskStatus task={item} />
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                ),
-                default: () => (
-                  <div class="statistic-card">
-                    <div class="grid statistic-list">
-                      {renderPopoverContent()}
+                  {!!sharedCache.length && (
+                    <div class="fw-bold my-2 flex align-center">
+                      {i18n.t(
+                        'packages_dag_monitor_node_zhengzaishiyongdehuancun',
+                      )}{' '}
+                      <IconButton
+                        onClick={() => emit('refresh-shared-cache')}
+                        class="ml-0.5"
+                        sm
+                        clickAndRotate
+                      >
+                        refresh
+                      </IconButton>
                     </div>
+                  )}
+                  {!!sharedCache.length && (
+                    <ul class="shared-cache-list rounded-4 p-2">
+                      {sharedCache.map((item) => (
+                        <li class="flex justify-content-between align-items-center pb-1">
+                          <ElLink
+                            type="primary"
+                            onClick={() => emit('open-shared-cache', item)}
+                          >
+                            {item.name}
+                          </ElLink>
+                          <TaskStatus task={item} />
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ),
+              default: () => (
+                <div class="statistic-card">
+                  <div class="grid statistic-list">
+                    {renderPopoverContent()}
                   </div>
-                ),
-              }}
-            </el-popover>
-          </div>
+                </div>
+              ),
+            }}
+          </el-popover>
         </DFNode>
       )
     }
@@ -559,16 +561,16 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .node-card {
-  position: absolute;
-  min-width: 240px;
-  z-index: -2;
-  top: 100%;
-  left: 50%;
-  background-color: var(--el-bg-color);
-  transform: translateX(-50%);
+  // position: absolute;
+  // min-width: 240px;
+  // z-index: -2;
+  // top: 100%;
+  // left: 50%;
+  // background-color: var(--el-bg-color);
+  // transform: translateX(-50%);
 
   &-content {
-    background-color: var(--el-fill-color-light);
+    background-color: var(--bg-block);
   }
 
   &-footer {
@@ -586,14 +588,14 @@ export default defineComponent({
 
     &-title {
       font-size: 12px;
-      line-height: 1.5;
+      line-height: 1rem;
     }
 
     &-value {
       display: inline-block;
       vertical-align: middle;
       color: var(--text-dark);
-      line-height: 1;
+      line-height: 1rem;
       //font-weight: 700;
       font-size: 12px;
       font-family: DIN;

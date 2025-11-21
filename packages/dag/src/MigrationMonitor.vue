@@ -33,13 +33,7 @@ import Node from './components/monitor/Node'
 import TopHeader from './components/monitor/TopHeader'
 import { getTimeGranularity, TIME_FORMAT_MAP } from './components/monitor/util'
 import PaperScroller from './components/PaperScroller'
-import {
-  NODE_HEIGHT,
-  NODE_PREFIX,
-  NODE_WIDTH,
-  NONSUPPORT_CDC,
-  NONSUPPORT_SYNC,
-} from './constants'
+import { NODE_PREFIX, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
 import { config, jsPlumb } from './instance'
 import editor from './mixins/editor'
 import formScope from './mixins/formScope'
@@ -990,9 +984,16 @@ export default {
       })
 
       nodes.forEach((n) => {
+        let { width, height } =
+          document
+            .getElementById(NODE_PREFIX + n.id)
+            ?.getBoundingClientRect() || {}
+        width /= this.scale
+        height /= this.scale
+
         dg.setNode(NODE_PREFIX + n.id, {
-          width: NODE_WIDTH,
-          height: NODE_HEIGHT,
+          width,
+          height,
         })
         nodePositionMap[NODE_PREFIX + n.id] = n.attrs?.position || [0, 0]
       })
