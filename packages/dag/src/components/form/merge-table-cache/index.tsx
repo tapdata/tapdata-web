@@ -114,7 +114,7 @@ export const MergeTableCache = defineComponent({
 
     const showRebuild = reactiveComputed(() => {
       return (
-        (task.type === 'cdc' || !!task.attrs.syncProgress) && !disabled.value
+        (task.type === 'cdc' || !!task.attrs?.syncProgress) && !disabled.value
       )
     })
 
