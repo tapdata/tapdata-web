@@ -1092,6 +1092,16 @@ const schema = {
                           },
                           'x-component': 'Switch',
                         },
+                        dataSaving: {
+                          title: t('packages_dag_dataSaving'), // 数据保存
+                          type: 'boolean',
+                          default: true,
+                          'x-decorator': 'FormItem',
+                          'x-decorator-props': {
+                            tooltip: t('packages_dag_dataSaving_tip'),
+                          },
+                          'x-component': 'Switch',
+                        },
                         accessNodeType: {
                           type: 'string',
                           title: t('packages_dag_connection_form_access_node'),

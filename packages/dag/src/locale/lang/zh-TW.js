@@ -780,6 +780,8 @@ export default {
   packages_dag_doubleActive: '雙向同步',
   packages_dag_doubleActive_tip:
     '當需要進行雙向同步，且產生的增量事件不會對自身產生干擾時，請啓用此開關。',
+  packages_dag_dataSaving: '數據儲存',
+  packages_dag_dataSaving_tip: '開啓後將優化數據傳輸，減少不必要的流量開銷。',
   packages_dag_time_zone_offset: '時區偏移量',
   packages_dag_dynamic_date_suffix: '動態日期後綴',
   packages_dag_dynamic_date_suffix_tip:
