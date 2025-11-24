@@ -11,8 +11,8 @@ export function each(val, iterator, revert) {
         }
       }
     } else {
-      for (let i = 0; i < val.length; i++) {
-        if (iterator(val[i], i) === false) {
+      for (const [i, element] of val.entries()) {
+        if (iterator(element, i) === false) {
           return
         }
       }
@@ -20,10 +20,11 @@ export function each(val, iterator, revert) {
   } else if (isObj(val)) {
     let key
     for (key in val) {
-      if (Object.hasOwnProperty.call(val, key)) {
-        if (iterator(val[key], key) === false) {
-          return
-        }
+      if (
+        Object.hasOwnProperty.call(val, key) &&
+        iterator(val[key], key) === false
+      ) {
+        return
       }
     }
   }

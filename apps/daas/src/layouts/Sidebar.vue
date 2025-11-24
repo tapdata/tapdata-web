@@ -136,6 +136,7 @@ onMounted(() => {
 </script>
 
 <template>
+  <div style="flex: 0 0 220px" />
   <el-scrollbar class="layout-side-scrollbar">
     <ElAside class="layout-side" width="220px">
       <ElMenu
@@ -221,6 +222,8 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .layout-side-scrollbar {
+  position: fixed;
+  margin-top: 64px;
   flex-shrink: 0;
   :deep(.el-scrollbar__view) {
     min-height: 100%;

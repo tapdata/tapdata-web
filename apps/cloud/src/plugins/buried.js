@@ -1,13 +1,13 @@
-import axios from '@/plugins/axios'
-import i18n from '@/i18n'
 import { setPageTitle } from '@tap/shared'
 import Time from '@tap/shared/src/time'
+import i18n from '@/i18n'
+import axios from '@/plugins/axios'
 const TIME_ON_SITE_KEY = 'TAPDATA_SITE_SESSTION'
 const TIME_ON_PAGE_KEY = 'TAPDATA_PAGE_SESSTION'
 
 export const buried = (code, page, attrs, sid) => {
-  let userInfo = window.__USER_INFO__ || {}
-  let data = {
+  const userInfo = window.__USER_INFO__ || {}
+  const data = {
     user_id: userInfo.userId || '',
     code,
     page,
@@ -17,18 +17,21 @@ export const buried = (code, page, attrs, sid) => {
     attrs.sid = sid
   }
   data.attrs = attrs
-  let queryStr = '?data=' + encodeURIComponent(JSON.stringify(data))
+  let queryStr = `?data=${encodeURIComponent(JSON.stringify(data))}`
   if (sid) {
-    let where = {
+    const where = {
       'attrs.sid': sid,
     }
-    queryStr = queryStr + '&where=' + encodeURIComponent(JSON.stringify(where))
+    queryStr = `${queryStr}&where=${encodeURIComponent(JSON.stringify(where))}`
   }
   // eslint-disable-next-line
    import.meta.env.NODE_ENV !== 'production' &&
-    console.log(i18n.global.t('dfs_plugins_buried_chufamaidianc', { val1: code }), attrs)
+    console.log(
+      i18n.global.t('dfs_plugins_buried_chufamaidianc', { val1: code }),
+      attrs,
+    )
 
-  axios.get('api/tcm/user/behavior' + queryStr)
+  axios.get(`api/tcm/user/behavior${queryStr}`)
 }
 
 export const startTimeOnSite = () => {
@@ -43,19 +46,18 @@ export const startTimeOnSite = () => {
 }
 
 export const updateTimeOnSite = () => {
-  let sessionId = sessionStorage.getItem(TIME_ON_SITE_KEY)
+  const sessionId = sessionStorage.getItem(TIME_ON_SITE_KEY)
   if (sessionId) {
-    let count = Time.now() - Number(sessionId)
+    const count = Time.now() - Number(sessionId)
     buried(
       'timeOnSite',
       '/',
       {
-        times: Math.floor(count / 1000) + 's',
+        times: `${Math.floor(count / 1000)}s`,
       },
       sessionId,
     )
   } else {
-    // eslint-disable-next-line
     console.error(i18n.global.t('dfs_plugins_buried_wangzhantingliushi'))
   }
 }
@@ -65,9 +67,9 @@ export const startTimeOnPage = (router) => {
 
   router.beforeEach((to, from, next) => {
     let sessionId = sessionStorage.getItem(TIME_ON_PAGE_KEY)
-    let arr = sessionId?.split('_') || []
+    const arr = sessionId?.split('_') || []
     const createSessionItem = () => {
-      sessionId = to.path + '_' + Time.now()
+      sessionId = `${to.path}_${Time.now()}`
       sessionStorage.setItem(TIME_ON_PAGE_KEY, sessionId)
       buried('accessPage', to.path || '/', null, sessionId)
     }
@@ -86,7 +88,14 @@ export const startTimeOnPage = (router) => {
     }
 
     // 隐藏客服控件
-    const blackList = ['DataflowNew', 'DataflowEditor', 'MigrateCreate', 'MigrateEditor', 'Welcome', 'WelcomeTask']
+    const blackList = [
+      'DataflowNew',
+      'DataflowEditor',
+      'MigrateCreate',
+      'MigrateEditor',
+      'Welcome',
+      'WelcomeTask',
+    ]
     if (!blackList.includes(to.name)) {
       document.body.classList.remove('hide-chart')
     } else {
@@ -104,25 +113,24 @@ export const startTimeOnPage = (router) => {
 }
 
 export const updateTimeOnPage = () => {
-  let sessionId = sessionStorage.getItem(TIME_ON_PAGE_KEY)
-  let arr = sessionId?.split('_') || []
+  const sessionId = sessionStorage.getItem(TIME_ON_PAGE_KEY)
+  const arr = sessionId?.split('_') || []
   if (arr.length) {
-    let path = arr[0] || '/'
-    let time = Time.now() - Number(arr[1] || 0)
-    let second = Math.floor(time / 1000)
+    const path = arr[0] || '/'
+    const time = Time.now() - Number(arr[1] || 0)
+    const second = Math.floor(time / 1000)
     if (second > 5) {
       buried(
         'timeOnPage',
         path,
         {
-          times: second + 's',
+          times: `${second}s`,
           pid: sessionId,
         },
         sessionId,
       )
     }
   } else {
-    // eslint-disable-next-line
     console.error(i18n.global.t('dfs_plugins_buried_wangzhantingliushi'))
   }
 }

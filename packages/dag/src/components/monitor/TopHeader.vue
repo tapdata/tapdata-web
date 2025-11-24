@@ -1,16 +1,15 @@
 <script>
-import { taskApi } from '@tap/api'
 import editSvg from '@tap/assets/images/edit-fill.svg'
-import { TaskStatus } from '@tap/business'
-
+import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import syncTaskAgent from '@tap/business/src/mixins/syncTaskAgent'
-import { OverflowTooltip, TextEditable, VDivider, VIcon } from '@tap/component'
-
+import { TextEditable } from '@tap/component/src/base/text-editable'
+import VDivider from '@tap/component/src/base/VDivider.vue'
 import focusSelect from '@tap/component/src/directives/focusSelect'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 import { mapGetters, mapMutations, mapState } from 'vuex'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import { $emit } from '../../../utils/gogocodeTransfer'
 import DataCaptureDebug from '../DataCaptureDebug.vue'
 import DataValidationDialog from '../DataValidationDialog.vue'
 
@@ -19,7 +18,6 @@ export default {
   directives: { focusSelect },
   components: {
     DataCaptureDebug,
-    VIcon,
     TaskStatus,
     VDivider,
     OverflowTooltip,
@@ -219,7 +217,6 @@ export default {
             v-model:value="name"
             class="overflow-hidden"
             :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
-            :input-min-width="32"
             :maxlength="200"
             @change="onNameInputChange"
           />
@@ -459,8 +456,8 @@ $sidebarBg: #fff;
   align-items: center;
   width: 100%;
   flex: 0 0 64px;
-  background-color: #fff;
-  color: rgba(0, 0, 0, 0.87);
+  background-color: var(--el-bg-color);
+  color: var(--el-text-color-primary);
   box-sizing: border-box;
   .left-content {
     min-width: calc(50% - 140px);
@@ -485,8 +482,8 @@ $sidebarBg: #fff;
     width: 28px;
     height: 28px;
     padding: 4px;
-    color: #4e5969;
-    background: #fff;
+    color: var(--icon-n1);
+    background: transparent;
     outline: none;
     border: 1px solid transparent;
     border-radius: $radius;
@@ -573,7 +570,7 @@ $sidebarBg: #fff;
   }
 }
 .agent-data__item {
-  border-left: 1px solid #f2f2f2;
+  border-left: 1px solid var(--el-border-color);
 }
 </style>
 
@@ -593,7 +590,7 @@ $sidebarBg: #fff;
     cursor: pointer;
 
     &:hover {
-      background-color: #edf1f9;
+      background-color: var(--el-fill-color-light);
     }
   }
 

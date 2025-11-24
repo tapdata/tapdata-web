@@ -1,10 +1,10 @@
 <script>
-import { fetchConnections, taskApi } from '@tap/api'
+import { fetchConnections } from '@tap/api/src/core/connections'
+import { fetchTasks } from '@tap/api/src/core/task'
 import { CURRENCY_SYMBOL_MAP, ORDER_STATUS_MAP, TIME_MAP } from '@tap/business'
 
 import { FilterBar, VTable } from '@tap/component'
 import dayjs from 'dayjs'
-import { isEmpty } from 'lodash-es'
 import i18n from '@/i18n'
 import StatusTag from '../../components/StatusTag'
 import { AGENT_TYPE_MAP, getPaymentMethod, getSpec } from '../instance/utils'
@@ -185,13 +185,9 @@ export default {
         fields,
         skip: 0,
       }
-      taskApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          this.taskList = data?.items || []
-        })
+      fetchTasks(filter).then((data) => {
+        this.taskList = data?.items || []
+      })
     },
     //获取连接列表
     getConnection() {

@@ -1,6 +1,7 @@
 <script>
-import { getConnectionNoSchema, proxyApi, taskApi } from '@tap/api'
-
+import { getConnectionNoSchema } from '@tap/api/src/core/connections'
+import { callProxy } from '@tap/api/src/core/proxy'
+import { createTask, deleteTask, saveTask } from '@tap/api/src/core/task'
 import SkipError from '@tap/business/src/views/task/SkipError.vue'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
@@ -8,6 +9,7 @@ import { showMessage } from '@tap/component/src/mixins/showMessage'
 import { titleChange } from '@tap/component/src/mixins/titleChange'
 import i18n from '@tap/i18n'
 import { uuid } from '@tap/shared'
+import { useDark } from '@vueuse/core'
 import dagre from 'dagre'
 import { merge } from 'lodash-es'
 import { getCurrentInstance, nextTick, provide, ref, shallowRef } from 'vue'
@@ -52,6 +54,8 @@ export default {
   inject: ['buried'],
 
   setup() {
+    useDark()
+
     const previewData = shallowRef(null)
     const previewLoading = ref(false)
 
@@ -65,23 +69,21 @@ export default {
         ins.proxy.scope?.formTab?.setActiveKey('previewTab')
       })
 
-      const data = await proxyApi
-        .call({
-          className: 'TaskPreviewService',
-          method: 'preview',
-          args: [
-            JSON.stringify({
-              id: ins.proxy.dataflow.id,
-              dag: {
-                edges: ins.proxy.allEdges,
-                nodes: ins.proxy.allNodes,
-              },
-            }),
-            [],
-            1,
-          ],
-        })
-        .finally(() => (previewLoading.value = false))
+      const data = await callProxy({
+        className: 'TaskPreviewService',
+        method: 'preview',
+        args: [
+          JSON.stringify({
+            id: ins.proxy.dataflow.id,
+            dag: {
+              edges: ins.proxy.allEdges,
+              nodes: ins.proxy.allNodes,
+            },
+          }),
+          [],
+          1,
+        ],
+      }).finally(() => (previewLoading.value = false))
 
       if (data.code !== 200) {
         ElMessage.error(data.message || 'Internal error')
@@ -356,11 +358,19 @@ export default {
 
       try {
         this.initWS()
-        // const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
-        const result = await taskApi.save(data, {
+        const result = await saveTask(data, {
           silenceMessage: true,
         })
         this.reformDataflow(result)
+
+        if (needStart && ['edit', 'wait_start'].includes(result.status)) {
+          const validateDropTableEnabled = await this.validateDropTableEnabled()
+          if (!validateDropTableEnabled) {
+            this.isSaving = false
+            return
+          }
+        }
+
         !needStart && this.$message.success(this.$t('public_message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
@@ -381,7 +391,7 @@ export default {
       this.isSaving = true
       const data = this.getDataflowDataToSave('sync')
       try {
-        const dataflow = await taskApi.post(data)
+        const dataflow = await createTask(data)
         this.buried('taskSubmit', { result: true })
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
@@ -532,7 +542,7 @@ export default {
           },
         ).then((res) => {
           if (res) {
-            taskApi.delete(this.dataflow.id)
+            deleteTask(this.dataflow.id)
           }
           this.$router.push({
             name: 'dataflowList',
@@ -755,42 +765,6 @@ export default {
         this.setMaterializedViewVisible(true)
       }, 120)
     },
-
-    // async handlePreview(nodeId, nodeData) {
-    //   this.previewLoading = true
-    //   this.currentPreviewNodeId = nodeId
-    //   this.setActiveNode(nodeId)
-
-    //   this.$nextTick(() => {
-    //     this.scope?.formTab?.setActiveKey('previewTab')
-    //   })
-
-    //   const data = await proxyApi
-    //     .call({
-    //       className: 'TaskPreviewService',
-    //       method: 'preview',
-    //       args: [
-    //         JSON.stringify({
-    //           id: this.dataflow.id,
-    //           dag: {
-    //             edges: this.allEdges,
-    //             nodes: this.allNodes,
-    //           },
-    //         }),
-    //         // inputs,
-    //         [],
-    //         1,
-    //       ],
-    //     })
-    //     .finally(() => (this.previewLoading = false))
-
-    //   if (data.code !== 200) {
-    //     this.$message.error(data.message || 'Internal error')
-    //     return
-    //   }
-
-    //   this.previewData = data.nodeResult
-    // },
   },
 }
 </script>
@@ -926,7 +900,7 @@ $sidebarW: 260px;
 $hoverBg: #e1e1e1;
 $radius: 3px;
 $baseHeight: 26px;
-$sidebarBg: #fff;
+$sidebarBg: var(--el-bg-color);
 
 .layout-sidebar {
   position: relative;
@@ -951,7 +925,7 @@ $sidebarBg: #fff;
 }
 .layout-content {
   position: relative;
-  background-color: #f9f9f9;
+  background-color: var(--el-bg-color);
 
   :deep(.connection-highlight),
   :deep(.connection-selected) {

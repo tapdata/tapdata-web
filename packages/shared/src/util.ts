@@ -161,19 +161,19 @@ export function sameNumber(num1, num2, tolerance = Number.EPSILON) {
 }
 
 export const os = (function () {
-  const ua = navigator.userAgent,
-    isWindowsPhone = /(Windows Phone)/.test(ua),
-    isSymbian = /SymbianOS/.test(ua) || isWindowsPhone,
-    isAndroid = /Android/.test(ua),
-    isFireFox = /Firefox/.test(ua),
-    isChrome = /Chrome|CriOS/.test(ua),
-    isTablet =
-      /iPad|PlayBook/.test(ua) ||
-      (isAndroid && !/Mobile/.test(ua)) ||
-      (isFireFox && /Tablet/.test(ua)),
-    isIPhone = /iPhone/.test(ua) && !isTablet,
-    isWeixin = /MicroMessenger/.test(ua),
-    isPc = !isIPhone && !isAndroid && !isSymbian
+  const ua = navigator.userAgent
+  const isWindowsPhone = /(Windows Phone)/.test(ua)
+  const isSymbian = /SymbianOS/.test(ua) || isWindowsPhone
+  const isAndroid = /Android/.test(ua)
+  const isFireFox = /Firefox/.test(ua)
+  const isChrome = /Chrome|CriOS/.test(ua)
+  const isTablet =
+    /iPad|PlayBook/.test(ua) ||
+    (isAndroid && !/Mobile/.test(ua)) ||
+    (isFireFox && /Tablet/.test(ua))
+  const isIPhone = /iPhone/.test(ua) && !isTablet
+  const isWeixin = /MicroMessenger/.test(ua)
+  const isPc = !isIPhone && !isAndroid && !isSymbian
   return {
     isChrome,
     isTablet,
@@ -324,7 +324,10 @@ export function onCopy(value) {
   input.remove()
 }
 
-export async function copyToClipboard(textToCopy, context) {
+export async function copyToClipboard(
+  textToCopy: string,
+  context?: HTMLElement,
+) {
   // Navigator clipboard api needs a secure context (https)
   if (navigator.clipboard && window.isSecureContext) {
     await navigator.clipboard.writeText(textToCopy)

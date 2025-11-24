@@ -1,20 +1,16 @@
 <script>
-import { proxyApi } from '@tap/api'
-import { VIcon, VTable } from '@tap/component'
-
+import { callProxy } from '@tap/api/src/core/proxy'
+import { VTable } from '@tap/component/src/base/v-table'
 import i18n from '@tap/i18n'
 import { calcTimeUnit, copyToClipboard } from '@tap/shared'
 import Time from '@tap/shared/src/time'
-
 import dayjs from 'dayjs'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
-
 import { ErrorMessage } from '../error-message'
 import NodeList from '../nodes/List'
 
 export default {
   name: 'List',
-  components: { VIcon, NodeList, VTable },
+  components: { NodeList, VTable },
   props: {
     dataflow: {
       type: Object,
@@ -124,7 +120,7 @@ export default {
       const dataflowType = this.dataflow.type
       let iconRunning = 'loading-circle'
       let iconRunningColor = 'color-success'
-      if (this.dataflow.status != 'running') {
+      if (this.dataflow.status !== 'running') {
         iconRunning = 'time'
         iconRunningColor = 'color-primary'
       }
@@ -312,16 +308,17 @@ export default {
 
       result.reverse()
 
-      result.unshift({
-        label: i18n.t('packages_business_milestone_list_zhengtijindu'),
-        icon: 'device',
-        percentage: per,
-        desc: i18n.t('packages_business_milestone_list_finish', {
-          val1: finishedLen,
-          val2: len,
-          val3: `${result[currentLen - 1].label} ${result[currentLen - 1].desc}`,
-        }),
-      })
+      result.length &&
+        result.unshift({
+          label: i18n.t('packages_business_milestone_list_zhengtijindu'),
+          icon: 'device',
+          percentage: per,
+          desc: i18n.t('packages_business_milestone_list_finish', {
+            val1: finishedLen,
+            val2: len,
+            val3: `${result[currentLen - 1].label} ${result[currentLen - 1].desc}`,
+          }),
+        })
 
       return result
     },
@@ -466,7 +463,7 @@ export default {
   methods: {
     handleChange(val, node) {
       this.activeNode = val ? node : {}
-      $emit(this, 'update:nodeId', val)
+      this.$emit('update:nodeId', val)
     },
 
     handleError(row = {}) {
@@ -491,8 +488,7 @@ export default {
       this.codeDialog.data.message = item.message
       this.codeDialog.data.module = ''
 
-      proxyApi
-        .call(params)
+      callProxy(params)
         .then((data) => {
           Object.assign(this.codeDialog.data, data)
 

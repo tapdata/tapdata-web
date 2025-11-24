@@ -1,4 +1,4 @@
-import { taskApi } from '@tap/api'
+import { fetchTasks } from '@tap/api/src/core/task'
 import classification from '@tap/component/src/store'
 import dataflow from '@tap/dag/src/store'
 import {
@@ -409,12 +409,10 @@ const store = createStore({
           await dispatch('subscribe', freeTier)
         }
       } else if (guide.installStep > -1 && guide.tour.taskId) {
-        const data = await taskApi.get({
-          filter: JSON.stringify({
-            where: {
-              id: guide.tour.taskId,
-            },
-          }),
+        const data = await fetchTasks({
+          where: {
+            id: guide.tour.taskId,
+          },
         })
 
         // 如果没有完成引导任务，并且任务还存在，跳转到引导任务

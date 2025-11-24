@@ -1,17 +1,13 @@
 import { createForm } from '@formily/core'
-import { observe } from '@formily/reactive'
 import { Form, FormLayout, SchemaField } from '@tap/form'
 import { cancelIdle, requestIdle } from '@tap/shared'
 import {
   computed,
   defineComponent,
-  nextTick,
   onBeforeUnmount,
   provide,
-  reactive,
   ref,
   shallowRef,
-  watch,
 } from 'vue'
 import {
   useEffect,

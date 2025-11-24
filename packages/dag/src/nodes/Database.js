@@ -2,10 +2,6 @@ import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
 
 export class Database extends NodeType {
-  constructor() {
-    super()
-  }
-
   type = 'database'
 
   minInputs = 0 // 最小输入个数
@@ -169,9 +165,6 @@ export class Database extends NodeType {
                           asterisk: true,
                           feedbackLayout: 'none',
                           connectionId: '{{$values.connectionId}}',
-                          title: i18n.t(
-                            'packages_dag_nodes_database_xuanzebiao',
-                          ),
                           target: '',
                         },
                         'x-component': 'Radio.Group',
@@ -389,6 +382,24 @@ export class Database extends NodeType {
                   },
                 },
                 properties: {
+                  compareSchema: {
+                    type: 'void',
+                    'x-component': 'CompareSchema',
+                    'x-reactions': {
+                      dependencies: [
+                        '.existDataProcessMode',
+                        '$outputs',
+                        '$inputs',
+                      ],
+                      fulfill: {
+                        state: {
+                          visible:
+                            '{{!$form.disabled && !$deps[1].length && $deps[2].length > 0 && $deps[1].length === 0 && $deps[0] !== "dropTable" && !!$values.attrs.connectionTags && !$values.attrs.connectionTags.includes("schema-free")}}',
+                        },
+                      },
+                    },
+                  },
+
                   fieldMapping: {
                     type: 'void',
                     'x-component': 'fieldInference',
@@ -1088,7 +1099,6 @@ export class Database extends NodeType {
                         },
                       },
                       dmlPolicy: {
-                        required: true,
                         title: i18n.t(
                           'packages_dag_nodes_database_shujuxieruce',
                         ),
@@ -1267,6 +1277,17 @@ export class Database extends NodeType {
                             },
                           },
                         },
+                      },
+                      writeWithGroupByTableEnable: {
+                        title: i18n.t(
+                          'packages_dag_writeWithGroupByTableEnable',
+                        ),
+                        type: 'boolean',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal',
+                        },
+                        'x-component': 'Switch',
                       },
                       noPkSyncMode: {
                         type: 'string',

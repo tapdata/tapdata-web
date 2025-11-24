@@ -1,5 +1,16 @@
 <script>
-import { fetchApps, logcollectorApi, taskApi } from '@tap/api'
+import { fetchApps } from '@tap/api/src/core/app'
+import {
+  checkLogcollector,
+  getSystemConfig,
+  patchSystemConfig,
+} from '@tap/api/src/core/logcollector'
+import {
+  batchStartTasks,
+  batchStopTasks,
+  fetchTasks,
+  forceStopTask,
+} from '@tap/api/src/core/task'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
@@ -152,13 +163,11 @@ export default {
     handleSetting() {
       //是否可以全局设置
       this.loadingConfig = true
-      logcollectorApi
-        .check()
+      checkLogcollector()
         .then((data) => {
           this.showEditSettingBtn = data?.data //true是可用，false是禁用 数据结构本身多了一层
           this.settingDialogVisible = true
-          logcollectorApi
-            .getSystemConfig()
+          getSystemConfig()
             .then((data) => {
               if (data) {
                 this.digSettingForm = data
@@ -186,7 +195,7 @@ export default {
             this.digSettingForm.persistenceMongodb_uri_db = ''
             this.digSettingForm.persistenceMongodb_collection = ''
           }
-          logcollectorApi.patchSystemConfig(this.digSettingForm).then(() => {
+          patchSystemConfig(this.digSettingForm).then(() => {
             this.settingDialogVisible = false
             this.$message.success(this.$t('public_message_save_ok'))
           })
@@ -201,9 +210,8 @@ export default {
           id: ids[0],
         },
       }
-      taskApi.get({ filter: JSON.stringify(filter) }).then(() => {
-        taskApi
-          .batchStart(ids)
+      fetchTasks(filter).then(() => {
+        batchStartTasks(ids)
           .then((data) => {
             this.buried(this.taskBuried.start, '', { result: true })
             this.$message.success(
@@ -225,7 +233,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then((data) => {
+        forceStopTask(ids).then((data) => {
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
           )
@@ -242,7 +250,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then((data) => {
+        batchStopTasks(ids).then((data) => {
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
           )
@@ -264,8 +272,8 @@ export default {
     },
 
     getConfirmMessage(operateStr, task) {
-      const title = `${operateStr}_confirm_title`,
-        message = `${operateStr}_confirm_message`
+      const title = `${operateStr}_confirm_title`
+      const message = `${operateStr}_confirm_message`
       const strArr = this.$t(`dataFlow_${message}`).split('xxx')
       const msg = `
         <p>

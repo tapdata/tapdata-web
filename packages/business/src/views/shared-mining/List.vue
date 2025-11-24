@@ -1,5 +1,19 @@
 <script>
-import { logcollectorApi, taskApi } from '@tap/api'
+import {
+  checkLogcollector,
+  fetchLogcollector,
+  getSystemConfig,
+  patchSystemConfig,
+} from '@tap/api/src/core/logcollector'
+import {
+  batchDeleteTasks,
+  batchRenewTasks,
+  batchStartTasks,
+  batchStopTasks,
+  fetchTasks,
+  forceStopTask,
+  taskConsoleRelations,
+} from '@tap/api/src/core/task'
 import { VTable } from '@tap/component/src/base/v-table'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import i18n from '@tap/i18n'
@@ -149,54 +163,48 @@ export default {
         skip: (current - 1) * size,
         where,
       }
-      return logcollectorApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          const list = data?.items || []
-          const pointTime = new Date()
-          return {
-            total: data?.total || 0,
-            data: list.map((item) => {
-              item.pointTime = pointTime
-              if (item.syncTimePoint === 'current') {
-                item.pointTime = dayjs(pointTime).format('YYYY-MM-DD HH:mm:ss')
-              } else {
-                item.pointTime = item.syncTimeZone
-              }
-              item.createTime = dayjs(item.createTime).format(
-                'YYYY-MM-DD HH:mm:ss',
-              )
-              item.logTime = item.logTime
-                ? dayjs(item.logTime).format('YYYY-MM-DD HH:mm:ss')
-                : '-'
-              item.delayTime =
-                item.delayTime < 0 || typeof item.delayTime !== 'number'
-                  ? '-'
-                  : calcTimeUnit(item.delayTime, 2, {
-                      autoHideMs: true,
-                    })
-              makeStatusAndDisabled(item)
-              if (item.status === 'edit') {
-                item.btnDisabled.start = false
-              }
-              return item
-            }),
-          }
-        })
+      return fetchLogcollector(filter).then((data) => {
+        const list = data?.items || []
+        const pointTime = new Date()
+        return {
+          total: data?.total || 0,
+          data: list.map((item) => {
+            item.pointTime = pointTime
+            if (item.syncTimePoint === 'current') {
+              item.pointTime = dayjs(pointTime).format('YYYY-MM-DD HH:mm:ss')
+            } else {
+              item.pointTime = item.syncTimeZone
+            }
+            item.createTime = dayjs(item.createTime).format(
+              'YYYY-MM-DD HH:mm:ss',
+            )
+            item.logTime = item.logTime
+              ? dayjs(item.logTime).format('YYYY-MM-DD HH:mm:ss')
+              : '-'
+            item.delayTime =
+              item.delayTime < 0 || typeof item.delayTime !== 'number'
+                ? '-'
+                : calcTimeUnit(item.delayTime, 2, {
+                    autoHideMs: true,
+                  })
+            makeStatusAndDisabled(item)
+            if (item.status === 'edit') {
+              item.btnDisabled.start = false
+            }
+            return item
+          }),
+        }
+      })
     },
 
     handleSetting() {
       //是否可以全局设置
       this.loadingConfig = true
-      logcollectorApi
-        .check()
+      checkLogcollector()
         .then((data) => {
           this.showEditSettingBtn = data?.data //true是可用，false是禁用 数据结构本身多了一层
           this.settingDialogVisible = true
-          logcollectorApi
-            .getSystemConfig()
+          getSystemConfig()
             .then((data) => {
               if (data) {
                 this.digSettingForm = data
@@ -224,7 +232,7 @@ export default {
             this.digSettingForm.persistenceMongodb_uri_db = ''
             this.digSettingForm.persistenceMongodb_collection = ''
           }
-          logcollectorApi.patchSystemConfig(this.digSettingForm).then(() => {
+          patchSystemConfig(this.digSettingForm).then(() => {
             this.settingDialogVisible = false
             this.$message.success(this.$t('public_message_save_ok'))
           })
@@ -239,9 +247,8 @@ export default {
           id: ids[0],
         },
       }
-      taskApi.get({ filter: JSON.stringify(filter) }).then(() => {
-        taskApi
-          .batchStart(ids)
+      fetchTasks(filter).then(() => {
+        batchStartTasks(ids)
           .then((data) => {
             this.buried(this.taskBuried.start, '', { result: true })
             this.$message.success(
@@ -263,7 +270,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then((data) => {
+        forceStopTask(ids).then((data) => {
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
           )
@@ -280,7 +287,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then((data) => {
+        batchStopTasks(ids).then((data) => {
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
           )
@@ -311,8 +318,8 @@ export default {
     },
 
     getConfirmMessage(operateStr, task) {
-      const title = `${operateStr}_confirm_title`,
-        message = `${operateStr}_confirm_message`
+      const title = `${operateStr}_confirm_title`
+      const message = `${operateStr}_confirm_message`
       const strArr = this.$t(`dataFlow_${message}`).split('xxx')
       const msg = `
         <p>
@@ -335,7 +342,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchRenew([id]).then((data) => {
+        batchRenewTasks([id]).then((data) => {
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
           )
@@ -349,7 +356,7 @@ export default {
         type: 'task_by_collector',
         taskId: row.id,
       }
-      this.showUsingTaskDialog.list = await taskApi.taskConsoleRelations(filter)
+      this.showUsingTaskDialog.list = await taskConsoleRelations(filter)
 
       this.$confirm(
         this.$t('packages_ldp_src_tablepreview_querenshanchu'),
@@ -367,7 +374,7 @@ export default {
           this.showUsingTaskDialog.visible = true
           return
         }
-        taskApi.batchDelete([row.id]).then((data) => {
+        batchDeleteTasks([row.id]).then((data) => {
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
           )
@@ -706,8 +713,8 @@ export default {
         <div class="dialog-footer">
           <ElButton
             @click="
-              ;(showUsingTaskDialog.list = []),
-                (showUsingTaskDialog.visible = false)
+              ;((showUsingTaskDialog.list = []),
+                (showUsingTaskDialog.visible = false))
             "
             >{{ $t('public_button_cancel') }}
           </ElButton>

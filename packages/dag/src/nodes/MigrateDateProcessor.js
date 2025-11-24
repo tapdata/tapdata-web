@@ -2,10 +2,6 @@ import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
 
 export class MigrateDateProcessor extends NodeType {
-  constructor() {
-    super()
-  }
-
   type = 'migrate_date_processor'
 
   maxInputs = 1 // 最大输入个数
@@ -92,6 +88,7 @@ export class MigrateDateProcessor extends NodeType {
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
                   asterisk: true,
+                  feedbackLayout: 'none',
                 },
                 'x-component': 'Space',
                 properties: {

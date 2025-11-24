@@ -1,5 +1,8 @@
 <script>
-import { metadataInstancesApi } from '@tap/api'
+import {
+  getNodeSchemaMapByIds,
+  getNodeSchemaPage,
+} from '@tap/api/src/core/metadata-instances'
 import VDivider from '@tap/component/src/base/VDivider.vue'
 import { IconButton } from '@tap/component/src/icon-button'
 import { mapFieldsData } from '@tap/form'
@@ -481,7 +484,7 @@ export default {
         nodeIds: this.viewNodes.map((node) => node.id).join(','),
         fields: ['original_name', 'fields', 'qualified_name'],
       }
-      const data = await metadataInstancesApi.getNodeSchemaMapByIds(params)
+      const data = await getNodeSchemaMapByIds(params)
 
       for (const nodeId in data) {
         const [schema = {}] = data[nodeId]
@@ -511,7 +514,7 @@ export default {
       }
       const {
         items: [schema = {}],
-      } = await metadataInstancesApi.nodeSchemaPage(params)
+      } = await getNodeSchemaPage(params)
       this.setNodeSchema(nodeId, schema)
     },
 

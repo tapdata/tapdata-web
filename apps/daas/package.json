@@ -30,6 +30,7 @@
     "@tap/request": "workspace:*",
     "@tap/shared": "workspace:*",
     "@tap/styles": "workspace:*",
+    "@vueuse/core": "catalog:",
     "axios": "catalog:",
     "core-js": "catalog:",
     "crypto-js": "catalog:",

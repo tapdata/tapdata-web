@@ -1,4 +1,5 @@
-import { countConnections, taskApi } from '@tap/api'
+import { countConnections } from '@tap/api/src/core/connections'
+import { countTasks } from '@tap/api/src/core/task'
 import { driver } from 'driver.js'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import i18n from '@/i18n'
@@ -202,7 +203,7 @@ export default {
      * @returns {Promise<*>}
      */
     async checkTaskCount() {
-      const { count } = await taskApi.count({
+      const { count } = await countTasks({
         where: JSON.stringify({
           syncType: 'migrate',
           is_deleted: false,
@@ -215,7 +216,7 @@ export default {
     },
 
     async getTaskRunningCount() {
-      const { count } = await taskApi.count({
+      const { count } = await countTasks({
         where: JSON.stringify({
           syncType: 'migrate',
           is_deleted: false,

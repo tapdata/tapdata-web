@@ -1,7 +1,6 @@
 <script>
-import { createApp } from '@tap/api'
+import { createApp } from '@tap/api/src/core/app'
 import resize from '@tap/component/src/directives/resize'
-import GitBook from '@tap/component/src/GitBook.vue'
 import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 import i18n from '@tap/i18n'
 

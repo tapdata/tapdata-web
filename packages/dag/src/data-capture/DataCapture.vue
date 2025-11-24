@@ -1,8 +1,13 @@
 <script>
-import { dataPermissionApi, proxyApi, taskApi } from '@tap/api'
-import { makeStatusAndDisabled, TaskStatus } from '@tap/business'
+import { getDataActions } from '@tap/api/src/core/data-permission'
+import { callProxy } from '@tap/api/src/core/proxy'
+import { getTaskById } from '@tap/api/src/core/task'
+import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import syncTaskAgent from '@tap/business/src/mixins/syncTaskAgent'
-import { TextEditable, VDivider, VEmpty, VIcon } from '@tap/component'
+import { makeStatusAndDisabled } from '@tap/business/src/shared/task'
+import { TextEditable } from '@tap/component/src/base/text-editable'
+import { VEmpty } from '@tap/component/src/base/v-empty'
+import VDivider from '@tap/component/src/base/VDivider.vue'
 import i18n, { useI18n } from '@tap/i18n'
 import { copyToClipboard, setPageTitle } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
@@ -12,6 +17,7 @@ import { ElMessage } from 'element-plus'
 import {
   computed,
   defineComponent,
+  getCurrentInstance,
   onBeforeUnmount,
   onMounted,
   reactive,
@@ -31,7 +37,6 @@ export default defineComponent({
     VDivider,
     VEmpty,
     CaptureItem,
-    VIcon,
     TaskStatus,
     TextEditable,
     DynamicScroller,
@@ -94,6 +99,8 @@ export default defineComponent({
       }, {}),
     )
 
+    console.log(dataflow)
+
     // Watch
     watch(
       () => dataflow.value.name,
@@ -105,7 +112,7 @@ export default defineComponent({
     // Methods
 
     const loadData = async () => {
-      const res = await proxyApi.call({
+      const res = await callProxy({
         className: 'CatchDataService',
         method: 'getCatchData',
         // taskId
@@ -176,7 +183,7 @@ export default defineComponent({
       if (!isDaas) return
       const id = dataflow.value.id || route.params?.id
       if (!id) return
-      const data = await dataPermissionApi.dataActions({
+      const data = await getDataActions({
         dataType: 'Task',
         dataId: id,
       })
@@ -209,7 +216,7 @@ export default defineComponent({
     }
 
     const initData = async () => {
-      await proxyApi.call({
+      await callProxy({
         className: 'CatchDataService',
         method: 'openCatchData',
         args: [dataflow.value.id, null, 60],
@@ -248,7 +255,7 @@ export default defineComponent({
     }
 
     const titleSet = () => {
-      setPageTitle(`${dataflow.value.name} - ${t(route.meta.title)}`)
+      setPageTitle(dataflow.value.name)
     }
 
     const startLoopTask = (id) => {
@@ -257,7 +264,7 @@ export default defineComponent({
       if (!id) return
       startLoopTaskTimer = setTimeout(async () => {
         const { parent_task_sign } = route.query || {}
-        const data = await taskApi.get(id, {}, { parent_task_sign })
+        const data = await getTaskById(id, {}, { parent_task_sign })
 
         if (data) {
           if (data.errorEvents?.length) {
@@ -309,7 +316,7 @@ export default defineComponent({
     const loadDataflow = async (id, params) => {
       try {
         const { parent_task_sign } = route.query || {}
-        const data = await taskApi.get(id, params, { parent_task_sign })
+        const data = await getTaskById(id, params, { parent_task_sign })
         if (!data) {
           ElMessage.error(i18n.t('packages_dag_mixins_editor_renwubucunzai'))
           handlePageReturn()
@@ -575,10 +582,9 @@ export default defineComponent({
       <div class="overflow-hidden">
         <div class="flex align-items-center">
           <TextEditable
-            v-model="name"
+            v-model:value="name"
             class="overflow-hidden"
             :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
-            :input-min-width="32"
             :maxlength="200"
             @change="onNameInputChange"
           />

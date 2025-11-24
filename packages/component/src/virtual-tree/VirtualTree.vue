@@ -5,7 +5,6 @@ import {
   useLocale,
   useNamespace,
 } from 'element-plus'
-import 'element-plus/es/components/virtual-list/style/css'
 import {
   ROOT_TREE_INJECTION_KEY,
   treeEmits,
@@ -22,6 +21,7 @@ import { useDragNodeHandler } from './composables/useDragNode'
 import { useTree } from './composables/useTree'
 import VirtualTreeNode from './VirtualTreeNode.vue'
 import type { TreeOptionProps } from './types'
+import 'element-plus/es/components/virtual-list/style/css'
 
 defineOptions({
   name: 'VirtualTree',

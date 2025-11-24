@@ -1,16 +1,14 @@
 <script>
-import {
-  getConnectionNoSchema,
-  lineageApi,
-  metadataDefinitionsApi,
-} from '@tap/api'
+import { fetchMetadataDefinitions } from '@tap/api/core/metadata-definitions'
+import { getConnectionNoSchema } from '@tap/api/src/core/connections'
+import { findLineageByTable } from '@tap/api/src/core/lineage'
 import SceneDialog from '@tap/business/src/components/create-connection/SceneDialog.vue'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import UpgradeCharges from '@tap/business/src/components/UpgradeCharges.vue'
 import UpgradeFee from '@tap/business/src/components/UpgradeFee.vue'
 import { EventEmitter } from '@tap/business/src/shared'
 import { IconButton } from '@tap/component/src/icon-button'
-import { jsPlumb } from '@tap/dag/src/instance'
+import LeaderLine from '@tap/leader-line'
 import Cookie from '@tap/shared/src/cookie'
 import Catalogue from './components/Catalogue'
 import ConnectionPreview from './ConnectionPreview'
@@ -20,7 +18,6 @@ import Settings from './Settings'
 import SourceItem from './Source'
 import TablePreview from './TablePreview'
 import TargetItem from './Target'
-
 const TYPE2NAME = {
   target: 'TARGET&SERVICE',
 }
@@ -78,7 +75,6 @@ export default {
       preLinkNodes: [],
       nextLinkNodes: [],
       connectionLines: [],
-      jsPlumbIns: jsPlumb.getInstance(),
       showParentLineage: false,
       nodes: [],
       edgsLinks: [],
@@ -151,17 +147,13 @@ export default {
 
   mounted() {
     this.$nextTick(() => {
-      this.jsPlumbIns.setContainer(this.$el)
       window.addEventListener('keydown', this.handleListenerEsc)
     })
   },
 
   beforeUnmount() {
     window.removeEventListener('keyword', this.handleListenerEsc)
-    // 销毁画布实例
-    this.jsPlumbIns?.destroy()
-    this.targetDomSet = null
-    this.otherDomSet = null
+    this.clearLeaderLines()
   },
 
   methods: {
@@ -197,6 +189,9 @@ export default {
     handleSettingsSuccess(data) {
       this.mode = data.mode
       Object.assign(this.settings, data)
+
+      this.loadDirectory()
+      this.$refs.source[0].initTree()
     },
 
     handleSettingsInit(settings) {
@@ -221,10 +216,7 @@ export default {
         }*/
       }
       this.loadingDirectory = true
-      metadataDefinitionsApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
+      fetchMetadataDefinitions(filter)
         .then((data) => {
           const items = data?.items || []
           const treeData = this.formatCatalog(items)
@@ -333,9 +325,9 @@ export default {
     },
 
     handleFindParent(parentNode, tableInfo = {}, ldpType = 'mdm') {
-      lineageApi
-        .findByTable(tableInfo.connectionId, tableInfo.name)
-        .then((data) => {
+      findLineageByTable(tableInfo.connectionId, tableInfo.name).then(
+        (data) => {
+          this.clearLeaderLines()
           const { edges, nodes } = data.dag || {}
           this.nodes = nodes
           const otherLdpType = ldpType === 'mdm' ? 'fdm' : 'mdm'
@@ -359,10 +351,16 @@ export default {
                   ? otherLdpType
                   : 'source'
             // 记录事件触发的dom和ldpType
-            if (sourceNode.table === tableInfo.name) {
+            if (
+              sourceNode.table === tableInfo.name &&
+              sourceNode.connectionId === tableInfo.connectionId
+            ) {
               sourceNode.ldpType = ldpType
               sourceNode.dom = parentNode
-            } else if (targetNode.table === tableInfo.name) {
+            } else if (
+              targetNode.table === tableInfo.name &&
+              targetNode.connectionId === tableInfo.connectionId
+            ) {
               targetNode.ldpType = ldpType
               targetNode.dom = parentNode
             }
@@ -375,10 +373,11 @@ export default {
 
           this.showParentLineage = true
           this.handleConnection()
-        })
+        },
+      )
     },
 
-    async handleConnection() {
+    handleConnection() {
       if (!this.showParentLineage) return
       const connectionLines = []
 
@@ -444,71 +443,64 @@ export default {
         this.$refs.fdm[0].searchByKeywordList(keywordOptions.fdm)
       }
 
-      const targetDom = new Set()
-      const otherDom = new Set()
-
-      this.$nextTick(() => {
+      setTimeout(() => {
         this.edgsLinks.forEach((el) => {
           const { sourceNode, targetNode } = el || {}
           const sDom = sourceNode.dom || map[sourceNode.ldpType](sourceNode)
           const tDom = targetNode.dom || map[targetNode.ldpType](targetNode)
           // 过滤掉source节点连线到source节点的情况
           if (targetNode.ldpType !== 'source') {
-            connectionLines.push([sDom, tDom])
-          }
-
-          otherDom.add(sDom)
-
-          if (targetNode.ldpType === 'target') {
-            targetDom.add(tDom)
-          } else {
-            otherDom.add(tDom)
-          }
-        })
-
-        this.connectionLines = connectionLines
-
-        this.jsPlumbIns.reset()
-        this.connectionLines.forEach((el = []) => {
-          const [source, target] = el
-          this.jsPlumbIns.connect({
-            source, // 源节点
-            target, // 目标节点
-            endpoint: 'Dot', // 端点的样式，可以设置Dot、Rectangle、image、Blank
-            connector: ['Bezier', { gap: 20 }], // 连接线 Bezier(贝塞尔曲线) Straight(直线) Flowchart(垂直或水平线组成的连接) StateMachine
-            anchor: ['Left', 'Right'], // 锚点位置
-            endpointStyle: { fill: 'rgba(255, 255, 255, 0)', radius: 2 },
-            paintStyle: {
-              strokeWidth: 2,
-              stroke: '#2C65FF',
-              dashstyle: '2 4',
-              gap: 20,
-            },
-            overlays: [
-              [
-                'Arrow',
-                {
-                  width: 10,
-                  length: 10,
-                  location: 1,
-                  id: 'arrow',
-                  foldback: 1,
-                  fill: '#2C65FF',
+            el.leaderLine = new LeaderLine(sDom, tDom, {
+              color: 'var(--color-primary)',
+              dash: {
+                len: 5,
+                gap: 5,
+                animation: {
+                  duration: 500, // 与 Vue Flow 的 2s 匹配
+                  timing: 'linear',
                 },
-              ],
-            ],
-          })
-        })
+              },
+              size: 2,
+              positionByWindowResize: false,
+              hide: true,
+            })
 
-        // 缓存所有dom node
-        this.targetDomSet = targetDom
-        this.otherDomSet = otherDom
+            el.leaderLine.show('draw', { duration: 300 })
+          }
+        })
+        this.$nextTick(() => {
+          this.repositionLeaderLines()
+        })
+      }, 50)
+    },
+
+    updateAnchor(anchor, data) {
+      console.log('updateAnchor', anchor, data)
+      this.edgsLinks.forEach((el) => {
+        if (
+          el.sourceNode.connectionId === data.connectionId &&
+          el.sourceNode.table === data.name
+        ) {
+          el.leaderLine.start = anchor
+        } else if (
+          el.targetNode.connectionId === data.connectionId &&
+          el.targetNode.table === data.name
+        ) {
+          el.leaderLine.end = anchor
+        }
       })
     },
 
     handleQuit() {
       this.showParentLineage = false
-      this.jsPlumbIns.reset()
+      this.clearLeaderLines()
+    },
+
+    clearLeaderLines() {
+      this.edgsLinks?.forEach((el) => {
+        el.leaderLine?.remove()
+      })
+      this.edgsLinks = []
     },
 
     handleListenerEsc(e) {
@@ -570,16 +562,15 @@ export default {
       this.$refs.target[0]?.createAPI(connection, tableOjb)
     },
 
+    repositionLeaderLines() {
+      this.edgsLinks.forEach((el) => {
+        el.leaderLine?.position()
+      })
+    },
+
     onScroll() {
       if (this.showParentLineage) {
-        for (const el of this.otherDomSet) {
-          this.jsPlumbIns.revalidate(el)
-        }
-
-        // 后面可对api节点特殊处理
-        for (const el of this.targetDomSet) {
-          this.jsPlumbIns.revalidate(el)
-        }
+        this.repositionLeaderLines()
       }
     },
   },
@@ -625,10 +616,11 @@ export default {
       >
     </template>
     <div
+      ref="swimLaneContainer"
       class="swim-lane flex flex-column h-100 position-relative overflow-hidden"
     >
       <div
-        class="list flex flex-fill overflow-hidden bg-white border rounded-xl"
+        class="list flex flex-fill overflow-hidden bg-card border rounded-xl"
       >
         <div v-if="currentView === 'catalog'" class="px-5 pb-5 w-100">
           <Catalogue @create-single-task="hanldeCreateSingleTask" />
@@ -659,6 +651,7 @@ export default {
             @find-parent="handleFindParent"
             @on-scroll="onScroll"
             @handle-show-upgrade="handleShowUpgradeDialog"
+            @update-anchor="updateAnchor"
           />
         </template>
       </div>
@@ -714,21 +707,22 @@ export default {
   :deep(.list__title) {
     height: 48px;
     min-height: 48px;
-    background: #f3f7fa;
+    color: var(--text-dark);
+    background: var(--ldp-header);
   }
 
   :deep(.list__title__source) {
     color: var(--color-primary);
-    background: #e8f3ff;
+    background: var(--ldp-source);
   }
 
   :deep(.list__title__target) {
     color: #009a29;
-    background: #e8ffea;
+    background: var(--ldp-target);
   }
 
   :deep(.list__item) {
-    border-left: 1px solid #e1e3e9;
+    border-left: 1px solid var(--border-color);
     &:first-child {
       border-left: none;
     }
@@ -748,9 +742,11 @@ export default {
     background-color: rgba(255, 255, 255, 0.4);
   }
 
+  :deep(.tree-wrap.is-drop) {
+    box-shadow: 0px 0px 0px 2px var(--color-primary) inset;
+  }
   :deep(.ldp-tree.is-drop),
   :deep(.is-drop .ldp-tree) {
-    box-shadow: 0px 0px 0px 2px var(--color-primary) inset;
     & + .drop-mask {
       display: none !important;
     }

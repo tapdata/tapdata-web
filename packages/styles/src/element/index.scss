@@ -1,7 +1,7 @@
 // Menu
-.el-menu {
-  --el-menu-text-color: var(--el-text-color-title);
-}
+// .el-menu {
+//   --el-menu-text-color: var(--el-text-color-title);
+// }
 .el-sub-menu {
   .el-sub-menu__icon-arrow.el-sub-menu__icon-arrow {
     display: block;
@@ -194,7 +194,7 @@
 .el-popper.el-popper {
   --el-popper-border-radius: var(--el-border-radius-large) !important;
   &.is-dark {
-    --el-text-color-primary: #303133;
+    // --el-text-color-primary: #303133;
   }
 }
 
@@ -205,12 +205,23 @@
 
 // Tooltip
 .el-popper.el-popper[role='tooltip']:not(.el-popover):not(.el-select__popper) {
-  max-width: 400px;
   --el-popper-border-radius: var(--el-border-radius-base);
+  max-width: 400px;
+  word-break: break-word;
 }
 
 // Select
 .el-select.el-select {
+  &.is-w-auto {
+    width: auto !important;
+    .el-select__wrapper {
+      .el-select__placeholder {
+        position: static;
+        transform: none;
+        width: auto;
+      }
+    }
+  }
   .el-select--small {
     --el-border-radius-base: var(--el-border-radius-small);
   }
@@ -284,6 +295,11 @@
 .el-dropdown-menu__item.is-danger {
   --el-dropdown-menuItem-hover-fill: var(--el-color-danger-light-9);
   --el-dropdown-menuItem-hover-color: var(--el-color-danger);
+}
+
+.el-dropdown-menu__item.is-active {
+  background-color: var(--el-dropdown-menuItem-hover-fill);
+  color: var(--el-dropdown-menuItem-hover-color);
 }
 
 // Tree
@@ -371,6 +387,31 @@
     display: flex;
     width: 100%;
   }
+}
+.dialog-fade-enter-active,
+.dialog-fade-leave-active,
+.el-overlay-dialog {
+  animation: none !important;
+}
+
+.dialog-fade-enter-active,
+.dialog-fade-leave-active,
+.dialog-fade-enter-active .el-dialog,
+.dialog-fade-leave-active .el-dialog {
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
+}
+
+.dialog-fade-enter-from,
+.dialog-fade-leave-to {
+  opacity: 1;
+  background-color: transparent;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
+}
+
+.dialog-fade-enter-from .el-dialog,
+.dialog-fade-leave-to .el-dialog {
+  opacity: 0;
+  transform: translate3d(0, -20px, 0);
 }
 
 // Drawer
@@ -506,6 +547,25 @@
     }
   }
 }
+.el-overlay-message-box {
+  animation: none !important;
+  .el-message-box {
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
+  }
+}
+.is-message-box {
+  opacity: 1 !important;
+  transition: background 0.3s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
+}
+.is-message-box.fade-in-linear-enter-from,
+.is-message-box.fade-in-linear-leave-to {
+  background-color: transparent !important;
+}
+.is-message-box.fade-in-linear-enter-from .el-message-box,
+.is-message-box.fade-in-linear-leave-to .el-message-box {
+  opacity: 0;
+  transform: translate3d(0, -20px, 0);
+}
 // Button
 .el-button.el-button {
   .el-button--small {
@@ -535,9 +595,9 @@
 
     //--el-fill-color-light: rgba(0, 0, 0, 0.06);
     --el-border-radius-base: 6px;
-    --el-fill-color-light: rgba(31, 35, 41, 0.1);
-    --el-fill-color: rgba(31, 35, 41, 0.1);
-    --el-button-text-color: var(--el-text-color-title);
+    --el-fill-color-light: rgba(var(--N900-raw), 0.1);
+    --el-fill-color: rgba(var(--N900-raw), 0.1);
+    --el-button-text-color: var(--el-text-color-primary);
 
     &.el-button--primary {
       --el-fill-color-light: rgba(var(--primary-raw), 0.1);
@@ -567,7 +627,7 @@
   &.el-button--text:has(> i + span:empty) {
     --el-button-text-color: var(--icon-color, var(--icon-n2));
     --el-border-radius-base: 8px;
-    --el-fill-color-light: rgba(31, 35, 41, 0.1);
+    --el-fill-color-light: rgba(var(--N900-raw), 0.1);
     //--el-fill-color-light: rgba(0, 0, 0, 0.06);
     padding: 4px;
     min-width: 0;
@@ -575,9 +635,28 @@
     border: none;
     line-height: 0;
     font-size: 20px;
+    flex-shrink: 0;
 
     &:hover {
       --el-button-text-color: var(--icon-n1);
+    }
+
+    &.el-button--xs{
+      --el-border-radius-base: 8px;
+      font-size: 12px;
+    }
+
+    &.el-button--small{
+      --el-border-radius-base: 8px;
+      font-size: 16px;
+    }
+
+    &.el-button--default{
+      font-size: 18px;
+    }
+
+    &.el-button--large {
+      font-size: 24px;
     }
 
     &.el-button--text,
@@ -698,6 +777,16 @@
     --el-tag-bg-color: rgba(129, 139, 152, 0.12);
     --el-tag-border-color: transparent;
   }
+
+  &.is-wrap {
+    height: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    line-height: 16px;
+    padding-block: 4px;
+    padding-inline: 8px;
+    border: 0;
+  }
 }
 
 // InputNumber
@@ -718,8 +807,16 @@
 
 //.el-picker-panel
 .el-picker-panel.el-picker-panel {
-  overflow: hidden;
+  // overflow: hidden;
   border-radius: var(--el-popper-border-radius);
+  .el-picker-panel__footer {
+    border-bottom-left-radius: var(--el-popper-border-radius);
+    border-bottom-right-radius: var(--el-popper-border-radius);
+  }
+
+  .el-time-panel {
+    border-radius: var(--el-popper-border-radius);
+  }
 }
 
 // Input
@@ -733,7 +830,7 @@
   }
 
   .el-input__count-inner {
-    --el-fill-color-blank: #eff0f1;
+    --el-fill-color-blank: var(--N200);
     color: var(--el-text-color-caption);
     border-radius: var(--el-border-radius-small);
     line-height: 20px !important;
@@ -743,7 +840,8 @@
 
 // Textarea
 .el-textarea.el-textarea .el-input__count {
-  --el-fill-color-blank: #eff0f1;
+  --el-fill-color-blank: var(--N200);
+  bottom: 6px;
   color: var(--el-text-color-caption);
   border-radius: var(--el-border-radius-small);
   line-height: 20px !important;
@@ -787,8 +885,8 @@
   --el-segmented-padding: 3px;
   --el-segmented-color: var(--el-text-color-secondary);
   --el-segmented-item-selected-color: var(--el-text-color-primary);
-  --el-segmented-item-selected-bg-color: #fff;
-  --el-segmented-item-selected-disabled-bg-color: #fff;
+  --el-segmented-item-selected-bg-color: var(--el-bg-color);
+  --el-segmented-item-selected-disabled-bg-color: var(--el-bg-color);
   --el-segmented-item-disabled-color: var(--el-text-color-disabled);
 
   .el-segmented__item-selected {
@@ -810,4 +908,9 @@
 // Notification
 .el-notification.el-notification {
   --el-notification-radius: var(--el-border-radius-large);
+}
+
+// Result
+.el-result__icon svg {
+  vertical-align: top;
 }

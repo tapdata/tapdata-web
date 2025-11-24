@@ -1,5 +1,5 @@
 <script>
-import { metadataInstancesApi } from '@tap/api'
+import { getNodeSchema } from '@tap/api/src/core/metadata-instances'
 import { cloneDeep, isEmpty } from 'lodash-es'
 
 export default {
@@ -13,6 +13,9 @@ export default {
     refresh: String,
   },
 
+  // 关键：需要禁用onChange事件，否则会触发表单的onChange事件
+  emits: ['change'],
+
   data() {
     return {
       result: {},
@@ -22,6 +25,15 @@ export default {
       },
       options: [],
     }
+  },
+
+  computed: {
+    newAttrs() {
+      return {
+        ...this.$attrs,
+        onChange: undefined,
+      }
+    },
   },
 
   watch: {
@@ -52,7 +64,7 @@ export default {
     },
 
     async loadOptions() {
-      const data = await metadataInstancesApi.nodeSchema(this.nodeId)
+      const data = await getNodeSchema(this.nodeId)
       this.options = data[0].fields
         .map((item) => ({
           label: item.field_name,
@@ -72,7 +84,6 @@ export default {
         result[this.tableName] = cloneDeep(this.defaultFields)
       }
 
-      this.$emit('update:value', result)
       this.$emit('change', result)
     },
 
@@ -86,23 +97,21 @@ export default {
 </script>
 
 <template>
-  <div>
-    <ElSelect
-      v-bind="$attrs"
-      v-model="selected.fields"
-      multiple
-      filterable
-      allow-create
-      default-first-option
-      class="fields-selector--input"
-      @change="handleChange"
-    >
-      <ElOption
-        v-for="opt in options"
-        :key="opt.value"
-        :label="opt.label"
-        :value="opt.value"
-      />
-    </ElSelect>
-  </div>
+  <ElSelect
+    v-bind="newAttrs"
+    v-model="selected.fields"
+    multiple
+    filterable
+    allow-create
+    default-first-option
+    class="fields-selector--input"
+    @change="handleChange"
+  >
+    <ElOption
+      v-for="opt in options"
+      :key="opt.value"
+      :label="opt.label"
+      :value="opt.value"
+    />
+  </ElSelect>
 </template>

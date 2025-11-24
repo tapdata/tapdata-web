@@ -1,97 +1,48 @@
 <script setup lang="ts">
 import { EditPen, InfoFilled } from '@element-plus/icons-vue'
+import { fetchConnections } from '@tap/api/src/core/connections'
+import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
+import { fetchEncryptionList } from '@tap/api/src/core/encryption'
+import { fetchMetadataInstances } from '@tap/api/src/core/metadata-instances'
 import {
   createApiModule,
-  fetchApiServerToken,
-  fetchConnections,
-  fetchDatabaseTypes,
-  metadataInstancesApi,
-  roleApi,
   updateApiModule,
   updateApiModulePermissions,
   updateApiModuleTags,
-  workerApi,
-} from '@tap/api'
+} from '@tap/api/src/core/modules'
+import { fetchRoles } from '@tap/api/src/core/roles'
 import SortConditionDisplay from '@tap/component/src/api-server/SortConditionDisplay.vue'
 import WhereConditionDisplay from '@tap/component/src/api-server/WhereConditionDisplay.vue'
 import Highlight from '@tap/component/src/base/Highlight'
-import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import Drawer from '@tap/component/src/Drawer.vue'
 import { EditOutlined } from '@tap/component/src/icon'
 import { Modal } from '@tap/component/src/modal'
 import InfiniteSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
-
 import { useI18n } from '@tap/i18n'
-import { uid } from '@tap/shared'
-import axios from 'axios'
-import { cloneDeep, isEqual, merge } from 'lodash-es'
+import { cloneDeep, isEmpty, isEqual, merge } from 'lodash-es'
+
 import {
   computed,
   inject,
   nextTick,
   onMounted,
+  provide,
   ref,
+  useTemplateRef,
   watch,
   type Component,
+  type Ref,
 } from 'vue'
 import { DatabaseIcon } from '../../components/DatabaseIcon'
+import MqlHelpDialog from '../../components/MqlHelpDialog.vue'
 import ListSelect from '../api-application/ListSelect.vue'
+import Debug from './Debug.vue'
+import FieldsTree from './FieldsTree.vue'
+import FieldsTreePreview from './FieldsTreePreview.vue'
 import MqlEditor from './MqlEditor.vue'
-import getTemplate from './template'
+import { getTableOptions, useDrawer } from './shared'
 
-interface ListTag {
-  id: string
-  value: string
-}
-
-interface FormDataPath {
-  name?: string
-  method?: string
-  result?: string
-  type?: string
-  params?: Array<{
-    name: string
-    type: string
-    defaultvalue?: string
-    description: string
-    required?: boolean
-  }>
-  where?: any[]
-  sort?: any[]
-  fields?: Field[]
-  path?: string
-  acl?: string[]
-}
-
-interface FormData {
-  id?: string
-  name?: string
-  description?: string
-  apiType?: string
-  connectionType?: string
-  connectionName?: string
-  connectionId?: string
-  tableName?: string
-  basePath?: string
-  apiVersion?: string
-  prefix?: string
-  pathAccessMethod?: string
-  status?: string
-  paths?: FormDataPath[]
-  listtags?: ListTag[]
-  fields?: Field[]
-  connection?: string
-  source?: {
-    database_type: string
-    name: string
-  }
-  datasource?: string
-  tablename?: string
-  readConcern?: string
-  readPreference?: string
-  readPreferenceTag?: string
-  operationType?: string
-}
+import type { InputInstance, SelectInstance, TableInstance } from 'element-plus'
 
 // Types
 interface Field {
@@ -102,26 +53,6 @@ interface Field {
 }
 
 const { t } = useI18n()
-
-// Constants
-const isHa = import.meta.env.MODE === 'ha'
-const typeOptions = ['number', 'string', 'boolean', 'date', 'datetime', 'time']
-const operatorOptions = ['>', '==', '<', '>=', '<=', '!=', 'like']
-const conditionOptions = ['and', 'or']
-const apiTypeMap = {
-  defaultApi: t('packages_business_data_server_drawer_morenchaxun'),
-  customerQuery: t('packages_business_data_server_drawer_zidingyichaxun'),
-}
-const apiTypeOptions = [
-  {
-    label: t('packages_business_data_server_drawer_morenchaxun'),
-    value: 'defaultApi',
-  },
-  {
-    label: t('packages_business_data_server_drawer_zidingyichaxun'),
-    value: 'customerQuery',
-  },
-]
 
 interface Props {
   host?: string
@@ -137,204 +68,65 @@ const props = withDefaults(defineProps<Props>(), {
   inDialog: false,
   disableApp: false,
   readonly: false,
+  isEdit: Boolean,
 })
 
-const emit = defineEmits(['visible', 'update:loading', 'save', 'update'])
+const emit = defineEmits([
+  'visible',
+  'update:loading',
+  'save',
+  'update',
+  'update:selectedFields',
+])
 
-const apiApplication = inject('apiApplication', null)
+const apiApplication = inject<Ref<any>>('apiApplication', ref(null))
 
-const getDefaultParams = (apiType: string) => {
-  const params = [
-    {
-      name: 'page',
-      type: 'number',
-      defaultvalue: '1',
-      description: t('packages_business_data_server_drawer_fenyebianhao'),
-      required: true,
-    },
-    {
-      name: 'limit',
-      type: 'number',
-      defaultvalue: '20',
-      description: t('packages_business_data_server_drawer_meigefenyefan'),
-      required: true,
-    },
-  ]
-  if (apiType === 'defaultApi') {
-    params.push({
-      name: 'filter',
-      type: 'object',
-      defaultvalue: '',
-      description: t('public_data_filter_condition'),
-      required: false,
-    })
-  }
-  return params
-}
-
-const getInitData = () => {
-  return {
-    id: undefined,
-    apiType: 'defaultApi',
-    pathAccessMethod: 'customize',
-    apiVersion: 'v1',
-    prefix: '',
-    basePath: uid(11, 'a'),
-    acl: ['admin'],
-    appValue: '',
-    appLabel: '',
-    limit: 0,
-    pathSetting: [],
-    connectionType: '',
-    connectionId: '',
-    tableName: '',
-
-    // paths
-    fields: [],
-    fullCustomQuery: false,
-    where: [],
-    sort: [],
-    params: getDefaultParams('defaultApi'),
-    customWhere: '',
-  }
-}
+const {
+  rules,
+  isHa,
+  typeOptions,
+  operatorOptions,
+  conditionOptions,
+  apiTypeOptions,
+  methodColorMap,
+  AllowedTypes,
+  getDefaultParams,
+  getInitData,
+  genFormData,
+  formatHander,
+  getMethodClass,
+  changeable,
+} = useDrawer(t, apiApplication)
 
 // Refs
 const form = ref<any>(getInitData())
+const encryptions = ref<any[]>([])
 
 const visible = ref(false)
 const loading = ref(false)
 const data = ref<any>({})
-let initialFormData = {}
+let initialFormData: Record<string, any> = {}
 const tab = ref('form')
 const isEdit = ref(false)
 const debugParams = ref<any>(null)
-const debugMethod = ref('GET')
-const debugResult = ref('')
-const templateType = ref('java')
-const token = ref('')
 const roles = ref([])
-const workerStatus = ref('')
-const intervalId = ref(0)
-const allFields = ref([])
+const allFields = ref<any[]>([])
 const tempFields = ref<Field[]>([])
 const fieldLoading = ref(false)
 const databaseTypes = ref<any[] | null>(null)
-const templates = ref<Record<string, string>>({})
+
 const mqlEditor = ref<any>(null)
 const containerRef = ref<HTMLElement | null>(null)
-const paramsTableRef = ref<InstanceType<typeof ElTable>>()
-const parameterSelectRef = ref<InstanceType<typeof ElSelect>[]>([])
+const paramsTableRef = ref<TableInstance>()
+const parameterSelectRef = ref<SelectInstance[]>([])
+const fieldsTreeRef =
+  useTemplateRef<InstanceType<typeof FieldsTree>>('fieldsTreeRef')
+const selectedFieldSize = ref(0)
+const helpVisible = ref(false)
 
 // Template refs
 const form_ref = ref()
-const fieldTable = ref()
 const tabs = ref()
-
-// Regex validation patterns
-const PARAM_PATTERN = /^[a-z$_\u4E00-\u9FA5][\w$\u4E00-\u9FA5]*$/i
-const PATH_PATTERN = /^[\w$-]+$/
-
-// Validation rules
-const validateParams = (rule: any, value: string, callback: Function) => {
-  if (PARAM_PATTERN.test(value)) {
-    callback()
-  } else {
-    callback(t('packages_business_data_server_drawer_geshicuowu'))
-  }
-}
-
-const validateBasePath = (rule: any, value: string, callback: Function) => {
-  if (!value || PATH_PATTERN.test(value)) {
-    callback()
-  } else {
-    callback(t('packages_business_data_server_drawer_validate'))
-  }
-}
-
-const validatePrefix = (rule: any, value: string, callback: Function) => {
-  if (PATH_PATTERN.test(value) || value === '') {
-    callback()
-  } else {
-    callback(t('packages_business_data_server_drawer_validate'))
-  }
-}
-
-const rules = {
-  name: [
-    {
-      required: true,
-      message: t('packages_business_data_server_drawer_qingshurufuwu'),
-      trigger: 'blur',
-    },
-  ],
-  acl: [
-    {
-      required: true,
-      message: t('packages_business_data_server_drawer_selectPermissions'),
-      trigger: 'change',
-    },
-  ],
-  connectionType: [
-    {
-      required: true,
-      message: t('packages_business_data_server_drawer_qingxuanzelianjie'),
-      trigger: 'change',
-    },
-  ],
-  connectionId: [
-    {
-      required: true,
-      message: t('public_input_placeholder') + t('public_connection'),
-      trigger: 'change',
-    },
-  ],
-  tableName: [
-    {
-      required: true,
-      message: t('packages_business_data_server_drawer_qingxuanzeduixiang'),
-      trigger: 'change',
-    },
-  ],
-  param: [
-    {
-      required: true,
-      validator: validateParams,
-      trigger: ['blur', 'change'],
-    },
-  ],
-  basePath: [
-    {
-      required: true,
-      message:
-        t('public_input_placeholder') +
-        t('packages_business_data_server_drawer_base_path'),
-      trigger: ['blur', 'change'],
-    },
-    { validator: validateBasePath, trigger: ['blur', 'change'] },
-  ],
-  prefix: [
-    {
-      required: false,
-      validator: validatePrefix,
-      trigger: ['blur', 'change'],
-    },
-  ],
-  apiVersion: [
-    {
-      required: false,
-      validator: validateBasePath,
-      trigger: ['blur', 'change'],
-    },
-  ],
-  appValue: [
-    {
-      required: true,
-      message: t('packages_business_data_server_drawer_qingxuanzesuoshu'),
-      trigger: ['blur'],
-    },
-  ],
-}
 
 // Computed properties
 const parameterOptions = computed(() => {
@@ -359,13 +151,20 @@ const customizePath = computed(() => {
   return `/api/${arr.join('/')}`
 })
 
-const urlList = computed(() => {
+const urlList = computed<
+  {
+    method: keyof typeof methodColorMap
+    url: string
+    last: string
+    canEdit: boolean
+    type: string
+  }[]
+>(() => {
   const baseUrl = props.host + customizePath.value
   const setting = form.value.pathSetting ? form.value.pathSetting : []
-  const settingMapping = {}
-  //@ts-ignore
-  setting.forEach((item) => {
-    //@ts-ignore
+  const settingMapping: Record<string, any> = {}
+
+  setting.forEach((item: any) => {
     settingMapping[item.type] = {
       method: item.method,
       url: baseUrl + (!item.path?.startsWith('/') ? '/' : ''),
@@ -374,8 +173,8 @@ const urlList = computed(() => {
       type: item.type,
     }
   })
+
   return [
-    //@ts-ignore
     settingMapping.DEFAULT_POST || {
       method: 'POST',
       url: `${baseUrl}/`,
@@ -383,7 +182,6 @@ const urlList = computed(() => {
       canEdit: true,
       type: 'DEFAULT_POST',
     },
-    //@ts-ignore
     settingMapping.DEFAULT_GET || {
       method: 'GET',
       url: String(baseUrl),
@@ -400,129 +198,35 @@ const urlList = computed(() => {
   ]
 })
 
-const urlsMap = computed(() => {
-  return urlList.value.reduce((acc: Record<string, string>, item) => {
-    acc[item.method] = item.url + (item.last || '')
+const encryptionsMap = computed(() => {
+  return encryptions.value!.reduce((acc: Record<string, string>, item) => {
+    acc[item.id!] = item.name
     return acc
   }, {})
 })
 
-const genFormData = (formData: any = {}): Record<string, any> => {
-  const apiType =
-    formData.apiType === 'customerApi'
-      ? 'customerQuery'
-      : formData.apiType || 'defaultApi'
-  const pathConfig = formData?.paths?.[0] || {}
-  const params =
-    pathConfig.params?.filter((t: any) => t.name !== 'sort') ||
-    getDefaultParams(formData.apiType)
-
-  const {
-    id,
-    name,
-    status = 'generating',
-    description,
-    connectionType,
-    connectionName,
-    connectionId,
-    tableName,
-    basePath,
-    apiVersion,
-    prefix,
-    pathAccessMethod = 'customize',
-    listtags,
-    limit = 0,
-    pathSetting,
-  } = formData
-
-  const {
-    fields,
-    method = 'GET',
-    fullCustomQuery = false,
-    customWhere = '',
-    where = [],
-    sort = [],
-    path = '',
-    acl = ['admin'],
-  } = pathConfig
-
-  const appData = listtags?.[0] || {}
-  const appValue =
-    apiApplication?.value?.id || formData.appValue || appData.id || ''
-  const appLabel =
-    apiApplication?.value?.value || formData.appLabel || appData.value || ''
-
-  return {
-    id,
-    name,
-    apiType,
-    status,
-    description,
-    connectionType,
-    connectionName,
-    connectionId,
-    tableName,
-    basePath,
-    apiVersion,
-    prefix,
-    pathAccessMethod,
-
-    appValue,
-    appLabel,
-    limit,
-    pathSetting,
-
-    // paths
-    method,
-    fields,
-    fullCustomQuery,
-    customWhere,
-    where,
-    sort,
-    path,
-    acl,
-    params,
-  }
-}
-
 const formatData = (formData: any = {}) => {
   form.value = genFormData(formData)
-
-  if (form.value.status === 'active') {
-    getAPIServerToken((token: string) => {
-      templates.value = getTemplate(props.host + form.value.path, token)
-    })
-  }
 }
 
-const fieldTableData = computed(() => {
-  return isEdit.value ? allFields.value : form.value.fields
-})
-
-const AllowedTypes = [
-  'Doris',
-  'MongoDB',
-  'Mysql',
-  'Oracle',
-  'PostgreSQL',
-  'SQL Server',
-  'Tidb',
-]
-
 const getDatabaseTypes = async () => {
-  const data = await fetchDatabaseTypes().catch(() => {
+  const data = await fetchDatabaseTypes({
+    where: {
+      pdkId: {
+        in: AllowedTypes,
+      },
+    },
+  }).catch(() => {
     return []
   })
 
   databaseTypes.value =
-    data
-      .filter((it: any) => AllowedTypes.includes(it.name))
-      .map((it: any) => {
-        return {
-          name: it.name,
-          pdkHash: it.pdkHash,
-        }
-      }) || []
+    data.map((it: any) => {
+      return {
+        name: it.name,
+        pdkHash: it.pdkHash,
+      }
+    }) || []
 }
 
 const getConnectionOptions = async (filter: any) => {
@@ -589,51 +293,8 @@ const handleChangeConnection = (connection: any) => {
   form_ref.value?.clearValidate('tableName')
 }
 
-const getTableOptions = async (filter: any) => {
-  const { connectionId } = filter
-  if (!connectionId) {
-    return { items: [], total: 0 }
-  }
-
-  const newFilter = merge(filter, {
-    fields: {
-      original_name: true,
-    },
-    order: ['original_name ASC'],
-    where: {
-      meta_type: {
-        in: ['collection', 'table', 'view'], //,
-      },
-      is_deleted: false,
-      sourceType: 'SOURCE',
-      'source.id': connectionId,
-    },
-  })
-
-  if (newFilter.where?.name) {
-    newFilter.where.original_name = filter.where?.name
-    delete newFilter.where.value
-  } else {
-    newFilter.where.original_name = {
-      // regexp: '^[^\\s]+$'
-      neq: '',
-    }
-  }
-
-  const data = await metadataInstancesApi.get({
-    filter: JSON.stringify(newFilter),
-  })
-
-  return {
-    items: data.items.map((it: any) => ({
-      name: it.original_name,
-      ...it,
-    })),
-    total: data.total,
-  }
-}
-
 const getFields = async () => {
+  selectedFieldSize.value = 0
   fieldLoading.value = true
   const filter = {
     where: {
@@ -645,24 +306,13 @@ const getFields = async () => {
   }
 
   try {
-    const data = await metadataInstancesApi.get({
-      filter: JSON.stringify(filter),
-    })
+    const data = await fetchMetadataInstances(filter)
 
-    allFields.value =
-      data.items?.[0]?.fields?.map((it: any) => ({
-        ...it,
-        id: it.id,
-        field_name: it.field_name,
-        field_alias: it.field_alias,
-        originalDataType: it.data_type,
-        comment: it.comment,
-      })) || []
+    allFields.value = data.items?.[0]?.fields || []
 
-    if (!form.value.id) {
-      form.value.fields = cloneDeep(allFields.value)
+    if (!form.value.id || !form.value.fields?.length) {
       nextTick(() => {
-        fieldTable.value?.toggleAllSelection()
+        fieldsTreeRef.value?.selectAll()
       })
     }
   } finally {
@@ -670,49 +320,54 @@ const getFields = async () => {
   }
 }
 
-const getAPIServerToken = async (callback?: (token: string) => void) => {
-  token.value = await fetchApiServerToken()
-  callback?.(token.value)
+const getEncryptions = async () => {
+  const { items } = await fetchEncryptionList({
+    limit: 10000,
+  })
+  encryptions.value = items
 }
 
 // Methods
-const open = (formData?: any) => {
-  const originalFormData = formData ? cloneDeep(formData) : {}
-
+const open = (formData?: any, copy?: boolean) => {
   tab.value = 'form'
   visible.value = true
   isEdit.value = false
   debugParams.value = null
-  debugMethod.value = 'GET'
-  debugResult.value = ''
   allFields.value = []
-  workerStatus.value = ''
+  selectedFieldSize.value = 0
 
-  if (!originalFormData.id) {
+  if (isEmpty(formData)) {
     form.value = getInitData()
     form_ref.value?.resetFields()
 
     edit()
   } else {
-    formatData(originalFormData)
+    formatData(cloneDeep(formData))
 
-    const { connectionId, tableName } = originalFormData
+    const { connectionId, tableName } = formData
 
-    if (connectionId && tableName) {
+    if (copy) {
+      allFields.value = formData?.fields || []
+    } else if (connectionId && tableName) {
       getFields()
+    }
+
+    if (!formData.id) {
+      edit(copy)
     }
   }
 
   getDatabaseTypes()
+  getEncryptions()
 
   nextTick(() => {
-    // form_ref.value?.clearValidate()
     containerRef.value?.parentElement?.scrollTo({ top: 0 })
   })
 }
 
 const save = async (type?: boolean) => {
   const valid = await form_ref.value?.validate()
+
   if (valid) {
     const {
       id,
@@ -750,15 +405,31 @@ const save = async (type?: boolean) => {
       }
     }
 
-    const params = form.value?.params?.filter((t: any) => t.name)
+    const params = form.value?.params
+      ?.filter((t: any) => t.name)
+      .map((t: any) => {
+        return {
+          name: t.name,
+          type: Array.isArray(t.type) ? t.type.join(': ') : t.type,
+          defaultvalue: t.defaultvalue,
+          description: t.description,
+          required: t.required,
+        }
+      })
     const sort = form.value?.sort?.filter((t: any) => t.fieldName)
     const where = form.value?.where?.filter(
       (t: any) => t.fieldName && t.parameter,
     )
-    const fields = form.value.fields.filter((f: any) => !!f)
+    const fields = fieldsTreeRef.value?.getCheckedFields(true)
 
     if (params.some((it: any) => !it.name.trim())) {
       ElMessage.error(t('packages_business_data_server_drawer_qingshurucanshu'))
+      return
+    }
+
+    if (!fields?.length) {
+      ElMessage.error(t('packages_business_please_select_field'))
+      fieldsTreeRef.value?.$el.scrollIntoView({ behavior: 'smooth' })
       return
     }
 
@@ -826,6 +497,7 @@ const save = async (type?: boolean) => {
         const fieldList = await getAllFields()
 
         const map = fields.reduce((acc: any, field: any) => {
+          field.field_alias = field.field_alias?.trim() || ''
           acc[field.id] = field
           return acc
         }, {})
@@ -833,7 +505,7 @@ const save = async (type?: boolean) => {
         formData.fields = fieldList.map((f: any) => {
           return {
             ...f,
-            field_alias: map[f.id]?.field_alias || '',
+            field_alias: map[f.id]?.field_alias,
           }
         })
       }
@@ -857,38 +529,49 @@ const save = async (type?: boolean) => {
   }
 }
 
-const edit = () => {
+const edit = (copy?: boolean) => {
   form.value.status = 'pending'
+
+  if (form.value.id || copy) {
+    const checkedFields = form.value.fields || []
+    const fieldsMap = checkedFields.reduce((acc: any, it: any) => {
+      if (it.field_alias || it.textEncryptionRuleIds?.length) {
+        acc[it.field_name] = {
+          field_alias: it.field_alias,
+          textEncryptionRuleIds: it.textEncryptionRuleIds,
+        }
+      }
+      return acc
+    }, {})
+    allFields.value = allFields.value.map((f: any) => {
+      if (fieldsMap[f.field_name]) {
+        f.field_alias = fieldsMap[f.field_name].field_alias
+        f.textEncryptionRuleIds = fieldsMap[f.field_name].textEncryptionRuleIds
+      } else {
+        f.field_alias = ''
+      }
+      return f
+    })
+
+    setTimeout(() => {
+      nextTick(() => {
+        fieldsTreeRef.value?.setCheckedFields(checkedFields)
+      })
+    }, 0)
+  }
+
   isEdit.value = true
   initialFormData = cloneDeep(form.value)
-
-  nextTick(() => {
-    form.value.fields?.forEach((f: any) => {
-      const field = allFields.value.find((it: any) => it.id === f.id) as any
-      if (field) {
-        field.field_alias = f.field_alias || ''
-        fieldTable.value?.toggleRowSelection(field)
-      } else {
-        console.log('field not found', f.field_name, f)
-      }
-    })
-  })
 }
 
 const handleCancel = () => {
   isEdit.value = false
   form.value = initialFormData
+  getFields()
 }
 
-// Watch effects
-watch(visible, (v) => {
-  if (!v) {
-    intervalId.value && clearTimeout(intervalId.value)
-  }
-})
-
 // Event handlers
-const tabChanged = (tab: string) => {
+const tabChanged = (tab: string | number) => {
   if (tab === 'debug') {
     isEdit.value = false
     const newDebugParams: Record<string, any> = {}
@@ -896,9 +579,8 @@ const tabChanged = (tab: string) => {
       newDebugParams[p.name] = p.defaultvalue || ''
     })
     debugParams.value = newDebugParams
-    getWorkers()
   } else {
-    clearTimeout(intervalId.value)
+    debugParams.value = null
   }
 }
 
@@ -911,10 +593,6 @@ const handleChangeTable = () => {
   allFields.value = []
   getFields()
   form_ref.value?.clearValidate('tableName')
-}
-
-const fieldsChanged = (val: any[]) => {
-  form.value.fields = val
 }
 
 const addItem = (key: 'params' | 'where' | 'sort') => {
@@ -946,7 +624,7 @@ const removeItem = (key: 'params' | 'where' | 'sort', index: number) => {
     'sort' === key &&
     removed.fieldName &&
     removed &&
-    !tempFields.value.find((f) => f.field_name === removed.fieldName)
+    !tempFields.value.some((f) => f.field_name === removed.fieldName)
   ) {
     tempFields.value.splice(0, 0, {
       field_name: removed.fieldName,
@@ -973,135 +651,12 @@ const handleAddParameter = (index: number) => {
   })
 }
 
-const debugDisabled = computed(() => {
-  return workerStatus.value !== 'running'
-})
-
-const debugData = async () => {
-  const http = axios.create()
-  let params = debugParams.value
-  const method = debugMethod.value
-  if (method === 'TOKEN') {
-    debugResult.value = JSON.stringify(
-      {
-        access_token: token.value,
-        expires_in: 1209599,
-        scope: 'admin',
-        token_type: 'Bearer',
-      },
-      null,
-      2,
-    )
-  } else {
-    const url = `${urlsMap.value[debugMethod.value]}?access_token=${token.value}`
-    if (params) {
-      const newParams: Record<string, any> = {}
-      Object.keys(params).forEach((key) => {
-        const value = params[key]
-        if (value) {
-          newParams[key] = value
-        }
-      })
-      params = method === 'GET' ? { params: newParams } : newParams
-    }
-    try {
-      const result = await http[method.toLowerCase()](url, params)
-      debugResult.value = JSON.stringify(result?.data, null, 2)
-    } catch (error: any) {
-      const result = error?.response?.data
-      debugResult.value = result ? JSON.stringify(result, null, 2) : ''
-    }
-  }
-}
-
-const getWorkers = () => {
-  const where = {
-    worker_type: 'api-server',
-    ping_time: {
-      gte: '$serverDate',
-      gte_offset: 30000,
-    },
-  }
-  const filter = {
-    order: 'ping_time DESC',
-    limit: 1,
-    fields: {
-      worker_status: true,
-    },
-    where,
-  }
-  workerApi
-    .get({
-      filter: JSON.stringify(filter),
-    })
-    .then((data) => {
-      if (data?.items?.length) {
-        const record = data.items[0] || {}
-        const worker = record.workerStatus || record.worker_status || {}
-        workerStatus.value = worker.status
-      } else {
-        workerStatus.value = 'stop'
-      }
-    })
-    .finally(() => {
-      intervalId.value = setTimeout(getWorkers, 2000)
-    })
-}
-
 // Expose key methods
 defineExpose({
   open,
   save,
   edit,
 })
-
-// Add event handlers
-const handleChangePermissionsAndSave = async () => {
-  if (isEdit.value) return
-  const valid = await form_ref.value?.validate()
-  if (!valid) return
-
-  const {
-    id,
-    apiType,
-    params,
-    where,
-    sort,
-    fields,
-    method,
-    path,
-    acl,
-    appLabel,
-    appValue,
-  } = form.value
-
-  const formData = {
-    id,
-    listtags: [
-      {
-        id: appValue,
-        value: appLabel,
-      },
-    ],
-    paths: [
-      {
-        name: apiType === 'customerQuery' ? 'customerQuery' : 'findPage',
-        result: 'Page<Document>',
-        type: apiType === 'customerQuery' ? 'customerQuery' : 'preset',
-        acl,
-        method,
-        params,
-        where,
-        sort,
-        fields,
-        path,
-      },
-    ],
-  }
-
-  await updateApiModule(formData)
-  ElMessage.success(t('public_message_operation_success'))
-}
 
 const handleUpdateRole = async () => {
   if (!form.value.id) return
@@ -1132,7 +687,6 @@ const handleUpdateApp = async () => {
   ElMessage.success(t('public_message_operation_success'))
 }
 
-// Add after the watch effects
 onMounted(() => {
   getRoles()
 })
@@ -1142,9 +696,7 @@ const getRoles = async () => {
     limit: 500,
     skip: 0,
   }
-  const data = await roleApi.get({
-    filter: JSON.stringify(filter),
-  })
+  const data = await fetchRoles(filter)
   roles.value = data?.items || []
 }
 
@@ -1157,9 +709,7 @@ const getAllFields = async () => {
       sourceType: 'SOURCE',
     },
   }
-  const data = await metadataInstancesApi.get({
-    filter: JSON.stringify(filter),
-  })
+  const data = await fetchMetadataInstances(filter)
   const allFieldsOld = allFields.value
   return (
     data?.items?.[0]?.fields?.map((it: any) => {
@@ -1178,11 +728,15 @@ const getAllFields = async () => {
 
 const handleBeforeClose = async (done: () => void) => {
   if (isEdit.value) {
-    const hasChanges = Object.keys(form.value).some((key) => {
+    const formValue = {
+      ...form.value,
+      fields: fieldsTreeRef.value?.getCheckedFields(true),
+    }
+    const hasChanges = Object.keys(formValue).some((key) => {
       if (['status', 'path'].includes(key)) {
         return false
       }
-      return !isEqual(initialFormData[key], form.value[key])
+      return !isEqual(initialFormData[key], formValue[key])
     })
 
     if (hasChanges) {
@@ -1191,6 +745,7 @@ const handleBeforeClose = async (done: () => void) => {
       isConfirm && done()
     } else {
       done()
+      isEdit.value = false
     }
   } else {
     done()
@@ -1200,13 +755,13 @@ const handleBeforeClose = async (done: () => void) => {
 /**自定义URL后缀*/
 const editingIndex = ref(-1)
 const editingValue = ref('')
-const editInput = ref<InstanceType<typeof ElInput>[]>([])
+const editInput = ref<InputInstance[]>([])
 const startEdit = (index: number, currentValue: string) => {
-  if (!urlList.value[index].canEdit || !isEdit.value) return
+  if (!urlList.value[index]?.canEdit || !isEdit.value) return
   if (editingIndex.value === index) return
   editingIndex.value = index
   editingValue.value = currentValue || ''
-  const currentUrl = urlList.value[index].url
+  const currentUrl = urlList.value[index]?.url
   if (!currentUrl.endsWith('/')) {
     urlList.value[index].url = `${currentUrl}/`
   }
@@ -1220,10 +775,10 @@ const saveEdit = (index: number) => {
   if (editingIndex.value === index) {
     const trimmedValue = editingValue.value.trim()
     if (!trimmedValue) {
-      urlList.value[index].url = urlList.value[index].url.replace(/\/$/, '')
-      urlList.value[index].last = ''
+      urlList.value[index]!.url = urlList.value[index]!.url.replace(/\/$/, '')
+      urlList.value[index]!.last = ''
     } else {
-      urlList.value[index].last = trimmedValue.replace(/^\//, '')
+      urlList.value[index]!.last = trimmedValue.replace(/^\//, '')
     }
     editingIndex.value = -1
     editingValue.value = ''
@@ -1240,7 +795,7 @@ watch(
     tempFields.value = newVal.filter(
       (field) =>
         !form.value?.sort?.some(
-          (sortField) => sortField.fieldName === field.field_name,
+          (sortField: any) => sortField.fieldName === field.field_name,
         ),
     )
   },
@@ -1252,11 +807,63 @@ function onFieldSelected(field: Field) {
     .filter(
       (f) =>
         !form.value?.sort?.some(
-          (sortField) => sortField.fieldName === f.field_name,
+          (sortField: any) => sortField.fieldName === f.field_name,
         ),
     )
     .filter((f) => f.field_name !== field.field_name)
 }
+
+function openHelp() {
+  helpVisible.value = true
+}
+
+function handleAliasConversion(command: keyof typeof formatHander) {
+  const format = formatHander[command]
+  const selectedFields = fieldsTreeRef.value?.getCheckedFields()
+
+  if (!selectedFields?.length) return
+
+  selectedFields.forEach((field: any) => {
+    const alias = format(field.name)
+
+    field.field_alias = alias !== field.name ? alias : ''
+    field.label = alias
+  })
+}
+
+function handleClearAlias() {
+  const selectedFields = fieldsTreeRef.value?.getCheckedFields()
+
+  if (!selectedFields?.length) return
+
+  selectedFields.forEach((field: any) => {
+    field.field_alias = ''
+    field.label = field.name
+  })
+}
+
+function onFieldsTreeCheck(keys: string[]) {
+  selectedFieldSize.value = keys.length
+}
+
+function editable(item: any, fromVal: any) {
+  if (fromVal.apiType === 'customerQuery') {
+    return (
+      isEdit.value &&
+      (!item.name || !['page', 'limit', 'fields'].includes(item.name))
+    )
+  } else if (fromVal.apiType === 'defaultApi') {
+    return (
+      isEdit.value &&
+      (!item.name || !['page', 'limit', 'filter'].includes(item.name))
+    )
+  }
+  return false
+}
+
+provide('encryptionsMap', encryptionsMap)
+provide('encryptions', encryptions)
+provide('form', form)
 </script>
 
 <template>
@@ -1265,7 +872,7 @@ function onFieldSelected(field: Field) {
     v-model="visible"
     v-loading="loading"
     :title="$t('packages_business_data_server_drawer_fuwuxiangqing')"
-    body-class="pt-0"
+    :body-class="readonly ? '' : 'pt-0'"
     class="overflow-hidden"
     header-class="pb-0"
     width="850px"
@@ -1283,6 +890,7 @@ function onFieldSelected(field: Field) {
           :class="{
             invisible: !(tab === 'form' && form.status !== 'active' && !isEdit),
           }"
+          :disabled="fieldLoading"
           @click="edit"
         >
           <el-icon class="mr-1">
@@ -1297,7 +905,7 @@ function onFieldSelected(field: Field) {
       <!-- 顶部 标题 Tab -->
       <div
         v-if="!inDialog"
-        class="flex position-sticky top-0 bg-white z-10"
+        class="flex position-sticky top-0 bg-white dark:bg-transparent dark:backdrop-blur-md z-10"
         style="line-height: 48px"
       >
         <ElTabs
@@ -1331,7 +939,7 @@ function onFieldSelected(field: Field) {
       <ElForm
         ref="form_ref"
         hide-required-asterisk
-        class="data-server__form overflow-auto flex-1"
+        class="data-server__form flex-1"
         label-position="top"
         scroll-to-error
         :model="form"
@@ -1506,7 +1114,7 @@ function onFieldSelected(field: Field) {
           </ElFormItem>
           <ElFormItem
             class="flex-1"
-            :label="$t('public_connection_name')"
+            :label="$t('public_connection')"
             prop="connectionId"
           >
             <InfiniteSelect
@@ -1626,10 +1234,13 @@ function onFieldSelected(field: Field) {
             <li
               v-for="(item, index) in urlList"
               :key="item.method"
-              class="data-server-path__item rounded-lg px-2 py-2"
-              :class="`method-item-${item.method.toLowerCase()}`"
+              class="data-server-path__item rounded-lg px-2 py-2 border"
+              :class="getMethodClass(item.method)"
             >
-              <div class="data-server-path__method fs-8 mr-4">
+              <div
+                class="data-server-path__method fs-8 mr-4"
+                :class="`bg-${methodColorMap[item.method]}-600`"
+              >
                 {{ item.method }}
               </div>
               <div v-if="!isEdit" class="data-server-path__value line-height">
@@ -1700,9 +1311,7 @@ function onFieldSelected(field: Field) {
             min-width="80"
           >
             <template #default="{ row, $index }">
-              <div
-                v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
-              >
+              <div v-if="editable(row, form, isEdit)">
                 <ElFormItem
                   :prop="`params.${$index}.name`"
                   :error="!form.params[$index].name ? 'true' : ''"
@@ -1716,34 +1325,67 @@ function onFieldSelected(field: Field) {
               <div v-else>{{ row.name }}</div>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('public_type')" prop="type" min-width="80">
+          <ElTableColumn :label="$t('public_type')" prop="type" min-width="90">
             <template #default="{ row, $index }">
-              <div
-                v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
-              >
-                <ElSelect v-model="form.params[$index].type">
-                  <ElOption
-                    v-for="type in typeOptions"
-                    :key="type"
-                    :value="type"
-                    :label="type"
-                  />
-                </ElSelect>
+              <div v-if="editable(row, form, isEdit)">
+                <el-cascader
+                  v-model="form.params[$index].type"
+                  :options="typeOptions"
+                  separator=": "
+                />
               </div>
-              <div v-else>{{ row.type }}</div>
+              <div v-else>
+                {{ Array.isArray(row.type) ? row.type.join(': ') : row.type }}
+              </div>
             </template>
           </ElTableColumn>
           <ElTableColumn
             v-if="tab === 'form'"
             :label="$t('public_data_default')"
             prop="defaultvalue"
-            min-width="60"
+            min-width="100"
           >
             <template #default="{ row, $index }">
               <div v-if="isEdit && row.defaultvalue !== undefined">
-                <ElInput v-model="form.params[$index].defaultvalue" />
+                <ElInput
+                  v-model="form.params[$index].defaultvalue"
+                  :type="
+                    row.type === 'object' ||
+                    (Array.isArray(row.type) && row.type.length > 1)
+                      ? 'textarea'
+                      : 'input'
+                  "
+                  :autosize="{ minRows: 2 }"
+                />
               </div>
               <div v-else>{{ row.defaultvalue }}</div>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn
+            :label="$t('packages_business_data_server_drawer_required')"
+            prop="required"
+            min-width="60"
+            align="center"
+          >
+            <template #default="{ row, $index }">
+              <div v-if="editable(row, form, isEdit)">
+                <ElFormItem
+                  :prop="`params.${$index}.required`"
+                  :error="!form.params[$index].required ? 'true' : ''"
+                  :show-message="false"
+                  :rules="rules.param"
+                  class="mb-0"
+                >
+                  <ElSwitch v-model="form.params[$index].required" />
+                </ElFormItem>
+              </div>
+              <div v-else>
+                {{
+                  row.required
+                    ? $t('packages_business_data_server_drawer_required_true')
+                    : $t('packages_business_data_server_drawer_required_false')
+                }}
+              </div>
             </template>
           </ElTableColumn>
           <ElTableColumn
@@ -1752,10 +1394,12 @@ function onFieldSelected(field: Field) {
             min-width="100"
           >
             <template #default="{ row, $index }">
-              <div
-                v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
-              >
-                <ElInput v-model="form.params[$index].description" />
+              <div v-if="editable(row, form, isEdit)">
+                <ElInput
+                  v-model="form.params[$index].description"
+                  type="textarea"
+                  autosize
+                />
               </div>
               <div v-else>{{ row.description }}</div>
             </template>
@@ -1783,14 +1427,14 @@ function onFieldSelected(field: Field) {
           >
             <template #default="{ $index }">
               <el-button
-                v-if="$index > 1"
+                v-if="changeable(form.params[$index], form)"
                 text
                 size="small"
                 @click="removeItem('params', $index)"
               >
                 <template #icon>
                   <el-icon>
-                    <i-mingcute:close-line />
+                    <i-mingcute-close-line />
                   </el-icon>
                 </template>
               </el-button>
@@ -1805,7 +1449,7 @@ function onFieldSelected(field: Field) {
             @click="addItem('params')"
           >
             <template #icon>
-              <i-mingcute:add-line />
+              <i-mingcute-add-line />
             </template>
             {{ $t('public_add_parameter') }}
           </el-button>
@@ -1819,6 +1463,7 @@ function onFieldSelected(field: Field) {
           <!-- 筛选条件 -->
           <div
             class="data-server-panel__title mt-7 mb-3 align-items-center justify-content-start gap-3"
+            style="--btn-space: 0"
           >
             <span>{{
               $t('packages_business_data_server_drawer_shaixuantiaojian')
@@ -1839,14 +1484,19 @@ function onFieldSelected(field: Field) {
               ]"
             />
 
+            <div class="flex-1" />
+
             <el-button
               v-if="form.fullCustomQuery && isEdit"
               text
-              class="ml-auto"
               @click="handleFormat"
             >
-              <el-icon class="mr-1"><i-mingcute:brush-line /></el-icon>
+              <el-icon class="mr-1"><i-mingcute-brush-line /></el-icon>
               {{ $t('public_format') }}
+            </el-button>
+            <el-button v-if="form.fullCustomQuery" text @click="openHelp">
+              <el-icon class="mr-1"><i-mingcute-question-line /></el-icon>
+              {{ $t('public_button_help') }}
             </el-button>
           </div>
           <template v-if="isEdit">
@@ -1897,7 +1547,7 @@ function onFieldSelected(field: Field) {
                             @click="handleAddParameter(index)"
                           >
                             <template #icon>
-                              <i-mingcute:add-line />
+                              <i-mingcute-add-line />
                             </template>
                             {{ $t('public_add_parameter') }}
                           </el-button>
@@ -1926,7 +1576,7 @@ function onFieldSelected(field: Field) {
                   @click="removeItem('where', index)"
                 >
                   <template #icon>
-                    <i-mingcute:close-line />
+                    <i-mingcute-close-line />
                   </template>
                 </el-button>
               </li>
@@ -1937,7 +1587,7 @@ function onFieldSelected(field: Field) {
                   @click="addItem('where')"
                 >
                   <template #icon>
-                    <i-mingcute:add-line />
+                    <i-mingcute-add-line />
                   </template>
                   {{ $t('public_add_condition') }}
                 </el-button>
@@ -2008,7 +1658,7 @@ function onFieldSelected(field: Field) {
                 @click="removeItem('sort', index)"
               >
                 <template #icon>
-                  <i-mingcute:close-line />
+                  <i-mingcute-close-line />
                 </template>
               </el-button>
             </li>
@@ -2019,7 +1669,7 @@ function onFieldSelected(field: Field) {
                 @click="addItem('sort')"
               >
                 <template #icon>
-                  <i-mingcute:add-line />
+                  <i-mingcute-add-line />
                 </template>
                 {{ $t('public_add_condition') }}
               </el-button>
@@ -2030,112 +1680,67 @@ function onFieldSelected(field: Field) {
 
         <!-- 输出结果 -->
         <template v-if="tab === 'form'">
-          <div class="data-server-panel__title mt-7 mb-3">
-            {{ $t('packages_business_data_server_drawer_shuchujieguo') }}
+          <div class="data-server-panel__title mt-7 mb-3 gap-2">
+            <span>{{
+              $t('packages_business_data_server_drawer_shuchujieguo')
+            }}</span>
+            <el-tag v-if="isEdit && selectedFieldSize" type="info" size="small">
+              {{ $t('public_selected_fields', { val: selectedFieldSize }) }}
+            </el-tag>
+            <div class="flex-1" />
+            <template v-if="isEdit && selectedFieldSize">
+              <el-dropdown placement="bottom" @command="handleAliasConversion">
+                <el-button text>
+                  <el-icon class="mr-1"><i-lucide-wand-sparkles /></el-icon>
+                  {{ $t('public_quick_convert_alias') }}
+                </el-button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item command="upperCase">{{
+                      $t('packages_form_field_processor_index_daxie')
+                    }}</el-dropdown-item>
+                    <el-dropdown-item command="lowerCase">{{
+                      $t('packages_form_field_processor_index_xiaoxie')
+                    }}</el-dropdown-item>
+                    <el-dropdown-item command="snakeToCamel">{{
+                      $t('packages_form_field_processor_index_snake_to_camel')
+                    }}</el-dropdown-item>
+                    <el-dropdown-item command="camelToSnake">{{
+                      $t('packages_form_field_processor_index_camel_to_snake')
+                    }}</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+              <el-popconfirm
+                :width="240"
+                :title="$t('public_clear_alias_confirm')"
+                @confirm="handleClearAlias"
+              >
+                <template #reference>
+                  <el-button text type="danger">
+                    <el-icon class="mr-1"><i-mingcute-close-line /></el-icon>
+                    {{ $t('public_clear_alias') }}
+                  </el-button>
+                </template>
+              </el-popconfirm>
+            </template>
           </div>
-          <ElTable
-            ref="fieldTable"
-            :data="fieldTableData"
-            :loading="fieldLoading"
-            @selection-change="fieldsChanged"
-          >
-            <ElTableColumn
-              v-if="isEdit"
-              type="selection"
-              width="32"
-              align="center"
-            />
-            <ElTableColumn
-              :label="$t('public_name')"
-              prop="field_name"
-              min-width="100"
-            />
-            <ElTableColumn
-              :label="$t('public_alias')"
-              prop="field_alias"
-              min-width="120"
-            >
-              <template #default="{ row }">
-                <ElInput v-if="isEdit" v-model="row.field_alias" />
-                <span v-else>{{ row.field_alias }}</span>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn
-              :label="$t('public_type')"
-              prop="originalDataType"
-              min-width="100"
-            />
-            <ElTableColumn
-              :label="$t('public_description')"
-              prop="comment"
-              min-width="150"
-            />
-          </ElTable>
-        </template>
 
-        <!-- {{$t('packages_business_data_server_drawer_diaoyongfangshi')}} -->
-        <template v-if="tab === 'debug'">
-          <div class="data-server-panel__title mt-4 mb-3">
-            {{ $t('packages_business_data_server_drawer_diaoyongfangshi') }}
-          </div>
-          <div class="flex gap-4">
-            <el-input :model-value="urlsMap[debugMethod]" readonly>
-              <template #prepend>
-                <ElSelect v-model="debugMethod" style="width: 100px">
-                  <ElOption
-                    v-for="(item, i) in urlList"
-                    :key="i"
-                    :value="item.method"
-                  />
-                </ElSelect>
-              </template>
-            </el-input>
-
-            <ElButton
-              type="primary"
-              :disabled="debugDisabled"
-              @click="debugData"
-              >{{ $t('public_button_submit') }}
-            </ElButton>
-          </div>
-        </template>
-
-        <template v-if="tab === 'debug'">
-          <div class="data-server-panel__title mt-4 mb-3">
-            {{ $t('packages_business_data_server_drawer_fanhuijieguo') }}
-          </div>
-          <VCodeEditor
-            class="rounded-lg"
-            height="280"
-            lang="json"
-            :options="{ printMargin: false, readOnly: true, wrap: 'free' }"
-            :value="debugResult"
+          <FieldsTree
+            v-if="isEdit"
+            ref="fieldsTreeRef"
+            :fields="allFields"
+            @check="onFieldsTreeCheck"
           />
+          <FieldsTreePreview v-else :fields="form.fields" />
         </template>
 
-        <!--  {{$t('packages_business_data_server_drawer_shilidaima2')}} -->
         <template v-if="tab === 'debug'">
-          <div class="position-relative mt-4 mb-3">
-            <div
-              class="fs-7 fw-sub font-color-dark flex align-center"
-              style="line-height: 36px; height: 36px"
-            >
-              <span class="data-server-panel__title my-0">
-                {{ $t('packages_business_data_server_drawer_shilidaima') }}
-              </span>
-            </div>
-            <ElTabs v-model="templateType" class="data-server__tabs flex-1">
-              <ElTabPane label="JAVA" name="java" />
-              <ElTabPane label="JS" name="javascript" />
-              <ElTabPane label="PYTHON" name="python" />
-            </ElTabs>
-          </div>
-          <VCodeEditor
-            class="rounded-lg"
-            height="280"
-            :lang="templateType"
-            :options="{ printMargin: false, readOnly: true, wrap: 'free' }"
-            :value="templates[templateType]"
+          <Debug
+            :url-list="urlList"
+            :debug-params="debugParams"
+            :host="host"
+            :visible="visible"
           />
         </template>
       </ElForm>
@@ -2145,13 +1750,12 @@ function onFieldSelected(field: Field) {
       <ElButton v-if="form.id" @click="handleCancel">{{
         $t('public_button_cancel')
       }}</ElButton>
-      <ElButton
-        :disabled="!form.fields.length"
-        type="primary"
-        @click="save()"
-        >{{ $t('public_button_save') }}</ElButton
-      >
+      <ElButton :loading="loading" type="primary" @click="save()">{{
+        $t('public_button_save')
+      }}</ElButton>
     </template>
+
+    <MqlHelpDialog v-model="helpVisible" />
   </component>
 </template>
 
@@ -2207,7 +1811,7 @@ function onFieldSelected(field: Field) {
 
 .data-server-panel__title {
   display: flex;
-  justify-content: space-between;
+  justify-content: start;
   align-items: center;
   margin-top: 32px;
   margin-bottom: 16px;

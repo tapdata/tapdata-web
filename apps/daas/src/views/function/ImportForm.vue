@@ -1,6 +1,6 @@
 <script>
-import { EditPen } from '@element-plus/icons-vue'
-import { fileApi, javascriptFunctionsApi } from '@tap/api'
+import { removeFile } from '@tap/api/src/core/file'
+import { createFunction, fetchFunctions } from '@tap/api/src/core/function'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import Cookie from '@tap/shared/src/cookie'
 import i18n from '@/i18n'
@@ -62,25 +62,21 @@ export default {
         map[name] = true
       })
 
-      javascriptFunctionsApi
-        .get({
-          filter: JSON.stringify({
-            fields: { function_name: 1 },
-            where: {
-              function_name: {
-                inq: Object.keys(map),
-              },
-            },
-          }),
+      fetchFunctions({
+        fields: { function_name: 1 },
+        where: {
+          function_name: {
+            inq: Object.keys(map),
+          },
+        },
+      }).then((data) => {
+        const items = data?.items || []
+        names = names.concat(items.map((item) => item.function_name))
+        this.repeatNames = Array.from(new Set(names))
+        this.funcList.forEach((item) => {
+          item.isRepeat = this.repeatNames.includes(item.function_name)
         })
-        .then((data) => {
-          const items = data?.items || []
-          names = names.concat(items.map((item) => item.function_name))
-          this.repeatNames = Array.from(new Set(names))
-          this.funcList.forEach((item) => {
-            item.isRepeat = this.repeatNames.includes(item.function_name)
-          })
-        })
+      })
     },
     changeName(index) {
       const item = this.funcList[index]
@@ -165,7 +161,7 @@ export default {
     },
     fileRemove() {
       this.fileList = []
-      fileApi.removeFile(this.form.fileId).then(() => {})
+      removeFile(this.form.fileId).then(() => {})
       this.form.fileId = ''
       this.form.fileName = ''
     },
@@ -241,8 +237,7 @@ export default {
               user_id: useId,
             }
           })
-          javascriptFunctionsApi
-            .post(params)
+          createFunction(params)
             .then(() => {
               this.$message.success(this.$t('public_message_save_ok'))
               this.$router.back()
@@ -380,7 +375,9 @@ export default {
         </ElTableColumn>
       </ElTable>
     </div>
-    <div class="footer position-sticky py-6 bottom-0 bg-white z-10">
+    <div
+      class="footer border-top position-sticky py-6 bottom-0 bg-white z-10 dark:bg-transparent dark:backdrop-blur-md"
+    >
       <ElButton type="primary" @click="save">{{
         $t('public_button_save')
       }}</ElButton>
@@ -488,7 +485,7 @@ export default {
     overflow: auto;
   }
   .footer {
-    border-top: 1px solid #f0f0f0;
+    // border-top: 1px solid #f0f0f0;
     box-shadow: 0px -1px 2px 0px #f6f6f6;
   }
 }

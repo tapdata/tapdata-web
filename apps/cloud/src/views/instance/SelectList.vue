@@ -1,66 +1,16 @@
-<template>
-  <ElDialog
-    width="1000px"
-    append-to-body
-    v-model="visible"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    @close="handleCancel"
-  >
-    <template #header>
-      <div class="mb-6 font-color-dark fs-3 fw-bold">{{ options.title }}</div>
-    </template>
-    <p class="mt-n10 mb-4 font-color-sslight">{{ options.desc }}</p>
-
-    <VTable
-      :columns="options.columns"
-      :remoteMethod="options.remoteMethod"
-      :page-options="{
-        layout: 'total, ->, prev, pager, next, sizes, jumper',
-      }"
-      :has-pagination="false"
-      ref="table"
-      class="mt-4 v-table"
-    >
-      <template #operation="{ row }">
-        <ElTooltip v-if="type === 'code'" placement="top" :content="getContent(row)">
-          <ElButton text @click="submit(row)">{{ $t('public_button_create') + ' ' + $t('public_agent') }}</ElButton>
-        </ElTooltip>
-        <ElButton v-else text @click="submit(row)">{{ $t('public_button_create') }}</ElButton>
-      </template>
-    </VTable>
-
-    <template v-slot:footer>
-      <span class="dialog-footer">
-        <template v-if="type === 'code'">
-          <ElButton type="primary" @click="goLicense">{{
-            $t('dfs_aliyun_market_checklicnese_jihuoshouquanma')
-          }}</ElButton>
-          <ElButton type="primary" @click="handleCreateCode">{{
-            $t('dfs_instance_selectlist_goumaixinshili')
-          }}</ElButton>
-        </template>
-        <ElButton v-else type="primary" @click="create">{{
-          $t('dfs_instance_selectlist_chuangjianxinshili')
-        }}</ElButton>
-      </span>
-    </template>
-  </ElDialog>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import i18n from '@/i18n'
+import { dayjs } from '@tap/business/src/shared/dayjs'
 import { VTable } from '@tap/component'
 import { openUrl } from '@tap/shared'
-import { dayjs } from '@tap/business/src/shared/dayjs'
+import i18n from '@/i18n'
+import { $emit } from '../../../utils/gogocodeTransfer'
 
 import { getPaymentMethod, getSpec } from './utils'
 
 export default {
   name: 'SelectList',
-  inject: ['buried'],
   components: { VTable },
+  inject: ['buried'],
   props: {
     value: {
       type: Boolean,
@@ -71,6 +21,7 @@ export default {
       default: 'code',
     },
   },
+  emits: ['update:value', 'new-agent', 'create'],
   data() {
     return {
       visible: false,
@@ -140,7 +91,8 @@ export default {
   computed: {
     options() {
       return Object.assign(this.map[this.type], {
-        remoteMethod: this.type === 'code' ? this.codeRemoteMethod : this.orderRemoteMethod,
+        remoteMethod:
+          this.type === 'code' ? this.codeRemoteMethod : this.orderRemoteMethod,
       })
     },
   },
@@ -156,40 +108,47 @@ export default {
     },
 
     codeRemoteMethod() {
-      return this.$axios.get('api/tcm/aliyun/market/license/available').then((data) => {
-        return {
-          total: data.length,
-          data:
-            data.map((t = {}) => {
-              t.bindAgent = t.agentId
-                ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
-                : i18n.t('user_Center_weiBangDing')
-              t.specLabel = getSpec(t.spec)
-              t.expiredTimeLabel = t.expiredTime ? dayjs(t.expiredTime).format('YYYY-MM-DD') : '-'
-              return t
-            }) || [],
-        }
-      })
+      return this.$axios
+        .get('api/tcm/aliyun/market/license/available')
+        .then((data) => {
+          return {
+            total: data.length,
+            data:
+              data.map((t = {}) => {
+                t.bindAgent = t.agentId
+                  ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
+                  : i18n.t('user_Center_weiBangDing')
+                t.specLabel = getSpec(t.spec)
+                t.expiredTimeLabel = t.expiredTime
+                  ? dayjs(t.expiredTime).format('YYYY-MM-DD')
+                  : '-'
+                return t
+              }) || [],
+          }
+        })
     },
 
     orderRemoteMethod() {
-      return this.$axios.get('api/tcm/paid/plan/queryAvailableSubscribe').then((data) => {
-        const items =
-          data.map((t = {}) => {
-            t.content = `${getPaymentMethod(t)} ${getSpec(t.spec)} ${i18n.t('public_agent')}`
-            const { periodStart, periodEnd } = t
-            t.periodLabel =
-              dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss')
-            t.bindAgent = t.agentId
-              ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
-              : i18n.t('user_Center_weiBangDing')
-            return t
-          }) || []
-        return {
-          total: data.length,
-          data: items,
-        }
-      })
+      return this.$axios
+        .get('api/tcm/paid/plan/queryAvailableSubscribe')
+        .then((data) => {
+          const items =
+            data.map((t = {}) => {
+              t.content = `${getPaymentMethod(t)} ${getSpec(t.spec)} ${i18n.t('public_agent')}`
+              const { periodStart, periodEnd } = t
+              t.periodLabel = `${dayjs(periodStart).format(
+                'YYYY-MM-DD HH:mm:ss',
+              )} - ${dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss')}`
+              t.bindAgent = t.agentId
+                ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
+                : i18n.t('user_Center_weiBangDing')
+              return t
+            }) || []
+          return {
+            total: data.length,
+            data: items,
+          }
+        })
     },
 
     handleCancel() {
@@ -243,9 +202,66 @@ export default {
       })
     },
   },
-  emits: ['update:value', 'new-agent', 'create'],
 }
 </script>
+
+<template>
+  <ElDialog
+    v-model="visible"
+    width="1000px"
+    append-to-body
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    @close="handleCancel"
+  >
+    <template #header>
+      <div class="mb-6 font-color-dark fs-3 fw-bold">{{ options.title }}</div>
+    </template>
+    <p class="mt-n10 mb-4 font-color-sslight">{{ options.desc }}</p>
+
+    <VTable
+      ref="table"
+      :columns="options.columns"
+      :remote-method="options.remoteMethod"
+      :page-options="{
+        layout: 'total, ->, prev, pager, next, sizes, jumper',
+      }"
+      :has-pagination="false"
+      class="mt-4 v-table"
+    >
+      <template #operation="{ row }">
+        <ElTooltip
+          v-if="type === 'code'"
+          placement="top"
+          :content="getContent(row)"
+        >
+          <ElButton text @click="submit(row)">{{
+            `${$t('public_button_create')} ${$t('public_agent')}`
+          }}</ElButton>
+        </ElTooltip>
+        <ElButton v-else text @click="submit(row)">{{
+          $t('public_button_create')
+        }}</ElButton>
+      </template>
+    </VTable>
+
+    <template #footer>
+      <span class="dialog-footer">
+        <template v-if="type === 'code'">
+          <ElButton type="primary" @click="goLicense">{{
+            $t('dfs_aliyun_market_checklicnese_jihuoshouquanma')
+          }}</ElButton>
+          <ElButton type="primary" @click="handleCreateCode">{{
+            $t('dfs_instance_selectlist_goumaixinshili')
+          }}</ElButton>
+        </template>
+        <ElButton v-else type="primary" @click="create">{{
+          $t('dfs_instance_selectlist_chuangjianxinshili')
+        }}</ElButton>
+      </span>
+    </template>
+  </ElDialog>
+</template>
 
 <style lang="scss" scoped>
 .v-table {

@@ -1,6 +1,6 @@
 <script>
 import i18n from '@tap/i18n'
-import { $emit, $off, $on, $once } from '../../../../utils/gogocodeTransfer'
+import { $emit } from '../../../../utils/gogocodeTransfer'
 
 export default {
   name: 'Frequency',

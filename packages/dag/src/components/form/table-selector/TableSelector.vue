@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { metadataInstancesApi, taskApi } from '@tap/api'
+import {
+  getPagePartitionTables,
+  getPageTables,
+} from '@tap/api/src/core/metadata-instances'
+import { refreshTaskSchema } from '@tap/api/src/core/task'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import { RightBoldOutlined } from '@tap/component/src/RightBoldOutlined'
@@ -149,12 +153,12 @@ const getTables = () => {
   loading.value = true
 
   const fn = props.hasPartition
-    ? metadataInstancesApi.pagePartitionTables({
+    ? getPagePartitionTables({
         connectionId,
         limit: 0,
         syncPartitionTableEnable: props.syncPartitionTableEnable,
       })
-    : metadataInstancesApi.pageTables({ connectionId, limit: 0 })
+    : getPageTables({ connectionId, limit: 0 })
 
   fn.then((res = {}) => {
     const data = res.items || []
@@ -184,14 +188,12 @@ const loadSchema = async () => {
   const nodeId = props.nodeId || store.state?.dataflow.activeNodeId
   const taskId = props.taskId || store.state?.dataflow.taskId
 
-  await taskApi
-    .refreshSchema(taskId, {
-      nodeIds: nodeId,
-      keys: table.value.searchKeyword,
-    })
-    .finally(() => {
-      schemaLoading.value = false
-    })
+  await refreshTaskSchema(taskId, {
+    nodeIds: nodeId,
+    keys: table.value.searchKeyword,
+  }).finally(() => {
+    schemaLoading.value = false
+  })
 
   getTables()
 }
@@ -235,6 +237,11 @@ const isRightCheckAll = computed(() => {
     : false
 })
 
+const emitChange = () => {
+  emit('change', selected.value.tables)
+  emit('update:value', selected.value.tables)
+}
+
 const add = () => {
   if (isOpenClipMode.value || props.disabled) return
 
@@ -244,7 +251,7 @@ const add = () => {
 
   table.value.checked = []
   table.value.isCheckAll = false
-  emit('change', selected.value.tables)
+  emitChange()
 }
 
 const remove = () => {
@@ -256,7 +263,7 @@ const remove = () => {
 
   selected.value.checked = []
   selected.value.isCheckAll = false
-  emit('change', selected.value.tables)
+  emitChange()
 }
 
 const changeSeletedMode = () => {
@@ -298,7 +305,7 @@ const submitClipboard = () => {
     new Set(selected.value.tables.concat(clipboardTables.value)),
   )
   isOpenClipMode.value = false
-  emit('change', selected.value.tables)
+  emitChange()
 }
 
 const autofix = () => {
@@ -311,7 +318,7 @@ const autofix = () => {
     selected.value.tables = selected.value.tables.filter(
       (t) => !errorTables.value[t],
     )
-    emit('change', selected.value.tables)
+    emitChange()
   }
 }
 
@@ -742,7 +749,7 @@ getTables()
   padding: 0 16px;
   display: flex;
   align-items: center;
-  background: #f7f8fa;
+  background: var(--bg-disable);
   height: 40px;
   color: var(--text-normal);
   font-size: 14px;

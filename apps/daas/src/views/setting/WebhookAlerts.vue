@@ -1,5 +1,16 @@
 <script setup lang="tsx">
-import { findAlarm, webhookApi } from '@tap/api'
+import { findAlarm } from '@tap/api/src/core/settings'
+import {
+  closeWebhook,
+  createWebhook,
+  deleteWebhook,
+  getWebhookHistory,
+  getWebhookList,
+  openWebhook,
+  pingWebhook,
+  resendWebhook,
+  updateWebhook,
+} from '@tap/api/src/core/webhook'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 import { VEmpty } from '@tap/component/src/base/v-empty'
@@ -213,7 +224,7 @@ const loadData = async () => {
     order: 'createTime DESC',
   }
   try {
-    const { items = [] } = await webhookApi.list({
+    const { items = [] } = await getWebhookList({
       filter: JSON.stringify(filter),
     })
     list.value = items
@@ -224,10 +235,12 @@ const loadData = async () => {
 
 const loadEventType = async () => {
   const data = await findAlarm()
-  eventData.value[0].children = data.map((item: any) => ({
-    label: keyMap[item.key],
-    value: item.key,
-  }))
+  eventData.value[0].children = data
+    .filter((item: any) => item.type !== 'API_SERVER')
+    .map((item: any) => ({
+      label: keyMap[item.key],
+      value: item.key,
+    }))
 }
 
 const afterClose = () => {
@@ -304,12 +317,11 @@ const mapHistory = (item: any): HistoryItem => {
 }
 
 const loadHistory = (pageNum = 1) => {
-  webhookApi
-    .history({
-      hookId: historyState.id,
-      pageFrom: (pageNum - 1) * page.size,
-      pageSize: page.size,
-    })
+  getWebhookHistory({
+    hookId: historyState.id,
+    pageFrom: (pageNum - 1) * page.size,
+    pageSize: page.size,
+  })
     .then(({ items, total }: { items: any[]; total: number }) => {
       historyState.list = items.map(mapHistory)
       page.total = total
@@ -323,7 +335,7 @@ const delWebhook = async ({ id }: { id: string }) => {
   )
 
   if (confirmed) {
-    await webhookApi.deleteOne(id)
+    await deleteWebhook(id)
     await loadData()
   }
 }
@@ -332,8 +344,7 @@ const sendPing = () => {
   formRef.value?.validate((valid) => {
     if (valid) {
       drawerState.ping = true
-      webhookApi
-        .ping(form)
+      pingWebhook(form)
         .then((data) => {
           ElMessage.success(t('public_message_send_success'))
 
@@ -354,7 +365,8 @@ const save = () => {
   formRef.value?.validate((valid) => {
     if (valid) {
       drawerState.saving = true
-      webhookApi[form.id ? 'update' : 'save'](form)
+      const method = form.id ? updateWebhook : createWebhook
+      method(form)
         .then(() => {
           ElMessage.success(t('public_message_save_ok'))
           drawerState.visible = false
@@ -367,7 +379,8 @@ const save = () => {
 
 const handleSwitch = (row: WebhookItem) => {
   switchStateMap[row.id] = true
-  webhookApi[row.open ? 'close' : 'open'](row.id)
+  const method = row.open ? closeWebhook : openWebhook
+  method(row.id)
     .then(() => {
       row.open = !row.open
       ElMessage.success(t('public_message_operation_success'))
@@ -383,7 +396,7 @@ const handleSwitch = (row: WebhookItem) => {
 const reSend = async (request: HistoryItem) => {
   resendStateMap[request.id] = true
   try {
-    const result = await webhookApi.resend(request)
+    const result = await resendWebhook(request)
     Object.assign(request, mapHistory(result))
     ElMessage.success(t('public_message_send_success'))
   } finally {

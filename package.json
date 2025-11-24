@@ -29,7 +29,7 @@
     "vue-router": "catalog:"
   },
   "devDependencies": {
-    "@iconify-json/fluent": "^1.2.26",
+    "@iconify-json/fluent": "catalog:",
     "@iconify-json/lucide": "catalog:",
     "@iconify-json/mingcute": "catalog:",
     "@rushstack/eslint-patch": "catalog:",
@@ -65,9 +65,7 @@
       "@formily/reactive": "^2.3.0",
       "@formily/reactive-vue": "^2.3.0",
       "@formily/shared": "^2.3.0",
-      "@formily/vue": "^2.3.0",
-      "vue": "^3.4.29",
-      "vue-virtual-scroller": "2.0.0-beta.8"
+      "@formily/vue": "^2.3.0"
     },
     "patchedDependencies": {
       "@formily/element-plus@1.1.0": "patches/@formily__element-plus@1.1.0.patch"

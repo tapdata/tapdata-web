@@ -1,7 +1,7 @@
-const fs = require('fs')
-const path = require('path')
+const crypto = require('node:crypto')
+const fs = require('node:fs')
+const path = require('node:path')
 const dotenv = require('dotenv')
-const crypto = require('crypto')
 function getUserIdFromEnv(username) {
   try {
     const envPath = path.resolve(__dirname, '.env.local')
@@ -58,7 +58,7 @@ function parseCommandLineArgs() {
   return { username, origin, port, env }
 }
 
-const getToken = userId => {
+const getToken = (userId) => {
   const secret = 'Q3HraAbDkmKoPzaBEYzPXB1zJXmWlQ169'
   function __encrypt(string) {
     return crypto
@@ -71,8 +71,8 @@ const getToken = userId => {
     return Buffer.from(string || '').toString('base64')
   }
   function encodeStaticTokenByUserId(userId) {
-    let token = __encrypt(userId)
-    return encodeBase64(userId) + '.' + encodeBase64(token)
+    const token = __encrypt(userId)
+    return `${encodeBase64(userId)}.${encodeBase64(token)}`
   }
   const token = encodeStaticTokenByUserId(userId)
   return token
@@ -81,5 +81,5 @@ const getToken = userId => {
 module.exports = {
   getUserIdFromEnv,
   parseCommandLineArgs,
-  getToken
+  getToken,
 }

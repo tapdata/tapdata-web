@@ -1,4 +1,4 @@
-import { requestClient, type PageFetchResult } from '../request'
+import { requestClient, type Filter, type PageFetchResult } from '../request'
 
 const BASE_URL = '/api/task-inspect'
 
@@ -32,6 +32,7 @@ export interface TaskInspectOperation {
 export interface TaskInspectConfig {
   timeCheckMode: 'NORMAL' | 'ROUND' | 'TRUNCATE'
   checkNoPkTable: boolean
+  queueCapacity: number
   custom: {
     cdc: {
       enable: boolean
@@ -97,7 +98,7 @@ export function manualRecover(taskId: string, params: ManualCheckParams = {}) {
 
 export interface InspectResultsLastOp {
   manualId: string
-  manualType: 'manualCheck' | 'manualRecover'
+  manualType: 'manualCheck' | 'manualRecover' | 'exportRecoverSql'
   totals: number
   unfinished: number
   created: string
@@ -109,24 +110,24 @@ export function getTaskInspectResultsLastOp(taskId: string) {
   )
 }
 
-export function getTaskInspectResultsGroupByTable(inspectId: string) {
+export function getTaskInspectResultsGroupByTable(
+  inspectId: string,
+  params: any,
+) {
   return requestClient.get<PageFetchResult<InspectionRow>>(
     `/api/task-inspect-histories/${inspectId}/results/group-by-table`,
+    { params },
   )
 }
 
 export function getTaskInspectHistoriesResults(
   inspectId: string,
-  sourceTable: string,
+  filter: Filter,
 ) {
   return requestClient.get<PageFetchResult<DiffRow>>(
     `/api/task-inspect-histories/${inspectId}/results`,
     {
-      params: {
-        filter: JSON.stringify({
-          where: { sourceTable },
-        }),
-      },
+      params: { filter: filter ? JSON.stringify(filter) : undefined },
     },
   )
 }
@@ -134,5 +135,22 @@ export function getTaskInspectHistoriesResults(
 export function getTaskInspectResultsOperations(resultId: string) {
   return requestClient.get<TaskInspectOperation[]>(
     `/api/task-inspect-results/${resultId}/operations`,
+  )
+}
+
+export function exportRecoverSql(
+  taskId: string,
+  params: ManualCheckParams = {},
+) {
+  return requestClient.post(`${BASE_URL}/${taskId}/export-recover-sql`, params)
+}
+
+export function downloadRecoverSql(taskId: string, manualId: string) {
+  return requestClient.get(
+    `${BASE_URL}/${taskId}/recover-sql/${manualId}/download`,
+    {
+      responseType: 'blob',
+      responseReturn: 'raw',
+    },
   )
 }

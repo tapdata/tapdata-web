@@ -1,16 +1,8 @@
-<script setup>
+<script setup lang="ts">
 import { isFn } from '@tap/shared'
 
 import { escapeRegExp, get } from 'lodash-es'
-import {
-  computed,
-  nextTick,
-  onBeforeUnmount,
-  ref,
-  useAttrs,
-  useTemplateRef,
-  watch,
-} from 'vue'
+import { computed, nextTick, ref, useAttrs, useTemplateRef, watch } from 'vue'
 
 defineOptions({
   name: 'FilterItemSelect',
@@ -106,6 +98,7 @@ const handleVisibleChange = (visible) => {
     :style="selectStyle"
     :options="filteredOptions"
     :fit-input-width="false"
+    :teleported="teleported"
     @visible-change="handleVisibleChange"
   >
     <template v-if="filterable" #header>

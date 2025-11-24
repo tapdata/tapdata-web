@@ -1,3 +1,19 @@
+<script>
+import { ElTable as Table } from 'element-plus'
+import TableBody from './ProTableBody.vue'
+export default {
+  name: 'ProTable',
+
+  components: { TableBody },
+
+  extends: Table,
+
+  props: {
+    draggable: Boolean,
+  },
+}
+</script>
+
 <template>
   <div
     class="el-table"
@@ -13,18 +29,19 @@
         'el-table--scrollable-y': layout.scrollY,
         'el-table--enable-row-hover': !store.states.isComplex,
         'el-table--enable-row-transition':
-          (store.states.data || []).length !== 0 && (store.states.data || []).length < 100,
+          (store.states.data || []).length !== 0 &&
+          (store.states.data || []).length < 100,
       },
       tableSize ? `el-table--${tableSize}` : '',
     ]"
     @mouseleave="handleMouseLeave($event)"
   >
-    <div class="hidden-columns" ref="hiddenColumns"><slot></slot></div>
+    <div ref="hiddenColumns" class="hidden-columns"><slot /></div>
     <div
       v-if="showHeader"
+      ref="headerWrapper"
       v-mousewheel="handleHeaderFooterMousewheel"
       class="el-table__header-wrapper"
-      ref="headerWrapper"
     >
       <table-header
         ref="tableHeader"
@@ -32,15 +49,16 @@
         :border="border"
         :default-sort="defaultSort"
         :style="{
-          width: layout.bodyWidth ? layout.bodyWidth + 'px' : '',
+          width: layout.bodyWidth ? `${layout.bodyWidth}px` : '',
         }"
-      >
-      </table-header>
+      />
     </div>
     <div
-      class="el-table__body-wrapper"
       ref="bodyWrapper"
-      :class="[layout.scrollX ? `is-scrolling-${scrollPosition}` : 'is-scrolling-none']"
+      class="el-table__body-wrapper"
+      :class="[
+        layout.scrollX ? `is-scrolling-${scrollPosition}` : 'is-scrolling-none',
+      ]"
       :style="[bodyHeight]"
     >
       <table-body
@@ -53,23 +71,31 @@
         :style="{
           width: bodyWidth,
         }"
+      />
+      <div
+        v-if="!data || data.length === 0"
+        ref="emptyBlock"
+        class="el-table__empty-block"
+        :style="emptyBlockStyle"
       >
-      </table-body>
-      <div v-if="!data || data.length === 0" class="el-table__empty-block" ref="emptyBlock" :style="emptyBlockStyle">
         <span class="el-table__empty-text">
           <slot name="empty">{{ emptyText || t('el.table.emptyText') }}</slot>
         </span>
       </div>
-      <div v-if="$slots.append" class="el-table__append-wrapper" ref="appendWrapper">
-        <slot name="append"></slot>
+      <div
+        v-if="$slots.append"
+        ref="appendWrapper"
+        class="el-table__append-wrapper"
+      >
+        <slot name="append" />
       </div>
     </div>
     <div
       v-if="showSummary"
       v-show="data && data.length > 0"
+      ref="footerWrapper"
       v-mousewheel="handleHeaderFooterMousewheel"
       class="el-table__footer-wrapper"
-      ref="footerWrapper"
     >
       <table-footer
         :store="store"
@@ -78,24 +104,27 @@
         :summary-method="summaryMethod"
         :default-sort="defaultSort"
         :style="{
-          width: layout.bodyWidth ? layout.bodyWidth + 'px' : '',
+          width: layout.bodyWidth ? `${layout.bodyWidth}px` : '',
         }"
-      >
-      </table-footer>
+      />
     </div>
     <div
       v-if="fixedColumns.length > 0"
+      ref="fixedWrapper"
       v-mousewheel="handleFixedMousewheel"
       class="el-table__fixed"
-      ref="fixedWrapper"
       :style="[
         {
-          width: layout.fixedWidth ? layout.fixedWidth + 'px' : '',
+          width: layout.fixedWidth ? `${layout.fixedWidth}px` : '',
         },
         fixedHeight,
       ]"
     >
-      <div v-if="showHeader" class="el-table__fixed-header-wrapper" ref="fixedHeaderWrapper">
+      <div
+        v-if="showHeader"
+        ref="fixedHeaderWrapper"
+        class="el-table__fixed-header-wrapper"
+      >
         <table-header
           ref="fixedTableHeader"
           fixed="left"
@@ -104,14 +133,14 @@
           :style="{
             width: bodyWidth,
           }"
-        ></table-header>
+        />
       </div>
       <div
-        class="el-table__fixed-body-wrapper"
         ref="fixedBodyWrapper"
+        class="el-table__fixed-body-wrapper"
         :style="[
           {
-            top: layout.headerHeight + 'px',
+            top: `${layout.headerHeight}px`,
           },
           fixedBodyHeight,
         ]"
@@ -124,17 +153,20 @@
           :row-class-name="rowClassName"
           :row-style="rowStyle"
           :style="{
-            width: layout.fixedWidth ? layout.fixedWidth + 'px' : '',
+            width: layout.fixedWidth ? `${layout.fixedWidth}px` : '',
           }"
-        >
-        </table-body>
-        <div v-if="$slots.append" class="el-table__append-gutter" :style="{ height: layout.appendHeight + 'px' }"></div>
+        />
+        <div
+          v-if="$slots.append"
+          class="el-table__append-gutter"
+          :style="{ height: `${layout.appendHeight}px` }"
+        />
       </div>
       <div
         v-if="showSummary"
         v-show="data && data.length > 0"
-        class="el-table__fixed-footer-wrapper"
         ref="fixedFooterWrapper"
+        class="el-table__fixed-footer-wrapper"
       >
         <table-footer
           fixed="left"
@@ -145,23 +177,29 @@
           :style="{
             width: bodyWidth,
           }"
-        ></table-footer>
+        />
       </div>
     </div>
     <div
       v-if="rightFixedColumns.length > 0"
+      ref="rightFixedWrapper"
       v-mousewheel="handleFixedMousewheel"
       class="el-table__fixed-right"
-      ref="rightFixedWrapper"
       :style="[
         {
-          width: layout.rightFixedWidth ? layout.rightFixedWidth + 'px' : '',
-          right: layout.scrollY ? (border ? layout.gutterWidth : layout.gutterWidth || 0) + 'px' : '',
+          width: layout.rightFixedWidth ? `${layout.rightFixedWidth}px` : '',
+          right: layout.scrollY
+            ? `${border ? layout.gutterWidth : layout.gutterWidth || 0}px`
+            : '',
         },
         fixedHeight,
       ]"
     >
-      <div v-if="showHeader" class="el-table__fixed-header-wrapper" ref="rightFixedHeaderWrapper">
+      <div
+        v-if="showHeader"
+        ref="rightFixedHeaderWrapper"
+        class="el-table__fixed-header-wrapper"
+      >
         <table-header
           ref="rightFixedTableHeader"
           fixed="right"
@@ -170,14 +208,14 @@
           :style="{
             width: bodyWidth,
           }"
-        ></table-header>
+        />
       </div>
       <div
-        class="el-table__fixed-body-wrapper"
         ref="rightFixedBodyWrapper"
+        class="el-table__fixed-body-wrapper"
         :style="[
           {
-            top: layout.headerHeight + 'px',
+            top: `${layout.headerHeight}px`,
           },
           fixedBodyHeight,
         ]"
@@ -190,17 +228,20 @@
           :row-style="rowStyle"
           :highlight="highlightCurrentRow"
           :style="{
-            width: layout.rightFixedWidth ? layout.rightFixedWidth + 'px' : '',
+            width: layout.rightFixedWidth ? `${layout.rightFixedWidth}px` : '',
           }"
-        >
-        </table-body>
-        <div v-if="$slots.append" class="el-table__append-gutter" :style="{ height: layout.appendHeight + 'px' }"></div>
+        />
+        <div
+          v-if="$slots.append"
+          class="el-table__append-gutter"
+          :style="{ height: `${layout.appendHeight}px` }"
+        />
       </div>
       <div
         v-if="showSummary"
         v-show="data && data.length > 0"
-        class="el-table__fixed-footer-wrapper"
         ref="rightFixedFooterWrapper"
+        class="el-table__fixed-footer-wrapper"
       >
         <table-footer
           fixed="right"
@@ -211,34 +252,22 @@
           :style="{
             width: bodyWidth,
           }"
-        ></table-footer>
+        />
       </div>
     </div>
     <div
       v-if="rightFixedColumns.length > 0"
-      class="el-table__fixed-right-patch"
       ref="rightFixedPatch"
+      class="el-table__fixed-right-patch"
       :style="{
-        width: layout.scrollY ? layout.gutterWidth + 'px' : '0',
-        height: layout.headerHeight + 'px',
+        width: layout.scrollY ? `${layout.gutterWidth}px` : '0',
+        height: `${layout.headerHeight}px`,
       }"
-    ></div>
-    <div class="el-table__column-resize-proxy" ref="resizeProxy" v-show="resizeProxyVisible"></div>
+    />
+    <div
+      v-show="resizeProxyVisible"
+      ref="resizeProxy"
+      class="el-table__column-resize-proxy"
+    />
   </div>
 </template>
-
-<script>
-import { ElTable as Table } from 'element-plus'
-import TableBody from './ProTableBody.vue'
-export default {
-  name: 'ProTable',
-
-  extends: Table,
-
-  props: {
-    draggable: Boolean,
-  },
-
-  components: { TableBody },
-}
-</script>

@@ -1,5 +1,8 @@
 <script>
-import { metadataInstancesApi } from '@tap/api'
+import {
+  checkMultipleDataType,
+  dataType2TapType,
+} from '@tap/api/src/core/metadata-instances'
 import { VTable } from '@tap/component/src/base/v-table'
 import i18n from '@tap/i18n'
 import { uuid } from '@tap/shared'
@@ -214,11 +217,10 @@ export default {
       this.currentData.coefficient = findRule?.multiple || 1
       this.currentData.selectedDataType = '' // 下拉框选择的类型，仅前端使用
 
-      const dataTypeCheckMultiple =
-        await metadataInstancesApi.dataTypeCheckMultiple({
-          databaseType: this.activeNode.databaseType,
-          dataType: this.currentData.dataType,
-        })
+      const dataTypeCheckMultiple = await checkMultipleDataType({
+        databaseType: this.activeNode.databaseType,
+        dataType: this.currentData.dataType,
+      })
 
       let modeType = 'custom'
       if (dataTypeCheckMultiple?.result) {
@@ -335,8 +337,7 @@ export default {
 
       this.editBtnLoading = true
       this.currentData.errorMessage = ''
-      metadataInstancesApi
-        .dataType2TapType(params)
+      dataType2TapType(params)
         .then((data) => {
           const val = data[newDataType]
           const tapType = val && val.type !== 7 ? JSON.stringify(val) : null
@@ -642,6 +643,7 @@ export default {
           <span
             v-if="field.indicesUnique[2]"
             class="inline-flex align-center align-middle"
+            :class="{ 'text-primary': field.indicesUnique[3] }"
           >
             <VIcon size="14">fingerprint</VIcon>
             <span

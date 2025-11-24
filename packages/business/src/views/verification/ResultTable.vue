@@ -85,7 +85,7 @@ export default {
 <template>
   <el-table
     ref="table"
-    class="flex-1"
+    class="flex-1 has-border-t"
     highlight-current-row
     height="100%"
     :data="list"

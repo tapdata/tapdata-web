@@ -1,12 +1,18 @@
-<script lang="jsx">
-import { TaskStatus } from '@tap/business'
-import { IconButton, VIcon } from '@tap/component'
+<script lang="tsx">
+import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
+import { IconButton } from '@tap/component/src/icon-button'
 import i18n from '@tap/i18n'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
-
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { computed, defineComponent, onMounted, ref, watch } from 'vue'
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  ref,
+  useTemplateRef,
+  watch,
+} from 'vue'
 import DFNode from '../DFNode'
 import 'dayjs/locale/zh-cn'
 
@@ -29,7 +35,6 @@ export default defineComponent({
   name: 'Node',
   components: {
     DFNode,
-    VIcon,
     TaskStatus,
   },
 
@@ -63,8 +68,9 @@ export default defineComponent({
     },
   },
 
-  setup(props, { attrs, emit, refs }) {
+  setup(props, { attrs, emit }) {
     const dfNode = ref(null)
+    const popoverRef = useTemplateRef('popover')
     const completeTime = computed(() => {
       const totalData = props.quota.samples?.totalData?.[0] || {}
       const { snapshotInsertRowTotal, snapshotRowTotal } = props.sample
@@ -466,7 +472,7 @@ export default defineComponent({
           }}
           onDragStop={(...args) => {
             ifDragStart.value = false
-            refs.popover?.updatePopper?.() // 更新popover位置
+            popoverRef.value?.updatePopper?.() // 更新popover位置
             emit('drag-stop', ...args)
           }}
         >
@@ -484,7 +490,7 @@ export default defineComponent({
                 reference: () => (
                   <div class="node-card rounded-xl px-2 pb-2 pt-4 mt-n2">
                     <div class="flex align-center">
-                      <div class="node-card-content p-2 flex-1 rounded-sm">
+                      <div class="node-card-content p-2 flex-1 rounded-lg">
                         {renderStatistic()}
                       </div>
                       <button
@@ -558,11 +564,11 @@ export default defineComponent({
   z-index: -2;
   top: 100%;
   left: 50%;
-  background-color: #fff;
+  background-color: var(--el-bg-color);
   transform: translateX(-50%);
 
   &-content {
-    background-color: #f5f8fe;
+    background-color: var(--el-fill-color-light);
   }
 
   &-footer {
@@ -602,8 +608,8 @@ export default defineComponent({
   align-items: center;
   width: 24px;
   height: 24px;
-  color: #4e5969;
-  background: #fff;
+  color: var(--icon-n1);
+  background: transparent;
   outline: none;
   border: 1px solid transparent;
   border-radius: 4px;
@@ -662,7 +668,7 @@ export default defineComponent({
 .el-popover.el-popper.node-statistic-popover {
   $bg: rgba(54, 66, 82, 0.9);
   background: $bg;
-  border: 1px solid #f2f2f2;
+  border: 1px solid var(--el-border-color);
 
   .el-popper__arrow {
     width: 0;

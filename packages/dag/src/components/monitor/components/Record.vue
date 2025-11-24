@@ -1,8 +1,8 @@
 <script>
-import { taskApi } from '@tap/api'
+import { getTaskRecords } from '@tap/api/src/core/task'
 
-import { TaskStatus } from '@tap/business'
-import { VTable } from '@tap/component'
+import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
+import { VTable } from '@tap/component/src/base/v-table'
 import i18n from '@tap/i18n'
 import { openUrl } from '@tap/shared'
 import Time from '@tap/shared/src/time'
@@ -98,7 +98,7 @@ export default {
         page: current,
         size,
       }
-      return taskApi.records(taskId, filter).then((data) => {
+      return getTaskRecords(taskId, filter).then((data) => {
         return {
           total: data.total,
           data: data.items || [],
@@ -142,7 +142,7 @@ export default {
 </script>
 
 <template>
-  <div class="record-wrap py-4 pl-4 h-100 w-100">
+  <div class="h-100 w-100">
     <VTable
       ref="table"
       :remote-method="remoteMethod"
@@ -166,9 +166,3 @@ export default {
     </VTable>
   </div>
 </template>
-
-<style lang="scss" scoped>
-.record-wrap {
-  width: calc(100% - 16px);
-}
-</style>

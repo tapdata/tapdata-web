@@ -329,8 +329,8 @@ export class CountUp {
     x2 = x.length > 1 ? this.options.decimal + x[1] : ''
     if (this.options.useGrouping) {
       x3 = ''
-      let factor = 3,
-        j = 0
+      let factor = 3
+      let j = 0
       for (let i = 0, len = x1.length; i < len; ++i) {
         if (this.options.useIndianSeparators && i === 4) {
           factor = 2

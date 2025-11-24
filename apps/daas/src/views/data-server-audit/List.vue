@@ -4,8 +4,8 @@ import {
   fetchAllMethods,
   fetchAllResponseCodes,
   fetchApiCalls,
-  fetchApiClients,
-} from '@tap/api'
+} from '@tap/api/src/core/api-calls'
+import { fetchApiClients } from '@tap/api/src/core/api-client'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import { FilterBar } from '@tap/component/src/filter-bar'

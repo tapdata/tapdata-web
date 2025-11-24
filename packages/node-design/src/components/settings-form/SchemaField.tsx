@@ -1,5 +1,4 @@
 // import { Slider, FormItemSwitcher } from '@formily/element-plus-renderer'
-import * as ElementUI from '@formily/element-plus'
 import { createSchemaField } from '@formily/vue'
 import { BackgroundStyleSetter } from './BackgroundStyleSetter'
 import { BorderRadiusStyleSetter } from './BorderRadiusStyleSetter'

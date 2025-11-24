@@ -2,10 +2,10 @@
 import {
   countNotifications,
   fetchNotifications,
-  fetchUserLogs,
   listNotifications,
   patchNotification,
-} from '@tap/api'
+} from '@tap/api/src/core/notification'
+import { fetchUserLogs } from '@tap/api/src/core/userlogs'
 import { ALARM_LEVEL_MAP } from '@tap/business/src/shared/const'
 import Cookie from '@tap/shared/src/cookie'
 
@@ -277,11 +277,10 @@ export default {
         @click="$router.push({ name: 'notification', query: { type: 'user' } })"
         >{{ $t('notify_view_more') }}</ElButton
       >
-      <el-tab-pane
-        class="tab-item"
-        :label="$t('notify_system_notice')"
-        name="system"
-      >
+      <el-tab-pane class="tab-item" name="system">
+        <template #label>
+          <span>{{ $t('notify_system_notice') }}</span>
+        </template>
         <div class="tab-item-container">
           <ul v-if="listData.length" class="tab-list notification-list">
             <li
@@ -346,12 +345,10 @@ export default {
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane
-        v-loading="loading"
-        class="tab-item"
-        :label="$t('notify_user_notice')"
-        name="user"
-      >
+      <el-tab-pane v-loading="loading" class="tab-item" name="user">
+        <template #label>
+          <span>{{ $t('notify_user_notice') }}</span>
+        </template>
         <div class="tab-item-container">
           <ul v-if="userOperations.length" class="tab-list notification-list">
             <li
@@ -378,12 +375,12 @@ export default {
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane
-        v-loading="loadingAlarm"
-        class="tab-item"
-        :label="$t('daas_notification_alarmnotification_gaojingtongzhi')"
-        name="alarm"
-      >
+      <el-tab-pane v-loading="loadingAlarm" class="tab-item" name="alarm">
+        <template #label>
+          <span>{{
+            $t('daas_notification_alarmnotification_gaojingtongzhi')
+          }}</span>
+        </template>
         <div class="tab-item-container">
           <ul v-if="alarmData.length" class="tab-list notification-list">
             <li
@@ -430,25 +427,10 @@ export default {
   .notification-popover-wrap {
     overflow: hidden;
     .el-tabs__header {
-      color: var(--text-light);
-      border-bottom: 1px solid var(--border-light);
       .el-tabs__nav-wrap {
         .el-tabs__nav-scroll {
           width: 280px;
         }
-      }
-      .el-tabs__item {
-        font-size: 14px;
-        font-weight: 400;
-
-        &.is-active {
-          // color: var(--color-primary);
-          font-weight: 500;
-          border-color: var(--color-primary);
-        }
-      }
-      .el-tabs__active-bar {
-        min-width: 80px !important;
       }
     }
     > .el-tabs__content {
@@ -457,8 +439,8 @@ export default {
       overflow: initial;
       & > .el-button {
         position: absolute;
-        right: 12px;
-        top: -49px;
+        right: 16px;
+        top: -53px;
         z-index: 10;
       }
     }

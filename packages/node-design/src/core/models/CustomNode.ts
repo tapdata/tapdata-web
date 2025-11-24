@@ -1,6 +1,9 @@
 //节点模型
 import { define, observable } from '@formily/reactive'
-import { patchCustomNode, createCustomNode } from '@tap/api'
+import {
+  createCustomNode,
+  patchCustomNode,
+} from '@tap/api/src/core/custom-node'
 import { transformToSchema } from '../transformer'
 
 export class CustomNode {
@@ -19,7 +22,11 @@ export class CustomNode {
   props
 
   static defaultScript =
-    'function process(record, form){\n' + '\n' + '\t// Enter you code at here\n' + '\treturn record;\n' + '}'
+    'function process(record, form){\n' +
+    '\n' +
+    '\t// Enter your code here\n' +
+    '\treturn record;\n' +
+    '}'
 
   constructor(engine, props = {}) {
     this.engine = engine

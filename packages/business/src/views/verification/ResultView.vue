@@ -155,7 +155,7 @@ export default {
 <template>
   <div v-loading="loading" class="verification-result-view panel-box">
     <div class="py-3 pl-3 fs-6 font-color-dark flex align-center">
-      <span class="lh-8">
+      <span class="lh-8 text-prefix-bar">
         {{ $t('packages_business_verification_verifyDetail') }}
       </span>
 
@@ -201,7 +201,7 @@ export default {
         >
           <div class="table__header">
             <ElRow
-              class="table__header-row flex align-items-center fw-bold border-bottom"
+              class="table__header-row flex align-items-center fw-bold border-top border-bottom border-lighter"
             >
               <ElCol :span="12">
                 <span class="px-3">{{
@@ -512,11 +512,6 @@ $margin: 10px;
 .table__body {
   height: 0;
   overflow-y: auto;
-}
-.table__row {
-  > div:nth-child(2n) {
-    background: #fafafa;
-  }
 }
 .row__label {
   display: inline-block;

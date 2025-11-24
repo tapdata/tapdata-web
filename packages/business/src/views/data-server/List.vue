@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { fetchApiServers } from '@tap/api/src/core/api-server'
+import { fetchApps } from '@tap/api/src/core/app'
+import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
+import { downloadMetadataInstance } from '@tap/api/src/core/metadata-instances'
 import {
   batchUpdateApiModules,
   batchUpdateApiModuleTags,
@@ -6,13 +10,9 @@ import {
   exportApiDocumentation,
   exportApiModules,
   fetchApiModules,
-  fetchApiServers,
-  fetchApps,
-  fetchDatabaseTypes,
-  metadataInstancesApi,
   updateApiModule,
-  useRequest,
-} from '@tap/api'
+} from '@tap/api/src/core/modules'
+import { useRequest } from '@tap/api/src/request'
 import FilterBar from '@tap/component/src/filter-bar/Main.vue'
 import {
   EditOutlined,
@@ -21,8 +21,9 @@ import {
 } from '@tap/component/src/icon'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
+import { uid } from '@tap/shared'
 
-import { escapeRegExp } from 'lodash-es'
+import { cloneDeep, escapeRegExp } from 'lodash-es'
 import {
   computed,
   nextTick,
@@ -34,6 +35,7 @@ import {
   watch,
 } from 'vue'
 import { useRoute } from 'vue-router'
+import { DatabaseIcon } from '../../components/DatabaseIcon'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
 import Upload from '../../components/UploadDialog.vue'
@@ -352,7 +354,7 @@ const changeStatus = async (row: any) => {
 }
 
 const output = (row: any) => {
-  metadataInstancesApi.download(
+  downloadMetadataInstance(
     {
       _id: {
         in: [row.id],
@@ -362,8 +364,20 @@ const output = (row: any) => {
   )
 }
 
-const showDrawer = (item?: any) => {
-  drawer.value?.open(item)
+const showDrawer = (item?: any, copy?: boolean) => {
+  if (copy) {
+    const newPath = uid(11, 'a')
+    drawer.value?.open(
+      Object.assign(cloneDeep(item || {}), {
+        id: null,
+        name: `${item.name}_copy_${newPath}`,
+        basePath: newPath,
+      }),
+      true,
+    )
+  } else {
+    drawer.value?.open(item)
+  }
 }
 
 const fetch = (...args: any[]) => {
@@ -557,12 +571,12 @@ defineExpose({
             @click="openSearch"
           >
             <template #icon>
-              <i-mingcute:search-line />
+              <i-mingcute-search-line />
             </template>
           </el-button>
           <el-button text @click="appEditor.open()">
             <template #icon>
-              <i-mingcute:add-line />
+              <i-mingcute-add-line />
             </template>
           </el-button>
         </div>
@@ -579,12 +593,12 @@ defineExpose({
             <div
               class="list-item-hover rounded-lg p-2 flex align-center gap-2 cursor-pointer font-color-light position-relative"
               :class="{
-                'bg-white shadow-sm font-color-dark': !searchParams.appId,
+                'bg-card shadow-sm font-color-dark': !searchParams.appId,
               }"
               @click="handleAppSelect()"
             >
               <el-icon size="18">
-                <i-fluent:folder-link-16-regular />
+                <i-fluent-folder-link-16-regular />
               </el-icon>
               <div class="flex flex-column gap-1 flex-1 min-w-0">
                 <div class="flex align-center gap-1">
@@ -597,7 +611,7 @@ defineExpose({
               :key="app.id"
               class="list-item-hover rounded-lg p-2 flex align-center gap-2 cursor-pointer font-color-light position-relative"
               :class="{
-                'bg-white shadow-sm font-color-dark':
+                'bg-card shadow-sm font-color-dark':
                   app.id === searchParams.appId,
               }"
               @click="handleAppSelect(app)"
@@ -609,7 +623,7 @@ defineExpose({
               <div class="flex flex-column gap-1 flex-1 min-w-0">
                 <div class="flex align-center gap-2">
                   <el-icon size="18">
-                    <i-fluent:folder-link-16-regular />
+                    <i-fluent-folder-link-16-regular />
                   </el-icon>
                   <span class="ellipsis lh-6" :title="app.value">{{
                     app.value
@@ -640,8 +654,8 @@ defineExpose({
                           class="is-danger"
                         >
                           <el-icon class="mr-2">
-                            <!-- <i-mingcute:delete-2-line /> -->
-                            <i-lucide:trash-2 />
+                            <!-- <i-mingcute-delete-2-line /> -->
+                            <i-lucide-trash-2 />
                           </el-icon>
                           {{ $t('public_button_delete') }}</ElDropdownItem
                         >
@@ -665,9 +679,6 @@ defineExpose({
         v-model:drag-state="dragState"
         row-key="id"
         :draggable="showAppList && !inAppList"
-        :tree-props="{
-          showCheckbox: false,
-        }"
         :remote-method="getData"
         @selection-change="handleSelectionChange"
       >
@@ -691,7 +702,7 @@ defineExpose({
         <template #multipleSelectionActions>
           <ElButton v-show="pendingSelection.length > 0" @click="batchPublish">
             <template #icon>
-              <i-lucide:cloud-upload />
+              <i-lucide-cloud-upload />
             </template>
             <span> {{ $t('public_batch_publish') }}</span>
           </ElButton>
@@ -742,7 +753,7 @@ defineExpose({
         <el-table-column
           :label="$t('packages_business_data_server_list_fuwuzhuangtai')"
           prop="statusFmt"
-          :min-width="106"
+          :min-width="110"
         >
           <template #default="{ row }">
             <span class="status-block" :class="`status-${row.status}`">{{
@@ -758,27 +769,37 @@ defineExpose({
             :min-width="140"
           />
           <el-table-column
-            :label="$t('public_connection_type')"
-            prop="connectionType"
-            :min-width="120"
-          />
-          <el-table-column
-            :label="$t('public_connection_name')"
+            :label="$t('public_connection')"
             prop="connectionName"
             :min-width="200"
-          />
+          >
+            <template #default="{ row }">
+              <div class="flex align-items-center gap-1">
+                <DatabaseIcon
+                  v-if="row.source?.pdkHash"
+                  :pdk-hash="row.source.pdkHash"
+                  :size="16"
+                />
+                <span>{{ row.connectionName }}</span>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column
-            :label="$t('packages_business_data_server_list_guanlianduixiang')"
+            :label="$t('public_table_name')"
             prop="tableName"
             :min-width="180"
           />
           <el-table-column
             :label="$t('daas_data_server_drawer_path')"
             prop="_path"
-            :min-width="130"
+            :min-width="145"
           >
             <template #default="{ row }">
-              <el-tag type="info" class="is-code">
+              <el-tag
+                type="info"
+                class="is-code is-wrap px-1.5 font-mono"
+                disable-transitions
+              >
                 {{ row._path }}
               </el-tag>
             </template>
@@ -809,6 +830,10 @@ defineExpose({
             <ElDivider class="mx-1" direction="vertical" />
             <ElButton text type="primary" @click="output(row)">{{
               $t('public_button_export')
+            }}</ElButton>
+            <ElDivider class="mx-1" direction="vertical" />
+            <ElButton text type="primary" @click="showDrawer(row, true)">{{
+              $t('public_button_copy')
             }}</ElButton>
             <ElDivider class="mx-1" direction="vertical" />
             <ElButton text type="primary" @click="removeServer(row)">{{

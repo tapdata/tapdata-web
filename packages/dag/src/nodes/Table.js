@@ -1,11 +1,9 @@
 import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
+// TODO: 后端合并后删除
+const isHa = import.meta.env.MODE === 'ha'
 
 export class Table extends NodeType {
-  constructor() {
-    super()
-  }
-
   type = 'table'
 
   group = 'data'
@@ -20,15 +18,6 @@ export class Table extends NodeType {
       $inputs: {
         type: 'array',
         'x-display': 'hidden',
-        'x-reactions': {
-          target: 'updateConditionFields',
-          effects: ['onFieldValueChange'],
-          fulfill: {
-            run: `setTimeout(() => {
-              $target && $target.visible && $target.validate()
-            }, 0)`,
-          },
-        },
       },
       $outputs: {
         type: 'array',
@@ -137,6 +126,24 @@ export class Table extends NodeType {
                 },
               },
 
+              compareSchema: {
+                type: 'void',
+                'x-component': 'CompareSchema',
+                'x-reactions': {
+                  dependencies: [
+                    '.existDataProcessMode',
+                    '$outputs',
+                    '$inputs',
+                  ],
+                  fulfill: {
+                    state: {
+                      visible:
+                        '{{!$form.disabled && !$deps[1].length && $deps[2].length > 0 && $deps[1].length === 0 && $deps[0] !== "dropTable" && !!$values.attrs.connectionTags && !$values.attrs.connectionTags.includes("schema-free")}}',
+                    },
+                  },
+                },
+              },
+
               tableNameSpace: {
                 type: 'void',
                 'x-component': 'Space',
@@ -163,7 +170,6 @@ export class Table extends NodeType {
                       asterisk: true,
                       feedbackLayout: 'none',
                       connectionId: '{{$values.connectionId}}',
-                      title: i18n.t('packages_dag_dag_table'),
                       target: 'tableName',
                       class: 'flex-1',
                     },
@@ -262,7 +268,6 @@ export class Table extends NodeType {
                     default: true,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      class: 'flex-1',
                       tooltip: i18n.t(
                         'packages_dag_syncSourcePartitionTableEnable_tip',
                       ),
@@ -373,19 +378,6 @@ export class Table extends NodeType {
                               },
                             },
                           },
-                          // `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.id)}}`,
-                          {
-                            effects: ['onFieldMount'],
-                            fulfill: {
-                              run: '$self.visible && $self.validate()',
-                            },
-                          },
-                          {
-                            effects: ['onFieldInputValueChange'],
-                            fulfill: {
-                              run: '$self.value && $self.value.length && $form.clearErrors("updateConditionFields")',
-                            },
-                          },
                           {
                             effects: ['onFieldInit'],
                             fulfill: {
@@ -452,9 +444,6 @@ export class Table extends NodeType {
                       },
                     ],
                     'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      wrapperWidth: 300,
-                    },
                     'x-component': 'Select',
                     'x-reactions': {
                       fulfill: {
@@ -462,11 +451,30 @@ export class Table extends NodeType {
                         state: {
                           description: `{{$settings.type === "cdc" ? '${i18n.t(
                             'packages_dag_nodes_database_setting_cdc_changjing_desc',
-                          )}':$self.value === 'dropTable' ? '${i18n.t('packages_dag_existDataProcessMode_desc')}':''}}`,
+                          )}':''}}`,
                         },
                         schema: {
                           // 根据capabilities列表如果不存在{"id" : "clear_table_function"}属性，表示不支持“运行前删除已存在数据”，⚠️👇表达式依赖enum的顺序
                           'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`,
+                        },
+                      },
+                    },
+                  },
+                  dropTableAlert: {
+                    type: 'void',
+                    'x-component': 'Alert',
+                    'x-component-props': {
+                      class: 'mb-2 lh-base',
+                      title: i18n.t('packages_dag_existDataProcessMode_desc'),
+                      type: 'warning',
+                      showIcon: true,
+                      closable: false,
+                    },
+                    'x-reactions': {
+                      dependencies: ['.existDataProcessMode'],
+                      fulfill: {
+                        state: {
+                          visible: '{{$deps[0] === "dropTable"}}',
                         },
                       },
                     },
@@ -1677,13 +1685,6 @@ export class Table extends NodeType {
                         },
                       },
                     },
-                    'x-reactions': {
-                      fulfill: {
-                        state: {
-                          display: `{{findParentNodes($values.id).filter(parent => (parent.type === 'database' || parent.type === 'table') && parent.ddlConfiguration === 'SYNCHRONIZATION' ).length > 0 ? "visible":"hidden"}}`,
-                        },
-                      },
-                    },
                     properties: {
                       ddlEvents: {
                         type: 'void',
@@ -1911,7 +1912,9 @@ export class Table extends NodeType {
                           {
                             fulfill: {
                               state: {
-                                display: `{{findParentNodes($values.id).length < 2 && $values.attrs.capabilities.filter(item => ["transaction_begin_function", "transaction_commit_function", "transaction_rollback_function"].includes(item.id)).length === 3 ? 'visible' : 'hidden'}}`,
+                                display: isHa
+                                  ? `{{$values.attrs.capabilities.filter(item => ["transaction_begin_function", "transaction_commit_function", "transaction_rollback_function"].includes(item.id)).length === 3 ? 'visible' : 'hidden'}}`
+                                  : `{{findParentNodes($values.id).length < 2 && $values.attrs.capabilities.filter(item => ["transaction_begin_function", "transaction_commit_function", "transaction_rollback_function"].includes(item.id)).length === 3 ? 'visible' : 'hidden'}}`,
                               },
                             },
                           },

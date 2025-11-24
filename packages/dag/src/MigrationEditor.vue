@@ -1,6 +1,6 @@
 <script>
-import { getConnectionNoSchema, taskApi } from '@tap/api'
-
+import { getConnectionNoSchema } from '@tap/api/src/core/connections'
+import { createTask, deleteTask, saveTask } from '@tap/api/src/core/task'
 import SkipError from '@tap/business/src/views/task/SkipError.vue'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import { VExpandXTransition } from '@tap/component/src/base/v-expand-x-transition'
@@ -10,6 +10,7 @@ import { showMessage } from '@tap/component/src/mixins/showMessage'
 import { titleChange } from '@tap/component/src/mixins/titleChange'
 import i18n from '@tap/i18n'
 import { uuid } from '@tap/shared'
+import { useDark } from '@vueuse/core'
 import { merge } from 'lodash-es'
 import DFNode from './components/DFNode.vue'
 import ConfigPanel from './components/migration/ConfigPanel.vue'
@@ -92,6 +93,10 @@ export default {
     'dataflow.id': function () {
       this.getTaskPermissions()
     },
+  },
+
+  created() {
+    useDark()
   },
 
   async mounted() {
@@ -228,7 +233,7 @@ export default {
       this.isSaving = true
       const data = this.getDataflowDataToSave()
       try {
-        const dataflow = await taskApi.post(data)
+        const dataflow = await createTask(data)
         this.buried('migrationSubmit', { result: true })
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
@@ -293,7 +298,7 @@ export default {
           },
         ).then((res) => {
           if (res) {
-            taskApi.delete(this.dataflow.id)
+            deleteTask(this.dataflow.id)
           }
           this.$router.push({
             name: 'migrateList',
@@ -346,6 +351,14 @@ export default {
         return
       }
 
+      if (needStart && ['edit', 'wait_start'].includes(this.dataflow.status)) {
+        const validateDropTableEnabled = await this.validateDropTableEnabled()
+        if (!validateDropTableEnabled) {
+          this.isSaving = false
+          return
+        }
+      }
+
       if (!this.dataflow.id) {
         return this.saveAsNewDataflow()
       }
@@ -355,8 +368,7 @@ export default {
 
       try {
         this.initWS()
-        // const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
-        const result = await taskApi.save(data, {
+        const result = await saveTask(data, {
           silenceMessage: true,
         })
         this.reformDataflow(result)
@@ -583,7 +595,7 @@ $sidebarW: 260px;
 $hoverBg: #e1e1e1;
 $radius: 3px;
 $baseHeight: 26px;
-$sidebarBg: #fff;
+$sidebarBg: var(--el-bg-color);
 
 .layout-sidebar {
   position: relative;

@@ -1,14 +1,30 @@
 <script>
-import { fetchClusterStates, licensesApi, taskApi, workerApi } from '@tap/api'
+import { fetchClusterStates } from '@tap/api/src/core/cluster'
+import { getPipelineDetails } from '@tap/api/src/core/licenses'
+import {
+  batchDeleteTasks,
+  batchRenewTasks,
+  batchStartTasks,
+  batchStopTasks,
+  batchUpdateTaskListtags,
+  copyTask,
+  exportTasks,
+  fetchTasks,
+  forceStopTask,
+  updateTask,
+} from '@tap/api/src/core/task'
+import { getTaskUsedAgent } from '@tap/api/src/core/workers'
 import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import FilterBar from '@tap/component/src/filter-bar/Main.vue'
 import i18n from '@tap/i18n'
+import { calcUnit } from '@tap/shared'
 import dayjs from 'dayjs'
-import { escapeRegExp, uniqBy } from 'lodash-es'
-
+import { escapeRegExp, isNumber, uniqBy } from 'lodash-es'
 import { h } from 'vue'
+
 import { DatabaseIcon } from '../../components/DatabaseIcon'
+import { showErrorMessage } from '../../components/error-message'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
 import SyncStatus from '../../components/SyncStatus.vue'
 import TablePage from '../../components/TablePage.vue'
@@ -18,6 +34,7 @@ import UpgradeFee from '../../components/UpgradeFee.vue'
 import Upload from '../../components/UploadDialog.vue'
 import syncTaskAgent from '../../mixins/syncTaskAgent'
 import { makeStatusAndDisabled, MILESTONE_TYPE, STATUS_MAP } from '../../shared'
+import EditInfoDialog from './EditInfoDialog.vue'
 import SkipError from './SkipError'
 
 export default {
@@ -36,6 +53,7 @@ export default {
     UpgradeCharges,
     UpgradeFee,
     SyncStatus,
+    EditInfoDialog,
   },
 
   mixins: [syncTaskAgent],
@@ -242,6 +260,7 @@ export default {
         syncStatus: true,
         restartFlag: true,
         attrs: true,
+        metricInfo: true,
       }
       const where = {
         syncType,
@@ -283,52 +302,65 @@ export default {
         skip: (current - 1) * size,
         where,
       }
-      return taskApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          const errorTaskIds = []
-          const list = (data?.items || []).map((item) => {
-            if (item.errorEvents?.length) {
-              // 清除 stacks
-              item.errorEvents.forEach((event) => {
-                delete event.stacks
-              })
-            }
-
-            makeStatusAndDisabled(item)
-            if (item.status === 'error') {
-              errorTaskIds.push(item.id)
-            } else if (this.taskErrorCause[item.id]) {
-              delete this.taskErrorCause
-            }
-            return item
-          })
-
-          /*if (!this.isDaas) {
-          this.loadTaskErrorCause(errorTaskIds)
-        }*/
-
-          // 有选中行，列表刷新后无法更新行数据，比如状态
-          if (this.multipleSelection.length && list.length) {
-            const tempMap = list.reduce((map, item) => {
-              map[item.id] = item
-              return map
-            }, {})
-            this.multipleSelection.forEach((item, i) => {
-              const temp = tempMap[item.id]
-              if (temp) {
-                this.multipleSelection[i] = temp
-              }
+      return fetchTasks(filter).then((data) => {
+        const errorTaskIds = []
+        const list = (data?.items || []).map((item) => {
+          if (item.errorEvents?.length) {
+            // 清除 stacks
+            item.errorEvents.forEach((event) => {
+              delete event.stacks
             })
           }
 
-          return {
-            total: data.total,
-            data: list,
+          makeStatusAndDisabled(item)
+          if (item.status === 'error') {
+            errorTaskIds.push(item.id)
+          } else if (this.taskErrorCause[item.id]) {
+            delete this.taskErrorCause
           }
+
+          if (item.metricInfo) {
+            const day = dayjs(item.metricInfo.lastUpdateTime)
+            item.metricInfo.cpuUsage = isNumber(item.metricInfo.cpuUsage)
+              ? `${Number(item.metricInfo.cpuUsage.toFixed(2))}%`
+              : '--'
+            item.metricInfo.memoryUsage = isNumber(item.metricInfo.memoryUsage)
+              ? calcUnit(item.metricInfo.memoryUsage, 'b', 2)
+              : '--'
+            item.metricInfo.lastUpdateTime = this.$t(
+              'public_updated_from_now',
+              {
+                time: day.fromNow(),
+              },
+            )
+            item.metricInfo.hasWarning = Date.now() - day.valueOf() > 60000
+          }
+          return item
         })
+
+        /*if (!this.isDaas) {
+          this.loadTaskErrorCause(errorTaskIds)
+        }*/
+
+        // 有选中行，列表刷新后无法更新行数据，比如状态
+        if (this.multipleSelection.length && list.length) {
+          const tempMap = list.reduce((map, item) => {
+            map[item.id] = item
+            return map
+          }, {})
+          this.multipleSelection.forEach((item, i) => {
+            const temp = tempMap[item.id]
+            if (temp) {
+              this.multipleSelection[i] = temp
+            }
+          })
+        }
+
+        return {
+          total: data.total,
+          data: list,
+        }
+      })
     },
 
     formatTime(time) {
@@ -358,7 +390,7 @@ export default {
           items: [
             { label: this.$t('public_select_option_all'), value: '' },
             ...Object.entries(MILESTONE_TYPE).map(([key, value]) => ({
-              label: value.text,
+              label: this.$t(value.i18n),
               value: key,
             })),
           ],
@@ -417,7 +449,7 @@ export default {
           slotName: 'pipeline',
           type: 'select-inner',
           items: async () => {
-            let data = await licensesApi.getPipelineDetails()
+            let data = await getPipelineDetails()
             data = data || []
             return data.map((item) => {
               return {
@@ -522,7 +554,7 @@ export default {
         status,
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      taskApi.update(where, attributes).then((data) => {
+      updateTask(where, attributes).then((data) => {
         this.table.fetch()
         this.responseHandler(data, this.$t('public_message_operation_success'))
       })
@@ -543,7 +575,7 @@ export default {
         id: ids,
         listtags,
       }
-      taskApi.batchUpdateListtags(attributes).then(() => {
+      batchUpdateTaskListtags(attributes).then(() => {
         this.dataFlowId = ''
         this.table.fetch()
       })
@@ -621,8 +653,7 @@ export default {
     },
 
     startTask(ids, canNotList) {
-      taskApi
-        .batchStart(ids)
+      batchStartTasks(ids)
         .then((data) => {
           this.buried(this.taskBuried.start, '', { result: true })
           this.table.fetch()
@@ -642,10 +673,26 @@ export default {
     },
 
     copy(ids, node) {
-      taskApi.copy(node.id).then(() => {
-        this.table.fetch()
-        this.$message.success(this.$t('public_message_copy_success'))
+      copyTask(node.id, {
+        skipErrorHandler: true,
       })
+        .then(() => {
+          this.table.fetch()
+          this.$message.success(this.$t('public_message_copy_success'))
+        })
+        .catch((error) => {
+          let msg
+
+          if (error?.code === 'Task.ListWarnMessage' && error.data) {
+            const keys = Object.keys(error.data)
+            msg = error.data[keys[0]]?.[0]?.msg
+          }
+
+          showErrorMessage({
+            msg: msg || error?.message || this.$t('public_message_copy_fail'),
+            stack: error?.stack,
+          })
+        })
     },
 
     initialize(ids, item = {}, canNotList) {
@@ -659,8 +706,7 @@ export default {
           return
         }
         this.restLoading = true
-        taskApi
-          .batchRenew(ids)
+        batchRenewTasks(ids)
           .then((data) => {
             this.table.fetch()
             this.responseHandler(
@@ -681,7 +727,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchDelete(ids).then((data = []) => {
+        batchDeleteTasks(ids).then((data = []) => {
           const selected = this.multipleSelection.filter(({ id }) =>
             ids.includes(id),
           )
@@ -733,7 +779,7 @@ export default {
     },
 
     async forceStop(ids, item = {}) {
-      const data = await workerApi.taskUsedAgent(ids)
+      const data = await getTaskUsedAgent(ids)
       let msgObj = this.getConfirmMessage(
         'force_stop',
         ids.length > 1,
@@ -750,7 +796,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then((data) => {
+        forceStopTask(ids).then((data) => {
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
             false,
@@ -767,7 +813,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then((data) => {
+        batchStopTasks(ids).then((data) => {
           this.table.fetch()
           this.responseHandler(
             data,
@@ -791,7 +837,7 @@ export default {
     },
 
     export(ids) {
-      taskApi.export(ids)
+      exportTasks(ids)
     },
 
     handleCommand(command, node) {
@@ -838,8 +884,8 @@ export default {
     },
 
     getConfirmMessage(operateStr, isBulk, name) {
-      let title = `${operateStr}_confirm_title`,
-        message = `${operateStr}_confirm_message`
+      let title = `${operateStr}_confirm_title`
+      let message = `${operateStr}_confirm_message`
       if (isBulk) {
         title = `bulk_${title}`
         message = `bulk_${message}`
@@ -850,7 +896,7 @@ export default {
       const msg = h(
         'p',
         {
-          style: 'width: calc(100% - 28px);word-break: break-word;',
+          style: 'word-break: break-word;',
         },
         [
           strArr[0],
@@ -983,7 +1029,7 @@ export default {
     },
 
     async loadPipelineOptions() {
-      const data = await licensesApi.getPipelineDetails()
+      const data = await getPipelineDetails()
 
       this.pipelineOptions = data.map((item) => {
         return {
@@ -1003,6 +1049,10 @@ export default {
     handleSelectPipeline(val) {
       // this.searchParams.id = this.pipeline ? this.pipeline.taskIds : undefined
       this.table.fetch(1)
+    },
+
+    handleEditInfo(row) {
+      this.$refs.editInfoDialog.open(row)
     },
   },
 }
@@ -1174,19 +1224,81 @@ export default {
       >
         <template #default="{ row }">
           <div class="dataflow-name flex flex-wrap">
-            <span v-if="handleClickNameDisabled(row)" class="mr-1">{{
+            <!-- <span v-if="handleClickNameDisabled(row)" class="mr-1">{{
               row.name
-            }}</span>
+            }}</span> -->
             <ElLink
-              v-else
               role="ellipsis"
               type="primary"
               underline="never"
-              class="justify-content-start ellipsis block mr-1"
+              class="justify-content-start ellipsis block mr-1 position-relative min-w-0 task-name-link"
               :class="['name', { 'has-children': row.hasChildren }]"
               @click.stop="handleClickName(row)"
-              >{{ row.name }}</ElLink
             >
+              <span class="inline-flex min-w-0">
+                <span class="ellipsis">{{ row.name }}</span>
+                <el-tooltip
+                  v-if="!row.desc"
+                  placement="top"
+                  :hide-after="0"
+                  :content="$t('packages_business_edit_task_info')"
+                >
+                  <el-button
+                    size="small"
+                    text
+                    class="edit-info-btn"
+                    @click.stop="handleEditInfo(row)"
+                  >
+                    <template #icon>
+                      <el-icon><i-lucide-file-pen /></el-icon>
+                    </template>
+                  </el-button>
+                </el-tooltip>
+                <el-popover
+                  v-else
+                  :teleported="true"
+                  placement="top"
+                  :content="row.desc"
+                  :hide-after="0"
+                  popper-style="width: auto;max-width: 448px"
+                >
+                  <template #reference>
+                    <el-button
+                      size="small"
+                      text
+                      class="edit-info-btn"
+                      style="--el-button-text-color: var(--icon-n1)"
+                      @click.stop="handleEditInfo(row)"
+                    >
+                      <template #icon>
+                        <el-icon><i-lucide-file-text /></el-icon>
+                      </template>
+                    </el-button>
+                  </template>
+                  <template #default>
+                    <div class="mb-2 flex align-center gap-1">
+                      {{ row.name }}
+                      <el-button
+                        class="flex-shrink-0"
+                        size="small"
+                        text
+                        @click="handleEditInfo(row)"
+                      >
+                        <template #icon>
+                          <el-icon><i-lucide-file-pen /></el-icon>
+                        </template>
+                      </el-button>
+                    </div>
+                    <div
+                      class="bg-gray-50 dark:bg-card rounded-lg p-2 border border-gray-100"
+                    >
+                      <div>{{ row.desc }}</div>
+                    </div>
+                  </template>
+                </el-popover>
+              </span>
+            </ElLink>
+
             <span
               v-if="row.listtags"
               class="justify-content-start ellipsis flex flex-wrap align-center gap-1"
@@ -1200,7 +1312,7 @@ export default {
               >
             </span>
           </div>
-          <div class="fs-8 font-color-sslight lh-base">
+          <div class="fs-8 font-color-sslight lh-base flex align-center">
             <span class="align-middle">{{
               row.type ? taskType[row.type] : ''
             }}</span>
@@ -1210,6 +1322,22 @@ export default {
               class="align-middle ml-1"
               >dynamic-form-outline</VIcon
             >
+            <template v-if="row.status === 'running' && row.metricInfo">
+              <el-divider direction="vertical" />
+              <el-tooltip :content="row.metricInfo.lastUpdateTime">
+                <div class="flex align-center gap-1">
+                  <el-icon
+                    v-if="row.metricInfo.hasWarning"
+                    class="color-warning"
+                    ><i-lucide-triangle-alert
+                  /></el-icon>
+                  <span class="font-color-sslight">CPU:</span>
+                  <span class="fw-sub">{{ row.metricInfo.cpuUsage }}</span>
+                  <span class="font-color-sslight ml-2">MEM:</span>
+                  <span class="fw-sub">{{ row.metricInfo.memoryUsage }}</span>
+                </div>
+              </el-tooltip>
+            </template>
           </div>
         </template>
       </el-table-column>
@@ -1492,14 +1620,13 @@ export default {
       "
       :go-page="upgradeFeeGoPage"
     />
+    <EditInfoDialog ref="editInfoDialog" @success="table.fetch()" />
   </section>
 </template>
 
 <style lang="scss" scoped>
 .data-flow-wrap {
   height: 100%;
-  //padding: 0 24px 24px 0;
-  background: #fff;
 
   .btn-refresh {
     padding: 0;
@@ -1550,6 +1677,7 @@ export default {
     }
 
     .dataflow-name {
+      line-height: 24px;
       .tag {
         padding: 0 4px;
         font-style: normal;
@@ -1587,6 +1715,26 @@ export default {
       padding: 10px;
       background-color: #f8f9fa;
     }
+  }
+
+  .task-name-link :deep(.el-link__inner) {
+    width: 100%;
+  }
+
+  .el-button.el-button.edit-info-btn {
+    --el-button-text-color: var(--icon-n3);
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    right: -24px;
+    top: 0;
+  }
+
+  .hover-row .el-button.el-button.edit-info-btn,
+  .el-button.el-button.edit-info-btn[aria-describedby] {
+    opacity: 1;
+    pointer-events: auto;
+    position: static;
   }
 }
 </style>

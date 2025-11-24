@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import { Cookie } from '@tap/shared'
-import { computed, onMounted, provide, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import Sidebar from '@/layouts/Sidebar.vue'
 import Wrapper from './Wrapper.vue'
 
 const store = useStore()
@@ -47,7 +44,12 @@ const handleSelectMenu = (name: string) => {
 <template>
   <Wrapper>
     <template #sidebar>
-      <el-aside class="layout-side" width="220px">
+      <div style="flex: 0 0 220px" />
+      <el-aside
+        class="layout-side position-fixed"
+        width="220px"
+        style="margin-top: 64px"
+      >
         <el-menu
           unique-opened
           class="flex flex-column flex-1 gap-2 border-end-0"
@@ -64,11 +66,7 @@ const handleSelectMenu = (name: string) => {
             </template>
           </el-menu-item>
           <div class="px-4"><el-divider class="my-0" /></div>
-          <el-menu-item
-            v-for="menu in menus"
-            :key="menu.key"
-            :index="menu.key"
-          >
+          <el-menu-item v-for="menu in menus" :key="menu.key" :index="menu.key">
             <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
             <template #title>
               <span class="ml-4 title">{{ $t(menu.name) }}</span>

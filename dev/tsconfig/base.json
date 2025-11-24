@@ -11,7 +11,7 @@
     "baseUrl": ".",
     "module": "ESNext",
 
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
 
     "strict": true,
@@ -34,7 +34,8 @@
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
-    "preserveWatchOutput": true
+    "preserveWatchOutput": true,
+    "incremental": true
   },
   "exclude": ["**/node_modules/**", "**/dist/**", "**/.turbo/**"]
 }

@@ -2,7 +2,7 @@
 import {
   getTaskInspectResultsOperations,
   type TaskInspectOperation,
-} from '@tap/api'
+} from '@tap/api/src/core/task-inspect'
 import { useI18n } from '@tap/i18n'
 import dayjs from 'dayjs'
 import { computed, ref } from 'vue'
@@ -130,11 +130,11 @@ function formatTime(timestamp: number): string {
           </el-tag>
         </template>
       </el-table-column>
-      <!-- <el-table-column
+      <el-table-column
         prop="msg"
         :label="$t('packages_dag_inspect_operation_message')"
         show-overflow-tooltip
-      /> -->
+      />
       <el-table-column
         prop="ts"
         :label="$t('packages_dag_inspect_operation_time')"

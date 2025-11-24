@@ -1,4 +1,6 @@
-import { fetchSettings, fetchTimestamp, getUserInfoByToken } from '@tap/api'
+import { fetchSettings } from '@tap/api/core/settings'
+import { fetchTimestamp } from '@tap/api/core/timestamp'
+import { getUserInfoByToken } from '@tap/api/src/core/users'
 import { WSClient } from '@tap/business/src/shared/ws-client'
 import VIcon from '@tap/component/src/base/VIcon.vue'
 import { installElement } from '@tap/component/src/InstallElement'
@@ -23,6 +25,7 @@ import i18n from './i18n'
 import router from './router'
 
 import 'virtual:svg-icons-register'
+// import 'element-plus/theme-chalk/dark/css-vars.css'
 import '@tap/styles'
 import '@/styles/app.scss'
 
@@ -36,6 +39,10 @@ window._TAPDATA_OPTIONS_ = {
   ).href,
   loginUrl: new URL(
     `./assets/images/${import.meta.env.VUE_APP_LOGIN_IMG}`,
+    import.meta.url,
+  ).href,
+  loginDarkUrl: new URL(
+    `./assets/images/${import.meta.env.VUE_APP_LOGIN_DARK_IMG}`,
     import.meta.url,
   ).href,
   loadingImg: new URL(

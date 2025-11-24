@@ -1,11 +1,11 @@
 <script>
+import { fetchLicenses } from '@tap/api/src/core/licenses'
 import {
   fetchSettings,
-  licensesApi,
   saveSettings,
   testEmail,
-  usersApi,
-} from '@tap/api'
+} from '@tap/api/src/core/settings'
+import { testLdapLogin } from '@tap/api/src/core/users'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
@@ -146,7 +146,7 @@ export default {
     // 获取设置数据
     getData() {
       let auth_data = []
-      licensesApi.get({}).then((data) => {
+      fetchLicenses().then((data) => {
         auth_data = data?.items || []
       })
       fetchSettings().then((data) => {
@@ -281,8 +281,7 @@ export default {
 
     testLdap() {
       this.adTesting = true
-      usersApi
-        .testLdapLogin(this.ldapForm)
+      testLdapLogin(this.ldapForm)
         .then((data) => {
           if (data?.result) {
             this.$message.success(this.$t('setting_test_ldap_success'))
@@ -449,14 +448,14 @@ export default {
                             @click="removeRule(childItem, i)"
                           >
                             <template #icon>
-                              <i-mingcute:close-line />
+                              <i-mingcute-close-line />
                             </template>
                           </el-button>
                         </div>
 
                         <el-button @click="addRule(childItem)">
                           <template #icon>
-                            <i-mingcute:add-line />
+                            <i-mingcute-add-line />
                           </template>
                           {{ $t('public_rule_add') }}
                         </el-button>
@@ -526,7 +525,9 @@ export default {
         </div>
       </div>
 
-      <div class="footer position-sticky py-6 bottom-0 bg-white z-10">
+      <div
+        class="footer border-top position-sticky py-6 bottom-0 bg-white z-10 dark:bg-transparent dark:backdrop-blur-md"
+      >
         <el-button
           v-if="email === 'admin@admin.com'"
           type="primary"
@@ -690,7 +691,7 @@ export default {
 .e-form {
   display: flex;
   flex-direction: column;
-  background-color: #fff;
+  // background-color: var(--card);
   box-sizing: border-box;
 
   .item {
@@ -727,7 +728,6 @@ export default {
   .footer {
     flex: 0 0 auto;
     width: 100%;
-    border-top: 1px solid var(--border-light);
   }
 }
 .dialog-email-template {

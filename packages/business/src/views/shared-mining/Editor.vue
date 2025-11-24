@@ -1,10 +1,11 @@
 <script>
+import { getConnectionNoSchema } from '@tap/api/src/core/connections'
+import { fetchDatabaseTypeByPdkHash } from '@tap/api/src/core/database-types'
 import {
-  fetchDatabaseTypeByPdkHash,
-  getConnectionNoSchema,
-  logcollectorApi,
-  taskApi,
-} from '@tap/api'
+  getLogcollectorDetail,
+  patchLogcollectorId,
+} from '@tap/api/src/core/logcollector'
+import { getTaskById, patchTask } from '@tap/api/src/core/task'
 import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 import dayjs from 'dayjs'
 
@@ -67,8 +68,7 @@ export default {
 
     loadData() {
       this.loading = true
-      logcollectorApi
-        .getDetail(this.taskId)
+      getLogcollectorDetail(this.taskId)
         .then((task) => {
           this.editForm.name = task.name
           this.editForm.storageTime = task.storageTime
@@ -110,7 +110,7 @@ export default {
       let dag = this.$store.getters['dataflow/dag']
 
       if (!dag?.edges?.length || !dag?.nodes?.length) {
-        const task = await taskApi.get(this.taskId)
+        const task = await getTaskById(this.taskId)
         const outputsMap = {}
         const inputsMap = {}
 
@@ -216,7 +216,7 @@ export default {
     handleSave(...args) {
       this.$refs.form?.validate((valid) => {
         if (valid) {
-          logcollectorApi.patchId(this.taskId, this.editForm).then(() => {
+          patchLogcollectorId(this.taskId, this.editForm).then(() => {
             this.$emit('success', ...args)
             this.$message.success(
               this.$t('packages_business_shared_cdc_setting_message_edit_save'),
@@ -285,7 +285,7 @@ export default {
           })
         }
       })
-      taskApi.patch({
+      patchTask({
         id: this.taskId,
         dag,
       })

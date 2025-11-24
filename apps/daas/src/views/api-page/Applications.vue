@@ -3,9 +3,9 @@ import {
   createApiClient,
   deleteApiClient,
   fetchApiClients,
-  roleApi,
   updateApiClient,
-} from '@tap/api'
+} from '@tap/api/src/core/api-client'
+import { fetchRoles } from '@tap/api/src/core/roles'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import { FilterBar } from '@tap/component/src/filter-bar'
@@ -168,7 +168,7 @@ export default {
         limit: 500,
         skip: 0,
       }
-      roleApi.get({ filter: JSON.stringify(filter) }).then((data) => {
+      fetchRoles(filter).then((data) => {
         this.roles = data?.items || []
       })
     },
@@ -318,7 +318,7 @@ export default {
       v-model="createDialogVisible"
       width="600px"
       class="create-dialog"
-      :title="$t('application_create')"
+      :title="createForm.id ? $t('application_edit') : $t('application_create')"
       :close-on-click-modal="false"
     >
       <ElForm

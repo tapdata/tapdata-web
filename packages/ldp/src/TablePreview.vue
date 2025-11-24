@@ -1,14 +1,22 @@
 <script>
+import { getStorageOverview } from '@tap/api/src/core/discovery'
+import { deleteMDMTable } from '@tap/api/src/core/ldp'
 import {
-  CancelToken,
-  discoveryApi,
-  getApiModuleList,
-  ldpApi,
-  metadataInstancesApi,
-  proxyApi,
-  taskApi,
-  workerApi,
-} from '@tap/api'
+  updateTableDesc,
+  updateTableFieldDesc,
+} from '@tap/api/src/core/metadata-instances'
+import { getApiModuleList } from '@tap/api/src/core/modules'
+import { callProxy } from '@tap/api/src/core/proxy'
+import {
+  batchDeleteTasks,
+  batchStartTasks,
+  batchStopTasks,
+  forceStopTask,
+  getTableStatus,
+  getTaskByTableName,
+} from '@tap/api/src/core/task'
+import { getTaskUsedAgent } from '@tap/api/src/core/workers'
+import { CancelToken } from '@tap/api/src/request'
 import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import { makeStatusAndDisabled, TASK_TYPE_MAP } from '@tap/business/src/shared'
@@ -23,7 +31,8 @@ import { calcTimeUnit, calcUnit, isNum } from '@tap/shared'
 import dayjs from 'dayjs'
 import { cloneDeep, debounce } from 'lodash-es'
 import { h } from 'vue'
-import TableLineage from './components/TableLineage'
+import LineageGraph from './components/LineageGraph'
+// import TableLineage from './components/TableLineage'
 
 export default {
   name: 'TablePreview',
@@ -33,9 +42,10 @@ export default {
     TaskStatus,
     VEmpty,
     DatabaseIcon,
-    TableLineage,
+    // TableLineage,
     VCodeEditor,
     IconButton,
+    LineageGraph,
   },
   props: {
     tag: {
@@ -317,8 +327,7 @@ export default {
     },
     getTableStorage(row) {
       this.loading = true
-      discoveryApi
-        .overViewStorage(row.id)
+      getStorageOverview(row.id)
         .then((res) => {
           for (const key in res) {
             this.detailData[key] = res[key]
@@ -352,10 +361,9 @@ export default {
       }
       this.cancelSource?.cancel()
       this.cancelSource = CancelToken.source()
-      return taskApi
-        .getTaskByTableName(params, {
-          cancelToken: this.cancelSource.token,
-        })
+      return getTaskByTableName(params, {
+        cancelToken: this.cancelSource.token,
+      })
         .then((taskList) => {
           this.taskData = taskList.filter((task) => {
             if (
@@ -416,8 +424,7 @@ export default {
         args: [this.connectionId, this.detailData.name],
       }
       this.loadingSampleData = true
-      proxyApi
-        .call(params)
+      callProxy(params)
         .then((res) => {
           this.sampleData = res?.sampleData || []
           //schema返回的数据组装数据
@@ -440,27 +447,25 @@ export default {
     },
     //
     saveTableDesc() {
-      metadataInstancesApi.updateTableDesc({
+      updateTableDesc({
         id: this.detailData.id,
         description: this.detailData.description,
       })
     },
     //获取表状态
     getTaskStatus() {
-      taskApi
-        .tableStatus(this.connectionId, this.detailData.name)
-        .then((res) => {
-          this.tableStatus = res?.status
-          this.cdcDelayTime =
-            isNum(res?.cdcDelayTime) && res.cdcDelayTime >= 0
-              ? calcTimeUnit(res.cdcDelayTime, 2, {
-                  autoHideMs: true,
-                })
-              : '-'
-          this.lastDataChangeTime = res?.lastDataChangeTime
-            ? dayjs(res?.lastDataChangeTime).format('YYYY-MM-DD HH:mm:ss')
+      getTableStatus(this.connectionId, this.detailData.name).then((res) => {
+        this.tableStatus = res?.status
+        this.cdcDelayTime =
+          isNum(res?.cdcDelayTime) && res.cdcDelayTime >= 0
+            ? calcTimeUnit(res.cdcDelayTime, 2, {
+                autoHideMs: true,
+              })
             : '-'
-        })
+        this.lastDataChangeTime = res?.lastDataChangeTime
+          ? dayjs(res?.lastDataChangeTime).format('YYYY-MM-DD HH:mm:ss')
+          : '-'
+      })
     },
     getApisData() {
       const { connectionId, name } = this.selected || {}
@@ -549,7 +554,7 @@ export default {
     },
 
     startTask(ids) {
-      taskApi.batchStart(ids).then((data) => {
+      batchStartTasks(ids).then((data) => {
         this.getTasks(true)
         if (data.every((t) => t.code === 'ok')) {
           this.$message.success(this.$t('public_message_operation_success'))
@@ -573,7 +578,7 @@ export default {
     },
 
     async forceStopTask(ids, item = {}) {
-      const data = await workerApi.taskUsedAgent(ids)
+      const data = await getTaskUsedAgent(ids)
       let msgObj = this.getConfirmMessage(
         'force_stop',
         ids.length > 1,
@@ -592,7 +597,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then((data) => {
+        forceStopTask(ids).then((data) => {
           this.getTasks(true)
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
@@ -611,7 +616,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then((data) => {
+        batchStopTasks(ids).then((data) => {
           this.getTasks(true)
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
@@ -629,7 +634,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchDelete(ids).then((data) => {
+        batchDeleteTasks(ids).then((data) => {
           this.getTasks(true)
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
@@ -640,8 +645,8 @@ export default {
     },
 
     getConfirmMessage(operateStr, isBulk, name) {
-      let title = `${operateStr}_confirm_title`,
-        message = `${operateStr}_confirm_message`
+      let title = `${operateStr}_confirm_title`
+      let message = `${operateStr}_confirm_message`
       if (isBulk) {
         title = `bulk_${title}`
         message = `bulk_${message}`
@@ -652,7 +657,7 @@ export default {
       const msg = h(
         'p',
         {
-          style: 'width: calc(100% - 28px);word-break: break-all;',
+          style: 'word-break: break-all;',
         },
         [
           strArr[0],
@@ -679,14 +684,12 @@ export default {
         col.desc = val
       }
 
-      metadataInstancesApi
-        .updateTableFieldDesc(this.selected.id, {
-          id,
-          businessDesc: val,
-        })
-        .catch(() => {
-          this.$message.error(this.$t('public_message_save_fail'))
-        })
+      updateTableFieldDesc(this.selected.id, {
+        id,
+        businessDesc: val,
+      }).catch(() => {
+        this.$message.error(this.$t('public_message_save_fail'))
+      })
     }, 300),
 
     handleDelete() {
@@ -710,7 +713,7 @@ export default {
         if (!resFlag) {
           return
         }
-        ldpApi.deleteTable(this.selected.id).then(() => {
+        deleteMDMTable(this.selected.id).then(() => {
           this.visible = false
           this.callback?.onDelete?.(this.selected.parent_id)
         })
@@ -945,7 +948,7 @@ export default {
               </span>
             </template>
             <div v-loading="loading" class="pt-4">
-              <section class="bg-white rounded-xl p-3 border border-gray-200">
+              <section class="bg-card rounded-xl p-3 border border-light">
                 <!--<div class="flex align-center">
                 <h3 class="fs-6">Table Summary</h3>
                 <ElLink class="ml-auto" type="primary">
@@ -1021,7 +1024,7 @@ export default {
                   </template>
                 </div>
               </section>
-              <section class="mt-4 bg-white overflow-hidden">
+              <section class="mt-4 overflow-hidden">
                 <el-tabs
                   v-model="activeNameItems"
                   class="tabs-fill tabs-as-card"
@@ -1081,6 +1084,7 @@ export default {
                           :height="360"
                           :value="sampleDataJson"
                           lang="json"
+                          auto-dark
                           :options="{
                             readOnly: true,
                             highlightActiveLine: false,
@@ -1357,11 +1361,18 @@ export default {
                 {{ $t('packages_ldp_lineage') }}
               </span>
             </template>
-            <TableLineage
+            <!-- <TableLineage
               class="border rounded-xl overflow-hidden"
               :is-show="activeName === 'lineage'"
               :connection-id="connectionId"
               :table-name="selected.name"
+              @click-task="handleClickName"
+              @node-dblclick="open"
+            /> -->
+            <LineageGraph
+              :connection-id="connectionId"
+              :table-name="selected.name"
+              :is-show="activeName === 'lineage'"
               @click-task="handleClickName"
               @node-dblclick="open"
             />
@@ -1411,23 +1422,23 @@ export default {
     font-weight: 500;
     font-size: 20px;
     line-height: 26px;
-    color: #1d2129;
+    color: var(--text-dark);
   }
 
   .table-dec-label {
     font-weight: 400;
-    color: #535f72;
+    color: var(--text-light);
   }
 
   .table-dec-txt {
     font-weight: 500;
-    color: #1d2129;
+    color: var(--text-dark);
   }
 
   .change-history {
     font-weight: 500;
     font-size: 18px;
-    color: #1d2129;
+    color: var(--text-dark);
   }
 
   .status {

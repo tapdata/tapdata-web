@@ -1,10 +1,10 @@
-<script setup>
+<script setup lang="ts">
+import { useI18n } from '@tap/i18n'
 import * as monaco from 'monaco-editor'
-import { onBeforeUnmount, ref, watch } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 import MonacoEditor from './MonacoEditor.vue'
-import {useI18n} from '@tap/i18n'
 
-const {t} = useI18n()
+const { t } = useI18n()
 
 const props = defineProps({
   height: {

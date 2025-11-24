@@ -1,5 +1,12 @@
 <script>
-import { logcollectorApi, taskApi } from '@tap/api'
+import {
+  addTables,
+  exclusionTables,
+  getExcludeTableInfos,
+  getLogcollectorByTaskId,
+  getTableInfos,
+} from '@tap/api/src/core/logcollector'
+import { taskConsoleRelations } from '@tap/api/src/core/task'
 import { VTable } from '@tap/component/src/base/v-table'
 import i18n from '@tap/i18n'
 import { openUrl } from '@tap/shared'
@@ -130,9 +137,7 @@ export default {
 
   async created() {
     this.currentTab = this.tabItems[0].value
-    this.connectionsList = await logcollectorApi.getConnectionIdsByTaskId(
-      this.taskId,
-    )
+    this.connectionsList = await getLogcollectorByTaskId(this.taskId)
     // this.selectedConnectionId = this.connectionsList[0]?.id
 
     //定时轮询
@@ -157,9 +162,9 @@ export default {
         size,
         order: this.order,
       }
-      return logcollectorApi[
-        this.currentTab === 'running' ? 'tableInfos' : 'excludeTableInfos'
-      ](filter).then((data) => {
+      const method =
+        this.currentTab === 'running' ? getTableInfos : getExcludeTableInfos
+      return method(filter).then((data) => {
         const total = data.total || 0
         if (!keyword) {
           this.listTotal = total
@@ -215,8 +220,7 @@ export default {
         type: 'task_by_collector_table',
         tableNameMap,
       }
-      taskApi
-        .taskConsoleRelations(filter)
+      taskConsoleRelations(filter)
         .then((data) => {
           this.taskData = data
         })
@@ -227,16 +231,15 @@ export default {
 
     handleSubmitStop() {
       this.submitLoading = true
-      logcollectorApi
-        .exclusionTables(
-          this.taskId,
-          this.multipleSelection.map((t) => {
-            return {
-              connectionId: t.connectionId,
-              tableNames: [t.name],
-            }
-          }),
-        )
+      exclusionTables(
+        this.taskId,
+        this.multipleSelection.map((t) => {
+          return {
+            connectionId: t.connectionId,
+            tableNames: [t.name],
+          }
+        }),
+      )
         .then(() => {
           this.visible = false
           this.$message.success(this.$t('public_message_operation_success'))
@@ -249,16 +252,15 @@ export default {
 
     handleRecover() {
       this.recoverLoading = true
-      logcollectorApi
-        .addTables(
-          this.taskId,
-          this.multipleSelection.map((t) => {
-            return {
-              connectionId: t.connectionId,
-              tableNames: [t.name],
-            }
-          }),
-        )
+      addTables(
+        this.taskId,
+        this.multipleSelection.map((t) => {
+          return {
+            connectionId: t.connectionId,
+            tableNames: [t.name],
+          }
+        }),
+      )
         .then(() => {
           this.$message.success(this.$t('public_message_operation_success'))
           this.fetch()

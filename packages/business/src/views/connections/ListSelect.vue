@@ -1,5 +1,5 @@
 <script>
-import { fetchConnections } from '@tap/api'
+import { fetchConnections } from '@tap/api/src/core/connections'
 import { InfiniteSelect as AsyncSelect } from '@tap/form/src/components/infinite-select'
 import { merge } from 'lodash-es'
 

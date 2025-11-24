@@ -1,5 +1,6 @@
 <script>
-import { CancelToken, lineageApi } from '@tap/api'
+import { findLineageByTable } from '@tap/api/src/core/lineage'
+import { CancelToken } from '@tap/api/src/request'
 import { makeStatusAndDisabled } from '@tap/business/src/shared'
 import { IconButton } from '@tap/component/src/icon-button'
 import PaperScroller from '@tap/dag/src/components/PaperScroller.vue'
@@ -149,11 +150,12 @@ export default {
     async showNodePopover(el, tasks) {
       this.nodeMenu.tasks = tasks
       this.nodeMenu.show = false
-      this.nodeMenu.reference = null
       await this.$nextTick()
       this.nodeMenu.reference = el
       await this.$nextTick()
-      this.nodeMenu.show = true
+      setTimeout(() => {
+        this.nodeMenu.show = true
+      }, 50)
     },
 
     async loadLineage() {
@@ -162,7 +164,7 @@ export default {
       this.cancelSource?.cancel()
       this.cancelSource = CancelToken.source()
       try {
-        const result = await lineageApi.findByTable(
+        const result = await findLineageByTable(
           this.connectionId,
           this.tableName,
           {
@@ -406,12 +408,13 @@ export default {
     },
 
     toggleFullscreen() {
-      this.fullscreenDisabled = true
+      // this.fullscreenDisabled = true
       this.isFullscreen = !this.isFullscreen
       // 加速关闭 tooltip
-      this.$refs.fullscreenTooltip.setExpectedState(false)
-      this.$refs.fullscreenTooltip.handleClosePopper()
+      // this.$refs.fullscreenTooltip.setExpectedState(false)
+      // this.$refs.fullscreenTooltip.handleClosePopper()
       setTimeout(() => {
+        this.$refs.paperScroller.initVisibleArea(true)
         this.handleCenterContent()
         this.$nextTick(() => {
           this.fullscreenDisabled = false
@@ -460,7 +463,8 @@ export default {
     </PaperScroller>
 
     <div
-      class="paper-toolbar position-absolute flex gap-1 bg-white p-1 rounded-lg shadow-sm"
+      class="paper-toolbar position-absolute flex gap-1 bg-white dark:bg-overlay p-1 rounded-lg shadow-sm"
+      style="--btn-space: 0"
     >
       <IconButton click-and-rotate @click="handleRefresh">refresh</IconButton>
       <ElTooltip

@@ -1,5 +1,5 @@
-import { isFn } from './types'
 import { instOf } from './instanceof'
+import { isFn } from './types'
 
 const NATIVE_KEYS = [
   ['Map', (map) => new Map(map)],
@@ -11,20 +11,21 @@ const NATIVE_KEYS = [
   'File',
   'URL',
   'RegExp',
-  ['Promise', (promise) => new Promise((resolve, reject) => promise.then(resolve, reject))],
+  [
+    'Promise',
+    (promise) =>
+      new Promise((resolve, reject) => promise.then(resolve, reject)),
+  ],
 ]
 
 const isNativeObject = (values) => {
-  for (let i = 0; i < NATIVE_KEYS.length; i++) {
-    const item = NATIVE_KEYS[i]
+  for (const item of NATIVE_KEYS) {
     if (Array.isArray(item) && item[0]) {
       if (instOf(values, item[0])) {
         return item[1] ? item[1] : item[0]
       }
-    } else {
-      if (instOf(values, item)) {
-        return item
-      }
+    } else if (instOf(values, item)) {
+      return item
     }
   }
 }

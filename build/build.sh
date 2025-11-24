@@ -1,5 +1,4 @@
 #!/bin/bash
-
 base=$(cd `dirname $0`/.. && pwd)
 app='daas'
 mode='production'
@@ -32,6 +31,8 @@ pnpm i
 
 echo "node version: $(node --version)
 corepack version: $(corepack --version)
-pnpm version: $(pnpm --version)"
+pnpm version: $(pnpm --version)
+NODE_OPTIONS: $NODE_OPTIONS
+Heap Statistics: $(node -e 'console.log(v8.getHeapStatistics())')"
 
 pnpm build:$app --mode $mode -- --env $env

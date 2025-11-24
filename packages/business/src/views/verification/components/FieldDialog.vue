@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { metadataInstancesApi } from '@tap/api'
+import {
+  getNodeSchemaPage,
+  getTapTables,
+} from '@tap/api/src/core/metadata-instances'
 import i18n from '@tap/i18n'
 import { cloneDeep, uniqueId } from 'lodash-es'
 import { computed, ref } from 'vue'
@@ -156,10 +159,8 @@ async function loadList(item: DialogItem) {
     pageSize: 1,
   }
   loading.value = true
-  const nodeSchemaPage = (await metadataInstancesApi.nodeSchemaPage(
-    params,
-  )) as NodeSchemaResponse
-  const sourceNodeSchemaPage = (await metadataInstancesApi.nodeSchemaPage({
+  const nodeSchemaPage = (await getNodeSchemaPage(params)) as NodeSchemaResponse
+  const sourceNodeSchemaPage = (await getNodeSchemaPage({
     nodeId: item.source.nodeId,
     tableFilter: item.source.table,
     page: 1,
@@ -275,7 +276,7 @@ async function getFields(
   table: string,
   connectionId: string,
 ): Promise<Field[]> {
-  const response = (await metadataInstancesApi.tapTables({
+  const response = (await getTapTables({
     filter: JSON.stringify({
       where: {
         meta_type: 'table',

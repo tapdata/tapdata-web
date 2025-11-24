@@ -1,6 +1,6 @@
-import i18n from '@tap/i18n'
-import { onBeforeUnmount, watch, type InjectionKey, type Ref, } from 'vue'
 import { observe, reaction } from '@formily/reactive'
+import i18n from '@tap/i18n'
+import { onBeforeUnmount, watch, type InjectionKey, type Ref } from 'vue'
 import { useStore } from 'vuex'
 
 export const TaskSavingSymbol: InjectionKey<Ref<boolean>> = Symbol('taskSaving')
@@ -17,7 +17,7 @@ export const useAfterTaskSaved = (obs, callback) => {
   const store = useStore()
 
   const dispose = observe(obs, (...args) => {
-    let unwatchSaving = watch(
+    const unwatchSaving = watch(
       () => store.state.dataflow.taskSaving,
       (v) => {
         if (!v) {
@@ -33,7 +33,9 @@ export const useAfterTaskSaved = (obs, callback) => {
     () => store.state.dataflow.transformLoading,
     (v) => {
       if (!v) {
-        console.debug(i18n.t('packages_dag_hooks_useaftertasksaved_moxingyishengcheng'))
+        console.debug(
+          i18n.t('packages_dag_hooks_useaftertasksaved_moxingyishengcheng'),
+        )
         callback()
       }
     },
@@ -48,7 +50,7 @@ export const useAfterTaskSaved = (obs, callback) => {
 export const useSchemaEffect = (tracker, callback) => {
   const store = useStore()
   const dispose = reaction(tracker, (...args) => {
-    let unwatchSaving = watch(
+    const unwatchSaving = watch(
       () => store.state.dataflow.taskSaving,
       (v) => {
         if (!v) {

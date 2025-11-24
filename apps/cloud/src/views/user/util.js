@@ -1,12 +1,13 @@
 // 获取验证码
 export function getCodeOptions(form, scene, type = 'sms') {
-  let params = {
+  const params = {
     scene,
   }
-  let { current, countryCode } = form
+  const { current, countryCode } = form
   if (type === 'sms') {
     params.phone = current
-    params.countryCode = countryCode || window.__USER_INFO__?.phoneCountryCode || '86'
+    params.countryCode =
+      countryCode || window.__USER_INFO__?.phoneCountryCode || '86'
   } else {
     params.email = current
   }

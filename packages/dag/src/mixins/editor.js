@@ -1,22 +1,30 @@
 import { observable } from '@formily/reactive'
+import { getDataActions } from '@tap/api/src/core/data-permission'
+import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
+import { fetchSharedCache } from '@tap/api/src/core/shared-cache'
 import {
-  dataPermissionApi,
-  fetchDatabaseTypes,
-  sharedCacheApi,
-  taskApi,
-} from '@tap/api'
+  batchStartTasks,
+  fetchTasks,
+  forceStopTask,
+  getNodeTableInfo,
+  getTaskById,
+  renameTask,
+  resetTask,
+  saveAndStartTask,
+  saveTask,
+  stopTask,
+} from '@tap/api/src/core/task'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
 import { makeStatusAndDisabled } from '@tap/business/src/shared/task'
 import resize from '@tap/component/src/directives/resize'
-import { computed as reactiveComputed } from '@tap/form/src/shared/reactive'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 import i18n from '@tap/i18n'
 import { setPageTitle } from '@tap/shared'
 import dagre from 'dagre'
 import dayjs from 'dayjs'
-import { merge } from 'lodash-es'
+import { isEmpty } from 'lodash-es'
 import Mousetrap from 'mousetrap'
-import { h, markRaw } from 'vue'
+import { h } from 'vue'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import {
   AddConnectionCommand,
@@ -243,15 +251,12 @@ export default {
     },
 
     async loadSharedCache(usedShareCache) {
-      const sharedCacheRes = await sharedCacheApi.get({
-        filter: JSON.stringify({
-          limit: 1000,
-          where: {
-            name: {
-              $in: Object.keys(usedShareCache),
-            },
+      const sharedCacheRes = await fetchSharedCache({
+        where: {
+          name: {
+            $in: Object.keys(usedShareCache),
           },
-        }),
+        },
       })
       this.sharedCacheMap = sharedCacheRes.items?.reduce((pre, task) => {
         const { id, name, status } = makeStatusAndDisabled(task)
@@ -443,12 +448,10 @@ export default {
     },
 
     async makeTaskName(source) {
-      const taskNames = await taskApi.get({
-        filter: JSON.stringify({
-          limit: 9999,
-          fields: { name: 1 },
-          where: { name: { like: `^${source}\\d+$` } },
-        }),
+      const taskNames = await fetchTasks({
+        limit: 9999,
+        fields: { name: 1 },
+        where: { name: { like: `^${source}\\d+$` } },
       })
       let def = 1
       if (taskNames?.items.length) {
@@ -462,26 +465,6 @@ export default {
       }
       return `${source}${def}`
     },
-
-    // async makeTaskName(source) {
-    //   const taskNames = await taskApi.get({
-    //     filter: JSON.stringify({
-    //       fields: { name: 1 },
-    //       where: { name: { like: `^${source} +` } }
-    //     })
-    //   })
-    //   let def = 1
-    //   if (taskNames?.items.length) {
-    //     let arr = [0]
-    //     taskNames.items.forEach(item => {
-    //       const res = item.name.match(/\+(\d+)$/)
-    //       if (res && res[1]) arr.push(+res[1])
-    //     })
-    //     arr.sort()
-    //     def = arr.pop() + 1
-    //   }
-    //   return `${source} +${def}`
-    // },
 
     onNodeDragStart() {
       if (this.ifNodeDragStart) {
@@ -535,10 +518,10 @@ export default {
       param.el.style.top = `${pos[1]}px`
       this.jsPlumbIns.revalidate(param.el) // 重绘
 
-      let t = pos[1],
-        b = pos[1] + nh,
-        l = pos[0],
-        r = pos[0] + nw
+      let t = pos[1]
+      let b = pos[1] + nh
+      let l = pos[0]
+      let r = pos[0] + nw
       verArr.forEach((y) => {
         t = Math.min(y + nh, t)
         b = Math.max(y, b)
@@ -551,8 +534,8 @@ export default {
       // 组装导航线
       const lines = []
       if (t < pos[1]) {
-        const top = `${t}px`,
-          height = `${pos[1] - t}px`
+        const top = `${t}px`
+        const height = `${pos[1] - t}px`
         lines.push(
           {
             top,
@@ -567,8 +550,8 @@ export default {
         )
       }
       if (b > pos[1] + nh) {
-        const top = `${pos[1] + nh}px`,
-          height = `${b - pos[1] - nh}px`
+        const top = `${pos[1] + nh}px`
+        const height = `${b - pos[1] - nh}px`
         lines.push(
           {
             top,
@@ -584,8 +567,8 @@ export default {
       }
 
       if (l < pos[0]) {
-        const left = `${l}px`,
-          width = `${pos[0] - l}px`
+        const left = `${l}px`
+        const width = `${pos[0] - l}px`
         lines.push(
           {
             top: `${pos[1]}px`,
@@ -601,8 +584,8 @@ export default {
       }
 
       if (r > pos[0] + nw) {
-        const left = `${pos[0] + nw}px`,
-          width = `${r - pos[0] - nw}px`
+        const left = `${pos[0] + nw}px`
+        const width = `${r - pos[0] - nw}px`
         lines.push(
           {
             top: `${pos[1]}px`,
@@ -1079,7 +1062,7 @@ export default {
       let isOk = false
 
       try {
-        const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
+        const result = await (needStart ? saveAndStartTask : saveTask)(data)
         this.reformDataflow(result)
         !needStart && this.$message.success(this.$t('public_message_save_ok'))
         this.setEditVersion(result.editVersion)
@@ -1406,8 +1389,7 @@ export default {
         await validateBySchema(schema, node, this.formScope || this.scope)
         this.clearNodeError(node.id)
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.log(
+        console.error(
           i18n.t('packages_dag_mixins_editor_jiedianjiaoyancuo'),
           error,
         )
@@ -1775,7 +1757,7 @@ export default {
 
           // 按表达式匹配表
           if (sourceNode.migrateTableSelectType === 'expression') {
-            const { items } = await taskApi.getNodeTableInfo({
+            const { items } = await getNodeTableInfo({
               taskId: this.dataflow.id,
               nodeId: node.id,
               page: 1,
@@ -1820,7 +1802,7 @@ export default {
       }
     },
 
-    async validateMigrateUnion() {
+    validateMigrateUnion() {
       if (this.dataflow.syncType !== 'migrate') return
 
       const nodes = this.allNodes.filter(
@@ -1830,7 +1812,7 @@ export default {
       if (nodes.length > 1) return i18n.t('packages_dag_migrate_union_multiple')
     },
 
-    async validateMergeTableProcessor() {
+    validateMergeTableProcessor() {
       if (this.dataflow.syncType === 'migrate') return
 
       const nodes = this.allNodes.filter(
@@ -1908,6 +1890,87 @@ export default {
       }
     },
 
+    validateDmlPolicy() {
+      if (this.dataflow.syncType !== 'migrate') return
+
+      const target = this.allNodes.find(
+        (node) => node.type === 'database' && !node.$outputs.length,
+      )
+
+      if (target && isEmpty(target.dmlPolicy)) {
+        const capabilities = target.attrs.capabilities
+        const insertPolicy = capabilities?.find(
+          ({ id }) => id === 'dml_insert_policy',
+        )
+        const updatePolicy = capabilities?.find(
+          ({ id }) => id === 'dml_update_policy',
+        )
+        const deletePolicy = capabilities?.find(
+          ({ id }) => id === 'dml_delete_policy',
+        )
+
+        const insertOptions = [
+          'update_on_exists',
+          'ignore_on_exists',
+          'just_insert',
+        ]
+        const updateOptions = [
+          'ignore_on_nonexists',
+          'insert_on_nonexists',
+          'log_on_nonexists',
+        ]
+        const deleteOptions = ['ignore_on_nonexists', 'log_on_nonexists']
+        const dmlPolicy = {}
+
+        if (insertPolicy?.alternatives?.length) {
+          dmlPolicy.insertPolicy = insertOptions[0]
+          const alternatives = insertPolicy.alternatives.filter((key) =>
+            insertOptions.includes(key),
+          )
+          if (alternatives.length === 1) {
+            dmlPolicy.insertPolicy = alternatives[0]
+          }
+        }
+
+        if (updatePolicy?.alternatives?.length) {
+          dmlPolicy.updatePolicy = updateOptions[0]
+          const alternatives = updatePolicy.alternatives.filter((key) =>
+            updateOptions.includes(key),
+          )
+          if (alternatives.length === 1) {
+            dmlPolicy.updatePolicy = alternatives[0]
+          }
+        }
+
+        if (deletePolicy?.alternatives?.length) {
+          dmlPolicy.deletePolicy = deleteOptions[0]
+          const alternatives = deletePolicy.alternatives.filter((key) =>
+            deleteOptions.includes(key),
+          )
+          if (alternatives.length === 1) {
+            dmlPolicy.deletePolicy = alternatives[0]
+          }
+        }
+
+        target.dmlPolicy = dmlPolicy
+      }
+    },
+
+    async validateDropTableEnabled() {
+      if (
+        this.allNodes.some(
+          (node) =>
+            node.existDataProcessMode === 'dropTable' && !node.$outputs.length,
+        )
+      ) {
+        return await this.$confirm(
+          i18n.t('packages_dag_drop_table_enabled_confirm'),
+          i18n.t('packages_dag_existDataProcessMode_desc'),
+        )
+      }
+      return true
+    },
+
     async eachValidate(...fns) {
       for (const fn of fns) {
         let result = fn()
@@ -1946,6 +2009,7 @@ export default {
         this.validateTableRename,
         this.validateMigrateUnion,
         this.validateMergeTableProcessor,
+        this.validateDmlPolicy,
       )
     },
 
@@ -2017,10 +2081,10 @@ export default {
         el.style.left = `${Number.parseInt(el.style.left) + diffPos.x * this.scale}px`
         el.style.top = `${Number.parseInt(el.style.top) + diffPos.y * this.scale}px`
 
-        let t = pos[1],
-          b = pos[1] + nh,
-          l = pos[0],
-          r = pos[0] + nw
+        let t = pos[1]
+        let b = pos[1] + nh
+        let l = pos[0]
+        let r = pos[0] + nw
         verArr.forEach((y) => {
           t = Math.min(y + nh, t)
           b = Math.max(y, b)
@@ -2032,8 +2096,8 @@ export default {
 
         // 组装导航线
         if (t < pos[1]) {
-          const top = `${t}px`,
-            height = `${pos[1] - t}px`
+          const top = `${t}px`
+          const height = `${pos[1] - t}px`
           lines.push(
             {
               top,
@@ -2048,8 +2112,8 @@ export default {
           )
         }
         if (b > pos[1] + nh) {
-          const top = `${pos[1] + nh}px`,
-            height = `${b - pos[1] - nh}px`
+          const top = `${pos[1] + nh}px`
+          const height = `${b - pos[1] - nh}px`
           lines.push(
             {
               top,
@@ -2065,8 +2129,8 @@ export default {
         }
 
         if (l < pos[0]) {
-          const left = `${l}px`,
-            width = `${pos[0] - l}px`
+          const left = `${l}px`
+          const width = `${pos[0] - l}px`
           lines.push(
             {
               top: `${pos[1]}px`,
@@ -2082,8 +2146,8 @@ export default {
         }
 
         if (r > pos[0] + nw) {
-          const left = `${pos[0] + nw}px`,
-            width = `${r - pos[0] - nw}px`
+          const left = `${pos[0] + nw}px`
+          const width = `${r - pos[0] - nw}px`
           lines.push(
             {
               top: `${pos[1]}px`,
@@ -2325,24 +2389,24 @@ export default {
     },
 
     handleError(error, msg = i18n.t('packages_dag_src_editor_chucuole')) {
-      const code = error?.data?.code
+      const code = error?.code
       if (code === 'Task.ListWarnMessage') {
         const names = []
-        if (error.data?.data) {
-          const keys = Object.keys(error.data.data)
+        if (error?.data) {
+          const keys = Object.keys(error.data)
           keys.forEach((key) => {
             const node = this.$store.state.dataflow.NodeMap[key]
             if (node) {
               names.push(node.name)
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: error.data.data[key][0].msg,
+                msg: error.data[key][0].msg,
               })
             }
           })
           if (!names.length && keys.length && msg) {
             // 兼容错误信息id不是节点id的情况
-            const msg = error.data.data[keys[0]][0]?.msg
+            const msg = error.data[keys[0]][0]?.msg
             if (msg) {
               this.$message.error(msg)
               return
@@ -2358,9 +2422,9 @@ export default {
       } else if (
         ['Task.ScheduleLimit', 'Task.ManuallyScheduleLimit'].includes(code)
       ) {
-        this.handleShowUpgradeDialog(error.data)
+        this.handleShowUpgradeDialog(error)
       } else {
-        showErrorMessage(error?.data)
+        showErrorMessage(error)
       }
     },
 
@@ -2368,7 +2432,7 @@ export default {
       const oldName = this.dataflow.name
       this.nameHasUpdated = true
       this.dataflow.name = name
-      taskApi.rename(this.dataflow.id, name).then(
+      renameTask(this.dataflow.id, name).then(
         () => {
           this.$message.success(
             this.$t('packages_dag_message_task_rename_success'),
@@ -2434,7 +2498,7 @@ export default {
         }
         this.initWS()
         this.dataflow.disabledData.stop = true
-        await taskApi.stop(this.dataflow.id).catch((error) => {
+        await stopTask(this.dataflow.id).catch((error) => {
           this.handleError(
             error,
             this.$t('packages_dag_message_operation_error'),
@@ -2452,7 +2516,7 @@ export default {
         }
         this.initWS()
         this.dataflow.disabledData.stop = true
-        await taskApi.forceStop(this.dataflow.id)
+        await forceStopTask(this.dataflow.id)
         // this.startLoop(true)
       })
     },
@@ -2468,7 +2532,7 @@ export default {
           this.dataflow.disabledData.reset = true
           this.toggleConsole(true)
           this.$refs.console?.startAuto('reset') // 信息输出自动加载
-          const data = await taskApi.reset(this.dataflow.id)
+          const data = await resetTask(this.dataflow.id)
           this.responseHandler(
             data,
             this.$t('public_message_operation_success'),
@@ -2537,7 +2601,7 @@ export default {
       this.loading = true
       try {
         const { parent_task_sign } = this.$route.query || {}
-        const data = await taskApi.get(id, params, { parent_task_sign })
+        const data = await getTaskById(id, params, { parent_task_sign })
         if (!data) {
           this.$message.error(
             i18n.t('packages_dag_mixins_editor_renwubucunzai'),
@@ -2581,7 +2645,7 @@ export default {
       if (!id) return
       this.startLoopTaskTimer = setTimeout(async () => {
         const { parent_task_sign } = this.$route.query || {}
-        const data = await taskApi.get(id, {}, { parent_task_sign })
+        const data = await getTaskById(id, {}, { parent_task_sign })
         if (this.destory) return
         if (data) {
           if (data.errorEvents?.length) {
@@ -2796,10 +2860,9 @@ export default {
 
     startTask() {
       const buriedCode = this.getIsDataflow() ? 'taskStart' : 'migrationStart'
-      taskApi
-        .batchStart([this.dataflow.id], {
-          silenceMessage: true,
-        })
+      batchStartTasks([this.dataflow.id], {
+        silenceMessage: true,
+      })
         .then(() => {
           this.buried(buriedCode, { result: true })
           this.gotoViewer()
@@ -2814,7 +2877,7 @@ export default {
       if (!this.isDaas) return
       const id = this.dataflow.id || this.$route.params?.id
       if (!id) return
-      const data = await dataPermissionApi.dataActions({
+      const data = await getDataActions({
         dataType: 'Task',
         dataId: id,
       })

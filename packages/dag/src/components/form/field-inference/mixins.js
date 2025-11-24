@@ -1,4 +1,4 @@
-import { metadataInstancesApi } from '@tap/api'
+import { getNodeSchemaPage } from '@tap/api/src/core/metadata-instances'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -39,7 +39,7 @@ export default {
           },
           op,
         )
-        data = await metadataInstancesApi.nodeSchemaPage(params)
+        data = await getNodeSchemaPage(params)
       } catch {
         // catch
       }

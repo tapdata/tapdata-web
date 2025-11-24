@@ -1,7 +1,6 @@
-<script lang="jsx">
-import { defineComponent } from 'vue'
-import { VIcon } from '@tap/component'
+<script lang="tsx">
 import i18n from '@tap/i18n'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'AlarmStatistics',
@@ -76,7 +75,7 @@ export default defineComponent({
     height: 40px;
     font-size: 14px;
     border-radius: 4px;
-    background: #fff;
+    background: var(--el-bg-color);
     box-shadow:
       0px 4px 10px 0px rgba(0, 0, 0, 0.1),
       0px 4px 10px 0px rgba(0, 0, 0, 0.1);

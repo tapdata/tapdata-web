@@ -1,5 +1,5 @@
 <script>
-import { taskApi } from '@tap/api'
+import { refreshTaskSchema } from '@tap/api/src/core/task'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import { TextEditable } from '@tap/component/src/base/text-editable'
 import { VEmpty } from '@tap/component/src/base/v-empty'
@@ -183,7 +183,7 @@ export default {
       this.refreshing = true
       this.setSchemaRefreshing(true)
 
-      taskApi.refreshSchema(this.dataflow.id).finally(() => {
+      refreshTaskSchema(this.dataflow.id).finally(() => {
         this.refreshing = false
         this.setSchemaRefreshing(false)
       })
@@ -209,7 +209,6 @@ export default {
       :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
       max-width="260"
       hidden-icon
-      :input-min-width="32"
       :maxlength="200"
       @change="onNameInputChange"
     />
@@ -302,7 +301,7 @@ export default {
           width="auto"
         >
           <template #reference>
-            <div class="size-wrap">{{ scaleTxt }}</div>
+            <div class="size-wrap font-color-dark">{{ scaleTxt }}</div>
           </template>
           <div class="choose-list p-1">
             <div
@@ -587,8 +586,8 @@ $sidebarBg: #fff;
   align-items: center;
   width: 100%;
   flex: 0 0 48px;
-  background-color: #fff;
-  color: rgba(0, 0, 0, 0.87);
+  background-color: var(--el-bg-color);
+  color: var(--el-text-color-primary);
   box-sizing: border-box;
   .title-wrap {
     width: $sidebarW;
@@ -656,8 +655,8 @@ $sidebarBg: #fff;
     width: 28px;
     height: 28px;
     padding: 4px;
-    color: #4e5969;
-    background: #fff;
+    color: var(--icon-n1);
+    background: transparent;
     outline: none;
     border: 1px solid transparent;
     border-radius: $radius;
@@ -781,7 +780,7 @@ $sidebarBg: #fff;
     cursor: pointer;
 
     &:hover {
-      background-color: #edf1f9;
+      background-color: var(--el-fill-color-light);
     }
   }
   &.auto-width .choose-item {

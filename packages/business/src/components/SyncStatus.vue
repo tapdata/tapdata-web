@@ -28,7 +28,7 @@ export default {
   <div>
     <div v-if="item" class="inline-flex align-center gap-1">
       <span>
-        {{ item.text }}
+        {{ $t(item.i18n) }}
       </span>
     </div>
     <span v-else>-</span>

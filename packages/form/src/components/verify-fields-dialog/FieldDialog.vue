@@ -1,5 +1,8 @@
 <script>
-import { metadataInstancesApi } from '@tap/api'
+import {
+  getNodeSchemaPage,
+  getTapTables,
+} from '@tap/api/src/core/metadata-instances'
 import i18n from '@tap/i18n'
 import { cloneDeep } from 'lodash-es'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
@@ -86,8 +89,8 @@ export default {
         pageSize: 1,
       }
       this.loading = true
-      const nodeSchemaPage = await metadataInstancesApi.nodeSchemaPage(params)
-      const sourceNodeSchemaPage = await metadataInstancesApi.nodeSchemaPage({
+      const nodeSchemaPage = await getNodeSchemaPage(params)
+      const sourceNodeSchemaPage = await getNodeSchemaPage({
         nodeId: item.source.nodeId,
         tableFilter: item.source.table,
         page: 1,
@@ -217,7 +220,7 @@ export default {
     },
 
     async getFields(table, connectionId) {
-      const targetMetadataInstances = await metadataInstancesApi.tapTables({
+      const targetMetadataInstances = await getTapTables({
         filter: JSON.stringify({
           where: {
             meta_type: 'table',

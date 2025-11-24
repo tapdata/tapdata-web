@@ -1,23 +1,27 @@
 <script setup lang="ts">
 import {
   addAgent,
-  addClusterMonitor,
   deleteAgentGroup,
+  fetchAgentGroups,
+  saveAgentGroup,
+  updateAgentGroup,
+} from '@tap/api/src/core/agentgroup'
+import {
+  addClusterMonitor,
   deleteClusterState,
   editClusterAgent,
   editClusterMonitor,
-  fetchAgentGroups,
   fetchClusterStates,
-  fetchWorkers,
   findRawServerInfo,
-  proxyApi,
-  queryAllBindWorker,
   removeClusterMonitor,
-  saveAgentGroup,
-  unbindByProcessId,
-  updateAgentGroup,
   updateClusterStatus,
-} from '@tap/api'
+} from '@tap/api/src/core/cluster'
+import { getConnectors, getSupervisor } from '@tap/api/src/core/proxy'
+import {
+  fetchWorkers,
+  queryAllBindWorker,
+  unbindByProcessId,
+} from '@tap/api/src/core/workers'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { dayjs, makeDragNodeImage } from '@tap/business/src/shared'
 import { FilterBar } from '@tap/component/src/filter-bar'
@@ -102,14 +106,6 @@ interface ClusterData {
   }
 }
 
-interface WorkerData {
-  process_id: string
-  metricValues?: {
-    CpuUsage: number
-    HeapMemoryUsage: number
-  }
-}
-
 interface LogMiningMonitor {
   timestamp: string
   pid: number
@@ -142,7 +138,7 @@ const editAgentForm = ref()
 // State
 const hideDownload = ref(import.meta.env.VUE_APP_HIDE_CLUSTER_DOWNLOAD)
 const waterfallData = ref([])
-const currentData = ref(null)
+const currentData = ref<ClusterData | null>(null)
 const dialogForm = ref(false)
 const activeIndex = ref('1')
 const serveStatus = ref('')
@@ -277,7 +273,7 @@ const submitForm = async () => {
         arguments: string
         id?: string
       } = {
-        uuid: currentData.value.uuid,
+        uuid: currentData.value?.uuid!,
         name: getFrom.name,
         command: getFrom.command,
         arguments: getFrom.arguments ? getFrom.arguments : '',
@@ -292,13 +288,13 @@ const submitForm = async () => {
         }
         dialogForm.value = false
         await getDataApi()
-        // Show success message
+        ElMessage.success(t('public_message_save_ok'))
       } finally {
         dialogForm.value = false
       }
     }
   } else {
-    // Show error message
+    ElMessage.error(t('cluster_startup_after_add'))
   }
 }
 
@@ -334,7 +330,7 @@ const addServeFn = (item: any) => {
 }
 
 const downServeFn = (item: any) => {
-  proxyApi.supervisor(item.systemInfo?.process_id).then((data) => {
+  getSupervisor(item.systemInfo?.process_id).then((data) => {
     downloadJson(
       JSON.stringify(data),
       `${item.systemInfo?.process_id}_supervisor_summary`,
@@ -343,7 +339,7 @@ const downServeFn = (item: any) => {
 }
 
 const downConnectorsFn = (item: any) => {
-  proxyApi.connectors(item.systemInfo?.process_id).then((data) => {
+  getConnectors(item.systemInfo?.process_id).then((data) => {
     downloadJson(
       JSON.stringify(data),
       `${item.systemInfo?.process_id}_connectors_memory`,
@@ -351,50 +347,59 @@ const downConnectorsFn = (item: any) => {
   })
 }
 
-const startFn = (item: any, status: string, server: string) => {
+const startFn = async (item: any, status: string, server: string) => {
   if (status === 'stopped') {
     const data = {
       uuid: item.uuid,
       server,
       operation: 'start',
     }
-    // Show confirmation dialog
-    operationFn(data)
+    const confirmed = await Modal.confirm(
+      `${t('cluster_confirm_text') + t('cluster_startServer')}?`,
+    )
+    confirmed && operationFn(data)
   }
 }
 
-const closeFn = (item: any, status: string, server: string) => {
+const closeFn = async (item: any, status: string, server: string) => {
   if (status === 'running') {
     const data = {
       uuid: item.uuid,
       server,
       operation: 'stop',
     }
-    // Show confirmation dialog
-    operationFn(data)
+    const confirmed = await Modal.confirm(
+      `${t('cluster_confirm_text') + t('cluster_closeSever')}?`,
+    )
+    confirmed && operationFn(data)
   }
 }
 
-const restartFn = (item: any, status: string, server: string) => {
+const restartFn = async (item: any, status: string, server: string) => {
   if (status === 'running') {
     const data = {
       uuid: item.uuid,
       server,
       operation: 'restart',
     }
-    // Show confirmation dialog
-    operationFn(data)
+    const confirmed = await Modal.confirm(
+      `${t('cluster_confirm_text') + t('cluster_restartServer')}?`,
+    )
+    confirmed && operationFn(data)
   }
 }
 
-const unbind = (item: any, status: string) => {
+const unbind = async (item: any, status: string) => {
   if (status === 'stopped') {
-    // Show confirmation dialog
     const { process_id } = item.systemInfo || {}
-    unbindByProcessId(process_id).then(() => {
-      init()
-      // Show success/error message
-    })
+    const confirmed = await Modal.confirm(
+      `${t('cluster_confirm_text') + t('cluster_unbind_server')}?`,
+    )
+
+    confirmed &&
+      unbindByProcessId(process_id).then(() => {
+        init()
+      })
   }
 }
 
@@ -407,22 +412,10 @@ const updateFn = (item: any) => {
   operationFn(data)
 }
 
-const getVersion = (datas: any[]) => {
-  const [...waterfallData] = datas
-  const [...newWaterfallData] = [[], []]
-  waterfallData.forEach((item, index) => {
-    if (index % 2) {
-      newWaterfallData[1].push(item)
-    } else {
-      newWaterfallData[0].push(item)
-    }
-  })
-  waterfallData.value = newWaterfallData
-}
-
 const operationFn = async (data: any) => {
   await updateClusterStatus(data)
   await getDataApi()
+  ElMessage.success(t('cluster_operation_success'))
 }
 
 const getUsageRate = (processId: string[]) => {
@@ -869,15 +862,11 @@ const handleTreeDrop = async (ev: DragEvent, data: any) => {
 
   if (list.length) {
     await Promise.all(list)
-    // Show success message
+    ElMessage.success(t('public_message_operation_success'))
     await onSavedTag()
   } else {
-    // Show info message
+    ElMessage.info(t('packages_component_data_already_exists'))
   }
-}
-
-function handleLogMiningDetail(item: LogMiningMonitor) {
-  // 这里可以实现详情弹窗或跳转
 }
 
 const fetchLogMiningData = async () => {
@@ -898,7 +887,7 @@ const fetchLogMiningData = async () => {
   })
 }
 
-const handleTabChange = (tab: string) => {
+const handleTabChange = (tab: any) => {
   if (tab === 'logMining') {
     fetchLogMiningData()
   }
@@ -908,12 +897,12 @@ const handleTabChange = (tab: string) => {
 <template>
   <PageContainer
     mode="auto"
-    container-class="bg-white rounded-xl shadow-sm gap-1"
+    container-class="bg-card rounded-xl shadow-sm gap-1"
     content-class="flex-1 min-h-0 overflow-auto px-6 pb-5 position-relative flex flex-column"
   >
     <el-tabs
       v-model="viewType"
-      class="position-sticky top-0 z-10 bg-white"
+      class="position-sticky top-0 z-10 bg-white dark:bg-transparent dark:backdrop-blur-md"
       @tab-change="handleTabChange"
     >
       <el-tab-pane name="cluster">
@@ -1296,7 +1285,7 @@ const handleTabChange = (tab: string) => {
               :md="12"
               :sm="24"
             >
-              <div class="grid-content list-box border rounded-xl">
+              <div class="grid-content list-box bg-card border rounded-xl">
                 <div class="list-box-header">
                   <div class="list-box-header-left">
                     <img
@@ -1345,7 +1334,7 @@ const handleTabChange = (tab: string) => {
                       >
                         <el-button text @click="downServeFn(item)">
                           <template #icon>
-                            <i-lucide:monitor-down />
+                            <i-lucide-monitor-down />
                           </template>
                         </el-button>
                       </el-tooltip>
@@ -1355,7 +1344,7 @@ const handleTabChange = (tab: string) => {
                       >
                         <el-button text @click="downConnectorsFn(item)">
                           <template #icon>
-                            <i-lucide:hard-drive-download />
+                            <i-lucide-hard-drive-download />
                           </template>
                         </el-button>
                       </el-tooltip>
@@ -1367,21 +1356,21 @@ const handleTabChange = (tab: string) => {
                     >
                       <el-button text @click="addServeFn(item)">
                         <template #icon>
-                          <i-lucide:square-plus />
+                          <i-lucide-square-plus />
                         </template>
                       </el-button>
                     </el-tooltip>
 
                     <el-button text @click="editAgent(item)">
                       <template #icon>
-                        <i-lucide:settings />
+                        <i-lucide-settings />
                       </template>
                     </el-button>
                     <template v-if="item.status !== 'running'">
                       <ElDivider direction="vertical" />
                       <ElButton text type="danger" @click="delConfirm(item)">
                         <template #icon>
-                          <i-lucide:trash-2 />
+                          <i-lucide-trash-2 />
                         </template>
                       </ElButton>
                     </template>
@@ -1394,7 +1383,7 @@ const handleTabChange = (tab: string) => {
                     </div>
                     {{ $t('cluster_cpu_usage') }}
                   </div>
-                  <div class="line" />
+                  <div class="line dark:bg-white/15" />
                   <div class="usageRate">
                     <div class="fs-5 pb-1 fw-bolder">
                       {{ item.metricValues.HeapMemoryUsage }}
@@ -1404,7 +1393,10 @@ const handleTabChange = (tab: string) => {
                 </div>
                 <!-- 监控数据 -->
                 <div class="list-box-footer">
-                  <el-row :gutter="16" class="list-box-footer-header">
+                  <el-row
+                    :gutter="16"
+                    class="list-box-footer-header dark:bg-white/10 rounded-lg"
+                  >
                     <el-col :span="6">
                       <span class="txt fw-sub">{{ $t('cluster_name') }}</span>
                     </el-col>
@@ -1789,10 +1781,17 @@ const handleTabChange = (tab: string) => {
                 v-model="agentName"
                 show-word-limit
                 :placeholder="$t('cluster_placeholder_mon_server')"
-              />
-              <ElButton text type="primary" @click="editNameRest">{{
-                $t('public_button_reduction')
-              }}</ElButton>
+              >
+                <template #suffix>
+                  <ElButton
+                    v-if="agentName !== currentNde.hostname"
+                    text
+                    type="primary"
+                    @click="editNameRest"
+                    >{{ $t('public_button_reduction') }}</ElButton
+                  >
+                </template>
+              </el-input>
             </div>
           </el-form-item>
           <el-form-item :label="$t('cluster_ip_display')" prop="command">
@@ -2009,7 +2008,6 @@ const handleTabChange = (tab: string) => {
         box-sizing: border-box;
 
         .list-box {
-          background-color: var(--color-white);
           //height: 340px;
           .list-box-header {
             overflow: hidden;
@@ -2067,7 +2065,7 @@ const handleTabChange = (tab: string) => {
             justify-content: center;
             padding: 16px 0;
             text-align: center;
-            border-top: 1px solid var(--border-light);
+            border-top: 1px solid var(--el-border-color-lighter);
 
             .usageRate {
               width: 50%;

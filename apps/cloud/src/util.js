@@ -1,4 +1,4 @@
-import VConfirm from '@/components/v-confirm'
+import { Modal } from '@tap/component/src/modal'
 import i18n from '@/i18n'
 import timeFunction from '@/mixins/timeFunction'
 
@@ -34,10 +34,10 @@ export const TYPEMAP = {
 // 500错误弹窗
 export const errorConfirmFnc = (error) => {
   let msg = `<div>${i18n.t('RequestErrorMessage_error_title')}</div>`
-  let title = i18n.t('confirm_error_tip')
+  const title = i18n.t('confirm_error_tip')
   error = typeof error === 'object' ? error : {}
-  let code = error.code
-  let reqId = error.data?.reqId
+  const code = error.code
+  const reqId = error.data?.reqId
   if (code) {
     msg += `<div class="mt-1">${i18n.t(
       'RequestErrorMessage_code_label',
@@ -62,7 +62,7 @@ export const errorConfirmFnc = (error) => {
                 )}</label>
               </div>`
   }
-  VConfirm.confirm(msg, title, {
+  Modal.confirm(title, msg, {
     type: 'error',
     iconSize: 18,
     dangerouslyUseHTMLString: true,
@@ -77,8 +77,8 @@ export const errorConfirmFnc = (error) => {
 
 // 毫秒换算成时分秒
 export const formatMs = (msTime = 0, type = 'time') => {
-  let time = msTime / 1000
-  let arr = []
+  const time = msTime / 1000
+  const arr = []
   arr.push({
     label: i18n.t('public_time_d'),
     value: Math.floor(time / 60 / 60 / 24),
@@ -99,7 +99,7 @@ export const formatMs = (msTime = 0, type = 'time') => {
   if (type === 'time') {
     result = arr
       .slice(1)
-      .map((t) => (t.value + '').padStart(2, '0'))
+      .map((t) => String(t.value).padStart(2, '0'))
       .join(':')
     return result
   }
@@ -119,32 +119,32 @@ export const extractTimeFromObjectId = (objectId) => {
   const hexString = objectId.toString()
 
   // 提取时间戳部分，前 8 个字符为时间戳
-  const timestampHex = hexString.substring(0, 8)
+  const timestampHex = hexString.slice(0, 8)
 
   // 将时间戳转换为整数（十进制）
-  const timestampInt = parseInt(timestampHex, 16)
+  const timestampInt = Number.parseInt(timestampHex, 16)
 
   // 根据时间戳创建 Date 对象
   return new Date(timestampInt * 1000) // 乘以 1000 转换为毫秒
 }
 
 export const daysdifference = (time) => {
-  let currentDate = new Date().getTime()
-  let endTime = new Date(time).getTime()
-  let dateTime = 1000 * 60 * 60 * 24 //每一天的毫秒数
-  let minusDays = Math.floor((endTime - currentDate) / dateTime) //计算出两个日期的天数差
+  const currentDate = Date.now()
+  const endTime = new Date(time).getTime()
+  const dateTime = 1000 * 60 * 60 * 24 //每一天的毫秒数
+  const minusDays = Math.floor((endTime - currentDate) / dateTime) //计算出两个日期的天数差
   return Math.abs(minusDays) //取绝对值
 }
 
 export const secondDifference = (time, type) => {
-  let currentDate = new Date().getTime()
-  let endTime = new Date(time).getTime()
+  const currentDate = Date.now()
+  const endTime = new Date(time).getTime()
   let dateTime = 1 //每秒的毫秒数
   if (type === 'second') {
     dateTime = 1000
   } else {
     dateTime = 1000 * 60
   }
-  let second = Math.floor((endTime - currentDate) / dateTime) //计算出两个日期的天数差
+  const second = Math.floor((endTime - currentDate) / dateTime) //计算出两个日期的天数差
   return Math.abs(second) //取绝对值
 }

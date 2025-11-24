@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { fetchDatabaseTypes, inspectApi, taskApi, useRequest } from '@tap/api'
+import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
+import {
+  findOneInspect,
+  getTaskList,
+  patchInspect,
+  postInspect,
+} from '@tap/api/src/core/inspects'
+import { getTaskById } from '@tap/api/src/core/task'
+import { useRequest } from '@tap/api/src/request'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import Time from '@tap/shared/src/time.js'
@@ -268,6 +276,7 @@ const typTipMap = ref({
   row_count: t('packages_business_verification_fastCountTip'),
   field: t('packages_business_verification_contentVerifyTip'),
   jointField: t('packages_business_verification_jointFieldTip'),
+  hash: t('packages_business_verification_hashVerifyTip'),
 })
 const jointErrorMessage = ref('')
 const errorMessageLevel = ref('')
@@ -308,7 +317,7 @@ const {
   run: runFetchTaskOptions,
 } = useRequest<[]>(
   () => {
-    return inspectApi.getTaskList()
+    return getTaskList()
   },
   {
     manual: true,
@@ -316,44 +325,9 @@ const {
   },
 )
 
-// const getTaskOptions = async (filter: any) => {
-//   let data
-
-//   if (filter.where?.id) {
-//     return {
-//       items: [
-//         {
-//           id: filter.where.id,
-//           name: taskName.value,
-//         },
-//       ],
-//       total: 1,
-//     }
-//   }
-
-//   if (!taskOptionCache.value) {
-//     taskOptionCache.value = await inspectApi.getTaskList()
-//   }
-
-//   data = taskOptionCache.value || []
-
-//   let query = filter?.where?.name
-//   query = typeof query === 'object' ? query.like : query
-//   if (query) {
-//     query = query.toLowerCase()
-//     const reg = new RegExp(query, 'i')
-//     data = data.filter((item) => reg.test(item.name))
-//   }
-
-//   return {
-//     items: data,
-//     total: data.length,
-//   }
-// }
-
 const getData = async (id: string) => {
   try {
-    const data = await inspectApi.findOne({
+    const data = await findOneInspect({
       filter: JSON.stringify({
         where: {
           id,
@@ -412,7 +386,7 @@ const getFlowStages = async (id: string, cb?: () => void) => {
   loading.value = true
   try {
     id = id || form.flowId
-    const data = await taskApi.getId(id)
+    const data = await getTaskById(id)
     loading.value = false
     applyTask(data, cb)
   } catch {
@@ -534,7 +508,7 @@ const save = async (saveOnly = false) => {
         alarmSettingsKeys.includes(t.key),
       )
 
-      await inspectApi[form.id ? 'patch' : 'post'](
+      await (form.id ? patchInspect : postInspect)(
         Object.assign({}, form, {
           fullMatchKeep: form.keep,
           status: saveOnly ? 'waiting' : 'scheduling',
@@ -763,7 +737,7 @@ provide('ConnectorMap', ConnectorMap)
                 >
                   <template #icon>
                     <el-icon>
-                      <i-mingcute:external-link-line />
+                      <i-mingcute-external-link-line />
                     </el-icon>
                   </template>
                 </el-button>
@@ -793,25 +767,37 @@ provide('ConnectorMap', ConnectorMap)
             class="align-top is-button"
             @change="handleChangeInspectMethod"
           >
-            <el-radio-button value="row_count">
+            <el-radio-button
+              value="row_count"
+              style="--el-radio-button-checked-bg-color: transparent"
+            >
               <div class="flex align-center gap-2">
                 <VIcon size="16">Lightning</VIcon>
                 {{ inspectMethodMap['row_count'] }}
               </div>
             </el-radio-button>
-            <el-radio-button value="field">
+            <el-radio-button
+              value="field"
+              style="--el-radio-button-checked-bg-color: transparent"
+            >
               <div class="flex align-center gap-2">
                 <VIcon size="16">LucideTable</VIcon>
                 {{ inspectMethodMap['field'] }}
               </div>
             </el-radio-button>
-            <el-radio-button value="jointField">
+            <el-radio-button
+              value="jointField"
+              style="--el-radio-button-checked-bg-color: transparent"
+            >
               <div class="flex align-center gap-2">
                 <VIcon size="16">LucideLink</VIcon>
                 {{ inspectMethodMap['jointField'] }}
               </div>
             </el-radio-button>
-            <el-radio-button value="hash">
+            <el-radio-button
+              value="hash"
+              style="--el-radio-button-checked-bg-color: transparent"
+            >
               <div class="flex align-center gap-2">
                 <VIcon size="16">LucideHash</VIcon>
                 {{ inspectMethodMap['hash'] }}
@@ -1146,7 +1132,7 @@ provide('ConnectorMap', ConnectorMap)
                   $t('packages_business_verification_form_jiaoyankaishishi')
                 "
                 format="YYYY-MM-DD HH:mm:ss"
-                value-format="YYYY-MM-DD HH:mm:ss"
+                value-format="x"
               />
             </ElFormItem>
             <ElFormItem v-if="form.mode === 'manual'" class="setting-item">
@@ -1161,7 +1147,7 @@ provide('ConnectorMap', ConnectorMap)
                   $t('packages_business_verification_form_jiaoyanjieshushi')
                 "
                 format="YYYY-MM-DD HH:mm:ss"
-                value-format="YYYY-MM-DD HH:mm:ss"
+                value-format="x"
               />
             </ElFormItem>
           </template>
@@ -1184,7 +1170,7 @@ provide('ConnectorMap', ConnectorMap)
     </ElForm>
 
     <div
-      class="position-sticky bottom-0 border-top bg-white z-10 mt-auto flex align-center content-footer flex-shrink-0"
+      class="position-sticky bottom-0 border-top bg-white dark:bg-transparent dark:backdrop-blur-md z-10 mt-auto flex align-center content-footer flex-shrink-0"
     >
       <el-button size="large" @click="goBack()">{{
         $t('public_button_back')
@@ -1198,7 +1184,7 @@ provide('ConnectorMap', ConnectorMap)
       >
         <template #icon>
           <el-icon size="16">
-            <i-mingcute:check-line />
+            <i-mingcute-check-line />
           </el-icon>
         </template>
         {{ $t('public_button_save') }}
@@ -1306,6 +1292,10 @@ provide('ConnectorMap', ConnectorMap)
     position: sticky;
     top: var(--sticky-top);
     z-index: 10;
+
+    &:where(html.dark *) {
+      backdrop-filter: blur(12px) !important;
+    }
   }
 }
 

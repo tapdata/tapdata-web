@@ -1,4 +1,8 @@
-import { externalStorageApi, getConnectionNoSchema } from '@tap/api'
+import { getConnectionNoSchema } from '@tap/api/src/core/connections'
+import {
+  fetchExternalStorageList,
+  getExternalStorage,
+} from '@tap/api/src/core/external-storage'
 
 export default {
   data() {
@@ -11,9 +15,7 @@ export default {
       await getConnectionNoSchema(id).then(async (data) => {
         // 检查外存是否存在，不存在则设置默认外存
         if (data.shareCDCExternalStorageId) {
-          const ext = await externalStorageApi.get(
-            data.shareCDCExternalStorageId,
-          )
+          const ext = await getExternalStorage(data.shareCDCExternalStorageId)
           if (!ext) {
             data.shareCDCExternalStorageId = ''
             const filter = {
@@ -22,7 +24,7 @@ export default {
               },
             }
 
-            const { items = [] } = await externalStorageApi.list({
+            const { items = [] } = await fetchExternalStorageList({
               filter: JSON.stringify(filter),
             })
             data.shareCDCExternalStorageId = items[0]?.id
@@ -44,6 +46,8 @@ export default {
           schemaUpdateHour,
           shareCDCExternalStorageId,
           heartbeatEnable,
+          dataSourceMonitor,
+          monitorCron,
         } = this.model
         this.schemaFormInstance.setValues({
           __TAPDATA: {
@@ -60,6 +64,8 @@ export default {
             shareCDCExternalStorageId,
             schemaUpdateHour,
             heartbeatEnable,
+            dataSourceMonitor,
+            monitorCron,
           },
           ...this.model?.config,
           id: this.model?.id,

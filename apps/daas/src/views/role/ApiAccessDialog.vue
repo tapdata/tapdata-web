@@ -1,5 +1,8 @@
 <script>
-import { fetchApiModules, updateApiModulePermissions } from '@tap/api'
+import {
+  fetchApiModules,
+  updateApiModulePermissions,
+} from '@tap/api/src/core/modules'
 import { isEqual } from 'lodash'
 
 export default {
@@ -188,7 +191,7 @@ export default {
               @input="handleFilter"
             >
               <template #prefix>
-                <el-icon><i-mingcute:search-line /></el-icon>
+                <el-icon><i-mingcute-search-line /></el-icon>
               </template>
             </el-input>
           </div>

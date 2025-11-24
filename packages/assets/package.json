@@ -2,6 +2,7 @@
   "name": "@tap/assets",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "keywords": [],
   "license": "ISC",
   "author": "",

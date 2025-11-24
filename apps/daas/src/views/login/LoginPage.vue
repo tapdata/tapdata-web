@@ -1,36 +1,35 @@
-<script>
+<script setup lang="ts">
+import { useI18n } from '@tap/i18n'
 import {
   getCurrentLanguage,
   langMenu,
   setCurrentLanguage,
 } from '@tap/i18n/src/shared/util'
 import { getSettingByKey } from '@tap/shared/src/settings'
+import { useDark } from '@vueuse/core'
+import { computed, ref } from 'vue'
 
-export default {
+defineOptions({
   name: 'LoginHeader',
-  data() {
-    return {
-      languages: langMenu,
-      lang: getCurrentLanguage(),
-    }
-  },
+})
 
-  computed: {
-    loginImageStyle() {
-      return {
-        background: `url('${window._TAPDATA_OPTIONS_.loginUrl}') center 0 no-repeat`,
-        backgroundSize: window._TAPDATA_OPTIONS_.loginSize || 'cover',
-      }
-    },
-  },
+const i18n = useI18n()
+const isDark = useDark()
 
-  methods: {
-    getSettingByKey,
-    langChange(lang) {
-      setCurrentLanguage(lang, this.$i18n)
-      this.lang = lang
-    },
-  },
+const languages = langMenu
+const lang = ref(getCurrentLanguage())
+
+const loginImageStyle = computed(() => {
+  const tapdataOptions = (window as any)._TAPDATA_OPTIONS_
+  return {
+    background: `url('${isDark.value && tapdataOptions.loginDarkUrl ? tapdataOptions.loginDarkUrl : tapdataOptions.loginUrl}') center 0 no-repeat`,
+    backgroundSize: tapdataOptions.loginSize || 'cover',
+  }
+})
+
+const langChange = (newLang: string) => {
+  setCurrentLanguage(newLang, i18n)
+  lang.value = newLang
 }
 </script>
 
@@ -48,7 +47,7 @@ export default {
             @click="langChange(key)"
           >
             {{ value }}
-            <ElDivider v-if="key !== 'tc'" direction="vertical" />
+            <ElDivider v-if="key !== 'en'" direction="vertical" />
           </span>
         </div>
         <slot name="main" />
@@ -78,7 +77,7 @@ export default {
     flex: 1;
     justify-content: center;
     align-items: center;
-    background-color: var(--color-white);
+    background-color: var(--el-bg-color);
     .page-main-box {
       display: flex;
       flex-direction: column;

@@ -37,28 +37,15 @@ export interface TaskChart {
   }
 }
 
-export function fetchTasks(params?: any, filter?: any, headers?: any) {
-  if (Array.isArray(params)) {
-    let queryStr = ''
-    if (typeof filter === 'object') {
-      queryStr = JSON.stringify(filter)
-    } else if (typeof filter === 'string') {
-      queryStr = filter
-    }
-    const qs = queryStr ? `?filter=${encodeURIComponent(queryStr)}` : ''
-    return requestClient.get(`${BASE_URL}/${params.join('/')}${qs}`)
-  } else if (typeof params === 'string') {
-    return requestClient.get(`${BASE_URL}/${params}`, {
-      params: filter,
-      headers,
-    })
-  }
-  params = params || {}
-  return requestClient.get(BASE_URL, { params })
+export function fetchTasks(filter?: any, config?: any) {
+  return requestClient.get(BASE_URL, {
+    params: { filter: filter ? JSON.stringify(filter) : undefined },
+    ...config,
+  })
 }
 
-export function copyTask(id: string) {
-  return requestClient.put(`${BASE_URL}/copy/${id}`)
+export function copyTask(id: string, config?: any) {
+  return requestClient.put(`${BASE_URL}/copy/${id}`, null, config)
 }
 
 export function pauseTask(id: string) {
@@ -83,6 +70,10 @@ export function batchStopTasks(ids: string[]) {
   )
 }
 
+export function patchTask(params: any, config?: any) {
+  return requestClient.patch(BASE_URL, params, config)
+}
+
 export function patchTaskById(id: string, params: any) {
   return requestClient.patch(`${BASE_URL}/${id}`, params)
 }
@@ -95,14 +86,14 @@ export function tranModelVersionControl(params: any) {
   return requestClient.post(`${BASE_URL}/tranModelVersionControl`, params)
 }
 
-export function getTaskById(id: string, params?: any, filter?: any) {
+export function getTaskById(id: string, params?: any, headers?: any) {
   if (Array.isArray(params)) {
-    filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
-    const qs = filter ? `?filter=${encodeURIComponent(filter)}` : ''
-    return requestClient.get(`${BASE_URL}/${id}${params.join('/')}${qs}`)
+    return requestClient.get(`${BASE_URL}/${id}${params.join('/')}`, {
+      headers,
+    })
   }
   params = params || {}
-  return requestClient.get(`${BASE_URL}/${id}`, { params })
+  return requestClient.get(`${BASE_URL}/${id}`, { params, headers })
 }
 
 export function editTask(params: any) {
@@ -298,6 +289,8 @@ export function downloadTaskAnalyze(taskId: string, params: any) {
   return requestClient.post(`${BASE_URL}/analyze/${taskId}`, null, {
     ...params,
     responseType: 'blob',
+    responseReturn: 'raw',
+    skipErrorHandler: true,
   })
 }
 
@@ -337,4 +330,25 @@ export function updateTask(where: any, attributes: any) {
     `${BASE_URL}/execute?where=${encodeURIComponent(queryStr)}`,
     attributes,
   )
+}
+
+export function updateTaskInfo(taskId: string, newName: string, desc: string) {
+  return requestClient.patch(
+    `${BASE_URL}/updateInfo/${taskId}`,
+    undefined,
+    {
+      params: {
+        newName,
+        desc,
+      },
+    },
+  )
+}
+
+export function uploadTask(data: any) {
+  return requestClient.post(`${BASE_URL}/batch/import`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
 }

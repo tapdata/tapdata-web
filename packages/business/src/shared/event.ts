@@ -32,7 +32,8 @@ export class EventEmitter {
     self._events = new Set()
     self._callbacks = {}
     self._console = localConsole
-    self._maxListeners = maxListeners === null ? null : parseInt(maxListeners, 10)
+    self._maxListeners =
+      maxListeners === null ? null : Number.parseInt(maxListeners, 10)
 
     return this
   }
@@ -41,7 +42,7 @@ export class EventEmitter {
    * Add callback to the event.
    *
    * @param {string} eventName.
-   * @param {function} callback
+   * @param {Function} callback
    * @param {object|null} context - In than context will be called callback.
    * @param {number} weight - Using for sorting callbacks calls.
    *
@@ -86,7 +87,9 @@ export class EventEmitter {
    */
   _getCallbackIndex(eventName, callback) {
     return this._has(eventName)
-      ? this._getCallbacks(eventName).findIndex((element) => element.callback === callback)
+      ? this._getCallbacks(eventName).findIndex(
+          (element) => element.callback === callback,
+        )
       : -1
   }
 
@@ -98,23 +101,29 @@ export class EventEmitter {
    * @return {bool}
    */
   _achieveMaxListener(eventName) {
-    return internal(this)._maxListeners !== null && internal(this)._maxListeners <= this.listenersNumber(eventName)
+    return (
+      internal(this)._maxListeners !== null &&
+      internal(this)._maxListeners <= this.listenersNumber(eventName)
+    )
   }
 
   /**
    * Check if callback is already exists for the event.
    *
    * @param {string} eventName
-   * @param {function} callback
+   * @param {Function} callback
    * @param {object|null} context - In than context will be called callback.
    *
    * @return {bool}
    */
   _callbackIsExists(eventName, callback, context) {
     const callbackInd = this._getCallbackIndex(eventName, callback)
-    const activeCallback = callbackInd !== -1 ? this._getCallbacks(eventName)[callbackInd] : void 0
+    const activeCallback =
+      callbackInd !== -1 ? this._getCallbacks(eventName)[callbackInd] : void 0
 
-    return callbackInd !== -1 && activeCallback && activeCallback.context === context
+    return (
+      callbackInd !== -1 && activeCallback && activeCallback.context === context
+    )
   }
 
   /**
@@ -132,7 +141,7 @@ export class EventEmitter {
    * Add the listener.
    *
    * @param {string} eventName
-   * @param {function} callback
+   * @param {Function} callback
    * @param {object|null} context - In than context will be called callback.
    * @param {number} weight - Using for sorting callbacks calls.
    *
@@ -154,12 +163,17 @@ export class EventEmitter {
     } else {
       // Check if we reached maximum number of listeners.
       if (this._achieveMaxListener(eventName)) {
-        self._console.warn(`Max listeners (${self._maxListeners})` + ` for event "${eventName}" is reached!`)
+        self._console.warn(
+          `Max listeners (${self._maxListeners})` +
+            ` for event "${eventName}" is reached!`,
+        )
       }
 
       // Check if the same callback has already added.
       if (this._callbackIsExists(...arguments)) {
-        self._console.warn(`Event "${eventName}"` + ` already has the callback ${callback}.`)
+        self._console.warn(
+          `Event "${eventName}"` + ` already has the callback ${callback}.`,
+        )
       }
     }
 
@@ -172,7 +186,7 @@ export class EventEmitter {
    * Add the listener which will be executed only once.
    *
    * @param {string} eventName
-   * @param {function} callback
+   * @param {Function} callback
    * @param {object|null} context - In than context will be called callback.
    * @param {number} weight - Using for sorting callbacks calls.
    *
@@ -191,7 +205,7 @@ export class EventEmitter {
    * Remove an event at all or just remove selected callback from the event.
    *
    * @param {string} eventName
-   * @param {function} callback
+   * @param {Function} callback
    *
    * @return {this}
    */
@@ -247,7 +261,7 @@ export class EventEmitter {
     let current
 
     if (i > 0 && len > 1) {
-      args = new Array(len - 1)
+      args = Array.from({ length: len - 1 })
 
       while (len--) {
         if (len === 0) {
@@ -296,6 +310,8 @@ export class EventEmitter {
    *                         or null if event isn't exists.
    */
   listenersNumber(eventName) {
-    return this._has(eventName) ? internal(this)._callbacks[eventName].length : null
+    return this._has(eventName)
+      ? internal(this)._callbacks[eventName].length
+      : null
   }
 }

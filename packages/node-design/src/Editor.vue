@@ -1,5 +1,6 @@
 <script>
 import { Slider } from '@tap/form'
+import { useDark } from '@vueuse/core'
 import { markRaw } from 'vue'
 import {
   CodeEditorWidget,
@@ -50,6 +51,8 @@ import {
 } from './sources'
 import './locales'
 import './theme.scss'
+
+useDark()
 
 GlobalRegistry.registerDesignerIcons(icons)
 GlobalRegistry.registerDesignerLocales({

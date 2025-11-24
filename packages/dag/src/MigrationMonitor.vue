@@ -1,18 +1,15 @@
 <script>
 import { observable } from '@formily/reactive'
-import { measurementApi, taskApi } from '@tap/api'
-import {
-  ALARM_LEVEL_SORT,
-  SkipError,
-  TASK_STATUS_MAP,
-  UpgradeCharges,
-  UpgradeFee,
-} from '@tap/business'
+import { batchMeasurements } from '@tap/api/src/core/measurement'
+import { getTaskRecords, resetTask, startTask } from '@tap/api/src/core/task'
+import UpgradeCharges from '@tap/business/src/components/UpgradeCharges.vue'
+import UpgradeFee from '@tap/business/src/components/UpgradeFee.vue'
+import { ALARM_LEVEL_SORT } from '@tap/business/src/shared/const'
 import SharedCacheDetails from '@tap/business/src/views/shared-cache/Details'
 import SharedCacheEditor from '@tap/business/src/views/shared-cache/Editor'
-
 import SharedMiningEditor from '@tap/business/src/views/shared-mining/Editor'
-import { VEmpty, VExpandXTransition, VIcon } from '@tap/component'
+import SkipError from '@tap/business/src/views/task/SkipError.vue'
+import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
 import resize from '@tap/component/src/directives/resize'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
@@ -22,7 +19,7 @@ import Time from '@tap/shared/src/time'
 import dagre from 'dagre'
 import { debounce } from 'lodash-es'
 import { mapMutations, mapState } from 'vuex'
-import { $emit, $off, $on, $once } from '../utils/gogocodeTransfer'
+import { $off, $on } from '../utils/gogocodeTransfer'
 
 import { MoveNodeCommand } from './command'
 import MaterializedView from './components/materialized-view/MaterializedView.vue'
@@ -61,7 +58,6 @@ export default {
     UpgradeFee,
     UpgradeCharges,
     AlarmStatistics,
-    VExpandXTransition,
     VEmpty,
     ConfigPanel,
     BottomPanel,
@@ -69,7 +65,6 @@ export default {
     TopHeader,
     Node,
     LeftSider,
-    VIcon,
     NodeDetailDialog,
     ConsolePanel,
     SharedMiningEditor,
@@ -286,7 +281,7 @@ export default {
       if (this.quotaTimeType === 'lastStart') {
         const { id: taskId } = this.dataflow || {}
         const filter = {}
-        await taskApi.records(taskId, filter).then((data) => {
+        await getTaskRecords(taskId, filter).then((data) => {
           const lastStartDate = data.items?.[0]?.startDate
           if (lastStartDate) {
             this.dataflow.lastStartDate = new Date(lastStartDate).getTime()
@@ -354,9 +349,9 @@ export default {
 
       await this.validateAllNodes()
 
-      const sourceMap = {},
-        targetMap = {},
-        edges = this.allEdges
+      const sourceMap = {}
+      const targetMap = {}
+      const edges = this.allEdges
       edges.forEach((item) => {
         const _source = sourceMap[item.source]
         const _target = targetMap[item.target]
@@ -597,10 +592,18 @@ export default {
         !skip && (await this.$refs.skipError.checkError(this.dataflow))
       if (hasError) return
 
+      if (['edit', 'wait_start'].includes(this.dataflow.status)) {
+        const validateDropTableEnabled = await this.validateDropTableEnabled()
+        if (!validateDropTableEnabled) {
+          this.isSaving = false
+          return
+        }
+      }
+
       this.isSaving = true
       try {
         this.wsAgentLive()
-        await taskApi.start(this.dataflow.id, {
+        await startTask(this.dataflow.id, {
           silenceMessage: true,
         })
         this.$message.success(this.$t('public_message_operation_success'))
@@ -707,6 +710,8 @@ export default {
             'inputSizeQps',
             'outputSizeQps',
             'qpsType',
+            'cpuUsage',
+            'memoryUsage',
           ],
           type: 'continuous', // 连续数据
         },
@@ -826,8 +831,7 @@ export default {
         this.loadResetQuotaData()
         return
       }
-      measurementApi
-        .batch(this.getParams())
+      batchMeasurements(this.getParams())
         .then((data) => {
           const map = {
             verifyTotals: this.loadVerifyTotals,
@@ -1030,7 +1034,7 @@ export default {
     },
 
     handleChangeTimeSelect(val, isTime, source) {
-      this.quotaTimeType = source?.type ?? val
+      this.quotaTimeType = isTime ? 'custom' : (source?.type ?? val)
       this.quotaTime = isTime
         ? val?.split(',')?.map((t) => Number(t))
         : this.getTimeRange(val)
@@ -1121,7 +1125,7 @@ export default {
           this.handleBottomPanel()
           this.toggleConsole(true)
           this.$refs.console?.startAuto('reset') // 信息输出自动加载
-          const data = await taskApi.reset(this.dataflow.id)
+          const data = await resetTask(this.dataflow.id)
           this.responseHandler(
             data,
             this.$t('public_message_operation_success'),
@@ -1439,7 +1443,7 @@ $sidebarW: 356px;
 $hoverBg: #e1e1e1;
 $radius: 3px;
 $baseHeight: 26px;
-$sidebarBg: #fff;
+$sidebarBg: var(--el-bg-color);
 
 .layout-sidebar {
   position: relative;

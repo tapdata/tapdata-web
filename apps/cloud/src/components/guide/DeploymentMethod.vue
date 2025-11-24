@@ -68,10 +68,7 @@ export default {
               {{ $t('dfs_components_taskalarmtour_deployment_wodeshujuku') }}
             </div>
           </div>
-          <el-image
-            class="deployMethod-image"
-            :src="selfHostManagedImg"
-          />
+          <el-image class="deployMethod-image" :src="selfHostManagedImg" />
         </div>
         <div class="is-active position-absolute top-0 end-0">
           <div class="is-active-triangle" />

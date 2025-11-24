@@ -1,25 +1,5 @@
-<template>
-  <div class="multi-selection">
-    <el-select
-      :model-value="values"
-      multiple
-      filterable
-      allow-create
-      default-first-option
-      :placeholder="placeholder"
-      @remove-tag="$emit('remove-tag', $event)"
-      @change="$emit('change', $event)"
-      @input="inputHandler"
-    >
-      <el-option v-for="opt in options.filter((i) => !!i)" :key="opt" :label="opt" :value="opt"> </el-option>
-    </el-select>
-    <ClipboardButton v-if="showCopyBtn" :content="value" icon></ClipboardButton>
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
-import { ClipboardButton } from '@tap/form'
+import { ClipboardButton } from '@tap/form/src/components/clipboard-button'
 export default {
   components: {
     ClipboardButton,
@@ -36,21 +16,48 @@ export default {
       default: true,
     },
   },
+  emits: ['remove-tag', 'change', 'update:value'],
   computed: {
     values() {
-      let value = this.value
+      const value = this.value
       return value && value.length ? value.split(',') : []
     },
   },
   methods: {
     inputHandler(values) {
       //过滤空字符串并去重，之后使用逗号分隔
-      $emit(this, 'update:value', Array.from(new Set(values.filter((v) => !!v.trim()))).join(','))
+      this.$emit(
+        'update:value',
+        Array.from(new Set(values.filter((v) => !!v.trim()))).join(','),
+      )
     },
   },
-  emits: ['remove-tag', 'change', 'update:value'],
 }
 </script>
+
+<template>
+  <div class="multi-selection">
+    <el-select
+      :model-value="values"
+      multiple
+      filterable
+      allow-create
+      default-first-option
+      :placeholder="placeholder"
+      @remove-tag="$emit('remove-tag', $event)"
+      @change="$emit('change', $event)"
+      @input="inputHandler"
+    >
+      <el-option
+        v-for="opt in options.filter((i) => !!i)"
+        :key="opt"
+        :label="opt"
+        :value="opt"
+      />
+    </el-select>
+    <ClipboardButton v-if="showCopyBtn" :content="value" icon />
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .multi-selection {

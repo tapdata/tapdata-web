@@ -1,22 +1,31 @@
-import { markRaw } from 'vue'
-import { isArr } from '@tap/shared'
-import { TreeNode, Engine } from './models'
-import { mergeLocales } from './internals'
 import { untracked } from '@formily/reactive'
+import { isArr } from '@tap/shared'
+import { markRaw } from 'vue'
+import { mergeLocales } from './internals'
+import { Engine, TreeNode } from './models'
 import { DEFAULT_DRIVERS, DEFAULT_EFFECTS } from './presets'
 
-export const isBehaviorHost = (val) => val?.Behavior && isBehaviorList(val.Behavior)
+export const isBehaviorHost = (val) =>
+  val?.Behavior && isBehaviorList(val.Behavior)
 
-export const isBehaviorList = (val) => Array.isArray(val) && val.every(isBehavior)
+export const isBehaviorList = (val) =>
+  Array.isArray(val) && val.every(isBehavior)
 
 export const isBehavior = (val) =>
-  val?.name || val?.selector || val?.extends || val?.designerProps || val?.designerLocales
+  val?.name ||
+  val?.selector ||
+  val?.extends ||
+  val?.designerProps ||
+  val?.designerLocales
 
-export const isResourceHost = (val) => val?.Resource && isResourceList(val.Resource)
+export const isResourceHost = (val) =>
+  val?.Resource && isResourceList(val.Resource)
 
-export const isResourceList = (val) => Array.isArray(val) && val.every(isResource)
+export const isResourceList = (val) =>
+  Array.isArray(val) && val.every(isResource)
 
-export const isResource = (val) => val?.node && !!val.node.isSourceNode && val.node instanceof TreeNode
+export const isResource = (val) =>
+  val?.node && !!val.node.isSourceNode && val.node instanceof TreeNode
 
 export const createLocales = (...packages) => {
   const results = {}

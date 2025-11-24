@@ -2,24 +2,10 @@ import { PreviewText } from '@formily/element-plus'
 import {
   composeExport,
   resolveComponent,
-  type SlotTypes,
 } from '@formily/element-plus/esm/__builtins__'
 import { connect, mapProps, mapReadPretty } from '@formily/vue'
-import { ElRadio, ElRadioButton, ElRadioGroup } from 'element-plus'
 import { defineComponent, h, type PropType } from 'vue'
-
-export type ElRadioProps = typeof ElRadio
-export type RadioGroupProps = typeof ElRadioGroup & {
-  value: any
-  options?: (
-    | (Omit<ElRadioProps, 'value'> & {
-        value: ElRadioProps['label']
-        label: SlotTypes
-      })
-    | string
-  )[]
-  optionType: 'defalt' | 'button'
-}
+import type { RadioGroupProps } from 'element-plus'
 
 const RadioGroupOption = defineComponent({
   name: 'FRadioGroup',
@@ -29,7 +15,7 @@ const RadioGroupOption = defineComponent({
       default: () => [],
     },
     optionType: {
-      type: String as PropType<RadioGroupProps['optionType']>,
+      type: String as PropType<'default' | 'button'>,
       default: 'default',
     },
   },

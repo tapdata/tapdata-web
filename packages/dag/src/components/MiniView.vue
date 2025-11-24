@@ -1,5 +1,5 @@
 <script>
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
+import { $emit } from '../../utils/gogocodeTransfer'
 export default {
   name: 'MiniView',
   props: {
@@ -61,16 +61,16 @@ export default {
     },
     viewPosition() {
       const { scale, paperScale } = this
-      const { x, y } = this.scrollPosition,
-        { width: ww, height: wh } = this.workView,
-        { left: paperLeft, top: paperTop } = this.paperOffset,
-        m = 1 / paperScale,
-        rect = {
-          width: Math.round(ww * m * scale),
-          height: Math.round(wh * m * scale),
-          left: 0,
-          top: 0,
-        }
+      const { x, y } = this.scrollPosition
+      const { width: ww, height: wh } = this.workView
+      const { left: paperLeft, top: paperTop } = this.paperOffset
+      const m = 1 / paperScale
+      const rect = {
+        width: Math.round(ww * m * scale),
+        height: Math.round(wh * m * scale),
+        left: 0,
+        top: 0,
+      }
       rect.left = ((x - paperLeft) / paperScale) * scale
       rect.top = ((y - paperTop) / paperScale) * scale
       return rect
@@ -93,31 +93,31 @@ export default {
      */
     dragDelegate(moveCallback, moveStopCallback) {
       let point, a
-      const s = { x: 0, y: 0 },
-        r = { dx: 0, dy: 0 }
-      let flag = false,
-        c = Object.assign({}, s)
+      const s = { x: 0, y: 0 }
+      const r = { dx: 0, dy: 0 }
+      let flag = false
+      let c = Object.assign({}, s)
       const onMove = (event) => {
-          if (event.buttons === 0) return
-          point || (point = { pageX: event.pageX, pageY: event.pageY })
-          a || (a = point)
-          s.x = event.pageX - point.pageX
-          s.y = event.pageY - point.pageY
-          r.dx = event.pageX - a.pageX
-          r.dy = event.pageY - a.pageY
-          a = { pageX: event.pageX, pageY: event.pageY }
-          flag || ((Math.abs(s.x) >= 5 || Math.abs(s.y) >= 5) && (flag = true))
-          const isNotSame = c.x !== s.x || c.y !== s.y
-          flag &&
-            isNotSame &&
-            ((c = Object.assign({}, s)), moveCallback(event, s, r, point))
-        },
-        h = (e) => {
-          point = undefined
-          window.removeEventListener('mousemove', onMove)
-          window.removeEventListener('mouseup', h)
-          moveStopCallback?.(e, s, flag)
-        }
+        if (event.buttons === 0) return
+        point || (point = { pageX: event.pageX, pageY: event.pageY })
+        a || (a = point)
+        s.x = event.pageX - point.pageX
+        s.y = event.pageY - point.pageY
+        r.dx = event.pageX - a.pageX
+        r.dy = event.pageY - a.pageY
+        a = { pageX: event.pageX, pageY: event.pageY }
+        flag || ((Math.abs(s.x) >= 5 || Math.abs(s.y) >= 5) && (flag = true))
+        const isNotSame = c.x !== s.x || c.y !== s.y
+        flag &&
+          isNotSame &&
+          ((c = Object.assign({}, s)), moveCallback(event, s, r, point))
+      }
+      const h = (e) => {
+        point = undefined
+        window.removeEventListener('mousemove', onMove)
+        window.removeEventListener('mouseup', h)
+        moveStopCallback?.(e, s, flag)
+      }
       window.addEventListener('mousemove', onMove)
       window.addEventListener('mouseup', h)
     },

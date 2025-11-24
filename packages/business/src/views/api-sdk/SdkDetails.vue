@@ -1,20 +1,18 @@
 <script setup lang="ts">
+import { fetchApiClients, type ApiClientVo } from '@tap/api/src/core/api-client'
+import { fetchApiServers } from '@tap/api/src/core/api-server'
 import {
   deleteSdkVersion,
-  fetchApiClients,
-  fetchApiModules,
   fetchSdk,
   fetchSdkVersionApiList,
   fetchSdkVersions,
-  useRequest,
-  type ApiClientVo,
-} from '@tap/api'
+} from '@tap/api/src/core/sdk'
+import { useRequest } from '@tap/api/src/request'
 import { Modal } from '@tap/component/src/modal'
-import { RightBoldOutlined } from '@tap/component/src/RightBoldOutlined'
 import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
 import { debounce } from 'lodash-es'
-import { computed, nextTick, ref, toRefs, watch } from 'vue'
+import { computed, nextTick, onBeforeMount, ref, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import { dayjs } from '../../shared/dayjs'
@@ -35,6 +33,7 @@ const apiDrawer = ref<any>(null)
 const sdkDialog = ref<any>(null)
 const hasGenerating = ref(false)
 const selectedVersion = ref<any>()
+const apiServerHost = ref('')
 
 const mapApi = (item: any) => {
   const pathJoin: string[] = []
@@ -240,6 +239,23 @@ const onSuccess = () => {
   runFetchSdkVersions()
   runFetchSdk()
 }
+
+const getApiServerHost = async () => {
+  const showError = () => {
+    ElMessage.error(t('packages_business_data_server_list_huoqufuwuyu'))
+  }
+  const data = await fetchApiServers().catch(() => {
+    showError()
+  })
+  apiServerHost.value = (data as any)?.items?.[0]?.clientURI || ''
+  if (!apiServerHost.value) {
+    showError()
+  }
+}
+
+onBeforeMount(() => {
+  getApiServerHost()
+})
 </script>
 
 <template>
@@ -260,7 +276,7 @@ const onSuccess = () => {
         @click="handleDownload(selectedVersion.zipGridfsId)"
       >
         <el-icon class="mr-1">
-          <i-mingcute:download-2-line />
+          <i-mingcute-download-2-line />
         </el-icon>
         {{ $t('public_button_download') }} ZIP
       </el-button>
@@ -270,7 +286,7 @@ const onSuccess = () => {
         @click="handleDownload(selectedVersion.jarGridfsId)"
       >
         <el-icon class="mr-1">
-          <i-mingcute:download-2-line />
+          <i-mingcute-download-2-line />
         </el-icon>
         {{ $t('public_button_download') }} JAR
       </el-button>
@@ -278,14 +294,14 @@ const onSuccess = () => {
       <el-dropdown trigger="click">
         <el-button circle class="rounded-lg">
           <el-icon size="16">
-            <i-mingcute:more-1-fill />
+            <i-mingcute-more-1-fill />
           </el-icon>
         </el-button>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item class="is-danger" @click="handleDeleteVersion">
               <el-icon class="mr-2">
-                <i-lucide:trash-2 />
+                <i-lucide-trash-2 />
               </el-icon>
               {{ $t('public_button_delete') }}
             </el-dropdown-item>
@@ -296,7 +312,7 @@ const onSuccess = () => {
 
     <div class="flex w-100 h-100 gap-4">
       <div
-        class="py-0 bg-light rounded-xl flex flex-column h-100"
+        class="py-0 bg-light dark:bg-white/5 rounded-xl flex flex-column h-100"
         style="width: 240px"
       >
         <div
@@ -312,12 +328,12 @@ const onSuccess = () => {
             @click="openSearch"
           >
             <template #icon>
-              <i-mingcute:search-line />
+              <i-mingcute-search-line />
             </template>
           </el-button>
           <el-button text :disabled="hasGenerating" @click="handleAddVersion">
             <template #icon>
-              <i-mingcute:add-line />
+              <i-mingcute-add-line />
             </template>
           </el-button>
         </div>
@@ -341,7 +357,7 @@ const onSuccess = () => {
             class="text-center py-8 text-disabled"
           >
             <el-icon size="24" class="mb-2">
-              <i-mingcute:search-line />
+              <i-mingcute-search-line />
             </el-icon>
             <div>{{ $t('public_no_match_version') }}</div>
           </div>
@@ -358,7 +374,7 @@ const onSuccess = () => {
               :key="version.id"
               class="list-item-hover rounded-lg p-2 flex align-center gap-2 cursor-pointer font-color-light position-relative"
               :class="{
-                'bg-white shadow-sm font-color-dark':
+                'bg-card shadow-sm font-color-dark':
                   version.id === selectedVersion.id,
               }"
               @click="handleVersionSelect(version)"
@@ -386,7 +402,7 @@ const onSuccess = () => {
                   <el-divider direction="vertical" class="mx-0" />
                   <span class="text-caption flex align-center gap-1">
                     <el-icon>
-                      <i-lucide:clock />
+                      <i-lucide-clock />
                     </el-icon>
                     <span class="fs-8">{{ version.updatedFromNow }}</span>
                   </span>
@@ -410,7 +426,7 @@ const onSuccess = () => {
       </div>
 
       <div class="flex-1 flex flex-column gap-4">
-        <div class="bg-light rounded-xl">
+        <div class="bg-light dark:bg-white/5 rounded-xl">
           <div class="px-4 py-2 fs-6 lh-8">{{ $t('public_version_info') }}</div>
           <div class="px-2 pb-2">
             <div
@@ -422,7 +438,7 @@ const onSuccess = () => {
                 <div class="flex flex-column gap-2 desc-item">
                   <span class="text-caption flex align-center gap-2">
                     <el-icon>
-                      <i-lucide:package />
+                      <i-lucide-package />
                     </el-icon>
                     {{ $t('public_package_name') }}
                   </span>
@@ -431,7 +447,7 @@ const onSuccess = () => {
                 <div class="flex flex-column gap-2 desc-item">
                   <span class="text-caption flex align-center gap-2">
                     <el-icon>
-                      <i-lucide:hard-drive />
+                      <i-lucide-hard-drive />
                     </el-icon>
                     {{ $t('public_zip_package') }}
                   </span>
@@ -442,7 +458,7 @@ const onSuccess = () => {
                 <div class="flex flex-column gap-2 desc-item">
                   <span class="text-caption flex align-center gap-2">
                     <el-icon>
-                      <i-lucide:hard-drive />
+                      <i-lucide-hard-drive />
                     </el-icon>
                     {{ $t('public_jar_package') }}
                   </span>
@@ -461,7 +477,7 @@ const onSuccess = () => {
                 <div class="flex flex-column gap-2 desc-item">
                   <span class="text-caption flex align-center gap-2">
                     <el-icon>
-                      <i-lucide:server />
+                      <i-lucide-server />
                     </el-icon>
                     {{ $t('public_client') }}
                   </span>
@@ -470,7 +486,7 @@ const onSuccess = () => {
                 <div class="flex flex-column gap-2 desc-item">
                   <span class="text-caption flex align-center gap-2">
                     <el-icon>
-                      <i-lucide:calendar />
+                      <i-lucide-calendar />
                     </el-icon>
                     {{ $t('public_release_time') }}
                   </span>
@@ -481,11 +497,13 @@ const onSuccess = () => {
           </div>
         </div>
 
-        <div class="bg-light rounded-xl min-h-0 flex flex-column">
+        <div
+          class="bg-light dark:bg-white/5 rounded-xl min-h-0 flex flex-column"
+        >
           <div class="px-4 py-2 fs-6 lh-8">{{ $t('public_api_list') }}</div>
           <div class="px-2 pb-2 flex-1 min-h-0">
             <div
-              class="bg-white rounded-xl p-2 h-100"
+              class="bg-card rounded-xl p-2 h-100"
               style="border: 1px solid #f2f4f7"
             >
               <el-table
@@ -534,7 +552,7 @@ const onSuccess = () => {
                   <template #default="{ row }">
                     <el-button text>
                       <template #icon>
-                        <i-mingcute:right-line />
+                        <i-mingcute-right-line />
                       </template>
                     </el-button>
                   </template>
@@ -544,7 +562,7 @@ const onSuccess = () => {
           </div>
         </div>
 
-        <ApiDrawer ref="apiDrawer" readonly />
+        <ApiDrawer ref="apiDrawer" readonly :host="apiServerHost" />
       </div>
     </div>
 

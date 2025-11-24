@@ -593,6 +593,8 @@ export default {
     'Table full-field validation checks all fields of the source and target tables row by row, identifying differences in all fields but with a slower speed. This operation simultaneously queries both the source and target databases, potentially causing read pressure on the databases.',
   packages_business_verification_jointFieldTip:
     'Associative field value validation compares only the values of associated fields in the source and target tables, providing faster results compared to full-field validation. This operation simultaneously queries both the source and target databases, potentially causing read pressure on the databases.',
+  packages_business_verification_hashVerifyTip:
+    'Table hash verification generates and compares hash values for each row in the source and target tables. It quickly detects differences but cannot show specific field details. This operation may put read pressure on the database.',
   packages_business_verification_waiting: 'To be verified',
   packages_business_verification_scheduling: 'Scheduling',
   packages_business_verification_error: 'Error',
@@ -746,9 +748,47 @@ export default {
     'When the task encounters an error',
   packages_business_setting_alarmnotification_dangrenwustop:
     'When the Agent service stops',
+  packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn:
+    'When APIServer worker P50 per minute exceeding threshold',
+  packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn:
+    'When APIServer worker P95 per minute exceeding threshold',
+  packages_business_setting_alarmnotification_api_server_worker_delay_p99_warn:
+    'When APIServer worker P99 per minute exceeding threshold',
+  packages_business_setting_alarmnotification_api_server_worker_error_rate_warn:
+    'When error rate of API Server worker requests per minute exceeds alarm threshold',
+  packages_business_setting_alarmnotification_api_server_worker_error_rate_alter:
+    'When the error rate of API Server worker process requests per minute exceeds the notification threshold',
+  packages_business_setting_alarmnotification_api_server_api_delay_avg_warn:
+    'When the average latency of any API request per minute exceeds the threshold',
+  packages_business_setting_alarmnotification_api_server_api_delay_p95_alter:
+    'When the request delay P95 per minute for any API exceeds the threshold',
+  packages_business_setting_alarmnotification_api_server_api_delay_p99_alter:
+    'When the request delay P99 per minute for any API exceeds the threshold',
+  packages_business_setting_alarmnotification_api_server_api_error_rate_alter:
+    'When the error rate of any API request per minute exceeds the threshold',
+  packages_business_setting_alarmnotification_api_server_all_api_error_rate_alter:
+    'When the error rate of all API requests per minute exceeds the threshold',
+  packages_business_setting_alarmnotification_api_server_api_response_size_alter:
+    'When the response size of any API request exceeds the threshold',
+  packages_business_setting_alarmnotification_api_server_cpu_usage_warn:
+    'When the CPU usage of any API Server exceeds the alarm threshold',
+  packages_business_setting_alarmnotification_api_server_cpu_usage_alter:
+    'When the CPU usage of any API Server exceeds the notification threshold',
+  packages_business_setting_alarmnotification_api_server_memory_usage_warn:
+    'When the memory usage of any API Server exceeds the alarm threshold',
+  packages_business_setting_alarmnotification_api_server_memory_usage_alter:
+    'When the memory usage of any API Server exceeds the notification threshold',
+  packages_business_setting_alarmnotification_api_server_worker_cpu_usage_warn:
+    "When the CPU usage of any API Server's worker process exceeds the alarm threshold",
+  packages_business_setting_alarmnotification_api_server_worker_cpu_usage_alter:
+    "When the CPU usage of any API Server's worker process exceeds the notification threshold",
+  packages_business_setting_alarmnotification_api_server_worker_memory_usage_warn:
+    "When the memory usage of any API Server's worker process exceeds the alarm threshold",
+  packages_business_setting_alarmnotification_api_server_worker_memory_usage_alter:
+    "When the memory usage of any API Server's worker process exceeds the notification threshold",
   packages_business_setting_alarmnotification_dangrenwuuP:
     'When the Agent service start',
-  packages_business_setting_alarmnotification_msshigaojing: 's',
+  packages_business_setting_alarmnotification_msshigaojing: ' alert',
   packages_business_setting_alarmnotification_lianxu: 'Continuous',
   packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu:
     'When the validation task encounters an error',
@@ -936,6 +976,8 @@ export default {
     'Enable heartbeat table',
   packages_business_connections_databaseform_jiaobentiaoshi: 'Script Debugging',
   // api服务管理
+  packages_business_data_server_drawer_filter:
+    'Invalid json Parameter value, input filter as json object, please',
   packages_business_data_server_drawer_qingshurucanshu:
     'Please enter parameter name',
   packages_business_data_server_drawer_paixu: 'Sort',
@@ -963,6 +1005,9 @@ export default {
   packages_business_data_server_drawer_shaixuantiaojian: 'Filter condition ',
   packages_business_data_server_drawer_canshuzhi: 'parameter value',
   packages_business_data_server_drawer_canshumingcheng: 'Parameter Name',
+  packages_business_data_server_drawer_required: 'Constraint',
+  packages_business_data_server_drawer_required_true: 'required',
+  packages_business_data_server_drawer_required_false: 'optional',
   packages_business_data_server_drawer_shurucanshu: 'Request Parameter',
   packages_business_data_server_drawer_jiekouleixing: 'Interface Type',
   packages_business_data_server_drawer_fabujiedian: 'Publishing Node',
@@ -1083,17 +1128,17 @@ export default {
     'The task has been created, but since your table does not have a primary key, you need to enter the task editor to manually set the update condition field. Click to view the task.',
   packages_business_fdm_create_task_dialog_desc_prefix: `${import.meta.env.VUE_APP_PAGE_TITLE}  will automatically create a cloning pipeline task, which will automatically copy the structure and data of the selected`,
   packages_business_fdm_create_task_dialog_desc_suffix:
-    'to the Cache layer of the data platform and keep the source database and Cache layer data in real-time synchronization and automatic validation. In most cases, the structure changes (DDL) of the source database will also be copied to the Cache layer. You can monitor the running status of the pipeline task by clicking the ICON on the right side of the database name in the Cache layer. You can also choose to modify the physical table name prefix in the Cache layer now.',
+    'to the Foundational Data Model layer of the data platform and keep the source database and Foundational Data Model layer data in real-time synchronization and automatic validation. In most cases, the structure changes (DDL) of the source database will also be copied to the Foundational Data Model layer. You can monitor the running status of the pipeline task by clicking the ICON on the right side of the database name in the Foundational Data Model layer. You can also choose to modify the physical table name prefix in the Foundational Data Model layer now.',
   packages_business_mdm_create_task_dialog_desc_prefix:
     "This will create a processing model on the Data Platform's Curated layer. Common scenarios for creating a processing model include the following:",
   packages_business_fdm_create_task_dialog_desc_li1:
-    'Need to do some transformation, enhancement, calculation field processing, etc. on the data of the Cache layer.',
+    'Need to do some transformation, enhancement, calculation field processing, etc. on the data of the Foundational Data Model layer.',
   packages_business_fdm_create_task_dialog_desc_li2:
-    'Need to merge the structures of several Cache layers into one wide table.',
+    'Need to merge the structures of several Foundational Data Model layers into one wide table.',
   packages_business_fdm_create_task_dialog_desc_li3:
-    'Need to merge the data of tables from multiple Cache layers to construct a merged table.',
+    'Need to merge the data of tables from multiple Foundational Data Model layers to construct a merged table.',
   packages_business_mdm_create_task_dialog_desc_suffix:
-    'Note: You can directly publish API or do data replication tasks to the target end at the Cache layer. If it is for these two reasons, you do not need to create a processing layer model.',
+    'Note: You can directly publish API or do data replication tasks to the target end at the Foundational Data Model layer. If it is for these two reasons, you do not need to create a processing layer model.',
   packages_business_mdm_create_task_dialog_desc_table_name:
     'Please enter the table name to be newly constructed in the Curated layer. If the table name already exists, the existing data will be overwritten by default.',
   packages_business_save_and_run_now: 'Save and Run',
@@ -1123,7 +1168,7 @@ export default {
   packages_business_data_console_mode_service_tooltip_1:
     'All Features Of Data Integration',
   packages_business_data_console_mode_service_tooltip_2:
-    'Data Cache Layer In Platform',
+    'Data Foundational Data Model layer In Platform',
   packages_business_data_console_mode_service_tooltip_3:
     'Support Multiple Service Publish',
   packages_business_data_console_fdm_mdm_storage: 'Data Center Storage',
@@ -1481,6 +1526,8 @@ export default {
   packages_business_connections_test_xiazaijindu: 'Download Progress',
   packages_business_connections_test_xiazaishibai: 'Download Failed',
   packages_business_relmig_import: 'MongoDB Relmig Import',
+  packages_business_api_import: 'API Import',
+  packages_business_functions_import: 'Functions Import',
   packages_business_relmig_import_desc: `This feature is designed to seamlessly import MongoDB Relational Migrator-exportd relmig project files into ${import.meta.env.VUE_APP_PAGE_TITLE}. After the relmig file is imported, ${import.meta.env.VUE_APP_PAGE_TITLE} will automatically create a task to  perform real time data synchronization from source database and transform into JSON data format in MongoDB database.`,
   packages_business_relmig_upload: 'Upload relmig file',
   packages_business__relmig_import_connection_tip:
@@ -1594,7 +1641,7 @@ export default {
 </ul>
 <p>Useful when syncing high-precision fields to lower-precision ones.</p>
 <p>If precision is the same but storage differs (e.g., Sybase ≈ 3.33ms), extra digits will be ignored.</p>`,
-  packages_business_checkTableThreadNum: 'Thread Validation',
+  packages_business_checkTableThreadNum: 'Thread Count',
   packages_business_checkTableThreadNum_tip:
     'Number of threads to use. Default is 10. Can be increased if system resources permit.',
   packages_business_verification_empty_add_table:
@@ -1615,29 +1662,79 @@ export default {
   packages_business_validation_task_type: 'Validation Task Type',
   packages_business_select_task_to_be_verified: 'Select Task to be Verified',
   packages_business_drag_file_here:
-    'Drag .gz file here or <em>select file upload</em>',
+    'Drag {type} file here or <em>select file upload</em>',
   packages_business_request_speed_limit: 'Request Limit per Second',
   packages_business_request_speed_limit_tag: 'Requests ≤ {val}/s',
   packages_business_request_speed_limit_tip: 'Default is 0 (no limit)',
   packages_business_data_source_monitor: 'Connection Monitor',
 
   // MongoDB operators
-  packages_business_mongo_operator_eq: 'Matches values that are equal to a specified value.',
-  packages_business_mongo_operator_gt: 'Matches values that are greater than a specified value.',
-  packages_business_mongo_operator_gte: 'Matches values that are greater than or equal to a specified value.',
-  packages_business_mongo_operator_in: 'Matches any of the values specified in an array.',
-  packages_business_mongo_operator_lt: 'Matches values that are less than a specified value.',
-  packages_business_mongo_operator_lte: 'Matches values that are less than or equal to a specified value.',
-  packages_business_mongo_operator_ne: 'Matches all values that are not equal to a specified value.',
-  packages_business_mongo_operator_nin: 'Matches none of the values specified in an array.',
-  packages_business_mongo_operator_and: 'Joins query clauses with a logical AND.',
-  packages_business_mongo_operator_nor: 'Joins query clauses with a logical NOR.',
+  package_business_mongodb_query_operators: 'MongoDB Query Operators',
+  package_business_operators_search: 'Search operators',
+  packages_business_comparison: 'Comparison',
+  packages_business_logical: 'Logical',
+  packages_business_element: 'Element',
+  packages_business_evaluation: 'Evaluation',
+  packages_business_mongo_operator_eq:
+    'Matches values that are equal to a specified value.',
+  packages_business_mongo_operator_gt:
+    'Matches values that are greater than a specified value.',
+  packages_business_mongo_operator_gte:
+    'Matches values that are greater than or equal to a specified value.',
+  packages_business_mongo_operator_in:
+    'Matches any of the values specified in an array.',
+  packages_business_mongo_operator_lt:
+    'Matches values that are less than a specified value.',
+  packages_business_mongo_operator_lte:
+    'Matches values that are less than or equal to a specified value.',
+  packages_business_mongo_operator_ne:
+    'Matches all values that are not equal to a specified value.',
+  packages_business_mongo_operator_nin:
+    'Matches none of the values specified in an array.',
+  packages_business_mongo_operator_and:
+    'Joins query clauses with a logical AND.',
+  packages_business_mongo_operator_nor:
+    'Joins query clauses with a logical NOR.',
   packages_business_mongo_operator_or: 'Joins query clauses with a logical OR.',
-  packages_business_mongo_operator_exists: 'Matches documents that have the specified field.',
-  packages_business_mongo_operator_type: 'Selects documents if a field is of the specified type.',
-  packages_business_mongo_operator_regex: 'Selects documents where values match a specified regular expression.',
-  packages_business_mongo_operator_all: 'Matches arrays that contain all elements specified in the query.',
-  packages_business_mongo_operator_elemMatch: 'Selects documents if element in the array field matches all the specified conditions.',
-  packages_business_mongo_operator_size: 'Selects documents if the array field is a specified size.',
-  packages_business_mongo_operator_mod: 'Performs a modulo operation on the value of a field.',
+  packages_business_mongo_operator_exists:
+    'Matches documents that have the specified field.',
+  packages_business_mongo_operator_type:
+    'Selects documents if a field is of the specified type.',
+  packages_business_mongo_operator_regex:
+    'Selects documents where values match a specified regular expression.',
+  packages_business_mongo_operator_all:
+    'Matches arrays that contain all elements specified in the query.',
+  packages_business_mongo_operator_elemMatch:
+    'Matches arrays that contain at least one element satisfying all specified conditions.',
+  packages_business_mongo_operator_size:
+    'Selects documents if the array field is a specified size.',
+  packages_business_mongo_operator_mod:
+    'Performs a modulo match on a field value [divisor, remainder].',
+  packages_business_example_eq: '{a} equals {b}',
+  packages_business_example_ne: '{a} not equals {b}',
+  packages_business_example_gt: '{a} greater than {b}',
+  packages_business_example_gte: '{a} greater than or equal to {b}',
+  packages_business_example_lt: '{a} less than {b}',
+  packages_business_example_lte: '{a} less than or equal to {b}',
+  packages_business_example_in: '{a} in {b}',
+  packages_business_example_nin: '{a} not in {b}',
+  packages_business_example_exists: 'field does not exist',
+  packages_business_example_type:
+    'Can also use numeric codes, such as 16 for int',
+  packages_business_example_regex: 'Starts with A, ignoring case',
+  packages_business_example_size: '{a} array size is {b}',
+  packages_business_edit_task_info: 'Edit Task Information',
+  packages_business_monitor_cron: 'Monitor Period',
+  packages_business_monitor_cron_tip: `Syntax: seconds * minutes * hours * days * months * weeks ? years *\nExample: 0 */1 * * * ? Run every minute 0 0 2 * * ? Run every day at 2am`,
+  packages_business_datasource_monitor_alter: 'Data Source Monitor Alert',
+  packages_business_import_mode: 'Handling for Name Conflicts',
+  packages_business_import_as_copy: 'Import as Copy',
+  packages_business_import_replace: 'Replace Existing',
+  packages_business_import_cancel_import: 'Cancel Import',
+  packages_business_import_as_copy_tip:
+    'If a task or data source with the same name exists, import a new copy with the _import suffix.',
+  packages_business_import_replace_tip:
+    'If a task or data source with the same name exists, overwrite the existing one.',
+  packages_business_import_cancel_import_tip:
+    'If a task or data source with the same name exists, cancel the import.',
 }

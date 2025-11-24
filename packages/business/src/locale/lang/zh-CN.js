@@ -541,6 +541,8 @@ export default {
     '表全字段值校验会对源表和目标表的全部字段进行逐行校验，能查出所有字段的差异，但是速度慢。此操作同时会对源和目标库发起查询，可能会对数据库造成读取压力。',
   packages_business_verification_jointFieldTip:
     '关联字段值校验只对源表和目标表的关联字段的值进行比对校验，速度快于全表字段值校验模式。此操作同时会对源和目标库发起查询，可能会对数据库造成读取压力。',
+  packages_business_verification_hashVerifyTip:
+    '全表 hash 校验会对源表和目标表逐行生成并比对 hash 值，可快速判断是否存在差异，但无法展示具体字段内容。此操作可能对数据库造成读取压力。',
   packages_business_verification_waiting: '待校验',
   packages_business_verification_scheduling: '校验启动中',
   packages_business_verification_error: '校验失败',
@@ -673,7 +675,45 @@ export default {
     '当任务遇到错误时',
   packages_business_setting_alarmnotification_dangrenwustop: 'Agent服务停止时',
   packages_business_setting_alarmnotification_dangrenwuuP: 'Agent服务启动时',
-  packages_business_setting_alarmnotification_msshigaojing: 's 时告警',
+  packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn:
+    '当APIServer工作进程每分钟请求延时P50超过阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn:
+    '当APIServer工作进程每分钟请求延时P95超过阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_delay_p99_warn:
+    '当APIServer工作进程每分钟请求延时P99超过阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_error_rate_warn:
+    '当APIServer工作进程每分钟请求错误率超过告警阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_error_rate_alter:
+    '当APIServer工作进程每分钟请求错误率超过通知阈值时',
+  packages_business_setting_alarmnotification_api_server_api_delay_avg_warn:
+    '当任一API每分钟请求的平均延时超过阈值时',
+  packages_business_setting_alarmnotification_api_server_api_delay_p95_alter:
+    '当任一API每分钟请求延时P95超过阈值时',
+  packages_business_setting_alarmnotification_api_server_api_delay_p99_alter:
+    '当任一API每分钟请求延时P99超过阈值时',
+  packages_business_setting_alarmnotification_api_server_api_error_rate_alter:
+    '当任一API每分钟请求错误率超过阈值时',
+  packages_business_setting_alarmnotification_api_server_all_api_error_rate_alter:
+    '当所有API每分钟请求错误率超过阈值时',
+  packages_business_setting_alarmnotification_api_server_api_response_size_alter:
+    '当任一API请求响应大小超过阈值时',
+  packages_business_setting_alarmnotification_api_server_cpu_usage_warn:
+    '当任一API Server CPU使用率超过告警阈值时',
+  packages_business_setting_alarmnotification_api_server_cpu_usage_alter:
+    '当任一API Server CPU使用率超过通知阈值时',
+  packages_business_setting_alarmnotification_api_server_memory_usage_warn:
+    '当任一API Server 内存使用量超过告警阈值时',
+  packages_business_setting_alarmnotification_api_server_memory_usage_alter:
+    '当任一API Server 内存使用量超过通知阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_cpu_usage_warn:
+    '当任一API Server的工作进程CPU使用率超过告警阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_cpu_usage_alter:
+    '当任一API Server的工作进程CPU使用率超过通知阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_memory_usage_warn:
+    '当任一API Server的工作进程内存使用量超过告警阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_memory_usage_alter:
+    '当任一API Server的工作进程内存使用量超过通知阈值时',
+  packages_business_setting_alarmnotification_msshigaojing: ' 时告警',
   packages_business_setting_alarmnotification_lianxu: '连续',
   packages_business_setting_alarmnotification_cichugaojinggui:
     '此处告警规则设置为系统全局告警规则设置，任务运行监控页面的告警规则设置优先级高于系统全局设置',
@@ -847,6 +887,8 @@ export default {
   packages_business_connections_databaseform_kaiqixintiaobiao: '开启心跳表',
   packages_business_connections_databaseform_jiaobentiaoshi: '脚本调试',
   // api服务管理
+  packages_business_data_server_drawer_filter:
+    '无效的Json参数值, 请将filter作为json对象输入',
   packages_business_data_server_drawer_qingshurucanshu: '请输入参数名称',
   packages_business_data_server_drawer_paixu: '排序',
   packages_business_data_server_drawer_meigefenyefan: '每个分页返回的记录数',
@@ -867,6 +909,9 @@ export default {
   packages_business_data_server_drawer_shaixuantiaojian: '筛选条件',
   packages_business_data_server_drawer_canshuzhi: '参数值',
   packages_business_data_server_drawer_canshumingcheng: '参数名称',
+  packages_business_data_server_drawer_required: '约束',
+  packages_business_data_server_drawer_required_true: '必填',
+  packages_business_data_server_drawer_required_false: '非必填',
   packages_business_data_server_drawer_shurucanshu: '请求参数',
   packages_business_data_server_drawer_quanxianfanwei: '权限范围',
   packages_business_data_server_drawer_jiekouleixing: '接口类型',
@@ -1320,6 +1365,8 @@ export default {
   packages_business_connections_test_xiazaijindu: '下载进度',
   packages_business_connections_test_xiazaishibai: '下载失败',
   packages_business_relmig_import: 'MongoDB Relmig 导入',
+  packages_business_api_import: 'API 导入',
+  packages_business_functions_import: '函数导入',
   packages_business_relmig_import_desc: `这个功能旨在无缝导入 MongoDB 关系迁移器导出的 relmig 项目文件到 ${import.meta.env.VUE_APP_PAGE_TITLE}。在 relmig 文件被导入后， ${import.meta.env.VUE_APP_PAGE_TITLE} 将自动创建一个任务来执行源数据库的实时数据同步，并将其转换为 MongoDB 数据库中的 JSON 数据格式。`,
   packages_business_relmig_upload: '上传 relmig 文件',
   packages_business__relmig_import_connection_tip:
@@ -1439,13 +1486,20 @@ export default {
   packages_business_ignoreTimePrecision_truncate: '截断',
   packages_business_validation_task_type: '校验任务类型',
   packages_business_select_task_to_be_verified: '选择被校验的任务',
-  packages_business_drag_file_here: '拖拽 .gz 文件至此或 <em>选择文件上传</em>',
+  packages_business_drag_file_here:
+    '拖拽 {type} 文件至此或 <em>选择文件上传</em>',
   packages_business_request_speed_limit: '每秒请求限制',
   packages_business_request_speed_limit_tag: '每秒请求 ≤ {val}',
   packages_business_request_speed_limit_tip: '默认是 0（表示不限制）',
   packages_business_data_source_monitor: '数据源监控',
 
   // MongoDB 操作符
+  package_business_mongodb_query_operators: 'MongoDB 查询操作符',
+  package_business_operators_search: '搜索操作符',
+  packages_business_comparison: '比较',
+  packages_business_logical: '逻辑',
+  packages_business_element: '元素',
+  packages_business_evaluation: '表达式',
   packages_business_mongo_operator_eq: '匹配等于指定值的值',
   packages_business_mongo_operator_gt: '匹配大于指定值的值',
   packages_business_mongo_operator_gte: '匹配大于或等于指定值的值',
@@ -1461,7 +1515,35 @@ export default {
   packages_business_mongo_operator_type: '如果字段是指定类型，则选择文档',
   packages_business_mongo_operator_regex: '选择值匹配指定正则表达式的文档',
   packages_business_mongo_operator_all: '匹配包含查询中指定的所有元素的数组',
-  packages_business_mongo_operator_elemMatch: '如果数组字段中的元素匹配所有指定条件，则选择文档',
+  packages_business_mongo_operator_elemMatch:
+    '匹配数组中至少有一个元素满足所有给定条件',
   packages_business_mongo_operator_size: '如果数组字段是指定大小，则选择文档',
-  packages_business_mongo_operator_mod: '对字段值执行模运算',
+  packages_business_mongo_operator_mod: '对字段值做取模匹配 [除数, 余数]',
+  packages_business_example_eq: '{a} 等于 {b}',
+  packages_business_example_ne: '{a} 不等于 {b}',
+  packages_business_example_gt: '{a} 大于 {b}',
+  packages_business_example_gte: '{a} 大于等于 {b}',
+  packages_business_example_lt: '{a} 小于{b}',
+  packages_business_example_lte: '{a} 小于等于 {b}',
+  packages_business_example_in: '{a} 在{b} 中',
+  packages_business_example_nin: '{a} 不在 {b} 中',
+  packages_business_example_exists: '字段不存在',
+  packages_business_example_type: '也可用数字代号，如 16 表示 int',
+  packages_business_example_regex: '以 A 开头，忽略大小写',
+  packages_business_example_size: '{a} 数组长度为 {b}',
+  packages_business_example_mod: '{a} 能被 {b} 整除',
+  packages_business_edit_task_info: '编辑任务信息',
+  packages_business_monitor_cron: '监控周期',
+  packages_business_monitor_cron_tip: `语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 ? 年 *\n举例：0 */1 * * * ? 每分钟运行一次 0 0 2 * * ? 每天2点运行`,
+  packages_business_datasource_monitor_alter: '数据源监控告警',
+  packages_business_import_mode: '同名处理方式',
+  packages_business_import_as_copy: '以副本导入',
+  packages_business_import_replace: '覆盖导入',
+  packages_business_import_cancel_import: '取消导入',
+  packages_business_import_as_copy_tip:
+    '若任务名或数据源名冲突，会在名称后加 _import 后缀导入为新副本。',
+  packages_business_import_replace_tip:
+    '若任务名或数据源名冲突，将覆盖系统中已有的任务或数据源。',
+  packages_business_import_cancel_import_tip:
+    '若任务名或数据源名冲突，则终止导入操作，不导入任何内容。',
 }

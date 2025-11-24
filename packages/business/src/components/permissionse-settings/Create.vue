@@ -1,5 +1,6 @@
 <script>
-import { dataPermissionApi, usersApi } from '@tap/api'
+import { getRoleActions, postDataAuth } from '@tap/api/src/core/data-permission'
+import { getUserRoles } from '@tap/api/src/core/users'
 import i18n from '@tap/i18n'
 
 export default {
@@ -120,7 +121,7 @@ export default {
         dataType: this.type,
         dataIds: this.dataList.map((t) => t.id).join(),
       }
-      dataPermissionApi.roleActions(params).then((data) => {
+      getRoleActions(params).then((data) => {
         this.form.checked = data
       })
     },
@@ -130,23 +131,21 @@ export default {
         order: 'name',
         limit: 500,
       }
-      usersApi
-        .role({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          this.roleList =
-            data.items?.map((t) => {
-              return {
-                label: t.name,
-                value: t.id,
-              }
-            }) || []
-          return {
-            total: data?.total || 0,
-            data: data?.items || [],
-          }
-        })
+      getUserRoles({
+        filter: JSON.stringify(filter),
+      }).then((data) => {
+        this.roleList =
+          data.items?.map((t) => {
+            return {
+              label: t.name,
+              value: t.id,
+            }
+          }) || []
+        return {
+          total: data?.total || 0,
+          data: data?.items || [],
+        }
+      })
     },
 
     handleClose() {
@@ -174,8 +173,7 @@ export default {
       }
 
       this.saveLoading = true
-      dataPermissionApi
-        .dataAuth(params)
+      postDataAuth(params)
         .then((data = []) => {
           if (!data?.length) {
             this.$message.success(this.$t('public_message_save_ok'))

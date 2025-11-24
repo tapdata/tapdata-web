@@ -1,5 +1,5 @@
 <script>
-import { taskApi } from '@tap/api'
+import { getTaskConsole } from '@tap/api/src/core/task'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import resize from '@tap/component/src/directives/resize'
 import i18n from '@tap/i18n'
@@ -68,7 +68,7 @@ export default {
     async loadData() {
       const { taskId, nodeId } = this
       this.loading = true
-      const data = await taskApi.getConsole({
+      const data = await getTaskConsole({
         taskId: taskId || this.$route.params.id,
         nodeId,
         type: this.type,
@@ -296,7 +296,7 @@ export default {
   z-index: 10;
   height: 40vh;
   overflow: auto;
-  background-color: #fff;
+  background-color: var(--el-bg-color);
   //transition: height 0.24s;
   will-change: height;
 
@@ -315,7 +315,7 @@ export default {
 
     &:hover,
     &.active {
-      background-color: rgba(229, 236, 255, 0.3);
+      background-color: var(--el-fill-color-light);
     }
   }
 

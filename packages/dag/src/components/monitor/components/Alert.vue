@@ -1,16 +1,20 @@
 <script>
-import { closeAlarms } from '@tap/api'
-import { ALARM_LEVEL_MAP, ALARM_STATUS_MAP } from '@tap/business'
+import { closeAlarms } from '@tap/api/src/core/alarm'
+import {
+  ALARM_LEVEL_MAP,
+  ALARM_STATUS_MAP,
+} from '@tap/business/src/shared/const'
 
-import { OverflowTooltip, SelectList, VIcon, VTable } from '@tap/component'
+import { VTable } from '@tap/component/src/base/v-table'
+import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
+import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 
 import i18n from '@tap/i18n'
 import { mapGetters } from 'vuex'
-import { $emit, $off, $on, $once } from '../../../../utils/gogocodeTransfer'
 
 export default {
   name: 'Alert',
-  components: { VIcon, VTable, OverflowTooltip, SelectList },
+  components: { VTable, OverflowTooltip, SelectList },
   props: {
     dataflow: {
       type: Object,
@@ -23,6 +27,7 @@ export default {
       },
     },
   },
+  emits: ['changeTab', 'loadData'],
   data() {
     return {
       activeNodeId: 'all',
@@ -199,7 +204,7 @@ export default {
         this.$message.success(
           i18n.t('packages_dag_components_alert_guanbichenggong'),
         )
-        $emit(this, 'load-data')
+        this.$emit('loadData')
       })
     },
 
@@ -208,10 +213,9 @@ export default {
         start: row.lastOccurrenceTime,
         nodeId: row.nodeId,
       }
-      $emit(this, 'change-tab', 'log', params)
+      this.$emit('changeTab', 'log', params)
     },
   },
-  emits: ['change-tab', 'load-data'],
 }
 </script>
 

@@ -1,5 +1,9 @@
 <script setup lang="tsx">
-import { fetchConnections, metadataInstancesApi } from '@tap/api'
+import { fetchConnections } from '@tap/api/src/core/connections'
+import {
+  checkTableExist,
+  fetchMetadataInstances,
+} from '@tap/api/src/core/metadata-instances'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared/const'
 import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import i18n from '@tap/i18n'
@@ -375,10 +379,7 @@ async function loadTable(
     }
   }
 
-  const result = await metadataInstancesApi.get(
-    { filter: JSON.stringify(filter) },
-    config,
-  )
+  const result = await fetchMetadataInstances(filter, config)
 
   const items = result.items.map((item: TableItem) => ({
     label: item.original_name + (item.comment ? `(${item.comment})` : ''),
@@ -387,7 +388,7 @@ async function loadTable(
 
   const table = filter.where?.original_name?.like
   if (table && !items.some((t) => t.value.includes(table))) {
-    const res = await metadataInstancesApi.checkTableExist({
+    const res = await checkTableExist({
       connectionId: filter.where!['source.id'],
       tableName: table,
     })

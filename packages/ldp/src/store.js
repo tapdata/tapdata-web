@@ -1,5 +1,5 @@
 const getState = function () {
-  let state = JSON.parse(sessionStorage.getItem('overViewState'))
+  const state = JSON.parse(sessionStorage.getItem('overViewState'))
   return {
     panelFlag: state?.panelFlag || false,
     userId: state?.userId || [],

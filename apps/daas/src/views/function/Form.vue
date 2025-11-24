@@ -1,5 +1,9 @@
 <script>
-import { javascriptFunctionsApi } from '@tap/api'
+import {
+  createFunction,
+  findOneFunction,
+  patchFunction,
+} from '@tap/api/src/core/function'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import JsEditor from '@tap/component/src/JsEditor.vue'
 import Cookie from '@tap/shared/src/cookie'
@@ -73,14 +77,13 @@ export default {
   methods: {
     getData(id) {
       this.loading = true
-      javascriptFunctionsApi
-        .findOne({
-          filter: JSON.stringify({
-            where: {
-              id,
-            },
-          }),
-        })
+      findOneFunction({
+        filter: JSON.stringify({
+          where: {
+            id,
+          },
+        }),
+      })
         .then((data) => {
           const details = data || {}
           // 处理老数据问题
@@ -107,7 +110,7 @@ export default {
             let params = {
               format,
             }
-            let method = 'post'
+            let method = createFunction
             const id = this.$route.params.id
             if (this.form.type === 'custom') {
               const obj = getScriptObj(this.form.script)
@@ -120,13 +123,13 @@ export default {
             }
             if (id) {
               params.id = id
-              method = 'patch'
+              method = patchFunction
             }
             if (!params.format) {
               params.format = `${params.function_name}(${params.parameters})`
             }
             this.loading = true
-            javascriptFunctionsApi[method](
+            method(
               Object.assign({}, this.form, params, {
                 last_updated: new Date(),
                 user_id: Cookie.get('user_id'),
@@ -154,7 +157,7 @@ export default {
   >
     <section
       v-loading="loading"
-      class="custom-form-wrapper section-wrap bg-white flex-fill"
+      class="custom-form-wrapper section-wrap flex-fill"
     >
       <div class="section-wrap-box">
         <ElForm
@@ -241,7 +244,9 @@ export default {
           </ElFormItem>
         </ElForm>
       </div>
-      <div class="footer position-sticky py-6 bottom-0 bg-white">
+      <div
+        class="footer border-top position-sticky py-6 bottom-0 bg-white dark:bg-transparent dark:backdrop-blur-md"
+      >
         <ElButton class="btn" type="primary" @click="save">{{
           $t('public_button_save')
         }}</ElButton>
@@ -288,9 +293,5 @@ export default {
     flex: 1;
     overflow: auto;
   }
-}
-.footer {
-  background-color: var(--color-white);
-  border-top: 1px solid #f0f0f0;
 }
 </style>

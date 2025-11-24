@@ -80,7 +80,8 @@ export class FieldCalc extends NodeType {
                 'x-decorator': 'FormItem',
                 'x-component': 'FieldValue',
                 'x-component-props': {
-                  '@editor-init': '{{editor => addEditorFieldCompletion(editor, $values.id, $values.$inputs)}}',
+                  '@editor-init':
+                    '{{editor => addEditorFieldCompletion(editor, $values.id, $values.$inputs)}}',
                 },
                 'x-reactions':
                   '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $self.value.length ? $values.id : $values.$inputs[0])}}',

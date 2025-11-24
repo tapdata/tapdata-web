@@ -99,7 +99,7 @@ export class JavaScript extends NodeType {
                 type: 'string',
                 required: true,
                 default:
-                  'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}',
+                  'function process(record){\n\n\t// Enter your code here\n\treturn record;\n}',
                 'x-component': 'JsProcessor',
                 'x-component-props': {
                   height: 500,

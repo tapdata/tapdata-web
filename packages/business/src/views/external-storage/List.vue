@@ -1,5 +1,11 @@
 <script>
-import { externalStorageApi } from '@tap/api'
+import {
+  changeExternalStorage,
+  createExternalStorage,
+  fetchExternalStorageList,
+  getUsingTask,
+  updateExternalStorageById,
+} from '@tap/api/src/core/external-storage'
 
 import Drawer from '@tap/component/src/Drawer.vue'
 import { FilterBar } from '@tap/component/src/filter-bar'
@@ -215,23 +221,21 @@ export default {
         skip: (current - 1) * size,
         where,
       }
-      return externalStorageApi
-        .list({
-          filter: JSON.stringify(filter),
+      return fetchExternalStorageList({
+        filter: JSON.stringify(filter),
+      }).then((data) => {
+        const list = (data?.items || []).map((item) => {
+          item.typeFmt = EXTERNAL_STORAGE_TYPE_MAP[item.type] || '-'
+          item.createTimeFmt =
+            dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') || '-'
+          item.status = item.status || 'ready'
+          return item
         })
-        .then((data) => {
-          const list = (data?.items || []).map((item) => {
-            item.typeFmt = EXTERNAL_STORAGE_TYPE_MAP[item.type] || '-'
-            item.createTimeFmt =
-              dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') || '-'
-            item.status = item.status || 'ready'
-            return item
-          })
-          return {
-            total: data?.total,
-            data: list,
-          }
-        })
+        return {
+          total: data?.total,
+          data: list,
+        }
+      })
     },
     openDialog(row) {
       this.dialogVisible = true
@@ -248,12 +252,12 @@ export default {
         this.$refs?.form?.clearValidate()
 
         if (this.form.type === 'mongodb') {
-          this.$refs.schemaToForm?.getForm().setValues(this.form)
+          this.$refs.schemaToForm?.getForm().setValues(this.form, 'overwrite')
         }
       })
     },
     submit() {
-      this.$refs.form.validate(async (valid) => {
+      this.$refs.form.validate((valid) => {
         if (valid) {
           const main = async () => {
             const formValues = this.$refs.schemaToForm?.getFormValues?.() || {}
@@ -271,8 +275,7 @@ export default {
               this.loading = false
             }
             if (id) {
-              await externalStorageApi
-                .updateById(id, params)
+              await updateExternalStorageById(id, params)
                 .then(() => {
                   this.table.fetch()
                   this.dialogVisible = false
@@ -280,8 +283,7 @@ export default {
                 })
                 .catch(catchFunc)
             } else {
-              await externalStorageApi
-                .post(params)
+              await createExternalStorage(params)
                 .then(() => {
                   this.table.fetch()
                   this.dialogVisible = false
@@ -292,7 +294,7 @@ export default {
           }
           if (this.$refs.schemaToForm) {
             const schemaFormInstance = this.$refs.schemaToForm?.getForm?.()
-            schemaFormInstance?.validate().then(async () => {
+            schemaFormInstance?.validate().then(() => {
               main()
             })
           } else {
@@ -302,14 +304,14 @@ export default {
       })
     },
     handleDefault(row) {
-      externalStorageApi.changeExternalStorage(row.id).then(() => {
+      changeExternalStorage(row.id).then(() => {
         this.$message.success(i18n.t('public_message_operation_success'))
         this.table.fetch()
       })
     },
     async remove(row) {
       //先去请求是否外存已被使用了
-      this.usingTasks = (await externalStorageApi.usingTask(row.id)) || []
+      this.usingTasks = (await getUsingTask(row.id)) || []
       const flag = await this.$confirm(
         i18n.t('packages_business_external_storage_list_querenshanchuwai'),
       )
@@ -317,7 +319,7 @@ export default {
         if (this.usingTasks?.length) {
           this.showUsingTaskDialog = true
         } else {
-          await externalStorageApi.delete(row.id)
+          await changeExternalStorage(row.id)
           this.table.fetch()
         }
       }
@@ -401,32 +403,23 @@ export default {
 
           this.loading = true
           const { id, name, type, uri, defaultStorage } = this.form
-          const params = Object.assign(
-            {
-              id,
-              name,
-              type,
-              uri,
-              defaultStorage,
-            },
-            formValues,
-          )
-          const result = { id }
-          for (const key in params) {
-            if (params[key] !== this.dialogForm[key]) {
-              result[key] = params[key]
-            }
+          const params = {
+            ...formValues,
+            id,
+            name,
+            type,
+            uri,
+            defaultStorage,
           }
-
-          this.startTest(result)
+          this.startTest(params)
         }
       })
     },
 
     startTest(data = {}) {
       const loading = this.$loading()
+      this.model = data
       this.checkAgent(() => {
-        Object.assign(this.model, data)
         this.$refs.test.start(false)
       })
         .catch(() => {
@@ -528,7 +521,7 @@ export default {
       />
       <ElTableColumn
         show-overflow-tooltip
-        min-width="120"
+        width="172"
         :label="$t('public_create_time')"
         prop="createTimeFmt"
       />

@@ -28,6 +28,11 @@
       font-size: 12px;
       font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
     }
+    &:where(html.dark *) {
+      .hljs {
+        background: #282c34 !important;
+      }
+    }
   }
 
   .code-before {

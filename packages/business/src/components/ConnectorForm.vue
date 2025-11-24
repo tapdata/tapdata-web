@@ -1,14 +1,24 @@
 <script>
 import { action } from '@formily/reactive'
+import { findAccessNodeInfo } from '@tap/api/src/core/cluster'
 import {
-  externalStorageApi,
-  fetchDatabaseTypeByPdkHash,
-  findAccessNodeInfo,
+  createConnection,
   getUsingDigginTaskByConnectionId,
-  proxyApi,
-} from '@tap/api'
-import { createConnection, updateConnectionById } from '@tap/api/src/core'
-import { SchemaToForm } from '@tap/form'
+  updateConnectionById,
+} from '@tap/api/src/core/connections'
+import { fetchDatabaseTypeByPdkHash } from '@tap/api/src/core/database-types'
+import {
+  fetchExternalStorageList,
+  getExternalStorage,
+} from '@tap/api/src/core/external-storage'
+import {
+  commandProxy,
+  generateRefreshToken,
+  getProxyHost,
+  getProxyId,
+  subscribeProxy,
+} from '@tap/api/src/core/proxy'
+import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 import i18n from '@tap/i18n'
 import { submitForm, uuid } from '@tap/shared'
 import { isEmpty } from 'lodash-es'
@@ -156,7 +166,7 @@ export default {
             if (!params.pdkHash || !params.connectionId) {
               return { items: [], total: 0 }
             }
-            const result = await proxyApi.command(params)
+            const result = await commandProxy(params)
             if (!result.items) {
               return { items: [], total: 0 }
             }
@@ -172,7 +182,7 @@ export default {
             service: 'engine',
             expireSeconds: 100000000,
           }
-          proxyApi.subscribe(filter).then((data) => {
+          subscribeProxy(filter).then((data) => {
             const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
             const p = location.origin + location.pathname
             let str = `${p}${isDaas ? '' : 'tm/'}api/proxy/callback/${data.token}`
@@ -204,7 +214,7 @@ export default {
             subscribeIds,
             type: 'connection',
           }
-          proxyApi.command(params).then((data) => {
+          commandProxy(params).then((data) => {
             const setValue = data.setValue
             if (setValue) {
               for (const key in setValue) {
@@ -221,10 +231,10 @@ export default {
               skip: 0,
             }
             if (id) {
-              const ext = await externalStorageApi.get(id)
+              const ext = await getExternalStorage(id)
               filter.where.type = ext?.type
             }
-            const { items = [] } = await externalStorageApi.list({
+            const { items = [] } = await fetchExternalStorageList({
               filter: JSON.stringify(filter),
             })
             return items.map((item) => {
@@ -314,7 +324,7 @@ export default {
             },
             others,
           )
-          proxyApi.generateRefreshToken(params).then((data = {}) => {
+          generateRefreshToken(params).then((data = {}) => {
             const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
             const p = location.origin + location.pathname
             let str = `${p}${isDaas ? '' : 'tm/'}${data.path}/${data.token}`
@@ -328,7 +338,7 @@ export default {
           return uuid()
         },
         getHost: async () => {
-          const data = await proxyApi.host()
+          const data = await getProxyHost()
           return data?.host
         },
       },
@@ -414,7 +424,7 @@ export default {
           (t) => t.id === 'command_callback_function',
         )
       ) {
-        this.commandCallbackFunctionId = await proxyApi.getId()
+        this.commandCallbackFunctionId = await getProxyId()
       }
 
       let { connectionType } = this.pdkOptions

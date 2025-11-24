@@ -46,7 +46,7 @@ export function $off(instance, event, fn) {
     events[event] = undefined
     return vm
   }
-  events[event] = cbs.filter((cb) => !(cb === fn || cb.fn === fn))
+  events[event] = cbs.filter((cb) => cb !== fn && cb.fn !== fn)
   return vm
 }
 export function $emit(instance, event, ...args) {

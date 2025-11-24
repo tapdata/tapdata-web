@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { CircleCheckFilled, CircleCloseFilled } from '@element-plus/icons-vue'
-import { inspectApi, metadataInstancesApi } from '@tap/api'
+import {
+  batchUpdateListtags,
+  deleteInspectById,
+  fetchInspects,
+  getTaskList,
+  importInspect,
+  updateInspect,
+} from '@tap/api/src/core/inspects'
+import { downloadMetadataInstance } from '@tap/api/src/core/metadata-instances'
 import loadingImg from '@tap/assets/icons/loading.svg'
 import FilterBar from '@tap/component/src/filter-bar/Main.vue'
 import {
@@ -149,7 +157,7 @@ const handleExport = () => {
       in: ids,
     },
   }
-  metadataInstancesApi.download(where, 'Inspect')
+  downloadMetadataInstance(where, 'Inspect')
 }
 
 const handleSelectionChange = (val: InspectItem[]) => {
@@ -224,42 +232,38 @@ const getData = ({
     skip: (current - 1) * size,
     where,
   }
-  return inspectApi
-    .get({
-      filter: JSON.stringify(filter),
-    })
-    .then((data: any) => {
-      const list = data?.items || []
-      return {
-        total: data?.total,
-        data: list.map((item: any) => {
-          const result = item.InspectResult
-          let sourceTotal: string | number = '-'
-          let targetTotal: string | number = '-'
-          if (result) {
-            sourceTotal = result.source_total
-            targetTotal = result.target_total
-          }
-          item.lastStartTime = item.lastStartTime
-            ? dayjs(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
-            : '-'
-          item.sourceTotal = sourceTotal
-          item.targetTotal = targetTotal
-          if (item.inspectMethod === 'hash') {
-            item.sourceTotal = '-'
-            item.targetTotal = '-'
-          }
+  return fetchInspects(filter).then((data: any) => {
+    const list = data?.items || []
+    return {
+      total: data?.total,
+      data: list.map((item: any) => {
+        const result = item.InspectResult
+        let sourceTotal: string | number = '-'
+        let targetTotal: string | number = '-'
+        if (result) {
+          sourceTotal = result.source_total
+          targetTotal = result.target_total
+        }
+        item.lastStartTime = item.lastStartTime
+          ? dayjs(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
+          : '-'
+        item.sourceTotal = sourceTotal
+        item.targetTotal = targetTotal
+        if (item.inspectMethod === 'hash') {
+          item.sourceTotal = '-'
+          item.targetTotal = '-'
+        }
 
-          delete item.tasks
+        delete item.tasks
 
-          if (item.status !== 'error') {
-            delete item.errorMsg
-          }
+        if (item.status !== 'error') {
+          delete item.errorMsg
+        }
 
-          return item
-        }),
-      }
-    })
+        return item
+      }),
+    }
+  })
 }
 
 const toTableInfo = (id: string) => {
@@ -281,22 +285,20 @@ const history = (id: string) => {
 }
 
 const startTask = (id: string) => {
-  inspectApi
-    .update(
-      {
-        id,
-      },
-      {
-        status: 'scheduling',
-        ping_time: 0,
-        scheduleTimes: 0,
-        byFirstCheckId: '',
-      },
-    )
-    .then(() => {
-      ElMessage.success(t('packages_business_verification_startVerify'))
-      table.value?.fetch()
-    })
+  updateInspect(
+    {
+      id,
+    },
+    {
+      status: 'scheduling',
+      ping_time: 0,
+      scheduleTimes: 0,
+      byFirstCheckId: '',
+    },
+  ).then(() => {
+    ElMessage.success(t('packages_business_verification_startVerify'))
+    table.value?.fetch()
+  })
 }
 
 const remove = async (id: string, row: InspectItem) => {
@@ -310,7 +312,7 @@ const remove = async (id: string, row: InspectItem) => {
   )
 
   if (confirmed) {
-    await inspectApi.delete(id)
+    await deleteInspectById(id)
     ElMessage.success(t('public_message_delete_ok'))
     table.value?.fetch()
   }
@@ -404,17 +406,15 @@ const getInspectName = (row: InspectItem = {} as InspectItem) => {
 }
 
 const stop = (id: string = '') => {
-  inspectApi
-    .update(
-      {
-        id,
-      },
-      { status: 'stopping' },
-    )
-    .then(() => {
-      ElMessage.success(t('public_message_operation_success'))
-      table.value?.fetch()
-    })
+  updateInspect(
+    {
+      id,
+    },
+    { status: 'stopping' },
+  ).then(() => {
+    ElMessage.success(t('public_message_operation_success'))
+    table.value?.fetch()
+  })
 }
 
 const handleCreate = (type: string) => {
@@ -442,27 +442,24 @@ const handleDelete = () => {
 }
 
 const fetchTaskOptions = async () => {
-  if (taskOptions.value.length) return
-
   taskOptionsLoading.value = true
 
-  const data = await inspectApi.getTaskList()
+  const data = await getTaskList()
 
   taskOptions.value = data || []
   taskOptionsLoading.value = false
 }
 
 const startImport = async () => {
-  console.log('startImport')
   const formData = new FormData()
-  formData.append('file', importForm.value.fileList[0].raw)
+  formData.append('file', importForm.value.fileList[0].raw!)
   formData.append('taskId', importForm.value.taskId)
 
   importLoading.value = true
 
-  const res = await inspectApi.import(formData)
-
-  importLoading.value = false
+  await importInspect(formData).finally(() => {
+    importLoading.value = false
+  })
 
   ElMessage.success(t('public_message_operation_success'))
 
@@ -503,7 +500,7 @@ const handleOperationClassify = async (listtags) => {
   }
 
   try {
-    await inspectApi.batchUpdateListtags(params)
+    await batchUpdateListtags(params)
     table.value?.fetch()
     ElMessage.success(t('public_message_save_ok'))
   } catch (error) {
@@ -571,6 +568,7 @@ onUnmounted(() => {
       v-model="importDialogVisible"
       :title="$t('public_task_import')"
       width="600px"
+      @open="fetchTaskOptions"
       @closed="onImportDialogClosed"
     >
       <el-upload
@@ -584,7 +582,7 @@ onUnmounted(() => {
         <el-icon size="40"><FileAddColorful /></el-icon>
         <div
           class="el-upload__text mt-6"
-          v-html="$t('packages_business_drag_file_here')"
+          v-html="$t('packages_business_drag_file_here', { type: '.gz' })"
         />
       </el-upload>
 
@@ -612,7 +610,7 @@ onUnmounted(() => {
         </el-button>
       </div>
 
-      <div class="p-4 bg-light rounded-xl mt-4">
+      <div class="mt-4">
         <el-form :model="importForm" label-position="top">
           <el-form-item :label="$t('packages_business_validation_task_type')">
             <el-radio-group
@@ -638,7 +636,6 @@ onUnmounted(() => {
               :loading="taskOptionsLoading"
               :options="taskOptions"
               :props="{ label: 'name', value: 'id' }"
-              @visible-change="fetchTaskOptions"
             />
           </el-form-item>
         </el-form>

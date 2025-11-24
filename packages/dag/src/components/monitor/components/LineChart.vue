@@ -1,18 +1,11 @@
-<template>
-  <div class="line-chart flex flex-column">
-    <div v-if="title" class="font-color-dark fw-bold">{{ title }}</div>
-    <Chart ref="chart" :extend="extend" class="flex-fill"></Chart>
-  </div>
-</template>
-
 <script>
-import i18n from '@tap/i18n'
+import Chart from '@tap/component/src/chart/Chart.vue'
 
-import { debounce, isNumber } from 'lodash-es'
-import dayjs from 'dayjs'
-import { Chart } from '@tap/component'
-import { calcUnit, calcTimeUnit } from '@tap/shared'
+import i18n from '@tap/i18n'
+import { calcTimeUnit, calcUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
+import dayjs from 'dayjs'
+import { debounce, isNumber } from 'lodash-es'
 
 export default {
   name: 'LineChart',
@@ -100,18 +93,40 @@ export default {
 
       const { x, value, name, markLine, yAxisMax } = this.data
       const { limit } = this
-      let series = []
+      const series = []
 
-      if (value?.[0] instanceof Array) {
+      if (Array.isArray(value?.[0])) {
         value.forEach((el, index) => {
-          series.push(this.getSeriesItem(el || [], index, name?.[index], markLine?.[index]))
+          series.push(
+            this.getSeriesItem(
+              el || [],
+              index,
+              name?.[index],
+              markLine?.[index],
+            ),
+          )
         })
       } else {
         series.push(this.getSeriesItem(value || []))
       }
-      let options = this.getOptions()
-      options.series = series
-      const seriesNoData = series.every((t) => !t.data.filter((d) => !!d).length)
+      const options = this.getOptions()
+
+      if (options.series.length) {
+        options.series = series.map((t, i) => {
+          return options.series[i]
+            ? {
+                ...t,
+                ...options.series[i],
+              }
+            : t
+        })
+      } else {
+        options.series = series
+      }
+
+      const seriesNoData = series.every(
+        (t) => !t.data.filter((d) => !!d).length,
+      )
       if (seriesNoData) {
         options.yAxis.max = isNumber(yAxisMax) ? yAxisMax : 1
         options.yAxis.min = 0
@@ -124,7 +139,7 @@ export default {
       } else {
         const now = Time.now()
         const count = this.limit || 5
-        options.xAxis.data = Array(count)
+        options.xAxis.data = Array.from({ length: count })
           .fill()
           .map((t, index) => now - (count - index - 1) * 5000)
       }
@@ -137,8 +152,8 @@ export default {
             zoomLock: true,
             zoomOnMouseWheel: false,
             moveOnMouseWheel: false,
-            startValue: x[len - 1 - limit] + '',
-            endValue: x[len - 1] + '',
+            startValue: String(x[len - 1 - limit]),
+            endValue: String(x[len - 1]),
           },
         ]
         this.$refs.chart.chart?.chart.on(
@@ -174,8 +189,9 @@ export default {
     },
     getOptions() {
       const { canScale, max, minNotZero } = this
-      let result = {
+      const result = {
         tooltip: {
+          borderRadius: 12,
           trigger: 'axis',
           backgroundColor: 'rgba(54, 66, 82, 0.9)',
           textStyle: {
@@ -186,7 +202,10 @@ export default {
             let result = ''
             params.forEach((item, index) => {
               const { axisValue, marker, seriesName, data } = item
-              let markerStr = marker.replace(/background-color:#\w+;/g, `background-color:${this.color[index]};`)
+              const markerStr = marker.replaceAll(
+                /background-color:#\w+;/g,
+                `background-color:${this.color[index]};`,
+              )
               if (!index) {
                 result += dayjs(Number(axisValue)).format('YYYY-MM-DD HH:mm:ss')
               }
@@ -206,19 +225,25 @@ export default {
                 }
               }
 
-              result += `<div class="flex justify-content-between"><div>${markerStr}${seriesName}</div><div class="din-font">${val}</div></div>`
+              result += `<div class="flex justify-content-between gap-4"><div>${markerStr}${seriesName}</div><div class="din-font">${val}</div></div>`
             })
             return result
           },
         },
+        showRectindicators: true,
         grid: {
-          top: '8px',
-          // top: 0,
           left: 0,
           right: 0,
-          // bottom: '24px',
+          top: 0,
           bottom: 0,
-          containLabel: true,
+          outerBounds: {
+            left: 0,
+            top: 0,
+            right: 10,
+            bottom: 0,
+          },
+          outerBoundsMode: 'auto',
+          outerBoundsContain: 'auto',
         },
         xAxis: {
           type: 'category',
@@ -278,7 +303,7 @@ export default {
                   })
                 : calcUnit(val, this.labelUnitType)
             },
-            // showMaxLabel: false,
+            showMaxLabel: true,
             showMinLabel: canScale ? true : null,
           },
         },
@@ -286,11 +311,10 @@ export default {
       }
       const op = this.options
       if (op) {
-        for (let key in op) {
-          if (key === 'series') {
-            result[key].forEach((el, index) => {
-              Object.assign(el, op[key][index])
-            })
+        for (const key of Object.keys(op)) {
+          const item = op[key]
+          if (Array.isArray(item) !== Array.isArray(result[key])) {
+            result[key] = item
           } else {
             Object.assign(result[key], op[key])
           }
@@ -346,7 +370,7 @@ export default {
           opacity: 0.1,
           origin: 'start',
         },
-        markLine: markLine,
+        markLine,
       }
     },
     reset() {
@@ -358,3 +382,10 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div class="line-chart flex flex-column">
+    <div v-if="title" class="font-color-dark fw-bold">{{ title }}</div>
+    <Chart ref="chart" :extend="extend" class="flex-fill" />
+  </div>
+</template>

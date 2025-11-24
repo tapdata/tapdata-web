@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { debounce, escapeRegExp, isString, merge } from 'lodash-es'
-import { computed, markRaw, nextTick, onMounted, ref, toRaw, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, toRaw, watch } from 'vue'
 import SelectLoading from './SelectLoading.vue'
 
 const page = ref(0)
@@ -69,7 +69,7 @@ const paramsSerializer = (params: {
 
   if (params.query) {
     filter.where = {
-      [props.itemQuery ||props.itemValue || props.itemLabel]: {
+      [props.itemQuery || props.itemValue || props.itemLabel]: {
         like: escapeRegExp(params.query),
         options: 'i',
       },
@@ -298,7 +298,7 @@ onMounted(() => {
     @visible-change="onVisibleChange"
     @change="onChange"
   >
-    <template #prefix>
+    <template v-if="showLoading || $slots.prefix" #prefix>
       <slot name="prefix" />
       <el-icon
         v-if="showLoading"

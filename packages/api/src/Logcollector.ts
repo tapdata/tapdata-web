@@ -7,7 +7,7 @@ export default class Logcollector extends Http {
 
   get(params) {
     if (Array.isArray(params)) {
-      return this.axios.get(this.url + '/' + params.join('/'))
+      return this.axios.get(`${this.url}/${params.join('/')}`)
     }
     if (params.url) {
       return this.axios.get(params.url)
@@ -27,11 +27,11 @@ export default class Logcollector extends Http {
   }
 
   getSystemConfig(params) {
-    return this.axios.get(this.url + '/system/config', { params })
+    return this.axios.get(`${this.url}/system/config`, { params })
   }
 
   patchSystemConfig(params) {
-    return this.axios.patch(this.url + '/system/config', params)
+    return this.axios.patch(`${this.url}/system/config`, params)
   }
 
   getDetail(id) {
@@ -53,7 +53,9 @@ export default class Logcollector extends Http {
     return this.axios.get(`${this.url}/tableNames/${taskId}`, { params })
   }
   newTableNames(taskId, callSubId, params) {
-    return this.axios.get(`${this.url}/tableNames/${taskId}/${callSubId}`, { params })
+    return this.axios.get(`${this.url}/tableNames/${taskId}/${callSubId}`, {
+      params,
+    })
   }
   relateTasks(params) {
     return this.axios.get(`${this.url}/relate_tasks`, { params })

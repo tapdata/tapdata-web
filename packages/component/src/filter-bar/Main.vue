@@ -274,7 +274,12 @@ const route = useRoute()
       :class="[item.class, item.type]"
     >
       <template v-if="item.slotName" #default="scope">
-        <slot :name="item.slotName" :row="scope.row" />
+        <slot
+          :name="item.slotName"
+          :row="scope.row"
+          :item="item"
+          :on-change="search"
+        />
       </template>
       <template v-else #default>
         <component

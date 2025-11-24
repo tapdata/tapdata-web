@@ -1,6 +1,5 @@
 <script>
-import { taskApi } from '@tap/api'
-
+import { putTaskLogSetting } from '@tap/api/src/core/task'
 export default {
   name: 'DataCaptureDebug',
   props: {
@@ -30,12 +29,10 @@ export default {
     async start() {
       this.loading = true
 
-      await taskApi
-        .putLogSetting(this.taskId, {
-          level: 'DEBUG',
-          ...this.form,
-        })
-        .finally(() => (this.loading = false))
+      await putTaskLogSetting(this.taskId, {
+        level: 'DEBUG',
+        ...this.form,
+      }).finally(() => (this.loading = false))
 
       this.close()
       this.$emit('start')

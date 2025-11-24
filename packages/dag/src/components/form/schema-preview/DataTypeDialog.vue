@@ -1,79 +1,9 @@
-<template>
-  <ElDialog
-    :title="$t('packages_form_field_inference_list_ziduanleixingtiao')"
-    append-to-body
-    :close-on-click-modal="false"
-    v-model="editDataTypeVisible"
-    width="35%"
-  >
-    <ElForm ref="dataTypeForm" label-width="140px" label-position="left" :model="currentData" @submit.prevent>
-      <ElRadioGroup v-if="!!originType" v-model="modeType" class="mb-3">
-        <ElRadio label="custom">{{ $t('packages_dag_field_inference_list_zidingyitiaozheng') }}</ElRadio>
-        <ElRadio label="coefficient">{{ $t('packages_dag_field_inference_list_anxishutiaozheng') }}</ElRadio>
-      </ElRadioGroup>
-      <template v-if="modeType === 'custom'">
-        <ElFormItem :label="$t('packages_form_field_inference_list_tuiyanchudelei')">
-          <span>{{ currentData.dataTypeTemp }}</span>
-        </ElFormItem>
-        <ElFormItem
-          :label="$t('packages_form_field_inference_list_yaotiaozhengweide')"
-          prop="newDataType"
-          :error="currentData.errorMessage"
-          inline-message
-          required
-        >
-          <ElAutocomplete
-            class="inline-input"
-            v-model="currentData.newDataType"
-            :fetch-suggestions="querySearch"
-            :placeholder="$t('public_input_placeholder')"
-            @select="handleAutocomplete"
-          ></ElAutocomplete>
-        </ElFormItem>
-        <div v-if="!hideBatch">
-          <ElCheckbox v-model="currentData.useToAll">{{
-            $t('packages_form_field_inference_list_duidangqiantuiyan')
-          }}</ElCheckbox>
-          <div v-show="currentData.useToAll" class="mt-2 color-danger fs-8">
-            {{ $t('packages_form_field_inference_list_piliangyingyonghui') }}
-          </div>
-        </div>
-      </template>
-      <template v-else>
-        <ElFormItem :label="$t('packages_form_field_inference_list_tuiyanchudelei')">
-          <span>{{ originType + ' (n)' }}</span>
-        </ElFormItem>
-        <ElFormItem :label="$t('packages_dag_field_inference_list_anzhaoxishu')">
-          <div class="flex align-items-center">
-            <span>{{ originType }}</span>
-            <span>(</span>
-            <ElInputNumber
-              v-model="currentData.coefficient"
-              controls-position="right"
-              :min="0.1"
-              class="coefficient-input mx-2"
-            ></ElInputNumber>
-            <span>* n )</span>
-          </div>
-        </ElFormItem>
-        <div class="flex align-items-center mt-n3 mb-3">
-          <VIcon class="color-primary mr-3">info</VIcon>
-          <span>{{ $t('packages_dag_field_inference_list_anzhaoxishu_tip') }}</span>
-        </div>
-      </template>
-    </ElForm>
-    <template v-slot:footer>
-      <ElButton @click="editDataTypeVisible = false">{{ $t('public_button_cancel') }}</ElButton>
-      <ElButton type="primary" :disabled="!currentData.newDataType" :loading="editBtnLoading" @click="submitEdit">{{
-        $t('public_button_confirm')
-      }}</ElButton>
-    </template>
-  </ElDialog>
-</template>
-
 <script>
+import {
+  checkMultipleDataType,
+  dataType2TapType,
+} from '@tap/api/src/core/metadata-instances'
 import i18n from '@tap/i18n'
-import { metadataInstancesApi } from '@tap/api'
 
 export default {
   name: 'DataTypeDialog',
@@ -120,11 +50,13 @@ export default {
       this.currentData.errorMessage = ''
       this.currentData.source = source
       this.currentData.canUseDataTypes = canUseDataTypes
-      const findRule = this.fieldChangeRules.find((t) => t.id === this.currentData.changeRuleId)
+      const findRule = this.fieldChangeRules.find(
+        (t) => t.id === this.currentData.changeRuleId,
+      )
       this.currentData.selectDataType = findRule?.result?.selectDataType || ''
       this.currentData.coefficient = findRule?.multiple || 1
 
-      const dataTypeCheckMultiple = await metadataInstancesApi.dataTypeCheckMultiple({
+      const dataTypeCheckMultiple = await checkMultipleDataType({
         databaseType: this.activeNode.databaseType,
         dataType: this.currentData.dataType,
       })
@@ -141,7 +73,8 @@ export default {
             const flag =
               namespace[0] === this.data.nodeId &&
               (namespace.length === 1 ||
-                (namespace[1] === this.data.qualified_name && namespace[2] === this.currentData.fieldName))
+                (namespace[1] === this.data.qualified_name &&
+                  namespace[2] === this.currentData.fieldName))
             if (flag) {
               modeType = 'custom'
             }
@@ -157,8 +90,16 @@ export default {
 
     submitEdit() {
       const { qualified_name, nodeId } = this.data
-      const { changeRuleId, fieldName, dataType, dataTypeTemp, newDataType, useToAll, selectDataType, coefficient } =
-        this.currentData
+      const {
+        changeRuleId,
+        fieldName,
+        dataType,
+        dataTypeTemp,
+        newDataType,
+        useToAll,
+        selectDataType,
+        coefficient,
+      } = this.currentData
       const params = {
         databaseType: this.activeNode.databaseType,
         dataTypes: [newDataType],
@@ -209,13 +150,14 @@ export default {
 
       this.editBtnLoading = true
       this.currentData.errorMessage = ''
-      metadataInstancesApi
-        .dataType2TapType(params)
+      dataType2TapType(params)
         .then((data) => {
           const val = data[newDataType]
           const tapType = val && val.type !== 7 ? JSON.stringify(val) : null
           if (!tapType) {
-            this.currentData.errorMessage = i18n.t('packages_form_field_inference_list_geshicuowu')
+            this.currentData.errorMessage = i18n.t(
+              'packages_form_field_inference_list_geshicuowu',
+            )
             this.editBtnLoading = false
             return
           }
@@ -224,7 +166,7 @@ export default {
           let ruleAccept = f?.accept
           if (f?.scope === 'Field') {
             if (useToAll) {
-              let batchRule = this.findNodeRuleByType(f.accept)
+              const batchRule = this.findNodeRuleByType(f.accept)
               if (batchRule) {
                 // 删除节点规则
                 this.deleteRuleById(f.id)
@@ -255,7 +197,9 @@ export default {
             const op = {
               id: uuid(),
               scope: useToAll ? 'Node' : 'Field',
-              namespace: useToAll ? [nodeId] : [nodeId, qualified_name, fieldName],
+              namespace: useToAll
+                ? [nodeId]
+                : [nodeId, qualified_name, fieldName],
               type: 'DataType',
               accept: dataTypeTemp,
               result: { dataType: newDataType, tapType, selectDataType },
@@ -266,7 +210,10 @@ export default {
           }
           this.handleUpdate()
           this.data.fields.find((t) => {
-            if ((useToAll && t.dataTypeTemp === ruleAccept) || t.field_name === fieldName) {
+            if (
+              (useToAll && t.dataTypeTemp === ruleAccept) ||
+              t.field_name === fieldName
+            ) {
               t.changeRuleId = ruleId
             }
           })
@@ -293,3 +240,100 @@ export default {
   },
 }
 </script>
+
+<template>
+  <ElDialog
+    v-model="editDataTypeVisible"
+    :title="$t('packages_form_field_inference_list_ziduanleixingtiao')"
+    append-to-body
+    :close-on-click-modal="false"
+    width="35%"
+  >
+    <ElForm
+      ref="dataTypeForm"
+      label-width="140px"
+      label-position="left"
+      :model="currentData"
+      @submit.prevent
+    >
+      <ElRadioGroup v-if="!!originType" v-model="modeType" class="mb-3">
+        <ElRadio label="custom">{{
+          $t('packages_dag_field_inference_list_zidingyitiaozheng')
+        }}</ElRadio>
+        <ElRadio label="coefficient">{{
+          $t('packages_dag_field_inference_list_anxishutiaozheng')
+        }}</ElRadio>
+      </ElRadioGroup>
+      <template v-if="modeType === 'custom'">
+        <ElFormItem
+          :label="$t('packages_form_field_inference_list_tuiyanchudelei')"
+        >
+          <span>{{ currentData.dataTypeTemp }}</span>
+        </ElFormItem>
+        <ElFormItem
+          :label="$t('packages_form_field_inference_list_yaotiaozhengweide')"
+          prop="newDataType"
+          :error="currentData.errorMessage"
+          inline-message
+          required
+        >
+          <ElAutocomplete
+            v-model="currentData.newDataType"
+            class="inline-input"
+            :fetch-suggestions="querySearch"
+            :placeholder="$t('public_input_placeholder')"
+            @select="handleAutocomplete"
+          />
+        </ElFormItem>
+        <div v-if="!hideBatch">
+          <ElCheckbox v-model="currentData.useToAll">{{
+            $t('packages_form_field_inference_list_duidangqiantuiyan')
+          }}</ElCheckbox>
+          <div v-show="currentData.useToAll" class="mt-2 color-danger fs-8">
+            {{ $t('packages_form_field_inference_list_piliangyingyonghui') }}
+          </div>
+        </div>
+      </template>
+      <template v-else>
+        <ElFormItem
+          :label="$t('packages_form_field_inference_list_tuiyanchudelei')"
+        >
+          <span>{{ `${originType} (n)` }}</span>
+        </ElFormItem>
+        <ElFormItem
+          :label="$t('packages_dag_field_inference_list_anzhaoxishu')"
+        >
+          <div class="flex align-items-center">
+            <span>{{ originType }}</span>
+            <span>(</span>
+            <ElInputNumber
+              v-model="currentData.coefficient"
+              controls-position="right"
+              :min="0.1"
+              class="coefficient-input mx-2"
+            />
+            <span>* n )</span>
+          </div>
+        </ElFormItem>
+        <div class="flex align-items-center mt-n3 mb-3">
+          <VIcon class="color-primary mr-3">info</VIcon>
+          <span>{{
+            $t('packages_dag_field_inference_list_anzhaoxishu_tip')
+          }}</span>
+        </div>
+      </template>
+    </ElForm>
+    <template #footer>
+      <ElButton @click="editDataTypeVisible = false">{{
+        $t('public_button_cancel')
+      }}</ElButton>
+      <ElButton
+        type="primary"
+        :disabled="!currentData.newDataType"
+        :loading="editBtnLoading"
+        @click="submitEdit"
+        >{{ $t('public_button_confirm') }}</ElButton
+      >
+    </template>
+  </ElDialog>
+</template>

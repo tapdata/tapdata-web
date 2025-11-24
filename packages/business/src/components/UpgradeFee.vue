@@ -224,7 +224,7 @@ export default {
     font-size: 14px;
     line-height: 17px;
     max-width: 300px;
-    color: var(--text-light);;
+    color: var(--text-light);
   }
   .desc_professional {
     font-weight: 400;

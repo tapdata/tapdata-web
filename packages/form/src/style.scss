@@ -55,7 +55,7 @@ $formNamespace: formily-element-plus;
 
   .el-collapse-item__wrap {
     padding: 8px 16px;
-    border: 1px solid #ebeef5;
+    border: 1px solid var(--el-border-color-lighter);
     border-radius: 12px;
   }
 
@@ -155,6 +155,16 @@ $formNamespace: formily-element-plus;
   .el-table {
     .cell {
       --btn-space: 2px;
+    }
+  }
+  .#{$formNamespace}-array-base-addition {
+    // margin-top: 8px;
+    // width: 100%;
+    // border: $--border-width-base dashed $--border-color-base;
+    border-color: var(--el-border-color);
+    &:hover, &:active, &:focus {
+      background-color: var(--el-bg-color-overlay);
+      border-color: var(--el-border-color-hover);
     }
   }
 }

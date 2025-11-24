@@ -190,3 +190,11 @@ export function findOneApiModule(params: any) {
 export function updateApiModuleById(id: string, params: any) {
   return requestClient.patch(`${BASE_URL}/${id}`, params)
 }
+
+export function uploadModules(data: any) {
+  return requestClient.post(`${BASE_URL}/batch/import`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+}

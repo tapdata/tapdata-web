@@ -1,7 +1,5 @@
 import { requestClient } from '../request'
 
-import type { UserInfo } from '@tap/types'
-
 const BASE_URL = '/api/users'
 
 export function login(params: any) {
@@ -10,7 +8,7 @@ export function login(params: any) {
   })
 }
 
-export function logout(params?: any) {
+export function logoutUser(params?: any) {
   return requestClient.post(`${BASE_URL}/logout`, params)
 }
 
@@ -30,15 +28,15 @@ export function resetUser(params: any) {
   return requestClient.post(`${BASE_URL}/reset`, params)
 }
 
-export function changePassword(params: any) {
+export function changeUserPassword(params: any) {
   return requestClient.post(`${BASE_URL}/change-password`, params)
 }
 
-export function updateUser(params: { id: string; [key: string]: any }) {
+export function updateUser(params: any) {
   return requestClient.patch(`${BASE_URL}/${params.id}`, params)
 }
 
-export function resetPassword(params: any) {
+export function resetUserPassword(params: any) {
   return requestClient.post(`${BASE_URL}/reset-password`, params)
 }
 
@@ -78,11 +76,15 @@ export function upsertUserWithWhere(where: any, params: any) {
   )
 }
 
-export function markGuideComplete(id: string) {
+export function isCompleteGuide(id: string) {
   return requestClient.patch(`${BASE_URL}/isCompleteGuide?id=${id}`)
 }
 
-export function updateUserWithWhere(where: any, params: any) {
+export function getUserInfo() {
+  return requestClient.get(`${BASE_URL}/self`)
+}
+
+export function updateUserInfo(where: any, params: any) {
   return requestClient.post(
     `${BASE_URL}/update?where=${encodeURIComponent(JSON.stringify(where))}`,
     params,
@@ -94,7 +96,7 @@ export function sendValidateCode(params: any) {
 }
 
 export function getUserInfoByToken() {
-  return requestClient.get<UserInfo>(`${BASE_URL}/byToken`)
+  return requestClient.get(`${BASE_URL}/byToken`)
 }
 
 export function updatePermissionRoleMapping(id: string, params: any) {
@@ -117,21 +119,10 @@ export function refreshAccessCode() {
 }
 
 // Base Http methods that are used in the codebase
-export function fetchUsers(params?: any, filter?: any) {
-  if (Array.isArray(params)) {
-    let queryStr = ''
-    if (typeof filter === 'object') {
-      queryStr = JSON.stringify(filter)
-    } else if (typeof filter === 'string') {
-      queryStr = filter
-    }
-    const qs = queryStr ? `?filter=${encodeURIComponent(queryStr)}` : ''
-    return requestClient.get(`${BASE_URL}/${params.join('/')}${qs}`)
-  } else if (typeof params === 'string') {
-    return requestClient.get(`${BASE_URL}/${params}`, { params: filter })
-  }
-  params = params || {}
-  return requestClient.get(BASE_URL, { params })
+export function fetchUsers(filter?: any) {
+  return requestClient.get(BASE_URL, {
+    params: { filter: filter ? JSON.stringify(filter) : undefined },
+  })
 }
 
 export function countUsers(params: any) {
@@ -140,4 +131,8 @@ export function countUsers(params: any) {
 
 export function patchUser(params: any, config?: any) {
   return requestClient.patch(BASE_URL, params, config)
+}
+
+export function batchUpdateUserListtags(params: any) {
+  return requestClient.patch(`${BASE_URL}/batchUpdateListtags`, params)
 }

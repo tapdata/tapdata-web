@@ -45,12 +45,12 @@ export default {
       const rowClasses = this.getRowClass(row, $index)
       let display = true
       if (treeRowData) {
-        rowClasses.push('el-table__row--level-' + treeRowData.level)
+        rowClasses.push(`el-table__row--level-${treeRowData.level}`)
         display = treeRowData.display
       }
       // 指令 v-show 会覆盖 row-style 中 display
       // 使用 :style 代替 v-show https://github.com/ElemeFE/element/issues/16995
-      let displayStyle = display
+      const displayStyle = display
         ? null
         : {
             display: 'none',

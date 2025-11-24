@@ -1,5 +1,6 @@
 <script>
-import { getConnectionStats, taskApi } from '@tap/api'
+import { getConnectionStats } from '@tap/api/src/core/connections'
+import { getTaskStats } from '@tap/api/src/core/task'
 import { Chart, VIcon } from '@tap/component'
 
 import { mapMutations } from 'vuex'
@@ -18,12 +19,11 @@ import plan_banner from '@/assets/image/plan_banner.png'
 import i18n from '@/i18n'
 import timeFunction from '@/mixins/timeFunction'
 import { UpgradeDialog } from '@/plugins/upgrade-notice'
-import CheckLicense from '@/views/aliyun-market/CheckLicnese'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import { $emit } from '../../../utils/gogocodeTransfer'
 
 export default {
   name: 'Workbench',
-  components: { VIcon, Chart },
+  components: { Chart },
   mixins: [timeFunction],
   inject: ['checkAgent'],
   data() {
@@ -267,7 +267,7 @@ export default {
       const taskLoading = this.$loading({
         target: this.$refs.task?.[0],
       })
-      const data = await taskApi.getStats().finally(() => {
+      const data = await getTaskStats().finally(() => {
         taskLoading.close()
       })
       const task = this.agentList.find(({ key }) => key === 'task')

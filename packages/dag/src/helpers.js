@@ -2,7 +2,10 @@ import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from './constants'
 
 export const getLeftmostTopNode = (nodes) => {
   return nodes.reduce((leftmostTop, node) => {
-    if (node.position[0] > leftmostTop.position[0] || node.position[1] > leftmostTop.position[1]) {
+    if (
+      node.position[0] > leftmostTop.position[0] ||
+      node.position[1] > leftmostTop.position[1]
+    ) {
       return leftmostTop
     }
 

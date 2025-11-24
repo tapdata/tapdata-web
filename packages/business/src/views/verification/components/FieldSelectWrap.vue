@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { FieldSelect } from '@tap/form/src/components/field-select/FieldSelect'
 import { debounce } from 'lodash-es'
-import { computed, nextTick, ref, useTemplateRef, watch, watchEffect } from 'vue'
+import {
+  computed,
+  nextTick,
+  ref,
+  useTemplateRef,
+  watch,
+  watchEffect,
+} from 'vue'
 import type { ElInput } from 'element-plus'
 
 // Define props with TypeScript types
@@ -76,9 +83,12 @@ const updateSelectAll = () => {
     filteredNames.value.every((item) => selectFields.value.includes(item))
 }
 
-watch(() => props.options, (newVal) => {
-  filteredOptions.value = newVal || []
-})
+watch(
+  () => props.options,
+  (newVal) => {
+    filteredOptions.value = newVal || []
+  },
+)
 
 watchEffect(() => {
   updateSelectAll()
@@ -120,7 +130,7 @@ const handleAllSelected = () => {
           @input="handleSearch"
         >
           <template #prefix>
-            <el-icon size="16"><i-mingcute:search-line /></el-icon>
+            <el-icon size="16"><i-mingcute-search-line /></el-icon>
           </template>
         </el-input>
         <el-divider class="my-1" />
@@ -138,7 +148,7 @@ const handleAllSelected = () => {
           </el-checkbox>
 
           <el-icon v-if="allSelected" class="ml-auto color-primary" size="16">
-            <i-mingcute:check-line />
+            <i-mingcute-check-line />
           </el-icon>
         </div>
       </div>

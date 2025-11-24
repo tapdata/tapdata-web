@@ -1,14 +1,18 @@
 <script lang="tsx">
+import { fetchApiServers } from '@tap/api/src/core/api-server'
+import { fetchApps } from '@tap/api/src/core/app'
+import { fetchConnections } from '@tap/api/src/core/connections'
+import { batchMeasurements } from '@tap/api/src/core/measurement'
+import { fetchApiModules } from '@tap/api/src/core/modules'
+import { callProxy } from '@tap/api/src/core/proxy'
 import {
-  fetchApiModules,
-  fetchApiServers,
-  fetchApps,
-  fetchConnections,
-  measurementApi,
-  proxyApi,
-  taskApi,
-  workerApi,
-} from '@tap/api'
+  batchStartTasks,
+  batchStopTasks,
+  forceStopTask,
+  getTaskByConnection,
+  saveAndStartTask,
+  saveTask,
+} from '@tap/api/src/core/task'
 
 import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
@@ -366,30 +370,12 @@ export default {
 
     async loadTask(list) {
       if (!list.length) return
-      // const spec = []
-      // const ids = list.map(item => {
-      //   if (item.showTableWebsite) spec.push(item.id)
-      //   return item.id
-      // })
 
       await this.loadConnectionTaskMap()
-
-      // if (spec.length) {
-      //   spec.forEach(id => {
-      //     const taskList = data[id]
-      //     if (taskList?.length) {
-      //       const mapTaskList = this.connectionTaskMap[id]
-      //       taskList.forEach((task, i) => {
-      //         const table = this.getTableByTask(task)
-      //         if (table) this.getTableWebsite(id, table, mapTaskList[i])
-      //       })
-      //     }
-      //   })
-      // }
     },
 
     async loadConnectionTaskMap() {
-      const data = await taskApi.getTaskByConnection({
+      const data = await getTaskByConnection({
         connectionIds: this.connectionIds.join(','),
         position: 'target',
       })
@@ -430,7 +416,7 @@ export default {
           .map(this.mapTask)
       })
 
-      const taskDataMap = await measurementApi.batch(taskMap)
+      const taskDataMap = await batchMeasurements(taskMap)
       const map = {}
       for (const id in taskDataMap) {
         const current = taskDataMap[id].data?.samples?.data?.[0]
@@ -528,30 +514,26 @@ export default {
     },
 
     getWebsite(connectionId) {
-      return proxyApi
-        .call({
-          className: 'PDKConnectionService',
-          method: 'getConnectorWebsite',
-          args: [connectionId],
-        })
-        .then((data) => {
-          data?.url && (this.connectionWebsiteMap[connectionId] = data.url)
-          return data?.url
-        })
+      return callProxy({
+        className: 'PDKConnectionService',
+        method: 'getConnectorWebsite',
+        args: [connectionId],
+      }).then((data) => {
+        data?.url && (this.connectionWebsiteMap[connectionId] = data.url)
+        return data?.url
+      })
     },
 
     getTableWebsite(connectionId, table, task) {
-      return proxyApi
-        .call({
-          className: 'PDKConnectionService',
-          method: 'getTableWebsite',
-          args: [connectionId, [table]],
-          _: generateId(4),
-        })
-        .then((data) => {
-          data?.url && (task.website = data.url)
-          return data?.url
-        })
+      return callProxy({
+        className: 'PDKConnectionService',
+        method: 'getTableWebsite',
+        args: [connectionId, [table]],
+        _: generateId(4),
+      }).then((data) => {
+        data?.url && (task.website = data.url)
+        return data?.url
+      })
     },
 
     findParentByClassName(parent, cls) {
@@ -771,13 +753,10 @@ export default {
           Object.assign(task, settings)
           let taskInfo
           try {
-            taskInfo = await taskApi.save(task)
+            taskInfo = await saveTask(task)
 
             if (ifStart) {
-              // 保存并运行
-              // taskInfo = await taskApi.save(task)
-
-              taskInfo = await taskApi.saveAndStart(taskInfo, {
+              taskInfo = await saveAndStartTask(taskInfo, {
                 params: {
                   confirm: true,
                 },
@@ -938,7 +917,7 @@ export default {
     },
 
     startTask(ids) {
-      taskApi.batchStart(ids).then((data) => {
+      batchStartTasks(ids).then((data) => {
         this.autoLoadTaskById()
         if (data.every((t) => t.code === 'ok')) {
           this.$message.success(this.$t('public_message_operation_success'))
@@ -962,7 +941,7 @@ export default {
     },
 
     async forceStopTask(ids, item = {}) {
-      const data = await workerApi.taskUsedAgent(ids)
+      const data = await getTaskUsedAgent(ids)
       let msgObj = this.getConfirmMessage(
         'force_stop',
         ids.length > 1,
@@ -981,7 +960,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then((data) => {
+        forceStopTask(ids).then((data) => {
           this.autoLoadTaskById()
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
@@ -1000,7 +979,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then((data) => {
+        batchStopTasks(ids).then((data) => {
           this.autoLoadTaskById()
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
@@ -1011,8 +990,8 @@ export default {
     },
 
     getConfirmMessage(operateStr, isBulk, name) {
-      let title = `${operateStr}_confirm_title`,
-        message = `${operateStr}_confirm_message`
+      let title = `${operateStr}_confirm_title`
+      let message = `${operateStr}_confirm_message`
       if (isBulk) {
         title = `bulk_${title}`
         message = `bulk_${message}`
@@ -1023,7 +1002,7 @@ export default {
       const msg = h(
         'p',
         {
-          style: 'width: calc(100% - 28px);word-break: break-all;',
+          style: 'word-break: break-all;',
         },
         [
           strArr[0],
@@ -1398,7 +1377,7 @@ export default {
 
 <style lang="scss" scoped>
 .wrap__item {
-  border: 1px solid #e1e3e9;
+  border: 1px solid var(--border-color);
 
   &:hover {
     //background-color: #f2f3f5;

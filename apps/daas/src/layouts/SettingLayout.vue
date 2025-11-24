@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { Cookie } from '@tap/shared'
-import { computed, onMounted, provide, ref, watch } from 'vue'
+import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import Sidebar from '@/layouts/Sidebar.vue'
 import { SettingList } from '@/router/menu'
 import Wrapper from './Wrapper.vue'
 
@@ -40,7 +39,12 @@ const handleSelectMenu = (name: string) => {
 <template>
   <Wrapper>
     <template #sidebar>
-      <el-aside class="layout-side" width="220px">
+      <div style="flex: 0 0 220px" />
+      <el-aside
+        class="layout-side position-fixed"
+        width="220px"
+        style="margin-top: 64px"
+      >
         <el-menu
           unique-opened
           class="flex flex-column flex-1 gap-2 border-end-0"

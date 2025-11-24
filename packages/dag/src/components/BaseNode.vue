@@ -1,15 +1,3 @@
-<template>
-  <div class="df-node">
-    <div class="df-node-icon">
-      <NodeIcon :node="node" />
-    </div>
-    <slot v-bind:text="node.name" name="text">
-      <div class="df-node-text">{{ node.name }}</div>
-    </slot>
-    <slot></slot>
-  </div>
-</template>
-
 <script>
 import NodeIcon from './NodeIcon'
 
@@ -21,6 +9,18 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div class="df-node">
+    <div class="df-node-icon">
+      <NodeIcon :node="node" />
+    </div>
+    <slot :text="node.name" name="text">
+      <div class="df-node-text">{{ node.name }}</div>
+    </slot>
+    <slot />
+  </div>
+</template>
 
 <style lang="scss">
 $width: 160px;
@@ -39,7 +39,7 @@ $height: 30px;
   align-items: center;
   width: $width;
   height: $height;
-  background-color: #fff;
+  background-color: var(--el-bg-color-overlay);
   border: 1px solid #2c65ff;
   border-radius: 10px;
   box-sizing: border-box;

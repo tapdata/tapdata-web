@@ -5,7 +5,7 @@ import {
   deleteApiServer,
   fetchApiServers,
   updateApiServer,
-} from '@tap/api'
+} from '@tap/api/src/core/api-server'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import { FilterBar } from '@tap/component/src/filter-bar'
@@ -340,9 +340,7 @@ export default {
       width="600px"
       class="create-dialog"
       :title="
-        createForm.id
-          ? $t('public_button_edit')
-          : $t('api_server_create_server')
+        createForm.id ? $t('api_server_edit') : $t('api_server_create_server')
       "
       :close-on-click-modal="false"
     >

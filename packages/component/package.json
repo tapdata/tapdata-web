@@ -2,10 +2,11 @@
   "name": "@tap/component",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "keywords": [],
   "license": "ISC",
   "author": "",
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -32,6 +33,7 @@
     "@tiptap/pm": "catalog:",
     "@tiptap/starter-kit": "catalog:",
     "@tiptap/vue-3": "catalog:",
+    "@vueuse/core": "catalog:",
     "ace-builds": "catalog:",
     "core-js": "catalog:",
     "dayjs": "catalog:",

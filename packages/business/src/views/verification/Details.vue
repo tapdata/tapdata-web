@@ -1,8 +1,12 @@
 <script>
-import { inspectApi, inspectResultsApi } from '@tap/api'
-import { checkEllipsisActive } from '@tap/shared'
-import Cookie from '@tap/shared/src/cookie'
-import axios from 'axios'
+import { fetchInspectResults } from '@tap/api/src/core/inspect-results'
+import {
+  downloadRecoverSql,
+  exportSql,
+  fetchInspects,
+  updateInspect,
+} from '@tap/api/src/core/inspects'
+import { checkEllipsisActive, downloadBlob } from '@tap/shared'
 import dayjs from 'dayjs'
 import { ErrorMessage } from '../../components/error-message'
 import PageContainer from '../../components/PageContainer.vue'
@@ -118,86 +122,78 @@ export default {
   methods: {
     ErrorMessage,
     async fetchResultStatus() {
-      await inspectResultsApi
-        .get({
-          filter: JSON.stringify({
-            where: {
-              id: this.resultInfo.id,
-            },
-          }),
-        })
-        .then((data) => {
-          const result = data?.items?.[0]
-          if (result) {
-            this.resultInfo.status = result.status
-          }
-        })
+      await fetchInspectResults({
+        where: {
+          id: this.resultInfo.id,
+        },
+      }).then((data) => {
+        const result = data?.items?.[0]
+        if (result) {
+          this.resultInfo.status = result.status
+        }
+      })
     },
     getData(showLoading = true) {
       if (showLoading) {
         this.loading = true
       }
-      inspectApi
-        .get({
-          filter: JSON.stringify({
-            where: {
-              id: this.$route.params.id,
-            },
-          }),
+      fetchInspects({
+        where: {
+          id: this.$route.params.id,
+        },
+      }).then((data) => {
+        const inspect = data?.items?.[0] || {}
+        const inspectResult = inspect.InspectResult
+        inspect.lastStartTime = dayjs(inspect.lastStartTime).format(
+          'YYYY-MM-DD HH:mm:ss',
+        )
+        this.inspect = inspect
+        fetchInspectResults({
+          where: {
+            id: inspectResult.id,
+          },
         })
-        .then((data) => {
-          const inspect = data?.items?.[0] || {}
-          const inspectResult = inspect.InspectResult
-          inspect.lastStartTime = dayjs(inspect.lastStartTime).format(
-            'YYYY-MM-DD HH:mm:ss',
-          )
-          this.inspect = inspect
-          inspectResultsApi
-            .get({
-              filter: JSON.stringify({
-                where: {
-                  id: inspectResult.id,
-                },
-              }),
-            })
-            .then((data) => {
-              const result = data?.items?.[0]
-              if (result) {
-                this.resultInfo = result
-                const stats = result.stats
-                if (stats.length) {
-                  this.errorMsg =
-                    result.status === 'error' ? result.errorMsg : undefined
+          .then((data) => {
+            const result = data?.items?.[0]
+            if (result) {
+              this.resultInfo = result
+              const stats = result.stats
+              if (stats.length) {
+                this.errorMsg =
+                  result.status === 'error' ? result.errorMsg : undefined
 
-                  if (import.meta.env.VUE_APP_KEYWORD && this.errorMsg) {
-                    this.errorMsg = this.errorMsg.replaceAll(
-                      /tapdata\s?/gi,
-                      import.meta.env.VUE_APP_KEYWORD,
+                if (import.meta.env.VUE_APP_KEYWORD && this.errorMsg) {
+                  this.errorMsg = this.errorMsg.replaceAll(
+                    /tapdata\s?/gi,
+                    import.meta.env.VUE_APP_KEYWORD,
+                  )
+                }
+
+                this.checkErrorMsg()
+                if (!this.taskId) {
+                  this.taskId = stats[0].taskId
+                }
+                this.$nextTick(() => {
+                  this.$refs.resultView?.fetch(1)
+                  if (!this.isCountOrHash && showLoading) {
+                    this.$refs.singleTable?.setCurrentRow(stats[0])
+                  }
+                  if (this.taskId) {
+                    this.$refs.singleTable?.setCurrentRow(
+                      stats.find((t) => t.taskId === this.taskId),
                     )
                   }
-
-                  this.checkErrorMsg()
-                  if (!this.taskId) {
-                    this.taskId = stats[0].taskId
-                  }
-                  this.$nextTick(() => {
-                    this.$refs.resultView?.fetch(1)
-                    if (!this.isCountOrHash && showLoading) {
-                      this.$refs.singleTable?.setCurrentRow(stats[0])
-                    }
-                    if (this.taskId) {
-                      this.$refs.singleTable?.setCurrentRow(
-                        stats.find((t) => t.taskId === this.taskId),
-                      )
-                    }
-                  })
-                }
+                })
               }
-            })
-            .finally(() => {
-              this.loading = false
-            })
-        })
+              if (result.status === 'exporting') {
+                this.startPolling()
+              }
+            }
+          })
+          .finally(() => {
+            this.loading = false
+          })
+      })
     },
     diffInspect() {
       const firstCheckId = this.resultInfo.firstCheckId
@@ -214,24 +210,22 @@ export default {
       // if (keep < totalFailed) {
       //   this.$message.warning(this.$t('packages_business_verification_message_out_of_limit'))
       // }
-      inspectApi
-        .update(
-          {
-            id: this.inspect.id,
-          },
-          {
-            status: 'scheduling',
-            ping_time: 0,
-            scheduleTimes: 0,
-            byFirstCheckId: firstCheckId,
-          },
+      updateInspect(
+        {
+          id: this.inspect.id,
+        },
+        {
+          status: 'scheduling',
+          ping_time: 0,
+          scheduleTimes: 0,
+          byFirstCheckId: firstCheckId,
+        },
+      ).then(() => {
+        this.$message.success(
+          this.$t('packages_business_verification_startVerify'),
         )
-        .then(() => {
-          this.$message.success(
-            this.$t('packages_business_verification_startVerify'),
-          )
-          this.getData()
-        })
+        this.getData()
+      })
     },
 
     handleCorrection() {
@@ -242,45 +236,36 @@ export default {
       this.exportSqlLoading = true
 
       try {
-        await inspectApi.exportSql(this.inspect.id, this.resultInfo.id)
+        await exportSql(this.inspect.id, this.resultInfo.id)
         this.$message.success(this.$t('public_start_generate_recovery_sql'))
 
-        this.startPolling()
+        this.startPolling(true)
       } catch {
         this.exportSqlLoading = false
       }
     },
 
-    async startPolling() {
+    async startPolling(autoDownload) {
       clearTimeout(this.pollingTimer)
 
       await this.fetchResultStatus()
 
       if (this.resultInfo.status !== 'exported') {
         this.pollingTimer = setTimeout(() => {
-          this.startPolling()
+          this.startPolling(autoDownload)
         }, 5000)
       } else {
         this.exportSqlLoading = false
         this.$message.success(this.$t('public_generate_recovery_sql_success'))
+        if (autoDownload) {
+          this.handleDownloadSql()
+        }
       }
     },
 
-    handleDownloadSql() {
-      let url =
-        `${axios.defaults.baseURL}/api/proxy/exportRecoverySql?inspectId=${this.inspect.id}&inspectResultId=${this.resultInfo.id}`.replace(
-          '//',
-          '/',
-        )
-
-      if (this.isDaas) {
-        const accessToken = Cookie.get('access_token')
-        url += `&access_token=${accessToken}`
-      } else if (TAP_ACCESS_TOKEN) {
-        url += `&__token=${TAP_ACCESS_TOKEN}`
-      }
-
-      window.open(url)
+    async handleDownloadSql() {
+      const res = await downloadRecoverSql(this.inspect.id, this.resultInfo.id)
+      downloadBlob(res)
     },
 
     onStarted() {
@@ -310,9 +295,8 @@ export default {
     <template v-if="!isCountOrHash" #actions>
       <div class="flex align-items-center ml-auto">
         <div
-          v-if="resultInfo.parentId"
+          v-if="resultInfo.parentId && inspect.lastStartTimeFmt"
           class="color-info flex align-items-center"
-          style="font-size: 12px"
         >
           {{ $t('packages_business_verification_last_start_time') }}:
           {{ inspect.lastStartTimeFmt }}
@@ -352,7 +336,7 @@ export default {
             >{{ $t('public_generate_recovery_sql') }}</ElButton
           >
           <ElButton
-            v-else
+            v-if="resultStatus === 'exported'"
             type="primary"
             class="ml-4"
             @click="handleDownloadSql"
@@ -411,7 +395,7 @@ export default {
         <div class="flex-1 h-100">
           <div class="flex flex-column h-100">
             <div class="py-3 pr-3 flex align-center">
-              <span class="fs-6 font-color-dark lh-8">{{
+              <span class="fs-6 font-color-dark lh-8 text-prefix-bar">{{
                 $t('packages_business_verification_details_jiaoyanjieguo')
               }}</span>
               <el-segmented

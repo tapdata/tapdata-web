@@ -1,15 +1,21 @@
 import { action } from '@formily/reactive'
+import { getAlarmChannels } from '@tap/api/src/core/alarm'
+import { findAccessNodeInfo } from '@tap/api/src/core/cluster'
 import {
-  externalStorageApi,
   fetchConnections,
-  fetchDatabaseTypeByPdkHash,
-  findAccessNodeInfo,
-  getAlarmChannels,
   getConnectionNoSchema,
-  metadataInstancesApi,
-  proxyApi,
-  taskApi,
-} from '@tap/api'
+} from '@tap/api/src/core/connections'
+import { fetchDatabaseTypeByPdkHash } from '@tap/api/src/core/database-types'
+import { getExternalStorage } from '@tap/api/src/core/external-storage'
+import {
+  checkTableExist,
+  fetchMetadataInstances,
+  getNodeFilterTypeList,
+  getNodeSchema,
+  getNodeSchemaPage,
+} from '@tap/api/src/core/metadata-instances'
+import { commandProxy } from '@tap/api/src/core/proxy'
+import { getNodeTableInfo } from '@tap/api/src/core/task'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { FormTab } from '@tap/form/src/components/form-tab'
 import i18n from '@tap/i18n'
@@ -376,10 +382,7 @@ export default {
               neq: '',
             }
           }
-          const data = await metadataInstancesApi.get(
-            { filter: JSON.stringify(filter) },
-            config,
-          )
+          const data = await fetchMetadataInstances(filter, config)
           data.items = data.items.map((item) => {
             return {
               label:
@@ -389,7 +392,7 @@ export default {
           })
           const table = filter.where.original_name?.like
           if (table && !data.items.some((t) => t.value.includes(table))) {
-            const res = await metadataInstancesApi.checkTableExist({
+            const res = await checkTableExist({
               connectionId: filter.where['source.id'],
               tableName: table,
             })
@@ -421,7 +424,7 @@ export default {
                 size: size || 1000,
               },
             }
-            const result = await proxyApi.command(params)
+            const result = await commandProxy(params)
             if (!result.items) {
               return { items: [], total: 0 }
             }
@@ -485,6 +488,7 @@ export default {
               value: item.field_name,
               isPrimaryKey: item.primary_key_position > 0,
               indicesUnique: !!item.indicesUnique,
+              coreUnique: item.coreUnique,
               type: item.data_type,
               tapType: item.tapType,
               source: item.source,
@@ -573,16 +577,25 @@ export default {
           if (!nodeId) return []
           try {
             await this.afterTaskSaved()
-            const data = await metadataInstancesApi.nodeSchema(nodeId)
+            const data = await getNodeSchema(nodeId)
             const fields = data?.[0]?.fields || []
             const indices = (data?.[0]?.indices || []).filter((t) => t.unique)
-            let columns = []
+            const columns = []
+            const coreColumns = []
             indices.forEach((el) => {
-              columns = [...columns, ...el.columns.map((t) => t.columnName)]
+              columns.push(...el.columns.map((t) => t.columnName))
+
+              if (el.coreUnique) {
+                coreColumns.push(...el.columns.map((t) => t.columnName))
+              }
             })
+
             fields.forEach((el) => {
               if (columns.includes(el.field_name)) {
                 el.indicesUnique = true
+              }
+              if (coreColumns.includes(el.field_name)) {
+                el.coreUnique = true
               }
             })
             return fields
@@ -602,7 +615,7 @@ export default {
           if (!nodeId) return []
           try {
             await this.afterTaskSaved()
-            const data = await metadataInstancesApi.nodeFilterTypeList({
+            const data = await getNodeFilterTypeList({
               nodeId,
             })
             return data
@@ -841,6 +854,7 @@ export default {
           const pdkType = form.getValuesIn('attrs.pdkType')
           const pdkHash = form.getValuesIn('attrs.pdkHash')
           const db_version = form.getValuesIn('attrs.db_version')
+          const connectionTags = form.getValuesIn('attrs.connectionTags')
 
           pdkType !== connection.pdkType &&
             form.setValuesIn('attrs.pdkType', connection.pdkType)
@@ -866,6 +880,9 @@ export default {
             form.setValuesIn('attrs.db_version', connection.db_version)
           !isEqual(capabilities, connection.capabilities) &&
             form.setValuesIn('attrs.capabilities', connection.capabilities)
+
+          !isEqual(connectionTags, connection.definitionTags) &&
+            form.setValuesIn('attrs.connectionTags', connection.definitionTags)
         },
 
         getPdkProperties: (node) => {
@@ -887,10 +904,10 @@ export default {
               where: {},
             }
             if (id) {
-              const ext = await externalStorageApi.get(id)
+              const ext = await getExternalStorage(id)
               filter.where.type = ext.type
             }
-            const { items = [] } = await externalStorageApi.get({
+            const { items = [] } = await getExternalStorage({
               filter: JSON.stringify(filter),
             })
             return items.map((item) => {
@@ -937,7 +954,7 @@ export default {
           let nodeFields = []
           if (!$inputs.length) return
           if (isMigrate) {
-            const result = await metadataInstancesApi.nodeSchemaPage({
+            const result = await getNodeSchemaPage({
               nodeId,
               fields: [
                 'original_name',
@@ -951,7 +968,7 @@ export default {
             })
             nodeFields = result.items[0]?.fields || []
           } else {
-            const data = await metadataInstancesApi.nodeSchema(nodeId)
+            const data = await getNodeSchema(nodeId)
             nodeFields = data?.[0]?.fields || []
           }
           nodeFields =
@@ -1021,6 +1038,10 @@ export default {
 
             if (options && options.length) {
               let defaultList = options.filter((item) => item.isPrimaryKey)
+
+              if (!defaultList.length) {
+                defaultList = options.filter((item) => item.coreUnique)
+              }
 
               if (!defaultList.length) {
                 defaultList = options.filter((item) => item.indicesUnique)
@@ -1208,7 +1229,7 @@ export default {
         },
 
         getNodeTableOptions: async (nodeId) => {
-          const { items = [] } = await taskApi.getNodeTableInfo({
+          const { items = [] } = await getNodeTableInfo({
             taskId: this.dataflow.id,
             nodeId,
             page: 1,

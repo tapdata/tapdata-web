@@ -5,7 +5,6 @@ import { ElTooltip, type ElTooltipProps } from 'element-plus'
 import {
   computed,
   defineComponent,
-  h,
   isVNode,
   onMounted,
   provide,

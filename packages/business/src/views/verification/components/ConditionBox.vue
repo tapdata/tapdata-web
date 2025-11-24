@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import { InfoFilled, Loading, Plus } from '@element-plus/icons-vue'
-import { fetchConnections, metadataInstancesApi } from '@tap/api'
+import { fetchConnections } from '@tap/api/src/core/connections'
+import {
+  findInspect,
+  getNodeSchema,
+  getNodeSchemaPage,
+  getTapTables,
+} from '@tap/api/src/core/metadata-instances'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import GitBook from '@tap/component/src/GitBook.vue'
 import { Modal } from '@tap/component/src/modal'
 import SwitchNumber from '@tap/component/src/SwitchNumber.vue'
+import { mapFieldsData } from '@tap/form/src/components/field-select/FieldSelect.tsx'
 import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import { JsonEditor } from '@tap/form/src/components/json-editor'
 import { SqlEditor } from '@tap/form/src/components/sql-editor'
@@ -298,7 +305,7 @@ const getTableListMethod = async (
     return { items: [], total: 0 }
   }
   if (props.taskId) {
-    return getTablesInTask(nodeId, connectionId, filter)
+    return getTablesInTask(nodeId as string, connectionId as string, filter)
   }
   try {
     const size = filter.size || 20
@@ -315,7 +322,7 @@ const getTableListMethod = async (
       limit: size,
       order: 'createTime DESC',
     }
-    const res = await metadataInstancesApi.tapTables({
+    const res = await getTapTables({
       filter: JSON.stringify(params),
     })
     const result: ApiResponse<string> = {
@@ -326,32 +333,14 @@ const getTableListMethod = async (
       // 缓存起来
       setFieldsByItem(
         [nodeId, connectionId, el.name],
-        Object.values(el.nameFieldMap || {}).map((t: any) => {
-          const {
-            id,
-            fieldName,
-            primaryKeyPosition,
-            fieldType,
-            data_type,
-            primaryKey,
-            unique,
-          } = t
-          return {
-            id,
-            field_name: fieldName,
-            primary_key_position: primaryKeyPosition,
-            fieldType,
-            data_type,
-            primaryKey,
-            unique,
-            type: t.data_type,
-            tapType: JSON.stringify(t.tapType),
-          }
-        }),
+        mapFieldsData({
+          fields: Object.values(el.nameFieldMap || {}),
+        }).fields,
       )
     })
     return result
-  } catch {
+  } catch (error) {
+    console.error('Failed to get table list:', error)
     return { items: [], total: 0 }
   }
 }
@@ -373,7 +362,14 @@ const getTablesInTask = async (
 
   const params: TableParams = {
     nodeId,
-    fields: ['original_name', 'fields', 'qualified_name', 'name'],
+    fields: [
+      'original_name',
+      'fields',
+      'qualified_name',
+      'name',
+      'indices',
+      'constraints',
+    ],
     page: filter?.page || 1,
     pageSize: filter?.size || 20,
     ...(filter.where?.name?.like
@@ -381,33 +377,12 @@ const getTablesInTask = async (
       : {}),
   }
 
-  const res = await metadataInstancesApi.nodeSchemaPage(params)
+  const res = await getNodeSchemaPage(params)
 
   const tableList = res.items?.map((t: TableItem) => t.name) || []
   const total = res.total
   res.items.forEach((el: TableItem) => {
-    setFieldsByItem(
-      [nodeId, connectionId, el.name],
-      el.fields.map((t: any) => {
-        const {
-          id,
-          field_name,
-          primary_key_position,
-          data_type,
-          primaryKey,
-          unique,
-        } = t
-
-        return {
-          id,
-          field_name,
-          primary_key_position,
-          data_type,
-          primaryKey,
-          unique,
-        }
-      }),
-    )
+    setFieldsByItem([nodeId, connectionId, el.name], mapFieldsData(el).fields)
   })
   let tableNames = tableList
   if (isDB) {
@@ -658,11 +633,10 @@ const autoAddTable = async () => {
     },
     taskId: props.taskId,
   }
-  metadataInstancesApi
-    .findInspect({
-      where,
-      fields: META_INSTANCE_FIELDS,
-    })
+  findInspect({
+    where,
+    fields: META_INSTANCE_FIELDS,
+  })
     .then((data: any) => {
       const newItems = []
       matchNodeList.forEach((m: any) => {
@@ -909,7 +883,12 @@ const handleChangeTable = (
     return
   }
 
-  if (matchNode.target === item[type].nodeId) {
+  const temp = {
+    source: 'target',
+    target: 'source',
+  }
+
+  if (matchNode[temp[type]] === item[type].nodeId) {
     matchNode = getReverseNodeInfo(matchNode)
   }
   const {
@@ -934,11 +913,11 @@ const handleChangeTable = (
     item.target.databaseType = targetDatabaseType
     return
   }
-  // 自动填充目标连接和表
-  item.source.databaseType = sourceDatabaseType
 
+  item.source.databaseType = sourceDatabaseType
   item.target.nodeId = target
   item.target.nodeName = targetName
+  item.target.databaseType = targetDatabaseType
   item.target.connectionId = targetConnectionId
   item.target.connectionName = targetConnectionName
   item.target.currentLabel = `${targetName} / ${targetConnectionName}`
@@ -961,7 +940,7 @@ const handleChangeTable = (
     page: 1,
     pageSize: 1,
   }
-  metadataInstancesApi.nodeSchemaPage(params).then((data: any) => {
+  getNodeSchemaPage(params).then((data: any) => {
     item.target.fields =
       data.items?.[0]?.fields.map((t: any) => {
         const { id, field_name, primary_key_position, primaryKey, unique } = t
@@ -1036,7 +1015,11 @@ const setFieldsByItem = (item: any[] = [], data: any[] = []) => {
 }
 
 const getFieldsByItem = (item: any, type = 'source') => {
-  const { nodeId, connectionId, table } = item[type] || {}
+  return getFields(item[type])
+}
+
+const getFields = (item: any = {}) => {
+  const { nodeId = '', connectionId = '', table = '' } = item
   return (
     fieldsMap[[nodeId || '', connectionId, table].filter((t) => t).join()] || []
   )
@@ -1359,10 +1342,25 @@ const handleChangeFields = (data: any[] = [], id: string) => {
   item.target.columns = data.map((t) => t.target)
 }
 
-const onVisibleChange = (opt: any = {}, visible: boolean) => {
+const onVisibleChange = async (opt: any = {}, visible: boolean) => {
   if (!visible || opt.fields?.length) {
     return
   }
+
+  if (props.taskId) {
+    opt.fields = getFields(opt)
+
+    if (!opt.fields.length) {
+      opt.fieldsLoading = true
+      const data = await getNodeSchema(opt.nodeId).finally(() => {
+        opt.fieldsLoading = false
+      })
+      const { fields } = mapFieldsData(data?.[0])
+      opt.fields = fields
+    }
+    return
+  }
+
   opt.fieldsLoading = true
   const connectionId = opt.connectionId
   const params = {
@@ -1374,10 +1372,9 @@ const onVisibleChange = (opt: any = {}, visible: boolean) => {
     },
     limit: 1,
   }
-  metadataInstancesApi
-    .tapTables({
-      filter: JSON.stringify(params),
-    })
+  getTapTables({
+    filter: JSON.stringify(params),
+  })
     .then((data: any = {}) => {
       if (isEmpty(data.items[0]?.nameFieldMap)) {
         return
@@ -1562,7 +1559,7 @@ watch(conditionList, () => {
           <span class="cond-item__index">{{
             (currentPage - 1) * pageSize + index + 1
           }}</span>
-          <div class="joint-table-setting overflow-hidden">
+          <div class="joint-table-setting flex-1 overflow-hidden">
             <div class="flex justify-content-between mb-2">
               <div
                 class="cond-item__title flex align-items-center gap-2 text-truncate min-w-0"
@@ -1580,7 +1577,7 @@ watch(conditionList, () => {
                 </span>
                 <span>/</span>
                 <span class="fw-sub">{{ item.source.table || '-' }}</span>
-                <el-icon size="20"><i-mingcute:arrow-right-line /></el-icon>
+                <el-icon size="20"><i-mingcute-arrow-right-line /></el-icon>
                 <DatabaseIcon
                   v-if="ConnectorMap[item.target.databaseType]"
                   class="flex-shrink-0"
@@ -1738,6 +1735,22 @@ watch(conditionList, () => {
                   v-model="item.source.enableCustomCommand"
                   @change="handleChangeCustomCommand($event, item.source)"
                 />
+                <template
+                  v-if="
+                    item.source.enableCustomCommand &&
+                    item.source.databaseType.toLowerCase().includes('mongo')
+                  "
+                >
+                  <el-divider direction="vertical" class="mx-4" />
+                  <el-radio-group v-model="item.source.customCommand.command">
+                    <el-radio value="executeQuery">{{
+                      $t('public_query')
+                    }}</el-radio>
+                    <el-radio value="aggregate">{{
+                      $t('public_aggregate')
+                    }}</el-radio>
+                  </el-radio-group>
+                </template>
               </el-form-item>
 
               <el-form-item
@@ -1775,6 +1788,22 @@ watch(conditionList, () => {
                   v-model="item.target.enableCustomCommand"
                   @change="handleChangeCustomCommand($event, item.target)"
                 />
+                <template
+                  v-if="
+                    item.target.enableCustomCommand &&
+                    item.target.databaseType.toLowerCase().includes('mongo')
+                  "
+                >
+                  <el-divider direction="vertical" class="mx-4" />
+                  <el-radio-group v-model="item.target.customCommand.command">
+                    <el-radio value="executeQuery">{{
+                      $t('public_query')
+                    }}</el-radio>
+                    <el-radio value="aggregate">{{
+                      $t('public_aggregate')
+                    }}</el-radio>
+                  </el-radio-group>
+                </template>
               </el-form-item>
             </div>
 
@@ -2137,9 +2166,9 @@ watch(conditionList, () => {
 
       <div
         v-if="conditionList.length === 0"
-        class="bg-gray-50 p-6 rounded-xl flex flex-column justify-center align-center gap-2"
+        class="bg-gray-50 dark:bg-white/5 p-6 rounded-xl flex flex-column justify-center align-center gap-2"
       >
-        <div class="flex rounded-pill bg-gray-100 p-3">
+        <div class="flex rounded-pill bg-gray-100 dark:bg-white/15 p-3">
           <VIcon :size="24" color="#9ca3af">database</VIcon>
         </div>
 
@@ -2188,7 +2217,7 @@ watch(conditionList, () => {
 
       <div
         v-if="conditionList.length"
-        class="py-4 condition-footer flex align-center"
+        class="py-4 condition-footer flex align-center dark:bg-transparent dark:backdrop-blur-md"
       >
         <ElButton :icon="Plus" @click="addItem">{{
           $t('packages_business_verification_addTable')
@@ -2328,8 +2357,6 @@ watch(conditionList, () => {
   }
 
   .joint-table-setting {
-    flex: 1;
-    background-color: var(--color-white);
   }
 
   .setting-item {

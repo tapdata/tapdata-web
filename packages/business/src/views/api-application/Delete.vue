@@ -1,5 +1,6 @@
 <script>
-import { deleteApp, fetchApiModules, fetchApps, moveApp } from '@tap/api'
+import { deleteApp, fetchApps, moveApp } from '@tap/api/src/core/app'
+import { fetchApiModules } from '@tap/api/src/core/modules'
 import i18n from '@tap/i18n'
 import ListSelect from './ListSelect'
 
@@ -125,7 +126,7 @@ export default {
     <template #header="{ titleClass }">
       <div class="flex align-items-center">
         <el-icon size="20" class="color-warning mr-4">
-          <i-mingcute:warning-fill />
+          <i-mingcute-warning-fill />
         </el-icon>
         <span :class="titleClass">{{
           $t('packages_business_application_delete_shanchuyingyong')

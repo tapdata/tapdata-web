@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { getAvailableAgent } from '@tap/api'
+import { getAvailableAgent } from '@tap/api/src/core/workers'
 import { useI18n } from '@tap/i18n'
 import en from 'element-plus/dist/locale/en.mjs'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'

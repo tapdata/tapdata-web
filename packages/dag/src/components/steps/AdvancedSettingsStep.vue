@@ -1,33 +1,22 @@
 <script>
+import { createEffectHook, createForm, onFieldValueChange } from '@formily/core'
+import { action } from '@formily/reactive'
+import { getAlarmChannels } from '@tap/api/src/core/alarm'
 import {
-  createEffectHook,
-  createForm,
-  onFieldValueChange,
-  onFormValuesChange,
-} from '@formily/core'
-import {
-  action,
-  autorun,
-  isObservable,
-  observable,
-  observe,
-  raw,
-  untracked,
-} from '@formily/reactive'
-import { findAccessNodeInfo, getAlarmChannels, taskApi } from '@tap/api'
-import { showErrorMessage, UpgradeCharges, UpgradeFee } from '@tap/business'
+  checkCloudTaskLimit,
+  checkTaskName,
+  findAccessNodeInfo,
+  patchTask,
+  saveAndStartTask,
+} from '@tap/api/src/core/task'
+import { showErrorMessage } from '@tap/business/src/components/error-message'
+import UpgradeCharges from '@tap/business/src/components/UpgradeCharges.vue'
+import UpgradeFee from '@tap/business/src/components/UpgradeFee.vue'
 import i18n from '@tap/i18n'
 import axios from 'axios'
 import { ElMessageBox, ElMessage as Message } from 'element-plus'
-import { debounce, merge } from 'lodash-es'
-import {
-  computed,
-  defineComponent,
-  inject,
-  nextTick,
-  onBeforeUnmount,
-  ref,
-} from 'vue'
+import { debounce } from 'lodash-es'
+import { computed, defineComponent, inject, onBeforeUnmount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import SchemaForm from '../SchemaForm.vue'
@@ -179,14 +168,12 @@ export default defineComponent({
       'packages_dag_task_form_error_name_duplicate',
     )
     const handleCheckName = debounce(function (resolve, value) {
-      taskApi
-        .checkName({
-          name: value,
-          // id
-        })
-        .then((data) => {
-          resolve(data)
-        })
+      checkTaskName({
+        name: value,
+        // id
+      }).then((data) => {
+        resolve(data)
+      })
     }, 500)
 
     const form = ref(null)
@@ -280,7 +267,7 @@ export default defineComponent({
       resolve,
       value,
     ) {
-      taskApi.checkCheckCloudTaskLimit(props.task.id).then((data) => {
+      checkCloudTaskLimit(props.task.id).then((data) => {
         resolve(data)
       })
     }, 500)
@@ -1264,7 +1251,7 @@ export default defineComponent({
                     type: 'datetime',
                     align: 'right',
                     format: 'YYYY-MM-DD HH:mm:ss',
-                    valueFormat: 'timestamp',
+                    valueFormat: 'x',
                   },
                   'x-reactions': {
                     dependencies: ['.planStartDateFlag'],
@@ -1948,7 +1935,7 @@ export default defineComponent({
     }
 
     const onTaskChange = debounce(async () => {
-      const data = await taskApi.patch(
+      const data = await patchTask(
         {
           ...taskRef.value,
           // id: taskRef.value.id,
@@ -2115,11 +2102,11 @@ export default defineComponent({
       error,
       msg = i18n.t('packages_dag_src_editor_chucuole'),
     ) => {
-      const code = error?.data?.code
+      const code = error?.code
       if (code === 'Task.ListWarnMessage') {
         const names = []
-        if (error.data?.data) {
-          const keys = Object.keys(error.data.data)
+        if (error.data) {
+          const keys = Object.keys(error.data)
           keys.forEach((key) => {
             const node = taskRef.value.dag.nodes.find(({ id }) => id === key)
             if (node) {
@@ -2128,7 +2115,7 @@ export default defineComponent({
           })
           if (!names.length && keys.length && msg) {
             // 兼容错误信息id不是节点id的情况
-            const msg = error.data.data[keys[0]][0]?.msg
+            const msg = error.data[keys[0]][0]?.msg
             if (msg) {
               Message.error(msg)
               return
@@ -2151,39 +2138,20 @@ export default defineComponent({
       } else if (
         ['Task.ScheduleLimit', 'Task.ManuallyScheduleLimit'].includes(code)
       ) {
-        handleShowUpgradeDialog(error.data)
+        handleShowUpgradeDialog(error)
       } else {
-        showErrorMessage(error?.data)
+        showErrorMessage(error)
       }
     }
 
     const save = async () => {
-      // this.isSaving = true
-      // const errorMsg = await this.validate()
-      // if (errorMsg) {
-      //   if (this.destory) return
-      //   this.$message.error(errorMsg)
-      //   this.isSaving = false
-      //   return
-      // }
-
-      // if (!this.dataflow.id) {
-      //   return this.saveAsNewDataflow()
-      // }
-
-      // const data = this.getDataflowDataToSave()
       starting.value = true
       let isOk = false
 
       try {
-        // this.initWS()
-        // const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
-        const result = await taskApi.saveAndStart(taskRef.value, {
+        await saveAndStartTask(taskRef.value, {
           silenceMessage: true,
         })
-        // this.reformDataflow(result)
-        // this.setEditVersion(result.editVersion)
-        // this.isSaving = false
         isOk = true
 
         store.dispatch('setGuideComplete')
@@ -2199,55 +2167,8 @@ export default defineComponent({
       } finally {
         starting.value = false
       }
-      // this.isSaving = false
-      // this.toggleConsole(true)
-      // this.$refs.console?.startAuto('checkDag') // 信息输出自动加载
+
       return isOk
-    }
-
-    const start = async () => {
-      this.buried('migrationStart')
-
-      this.unWatchStatus?.()
-      this.unWatchStatus = this.$watch('dataflow.status', (v) => {
-        if (
-          ['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(
-            v,
-          )
-        ) {
-          this.$refs.console?.loadData()
-          if (v !== 'running') {
-            this.$refs.console?.stopAuto()
-          } else {
-            this.toggleConsole(false)
-            this.gotoViewer(false)
-          }
-          // this.unWatchStatus()
-        }
-        if (['MigrateViewer'].includes(this.$route.name)) {
-          if (['renewing'].includes(v)) {
-            this.handleConsoleAutoLoad()
-          } else {
-            this.toggleConsole(false)
-          }
-        }
-      })
-
-      const hasError = await this.$refs.skipError.checkError(this.dataflow)
-      if (hasError) return
-
-      const flag = await this.save(true)
-      if (flag) {
-        this.dataflow.disabledData.edit = true
-        this.dataflow.disabledData.start = true
-        this.dataflow.disabledData.stop = true
-        this.dataflow.disabledData.reset = true
-        // this.gotoViewer()
-        this.beforeStartTask()
-        this.buried('taskSubmit', { result: true })
-      } else {
-        this.buried('taskSubmit', { result: false })
-      }
     }
 
     const handleStart = () => {
@@ -2255,7 +2176,6 @@ export default defineComponent({
     }
 
     onBeforeUnmount(() => {
-      console.log('卸载')
       form.value.onUnmount()
       dispose?.()
       dispose = null

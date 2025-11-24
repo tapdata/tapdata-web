@@ -9,7 +9,7 @@
   width: 100%;
   // min-width: 1440px;
   height: 100%;
-  overflow: hidden;
+  // overflow: hidden;
   font-size: 14px;
   //font-weight: 400;
   font-style: normal;
@@ -52,10 +52,11 @@
 .status-block {
   display: inline-block;
   min-width: 60px;
-  padding: 3px 10px;
+  padding: 4px 8px;
   text-align: center;
+  line-height: 16px;
   font-weight: 500;
-  border-radius: 4px;
+  border-radius: 8px;
   box-sizing: border-box;
 }
 .status-running {
@@ -239,19 +240,4 @@
 .el-menu-item.is-locked {
   opacity: 1;
   cursor: help;
-}
-
-.error-stack-pre-wrap {
-  background: #fff2f0;
-  border: 1px solid #ffccc7;
-
-  .error-stack-actions {
-    display: none;
-  }
-
-  &:hover {
-    .error-stack-actions {
-      display: block;
-    }
-  }
 }

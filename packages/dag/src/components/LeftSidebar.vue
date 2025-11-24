@@ -1,10 +1,8 @@
 <script>
-import {
-  CancelToken,
-  fetchConnections,
-  fetchDatabaseTypes,
-  metadataInstancesApi,
-} from '@tap/api'
+import { fetchConnections } from '@tap/api/src/core/connections'
+import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
+import { fetchMetadataInstances } from '@tap/api/src/core/metadata-instances'
+import { CancelToken } from '@tap/api/src/request'
 import SceneDialog from '@tap/business/src/components/create-connection/SceneDialog.vue'
 import StageButton from '@tap/business/src/components/StageButton.vue'
 import { VEmpty } from '@tap/component/src/base/v-empty'
@@ -13,7 +11,6 @@ import resize from '@tap/component/src/directives/resize'
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { getInitialValuesInBySchema } from '@tap/form/src/shared/validate'
 import { useResizeObserver } from '@vueuse/core'
-import { getScrollBarWidth } from 'element-plus/es/utils/dom/scroll'
 import { debounce, escapeRegExp } from 'lodash-es'
 import { markRaw } from 'vue'
 import { mapGetters } from 'vuex'
@@ -109,11 +106,6 @@ export default {
 
     disabledDBMore() {
       return this.dbLoading || this.noDBMore || this.dbLoadingMore
-    },
-
-    scrollbarWrapStyle() {
-      const gutter = getScrollBarWidth()
-      return `position:relative;height: calc(100% + ${gutter}px);`
     },
   },
   created() {
@@ -313,7 +305,7 @@ export default {
         filter.where.original_name = { neq: '' }
       }
 
-      return { filter: JSON.stringify(filter) }
+      return filter
     },
 
     /**
@@ -335,7 +327,7 @@ export default {
 
       let data
       try {
-        data = await metadataInstancesApi.get(this.getTableFilter(), {
+        data = await fetchMetadataInstances(this.getTableFilter(), {
           cancelToken: this.cancelSource.token,
         })
       } catch (error) {
@@ -538,6 +530,7 @@ export default {
         capabilities: connection.capabilities || [],
         db_version: connection.db_version,
         hasCreated: false,
+        connectionTags: connection.definitionTags,
       }
 
       if (pdkProperties) {
@@ -632,6 +625,7 @@ export default {
         <ElCollapseItem name="db">
           <template #title>
             <div class="flex align-center flex-1 overflow-hidden">
+              <el-icon class="mr-2"><i-lucide-database /></el-icon>
               <template v-if="collapseMode === 'db'">
                 <span
                   class="flex-1 user-select-none text-truncate flex align-center"
@@ -674,7 +668,7 @@ export default {
             </div>
           </template>
           <div class="flex flex-column h-100">
-            <div v-show="showDBInput" class="p-2">
+            <div v-show="showDBInput" class="p-2 pb-0">
               <ElInput
                 id="connection-search-input"
                 ref="dbInput"
@@ -700,7 +694,6 @@ export default {
               class="flex-1"
               tag="div"
               wrap-class="db-list"
-              :wrap-style="scrollbarWrapStyle"
             >
               <ElSkeleton
                 :loading="dbLoading"
@@ -720,7 +713,7 @@ export default {
                 <div
                   v-infinite-scroll="loadMoreDB"
                   :infinite-scroll-disabled="disabledDBMore"
-                  class="px-2 pb-2"
+                  class="p-2"
                 >
                   <div
                     v-for="db in dbList"
@@ -759,7 +752,7 @@ export default {
                         <ConnectionType :type="db.connection_type" />
                       </div>
                       <OverflowTooltip
-                        class="w-100 text-truncate"
+                        class="w-100 text-truncate fs-8"
                         placement="right"
                         :disabled="dragStarting"
                         :text="db.connectionUrl"
@@ -782,7 +775,11 @@ export default {
       </ElCollapse>
 
       <div class="flex-1 min-h-0 flex flex-column border-bottom">
-        <div class="tb-header flex align-center px-4" style="--btn-space: 4px">
+        <div
+          class="tb-header flex align-center px-4 border-bottom"
+          style="--btn-space: 4px"
+        >
+          <el-icon class="mr-2"><i-lucide-table /></el-icon>
           <span class="flex-1 user-select-none text-truncate flex align-center">
             <!--表-->
             {{ $t('packages_dag_dag_table') }}
@@ -829,7 +826,7 @@ export default {
         </div>
 
         <div class="flex flex-column flex-1 min-h-0">
-          <div v-show="showTBInput" class="p-2">
+          <div v-show="showTBInput" class="p-2 pb-0">
             <ElInput
               id="table-search-input"
               ref="tbInput"
@@ -852,11 +849,10 @@ export default {
             class="flex-1 min-h-0"
             tag="div"
             wrap-class="tb-list"
-            :wrap-style="scrollbarWrapStyle"
           >
             <ElSkeleton
               v-show="tbLoading"
-              class="skeleton-wrap position-sticky top-0 w-100 bg-white"
+              class="skeleton-wrap position-sticky top-0 w-100"
               :loading="tbLoading"
               animated
             >
@@ -869,7 +865,8 @@ export default {
             <div
               v-infinite-scroll="loadMoreTable"
               :infinite-scroll-disabled="disabled"
-              class="px-2 pb-2"
+              class="p-2"
+              :class="{ 'opacity-0': tbLoading }"
             >
               <div
                 v-for="tb in tbList"
@@ -922,18 +919,14 @@ export default {
       <ElCollapseItem name="process">
         <template #title>
           <div class="flex align-center flex-1">
+            <VIcon size="16" class="mr-2">custom-node</VIcon>
             <span class="flex-1 user-select-none text-start">
               <!--处理节点-->
               {{ $t('public_node_processor') }}
             </span>
           </div>
         </template>
-        <ElScrollbar
-          ref="processorList"
-          tag="div"
-          wrap-class="px-2 pb-2"
-          :wrap-style="scrollbarWrapStyle"
-        >
+        <ElScrollbar ref="processorList" tag="div" wrap-class="p-2">
           <div
             v-for="(n, ni) in processorNodeTypes"
             :key="ni"
@@ -986,7 +979,7 @@ export default {
 
 <style lang="scss" scoped>
 $itemH: 30px;
-$hoverBg: #eef3ff;
+$hoverBg: var(--primary-hover-light);
 
 .drag-node {
   position: fixed !important;
@@ -997,12 +990,15 @@ $hoverBg: #eef3ff;
 }
 .layout-sidebar.--left {
   overflow: visible;
-  $headerH: 34px;
+  $headerH: 40px;
+  --header-bg: var(--N100);
 
   :deep(.db-list-container) {
+    --el-collapse-border-color: var(--border-color) !important;
     max-height: 50%;
+
     .el-collapse-item:last-child {
-      margin-bottom: -1px;
+      margin-bottom: 0;
     }
 
     .el-collapse-item__header {
@@ -1058,6 +1054,7 @@ $hoverBg: #eef3ff;
     font-size: 14px;
     font-weight: 500;
     border-bottom: 1px solid transparent;
+    background-color: var(--header-bg);
     .tb-header-icon {
       flex-shrink: 0;
       width: 20px;
@@ -1070,13 +1067,14 @@ $hoverBg: #eef3ff;
     .tb-item,
     .node-item {
       height: 28px;
-      font-size: var(--font-base-title);
+      font-size: 13px;
       &.active {
-        background-color: #eef3ff;
+        background-color: var(--primary-hover-light);
+        color: var(--el-color-primary);
       }
 
       &:not(.active):hover {
-        background-color: rgba(47, 46, 63, 0.05);
+        background-color: var(--primary-hover-light);
       }
 
       .el-image {
@@ -1093,19 +1091,19 @@ $hoverBg: #eef3ff;
 
       &-icon {
         padding: 4px;
-        border: 1px solid #f2f2f2;
         border-radius: 50%;
       }
 
       &-content {
         overflow: hidden;
-        > :not(:last-child) {
-          margin-bottom: 4px;
-          font-size: 13px;
+        > :last-child {
+          color: rgba(0, 0, 0, 0.3);
         }
 
-        > :last-child {
-          color: rgb(83 95 114 / 70%);
+        &:where(html.dark *) {
+          > :last-child {
+            color: rgba(255, 255, 255, 0.3);
+          }
         }
       }
 
@@ -1132,6 +1130,7 @@ $hoverBg: #eef3ff;
   }
 
   :deep(.el-collapse.collapse-fill) {
+    --el-collapse-header-height: $headerH;
     .el-collapse-item:first-child:last-child {
       height: 100%;
       .el-collapse-item__wrap {
@@ -1145,6 +1144,7 @@ $hoverBg: #eef3ff;
   }
 
   :deep(.el-collapse) {
+    --el-collapse-header-bg-color: var(--header-bg);
     border-top: 0;
     .el-collapse-item {
       &.is-active [role='tab'] {
@@ -1157,10 +1157,7 @@ $hoverBg: #eef3ff;
         position: relative;
         height: $headerH;
         font-size: 14px;
-
-        &:hover {
-          background-color: rgba(47, 46, 63, 0.05);
-        }
+        border-bottom: 1px solid var(--border-color) !important;
       }
 
       &__content {

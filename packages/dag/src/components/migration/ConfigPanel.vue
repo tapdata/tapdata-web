@@ -199,7 +199,7 @@ $tabHeight: 44px;
   width: 680px;
   height: 100%;
   overflow: auto;
-  background-color: #fff;
+  background-color: var(--el-bg-color);
   //transition: height 0.24s;
   will-change: width;
 

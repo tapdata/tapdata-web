@@ -1,8 +1,14 @@
 <script>
-import { CancelToken, monitoringLogsApi, proxyApi, taskApi } from '@tap/api'
-import { IconButton, TimeSelect, VIcon } from '@tap/component'
-
+import {
+  exportMonitoringLogs,
+  queryMonitoringLogs,
+} from '@tap/api/src/core/monitoring-logs'
+import { callProxy } from '@tap/api/src/core/proxy'
+import { downloadTaskAnalyze, putTaskLogSetting } from '@tap/api/src/core/task'
+import { CancelToken } from '@tap/api/src/request'
 import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
+
+import TimeSelect from '@tap/component/src/TimeSelect.vue'
 import i18n from '@tap/i18n'
 import { copyToClipboard, CountUp, downloadBlob, openUrl } from '@tap/shared'
 import Time from '@tap/shared/src/time'
@@ -11,7 +17,6 @@ import dayjs from 'dayjs'
 import { cloneDeep, debounce, escape, uniqBy } from 'lodash-es'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { mapGetters } from 'vuex'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 
 import NodeList from '../nodes/List'
 import Download from './Download'
@@ -19,17 +24,6 @@ import Download from './Download'
 export default {
   name: 'NodeLog',
   components: {
-    VIcon,
-    TimeSelect,
-    DynamicScroller,
-    DynamicScrollerItem,
-    VEmpty,
-    NodeList,
-  },
-
-  components: {
-    IconButton,
-    VIcon,
     TimeSelect,
     DynamicScroller,
     DynamicScrollerItem,
@@ -374,7 +368,7 @@ export default {
     },
 
     changeItem(val) {
-      $emit(this, 'update:nodeId', val)
+      this.$emit('update:nodeId', val)
       this.init()
     },
 
@@ -414,10 +408,9 @@ export default {
       } else {
         this.loading = true
       }
-      monitoringLogsApi
-        .query(filter)
+      queryMonitoringLogs(filter)
         .then((data = {}) => {
-          const items = this.getFormatRow(data.items?.reverse())
+          const items = this.getFormatRow(data.items?.toReversed())
           this.oldPageObj.total = data.total || 0
           this.oldPageObj.page = filter.page
 
@@ -466,7 +459,7 @@ export default {
         return
       }
 
-      monitoringLogsApi.query(filter).then((data = {}) => {
+      queryMonitoringLogs(filter).then((data = {}) => {
         const items = this.getFormatRow(data.items)
         this.newPageObj.total = data.total || 0
 
@@ -642,8 +635,7 @@ export default {
         taskRecordId,
       }
       this.downloadLoading = true
-      monitoringLogsApi
-        .export(filter)
+      exportMonitoringLogs(filter)
         .then((data) => {
           downloadBlob(data)
         })
@@ -687,8 +679,7 @@ export default {
         params.recordCeiling = form.recordCeiling
       }
       this.saveLoading = true
-      taskApi
-        .putLogSetting(this.dataflow.id, params)
+      putTaskLogSetting(this.dataflow.id, params)
         .then(() => {
           this.$message.success(this.$t('public_message_save_ok'))
           this.dialog = false
@@ -762,8 +753,7 @@ export default {
       this.codeDialog.data.message = item.message
       this.codeDialog.data.module = ''
 
-      proxyApi
-        .call(params)
+      callProxy(params)
         .then((data) => {
           Object.assign(this.codeDialog.data, data)
 
@@ -825,7 +815,7 @@ export default {
       this.analysisCancelSource = CancelToken.source()
       this.initSteps()
 
-      const blogData = await taskApi.downloadAnalyze(this.dataflow.id, {
+      const blogData = await downloadTaskAnalyze(this.dataflow.id, {
         cancelToken: this.analysisCancelSource.token,
       })
 
@@ -1475,8 +1465,8 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
 
   :deep(.log-line) {
     padding: 8px 16px;
-    background-color: #fff;
-    border-bottom: 1px solid #ebeef5;
+    background-color: var(--el-bg-color);
+    border-bottom: 1px solid var(--el-border-color);
     width: 100%;
     font-family:
       'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;

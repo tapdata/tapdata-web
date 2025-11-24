@@ -669,7 +669,7 @@ export default {
   packages_dag_date_processor_increase: '增加',
   packages_dag_date_processor_decrease: '减少',
   packages_dag_nodes_table_shiligro:
-    '示例: {\'{\'}"$group": {\'{\'} "_id": "$name", totalQuantity: {\'{\'} $sum: "$quantity" {\'} }}\'}',
+    '示例: [{\'{\'}"$group": {\'{\'} "_id": "$name", totalQuantity: {\'{\'} $sum: "$quantity" {\'} }}\'}]',
   packages_dag_nodes_table_jinzhichiqu:
     '仅支持query, 例如: {\'{\'} "_id": "apples", "qty": 5 {\'}\'}',
   packages_dag_migration_settingpanel_shirenwubaocuo: '时，任务报错停止',
@@ -922,6 +922,7 @@ export default {
   packages_dag_inspect_source_value: '源表值',
   packages_dag_inspect_target_value: '目标表值',
   packages_dag_inspect_row_id: '行 ID',
+  packages_dag_inspect_manual_id: '操作 ID',
   packages_dag_inspect_diff_type_diff: '差异',
   packages_dag_inspect_diff_type_miss: '目标少',
   packages_dag_inspect_diff_type_more: '目标多',
@@ -931,6 +932,7 @@ export default {
   packages_dag_auto_repair_tips: '启用后将自动修复数据差异',
   packages_dag_auto_repair_disabled_tips: '请先选择至少一种校验方式',
   packages_dag_inspect_operation_record: '操作记录',
+  packages_dag_inspect_copy_row: '复制当前行',
   packages_dag_inspect_operation_type: '操作类型',
   packages_dag_inspect_operation_message: '操作信息',
   packages_dag_inspect_operation_time: '操作时间',
@@ -945,7 +947,77 @@ export default {
   packages_dag_table_selector_all_tables_selected: '您已选择所有表进行复制',
   packages_dag_syncForeignKeyEnable: '同步外键',
   packages_dag_check_no_pk_table: '校验无主键表',
+  packages_dag_writeWithGroupByTableEnable: '按表分组写入',
   packages_dag_ignoreUpdateEvent: '忽略更新事件',
   packages_dag_ignoreUpdateEvent_tips:
     '开启后将自动忽略子表更新事件，适用于无需关注子表变化，且子表更新会对主表大部分数据产生影响的场景',
+  packages_dag_applyCompareRule: '启用模型对比规则',
+  packages_dag_applyCompareRule_tip:
+    '开启后，模型对比产生的差异将根据已选规则自动处理',
+  packages_dag_applyCompareRules_Missing: '删除缺失字段',
+  packages_dag_applyCompareRules_Additional: '添加额外字段',
+  packages_dag_applyCompareRules_Different: '更新字段类型',
+  packages_dag_applyCompareRules_CannotWrite: '删除不可写字段',
+  packages_dag_view_compare_result: '查看模型对比结果',
+  packages_dag_compare_different: '类型差异',
+  packages_dag_compare_missing: '字段缺失',
+  packages_dag_compare_missing_source: '字段未定义',
+  packages_dag_compare_precision: '类型差异(一般)',
+  packages_dag_compare_cannot_write: '字段只读',
+  packages_dag_compare_done_modify: '已{type}修改',
+  packages_dag_compare_done_add: '已{type}添加',
+  packages_dag_compare_done_delete: '已{type}删除',
+  packages_dag_compare_result: '模型差异对比',
+  packages_dag_compare_result_desc: '推演结果与目标数据库模型对比',
+  packages_dag_compare_result_compare_target: '对比目标模型',
+  packages_dag_compare_result_running: '正在对比',
+  packages_dag_compare_result_recompare: '重新对比',
+  packages_dag_compare_result_apply_all: '全部应用',
+  packages_dag_compare_result_undo_all: '全部撤销',
+  packages_dag_compare_result_search_field: '搜索字段名称或类型',
+  packages_dag_compare_result_apply_table: '应用以下字段',
+  packages_dag_compare_result_undo_table: '撤销以下字段',
+  packages_dag_compare_result_no_match_field: '未找到匹配的字段',
+  packages_dag_compare_result_done: '模型对比完成',
+  packages_dag_compare_result_error: '模型对比失败,请稍后重试',
+  packages_dag_compare_result_no_diff: '模型对比无差异',
+  packages_dag_compare_result_clear_invalid_apply: '清除 {num} 条无效配置',
+  packages_dag_compare_result_no_diff_alert:
+    '{time1}对比数据库模型({time2}加载)无差异',
+
+  packages_dag_compare_result_alert:
+    '{time1}对比数据库模型({time2}加载），{result}',
+  packages_dag_compare_no_diff: '未发现差异',
+  packages_dag_compare_result_with_diff: '发现 {count} 个字段差异{details}',
+  packages_dag_compare_result_with_diff_resolved:
+    '发现 {count} 个字段差异，已处理',
+  packages_dag_compare_result_with_diff_partial:
+    '发现 {count} 个字段差异，已处理 {resolved} 个，剩余 {remaining} 个',
+  packages_dag_compare_result_no_schema:
+    '{time1}未找到数据库模型，暂未进行对比',
+  packages_dag_compare_result_detail_readonly: '{readonly} 个只读',
+  packages_dag_compare_result_detail_missing: '{missing} 个缺失',
+  packages_dag_compare_result_detail_different: '{different} 个类型差异',
+  packages_dag_compare_result_detail_all: '全部差异',
+  packages_dag_compare_result_auto_process: '自动处理差异',
+  packages_dag_compare_result_display_field: '显示字段',
+  packages_dag_compare_result_database_field: '数据库字段',
+  //Api server
+  public_api_name: 'API 名称',
+  public_api_server_name: 'API服务名称',
+  public_api_worker_name: 'API服务工作进程',
+  public_api_threshold: '阈值',
+  public_api_threshold_unit: '单位',
+  public_api_threshold_equalsFlag: '对比符号',
+  public_api_minute: '持续时间',
+  public_api_alarmDate: '告警时间',
+  packages_dag_drop_table_enabled_confirm:
+    '您已选择清空目标表数据，是否确认继续？',
+  packages_dag_qpSshizhi_tip:
+    '查询范围小于1小时，取每五秒的数据点计算平均的QPS值',
+  packages_dag_qpSshizhi2_tip:
+    '查询范围大于等于1小时小于24小时，取每分钟的数据点计算平均和最大的QPS值',
+  packages_dag_qpSshizhi3_tip:
+    '查询范围大于等于24小时小于30天，取每小时的数据点计算平均和最大的QPS值',
+  packages_dag_task_resource_usage: '任务资源占用',
 }

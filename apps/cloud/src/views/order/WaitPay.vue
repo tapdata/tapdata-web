@@ -1,56 +1,10 @@
-<template>
-  <section class="pay-container flex flex-column gap-4 overflow-hidden">
-    <div class="flex-1 overflow-auto rounded-lg flex flex-column gap-4">
-      <div class="bg-white rounded-lg p-4">
-        <el-result :subTitle="$t('dfs_payment_progress_desc')" class="py-15">
-          <template #icon>
-            <div class="dot-pulse my-2"></div>
-          </template>
-          <template #title>
-            <div class="text-center">
-              <div class="fw-sub fs-5">{{ $t('dfs_payment_progress') }}</div>
-            </div>
-          </template>
-          <template slot="extra">
-            <el-button
-              @click="
-                $router.push({
-                  name: 'payForBill',
-                  params: {
-                    id: billId
-                  }
-                })
-              "
-              size="medium"
-              >{{ $t('dfs_retry_payment') }}</el-button
-            >
-            <el-button
-              @click="
-                $router.push({
-                  name: 'order'
-                })
-              "
-              type="primary"
-              size="medium"
-              >{{ $t('dfs_complete_payment') }}</el-button
-            >
-          </template>
-        </el-result>
-      </div>
-    </div>
-  </section>
-</template>
-
 <script>
-import i18n from '@/i18n'
-import { calcUnit } from '@tap/shared'
-
 export default {
   components: {},
 
   data() {
     return {
-      billId: ''
+      billId: '',
     }
   },
 
@@ -62,33 +16,76 @@ export default {
     }, 5000)
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     clearInterval(this.timer)
   },
 
   methods: {
     async loadBill() {
       const {
-        items: [bill]
+        items: [bill],
       } = await this.$axios.get(
         `api/tcm/billing?filter=${encodeURIComponent(
           JSON.stringify({
             where: {
-              id: this.billId
-            }
-          })
-        )}`
+              id: this.billId,
+            },
+          }),
+        )}`,
       )
 
       if (bill?.status !== 'UNPAID') {
         this.$router.push({
-          name: 'order'
+          name: 'order',
         })
       }
-    }
-  }
+    },
+  },
 }
 </script>
+
+<template>
+  <section class="pay-container flex flex-column gap-4 overflow-hidden">
+    <div class="flex-1 overflow-auto rounded-lg flex flex-column gap-4">
+      <div class="bg-white rounded-lg p-4">
+        <el-result :sub-title="$t('dfs_payment_progress_desc')" class="py-15">
+          <template #icon>
+            <div class="dot-pulse my-2" />
+          </template>
+          <template #title>
+            <div class="text-center">
+              <div class="fw-sub fs-5">{{ $t('dfs_payment_progress') }}</div>
+            </div>
+          </template>
+          <template #extra>
+            <el-button
+              size="medium"
+              @click="
+                $router.push({
+                  name: 'payForBill',
+                  params: {
+                    id: billId,
+                  },
+                })
+              "
+              >{{ $t('dfs_retry_payment') }}</el-button
+            >
+            <el-button
+              type="primary"
+              size="medium"
+              @click="
+                $router.push({
+                  name: 'order',
+                })
+              "
+              >{{ $t('dfs_complete_payment') }}</el-button
+            >
+          </template>
+        </el-result>
+      </div>
+    </div>
+  </section>
+</template>
 
 <style scoped lang="scss">
 .pay-container {

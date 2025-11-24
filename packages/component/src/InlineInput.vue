@@ -1,49 +1,7 @@
-<template>
-  <div class="inline-input-wrap">
-    <span class="inline-input-body" v-show="!editing">
-      <span :class="[wordBreak ? 'word-break' : 'ellipsis']" :title="value" @click="$emit('click-text')">{{
-        value
-      }}</span>
-      <ElLink class="inline-input-link" style="margin-left: 5px" @click="editing = true">
-        <VIcon v-bind="iconConfig" color="#999">edit-outline</VIcon>
-      </ElLink>
-    </span>
-    <span class="inline-input-body" v-show="editing">
-      <ElTooltip manual effect="dark" :content="tooltip" placement="top-start" :visible="disabled">
-        <ElInput
-          v-bind="inputProps"
-          class="input"
-          :class="[{ 'valid-input': disabled }, 'block']"
-          :style="inputStyle"
-          v-model="inputValue"
-        ></ElInput>
-      </ElTooltip>
-      <template v-if="type === 'icon'">
-        <ElButton class="icon-button ml-4" :disabled="disabled" @click="save"><VIcon size="12">check</VIcon></ElButton>
-        <ElButton class="icon-button ml-2" @click="cancel"><VIcon size="12">close</VIcon></ElButton>
-      </template>
-      <template v-else>
-        <ElButton
-          class="inline-input-button"
-          style="margin-left: 10px"
-          type="primary"
-          :disabled="disabled"
-          @click="save"
-          >{{ $t('public_button_save') }}</ElButton
-        >
-        <ElButton class="inline-input-button" @click="cancel">{{ $t('public_button_cancel') }}</ElButton>
-      </template>
-    </span>
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
-import VIcon from './base/VIcon.vue'
 export default {
-  components: { VIcon },
   props: {
     value: [String, Number],
     type: String,
@@ -60,6 +18,7 @@ export default {
       default: 32,
     },
   },
+  emits: ['click-text', 'save', 'update:value', , , 'update:value'],
   data() {
     return {
       editing: false,
@@ -68,16 +27,16 @@ export default {
   },
   computed: {
     disabled() {
-      let value = this.inputValue
+      const value = this.inputValue
       if (!this.editing) {
         return false
       }
-      let { min, max } = this
-      let reg = new RegExp(`^.{${min},${max}}$`)
+      const { min, max } = this
+      const reg = new RegExp(`^.{${min},${max}}$`)
       return !reg.test(value)
     },
     tooltip() {
-      let { min, max } = this
+      const { min, max } = this
       return i18n.t('packages_component_src_inlineinput_zifuchangduxian', {
         val1: min,
         val2: max,
@@ -97,15 +56,72 @@ export default {
       if (this.inputValue === this.value) {
         return
       }
-      $emit(this, 'save', this.inputValue)
+      this.$emit('save', this.inputValue)
     },
     cancel() {
       this.editing = false
     },
   },
-  emits: ['click-text', 'save', 'update:value', , , 'update:value'],
 }
 </script>
+
+<template>
+  <div class="inline-input-wrap">
+    <span v-show="!editing" class="inline-input-body">
+      <span
+        :class="[wordBreak ? 'word-break' : 'ellipsis']"
+        :title="value"
+        @click="$emit('click-text')"
+        >{{ value }}</span
+      >
+      <ElLink
+        class="inline-input-link"
+        style="margin-left: 5px"
+        @click="editing = true"
+      >
+        <VIcon v-bind="iconConfig" color="#999">edit-outline</VIcon>
+      </ElLink>
+    </span>
+    <span v-show="editing" class="inline-input-body">
+      <ElTooltip
+        manual
+        effect="dark"
+        :content="tooltip"
+        placement="top-start"
+        :visible="disabled"
+      >
+        <ElInput
+          v-bind="inputProps"
+          v-model="inputValue"
+          class="input"
+          :class="[{ 'valid-input': disabled }, 'block']"
+          :style="inputStyle"
+        />
+      </ElTooltip>
+      <template v-if="type === 'icon'">
+        <ElButton class="icon-button ml-4" :disabled="disabled" @click="save"
+          ><VIcon size="12">check</VIcon></ElButton
+        >
+        <ElButton class="icon-button ml-2" @click="cancel"
+          ><VIcon size="12">close</VIcon></ElButton
+        >
+      </template>
+      <template v-else>
+        <ElButton
+          class="inline-input-button"
+          style="margin-left: 10px"
+          type="primary"
+          :disabled="disabled"
+          @click="save"
+          >{{ $t('public_button_save') }}</ElButton
+        >
+        <ElButton class="inline-input-button" @click="cancel">{{
+          $t('public_button_cancel')
+        }}</ElButton>
+      </template>
+    </span>
+  </div>
+</template>
 
 <style lang="scss">
 .inline-input-wrap {

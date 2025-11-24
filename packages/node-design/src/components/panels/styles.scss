@@ -42,9 +42,9 @@
       &-btn {
         width: 30px;
         height: 30px;
-        background: #fff;
+        background: transparent;
         border: 1px solid transparent;
-        border-radius: 4px;
+        border-radius: 6px;
         cursor: pointer;
         transition: background, color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
 
@@ -118,7 +118,7 @@
         width: 30px;
         height: 30px;
         padding: 5px;
-        background: #fff;
+        background: transparent;
         border: 1px solid transparent;
         border-radius: $radius;
         transition: background, color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
