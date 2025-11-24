@@ -1,4 +1,4 @@
-import { requestClient, type Filter } from '../request'
+import { PdkRenamedData, requestClient, type Filter } from '../request'
 
 const BASE_URL = '/api/DatabaseTypes'
 
@@ -7,11 +7,6 @@ const BASE_URL = '/api/DatabaseTypes'
  */
 export function fetchDatabaseTypeByPdkHash(pdkHash: string) {
   return requestClient.get(`${BASE_URL}/pdkHash/${pdkHash}`)
-}
-
-const renamedData: Record<string, string> = {
-  Mysql: 'MySQL',
-  "HuaWei'Cloud GaussDB": 'Huawei Cloud GaussDB',
 }
 
 /**
@@ -25,7 +20,7 @@ export async function fetchDatabases(filter?: Filter) {
   })
 
   return data?.map((it: any) => {
-    it.name = renamedData[it.name] || it.name
+    it.name = PdkRenamedData[it.name] || it.name
     return it
   })
 }
@@ -38,7 +33,7 @@ export async function fetchDatabaseTypes(filter?: Filter) {
   })
 
   return data?.map((it: any) => {
-    it.name = renamedData[it.name] || it.name
+    it.name = PdkRenamedData[it.name] || it.name
     return it
   })
 }
