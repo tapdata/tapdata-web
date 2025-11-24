@@ -3,7 +3,6 @@ import { computed } from 'vue'
 export function useCanvasMapping(dag) {
   const mappedNodes = computed(() => {
     return dag.value.nodes.map((node) => {
-      console.log(node)
       return {
         id: node.id,
         label: node.name,

@@ -4,7 +4,7 @@ import { fetchMetadataInstances } from '@tap/api/src/core/metadata-instances'
 import { mouseDrag as vDrag } from '@tap/component/src/directives/mousedrag'
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { escapeRegExp } from 'lodash-es'
-import { computed, nextTick, reactive, ref } from 'vue'
+import { computed, nextTick, reactive, ref, shallowRef } from 'vue'
 import { useDnD } from '../composables/useDnD'
 import { useDataflowStore } from '../stores/dataflow.store'
 import BaseNode from './BaseNode.vue'
@@ -15,8 +15,15 @@ import type { ScrollbarDirection } from 'element-plus'
 const emit = defineEmits(['move-node', 'drop-node'])
 
 const dataflowStore = useDataflowStore()
-const { dragNode, dragStarting, onDragStart, onDragMove, onDragStop, onDrop } =
-  useDnD(emit)
+const {
+  dragNode,
+  dragStarting,
+  onDragStart,
+  onProcessorDragStart,
+  onDragMove,
+  onDragStop,
+  onDrop,
+} = useDnD(emit)
 
 const pageSize = 20
 
@@ -26,6 +33,7 @@ const connectionsLoading = ref(false)
 const connectionsCurrentPage = ref(1)
 const connectionsTotal = ref(0)
 const currentConnectionId = ref('')
+const currentConnection = shallowRef(null)
 const tableState = reactive({
   query: '',
   currentPage: 1,
@@ -51,6 +59,7 @@ const getDragDom = async () => {
 
 const handleSelectConnection = (item) => {
   currentConnectionId.value = item.id
+  currentConnection.value = item
   runFetchTables()
 }
 
@@ -185,6 +194,10 @@ runFetchConnections().then(() => {
     handleSelectConnection(connections.value[0])
   }
 })
+
+const onTableDragStart = (item) => {
+  onDragStart(currentConnection.value, item.name)
+}
 </script>
 
 <template>
@@ -222,7 +235,7 @@ runFetchConnections().then(() => {
             :key="item.id"
             v-drag="{
               item,
-              container: '#dfEditorContent',
+              container: '[data-id=\'flow-container\']',
               getDragDom,
               onStart: onDragStart,
               onMove: onDragMove,
@@ -235,7 +248,12 @@ runFetchConnections().then(() => {
             }"
             @click="handleSelectConnection(item)"
           >
-            <NodeIcon :size="20" :node="item" />
+            <NodeIcon
+              class="flex-shrink-0"
+              :size="20"
+              :node="item"
+              draggable="false"
+            />
             <OverflowTooltip
               class="text-truncate"
               placement="right"
@@ -279,6 +297,15 @@ runFetchConnections().then(() => {
           <div
             v-for="item in tables"
             :key="item.id"
+            v-drag="{
+              item,
+              container: '[data-id=\'flow-container\']',
+              getDragDom,
+              onStart: onTableDragStart,
+              onMove: onDragMove,
+              onDrop,
+              onStop: onDragStop,
+            }"
             class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg grabbable user-select-none"
           >
             <el-icon :size="16"><i-lucide-table /></el-icon>
@@ -311,18 +338,32 @@ runFetchConnections().then(() => {
       <el-scrollbar class="flex-1 min-h-0">
         <div class="p-1">
           <div
-            v-for="(n, ni) in dataflowStore.processorNodeTypes"
+            v-for="(item, ni) in dataflowStore.processorNodeTypes"
             :key="ni"
+            v-drag="{
+              item,
+              container: '[data-id=\'flow-container\']',
+              getDragDom,
+              onStart: onProcessorDragStart,
+              onMove: onDragMove,
+              onDrop,
+              onStop: onDragStop,
+            }"
             class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg grabbable user-select-none"
           >
-            <NodeIcon :size="20" class="flex-shrink-0" :node="n" />
+            <NodeIcon
+              :size="20"
+              class="flex-shrink-0"
+              :node="item"
+              draggable="false"
+            />
             <OverflowTooltip
-              :text="n.name"
+              :text="item.name"
               popper-class="df-node-text-tooltip"
               placement="top"
               :open-delay="400"
             />
-            <VIcon v-if="n.beta" class="ml-1" size="32">beta</VIcon>
+            <VIcon v-if="item.beta" class="ml-1" size="32">beta</VIcon>
           </div>
         </div>
       </el-scrollbar>
@@ -348,6 +389,7 @@ runFetchConnections().then(() => {
 }
 
 .connection-item {
+  user-select: none;
   &:hover {
     background-color: var(--el-fill-color-light);
   }

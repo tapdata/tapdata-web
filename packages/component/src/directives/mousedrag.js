@@ -36,8 +36,10 @@ export const mouseDrag = {
     }
 
     const moveAt = (posX, posY) => {
-      let left = posX - width / 2
-      let top = posY - height / 2
+      // let left = posX - width / 2
+      // let top = posY - height / 2
+      let left = posX
+      let top = posY
 
       left = Math.max(left, l)
       left = Math.min(left, document.documentElement.clientWidth - width - r)
@@ -88,6 +90,17 @@ export const mouseDrag = {
           ? appendHtml(document.body, domHtml.replaceAll('\n', '').trim())
           : await getDragDom()
         document.body.classList.add('cursor-grabbing')
+
+        // 添加 ESC 键监听
+        const handleEscKey = (e) => {
+          if (e.key === 'Escape') {
+            handleStop(event)
+            document.removeEventListener('keydown', handleEscKey)
+          }
+        }
+        document.addEventListener('keydown', handleEscKey)
+        el._handleEscKey = handleEscKey
+
         const rect = $drag.getBoundingClientRect()
         width = rect.width
         height = rect.height
@@ -103,6 +116,7 @@ export const mouseDrag = {
       const posY = event.touches ? event.touches[0].pageY : event.pageY
 
       document.body.classList.remove('cursor-grabbing')
+      document.removeEventListener('keydown', el._handleEscKey)
       onStop?.(item, [posX, posY])
 
       if ($drag) {
@@ -135,6 +149,7 @@ export const mouseDrag = {
     off(el, _eventsFor.move, el._handleMove)
     off(el, _eventsFor.stop, el._handleStop)
 
+    document.removeEventListener('keydown', el._handleEscKey)
     delete el._eventsFor
     delete el._handleStart
     delete el._handleMove

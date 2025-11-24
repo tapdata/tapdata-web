@@ -405,17 +405,7 @@ export default {
 
     onProcessorStart(item) {
       if (this.stateIsReadonly) return false
-      const node = item
-      const getResourceIns = this.$store.getters['dataflow/getResourceIns']
-      if (!item.__Ctor) {
-        const ins = getResourceIns(node)
-
-        Object.defineProperty(node, '__Ctor', {
-          value: markRaw(ins),
-          enumerable: false,
-          configurable: true,
-        })
-      }
+    }
 
       console.log('onProcessorStart', node)
 

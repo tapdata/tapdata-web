@@ -108,7 +108,7 @@ export default {
 </script>
 
 <template>
-  <div class="df-node-wrap" :class="wrapClass" tabindex="1">
+  <div class="df-node-wrap canvas-node" :class="wrapClass" tabindex="1">
     <BaseNode :node="data" :class="nodeClass" @click="mouseClick">
       <template #text="{ text }">
         <OverflowTooltip
@@ -197,12 +197,10 @@ export default {
       <VIcon v-if="data.disabled" class="mr-2 color-warning" size="16"
         >disable</VIcon
       >
-      <div class="node-anchor input" />
-      <div v-show="allowTarget" class="node-anchor output" />
     </BaseNode>
     <slot />
-    <NodeSourceHandle />
-    <NodeTargetHandle />
+    <NodeSourceHandle class="canvas-node-handle" />
+    <NodeTargetHandle class="canvas-node-handle" />
   </div>
 </template>
 
@@ -282,7 +280,7 @@ export default {
 }
 </style>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .df-node-wrap {
   z-index: 5;
   outline: none;
@@ -327,6 +325,46 @@ export default {
 
   &.options-active {
     .df-node-options {
+      display: flex;
+    }
+  }
+}
+.canvas-node {
+  .canvas-node-handle {
+    width: 1rem;
+    height: 1rem;
+    transition: all cubic-bezier(0.4, 0, 0.2, 1) 0.15s;
+    background-color: transparent;
+    pointer-events: all;
+    border: none;
+    cursor: pointer;
+    &.vue-flow__handle-left:hover {
+      transform: translate(-50%, -50%) scale(1.25);
+    }
+    &.vue-flow__handle-right:hover {
+      transform: translate(50%, -50%) scale(1.25);
+    }
+  }
+
+  :deep(.canvas-node-handle-icon) {
+    display: none;
+    width: 1rem;
+    height: 1rem;
+    font-size: 10px;
+    // transition: all cubic-bezier(0.4, 0, 0.2, 1) 0.15s;
+    // &:hover {
+    //   transform: scale(1.25);
+    // }
+  }
+
+  &:hover :deep(.canvas-node-handle-icon) {
+    display: flex;
+  }
+  &:hover .canvas-node-handle,
+  .canvas-node-handle.active {
+    // width: 1rem;
+    // height: 1rem;
+    .canvas-node-handle-icon {
       display: flex;
     }
   }

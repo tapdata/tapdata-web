@@ -4,7 +4,6 @@ import { computed, onMounted, provide, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import Canvas from './Canvas.vue'
-import NodesPanel from './components/NodesPanel.vue'
 import TaskOperations from './components/TaskOperations.vue'
 import { allResourceIns } from './nodes/loader'
 import { useDataflowStore } from './stores/dataflow.store'
@@ -116,6 +115,12 @@ const initNodeType = async () => {
   }
 }
 
+const onUpdateNodesPosition = (events) => {
+  events.forEach(({ id, position }) => {
+    dataflowStore.setNodePositionById(id, position)
+  })
+}
+
 onMounted(async () => {
   await initNodeType()
   await dataflowStore.fetchDataflow(route.params.id as string)
@@ -144,8 +149,7 @@ provide('dataflow', dataflow)
       <div class="flex-1" />
       <TaskOperations />
     </div>
-    <NodesPanel />
-    <Canvas />
+    <Canvas @update:nodes:position="onUpdateNodesPosition" />
   </div>
 </template>
 

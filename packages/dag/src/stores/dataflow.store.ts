@@ -157,15 +157,29 @@ export const useDataflowStore = defineStore('dataflow', () => {
     addResourceIns(insArr)
   }
 
+  function findNodeById(id) {
+    return dag.value.nodes.find((node) => node.id === id)
+  }
+
+  function addNode(node) {
+    dag.value.nodes.push(node)
+  }
+
+  function setNodePositionById(id: string, position: { x: number; y: number }) {
+    findNodeById(id).attrs.position = [position.x, position.y]
+  }
+
   return {
     dataflow,
     dag,
     fetchDataflow,
     processorNodeTypes,
 
+    addNode,
     addProcessorNode,
     addResourceIns,
     loadCustomNode,
     getResourceInsByNode,
+    setNodePositionById,
   }
 })

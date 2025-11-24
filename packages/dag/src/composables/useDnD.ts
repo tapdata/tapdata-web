@@ -1,3 +1,5 @@
+import { uuid } from '@tap/shared'
+import { useVueFlow } from '@vue-flow/core'
 import { ref } from 'vue'
 import { useDataflowStore } from '../stores/dataflow.store'
 import { useUiStore } from '../stores/ui.store'
@@ -7,6 +9,7 @@ export function useDnD(emit) {
   const dataflowStore = useDataflowStore()
   const dragNode = ref(null)
   const dragStarting = ref(false)
+  const { screenToFlowCoordinate, getNodes } = useVueFlow()
 
   const makeNode = (connection, tableName) => {
     const nodeConfig = {}
@@ -35,14 +38,36 @@ export function useDnD(emit) {
     }
   }
 
-  const onDragStart = (connection, tableName = '') => {
-    const node = makeNode(connection, tableName)
+  const resolveNodeData = (node, position) => {
+    if (node.attrs) {
+      node.attrs.position = position
+    } else {
+      node.attrs = { position }
+    }
+
+    return {
+      ...node,
+      id: uuid(),
+    }
+  }
+
+  const resolveNodeRecource = (node) => {
     const ins = dataflowStore.getResourceInsByNode(node)
     Object.defineProperty(node, '__Ctor', {
       value: ins,
       enumerable: false,
     })
+    return node
+  }
+
+  const onDragStart = (connection, tableName = '') => {
+    const node = resolveNodeRecource(makeNode(connection, tableName))
     dragNode.value = node
+    dragStarting.value = true
+  }
+
+  const onProcessorDragStart = (item) => {
+    dragNode.value = resolveNodeRecource(item)
     dragStarting.value = true
   }
 
@@ -51,8 +76,11 @@ export function useDnD(emit) {
     // emit('move-node', ...args)
     const belowElem = document.elementFromPoint(...position)
 
-    if (document.querySelector('#node-canvas').contains(belowElem)) {
+    if (
+      document.querySelector('[data-id="flow-container"]').contains(belowElem)
+    ) {
       dragElement.style.transition = `transform 0.3s`
+      dragElement.style.transformOrigin = `0 0`
       dragElement.style.transform = `scale(${uiStore.zoom})`
       // const nw = dragElement.offsetWidth
       // const nh = dragElement.offsetHeight
@@ -187,18 +215,27 @@ export function useDnD(emit) {
   }
 
   const onDrop = (item, position, rect) => {
+    const newPos = screenToFlowCoordinate({
+      x: position[0],
+      y: position[1],
+    })
+    console.log('screenToFlowCoordinate', newPos)
+    console.log('dragNode', dragNode.value)
+
     emit('drop-node', dragNode.value, position, rect)
+    dataflowStore.addNode(resolveNodeData(dragNode.value, [newPos.x, newPos.y]))
   }
 
   const onDragStop = () => {
     dragStarting.value = false
-    dragNode.value = null
+    // dragNode.value = null
   }
 
   return {
     dragNode,
     dragStarting,
     onDragStart,
+    onProcessorDragStart,
     onDragStop,
     onDragMove,
     onDrop,
