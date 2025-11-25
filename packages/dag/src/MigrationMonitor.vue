@@ -22,7 +22,6 @@ import { mapMutations, mapState } from 'vuex'
 import { $off, $on } from '../utils/gogocodeTransfer'
 
 import { MoveNodeCommand } from './command'
-import MaterializedView from './components/materialized-view/MaterializedView.vue'
 import ConfigPanel from './components/migration/ConfigPanel'
 import ConsolePanel from './components/migration/ConsolePanel'
 import BottomPanel from './components/monitor/BottomPanel'
@@ -54,7 +53,6 @@ export default {
 
   components: {
     SkipError,
-    MaterializedView,
     UpgradeFee,
     UpgradeCharges,
     AlarmStatistics,
@@ -1426,13 +1424,6 @@ export default {
         "
         :go-page="upgradeFeeGoPage"
       />
-
-      <MaterializedView
-        ref="materializedView"
-        v-model:visible="materializedViewVisible"
-        disabled
-      />
-
       <SkipError ref="skipError" @skip="handleSkipAndRun" />
     </section>
   </section>
