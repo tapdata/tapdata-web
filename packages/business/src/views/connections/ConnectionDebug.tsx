@@ -26,10 +26,8 @@ export const ConnectionDebug = observer(
     setup(props, { emit, root }) {
       const logList = ref([])
       const logLoading = ref(false)
-      const connForm = props.getForm()
-      const form = createForm({
-        values: connForm?.values,
-      })
+      let connForm
+      let form
       const params = reactive({
         connectType: '',
         timeout: 10,
@@ -77,6 +75,10 @@ export const ConnectionDebug = observer(
         () => props.visible,
         (show) => {
           if (show) {
+            connForm = props.getForm()
+            form = createForm({
+              values: connForm?.values,
+            })
             connectionType = connForm.values.__TAPDATA.connection_type
             params.connectType = connectionType
             asSource.value = connectionType === 'source'
@@ -198,7 +200,7 @@ export const ConnectionDebug = observer(
                 >
                   <ElRadioGroup
                     modelValue={params.connectType}
-                    onInput={(val) => {
+                    onChange={(val) => {
                       params.connectType = val
                       form.values.__TAPDATA.connection_type = val
                     }}
@@ -268,8 +270,9 @@ export const ConnectionDebug = observer(
                         )}
                       >
                         <VCodeEditor
-                          class="border rounded-2 p-0"
+                          class="border rounded-xl p-0"
                           theme="one_dark"
+                          auto-dark
                           value={params.input}
                           lang="json"
                           height={200}

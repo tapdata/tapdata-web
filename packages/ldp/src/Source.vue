@@ -11,21 +11,8 @@ import VirtualTree from '@tap/component/src/virtual-tree'
 import NodeIcon from '@tap/dag/src/components/NodeIcon.vue'
 import { useResizeObserver } from '@vueuse/core'
 import { debounce } from 'lodash-es'
-import { defineComponent, h } from 'vue'
+import { defineComponent } from 'vue'
 import commonMix from './mixins/common'
-
-const NodeContent = defineComponent(
-  (props) => {
-    return () => {
-      const node = props.node
-      const { data, store } = node
-      return props.renderContent(h, { node, data, store })
-    }
-  },
-  {
-    props: ['renderContent', 'node', 'data'],
-  },
-)
 
 export default defineComponent({
   name: 'Source',
@@ -35,7 +22,6 @@ export default defineComponent({
     StageButton,
     IconButton,
     VEmpty,
-    NodeContent,
   },
   mixins: [commonMix],
   props: {
@@ -191,121 +177,6 @@ export default defineComponent({
     this.unwatchFdmAndMdm?.()
   },
   methods: {
-    renderContent(h, { node, data }) {
-      const className = ['custom-tree-node']
-
-      if (data.isObject) {
-        className.push('grabbable')
-      }
-
-      if (data.disabled) {
-        className.push('opacity-50')
-      }
-
-      if (!data.isObject && !data.children?.length) node.isLeaf = false
-
-      return (
-        <div
-          class={className}
-          onClick={() => {
-            this.$emit('preview', data, node.parent.data)
-          }}
-        >
-          <div
-            id={
-              data.isObject
-                ? `ldp_source_table_${data.connectionId}_${data.name}`
-                : `connection_${data.id}`
-            }
-            class="inline-flex align-items-center overflow-hidden"
-          >
-            {!data.isObject ? (
-              <NodeIcon node={data} size={18} class="tree-item-icon mr-2" />
-            ) : (
-              <VIcon class="tree-item-icon mr-2" size="18">
-                table
-              </VIcon>
-            )}
-            <span class="table-label" title={data.name}>
-              {data.name}
-            </span>
-            {data.disabled && (
-              <ElTag disable-transitions type="info">
-                {this.$t('public_status_invalid')}
-              </ElTag>
-            )}
-            <IconButton
-              class="btn-menu"
-              sm
-              onClick={() => {
-                this.$emit('preview', data, node.parent.data)
-              }}
-            >
-              view-details
-            </IconButton>
-          </div>
-        </div>
-      )
-    },
-
-    renderDefaultContent(h, { node, data }) {
-      console.log('renderDefaultContent', data)
-      const schemaLoading = data.loadFieldsStatus === 'loading'
-      // 引导时特殊处理，添加的连接等加载完schema后方可展开
-      // node.isLeaf = data.LDP_TYPE !== 'connection' || (this.startingTour && schemaLoading && !data.children?.length)
-
-      return (
-        <div
-          class={[
-            'custom-tree-node flex align-items-center position-relative',
-            { grabbable: data.isObject, 'opacity-50': data.disabled },
-          ]}
-          onClick={() => {
-            this.$emit('preview', data, node.parent.data)
-          }}
-        >
-          {schemaLoading && (
-            <VIcon
-              class="v-icon animation-rotate"
-              size="14"
-              color="rgb(61, 156, 64)"
-            >
-              loading-circle
-            </VIcon>
-          )}
-          {!data.isObject && !data.isEmpty ? (
-            <NodeIcon node={node.data} size={18} class="tree-item-icon mr-2" />
-          ) : data.isEmpty ? (
-            <div class="flex align-items-center">
-              <span class="mr-1">{this.$t('public_data_no_data')}</span>
-              <StageButton
-                connection-id={this.getConnectionId(node)}
-                onComplete={() => {
-                  this.handleNodeExpand(node.parent.data, node.parent)
-                }}
-              />
-            </div>
-          ) : (
-            <VIcon class="tree-item-icon mr-2" size="18">
-              table
-            </VIcon>
-          )}
-
-          <span class="table-label" title={data.name}>
-            {data.name}
-            {data.comment && (
-              <span class="font-color-sslight">{`(${data.comment})`}</span>
-            )}
-            {data.disabled && (
-              <ElTag disable-transitions type="info" class="ml-2">
-                {this.$t('public_status_invalid')}
-              </ElTag>
-            )}
-          </span>
-        </div>
-      )
-    },
-
     handleAdd() {
       this.$emit('create-connection', 'source')
     },
@@ -517,33 +388,39 @@ export default defineComponent({
       this.$emit('on-scroll')
     }, 200),
 
-    async searchByKeywordList(val = []) {
-      const searchExpandedKeys = []
-      this.filterTreeData = val.map((t) => {
-        searchExpandedKeys.push(t.connectionId)
-        return {
-          LDP_TYPE: 'connection',
-          id: t.connectionId,
-          name: t.connectionName,
-          pdkHash: t.pdkHash,
-          status: 'ready',
-          isLeaf: false,
-          level: 0,
-          disabled: false,
-          children: [
-            {
-              id: t.tableId,
-              name: t.table,
-              connectionId: t.connectionId,
-              isLeaf: true,
-              isObject: true,
-              type: 'table',
-              LDP_TYPE: 'table',
-            },
-          ],
+    searchByKeywordList(val = []) {
+      const searchExpandedKeys: string[] = []
+      const connectionMap = new Map()
+
+      val.forEach((t: any) => {
+        if (!connectionMap.has(t.connectionId)) {
+          searchExpandedKeys.push(t.connectionId)
+          connectionMap.set(t.connectionId, {
+            LDP_TYPE: 'connection',
+            id: t.connectionId,
+            name: t.connectionName,
+            pdkHash: t.pdkHash,
+            status: 'ready',
+            isLeaf: false,
+            level: 0,
+            disabled: false,
+            children: [],
+          })
         }
+
+        connectionMap.get(t.connectionId).children.push({
+          id: t.tableId,
+          name: t.table,
+          connectionId: t.connectionId,
+          isLeaf: true,
+          isObject: true,
+          type: 'table',
+          LDP_TYPE: 'table',
+        })
       })
+
       this.searchExpandedKeys = searchExpandedKeys
+      this.filterTreeData = [...connectionMap.values()]
     },
   },
   emits: ['preview', 'create-connection', 'node-drag-end', 'handle-connection'],
@@ -615,7 +492,6 @@ export default defineComponent({
           @handle-scroll="handleScroll"
         >
           <template #default="{ node, data }">
-            <!--<NodeContent :render-content="renderDefaultContent" :node="node" :data="data"></NodeContent>-->
             <span
               class="custom-tree-node flex align-items-center position-relative"
               :class="{
@@ -685,7 +561,6 @@ export default defineComponent({
             @handle-scroll="handleScroll"
           >
             <template #default="{ node, data }">
-              <!--<NodeContent :render-content="renderDefaultContent" :node="node" :data="data"></NodeContent>-->
               <span
                 class="custom-tree-node flex align-items-center position-relative"
                 :class="{
@@ -742,7 +617,7 @@ export default defineComponent({
         v-loading="loading || searchIng"
         class="flex-fill min-h-0 p-1"
       >
-        <VirtualTree
+        <el-tree-v2
           key="searchTree"
           ref="tree"
           class="ldp-tree h-100"
@@ -752,17 +627,47 @@ export default defineComponent({
           draggable
           :height="treeHeight"
           wrapper-class-name="p-2"
-          :default-expanded-keys="searchExpandedKeys"
           :data="filterTreeData"
-          :render-content="renderContent"
+          :default-expanded-keys="searchExpandedKeys"
           :expand-on-click-node="false"
-          :allow-drag="(node) => node.data.isObject"
-          :allow-drop="() => false"
           @node-drag-start="handleDragStart"
           @node-drag-end="handleDragEnd"
-          @node-expand="handleNodeExpand"
           @handle-scroll="handleScroll"
-        />
+        >
+          <template #default="{ node, data }">
+            <div
+              class="custom-tree-node"
+              :class="{
+                'opacity-50': data.disabled,
+              }"
+            >
+              <div
+                :id="
+                  data.isObject
+                    ? `ldp_source_table_${data.connectionId}_${data.name}`
+                    : `connection_${data.id}`
+                "
+                class="inline-flex align-items-center overflow-hidden"
+              >
+                <NodeIcon
+                  v-if="!data.isObject"
+                  :node="data"
+                  :size="18"
+                  class="tree-item-icon mr-2"
+                />
+                <VIcon v-else class="tree-item-icon mr-2" size="18">
+                  table
+                </VIcon>
+                <span class="table-label" :title="data.name">
+                  {{ data.name }}
+                </span>
+                <ElTag v-if="data.disabled" disable-transitions type="info">
+                  {{ $t('public_status_invalid') }}
+                </ElTag>
+              </div>
+            </div>
+          </template>
+        </el-tree-v2>
       </div>
     </div>
   </div>

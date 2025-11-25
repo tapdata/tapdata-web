@@ -44,8 +44,8 @@ export default {
       })
       return flag
     },
-    confirm() {
-      const flag = this.validateForm()
+    async confirm() {
+      const flag = await this.$refs.ruleForm.validate()
       const first =
         this.ruleForm.newTable.split('.')[0] == 'system' ? true : false
       if (flag) {

@@ -326,8 +326,6 @@ const form = createForm({
   values,
 })
 
-console.log('form', form)
-
 // Methods
 const lazySaveAlarmConfig = debounce(saveAlarmConfig, 100)
 const lazySavePermissionsConfig = debounce(savePermissionsConfig, 300)

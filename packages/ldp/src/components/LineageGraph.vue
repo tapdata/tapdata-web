@@ -35,7 +35,7 @@ const props = defineProps<{
 }>()
 
 const rootRef = useTemplateRef<HTMLElement>('root')
-const { addNodes, addEdges, fitView, zoomOut, zoomIn } = useVueFlow()
+const { fitView, zoomOut, zoomIn } = useVueFlow()
 const { layout } = useLayout()
 
 const vueFlowRef = ref<InstanceType<typeof VueFlow> | null>(null)
@@ -47,6 +47,7 @@ const popoverTasks = ref<Task[]>([])
 const popoverTarget = ref<HTMLElement | null>(null)
 const taskReplicateLagMap = ref({})
 const taskMap = ref<Record<string, any>>({})
+const currentNodeId = ref<string | null>()
 
 interface FetchLineageFn {
   (): Promise<void>
@@ -57,6 +58,12 @@ const mapNode = (node: any) => {
   let module: any = {}
   if (node.type === 'apiserverLineage') {
     module = Object.values(node.modules)[0]
+  }
+  if (
+    node.connectionId === props.connectionId &&
+    node.table === props.tableName
+  ) {
+    currentNodeId.value = node.id
   }
   return {
     id: node.id,
@@ -104,6 +111,7 @@ const mapEdge = (edge: any, index: number) => {
     type: 'table',
     // markerEnd: 'figma-arrow-wide',
     markerEnd: 'custom-arrow',
+    animated: tasks[0]?.status === 'running',
     // markerEnd: {
     //   type: 'arrow',
     //   strokeWidth: 2,
@@ -191,7 +199,6 @@ const fetchTaskReplicateLag = async () => {
 
 const handleLayoutGraph = () => {
   nodes.value = layout(nodes.value, edges.value, 'LR')
-
   nextTick(() => {
     fitView()
   })

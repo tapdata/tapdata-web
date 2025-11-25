@@ -18,15 +18,6 @@ export class Table extends NodeType {
       $inputs: {
         type: 'array',
         'x-display': 'hidden',
-        'x-reactions': {
-          target: 'updateConditionFields',
-          effects: ['onFieldValueChange'],
-          fulfill: {
-            run: `setTimeout(() => {
-              $target && $target.visible && $target.validate()
-            }, 0)`,
-          },
-        },
       },
       $outputs: {
         type: 'array',
@@ -385,19 +376,6 @@ export class Table extends NodeType {
                                 dataSource: '{{$deps[0]}}',
                                 loading: '{{$deps[1]}}',
                               },
-                            },
-                          },
-                          // `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.id)}}`,
-                          {
-                            effects: ['onFieldMount'],
-                            fulfill: {
-                              run: '$self.visible && $self.validate()',
-                            },
-                          },
-                          {
-                            effects: ['onFieldInputValueChange'],
-                            fulfill: {
-                              run: '$self.value && $self.value.length && $form.clearErrors("updateConditionFields")',
                             },
                           },
                           {

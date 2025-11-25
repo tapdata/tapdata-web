@@ -1,0 +1,22 @@
+{
+  "name": "@tap/leader-line",
+  "version": "1.0.8",
+  "packageManager": "pnpm@10.7.0",
+  "description": "",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
+  "main": "index.min.js",
+  "module": "index.min.js",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.min.js",
+      "default": "./index.min.js"
+    }
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
