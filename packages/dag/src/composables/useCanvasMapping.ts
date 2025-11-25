@@ -21,6 +21,10 @@ export function useCanvasMapping(dag) {
       return {
         ...edge,
         type: '',
+        markerEnd: {
+          type: 'arrow',
+          strokeWidth: 2,
+        },
       }
     })
   })

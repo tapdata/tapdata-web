@@ -15,7 +15,7 @@ import { Handle, Position } from '@vue-flow/core'
       </div>
     </div>
     <div
-      class="bg-primary rounded-pill align-center justify-center canvas-node-handle-icon position-absolute w-100 h-100 left-0 top-0 align-items-center justify-center color-white"
+      class="bg-primary rounded-pill align-center justify-center canvas-node-handle-icon position-absolute w-100 h-100 left-0 top-0 align-items-center justify-center color-white z-10"
     >
       <el-icon size="10" class="">
         <i-mingcute-add-fill />

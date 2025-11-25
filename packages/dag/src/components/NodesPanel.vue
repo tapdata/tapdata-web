@@ -260,7 +260,7 @@ const onTableDragStart = (item) => {
               :text="item.name"
               :show-after="400"
             />
-            <ConnectionType :type="item.connection_type" />
+            <ConnectionType class="ml-auto" :type="item.connection_type" />
           </div>
         </div>
       </el-scrollbar>

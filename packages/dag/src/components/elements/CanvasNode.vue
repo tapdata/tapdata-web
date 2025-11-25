@@ -120,7 +120,7 @@ export default {
         />
         <VIcon v-if="ins.beta" class="mr-1" size="32">beta</VIcon>
       </template>
-      <div v-if="!stateIsReadonly" class="df-node-options gap-4" @click.stop>
+      <!-- <div v-if="!stateIsReadonly" class="df-node-options gap-4" @click.stop>
         <div
           v-if="isSync"
           :disabled="data.disabled"
@@ -186,7 +186,7 @@ export default {
         >
           <VIcon size="20">action-delete</VIcon>
         </div>
-      </div>
+      </div> -->
       <ElTooltip
         v-if="hasNodeError(data.id)"
         :content="nodeErrorMsg"
@@ -343,6 +343,21 @@ export default {
     }
     &.vue-flow__handle-right:hover {
       transform: translate(50%, -50%) scale(1.25);
+    }
+    &::after {
+      content: '';
+      position: absolute;
+      width: 0.125rem;
+      height: 0.5rem;
+      top: 0.25rem;
+      background-color: var(--el-color-primary);
+    }
+
+    &.vue-flow__handle-left::after {
+      left: 0.375rem;
+    }
+    &.vue-flow__handle-right::after {
+      right: 0.375rem;
     }
   }
 
