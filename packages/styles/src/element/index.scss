@@ -446,8 +446,9 @@
     width: 24px !important;
     height: 24px !important;
     line-height: 1;
-    font-size: 16px !important;
+    // font-size: 16px !important;
     border-radius: 6px;
+    margin-left: 8px;
     &:hover {
       color: var(--icon-n1);
       background-color: var(--icon-n1-hover);

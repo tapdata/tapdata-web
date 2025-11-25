@@ -6,7 +6,7 @@ import {
 import { getPermissions } from '@tap/api/src/core/data-permission'
 import { fetchDatabaseTypeByPdkHash } from '@tap/api/src/core/database-types'
 import { callProxy } from '@tap/api/src/core/proxy'
-import { countUsers } from '@tap/api/src/core/users'
+import { getUserRoles } from '@tap/api/src/core/users'
 import Drawer from '@tap/component/src/Drawer.vue'
 import { Modal } from '@tap/component/src/modal'
 import i18n, { useI18n } from '@tap/i18n'
@@ -582,26 +582,24 @@ const loadPermissions = (id: string) => {
     dataId: id,
   }
   getPermissions(filter).then((data: any = []) => {
-    countUsers
-      .role({
-        filter: JSON.stringify({
-          limit: 1000,
-        }),
-      })
-      .then((roleList) => {
-        permissions.value = data
-          .map((t) => {
-            const role = roleList.items?.find((r) => r.id === t.typeId) || {
-              name: '',
-            }
-            return {
-              checked: t.actions,
-              roleId: t.typeId,
-              roleName: role.name,
-            }
-          })
-          .filter((t) => !!t.roleName)
-      })
+    getUserRoles({
+      filter: JSON.stringify({
+        limit: 1000,
+      }),
+    }).then((roleList) => {
+      permissions.value = data
+        .map((t) => {
+          const role = roleList.items?.find((r) => r.id === t.typeId) || {
+            name: '',
+          }
+          return {
+            checked: t.actions,
+            roleId: t.typeId,
+            roleName: role.name,
+          }
+        })
+        .filter((t) => !!t.roleName)
+    })
   })
 }
 
@@ -706,7 +704,7 @@ defineExpose({
 </script>
 
 <template>
-  <Drawer v-model="visible" width="400px">
+  <Drawer v-model="visible" width="400px" :modal="false" modal-penetrable>
     <template #header>
       <div class="flex align-center gap-2 font-color-dark overflow-hidden">
         <DatabaseIcon
