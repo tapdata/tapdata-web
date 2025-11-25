@@ -409,6 +409,8 @@ export default {
   share_detail_statistics_time: '统计时间',
   share_detail_incremental_time: '所处的时间点',
   // 设置
+  setting_auto_incremental_batch_size: '是否自动调整增量读取批次数',
+  setting_auto_incremental_batch_size_doc: '开启后将根据实时增量延迟、增量日志读取事件数、内存占用等属性自动调整增量读取批次数',
   setting_email_template: '邮件模板',
   setting_saveSuccess: '保存成功，一分钟后生效',
   setting_nameserver: '服务器名称',
