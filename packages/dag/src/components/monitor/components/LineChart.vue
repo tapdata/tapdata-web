@@ -107,7 +107,9 @@ export default {
           )
         })
       } else {
-        series.push(this.getSeriesItem(value || [], 0, name?.[0]))
+        series.push(
+          this.getSeriesItem(value || [], 0, name?.[0], markLine?.[0]),
+        )
       }
       const options = this.getOptions()
 

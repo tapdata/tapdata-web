@@ -241,6 +241,11 @@ export default {
         return {
           x: [],
           value: [],
+          markLine: [
+            {
+              data: [],
+            },
+          ],
         }
       }
       const { time = [] } = this.quota
@@ -248,6 +253,37 @@ export default {
         x: time,
         name: [i18n.t('packages_dag_batch_read_size')],
         value: data.batchReadSize,
+      }
+      // 计算距离增量时间点，最近的时间点
+      const milestone = this.dataflow.attrs?.milestone || {}
+      const snapshotDoneAt = milestone.SNAPSHOT?.end
+      let markLineTime = 0
+      time.forEach((el) => {
+        if (
+          Math.abs(el - snapshotDoneAt) < 2000 &&
+          Math.abs(el - snapshotDoneAt) < Math.abs(el - markLineTime)
+        ) {
+          markLineTime = el
+        }
+      })
+
+      if (this.dataflow.type === 'initial_sync+cdc') {
+        result.markLine = [
+          {
+            symbol: 'none',
+            data: [
+              {
+                xAxis: String(markLineTime),
+                lineStyle: {
+                  color: '#000',
+                },
+                label: {
+                  show: false,
+                },
+              },
+            ],
+          },
+        ]
       }
 
       return result
