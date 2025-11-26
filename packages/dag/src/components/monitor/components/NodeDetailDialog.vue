@@ -202,10 +202,16 @@ export default {
       }
       const { time = [] } = this.quota
       const { isSource, isTarget } = this
+      const {
+        timeCostAvg = [],
+        snapshotSourceReadTimeCostAvg = [],
+        incrementalSourceReadTimeCostAvg = [],
+        targetWriteTimeCostAvg = [],
+      } = data
       const result = {
         x: time,
         name: [i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi')],
-        value: data.timeCostAvg,
+        value: timeCostAvg,
       }
       if (isSource) {
         result.name = [
@@ -214,16 +220,16 @@ export default {
           i18n.t('packages_dag_components_nodedetaildialog_zengliangduquyan'),
         ]
         result.value = [
-          data.timeCostAvg,
-          data.snapshotSourceReadTimeCostAvg,
-          data.incrementalSourceReadTimeCostAvg,
+          timeCostAvg,
+          snapshotSourceReadTimeCostAvg,
+          incrementalSourceReadTimeCostAvg,
         ]
       } else if (isTarget) {
         result.name = [
           i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi'),
           i18n.t('packages_dag_components_nodedetaildialog_xieruhaoshi'),
         ]
-        result.value = [data.timeCostAvg, data.targetWriteTimeCostAvg]
+        result.value = [timeCostAvg, targetWriteTimeCostAvg]
       }
       return result
     },

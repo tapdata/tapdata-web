@@ -202,6 +202,7 @@ export default {
   public_data_filter_condition: 'Filter Condition',
   public_data_fields_condition: 'Filter Fields',
   public_data_type: 'Data Type',
+  public_no_available_tables: 'No available tables',
   // time
   public_time_ms: 'Milliseconds',
   public_time_s: 'Seconds',
