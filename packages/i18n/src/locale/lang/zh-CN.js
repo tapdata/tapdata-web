@@ -202,6 +202,8 @@ export default {
   public_data_filter_condition: '过滤条件',
   public_data_fields_condition: '过滤字段',
   public_data_type: '数据类型',
+  public_no_available_tables: '暂无可选的表',
+
   // 时间
   public_time_ms: '毫秒',
   public_time_s: '秒',

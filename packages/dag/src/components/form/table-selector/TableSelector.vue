@@ -452,13 +452,7 @@ getTables()
           </VEmpty>
           <VEmpty v-else>
             <span class="align-middle"
-              >{{
-                $t(
-                  table.searchKeyword || alwaysShowReload
-                    ? 'packages_form_component_table_selector_error_not_exit'
-                    : 'public_data_no_data',
-                )
-              }},</span
+              >{{ $t('public_no_available_tables') }},</span
             >
             <el-button
               class="ml-1"
