@@ -166,7 +166,6 @@ export default defineConfig({
           'tap-ldp': ['@tap/ldp'],
           'tap-node-design': ['@tap/node-design'],
           'tap-request': ['@tap/request'],
-          'tap-shared': ['@tap/shared'],
         },
       },
     },
