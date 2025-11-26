@@ -125,6 +125,7 @@ export default {
       if (!val) {
         this.resetView()
         this.unwatchMergeProperties?.()
+        this.unbindEvent()
         return
       }
 
@@ -133,26 +134,16 @@ export default {
       this.loading = true
       await this.transformToDag()
       await this.loadSchema().catch((error) => {
-        console.log('load error', error)
+        console.error('load error', error)
       })
       this.loading = false
       await this.$nextTick()
       this.handleAutoLayout()
       this.watchMergeProperties()
+      this.bindEvent()
     },
   },
   mounted() {
-    Mousetrap(this.$refs.container).bind(['backspace', 'del'], () => {
-      this.visible && !this.disabled && this.handleDelete()
-    })
-    Mousetrap(this.$refs.container).bind(
-      ['option+command+l', 'ctrl+alt+l'],
-      (e) => {
-        e.preventDefault()
-        this.visible && this.handleAutoLayout()
-      },
-    )
-
     if (!this.isDomesticStation) {
       this.docUrl =
         'https://docs.tapdata.io/user-guide/data-pipeline/data-development/create-materialized-view/'
@@ -172,8 +163,29 @@ export default {
       this.iframeHtml = `<iframe class="block" width="100%" height="360" src="//player.bilibili.com/player.html?bvid=BV1eN411T7wG&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>`
     }
   },
+  beforeUnmount() {
+    this.unbindEvent()
+  },
   methods: {
     ...mapActions('dataflow', ['updateDag']),
+
+    bindEvent() {
+      Mousetrap(this.$refs.container).bind(['backspace', 'del'], () => {
+        this.visible && !this.disabled && this.handleDelete()
+      })
+      Mousetrap(this.$refs.container).bind(
+        ['option+command+l', 'ctrl+alt+l'],
+        (e) => {
+          e.preventDefault()
+          this.visible && this.handleAutoLayout()
+        },
+      )
+    },
+
+    unbindEvent() {
+      Mousetrap(this.$refs.container).unbind(['backspace', 'del'])
+      Mousetrap(this.$refs.container).unbind(['option+command+l', 'ctrl+alt+l'])
+    },
 
     // activeNode.mergeProperties
     watchMergeProperties() {
@@ -197,7 +209,7 @@ export default {
         return {
           id: node.id,
           attrs: {
-            position: this.nodePositionMap[node.id],
+            position: this.nodePositionMap[node.id] || [0, 0],
           },
         }
       })
