@@ -586,7 +586,7 @@ export default {
               }
             }
           })
-          console.log('quota', quota)
+
           this.quota = quota
           const granularity = getTimeGranularity(this.quota.interval)
           this.timeFormat = TIME_FORMAT_MAP[granularity]
