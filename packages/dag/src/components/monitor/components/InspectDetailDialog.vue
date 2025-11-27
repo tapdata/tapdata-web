@@ -320,6 +320,7 @@ async function fetchTableDiff(page?: number): Promise<void> {
 
     Object.keys(selectedMap.value).forEach((key) => {
       if (!map[key]) {
+        selectedMap.value[key] = false
         delete selectedMap.value[key]
       }
     })
