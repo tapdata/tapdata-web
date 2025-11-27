@@ -13,6 +13,7 @@ import {
 import { useRequest } from '@tap/api/src/request'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 import { CloseIcon } from '@tap/component/src/CloseIcon'
+import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
 import FilterItemSelect from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import { FilterConditionsOutlined } from '@tap/component/src/icon/FilterConditionsOutlined'
 import { SettingInterOutlined } from '@tap/component/src/icon/SettingInterOutlined'
@@ -52,7 +53,7 @@ const onlyShowDiffFields = ref(true)
 const progress = ref(0)
 const lastOpTime = ref('')
 const lastOpDate = ref('')
-const diffFilterType = ref()
+const diffFilterType = ref('')
 const exportClicked = ref(false)
 const pageState = reactive({
   page: 1,
@@ -79,6 +80,9 @@ const innerFields = [
 ]
 const sourceFields = ref<{ label: string; value: string }[]>([])
 const targetFields = ref<{ label: string; value: string }[]>([])
+const selectedMap = ref<Record<string, boolean>>({})
+const isIndeterminate = ref(false)
+const checkAll = ref(false)
 
 const conditions = reactive({
   inner: {
@@ -110,8 +114,21 @@ const showRecoverProgress = computed(() => {
   return opState.loading && opState.type === 'manualRecover'
 })
 
+const selectedIds = computed(() => {
+  return Object.keys(selectedMap.value).filter((key) => selectedMap.value[key])
+})
+
+const diffFilterTypeLabel = computed(() => {
+  return diffFilterTypes.find((item) => item.value === diffFilterType.value)
+    ?.label
+})
+
 // Constants
 const diffFilterTypes = [
+  {
+    label: t('public_all_type'),
+    value: '',
+  },
   {
     label: t('packages_dag_inspect_diff_type_diff'),
     value: 'DIFF',
@@ -168,7 +185,7 @@ function resetData(): void {
   tablePageState.page = 1
   tablePageState.keyword = ''
   pageState.page = 1
-  diffFilterType.value = undefined
+  diffFilterType.value = ''
   clearAllConditions()
 }
 
@@ -267,7 +284,7 @@ async function fetchTableDiff(page?: number): Promise<void> {
     limit: pageState.pageSize,
     where: {
       sourceTable: currentSelectedRow.value!.sourceTable,
-      diffType: diffFilterType.value,
+      diffType: diffFilterType.value || undefined,
       ...genWhereCondition('source'),
       ...genWhereCondition('target'),
       ...genWhereCondition('inner'),
@@ -279,7 +296,10 @@ async function fetchTableDiff(page?: number): Promise<void> {
 
     pageState.total = data?.total || 0
 
+    const map: Record<string, boolean> = {}
+
     rowDiffList.value = (data?.items || []).map((item: DiffRow) => {
+      map[item.id] = true
       if (item.diffType === 'DIFF') {
         return {
           ...item,
@@ -297,6 +317,14 @@ async function fetchTableDiff(page?: number): Promise<void> {
       }
       return item
     })
+
+    Object.keys(selectedMap.value).forEach((key) => {
+      if (!map[key]) {
+        delete selectedMap.value[key]
+      }
+    })
+
+    updateCheckState()
   } catch (error) {
     console.error('Failed to fetch inspect details:', error)
   } finally {
@@ -352,7 +380,7 @@ const loadLastOp = async () => {
   opState.manualId = manualId
 }
 
-const handleManualCheck = async (resultId?: string) => {
+const handleManualCheck = async (resultIds?: string[]) => {
   if (showRecoverProgress.value) {
     const result = await Modal.confirm(
       t('public_last_operation_not_finished'),
@@ -362,7 +390,7 @@ const handleManualCheck = async (resultId?: string) => {
       return
     }
   }
-  runManualCheck(resultId ? [resultId] : undefined)
+  runManualCheck(resultIds)
 }
 
 const { run: runManualCheck, loading: manualCheckLoading } = useRequest(
@@ -377,7 +405,7 @@ const { run: runManualCheck, loading: manualCheckLoading } = useRequest(
   },
 )
 
-const handleManualRecover = async (resultId?: string) => {
+const handleManualRecover = async (resultIds?: string[]) => {
   if (showCheckProgress.value) {
     const result = await Modal.confirm(
       t('public_last_operation_not_finished'),
@@ -387,7 +415,7 @@ const handleManualRecover = async (resultId?: string) => {
       return
     }
   }
-  runManualRecover(resultId ? [resultId] : undefined)
+  runManualRecover(resultIds)
 }
 
 const { run: runManualRecover, loading: manualRecoverLoading } = useRequest(
@@ -490,9 +518,9 @@ function clearAllConditions(): void {
   clearCondition('inner')
 }
 
-function handleExportRecoverSql(resultId?: string): void {
+function handleExportRecoverSql(resultIds?: string[]): void {
   exportClicked.value = true
-  runExportRecoverSql(resultId ? [resultId] : undefined)
+  runExportRecoverSql(resultIds)
 }
 
 async function handleDownloadSql(): Promise<void> {
@@ -504,6 +532,46 @@ async function handleDownloadSql(): Promise<void> {
 function handleCopy(row: DiffRow): void {
   copyToClipboard(JSON.stringify(row, null, 2))
   ElMessage.success(t('public_message_copy_success'))
+}
+
+function updateCheckState() {
+  const selectedCount = selectedIds.value.length
+  checkAll.value =
+    selectedCount > 0 && selectedCount === rowDiffList.value.length
+  isIndeterminate.value =
+    selectedCount > 0 && selectedCount < rowDiffList.value.length
+}
+
+function handleCheckAllChange(checked: boolean): any {
+  isIndeterminate.value = false
+  if (checked) {
+    selectedMap.value = rowDiffList.value.reduce(
+      (acc: Record<string, boolean>, row: DiffRow) => {
+        acc[row.id] = true
+        return acc
+      },
+      {},
+    )
+  } else {
+    Object.keys(selectedMap.value).forEach((key) => {
+      selectedMap.value[key] = false
+    })
+  }
+}
+
+function toggleSelected(id: string): void {
+  selectedMap.value[id] = !selectedMap.value[id]
+  updateCheckState()
+}
+
+function clearSelected(): void {
+  checkAll.value = false
+  handleCheckAllChange(false)
+}
+
+function handleDiffTypeChange(value: string): void {
+  diffFilterType.value = value
+  fetchTableDiff(1)
 }
 </script>
 
@@ -517,7 +585,7 @@ function handleCopy(row: DiffRow): void {
     :close-on-click-modal="false"
     :show-close="false"
     @open="onOpen"
-    @close="onClose"
+    @closed="onClose"
   >
     <template #title>
       <div class="flex align-items-center">
@@ -802,63 +870,40 @@ function handleCopy(row: DiffRow): void {
         >
           <div class="flex align-center gap-3 px-4 py-3 border-bottom">
             <span
-              class="bg-subtle rounded-lg px-3 lh-8 cursor-pointer"
-              :class="{
-                'active-primary': onlyShowDiffFields,
-              }"
-              @click="onlyShowDiffFields = true"
-              >{{
-                $t('packages_business_verification_details_jinxianshichayi')
-              }}</span
+              class="bg-subtle rounded-lg px-3 pr-1 lh-8 cursor-pointer flex align-center gap-2"
             >
-
-            <span
-              class="bg-subtle rounded-lg px-3 lh-8 cursor-pointer"
-              :class="{
-                'active-primary': !onlyShowDiffFields,
-              }"
-              @click="onlyShowDiffFields = false"
-              >{{
-                $t('packages_business_verification_details_xianshiwanzhengzi')
-              }}</span
-            >
-            <el-divider direction="vertical" class="mx-0" />
-            <FilterItemSelect
-              v-model="diffFilterType"
-              :label="$t('packages_dag_src_editor_leixingguolu')"
-              :items="diffFilterTypes"
-              clearable
-              @change="fetchTableDiff(1)"
-            >
-              <template #label="{ label, value }">
-                <ElTag
-                  class="rounded-4"
-                  size="small"
-                  :type="
-                    value === 'DIFF'
-                      ? 'danger'
-                      : value === 'MORE'
-                        ? 'warning'
-                        : undefined
-                  "
-                  :class="{ 'tag-amber': value === 'MISS' }"
+              <el-checkbox
+                v-model="checkAll"
+                style="transform: scale(1.25)"
+                :indeterminate="isIndeterminate"
+                @change="handleCheckAllChange"
+              />
+              <el-dropdown trigger="click" @command="handleDiffTypeChange">
+                <el-button
+                  text
+                  :type="diffFilterType ? 'primary' : 'default'"
+                  :bg="!!diffFilterType"
                 >
-                  {{ label }}
-                </ElTag>
-              </template>
-              <template #default="{ item }">
-                <div class="flex align-center h-100">
-                  <ElTag
-                    class="rounded-4"
-                    size="small"
-                    :type="item.type"
-                    :class="{ 'tag-amber': item.value === 'MISS' }"
-                  >
-                    {{ item.label }}
-                  </ElTag>
-                </div></template
-              >
-            </FilterItemSelect>
+                  {{ diffFilterTypeLabel }}
+                  <el-icon class="ml-1" :size="12"
+                    ><DownBoldOutlined
+                  /></el-icon>
+                </el-button>
+
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item
+                      v-for="item in diffFilterTypes"
+                      :key="item.value"
+                      :command="item.value"
+                      :class="{ 'is-active': item.value === diffFilterType }"
+                    >
+                      {{ item.label }}
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </span>
             <el-popover trigger="click" width="480px" :hide-after="0">
               <template #reference>
                 <el-button
@@ -1008,6 +1053,156 @@ function handleCopy(row: DiffRow): void {
                 </div>
               </div>
             </el-popover>
+            <el-divider direction="vertical" class="mx-0" />
+            <span
+              class="bg-subtle rounded-lg px-3 lh-8 cursor-pointer"
+              :class="{
+                'active-primary': onlyShowDiffFields,
+              }"
+              @click="onlyShowDiffFields = true"
+              >{{
+                $t('packages_business_verification_details_jinxianshichayi')
+              }}</span
+            >
+
+            <span
+              class="bg-subtle rounded-lg px-3 lh-8 cursor-pointer"
+              :class="{
+                'active-primary': !onlyShowDiffFields,
+              }"
+              @click="onlyShowDiffFields = false"
+              >{{
+                $t('packages_business_verification_details_xianshiwanzhengzi')
+              }}</span
+            >
+
+            <transition name="el-fade-in-linear">
+              <div
+                v-show="selectedIds.length > 0"
+                style="display: flex"
+                class="active-primary rounded-lg px-1 h-8 align-center gap-2 ml-auto"
+              >
+                <el-button type="primary" text @click="clearSelected">
+                  <el-icon class="color-primary"><i-lucide-x /></el-icon
+                  ><span class="ml-1">{{
+                    $t('packages_business_selected_rows', {
+                      val: selectedIds.length,
+                    })
+                  }}</span>
+                </el-button>
+                <el-divider direction="vertical" class="mx-0" />
+                <el-tooltip
+                  :content="$t('public_generate_recovery_sql')"
+                  :enterable="false"
+                  :show-after="200"
+                  :hide-after="0"
+                  :disabled="showExportRecoverSqlProgress"
+                  :teleported="false"
+                >
+                  <div>
+                    <el-button
+                      text
+                      type="primary"
+                      size="small"
+                      :disabled="showExportRecoverSqlProgress"
+                      @click="handleExportRecoverSql(selectedIds)"
+                    >
+                      <template #icon>
+                        <SettingInterOutlined />
+                      </template>
+                    </el-button>
+                  </div>
+                </el-tooltip>
+                <el-tooltip
+                  :content="$t('public_diff_check')"
+                  :enterable="false"
+                  :show-after="200"
+                  :hide-after="0"
+                  :disabled="showCheckProgress"
+                  :teleported="false"
+                >
+                  <div>
+                    <el-button
+                      text
+                      type="primary"
+                      size="small"
+                      :disabled="showCheckProgress"
+                      @click="handleManualCheck(selectedIds)"
+                    >
+                      <template #icon>
+                        <i-lucide-git-compare-arrows />
+                      </template>
+                    </el-button>
+                  </div>
+                </el-tooltip>
+                <el-tooltip
+                  :content="$t('public_one_key_repair')"
+                  :enterable="false"
+                  :show-after="200"
+                  :hide-after="0"
+                  :disabled="showRecoverProgress"
+                  :teleported="false"
+                >
+                  <div>
+                    <el-button
+                      text
+                      type="primary"
+                      size="small"
+                      :disabled="showRecoverProgress"
+                      @click="handleManualRecover(selectedIds)"
+                    >
+                      <template #icon>
+                        <i-lucide-wand-sparkles />
+                      </template>
+                    </el-button>
+                  </div>
+                </el-tooltip>
+              </div>
+            </transition>
+
+            <!-- <el-divider direction="vertical" class="mx-0" /> -->
+            <!-- <el-select
+              v-model="diffFilterType"
+              :empty-values="[null, undefined]"
+              :options="diffFilterTypes"
+              clearable
+              style="width: 100px"
+              @change="fetchTableDiff(1)"
+            >
+              <template #label="{ label, value }">
+                <ElTag
+                  class="rounded-4"
+                  size="small"
+                  :type="
+                    value === 'DIFF'
+                      ? 'danger'
+                      : value === 'MORE'
+                        ? 'warning'
+                        : undefined
+                  "
+                  :class="{ 'tag-amber': value === 'MISS' }"
+                >
+                  {{ label }}
+                </ElTag>
+              </template>
+              <el-option
+                v-for="item in diffFilterTypes"
+                :key="item.value"
+                :value="item.value"
+                :label="item.label"
+              >
+                <div class="flex align-center h-100">
+                  <ElTag
+                    class="rounded-4"
+                    size="small"
+                    :type="item.type"
+                    :class="{ 'tag-amber': item.value === 'MISS' }"
+                  >
+                    {{ item.label }}
+                  </ElTag>
+                </div>
+              </el-option>
+            </el-select> -->
           </div>
           <div ref="diffListContainer" class="overflow-y-auto p-4 min-h-0">
             <div class="flex flex-column gap-4">
@@ -1015,14 +1210,21 @@ function handleCopy(row: DiffRow): void {
                 v-for="(row, index) in rowDiffList"
                 :key="index"
                 class="border rounded-xl overflow-hidden"
+                :class="{ 'border-primary': selectedMap[row.id] }"
               >
                 <table class="w-100 row-diff-table font-color-dark">
                   <thead class="bg-light border-bottom">
-                    <tr>
+                    <tr class="cursor-pointer" @click="toggleSelected(row.id)">
                       <th
-                        class="text-start p-3 text-sm fw-sub text-muted-foreground w-1/4 break-all"
+                        class="text-start px-3 text-sm fw-sub text-muted-foreground w-1/4 break-all"
                       >
                         <div class="flex align-center gap-2">
+                          <el-checkbox
+                            v-model="selectedMap[row.id]"
+                            class="diff-table-checkbox"
+                            @click.stop
+                            @change="updateCheckState"
+                          />
                           {{
                             $t(
                               'packages_business_verification_result_field_name',
@@ -1078,6 +1280,7 @@ function handleCopy(row: DiffRow): void {
                             <el-tooltip
                               :content="$t('public_generate_recovery_sql')"
                               :enterable="false"
+                              :show-after="200"
                               :hide-after="0"
                               :disabled="showExportRecoverSqlProgress"
                               :teleported="false"
@@ -1087,7 +1290,7 @@ function handleCopy(row: DiffRow): void {
                                   text
                                   size="small"
                                   :disabled="showExportRecoverSqlProgress"
-                                  @click="handleExportRecoverSql(row.id)"
+                                  @click.stop="handleExportRecoverSql(row.id)"
                                 >
                                   <template #icon>
                                     <SettingInterOutlined />
@@ -1098,6 +1301,7 @@ function handleCopy(row: DiffRow): void {
                             <el-tooltip
                               :content="$t('public_diff_check')"
                               :enterable="false"
+                              :show-after="200"
                               :hide-after="0"
                               :disabled="showCheckProgress"
                               :teleported="false"
@@ -1107,7 +1311,7 @@ function handleCopy(row: DiffRow): void {
                                   text
                                   size="small"
                                   :disabled="showCheckProgress"
-                                  @click="handleManualCheck(row.id)"
+                                  @click.stop="handleManualCheck([row.id])"
                                 >
                                   <template #icon>
                                     <i-lucide-git-compare-arrows />
@@ -1118,6 +1322,7 @@ function handleCopy(row: DiffRow): void {
                             <el-tooltip
                               :content="$t('public_one_key_repair')"
                               :enterable="false"
+                              :show-after="200"
                               :hide-after="0"
                               :disabled="showRecoverProgress"
                               :teleported="false"
@@ -1127,7 +1332,7 @@ function handleCopy(row: DiffRow): void {
                                   text
                                   size="small"
                                   :disabled="showRecoverProgress"
-                                  @click="handleManualRecover(row.id)"
+                                  @click.stop="handleManualRecover([row.id])"
                                 >
                                   <template #icon>
                                     <i-lucide-wand-sparkles />
@@ -1138,13 +1343,14 @@ function handleCopy(row: DiffRow): void {
                             <el-tooltip
                               :content="$t('packages_dag_inspect_copy_row')"
                               :enterable="false"
+                              :show-after="200"
                               :hide-after="0"
                               :teleported="false"
                             >
                               <el-button
                                 text
                                 size="small"
-                                @click="handleCopy(row)"
+                                @click.stop="handleCopy(row)"
                               >
                                 <template #icon>
                                   <i-lucide-copy />
@@ -1155,7 +1361,7 @@ function handleCopy(row: DiffRow): void {
                             <el-button
                               text
                               type="primary"
-                              @click="handleRecordClick(row)"
+                              @click.stop="handleRecordClick(row)"
                               >{{ $t('packages_dag_inspect_operation_record') }}
                             </el-button>
                           </div>
@@ -1346,12 +1552,43 @@ function handleCopy(row: DiffRow): void {
     }
 
     .diff-table-operations {
-      display: none;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition:
+        opacity 0.2s ease,
+        visibility 0s 0.2s;
+    }
+
+    .diff-table-checkbox {
+      // visibility: hidden;
+      // opacity: 0;
+      transition:
+        opacity 0.2s ease,
+        transform 0.2s ease,
+        visibility 0s 0.2s;
+      --el-checkbox-input-border: 1px solid var(--N500);
     }
 
     &:hover {
       .diff-table-operations {
-        display: contents;
+        display: flex;
+        opacity: 1;
+        visibility: visible;
+        transition:
+          opacity 0.2s ease,
+          visibility 0s 0s;
+      }
+      .diff-table-checkbox {
+        opacity: 1;
+        visibility: visible;
+        transform: scale(1.25);
+        // transition:
+        //   opacity 0.2s ease,
+        //   transform 0.2s ease,
+        //   visibility 0s 0s;
       }
     }
   }

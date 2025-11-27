@@ -662,9 +662,11 @@
 
     &.el-button--text,
     &.el-button--primary {
+      --el-fill-color-light: rgba(var(--primary-raw), 0.1);
+      --el-fill-color: rgba(var(--primary-raw), 0.2);
       --el-button-text-color: var(--el-color-primary);
-      --el-fill-color-light: var(--el-color-primary-light-9);
-      --el-fill-color: var(--el-color-primary-light-8);
+      // --el-fill-color-light: var(--el-color-primary-light-9);
+      // --el-fill-color: var(--el-color-primary-light-8);
     }
 
     &.el-button--danger {

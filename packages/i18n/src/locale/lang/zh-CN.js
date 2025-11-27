@@ -601,4 +601,5 @@ export default {
   public_crontabExpression: 'Cron 表达式',
   public_start_at_time: '启动于 {time}',
   public_last_operation_time: '最后操作时间',
+  public_all_type: '所有类型',
 }

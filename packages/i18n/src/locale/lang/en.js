@@ -609,4 +609,5 @@ export default {
   public_crontabExpression: 'Cron Expression',
   public_start_at_time: 'Started at {time}',
   public_last_operation_time: 'Last Operation Time',
+  public_all_type: 'All Types',
 }

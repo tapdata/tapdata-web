@@ -598,4 +598,5 @@ export default {
   public_crontabExpression: 'Cron 表達式',
   public_start_at_time: '啟動于 {time}',
   public_last_operation_time: '最後操作時間',
+  public_all_type: '所有類型',
 }
