@@ -411,6 +411,7 @@ export default {
   // 设置
   setting_auto_incremental_batch_size: '是否自動調整增量讀取批次數',
   setting_auto_incremental_batch_size_doc: '開啟後將根據實时增量延遲、增量日誌讀取事件數、記憶體佔用等内容自動調整增量讀取批次數',
+  setting_Database_query_compression_enabled: '是否開啟數據庫查詢壓縮',
   setting_email_template: '郵件模板',
   setting_saveSuccess: '保存成功，一分鐘後生效',
   setting_nameserver: '服務器名稱',

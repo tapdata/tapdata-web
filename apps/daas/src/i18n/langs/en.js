@@ -426,6 +426,7 @@ export default {
   // 设置
   setting_auto_incremental_batch_size: 'Whether to automatically adjust the number of incremental read batches',
   setting_auto_incremental_batch_size_doc: 'After activation, the number of incremental read batches will be automatically adjusted based on real-time incremental delay, incremental log read event count, memory usage, and other attributes',
+  setting_Database_query_compression_enabled: "Enable database query compression",
   setting_email_template: 'Email Template',
   setting_saveSuccess: 'Save successfully, take effect in one minute',
   setting_nameserver: 'Server Name',
