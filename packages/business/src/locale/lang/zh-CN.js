@@ -1540,10 +1540,13 @@ export default {
   packages_business_import_as_copy: '以副本导入',
   packages_business_import_replace: '覆盖导入',
   packages_business_import_cancel_import: '取消导入',
+  packages_business_import_reuse_existing: '复用现有连接导入',
   packages_business_import_as_copy_tip:
     '若任务名或数据源名冲突，会在名称后加 _import 后缀导入为新副本。',
   packages_business_import_replace_tip:
     '若任务名或数据源名冲突，将覆盖系统中已有的任务或数据源。',
   packages_business_import_cancel_import_tip:
     '若任务名或数据源名冲突，则终止导入操作，不导入任何内容。',
+  packages_business_import_reuse_existing_tip:
+    '若任务名冲突则替换任务，数据源名冲突则复用系统中已有数据源。',
 }

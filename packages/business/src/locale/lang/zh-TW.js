@@ -1529,10 +1529,13 @@ export default {
   packages_business_import_as_copy: '以副本導入',
   packages_business_import_replace: '覆蓋導入',
   packages_business_import_cancel_import: '取消導入',
+  packages_business_import_reuse_existing: '复用現有連接導入',
   packages_business_import_as_copy_tip:
     '若任務名或數據源名衝突，會在名稱後加 _import 後綴導入為新副本。',
   packages_business_import_replace_tip:
     '若任務名或數據源名衝突，將覆蓋系統中已有的任務或數據源。',
   packages_business_import_cancel_import_tip:
     '若任務名或數據源名衝突，則終止導入操作，不導入任何內容。',
+  packages_business_import_reuse_existing_tip:
+    '若任務名衝突則替換任務，數據源名衝突則重用系統中已有數據源。',
 }
