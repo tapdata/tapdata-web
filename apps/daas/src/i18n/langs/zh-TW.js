@@ -409,6 +409,7 @@ export default {
   share_detail_statistics_time: '統計時間',
   share_detail_incremental_time: '所處的時間點',
   // 设置
+  setting_Database_query_compression_enabled: '是否開啟數據庫查詢壓縮',
   setting_email_template: '郵件模板',
   setting_saveSuccess: '保存成功，一分鐘後生效',
   setting_nameserver: '服務器名稱',

@@ -410,6 +410,7 @@ export default {
   share_detail_statistics_time: '统计时间',
   share_detail_incremental_time: '所处的时间点',
   // 设置
+  setting_Database_query_compression_enabled: "是否开启数据库查询压缩",
   setting_email_template: '邮件模板',
   setting_saveSuccess: '保存成功，一分钟后生效',
   setting_nameserver: '服务器名称',

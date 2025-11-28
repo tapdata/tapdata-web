@@ -424,6 +424,7 @@ export default {
   share_detail_statistics_time: 'Statistics time',
   share_detail_incremental_time: 'The time point',
   // 设置
+  setting_Database_query_compression_enabled: "Enable database query compression",
   setting_email_template: 'Email Template',
   setting_saveSuccess: 'Save successfully, take effect in one minute',
   setting_nameserver: 'Server Name',
