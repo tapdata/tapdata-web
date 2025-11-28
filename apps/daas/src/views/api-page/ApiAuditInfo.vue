@@ -19,6 +19,11 @@ export default {
           value: 0,
         },
         {
+          label: this.$t('apiaudit_total_records'),
+          key: 'totalRows',
+          value: 0,
+        },
+        {
           label: this.$t('apiaudit_average_access_rate'),
           key: 'speed',
           value: 0,
