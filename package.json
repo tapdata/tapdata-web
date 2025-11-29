@@ -11,7 +11,7 @@
     "dev:daas": "pnpm --filter daas start:dev --mode ha",
     "dev:cloud": "pnpm --filter cloud start:dev",
     "taptest:daas": "pnpm --filter daas taptest",
-    "build:daas": "pnpm --filter daas build --mode ha",
+    "build:daas": "pnpm --filter daas build --mode ha --emptyOutDir",
     "build:cloud": "pnpm --filter cloud build",
     "daas": "pnpm --filter daas start:test",
     "cloud": "cross-env NODE_OPTIONS=--openssl-legacy-provider pnpm --filter cloud start",
