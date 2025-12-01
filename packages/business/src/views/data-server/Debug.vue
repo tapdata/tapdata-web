@@ -7,13 +7,17 @@ import { useI18n } from '@tap/i18n'
 import {
   computed,
   inject,
+  markRaw,
   onBeforeUnmount,
   onMounted,
   ref,
+  shallowRef,
   watch,
   type Ref,
 } from 'vue'
+import VueJsonPretty from 'vue-json-pretty'
 import getTemplate from './template'
+import 'vue-json-pretty/lib/styles.css'
 
 interface Props {
   urlList?: any[]
@@ -33,10 +37,11 @@ const workerStatus = ref('')
 const token = ref<Record<string, any>>({})
 const templateType = ref('java')
 const debugMethod = ref('GET')
-const debugResult = ref('')
+const debugResult = shallowRef({})
 const debugHttpInfo = ref<Record<string, any>>({})
 const templates = ref<Record<string, string>>({})
 const intervalId = ref()
+const loading = ref(false)
 
 const urlsMap = computed(() => {
   return props.urlList.reduce((acc: Record<string, string>, item) => {
@@ -71,7 +76,7 @@ const getAPIServerToken = async (
 }
 
 const reflshToken = () => {
-  getAPIServerToken((token: Record<string, any>) => {
+  return getAPIServerToken((token: Record<string, any>) => {
     templates.value = getTemplate(props.host + form.value.path, token)
   })
 }
@@ -110,9 +115,13 @@ const getWorkers = () => {
 const debugData = async () => {
   const params = props.debugParams
   const method = debugMethod.value
+  loading.value = true
+
   if (method === 'TOKEN') {
-    reflshToken()
-    debugResult.value = JSON.stringify(token.value, null, 2)
+    await reflshToken().finally(() => {
+      loading.value = false
+    })
+    debugResult.value = markRaw(token.value)
     debugHttpInfo.value = {
       httpCode: 200,
     }
@@ -176,14 +185,15 @@ const debugData = async () => {
       httpCode: debugInfo.httpCode,
     }
     delete debugInfo.httpCode
-    debugResult.value = debugInfo ? JSON.stringify(debugInfo, null, 2) : ''
+    debugResult.value = markRaw(debugInfo)
   } catch (error: any) {
     const result = error?.response?.data
-    debugResult.value = result ? JSON.stringify(result, null, 2) : ''
+    debugResult.value = markRaw(result)
     debugHttpInfo.value = {
       httpCode: result?.code || result?.httpCode,
     }
   }
+  loading.value = false
 }
 
 const getParamType = (key: string) => {
@@ -250,7 +260,11 @@ onMounted(() => {
       </template>
     </el-input>
 
-    <ElButton type="primary" :disabled="debugDisabled" @click="debugData"
+    <ElButton
+      type="primary"
+      :disabled="debugDisabled"
+      :loading="loading"
+      @click="debugData"
       >{{ $t('public_button_submit') }}
     </ElButton>
   </div>
@@ -270,14 +284,15 @@ onMounted(() => {
       >{{ debugHttpInfo.httpCode }}</el-tag
     >
   </div>
-  <VCodeEditor
-    class="rounded-lg"
-    height="280"
-    lang="json"
-    :options="{ printMargin: false, readOnly: true, wrap: 'free' }"
-    :value="debugResult"
+  <VueJsonPretty
+    class="bg-light rounded-xl p-2 pr-0"
+    :data="debugResult"
+    :height="280"
+    virtual
+    show-icon
+    :show-line="false"
   />
-  <div class="position-relative mt-4 mb-3">
+  <div class="position-relative mt-4">
     <div
       class="fs-7 fw-sub font-color-dark flex align-center"
       style="line-height: 36px; height: 36px"
@@ -299,7 +314,7 @@ onMounted(() => {
     </ElTabs>
   </div>
   <VCodeEditor
-    class="rounded-lg"
+    class="rounded-xl ace-one-dark overflow-hidden"
     height="280"
     :lang="templateType"
     :options="{ printMargin: false, readOnly: true, wrap: 'free' }"
