@@ -11,21 +11,8 @@ import VirtualTree from '@tap/component/src/virtual-tree'
 import NodeIcon from '@tap/dag/src/components/NodeIcon.vue'
 import { useResizeObserver } from '@vueuse/core'
 import { debounce } from 'lodash-es'
-import { defineComponent, h } from 'vue'
+import { defineComponent } from 'vue'
 import commonMix from './mixins/common'
-
-const NodeContent = defineComponent(
-  (props) => {
-    return () => {
-      const node = props.node
-      const { data, store } = node
-      return props.renderContent(h, { node, data, store })
-    }
-  },
-  {
-    props: ['renderContent', 'node', 'data'],
-  },
-)
 
 export default defineComponent({
   name: 'Source',
@@ -35,7 +22,6 @@ export default defineComponent({
     StageButton,
     IconButton,
     VEmpty,
-    NodeContent,
   },
   mixins: [commonMix],
   props: {
@@ -191,121 +177,6 @@ export default defineComponent({
     this.unwatchFdmAndMdm?.()
   },
   methods: {
-    renderContent(h, { node, data }) {
-      const className = ['custom-tree-node']
-
-      if (data.isObject) {
-        className.push('grabbable')
-      }
-
-      if (data.disabled) {
-        className.push('opacity-50')
-      }
-
-      if (!data.isObject && !data.children?.length) node.isLeaf = false
-
-      return (
-        <div
-          class={className}
-          onClick={() => {
-            this.$emit('preview', data, node.parent.data)
-          }}
-        >
-          <div
-            id={
-              data.isObject
-                ? `ldp_source_table_${data.connectionId}_${data.name}`
-                : `connection_${data.id}`
-            }
-            class="inline-flex align-items-center overflow-hidden"
-          >
-            {!data.isObject ? (
-              <NodeIcon node={data} size={18} class="tree-item-icon mr-2" />
-            ) : (
-              <VIcon class="tree-item-icon mr-2" size="18">
-                table
-              </VIcon>
-            )}
-            <span class="table-label" title={data.name}>
-              {data.name}
-            </span>
-            {data.disabled && (
-              <ElTag disable-transitions type="info">
-                {this.$t('public_status_invalid')}
-              </ElTag>
-            )}
-            <IconButton
-              class="btn-menu"
-              sm
-              onClick={() => {
-                this.$emit('preview', data, node.parent.data)
-              }}
-            >
-              view-details
-            </IconButton>
-          </div>
-        </div>
-      )
-    },
-
-    renderDefaultContent(h, { node, data }) {
-      console.log('renderDefaultContent', data)
-      const schemaLoading = data.loadFieldsStatus === 'loading'
-      // 引导时特殊处理，添加的连接等加载完schema后方可展开
-      // node.isLeaf = data.LDP_TYPE !== 'connection' || (this.startingTour && schemaLoading && !data.children?.length)
-
-      return (
-        <div
-          class={[
-            'custom-tree-node flex align-items-center position-relative',
-            { grabbable: data.isObject, 'opacity-50': data.disabled },
-          ]}
-          onClick={() => {
-            this.$emit('preview', data, node.parent.data)
-          }}
-        >
-          {schemaLoading && (
-            <VIcon
-              class="v-icon animation-rotate"
-              size="14"
-              color="rgb(61, 156, 64)"
-            >
-              loading-circle
-            </VIcon>
-          )}
-          {!data.isObject && !data.isEmpty ? (
-            <NodeIcon node={node.data} size={18} class="tree-item-icon mr-2" />
-          ) : data.isEmpty ? (
-            <div class="flex align-items-center">
-              <span class="mr-1">{this.$t('public_data_no_data')}</span>
-              <StageButton
-                connection-id={this.getConnectionId(node)}
-                onComplete={() => {
-                  this.handleNodeExpand(node.parent.data, node.parent)
-                }}
-              />
-            </div>
-          ) : (
-            <VIcon class="tree-item-icon mr-2" size="18">
-              table
-            </VIcon>
-          )}
-
-          <span class="table-label" title={data.name}>
-            {data.name}
-            {data.comment && (
-              <span class="font-color-sslight">{`(${data.comment})`}</span>
-            )}
-            {data.disabled && (
-              <ElTag disable-transitions type="info" class="ml-2">
-                {this.$t('public_status_invalid')}
-              </ElTag>
-            )}
-          </span>
-        </div>
-      )
-    },
-
     handleAdd() {
       this.$emit('create-connection', 'source')
     },
@@ -550,15 +421,6 @@ export default defineComponent({
 
       this.searchExpandedKeys = searchExpandedKeys
       this.filterTreeData = [...connectionMap.values()]
-      // console.log('searchExpandedKeys', this.filterTreeData)
-      // console.log('tree', this.$refs.tree, searchExpandedKeys)
-      // this.$nextTick(() => {
-      //   // this.$refs.tree?.setExpandedKeys(searchExpandedKeys)
-      //   console.log(this.$refs.tree.getNode(searchExpandedKeys[0]))
-      //   this.$refs.tree.expandNode(
-      //     this.$refs.tree.getNode(searchExpandedKeys[0]),
-      //   )
-      // })
     },
   },
   emits: ['preview', 'create-connection', 'node-drag-end', 'handle-connection'],
@@ -630,7 +492,6 @@ export default defineComponent({
           @handle-scroll="handleScroll"
         >
           <template #default="{ node, data }">
-            <!--<NodeContent :render-content="renderDefaultContent" :node="node" :data="data"></NodeContent>-->
             <span
               class="custom-tree-node flex align-items-center position-relative"
               :class="{
@@ -700,7 +561,6 @@ export default defineComponent({
             @handle-scroll="handleScroll"
           >
             <template #default="{ node, data }">
-              <!--<NodeContent :render-content="renderDefaultContent" :node="node" :data="data"></NodeContent>-->
               <span
                 class="custom-tree-node flex align-items-center position-relative"
                 :class="{
@@ -778,10 +638,8 @@ export default defineComponent({
             <div
               class="custom-tree-node"
               :class="{
-                grabbable: data.isObject,
                 'opacity-50': data.disabled,
               }"
-              @click="$emit('preview', data, node.parent?.data)"
             >
               <div
                 :id="
@@ -806,13 +664,6 @@ export default defineComponent({
                 <ElTag v-if="data.disabled" disable-transitions type="info">
                   {{ $t('public_status_invalid') }}
                 </ElTag>
-                <IconButton
-                  class="btn-menu"
-                  sm
-                  @click="$emit('preview', data, node.parent?.data)"
-                >
-                  view-details
-                </IconButton>
               </div>
             </div>
           </template>

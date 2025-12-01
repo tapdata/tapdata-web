@@ -86,7 +86,7 @@ const FormTab = observer(
 
       const badgedHeader = (key: SchemaKey, props: any) => {
         if (props.locked) {
-          return () => (
+          return (
             <div
               class="flex align-center"
               onClick={(e) => {

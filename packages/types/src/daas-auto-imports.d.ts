@@ -7,6 +7,9 @@
 export {}
 declare global {
   const ElDivider: typeof import('element-plus/es').ElDivider
+  const ElDropdown: typeof import('element-plus/es').ElDropdown
+  const ElDropdownItem: typeof import('element-plus/es').ElDropdownItem
+  const ElDropdownMenu: typeof import('element-plus/es').ElDropdownMenu
   const ElIcon: typeof import('element-plus/es').ElIcon
   const ElIconCopyDocument: typeof import('@element-plus/icons-vue').CopyDocument
   const ElIconSearch: typeof import('@element-plus/icons-vue').Search

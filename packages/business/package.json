@@ -25,6 +25,7 @@
     "qs": "catalog:",
     "tiny-emitter": "catalog:",
     "vue": "catalog:",
+    "vue-json-pretty": "catalog:",
     "vue-json-viewer": "catalog:",
     "vue-virtual-scroller": "catalog:",
     "vuex": "catalog:"

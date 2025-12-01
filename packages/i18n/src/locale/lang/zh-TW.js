@@ -202,6 +202,7 @@ export default {
   public_data_filter_condition: '過濾條件',
   public_data_fields_condition: '過濾字段',
   public_data_type: '數據類型',
+  public_no_available_tables: '暫無可選的表',
   // 時間
   public_time_ms: '毫秒',
   public_time_s: '秒',
@@ -597,4 +598,5 @@ export default {
   public_crontabExpression: 'Cron 表達式',
   public_start_at_time: '啟動于 {time}',
   public_last_operation_time: '最後操作時間',
+  public_all_type: '所有類型',
 }

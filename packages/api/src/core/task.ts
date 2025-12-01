@@ -1,6 +1,5 @@
 import { isPlainObj } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
-import qs from 'qs'
 import { requestClient } from '../request'
 
 const BASE_URL = '/api/Task'
@@ -336,10 +335,13 @@ export function updateTask(where: any, attributes: any) {
 export function updateTaskInfo(taskId: string, newName: string, desc: string) {
   return requestClient.patch(
     `${BASE_URL}/updateInfo/${taskId}`,
-    qs.stringify({
-      newName,
-      desc,
-    }),
+    undefined,
+    {
+      params: {
+        newName,
+        desc,
+      },
+    },
   )
 }
 

@@ -921,6 +921,9 @@ export default {
   packages_dag_doubleActive: 'Bidirectional Synchronization',
   packages_dag_doubleActive_tip:
     'When bidirectional synchronization is required and the generated incremental events do not interfere with the system itself, please turn on this switch.',
+  packages_dag_dataSaving: 'Data Saving',
+  packages_dag_dataSaving_tip:
+    'When enabled, optimizes data transmission to reduce unnecessary bandwidth usage.',
   packages_dag_time_zone_offset: 'Time Zone Offset',
   packages_dag_dynamic_date_suffix: 'Dynamic Date Suffix',
   packages_dag_dynamic_date_suffix_tip:
