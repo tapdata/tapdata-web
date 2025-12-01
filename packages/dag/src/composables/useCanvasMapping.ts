@@ -24,6 +24,7 @@ export function useCanvasMapping(dag) {
         markerEnd: {
           type: 'arrow',
           strokeWidth: 2,
+          color: 'context-stroke',
         },
       }
     })

@@ -129,10 +129,24 @@ const iconPositions = computed(() => {
     },
   }
 })
+
+const stroke = computed(() => {
+  return 'var(--color-canvas-link-line-normal)'
+})
+
+console.log('markerEnd', props.markerEnd)
 </script>
 
 <template>
-  <BaseEdge :id="id" :style="style" :path="path[0]" :marker-end="markerEnd" />
+  <BaseEdge
+    :id="id"
+    :style="{
+      stroke,
+      strokeWidth: 2,
+    }"
+    :path="path[0]"
+    :marker-end="markerEnd"
+  />
   <EdgeLabelRenderer>
     <div
       v-show="hovered"
