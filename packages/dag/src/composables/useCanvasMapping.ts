@@ -6,7 +6,7 @@ export function useCanvasMapping(dag) {
       return {
         id: node.id,
         label: node.name,
-        type: 'canvas-node',
+        type: 'canvas',
         position: {
           x: node.attrs.position[0],
           y: node.attrs.position[1],
@@ -20,7 +20,7 @@ export function useCanvasMapping(dag) {
     return dag.value.edges.map((edge) => {
       return {
         ...edge,
-        type: '',
+        type: 'canvas',
         markerEnd: {
           type: 'arrow',
           strokeWidth: 2,

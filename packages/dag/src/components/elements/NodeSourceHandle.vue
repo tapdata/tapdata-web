@@ -1,9 +1,20 @@
 <script setup lang="ts">
-import { Handle, Position } from '@vue-flow/core'
+import { Handle, Position, useNodeConnections } from '@vue-flow/core'
+import { computed } from 'vue'
+
+const connections = useNodeConnections({
+  handleType: 'source',
+})
+
+const connected = computed(() => connections.value.length > 0)
 </script>
 
 <template>
-  <Handle type="source" :position="Position.Right">
+  <Handle
+    type="source"
+    :position="Position.Right"
+    :class="{ 'after:opacity-0': !connected }"
+  >
     <div
       class="position-absolute handle-tooltip -top-1 left-1/2 rounded-lg border-[0.5px] border-components-panel-border bg-card p-1.5 shadow-lg group-hover/handle:block"
     >
