@@ -211,7 +211,7 @@ export default {
       const result = {
         x: time,
         name: [i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi')],
-        value: timeCostAvg,
+        value: [timeCostAvg],
       }
       if (isSource) {
         result.name = [
@@ -231,6 +231,9 @@ export default {
         ]
         result.value = [timeCostAvg, targetWriteTimeCostAvg]
       }
+
+      result.value = result.value.map((t) => t.map((t) => t * 1000))
+
       return result
     },
 
