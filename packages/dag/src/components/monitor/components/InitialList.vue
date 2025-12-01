@@ -1,13 +1,14 @@
 <script>
 import { getFullStatistics } from '@tap/api/src/core/measurement'
-
 import { VTable } from '@tap/component/src/base/v-table'
+
+import { IconButton } from '@tap/component/src/icon-button'
 import i18n from '@tap/i18n'
 import { debounce } from 'lodash-es'
 
 export default {
   name: 'InitialList',
-  components: { VTable },
+  components: { VTable, IconButton },
   props: {
     dataflow: Object,
     value: {
@@ -165,33 +166,28 @@ export default {
     :modal-append-to-body="false"
     @close="$emit('update:value', false)"
   >
-    <template #header>
-      <div>
+    <template #header="{ titleClass }">
+      <div :class="titleClass" class="flex align-items-center gap-2">
         <span>{{
           $t('packages_dag_components_initiallist_quanliangxinxixiang')
         }}</span>
-        <ElTooltip
-          transition="tooltip-fade-in"
-          :content="$t('packages_dag_components_initiallist_dianjishuaxin')"
-          class="ml-2"
-        >
-          <VIcon
-            class="color-primary cursor-pointer"
-            size="12"
-            @click="startLoadData"
-            >icon_table_selector_load</VIcon
-          >
-        </ElTooltip>
-      </div>
-      <div class="mb-2">
+        <el-divider direction="vertical" />
         <ElInput
           v-model="tableName"
           :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
-          prefix-icon="el-icon-search"
           clearable
           style="width: 240px"
           @input="handleInput"
-        />
+        >
+          <template #prefix>
+            <i-lucide-search />
+          </template>
+        </ElInput>
+        <el-button class="rounded-lg" circle @click="startLoadData">
+          <template #icon>
+            <i-lucide-refresh-cw />
+          </template>
+        </el-button>
       </div>
     </template>
     <VTable
@@ -199,6 +195,7 @@ export default {
       :remote-method="remoteMethod"
       :columns="columns"
       height="100%"
+      table-class="has-border-t"
       class="table-list"
     >
       <template #progress="scope">
