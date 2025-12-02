@@ -5,7 +5,7 @@ import {
   getBezierPath,
   type Position,
 } from '@vue-flow/core'
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 defineOptions({
   inheritAttrs: false,
@@ -24,13 +24,15 @@ const props = defineProps<{
   hovered?: boolean
 }>()
 
+const emit = defineEmits(['update:label:hovered'])
+
 const curvature = 0.16
 
 const path = computed(() =>
   getBezierPath({
     sourceX: props.sourceX - 8,
     sourceY: props.sourceY,
-    targetX: props.targetX + 5,
+    targetX: props.targetX + 4,
     targetY: props.targetY,
     sourcePosition: props.sourcePosition,
     targetPosition: props.targetPosition,
@@ -134,7 +136,33 @@ const stroke = computed(() => {
   return 'var(--color-canvas-link-line-normal)'
 })
 
-console.log('markerEnd', props.markerEnd)
+const delayedHovered = ref(props.hovered)
+const delayedHoveredSetTimeoutRef = ref<NodeJS.Timeout | null>(null)
+const delayedHoveredTimeout = 50
+
+watch(
+  () => props.hovered,
+  (isHovered) => {
+    if (isHovered) {
+      if (delayedHoveredSetTimeoutRef.value) {
+        clearTimeout(delayedHoveredSetTimeoutRef.value)
+      }
+      delayedHovered.value = true
+    } else {
+      delayedHoveredSetTimeoutRef.value = setTimeout(() => {
+        delayedHovered.value = false
+      }, delayedHoveredTimeout)
+    }
+  },
+)
+
+function onEdgeLabelMouseEnter() {
+  emit('update:label:hovered', true)
+}
+
+function onEdgeLabelMouseLeave() {
+  emit('update:label:hovered', false)
+}
 </script>
 
 <template>
@@ -149,13 +177,15 @@ console.log('markerEnd', props.markerEnd)
   />
   <EdgeLabelRenderer>
     <div
-      v-show="hovered"
+      v-show="delayedHovered"
       :style="{
         pointerEvents: 'all',
         position: 'absolute',
         transform: `translate(-50%, -50%) translate(${iconPositions.add.x}px,${iconPositions.add.y}px)`,
       }"
       class="nodrag nopan"
+      @mouseenter="onEdgeLabelMouseEnter"
+      @mouseleave="onEdgeLabelMouseLeave"
     >
       <div
         class="bg-primary rounded-pill flex align-center justify-center w-4 h-4 align-items-center justify-center color-white z-10"
@@ -168,13 +198,15 @@ console.log('markerEnd', props.markerEnd)
   </EdgeLabelRenderer>
   <EdgeLabelRenderer>
     <div
-      v-show="hovered"
+      v-show="delayedHovered"
       :style="{
         pointerEvents: 'all',
         position: 'absolute',
         transform: `translate(-50%, -50%) translate(${iconPositions.close.x}px,${iconPositions.close.y}px)`,
       }"
       class="nodrag nopan"
+      @mouseenter="onEdgeLabelMouseEnter"
+      @mouseleave="onEdgeLabelMouseLeave"
     >
       <div
         class="bg-primary rounded-pill flex align-center justify-center w-4 h-4 align-items-center justify-center color-white z-10"

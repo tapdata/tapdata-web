@@ -55,6 +55,10 @@ watch(
     uiStore.zoom = val
   },
 )
+
+function onUpdateEdgeLabelHovered(id: string, hovered: boolean) {
+  edgesHoveredById.value[id] = hovered
+}
 </script>
 
 <template>
@@ -82,6 +86,7 @@ watch(
           :marker-end="edge.markerEnd"
           :style="edge.style"
           :hovered="edgesHoveredById[edge.id]"
+          @update:label:hovered="onUpdateEdgeLabelHovered(edge.id, $event)"
         />
       </template>
       <Background class="bg-dataflow-canvas" />
