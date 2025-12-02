@@ -438,7 +438,11 @@ export default {
       @start="$emit('debug-start')"
     />
 
-    <DataValidationDialog v-model="openValidation" :task-id="dataflow.id" />
+    <DataValidationDialog
+      v-model="openValidation"
+      :task-id="dataflow.id"
+      :sync-type="dataflow.syncType"
+    />
   </header>
 </template>
 

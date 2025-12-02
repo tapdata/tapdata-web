@@ -50,6 +50,11 @@ export interface TaskInspectConfig {
     }
   }
   mode: 'CLOSE' | 'INTELLIGENT' | 'CUSTOM'
+  tableFilter: {
+    type: 'NONE' | 'INCLUDES' | 'INCLUDE_REGEX' | 'EXCLUDES' | 'EXCLUDE_REGEX'
+    tables: string[]
+    regex: string
+  }
 }
 
 export async function getTaskInspectConfig(taskId: string) {
@@ -68,6 +73,11 @@ export async function getTaskInspectConfig(taskId: string) {
           sample: { interval: 1, limit: 10 },
           type: 'SAMPLE',
         },
+      },
+      tableFilter: {
+        type: 'NONE',
+        tables: [''],
+        regex: '',
       },
     }
   )
