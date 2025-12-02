@@ -39,7 +39,7 @@ const config = reactive<Partial<TaskInspectConfig>>({
   timeCheckMode: 'NORMAL',
   tableFilter: {
     type: 'NONE',
-    tables: [''],
+    tables: [],
     regex: '',
   },
 })
@@ -371,13 +371,13 @@ defineExpose({
                         <ul class="ml-4 list-disc flex flex-column gap-0.5">
                           <li class="list-disc">
                             <code class="font-mono rounded px-1 bg-white/15"
-                              >^user_</code
+                              >user_.*</code
                             >
                             - {{ $t('public_table_regex_example_1') }}
                           </li>
                           <li class="list-disc">
                             <code class="font-mono rounded bg-white/15 px-1"
-                              >_temp$</code
+                              >.*_temp</code
                             >
                             - {{ $t('public_table_regex_example_2') }}
                           </li>
