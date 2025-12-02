@@ -498,7 +498,7 @@ defineExpose({
 
     <template #footer>
       <ElButton @click="handleClose">{{ t('public_button_cancel') }}</ElButton>
-      <ElButton type="primary" @click="handleSave">{{
+      <ElButton type="primary" :loading="saving" @click="handleSave">{{
         t('public_button_save')
       }}</ElButton>
     </template>
