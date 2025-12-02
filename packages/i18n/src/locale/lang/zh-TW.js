@@ -608,7 +608,7 @@ export default {
   public_exclude_regex: '排除正則匹配',
   public_tables_included: '包含的表',
   public_tables_excluded: '排除的表',
-  public_table_regex_placeholder: '例如: ^user_ 匹配以 user_ 開頭的表',
+  public_table_regex_placeholder: '例如: user_.* 匹配以 user_ 開頭的表',
   public_table_regex_example_1: '匹配以 user_ 開頭的表',
   public_table_regex_example_2: '匹配以 _temp 結尾的表',
   public_table_regex_example_3: '匹配包含 test 或 demo 的表',

@@ -76,7 +76,7 @@ export async function getTaskInspectConfig(taskId: string) {
       },
       tableFilter: {
         type: 'NONE',
-        tables: [''],
+        tables: [],
         regex: '',
       },
     }
