@@ -409,6 +409,8 @@ export default {
   share_detail_statistics_time: '统计时间',
   share_detail_incremental_time: '所处的时间点',
   // 设置
+  setting_auto_incremental_batch_size: '是否自动调整增量读取批次数',
+  setting_auto_incremental_batch_size_doc: '开启后将根据实时增量延迟、增量日志读取事件数、内存占用等属性自动调整增量读取批次数',
   setting_email_template: '邮件模板',
   setting_saveSuccess: '保存成功，一分钟后生效',
   setting_nameserver: '服务器名称',
@@ -2060,4 +2062,10 @@ export default {
   api_monitor_memory: '内存',
   api_monitor_server_ping_warning: '服务器响应已 {val} 未更新',
   cluster_operation_success: '操作指令已发送，请稍后刷新查看结果',
+  cluster_launcher_offline: '启动器已离线',
+  cluster_delete_confirm: '确定删除该服务吗？',
+  cluster_update_license_success: 'License 更新成功',
+  license_expired_today: 'License 今日到期',
+  license_expired_days: 'License 已过期 {val} 天',
+  license_expire_days: 'License 还有 {val} 天到期',
 }

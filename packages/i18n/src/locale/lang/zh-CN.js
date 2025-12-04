@@ -54,6 +54,7 @@ export default {
   public_is_null: '为空',
   public_is_not_null: '不为空',
   public_field_value: '字段值',
+  public_cache: '缓存',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '无效',

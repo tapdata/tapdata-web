@@ -83,11 +83,13 @@ export default {
       async handler(n, o) {
         const oldNode = this.nodeById(o)
         const formSchema = this.$store.getters['dataflow/formSchema'] || {}
+        const activeKey = this.scope?.formTab?.activeKey
 
         // 重置TAB
         if (
-          this.ins?.group !== oldNode?.__Ctor.group &&
-          this.scope?.formTab?.activeKey !== 'previewTab'
+          (this.ins?.group !== oldNode?.__Ctor.group &&
+            activeKey !== 'previewTab') ||
+          activeKey === 'cacheTab'
         ) {
           this.scope?.formTab?.setActiveKey('tab1')
         }

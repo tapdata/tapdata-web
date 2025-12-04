@@ -140,3 +140,32 @@ export function updateClusterState(where: any, attributes: any) {
     attributes,
   )
 }
+
+export function commandNineBridge(serverId: string, command: string) {
+  return requestClient.post(
+    `${BASE_URL}/oracle-log-parser?serverId=${serverId}&command=${command}`,
+  )
+}
+
+export function deleteNieBridge(serverId: string) {
+  return requestClient.delete(`${BASE_URL}/oracle-log-parser?serverId=${serverId}`)
+}
+
+export function updateNieBridgeLicense(serverId: string, file: File) {
+  const formData = new FormData()
+  formData.append('file', file)
+
+  return requestClient.post(
+    `${BASE_URL}/oracle-log-parser/upgrade-sn?serverId=${serverId}`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    },
+  )
+}
+
+export function getNieBridgeLicense(serverId: string) {
+  return requestClient.get(`${BASE_URL}/oracle-log-parser/sn?serverId=${serverId}`)
+}
