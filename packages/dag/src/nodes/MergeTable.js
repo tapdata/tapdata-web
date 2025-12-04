@@ -340,6 +340,25 @@ export class MergeTable extends NodeType {
               },
             },
           },
+          cacheTab: {
+            type: 'void',
+            'x-index': 6,
+            'x-component': 'FormTab.TabPane',
+            'x-component-props': {
+              label: '数据缓存',
+            },
+            properties: {
+              cacheConfig: {
+                type: 'void',
+                'x-component': 'MergeTableCache',
+                'x-component-props': {
+                  value: '{{$values.mergeProperties}}',
+                  findNodeById: '{{findNodeById}}',
+                  '@center-node': '{{centerNode}}',
+                },
+              },
+            },
+          },
         },
       },
     },

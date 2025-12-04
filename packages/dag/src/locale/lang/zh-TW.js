@@ -1006,6 +1006,17 @@ export default {
   packages_dag_qpSshizhi3_tip:
     '查詢範圍大於等於24小時小於30天，取每小時的數據點計算平均和最大的QPS值',
   packages_dag_task_resource_usage: '任務資源占用',
+  packages_dag_cache_expired: '緩存已過期，需要重建緩存',
+  packages_dag_rebuild_cache: '重建緩存',
+  packages_dag_rebuild_cache_tips: '自動重建過期的緩存數據',
+  packages_dag_connection_address: '連接地址',
+  packages_dag_cache_pending: '待重建',
+  packages_dag_cache_running: '運行中',
+  packages_dag_cache_done: '完成',
+  packages_dag_cache_error: '失敗',
+  packages_dag_cache_count: '緩存行數',
+  packages_dag_cache_space: '占用空間',
+  packages_dag_cache_no_data: '暫無緩存數據',
   packages_dag_batch_read_size_chart_title: '批次讀取統計 (條/批)',
   packages_dag_batch_read_size: '每批讀取條數',
 }

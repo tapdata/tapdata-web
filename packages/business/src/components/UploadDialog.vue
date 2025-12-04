@@ -383,6 +383,18 @@ export default {
               {{ $t('packages_business_import_cancel_import_tip') }}
             </p>
           </el-radio>
+          <el-radio
+            value="reuse_existing"
+            border
+            class="h-auto px-3 py-2 rounded-xl bg-card w-100 m-0"
+          >
+            <div class="lh-5 mb-1">
+              {{ $t('packages_business_import_reuse_existing') }}
+            </div>
+            <p class="lh-sm font-color-sslight fs-8 text-wrap">
+              {{ $t('packages_business_import_reuse_existing_tip') }}
+            </p>
+          </el-radio>
         </el-radio-group>
       </ElFormItem>
       <template v-if="isRelmig && importForm.fileList.length">
