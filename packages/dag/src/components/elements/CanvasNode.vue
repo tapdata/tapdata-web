@@ -6,6 +6,7 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 import BaseNode from '../BaseNode.vue'
 import NodeSourceHandle from './NodeSourceHandle.vue'
 import NodeTargetHandle from './NodeTargetHandle.vue'
+import NodeToolbar from './NodeToolbar.vue'
 
 export default {
   name: 'DFNode',
@@ -14,6 +15,7 @@ export default {
     BaseNode,
     NodeSourceHandle,
     NodeTargetHandle,
+    NodeToolbar,
   },
   mixins: [deviceSupportHelpers],
   props: {
@@ -199,8 +201,9 @@ export default {
       >
     </BaseNode>
     <slot />
-    <NodeSourceHandle class="canvas-node-handle" />
-    <NodeTargetHandle class="canvas-node-handle" />
+    <NodeSourceHandle class="canvas-node-handle z-1" />
+    <NodeTargetHandle class="canvas-node-handle z-1" />
+    <NodeToolbar />
   </div>
 </template>
 
@@ -382,6 +385,10 @@ export default {
     .canvas-node-handle-icon {
       display: flex;
     }
+  }
+
+  &:hover :deep(.node-toolbar) {
+    display: flex;
   }
 }
 </style>

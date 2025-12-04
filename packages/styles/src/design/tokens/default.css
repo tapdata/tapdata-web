@@ -208,4 +208,6 @@
     --bg-light: #f8f9fa;
 
     --color-canvas-link-line-normal: #d0d5dc;
+    --color-canvas-link-line-active: #4552ff;
+    --color-canvas-link-btn: #0819ff;
   }

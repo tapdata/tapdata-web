@@ -125,6 +125,14 @@ const onCreateConnection = (connection) => {
   dataflowStore.addConnection(connection)
 }
 
+const onDeleteConnection = (connection) => {
+  dataflowStore.deleteConnection(connection)
+}
+
+const onClickConnectionAdd = (connection) => {
+  // dataflowStore.addConnection(connection)
+}
+
 onMounted(async () => {
   await initNodeType()
   await dataflowStore.fetchDataflow(route.params.id as string)
@@ -156,6 +164,8 @@ provide('dataflow', dataflow)
     <Canvas
       @update:nodes:position="onUpdateNodesPosition"
       @create:connection="onCreateConnection"
+      @delete:connection="onDeleteConnection"
+      @click:connection:add="onClickConnectionAdd"
     />
   </div>
 </template>

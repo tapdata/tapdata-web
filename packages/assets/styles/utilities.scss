@@ -12997,3 +12997,18 @@
 .after\:opacity-0:after {
   opacity: 0;
 }
+
+.hover\:scale-125:hover {
+  transform: scale(1.25);
+}
+
+.hover\:scale-150:hover {
+  transform: scale(1.5);
+}
+
+.transition-all {
+  transition-property: all;
+  transition-timing-function: 
+cubic-bezier(.4, 0, .2, 1);
+  transition-duration: .15s;
+}

@@ -15,6 +15,8 @@ import '@vue-flow/core/dist/theme-default.css'
 const emit = defineEmits<{
   'update:nodes:position': [events: any[]]
   'create:connection': [connection: any]
+  'delete:connection': [connection: any]
+  'click:connection:add': [connection: any]
 }>()
 
 const uiStore = useUiStore()
@@ -29,6 +31,16 @@ const {
   onNodeMouseEnter,
   onNodeMouseLeave,
 } = vueFlow
+
+const nodesHoveredById = ref<Record<string, boolean>>({})
+
+onNodeMouseEnter(({ node }) => {
+  nodesHoveredById.value = { [node.id]: true }
+})
+
+onNodeMouseLeave(({ node }) => {
+  nodesHoveredById.value = { [node.id]: false }
+})
 
 function onUpdateNodesPosition(events) {
   emit('update:nodes:position', events)
@@ -74,6 +86,14 @@ function onConnect(connection: Connection) {
   connectedHandle.value = connection
   connectionCreated.value = true
 }
+
+function onDeleteConnection(connection: Connection) {
+  emit('delete:connection', connection)
+}
+
+function onClickConnectionAdd(connection: Connection) {
+  emit('click:connection:add', connection)
+}
 </script>
 
 <template>
@@ -116,16 +136,14 @@ function onConnect(connection: Connection) {
       </template>
       <template #edge-canvas="edge">
         <CanvasEdge
-          :id="edge.id"
-          :source-x="edge.sourceX"
-          :source-y="edge.sourceY"
-          :target-x="edge.targetX"
-          :target-y="edge.targetY"
-          :source-position="edge.sourcePosition"
-          :target-position="edge.targetPosition"
-          :style="edge.style"
+          v-bind="edge"
           :hovered="edgesHoveredById[edge.id]"
+          :connected-node-is-hovering="
+            nodesHoveredById[edge.source] || nodesHoveredById[edge.target]
+          "
           @update:label:hovered="onUpdateEdgeLabelHovered(edge.id, $event)"
+          @add="onClickConnectionAdd"
+          @delete="onDeleteConnection"
         />
       </template>
       <template #connection-line="connectionLineProps">

@@ -176,6 +176,14 @@ export const useDataflowStore = defineStore('dataflow', () => {
     })
   }
 
+  function deleteConnection(connection) {
+    const index = dag.value.edges.findIndex(
+      (item) =>
+        item.source === connection.source && item.target === connection.target,
+    )
+    if (~index) dag.value.edges.splice(index, 1)
+  }
+
   return {
     dataflow,
     dag,
@@ -189,5 +197,6 @@ export const useDataflowStore = defineStore('dataflow', () => {
     getResourceInsByNode,
     setNodePositionById,
     addConnection,
+    deleteConnection,
   }
 })
