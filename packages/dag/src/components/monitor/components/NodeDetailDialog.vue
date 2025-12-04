@@ -1,15 +1,15 @@
 <script>
 import { batchMeasurements } from '@tap/api/src/core/measurement'
-
 import SharedMiningTable from '@tap/business/src/views/shared-mining/Table'
-import TimeSelect from '@tap/component/src/TimeSelect.vue'
+import { IconButton } from '@tap/component/src/icon-button'
 
+import TimeSelect from '@tap/component/src/TimeSelect.vue'
 import i18n from '@tap/i18n'
 import { calcTimeUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 import dayjs from 'dayjs'
-import { cloneDeep } from 'lodash-es'
 
+import { cloneDeep } from 'lodash-es'
 import { mapGetters } from 'vuex'
 import NodeIcon from '../../NodeIcon'
 import { getTimeGranularity, TIME_FORMAT_MAP } from '../util'
@@ -26,6 +26,7 @@ export default {
     TimeSelect,
     Frequency,
     SharedMiningTable,
+    IconButton,
   },
   props: {
     value: {
@@ -233,6 +234,60 @@ export default {
       }
 
       result.value = result.value.map((t) => t.map((t) => t * 1000))
+
+      return result
+    },
+
+    batchReadData() {
+      const data = this.quota.samples?.batchReadData?.[0]
+      if (!data) {
+        return {
+          x: [],
+          value: [],
+          markLine: [
+            {
+              data: [],
+            },
+          ],
+        }
+      }
+      const { time = [] } = this.quota
+      const result = {
+        x: time,
+        name: [i18n.t('packages_dag_batch_read_size')],
+        value: data.batchReadSize,
+      }
+      // 计算距离增量时间点，最近的时间点
+      const milestone = this.dataflow.attrs?.milestone || {}
+      const snapshotDoneAt = milestone.SNAPSHOT?.end
+      let markLineTime = 0
+      time.forEach((el) => {
+        if (
+          Math.abs(el - snapshotDoneAt) < 2000 &&
+          Math.abs(el - snapshotDoneAt) < Math.abs(el - markLineTime)
+        ) {
+          markLineTime = el
+        }
+      })
+
+      if (this.dataflow.type === 'initial_sync+cdc') {
+        result.markLine = [
+          {
+            symbol: 'none',
+            data: [
+              {
+                xAxis: String(markLineTime),
+                lineStyle: {
+                  color: '#000',
+                },
+                label: {
+                  show: false,
+                },
+              },
+            ],
+          },
+        ]
+      }
 
       return result
     },
@@ -507,6 +562,16 @@ export default {
           ],
           type: 'continuous', // 连续数据
         },
+        batchReadData: {
+          tags: {
+            type: 'node',
+            taskId,
+            taskRecordId,
+            nodeId,
+          },
+          fields: ['batchReadSize', 'intervalMs'],
+          type: 'continuous', // 连续数据
+        },
       }
       params.samples.data = samples[type]
       return params
@@ -530,6 +595,10 @@ export default {
           uri: '/api/measurement/query/v2',
           param: this.getFilter('lineChartData'),
         },
+        batchReadData: {
+          uri: '/api/measurement/query/v2',
+          param: this.getFilter('batchReadData'),
+        },
       }
       batchMeasurements(params)
         .then((data) => {
@@ -538,7 +607,12 @@ export default {
             time: [],
             interval: 5000,
           }
-          const arr = ['totalData', 'barChartData', 'lineChartData']
+          const arr = [
+            'totalData',
+            'barChartData',
+            'lineChartData',
+            'batchReadData',
+          ]
           arr.forEach((el) => {
             const item = data[el]
             if (item.code === 'ok') {
@@ -551,6 +625,7 @@ export default {
               }
             }
           })
+
           this.quota = quota
           const granularity = getTimeGranularity(this.quota.interval)
           this.timeFormat = TIME_FORMAT_MAP[granularity]
@@ -673,61 +748,45 @@ export default {
         transition="tooltip-fade-in"
         :content="$t('public_button_refresh')"
       >
-        <VIcon class="color-primary" @click="init">refresh</VIcon>
+        <IconButton class="color-primary" @click="init">refresh</IconButton>
       </ElTooltip>
     </div>
-    <div v-if="isLogCollector">
-      <div v-loading="loading" class="chart-box rounded-xl w-100">
+    <div class="flex flex-column gap-4">
+      <div
+        v-if="isSource || isTarget"
+        v-loading="loading"
+        class="chart-box rounded-xl flex flex-column"
+      >
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
-          {{ $t('packages_dag_components_nodedetaildialog_shijiantongji') }}
-        </div>
-        <div class="chart-box__content px-4 pb-2">
-          <EventChart :samples="[eventDataAll, eventDataPeriod]" />
-        </div>
-      </div>
-    </div>
-    <template v-else>
-      <div class="flex justify-content-between gap-6">
-        <div
-          v-loading="loading"
-          class="chart-box rounded-xl"
-          :class="{ 'w-100': chartBoxWidth100 }"
-        >
-          <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
-            {{ $t('packages_dag_components_nodedetaildialog_shijiantongji') }}
-          </div>
-          <div class="chart-box__content px-4 pb-2">
-            <EventChart :samples="[eventDataAll, eventDataPeriod]" />
-          </div>
+          {{ $t('packages_dag_components_nodedetaildialog_tongbuzhuangtai') }}
         </div>
         <div
-          v-if="isSource"
-          v-loading="loading"
-          class="chart-box rounded-xl flex flex-column"
+          class="chart-box__content p-4 pt-0 grid-auto-column gap-3 font-color-sslight lh-base"
         >
-          <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
-            {{ $t('packages_dag_components_nodedetaildialog_tongbuzhuangtai') }}
-          </div>
-          <div class="chart-box__content p-6 fs-8">
+          <template v-if="isSource">
             <template v-if="dataflow.type !== 'cdc'">
-              <div class="mb-4 flex justify-content-between">
+              <div class="flex flex-column gap-1">
                 <span>{{
                   $t(
                     'packages_dag_components_nodedetaildialog_quanliangkaishishi',
                   )
                 }}</span>
-                <span>{{ initialData.snapshotStartAt || '-' }}</span>
+                <span class="font-color-dark">{{
+                  initialData.snapshotStartAt || '-'
+                }}</span>
               </div>
               <div
                 v-if="initialData.snapshotDoneAt"
-                class="mb-4 flex justify-content-between"
+                class="flex flex-column gap-1"
               >
                 <span>{{
                   $t('packages_dag_monitor_leftsider_quanliangwanchengshi')
                 }}</span>
-                <span>{{ initialData.snapshotDoneAt }}</span>
+                <span class="font-color-dark">{{
+                  initialData.snapshotDoneAt
+                }}</span>
               </div>
-              <div v-else class="mb-4 flex justify-content-between">
+              <div v-else class="flex flex-column gap-1">
                 <span>{{
                   $t('packages_dag_monitor_leftsider_yujiquanliangwan')
                 }}</span>
@@ -738,19 +797,20 @@ export default {
                   <span>{{ calcTimeUnit(initialData.finishDuration) }}</span>
                 </ElTooltip>
               </div>
-              <div class="mb-4 flex align-items-center">
+              <div class="flex flex-column gap-1">
                 <span class="mr-2">{{
                   $t('public_task_full_sync_progress')
                 }}</span>
-                <ElProgress
-                  class="flex-1 my-2"
-                  :show-text="false"
-                  style="width: 150px"
-                  :percentage="totalDataPercentage"
-                />
-                <span class="ml-2">{{
-                  `${totalData.snapshotTableTotal}/${totalData.tableTotal}`
-                }}</span>
+                <div class="flex align-center px-1">
+                  <ElProgress
+                    class="flex-1"
+                    :show-text="false"
+                    :percentage="totalDataPercentage"
+                  />
+                  <span class="ml-2">{{
+                    `${totalData.snapshotTableTotal}/${totalData.tableTotal}`
+                  }}</span>
+                </div>
               </div>
               <div
                 v-if="
@@ -758,25 +818,48 @@ export default {
                   totalData.currentSnapshotTableRowTotal &&
                   !ifEnableConcurrentRead
                 "
-                class="mb-4 flex align-items-center"
+                class="flex flex-column gap-1"
               >
                 <span class="mr-2">{{
                   $t(
                     'packages_dag_components_nodedetaildialog_dangqianbiaotongbu',
                   )
                 }}</span>
-                <ElProgress
-                  class="flex-1 my-2"
-                  :show-text="false"
-                  :percentage="currentTotalDataPercentage"
-                />
-                <span class="ml-2">{{
-                  `${totalData.currentSnapshotTableInsertRowTotal || 0}/${
-                    totalData.currentSnapshotTableRowTotal || 0
-                  }`
+                <div class="flex align-center px-1">
+                  <ElProgress
+                    class="flex-1"
+                    :show-text="false"
+                    :percentage="currentTotalDataPercentage"
+                  />
+                  <span class="ml-2">{{
+                    `${totalData.currentSnapshotTableInsertRowTotal || 0}/${
+                      totalData.currentSnapshotTableRowTotal || 0
+                    }`
+                  }}</span>
+                </div>
+              </div>
+            </template>
+            <template v-if="dataflow.type !== 'initial_sync'">
+              <div
+                v-if="targetData.currentEventTimestamp"
+                class="flex flex-column gap-1"
+              >
+                <span>{{
+                  $t(
+                    'packages_dag_components_nodedetaildialog_zengliangshijiandian2',
+                  )
+                }}</span>
+                <span class="font-color-dark">{{
+                  formatTime(
+                    targetData.currentEventTimestamp,
+                    'YYYY-MM-DD HH:mm:ss.SSS',
+                  )
                 }}</span>
               </div>
             </template>
+          </template>
+
+          <template v-if="isTarget">
             <template v-if="dataflow.type !== 'initial_sync'">
               <div
                 v-if="targetData.currentEventTimestamp"
@@ -795,164 +878,174 @@ export default {
                 }}</span>
               </div>
             </template>
-          </div>
+          </template>
         </div>
-        <div
-          v-else-if="isTarget"
-          v-loading="loading"
-          :class="{ 'w-100': !isSource && !isTarget }"
-          class="chart-box rounded-xl flex flex-column"
-        >
+      </div>
+      <div v-if="isLogCollector">
+        <div v-loading="loading" class="chart-box rounded-xl w-100">
           <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
-            {{ $t('packages_dag_components_nodedetaildialog_tongbuzhuangtai') }}
+            {{ $t('packages_dag_components_nodedetaildialog_shijiantongji') }}
           </div>
-          <div
-            class="chart-box__content p-6 fs-8 flex flex-column align-items-center flex-fill justify-content-center"
-          >
-            <template v-if="dataflow.type !== 'initial_sync'">
-              <div
-                v-if="targetData.currentEventTimestamp"
-                class="mb-4 flex justify-content-between"
-              >
-                <span>{{
-                  $t(
-                    'packages_dag_components_nodedetaildialog_zengliangshijiandian2',
-                  )
-                }}</span>
-                <span>{{
-                  formatTime(
-                    targetData.currentEventTimestamp,
-                    'YYYY-MM-DD HH:mm:ss.SSS',
-                  )
-                }}</span>
-              </div>
-            </template>
+          <div class="chart-box__content px-4 pb-2">
+            <EventChart :samples="[eventDataAll, eventDataPeriod]" />
           </div>
         </div>
       </div>
-      <div class="my-4">
-        {{ $t('packages_dag_components_nodedetaildialog_xingnengzhibiao') }}
-      </div>
-      <div class="flex justify-content-between gap-6">
-        <div v-loading="loading" class="chart-box rounded-xl">
+      <template v-else>
+        <div class="flex justify-content-between gap-4">
           <div
-            class="flex justify-content-between align-items-center chart-box__title px-4"
+            v-loading="loading"
+            class="chart-box rounded-xl"
+            :class="{ 'w-100': chartBoxWidth100 }"
           >
-            <div class="fw-bold font-color-normal flex align-items-center">
-              <span class="mr-2">QPS</span>
+            <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
+              {{ $t('packages_dag_components_nodedetaildialog_shijiantongji') }}
+            </div>
+            <div class="chart-box__content px-4 pb-2">
+              <EventChart :samples="[eventDataAll, eventDataPeriod]" />
+            </div>
+          </div>
+          <div v-loading="loading" class="chart-box rounded-xl">
+            <div
+              class="flex justify-content-between align-items-center chart-box__title px-4"
+            >
+              <div class="fw-bold font-color-normal flex align-items-center">
+                <span class="mr-2">{{
+                  $t('packages_dag_batch_read_size_chart_title')
+                }}</span>
+              </div>
+            </div>
+            <div class="chart-box__content p-4">
+              <LineChart
+                :data="batchReadData"
+                :color="['#2C65FF']"
+                :time-format="timeFormat"
+                label-unit-type=""
+              />
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-content-between gap-4">
+          <div v-loading="loading" class="chart-box rounded-xl">
+            <div
+              class="flex justify-content-between align-items-center chart-box__title px-4"
+            >
+              <div class="fw-bold font-color-normal flex align-items-center">
+                <span class="mr-2">QPS</span>
+                <ElTooltip
+                  transition="tooltip-fade-in"
+                  placement="top"
+                  :content="
+                    qpsChartsType === 'count'
+                      ? $t(
+                          'packages_dag_components_nodedetaildialog_dangqianjiedianping',
+                        )
+                      : $t('packages_dag_monitor_leftsider_qpSshizhi2')
+                  "
+                >
+                  <VIcon class="color-primary">info</VIcon>
+                </ElTooltip>
+              </div>
+              <ElRadioGroup
+                v-model="qpsChartsType"
+                class="chart__radio"
+                size="small"
+              >
+                <ElRadioButton label="count">count</ElRadioButton>
+                <ElRadioButton label="size">size</ElRadioButton>
+              </ElRadioGroup>
+            </div>
+            <div class="chart-box__content p-4">
+              <LineChart
+                ref="qpsLineChart"
+                :data="qpsMap[qpsChartsType]"
+                :color="['#26CF6C', '#2C65FF']"
+                :time-format="timeFormat"
+                :label-unit-type="qpsChartsType === 'size' ? 'byte' : ''"
+                auto-scale
+              />
+            </div>
+          </div>
+          <div v-loading="loading" class="chart-box rounded-xl">
+            <div
+              class="chart-box__title py-2 px-4 fw-bold font-color-normal flex align-items-center"
+            >
+              <span class="mr-2">{{ delayLineTitle }}</span>
               <ElTooltip
                 transition="tooltip-fade-in"
                 placement="top"
-                :content="
-                  qpsChartsType === 'count'
-                    ? $t(
-                        'packages_dag_components_nodedetaildialog_dangqianjiedianping',
-                      )
-                    : $t('packages_dag_monitor_leftsider_qpSshizhi2')
-                "
+                class="inline-flex align-items-center"
               >
                 <VIcon class="color-primary">info</VIcon>
+                <template v-if="isSource" #content>
+                  <div>
+                    <div>
+                      {{
+                        $t(
+                          'packages_dag_components_nodedetaildialog_chulihaoshiyuan',
+                        )
+                      }}
+                    </div>
+                    <div>
+                      {{
+                        $t(
+                          'packages_dag_components_nodedetaildialog_pingjunduquhao2',
+                        )
+                      }}
+                    </div>
+                    <div>
+                      {{
+                        $t(
+                          'packages_dag_components_nodedetaildialog_zengliangduquyan2',
+                        )
+                      }}
+                    </div>
+                  </div>
+                </template>
+                <template v-else-if="isTarget" #content>
+                  <div>
+                    <div>
+                      {{
+                        $t(
+                          'packages_dag_components_nodedetaildialog_chulihaoshidang',
+                        )
+                      }}
+                    </div>
+                    <div>
+                      {{
+                        $t(
+                          'packages_dag_components_nodedetaildialog_xieruhaoshidang',
+                        )
+                      }}
+                    </div>
+                  </div>
+                </template>
+                <template v-else #content>
+                  <div>
+                    <div>
+                      {{
+                        $t(
+                          'packages_dag_components_nodedetaildialog_dangqianjiedianchu',
+                        )
+                      }}
+                    </div>
+                  </div>
+                </template>
               </ElTooltip>
             </div>
-            <ElRadioGroup
-              v-model="qpsChartsType"
-              class="chart__radio"
-              size="small"
-            >
-              <ElRadioButton label="count">count</ElRadioButton>
-              <ElRadioButton label="size">size</ElRadioButton>
-            </ElRadioGroup>
-          </div>
-          <div class="chart-box__content p-4">
-            <LineChart
-              ref="qpsLineChart"
-              :data="qpsMap[qpsChartsType]"
-              :color="['#26CF6C', '#2C65FF']"
-              :time-format="timeFormat"
-              :label-unit-type="qpsChartsType === 'size' ? 'byte' : ''"
-              auto-scale
-            />
+            <div class="chart-box__content p-4">
+              <LineChart
+                ref="delayLineChart"
+                :data="delayData"
+                :time-format="timeFormat"
+                :color="['#2C65FF']"
+                time-value
+              />
+            </div>
           </div>
         </div>
-        <div v-loading="loading" class="chart-box rounded-xl">
-          <div
-            class="chart-box__title py-2 px-4 fw-bold font-color-normal flex align-items-center"
-          >
-            <span class="mr-2">{{ delayLineTitle }}</span>
-            <ElTooltip
-              transition="tooltip-fade-in"
-              placement="top"
-              class="inline-flex align-items-center"
-            >
-              <VIcon class="color-primary">info</VIcon>
-              <template v-if="isSource" #content>
-                <div>
-                  <div>
-                    {{
-                      $t(
-                        'packages_dag_components_nodedetaildialog_chulihaoshiyuan',
-                      )
-                    }}
-                  </div>
-                  <div>
-                    {{
-                      $t(
-                        'packages_dag_components_nodedetaildialog_pingjunduquhao2',
-                      )
-                    }}
-                  </div>
-                  <div>
-                    {{
-                      $t(
-                        'packages_dag_components_nodedetaildialog_zengliangduquyan2',
-                      )
-                    }}
-                  </div>
-                </div>
-              </template>
-              <template v-else-if="isTarget" #content>
-                <div>
-                  <div>
-                    {{
-                      $t(
-                        'packages_dag_components_nodedetaildialog_chulihaoshidang',
-                      )
-                    }}
-                  </div>
-                  <div>
-                    {{
-                      $t(
-                        'packages_dag_components_nodedetaildialog_xieruhaoshidang',
-                      )
-                    }}
-                  </div>
-                </div>
-              </template>
-              <template v-else #content>
-                <div>
-                  <div>
-                    {{
-                      $t(
-                        'packages_dag_components_nodedetaildialog_dangqianjiedianchu',
-                      )
-                    }}
-                  </div>
-                </div>
-              </template>
-            </ElTooltip>
-          </div>
-          <div class="chart-box__content p-4">
-            <LineChart
-              ref="delayLineChart"
-              :data="delayData"
-              :time-format="timeFormat"
-              :color="['#2C65FF']"
-              time-value
-            />
-          </div>
-        </div>
-      </div>
-    </template>
+      </template>
+    </div>
   </ElDialog>
 </template>
 
@@ -965,9 +1058,9 @@ export default {
 
 .chart-box {
   flex: 1;
-  height: 286px;
   border: 1px solid var(--el-border-color);
   position: relative;
+  overflow: hidden;
   &.disabled {
     border: none;
   }
@@ -1026,5 +1119,12 @@ export default {
 }
 .shared-mining-table {
   height: 350px;
+}
+
+.grid-auto-column {
+  display: grid;
+  // grid-auto-columns: 1fr;
+  // grid-auto-flow: column;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
 }
 </style>

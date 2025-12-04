@@ -1033,4 +1033,6 @@ export default {
   packages_dag_cache_count: '缓存行数',
   packages_dag_cache_space: '占用空间',
   packages_dag_cache_no_data: '暂无缓存数据',
+  packages_dag_batch_read_size_chart_title: '读取批次统计 (条/批)',
+  packages_dag_batch_read_size: '每批读取条数',
 }
