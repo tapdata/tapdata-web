@@ -1169,4 +1169,15 @@ export default {
   packages_dag_qpSshizhi3_tip:
     '24h ≤ Query < 30d: avg & max QPS from 1h data points',
   packages_dag_task_resource_usage: 'Task Resource Usage',
+  packages_dag_cache_expired: 'Cache Expired, Need to Rebuild',
+  packages_dag_rebuild_cache: 'Rebuild Cache',
+  packages_dag_rebuild_cache_tips: 'Auto Rebuild Expired Cache',
+  packages_dag_connection_address: 'Connection Address',
+  packages_dag_cache_pending: 'Pending',
+  packages_dag_cache_running: 'Running',
+  packages_dag_cache_done: 'Done',
+  packages_dag_cache_error: 'Error',
+  packages_dag_cache_count: 'Cache Count',
+  packages_dag_cache_space: 'Cache Space',
+  packages_dag_cache_no_data: 'No Cache Data',
 }
