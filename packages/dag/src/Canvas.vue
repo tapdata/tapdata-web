@@ -2,6 +2,7 @@
 import { Background } from '@vue-flow/background'
 import { useVueFlow, VueFlow } from '@vue-flow/core'
 import { inject, ref, watch } from 'vue'
+import CanvasConnectionLine from './components/elements/CanvasConnectionLine.vue'
 import CanvasEdge from './components/elements/CanvasEdge.vue'
 import Node from './components/elements/CanvasNode.vue'
 import NodesPanel from './components/NodesPanel.vue'
@@ -11,7 +12,10 @@ import { useUiStore } from './stores/ui.store'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
 
-const emit = defineEmits(['update:nodes:position'])
+const emit = defineEmits<{
+  'update:nodes:position': [events: any[]]
+  'create:connection': [connection: any]
+}>()
 
 const uiStore = useUiStore()
 const dag = inject('dag')
@@ -59,17 +63,53 @@ watch(
 function onUpdateEdgeLabelHovered(id: string, hovered: boolean) {
   edgesHoveredById.value[id] = hovered
 }
+
+const connectionCreated = ref(false)
+const connectingHandle = ref<ConnectStartEvent>()
+const connectedHandle = ref<Connection>()
+
+function onConnect(connection: Connection) {
+  emit('create:connection', connection)
+
+  connectedHandle.value = connection
+  connectionCreated.value = true
+}
 </script>
 
 <template>
   <div id="node-canvas" class="position-relative w-100 h-100">
     <NodesPanel />
 
+    <svg style="position: absolute; left: -1000px; top: 0">
+      <defs>
+        <marker
+          id="marker-arrow"
+          viewBox="-10 -10 20 20"
+          refX="0"
+          refY="0"
+          markerWidth="12.5"
+          markerHeight="12.5"
+          markerUnits="strokeWidth"
+          orient="auto-start-reverse"
+        >
+          <polyline
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            fill="none"
+            points="-5,-4 0,0 -5,4"
+            style="stroke: context-stroke; stroke-width: 2"
+          />
+        </marker>
+      </defs>
+    </svg>
+
     <VueFlow
       data-id="flow-container"
       :nodes="nodes"
       :edges="edges"
+      :connection-radius="30"
       @node-drag-stop="onNodeDragStop"
+      @connect="onConnect"
     >
       <template #node-canvas="nodeProps">
         <Node :data="nodeProps.data" />
@@ -83,11 +123,13 @@ function onUpdateEdgeLabelHovered(id: string, hovered: boolean) {
           :target-y="edge.targetY"
           :source-position="edge.sourcePosition"
           :target-position="edge.targetPosition"
-          :marker-end="edge.markerEnd"
           :style="edge.style"
           :hovered="edgesHoveredById[edge.id]"
           @update:label:hovered="onUpdateEdgeLabelHovered(edge.id, $event)"
         />
+      </template>
+      <template #connection-line="connectionLineProps">
+        <CanvasConnectionLine v-bind="connectionLineProps" />
       </template>
       <Background class="bg-dataflow-canvas" />
     </VueFlow>

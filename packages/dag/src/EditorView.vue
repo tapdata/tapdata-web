@@ -121,6 +121,10 @@ const onUpdateNodesPosition = (events) => {
   })
 }
 
+const onCreateConnection = (connection) => {
+  dataflowStore.addConnection(connection)
+}
+
 onMounted(async () => {
   await initNodeType()
   await dataflowStore.fetchDataflow(route.params.id as string)
@@ -149,7 +153,10 @@ provide('dataflow', dataflow)
       <div class="flex-1" />
       <TaskOperations />
     </div>
-    <Canvas @update:nodes:position="onUpdateNodesPosition" />
+    <Canvas
+      @update:nodes:position="onUpdateNodesPosition"
+      @create:connection="onCreateConnection"
+    />
   </div>
 </template>
 

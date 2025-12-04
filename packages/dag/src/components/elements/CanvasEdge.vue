@@ -19,7 +19,6 @@ const props = defineProps<{
   targetY: number
   sourcePosition: Position
   targetPosition: Position
-  markerEnd?: string
   style?: object
   hovered?: boolean
 }>()
@@ -30,12 +29,9 @@ const curvature = 0.16
 
 const path = computed(() =>
   getBezierPath({
+    ...props,
     sourceX: props.sourceX - 8,
-    sourceY: props.sourceY,
     targetX: props.targetX + 4,
-    targetY: props.targetY,
-    sourcePosition: props.sourcePosition,
-    targetPosition: props.targetPosition,
     curvature,
   }),
 )
@@ -137,7 +133,7 @@ const stroke = computed(() => {
 })
 
 const delayedHovered = ref(props.hovered)
-const delayedHoveredSetTimeoutRef = ref<NodeJS.Timeout | null>(null)
+const delayedHoveredSetTimeoutRef = ref<number | null>(null)
 const delayedHoveredTimeout = 50
 
 watch(
@@ -173,7 +169,7 @@ function onEdgeLabelMouseLeave() {
       strokeWidth: 2,
     }"
     :path="path[0]"
-    :marker-end="markerEnd"
+    marker-end="url(#marker-arrow)"
   />
   <EdgeLabelRenderer>
     <div

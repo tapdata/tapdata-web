@@ -21,11 +21,7 @@ export function useCanvasMapping(dag) {
       return {
         ...edge,
         type: 'canvas',
-        markerEnd: {
-          type: 'arrow',
-          strokeWidth: 2,
-          color: 'context-stroke',
-        },
+        id: `${edge.source}_${edge.target}`,
       }
     })
   })

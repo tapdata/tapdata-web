@@ -16,6 +16,7 @@ const connected = computed(() => connections.value.length > 0)
     :class="{ 'after:opacity-0': !connected }"
   >
     <div
+      v-if="!connected"
       class="bg-primary rounded-pill align-center justify-center canvas-node-handle-icon position-absolute w-100 h-100 left-0 top-0 align-items-center justify-center color-white z-10"
     >
       <el-icon size="10" class="">

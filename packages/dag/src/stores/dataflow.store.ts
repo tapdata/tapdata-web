@@ -169,6 +169,13 @@ export const useDataflowStore = defineStore('dataflow', () => {
     findNodeById(id).attrs.position = [position.x, position.y]
   }
 
+  function addConnection(connection) {
+    dag.value.edges.push({
+      source: connection.source,
+      target: connection.target,
+    })
+  }
+
   return {
     dataflow,
     dag,
@@ -181,5 +188,6 @@ export const useDataflowStore = defineStore('dataflow', () => {
     loadCustomNode,
     getResourceInsByNode,
     setNodePositionById,
+    addConnection,
   }
 })
