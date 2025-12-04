@@ -447,8 +447,9 @@
     width: 24px !important;
     height: 24px !important;
     line-height: 1;
-    font-size: 16px !important;
+    // font-size: 16px !important;
     border-radius: 6px;
+    margin-left: 8px;
     &:hover {
       color: var(--icon-n1);
       background-color: var(--icon-n1-hover);
@@ -662,9 +663,11 @@
 
     &.el-button--text,
     &.el-button--primary {
+      --el-fill-color-light: rgba(var(--primary-raw), 0.1);
+      --el-fill-color: rgba(var(--primary-raw), 0.2);
       --el-button-text-color: var(--el-color-primary);
-      --el-fill-color-light: var(--el-color-primary-light-9);
-      --el-fill-color: var(--el-color-primary-light-8);
+      // --el-fill-color-light: var(--el-color-primary-light-9);
+      // --el-fill-color: var(--el-color-primary-light-8);
     }
 
     &.el-button--danger {

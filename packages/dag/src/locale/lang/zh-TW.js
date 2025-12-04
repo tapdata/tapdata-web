@@ -780,6 +780,8 @@ export default {
   packages_dag_doubleActive: '雙向同步',
   packages_dag_doubleActive_tip:
     '當需要進行雙向同步，且產生的增量事件不會對自身產生干擾時，請啓用此開關。',
+  packages_dag_dataSaving: '數據儲存',
+  packages_dag_dataSaving_tip: '開啓後將優化數據傳輸，減少不必要的流量開銷。',
   packages_dag_time_zone_offset: '時區偏移量',
   packages_dag_dynamic_date_suffix: '動態日期後綴',
   packages_dag_dynamic_date_suffix_tip:
@@ -1004,4 +1006,15 @@ export default {
   packages_dag_qpSshizhi3_tip:
     '查詢範圍大於等於24小時小於30天，取每小時的數據點計算平均和最大的QPS值',
   packages_dag_task_resource_usage: '任務資源占用',
+  packages_dag_cache_expired: '緩存已過期，需要重建緩存',
+  packages_dag_rebuild_cache: '重建緩存',
+  packages_dag_rebuild_cache_tips: '自動重建過期的緩存數據',
+  packages_dag_connection_address: '連接地址',
+  packages_dag_cache_pending: '待重建',
+  packages_dag_cache_running: '運行中',
+  packages_dag_cache_done: '完成',
+  packages_dag_cache_error: '失敗',
+  packages_dag_cache_count: '緩存行數',
+  packages_dag_cache_space: '占用空間',
+  packages_dag_cache_no_data: '暫無緩存數據',
 }

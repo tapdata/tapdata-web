@@ -4,6 +4,7 @@ import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
 import { fetchSharedCache } from '@tap/api/src/core/shared-cache'
 import {
   batchStartTasks,
+  fetchMergeTaskCache,
   fetchTasks,
   forceStopTask,
   getNodeTableInfo,
@@ -453,16 +454,26 @@ export default {
         fields: { name: 1 },
         where: { name: { like: `^${source}\\d+$` } },
       })
-      let def = 1
-      if (taskNames?.items.length) {
-        const arr = [0]
-        taskNames.items.forEach((item) => {
-          const res = item.name.match(new RegExp(`^${source}(\\d+)$`))
-          if (res && res[1]) arr.push(+res[1])
-        })
-        arr.sort((a, b) => a - b)
-        def = arr.pop() + 1
+
+      if (!taskNames?.items.length) {
+        return `${source}1`
       }
+
+      // 提取所有已存在的数字
+      const existingNumbers = new Set()
+      taskNames.items.forEach((item) => {
+        const res = item.name.match(new RegExp(`^${source}(\\d+)$`))
+        if (res && res[1]) {
+          existingNumbers.add(Number.parseInt(res[1]))
+        }
+      })
+
+      // 找到第一个不存在的数字
+      let def = 1
+      while (existingNumbers.has(def)) {
+        def++
+      }
+
       return `${source}${def}`
     },
 
@@ -1812,8 +1823,8 @@ export default {
       if (nodes.length > 1) return i18n.t('packages_dag_migrate_union_multiple')
     },
 
-    validateMergeTableProcessor() {
-      if (this.dataflow.syncType === 'migrate') return
+    async validateMergeTableProcessor() {
+      if (this.dataflow.syncType !== 'sync') return
 
       const nodes = this.allNodes.filter(
         (node) => node.type === 'merge_table_processor',
@@ -1886,6 +1897,34 @@ export default {
           return i18n.t('packages_dag_merge_table_table_not_allow_target', {
             val: targetNode.databaseType,
           })
+        }
+
+        if (this.mergeTableCacheValidated) continue
+
+        try {
+          // check cache
+          const cache = await fetchMergeTaskCache(
+            this.dataflow.id,
+            node.id,
+            true,
+          )
+          const needRebuild = cache.some((item) => item.needRebuild)
+
+          if (needRebuild) {
+            this.setNodeErrorMsg({
+              id: node.id,
+              msg: i18n.t('packages_dag_cache_expired'),
+            })
+            this.setActiveNode(node.id)
+            this.$nextTick(() => {
+              this.scope?.formTab?.setActiveKey('cacheTab')
+            })
+            // 标记验证过一次
+            this.mergeTableCacheValidated = true
+            return i18n.t('packages_dag_cache_expired')
+          }
+        } catch (error) {
+          console.error(error)
         }
       }
     },

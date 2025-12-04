@@ -326,8 +326,6 @@ const form = createForm({
   values,
 })
 
-console.log('form', form)
-
 // Methods
 const lazySaveAlarmConfig = debounce(saveAlarmConfig, 100)
 const lazySavePermissionsConfig = debounce(savePermissionsConfig, 300)
@@ -1089,6 +1087,16 @@ const schema = {
                           'x-decorator': 'FormItem',
                           'x-decorator-props': {
                             tooltip: t('packages_dag_doubleActive_tip'),
+                          },
+                          'x-component': 'Switch',
+                        },
+                        dataSaving: {
+                          title: t('packages_dag_dataSaving'), // 数据保存
+                          type: 'boolean',
+                          default: true,
+                          'x-decorator': 'FormItem',
+                          'x-decorator-props': {
+                            tooltip: t('packages_dag_dataSaving_tip'),
                           },
                           'x-component': 'Switch',
                         },

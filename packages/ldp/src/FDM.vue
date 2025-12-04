@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import {
   createMetadataDefinition,
   deleteMetadataDefinition,
@@ -277,27 +277,22 @@ function renderContent(h: any, { node, data }: { node: any; data: any }) {
     }
     actions.push(
       h(
-        'ElDropdown',
+        ElDropdown,
         {
           placement: 'bottom',
           trigger: 'click',
           onCommand: (command: string) => handleMoreCommand(command, data),
         },
         {
-          default: () =>
-            h(
-              IconButton,
-              { sm: true, class: 'ml-2' },
-              { default: () => 'more' },
-            ),
+          default: () => h(IconButton, { sm: true }, { default: () => 'more' }),
           dropdown: () =>
             h(
-              'ElDropdownMenu',
+              ElDropdownMenu,
               {},
               {
                 default: () =>
                   h(
-                    'ElDropdownItem',
+                    ElDropdownItem,
                     { command: 'edit' },
                     { default: () => t('public_button_edit') },
                   ),
@@ -314,8 +309,14 @@ function renderContent(h: any, { node, data }: { node: any; data: any }) {
     'div',
     {
       class: className,
+      style: '--btn-space: 8px;',
       onClick: () => {
-        data.isObject && emit('preview', data, props.fdmConnection)
+        data.isObject &&
+          emit(
+            'preview',
+            { ...data, id: data.id.split('_')[0] },
+            props.fdmConnection,
+          )
       },
       onDrop: handleTreeNodeDrop,
     },
@@ -818,12 +819,14 @@ function loadObjects(
   }).then((res: any) => {
     return res.items.map((item: any) =>
       Object.assign(item, {
+        id: `${item.id}_${node.id}`,
         isLeaf: true,
         isObject: true,
         connectionId: item.sourceConId,
         LDP_TYPE: 'table',
         parent_id: node.id,
         isVirtual: item.status === 'noRunning',
+        listtags: [item.listtags[0]],
       }),
     )
   })

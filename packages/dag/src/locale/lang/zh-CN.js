@@ -790,6 +790,8 @@ export default {
   packages_dag_doubleActive: '双向同步',
   packages_dag_doubleActive_tip:
     '当需要进行双向同步，且产生的增量事件不会对自身产生干扰时，请启用此开关。',
+  packages_dag_dataSaving: '数据节省',
+  packages_dag_dataSaving_tip: '启用后将优化数据传输，减少不必要的流量开销。',
   packages_dag_time_zone_offset: '时区偏移量',
   packages_dag_dynamic_date_suffix: '动态日期后缀',
   packages_dag_dynamic_date_suffix_tip:
@@ -1020,4 +1022,15 @@ export default {
   packages_dag_qpSshizhi3_tip:
     '查询范围大于等于24小时小于30天，取每小时的数据点计算平均和最大的QPS值',
   packages_dag_task_resource_usage: '任务资源占用',
+  packages_dag_cache_expired: '缓存已过期，需要重建缓存',
+  packages_dag_rebuild_cache: '重建缓存',
+  packages_dag_rebuild_cache_tips: '自动重建过期的缓存数据',
+  packages_dag_connection_address: '连接地址',
+  packages_dag_cache_pending: '待重建',
+  packages_dag_cache_running: '运行中',
+  packages_dag_cache_done: '完成',
+  packages_dag_cache_error: '失败',
+  packages_dag_cache_count: '缓存行数',
+  packages_dag_cache_space: '占用空间',
+  packages_dag_cache_no_data: '暂无缓存数据',
 }

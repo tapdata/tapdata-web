@@ -246,17 +246,17 @@ export default {
   methods: {
     async init() {
       let connectionList = await this.getData()
-      let appList = []
+      this.appList = []
 
       connectionList = connectionList.filter(
         (item) => !this.fdmAndMdmId.includes(item.id),
       )
 
       if (this.isDaas) {
-        appList = await this.getApiAppList()
-        Promise.all(appList.map(({ id }) => this.loadApiModule(id))).then(
+        this.appList = await this.getApiAppList()
+        Promise.all(this.appList.map(({ id }) => this.loadApiModule(id))).then(
           (list) => {
-            appList.forEach((app, i) => {
+            this.appList.forEach((app, i) => {
               app.modules = list[i]
             })
           },
@@ -264,8 +264,7 @@ export default {
       }
 
       this.connectionIds = connectionList.map((item) => item.id)
-      this.appList = appList
-      this.list = appList
+      this.list = this.appList
         .concat(connectionList)
         .sort(
           (obj1, obj2) => new Date(obj2.createTime) - new Date(obj1.createTime),

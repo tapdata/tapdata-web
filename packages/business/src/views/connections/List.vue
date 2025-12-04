@@ -639,9 +639,16 @@ const fetchDatabaseTypeOptions = async () => {
     t1.databaseType.localeCompare(t2.databaseType),
   )
 
-  databaseTypeOptions.value = data.map((item: any) => {
-    return { label: item.databaseType, value: item.databaseType }
-  })
+  databaseTypeOptions.value = data.map(
+    ({ databaseType: label, pdkHash }: any) => {
+      return {
+        fakeLabel: `→ ${label}`,
+        label,
+        value: label,
+        pdkHash,
+      }
+    },
+  )
 }
 
 const handleChangeDatabaseType = (value: string) => {
@@ -747,11 +754,27 @@ onUnmounted(() => {
                 $t('packages_business_connection_list_form_database_type')
               "
               :items="databaseTypeOptions"
+              :props="{
+                label: 'fakeLabel',
+              }"
               filterable
               clearable
               @change="handleChangeDatabaseType"
               @visible-change="fetchDatabaseTypeOptions"
-            />
+            >
+              <template #label="{ value }">{{ value }}</template>
+              <template #default="{ item }">
+                <div class="flex align-center gap-2">
+                  <img
+                    :src="getConnectionIcon(item.pdkHash)"
+                    alt=""
+                    width="16"
+                    height="16"
+                  />
+                  <span>{{ item.label }}</span>
+                </div>
+              </template>
+            </SelectList>
           </template>
         </FilterBar>
       </template>

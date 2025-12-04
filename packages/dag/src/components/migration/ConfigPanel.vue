@@ -131,7 +131,11 @@ export default {
       <NodeIcon :node="activeNode" :size="24" />
     </div>
     <div
-      v-if="activeNode && activeNode.type === 'merge_table_processor'"
+      v-if="
+        !stateIsReadonly &&
+        activeNode &&
+        activeNode.type === 'merge_table_processor'
+      "
       class="position-absolute config-tabs-right-extra flex align-center"
     >
       <ElButton

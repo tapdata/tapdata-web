@@ -40,3 +40,8 @@ export interface Filter {
 
 export { useRequest } from 'vue-request'
 export { CancelToken, isCancel }
+
+export const PdkRenamedData: Record<string, string> = {
+  Mysql: 'MySQL',
+  "HuaWei'Cloud GaussDB": 'Huawei Cloud GaussDB',
+}

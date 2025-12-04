@@ -1,6 +1,5 @@
 import { isPlainObj } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
-import qs from 'qs'
 import { requestClient } from '../request'
 
 const BASE_URL = '/api/Task'
@@ -334,19 +333,32 @@ export function updateTask(where: any, attributes: any) {
 }
 
 export function updateTaskInfo(taskId: string, newName: string, desc: string) {
-  return requestClient.patch(
-    `${BASE_URL}/updateInfo/${taskId}`,
-    qs.stringify({
+  return requestClient.patch(`${BASE_URL}/updateInfo/${taskId}`, undefined, {
+    params: {
       newName,
       desc,
-    }),
-  )
+    },
+  })
 }
 
 export function uploadTask(data: any) {
   return requestClient.post(`${BASE_URL}/batch/import`, data, {
     headers: {
       'Content-Type': 'multipart/form-data',
+    },
+  })
+}
+
+export function fetchMergeTaskCache(
+  taskId: string,
+  nodeId: string,
+  check?: boolean,
+) {
+  return requestClient.get(`${BASE_URL}/getMergeTaskCacheManager`, {
+    params: {
+      taskId,
+      nodeId,
+      check,
     },
   })
 }

@@ -54,6 +54,7 @@ export default {
   public_is_null: 'is null',
   public_is_not_null: 'is not null',
   public_field_value: 'Field Value',
+  public_cache: 'Cache',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',
@@ -202,6 +203,7 @@ export default {
   public_data_filter_condition: 'Filter Condition',
   public_data_fields_condition: 'Filter Fields',
   public_data_type: 'Data Type',
+  public_no_available_tables: 'No available tables',
   // time
   public_time_ms: 'Milliseconds',
   public_time_s: 'Seconds',
@@ -608,4 +610,5 @@ export default {
   public_crontabExpression: 'Cron Expression',
   public_start_at_time: 'Started at {time}',
   public_last_operation_time: 'Last Operation Time',
+  public_all_type: 'All Types',
 }

@@ -1731,10 +1731,13 @@ export default {
   packages_business_import_as_copy: 'Import as Copy',
   packages_business_import_replace: 'Replace Existing',
   packages_business_import_cancel_import: 'Cancel Import',
+  packages_business_import_reuse_existing: 'Reuse Existing',
   packages_business_import_as_copy_tip:
     'If a task or data source with the same name exists, import a new copy with the _import suffix.',
   packages_business_import_replace_tip:
     'If a task or data source with the same name exists, overwrite the existing one.',
   packages_business_import_cancel_import_tip:
     'If a task or data source with the same name exists, cancel the import.',
+  packages_business_import_reuse_existing_tip:
+    'If a task name conflict, replace the task; if a data source name conflict, reuse the existing data source in the system.',
 }
