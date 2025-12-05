@@ -1213,8 +1213,8 @@ function handleDiffTypeChange(value: string): void {
           <div ref="diffListContainer" class="overflow-y-auto p-4 min-h-0">
             <div class="flex flex-column gap-4">
               <div
-                v-for="(row, index) in rowDiffList"
-                :key="index"
+                v-for="row in rowDiffList"
+                :key="row.id"
                 class="border rounded-xl overflow-hidden"
                 :class="{ 'border-primary': selectedMap[row.id] }"
               >
