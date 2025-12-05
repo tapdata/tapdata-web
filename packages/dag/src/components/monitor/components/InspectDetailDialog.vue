@@ -465,6 +465,11 @@ function handleRowClick(row: InspectionRow): void {
   if (currentSelectedRow.value === row) return
   currentSelectedRow.value = row
   diffListContainer.value?.scrollTo({ top: 0 })
+
+  selectedMap.value = {}
+  checkAll.value = false
+  isIndeterminate.value = false
+
   fetchTableDiff(1).then(setFieldOptions)
 }
 
