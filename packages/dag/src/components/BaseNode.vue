@@ -22,13 +22,14 @@ export default {
       </slot>
       <slot />
     </div>
-    <slot name="bottom" />
+    <slot name="extra" />
   </div>
 </template>
 
 <style lang="scss">
 $width: 242px;
 $height: 52px;
+$iconSize: 24px;
 
 .layout-content .df-node {
   cursor: move;
@@ -46,7 +47,7 @@ $height: 52px;
   // background-color: var(--el-bg-color-overlay);
   background-color: var(--bg-node);
   // border: 1px solid transparent;
-  border-radius: 1rem;
+  border-radius: 15px;
   box-sizing: border-box;
   user-select: none;
   box-shadow:
@@ -79,15 +80,15 @@ $height: 52px;
 
     .v-icon {
       color: #2c65ff;
-      font-size: 24px;
+      font-size: $iconSize;
     }
   }
 
   &-icon-bg {
     position: absolute;
     inset: 0;
-    width: 28px;
-    height: 28px;
+    width: $iconSize;
+    height: $iconSize;
     border-radius: 100%;
     opacity: 1;
     filter: blur(8px);
@@ -96,8 +97,8 @@ $height: 52px;
   }
 
   &-icon-img {
-    width: 28px;
-    height: 28px;
+    width: $iconSize;
+    height: $iconSize;
     background: rgb(255 255 255 / 25%);
     border-radius: 8px;
     backdrop-filter: blur(8px);

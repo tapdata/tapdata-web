@@ -1,23 +1,14 @@
 <script setup lang="ts">
-import {
-  BaseEdge,
-  EdgeLabelRenderer,
-  type Connection,
-  type EdgeProps,
-} from '@vue-flow/core'
+import { BaseEdge, EdgeLabelRenderer, type Connection } from '@vue-flow/core'
 import { computed, ref, watch } from 'vue'
-import { useCanvasEdge } from '../../composables/useCanvasEdge'
+import {
+  useCanvasEdge,
+  type CanvasEdgeProps,
+} from '../../composables/useCanvasEdge'
 
 defineOptions({
   inheritAttrs: false,
 })
-
-export type CanvasEdgeProps = EdgeProps & {
-  readOnly?: boolean
-  hovered?: boolean
-  connectedNodeIsHovering?: boolean
-  bringToFront?: boolean // Determines if entire edges layer should be brought to front
-}
 
 const props = defineProps<CanvasEdgeProps>()
 

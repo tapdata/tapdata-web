@@ -397,7 +397,7 @@ export default {
       <div class="node-anchor input" />
       <div v-show="allowTarget" class="node-anchor output" />
 
-      <template #bottom>
+      <template #extra>
         <slot />
       </template>
     </BaseNode>

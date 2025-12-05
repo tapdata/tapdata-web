@@ -128,11 +128,12 @@ function onClickConnectionAdd(connection: Connection) {
       :nodes="nodes"
       :edges="edges"
       :connection-radius="30"
+      :max-zoom="10"
       @node-drag-stop="onNodeDragStop"
       @connect="onConnect"
     >
       <template #node-canvas="nodeProps">
-        <Node :data="nodeProps.data" />
+        <Node v-bind="nodeProps" />
       </template>
       <template #edge-canvas="edge">
         <CanvasEdge

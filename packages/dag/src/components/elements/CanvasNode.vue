@@ -7,22 +7,15 @@ import BaseNode from '../BaseNode.vue'
 import NodeSourceHandle from './NodeSourceHandle.vue'
 import NodeTargetHandle from './NodeTargetHandle.vue'
 import NodeToolbar from './NodeToolbar.vue'
+import type { NodeProps } from '@vue-flow/core'
 
-defineOptions({
-  name: 'DFNode',
-})
+export type CanvasNodeProps = NodeProps & {
+  readOnly?: boolean
+}
 
 const { t } = useI18n()
 
-interface Props {
-  data: Record<string, any>
-  nodeId: string
-  jsPlumbIns?: Record<string, any>
-  hideDisableAction?: boolean
-  isSync?: boolean
-}
-
-const props = defineProps<Props>()
+const props = defineProps<CanvasNodeProps>()
 
 const store = useStore()
 
@@ -41,6 +34,7 @@ const activeType = computed(() => store.getters['dataflow/activeType'])
 const ins = computed(() => props.data?.__Ctor || {})
 
 const wrapClass = computed(() => {
+  if (props.selected) return 'border-primary'
   if (canBeConnectedNodeIds.value.includes(props.nodeId))
     return 'can-be-connected'
   return ''
@@ -72,11 +66,15 @@ const nodeErrorMsg = computed(() => {
 
 <template>
   <div
-    class="df-node-wrap canvas-node border border-transparent"
+    class="df-node-wrap canvas-node border border-transparent rounded-2xl"
     :class="wrapClass"
     tabindex="1"
   >
-    <BaseNode :node="props.data" :class="nodeClass">
+    <BaseNode
+      :node="props.data"
+      :class="nodeClass"
+      class="border border-transparent position-relative"
+    >
       <template #text="{ text }">
         <OverflowTooltip
           class="df-node-text"
@@ -97,11 +95,14 @@ const nodeErrorMsg = computed(() => {
       <VIcon v-if="props.data.disabled" class="mr-2 color-warning" size="16"
         >disable</VIcon
       >
+
+      <template #extra>
+        <NodeSourceHandle class="canvas-node-handle z-1" />
+        <NodeTargetHandle class="canvas-node-handle z-1" />
+        <NodeToolbar />
+      </template>
     </BaseNode>
     <slot />
-    <NodeSourceHandle class="canvas-node-handle z-1" />
-    <NodeTargetHandle class="canvas-node-handle z-1" />
-    <NodeToolbar />
   </div>
 </template>
 
@@ -239,11 +240,17 @@ const nodeErrorMsg = computed(() => {
     pointer-events: all;
     border: none;
     cursor: pointer;
-    &.vue-flow__handle-left:hover {
-      transform: translate(-50%, -50%) scale(1.25);
+    transform: none;
+    top: 1rem;
+    border-radius: 0;
+    &.vue-flow__handle-left {
+      left: -9px;
     }
-    &.vue-flow__handle-right:hover {
-      transform: translate(50%, -50%) scale(1.25);
+    &.vue-flow__handle-right {
+      right: -9px;
+    }
+    &:hover {
+      transform: scale(1.25);
     }
     &::after {
       content: '';
@@ -253,7 +260,6 @@ const nodeErrorMsg = computed(() => {
       top: 0.25rem;
       background-color: var(--el-color-primary);
     }
-
     &.vue-flow__handle-left::after {
       left: 0.375rem;
     }
