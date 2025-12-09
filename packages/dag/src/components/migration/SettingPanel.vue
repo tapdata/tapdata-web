@@ -1639,7 +1639,7 @@ const schema = {
                       dependencies: ['._ms'],
                       fulfill: {
                         state: {
-                          value: `{{!isNaN($deps[0]) ? Math.ceil($deps[0] * 1000) < 1 ? 1 : Math.ceil($deps[0] * 1000) : $self.value}}`,
+                          value: `{{!isNaN($deps[0]) ? $deps[0] * 1000 : $self.value}}`,
                         },
                       },
                     },
@@ -1650,8 +1650,7 @@ const schema = {
                   'x-editable': true,
                   'x-component': 'InputNumber',
                   'x-component-props': {
-                    min: 1,
-                    precision: 0,
+                    min: 0,
                     style: {
                       width: '100px',
                     },
@@ -1661,7 +1660,7 @@ const schema = {
                       dependencies: ['.ms'],
                       fulfill: {
                         state: {
-                          value: `{{isNaN($self.value) ? Math.ceil($deps[0] / 1000) < 1 ? 1 : Math.ceil($deps[0] / 1000) : $self.value}}`,
+                          value: `{{isNaN($self.value) ? $deps[0] / 1000 : $self.value}}`,
                         },
                       },
                     },

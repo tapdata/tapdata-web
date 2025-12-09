@@ -1580,28 +1580,6 @@ export class Database extends NodeType {
                     ],
                   },
                   ms: {
-                    type: 'number',
-                    'x-reactions': [
-                      {
-                        dependencies: ['._ms'],
-                        fulfill: {
-                          state: {
-                            value: `{{Math.ceil($deps[0] * 1000) < 1 ? 1 : Math.ceil($deps[0] * 1000)}}`,
-                          },
-                        },
-                      },
-                      {
-                        target: 'alarmRules.0._ms',
-                        effects: ['onFieldInit'],
-                        fulfill: {
-                          state: {
-                            value: `{{Math.ceil($self.value / 1000) < 1 ? 1 : Math.ceil($self.value / 1000)}}`,
-                          },
-                        },
-                      },
-                    ],
-                  },
-                  _ms: {
                     title: '',
                     type: 'number',
                     'x-editable': true,
@@ -1619,7 +1597,7 @@ export class Database extends NodeType {
                     },
                   },
                   unit: {
-                    title: 's',
+                    title: 'ms',
                     type: 'void',
                     default: 0,
                     'x-decorator': 'FormItem',
