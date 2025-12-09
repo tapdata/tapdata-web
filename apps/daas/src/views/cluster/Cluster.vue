@@ -1861,250 +1861,241 @@ const onUpdateLicenseSuccess = () => {
           v-loading="logMiningFirstLoading"
           class="content flex-1"
         >
-          <el-row
+          <div
             v-if="logMiningData.length"
-            class="waterfall h-auto"
+            class="waterfall h-auto logMining-container list"
             :gutter="24"
             style="row-gap: 24px"
           >
-            <el-col
+            <div
               v-for="item in logMiningData"
               :key="item.id"
-              class="list"
-              :md="12"
-              :sm="24"
+              class="grid-content list-box border rounded-xl mb-6 logMining-card"
             >
-              <div class="grid-content list-box border rounded-xl">
-                <div class="list-box-header justify-content-start gap-3">
-                  <div class="list-box-header-left">
-                    <img
-                      class="mr-4 rounded-xl"
-                      src="../../assets/static/serve.svg"
-                    />
-                    <div class="list-box-header-main">
-                      <h2 class="name fs-6 mb-1 flex align-center gap-2">
-                        <i
-                          class="circular"
-                          :class="!item.isAlive ? 'bgred' : 'bggreen'"
-                        />
-                        {{ item.serviceId }}
-                      </h2>
-                      <span class="ip">{{ item.dataSource }}</span>
-                    </div>
-                  </div>
-                  <div
-                    class="flex flex-column align-items-end justify-content-between flex-1"
-                    style="--btn-space: 0"
-                  >
-                    <div class="flex align-center gap-2 mb-1">
-                      <el-tag
-                        v-if="item.reportedData.state === 'sleep'"
-                        type="success"
-                      >
-                        <el-tooltip
-                          v-if="!item.isAlive"
-                          :content="$t('cluster_launcher_offline')"
-                          :enterable="false"
-                          placement="top"
-                        >
-                          <el-icon class="color-warning"
-                            ><i-lucide-triangle-alert
-                          /></el-icon>
-                        </el-tooltip>
-                        {{ $t('public_status_running') }}</el-tag
-                      >
-                      <el-tag
-                        v-else-if="item.reportedData.state === 'notExists'"
-                        type="info"
-                        >{{ $t('public_agent_status_offline') }}</el-tag
-                      >
-                      <el-tag v-else type="danger">{{
-                        $t('public_status_stop')
-                      }}</el-tag>
-                      <ElButton
-                        v-if="item.reportedData.state === 'sleep'"
-                        text
-                        type="danger"
-                        :loading="
-                          logMiningCommandLoading[item.serviceId] ||
-                          !!logMiningOperationState[item.serviceId]
-                        "
-                        :disabled="
-                          !item.isAlive ||
-                          !!logMiningOperationState[item.serviceId]
-                        "
-                        @click="stopLogMining(item)"
-                      >
-                        <template #icon>
-                          <i-lucide-square />
-                        </template>
-                        <span>{{ $t('public_button_stop') }}</span>
-                      </ElButton>
-                      <ElButton
-                        v-else
-                        text
-                        type="primary"
-                        :loading="
-                          logMiningCommandLoading[item.serviceId] ||
-                          !!logMiningOperationState[item.serviceId]
-                        "
-                        :disabled="
-                          !item.isAlive ||
-                          !!logMiningOperationState[item.serviceId]
-                        "
-                        @click="startLogMining(item)"
-                      >
-                        <template #icon>
-                          <i-lucide-play />
-                        </template>
-                        <span>{{ $t('public_button_start') }}</span>
-                      </ElButton>
-                      <el-dropdown
-                        @command="handleLogMiningCommand($event, item)"
-                      >
-                        <el-button text>
-                          <template #icon>
-                            <i-lucide-ellipsis />
-                          </template>
-                        </el-button>
-
-                        <template #dropdown>
-                          <el-dropdown-menu>
-                            <el-dropdown-item
-                              :disabled="
-                                !item.isAlive ||
-                                logMiningCommandLoading[item.serviceId]
-                              "
-                              command="restart"
-                            >
-                              <el-icon class="mr-2" size="16">
-                                <i-lucide-rotate-cw />
-                              </el-icon>
-                              {{
-                                $t('public_button_restart')
-                              }}</el-dropdown-item
-                            >
-                            <el-dropdown-item
-                              :disabled="!item.isAlive"
-                              command="updateLicense"
-                            >
-                              <el-icon class="mr-2" size="16">
-                                <i-lucide-file-key />
-                              </el-icon>
-                              {{ $t('license_renew_dialog') }}</el-dropdown-item
-                            >
-                            <el-dropdown-item
-                              :disabled="item.reportedData.state === 'sleep'"
-                              divided
-                              class="is-danger"
-                              command="delete"
-                            >
-                              <el-icon class="mr-2" size="16">
-                                <i-lucide-trash-2 />
-                              </el-icon>
-                              {{ $t('public_button_delete') }}</el-dropdown-item
-                            >
-                          </el-dropdown-menu>
-                        </template>
-                      </el-dropdown>
-                    </div>
-
-                    <div class="text-xs flex align-center">
-                      <span
-                        class="font-color-sslight inline-flex flex-wrap gap-1"
-                        ><span
-                          >{{ $t('packages_business_task_preview_startTime') }}:
-                        </span>
-                        {{ item.startTime }}</span
-                      ><template v-if="licenseExpireDate[item.serviceId]"
-                        ><el-divider direction="vertical" />
-                        <span
-                          class="font-color-sslight inline-flex flex-wrap gap-1"
-                          ><span>{{ $t('license_expire_date') }}: </span>
-                          {{ licenseExpireDate[item.serviceId] }}</span
-                        ></template
-                      >
-                    </div>
+              <div class="list-box-header justify-content-start gap-3">
+                <div class="list-box-header-left">
+                  <img
+                    class="mr-4 rounded-xl"
+                    src="../../assets/static/serve.svg"
+                  />
+                  <div class="list-box-header-main">
+                    <h2 class="name fs-6 mb-1 flex align-center gap-2">
+                      <i
+                        class="circular"
+                        :class="!item.isAlive ? 'bgred' : 'bggreen'"
+                      />
+                      {{ item.serviceId }}
+                    </h2>
+                    <span class="ip">{{ item.dataSource }}</span>
                   </div>
                 </div>
                 <div
-                  v-if="licenseExpireDays[item.serviceId] < 8"
-                  class="px-4 pb-4"
+                  class="flex flex-column align-items-end justify-content-between flex-1"
+                  style="--btn-space: 0"
                 >
-                  <el-alert
-                    v-if="licenseExpireDays[item.serviceId] < 1"
-                    :closable="false"
-                    type="error"
-                    show-icon
-                    class="fit-content"
-                  >
-                    <template #title>
-                      <div class="flex align-center justify-content-between">
-                        <span>
-                          {{
-                            licenseExpireDays[item.serviceId] === 0
-                              ? $t('license_expired_today')
-                              : $t('license_expired_days', {
-                                  val: Math.abs(
-                                    licenseExpireDays[item.serviceId],
-                                  ),
-                                })
-                          }}
-                        </span>
-                        <el-button
-                          type="primary"
-                          text
-                          @click="updateLogMiningLicense(item)"
-                        >
-                          <el-icon>
-                            <i-lucide-upload />
-                          </el-icon>
-                          <span>
-                            {{ $t('license_renew_dialog') }}
-                          </span>
-                        </el-button>
-                      </div>
-                    </template>
-                  </el-alert>
-                  <el-alert
-                    v-else
-                    :closable="false"
-                    type="warning"
-                    show-icon
-                    class="fit-content"
-                  >
-                    <template #title>
-                      <div class="flex align-center justify-content-between">
-                        <span>
-                          {{
-                            $t('license_expire_days', {
-                              val: licenseExpireDays[item.serviceId],
-                            })
-                          }}
-                        </span>
-                        <el-button text @click="updateLogMiningLicense(item)">
-                          {{ $t('license_renew_dialog') }}
-                        </el-button>
-                      </div>
-                    </template>
-                  </el-alert>
-                </div>
-                <div class="list-box-main">
-                  <div class="usageRate">
-                    <div class="fs-5 pb-1 fw-bolder">{{ item.cpuUsage }}%</div>
-                    {{ $t('cluster_cpu_usage') }}
+                  <div class="flex align-center gap-2 mb-1">
+                    <el-tag
+                      v-if="item.reportedData.state === 'sleep'"
+                      type="success"
+                    >
+                      <el-tooltip
+                        v-if="!item.isAlive"
+                        :content="$t('cluster_launcher_offline')"
+                        :enterable="false"
+                        placement="top"
+                      >
+                        <el-icon class="color-warning"
+                          ><i-lucide-triangle-alert
+                        /></el-icon>
+                      </el-tooltip>
+                      {{ $t('public_status_running') }}</el-tag
+                    >
+                    <el-tag
+                      v-else-if="item.reportedData.state === 'notExists'"
+                      type="info"
+                      >{{ $t('public_agent_status_offline') }}</el-tag
+                    >
+                    <el-tag v-else type="danger">{{
+                      $t('public_status_stop')
+                    }}</el-tag>
+                    <ElButton
+                      v-if="item.reportedData.state === 'sleep'"
+                      text
+                      type="danger"
+                      :loading="
+                        logMiningCommandLoading[item.serviceId] ||
+                        !!logMiningOperationState[item.serviceId]
+                      "
+                      :disabled="
+                        !item.isAlive ||
+                        !!logMiningOperationState[item.serviceId]
+                      "
+                      @click="stopLogMining(item)"
+                    >
+                      <template #icon>
+                        <i-lucide-square />
+                      </template>
+                      <span>{{ $t('public_button_stop') }}</span>
+                    </ElButton>
+                    <ElButton
+                      v-else
+                      text
+                      type="primary"
+                      :loading="
+                        logMiningCommandLoading[item.serviceId] ||
+                        !!logMiningOperationState[item.serviceId]
+                      "
+                      :disabled="
+                        !item.isAlive ||
+                        !!logMiningOperationState[item.serviceId]
+                      "
+                      @click="startLogMining(item)"
+                    >
+                      <template #icon>
+                        <i-lucide-play />
+                      </template>
+                      <span>{{ $t('public_button_start') }}</span>
+                    </ElButton>
+                    <el-dropdown
+                      @command="handleLogMiningCommand($event, item)"
+                    >
+                      <el-button text>
+                        <template #icon>
+                          <i-lucide-ellipsis />
+                        </template>
+                      </el-button>
+
+                      <template #dropdown>
+                        <el-dropdown-menu>
+                          <el-dropdown-item
+                            :disabled="
+                              !item.isAlive ||
+                              logMiningCommandLoading[item.serviceId]
+                            "
+                            command="restart"
+                          >
+                            <el-icon class="mr-2" size="16">
+                              <i-lucide-rotate-cw />
+                            </el-icon>
+                            {{ $t('public_button_restart') }}</el-dropdown-item
+                          >
+                          <el-dropdown-item
+                            :disabled="!item.isAlive"
+                            command="updateLicense"
+                          >
+                            <el-icon class="mr-2" size="16">
+                              <i-lucide-file-key />
+                            </el-icon>
+                            {{ $t('license_renew_dialog') }}</el-dropdown-item
+                          >
+                          <el-dropdown-item
+                            :disabled="item.reportedData.state === 'sleep'"
+                            divided
+                            class="is-danger"
+                            command="delete"
+                          >
+                            <el-icon class="mr-2" size="16">
+                              <i-lucide-trash-2 />
+                            </el-icon>
+                            {{ $t('public_button_delete') }}</el-dropdown-item
+                          >
+                        </el-dropdown-menu>
+                      </template>
+                    </el-dropdown>
                   </div>
-                  <div class="line" />
-                  <div class="usageRate">
-                    <div class="fs-5 pb-1 fw-bolder">
-                      {{ item.memoryUsage }}%
-                    </div>
-                    {{ $t('cluster_heap_memory_usage') }}
+
+                  <div class="text-xs flex align-center">
+                    <span class="font-color-sslight inline-flex flex-wrap gap-1"
+                      ><span
+                        >{{ $t('packages_business_task_preview_startTime') }}:
+                      </span>
+                      {{ item.startTime }}</span
+                    ><template v-if="licenseExpireDate[item.serviceId]"
+                      ><el-divider direction="vertical" />
+                      <span
+                        class="font-color-sslight inline-flex flex-wrap gap-1"
+                        ><span>{{ $t('license_expire_date') }}: </span>
+                        {{ licenseExpireDate[item.serviceId] }}</span
+                      ></template
+                    >
                   </div>
                 </div>
               </div>
-            </el-col>
-          </el-row>
+              <div
+                v-if="licenseExpireDays[item.serviceId] < 8"
+                class="px-4 pb-4"
+              >
+                <el-alert
+                  v-if="licenseExpireDays[item.serviceId] < 1"
+                  :closable="false"
+                  type="error"
+                  show-icon
+                  class="fit-content"
+                >
+                  <template #title>
+                    <div class="flex align-center justify-content-between">
+                      <span>
+                        {{
+                          licenseExpireDays[item.serviceId] === 0
+                            ? $t('license_expired_today')
+                            : $t('license_expired_days', {
+                                val: Math.abs(
+                                  licenseExpireDays[item.serviceId],
+                                ),
+                              })
+                        }}
+                      </span>
+                      <el-button
+                        type="primary"
+                        text
+                        @click="updateLogMiningLicense(item)"
+                      >
+                        <el-icon>
+                          <i-lucide-upload />
+                        </el-icon>
+                        <span>
+                          {{ $t('license_renew_dialog') }}
+                        </span>
+                      </el-button>
+                    </div>
+                  </template>
+                </el-alert>
+                <el-alert
+                  v-else
+                  :closable="false"
+                  type="warning"
+                  show-icon
+                  class="fit-content"
+                >
+                  <template #title>
+                    <div class="flex align-center justify-content-between">
+                      <span>
+                        {{
+                          $t('license_expire_days', {
+                            val: licenseExpireDays[item.serviceId],
+                          })
+                        }}
+                      </span>
+                      <el-button text @click="updateLogMiningLicense(item)">
+                        {{ $t('license_renew_dialog') }}
+                      </el-button>
+                    </div>
+                  </template>
+                </el-alert>
+              </div>
+              <div class="list-box-main">
+                <div class="usageRate">
+                  <div class="fs-5 pb-1 fw-bolder">{{ item.cpuUsage }}%</div>
+                  {{ $t('cluster_cpu_usage') }}
+                </div>
+                <div class="line" />
+                <div class="usageRate">
+                  <div class="fs-5 pb-1 fw-bolder">{{ item.memoryUsage }}%</div>
+                  {{ $t('cluster_heap_memory_usage') }}
+                </div>
+              </div>
+            </div>
+          </div>
 
           <el-empty v-else />
         </div>
@@ -2650,5 +2641,12 @@ const onUpdateLicenseSuccess = () => {
     height: 32px;
     overflow: hidden;
   }
+}
+.logMining-container {
+  column-count: 2; /* 两列 */
+  column-gap: 24px;
+}
+.logMining-card {
+  break-inside: avoid; /* 防止卡片被分割到两列 */
 }
 </style>
