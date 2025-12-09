@@ -238,10 +238,12 @@ const logMiningOperationState = ref<{ [key: string]: 'starting' | 'stopping' }>(
   {},
 )
 const licenseExpireDays = ref<Record<string, number>>({})
+const licenseExpireDate = ref<Record<string, string>>({})
 
 // constants
 const DataSourceMap = {
   nineBridge: t('public_oracle_raw_log'),
+  OracleLogParser: t('public_oracle_raw_log'),
 } as const
 
 // Watchers
@@ -944,6 +946,7 @@ const {
   {
     manual: true,
     pollingInterval: 5000,
+    loadingKeep: 300,
     initialData: [] as LogMiningMonitor[],
   },
 )
@@ -963,6 +966,9 @@ const handleTabChange = (tab: any) => {
 const updateLicenseExpireDays = (serverId: string, item: any) => {
   const diffDays = dayjs().startOf('day').diff(item.data.issueDate, 'd')
   licenseExpireDays.value[serverId] = item.data.days - diffDays
+  licenseExpireDate.value[serverId] = dayjs(item.data.issueDate)
+    .add(item.data.days, 'day')
+    .format('YYYY-MM-DD')
 }
 
 const fetchLogMiningLicense = () => {
@@ -972,6 +978,7 @@ const fetchLogMiningLicense = () => {
   Object.keys(licenseExpireDays.value).forEach((id) => {
     if (!serviceIds.includes(id)) {
       delete licenseExpireDays.value[id]
+      delete licenseExpireDate.value[id]
     }
   })
 
@@ -1868,7 +1875,7 @@ const onUpdateLicenseSuccess = () => {
               :sm="24"
             >
               <div class="grid-content list-box border rounded-xl">
-                <div class="list-box-header">
+                <div class="list-box-header justify-content-start gap-3">
                   <div class="list-box-header-left">
                     <img
                       class="mr-4 rounded-xl"
@@ -1886,7 +1893,7 @@ const onUpdateLicenseSuccess = () => {
                     </div>
                   </div>
                   <div
-                    class="flex flex-column align-items-end justify-content-between"
+                    class="flex flex-column align-items-end justify-content-between flex-1"
                     style="--btn-space: 0"
                   >
                     <div class="flex align-center gap-2 mb-1">
@@ -2002,10 +2009,22 @@ const onUpdateLicenseSuccess = () => {
                       </el-dropdown>
                     </div>
 
-                    <span class="font-color-sslight"
-                      >{{ $t('packages_business_task_preview_startTime') }}:
-                      {{ item.startTime }}</span
-                    >
+                    <div class="text-xs flex align-center">
+                      <span
+                        class="font-color-sslight inline-flex flex-wrap gap-1"
+                        ><span
+                          >{{ $t('packages_business_task_preview_startTime') }}:
+                        </span>
+                        {{ item.startTime }}</span
+                      ><template v-if="licenseExpireDate[item.serviceId]"
+                        ><el-divider direction="vertical" />
+                        <span
+                          class="font-color-sslight inline-flex flex-wrap gap-1"
+                          ><span>{{ $t('license_expire_date') }}: </span>
+                          {{ licenseExpireDate[item.serviceId] }}</span
+                        ></template
+                      >
+                    </div>
                   </div>
                 </div>
                 <div
@@ -2032,8 +2051,17 @@ const onUpdateLicenseSuccess = () => {
                                 })
                           }}
                         </span>
-                        <el-button text @click="updateLogMiningLicense(item)">
-                          {{ $t('license_renew_dialog') }}
+                        <el-button
+                          type="primary"
+                          text
+                          @click="updateLogMiningLicense(item)"
+                        >
+                          <el-icon>
+                            <i-lucide-upload />
+                          </el-icon>
+                          <span>
+                            {{ $t('license_renew_dialog') }}
+                          </span>
                         </el-button>
                       </div>
                     </template>
