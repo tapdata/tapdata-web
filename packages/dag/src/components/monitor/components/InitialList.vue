@@ -42,6 +42,10 @@ export default {
           title: i18n.t('packages_dag_counting_num_of_rows_table'),
           type: 'scheduling',
         },
+        ERROR_SKIPPED: {
+          text: i18n.t('packages_dag_error_skipped'),
+          type: 'error',
+        },
       },
       columns: [
         {

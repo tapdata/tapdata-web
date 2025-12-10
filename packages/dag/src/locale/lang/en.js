@@ -1182,4 +1182,6 @@ export default {
   packages_dag_cache_no_data: 'No Cache Data',
   packages_dag_batch_read_size_chart_title: 'Batch Read Size (rows/batch)',
   packages_dag_batch_read_size: 'Each batch read size',
+  packages_dag_enableSkipErrorTable: 'Skip Error Table',
+  packages_dag_error_skipped: 'Error Skipped',
 }

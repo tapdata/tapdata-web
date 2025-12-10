@@ -813,6 +813,19 @@ const schema = {
                             },
                           },
                         },
+                        enableSkipErrorTable: {
+                          title: t('packages_dag_enableSkipErrorTable'),
+                          type: 'boolean',
+                          'x-decorator': 'FormItem',
+                          'x-component': 'Switch',
+                          'x-reactions': {
+                            fulfill: {
+                              state: {
+                                visible: '{{$values.syncType === "migrate"}}',
+                              },
+                            },
+                          },
+                        },
                         planStartDateFlag: {
                           title: t('packages_dag_task_setting_plan_start_date'), //计划时间
                           type: 'boolean',

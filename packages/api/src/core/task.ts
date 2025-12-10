@@ -1,6 +1,6 @@
 import { isPlainObj } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
-import { requestClient } from '../request'
+import { requestClient, type Page } from '../request'
 
 const BASE_URL = '/api/Task'
 
@@ -361,4 +361,56 @@ export function fetchMergeTaskCache(
       check,
     },
   })
+}
+
+export interface SkipErrorTableParams {
+  tableFilter?: string
+  skip?: number
+  limit?: number
+  order?: string
+}
+
+export interface SkipErrorTable {
+  id: string
+  status: 'SKIPPED' | 'RECOVERING'
+  created: string
+  updated: string
+  taskId: string
+  sourceTable: string
+  targetTable: string
+  skipStage: string
+  skipDate: string
+  cdcDate: string
+  errorMessage: string
+  errorStack?: string
+  errorTitle?: string
+  errorContent?: string
+  errorCode: string
+  fullErrorCode?: string
+}
+
+export function fetchSkipErrorTable(
+  taskId: string,
+  params: SkipErrorTableParams,
+) {
+  return requestClient.get<Page<SkipErrorTable>>(
+    `${BASE_URL}/${taskId}/skip-error-table`,
+    {
+      params,
+    },
+  )
+}
+
+// # 恢复错误表同步接口：{{[PUT] /api/task/{taskId}/skip-error-table-recover}} 参数：
+// {noformat}@Operation(summary = "恢复错误表同步")
+// @PutMapping("/{taskId}/skip-error-table-recovering")
+// public ResponseMessage<Boolean> pageByTaskId(HttpServletRequest request
+//     , @PathVariable(name = "taskId") String taskId
+//     , @RequestParam(name = "sourceTable", required = false) String sourceTable
+// ){noformat}
+
+export function recoverSkipErrorTable(taskId: string, sourceTable: string) {
+  return requestClient.put(
+    `${BASE_URL}/${taskId}/skip-error-table-recovering?sourceTables=${sourceTable}`,
+  )
 }

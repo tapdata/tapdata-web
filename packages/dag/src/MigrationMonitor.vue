@@ -1366,6 +1366,7 @@ export default {
           @load-data="init"
           @show-bottom-panel="handleShowBottomPanel"
           @action="handleBottomPanelAction"
+          @start="handleStart(false, false)"
         />
         <ConsolePanel ref="console" @stop-auto="handleStopAuto" />
       </section>
