@@ -674,6 +674,10 @@ export default {
     'The full Distinguished Name (DN) of the user for authentication, i.e., the identity used to log in to the AD server, e.g., user@example.com',
   setting_Ldap_Bind_Password_doc:
     'The password corresponding to the Bind DN, used for authentication',
+  setting_Appearance: 'Appearance',
+  setting_enableEnvTag: 'Environment Tag',
+  setting_envTagContent: 'Custom Text',
+  setting_envTagColor: 'Select Color',
   user_list_user_name_email: 'Please enter username/email',
   user_list_change_time: 'Modification time',
   user_list_creat_user: 'Create User',

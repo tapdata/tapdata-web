@@ -632,6 +632,10 @@ export default {
   setting_Ldap_Bind_DN_doc:
     '用于进行身份验证的用户的完整Distinguished Name (DN)，即登录AD服务器的身份，示例：user@example.com',
   setting_Ldap_Bind_Password_doc: '与Bind DN对应的用户密码，用于身份验证',
+  setting_Appearance: '外观',
+  setting_enableEnvTag: '环境标签',
+  setting_envTagContent: '自定义文字',
+  setting_envTagColor: '选择颜色',
   user_list_user_name_email: '请输入用户名 / 邮箱',
   user_list_change_time: ' 修改时间',
   user_list_creat_user: '创建用户',
