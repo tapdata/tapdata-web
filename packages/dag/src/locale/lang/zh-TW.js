@@ -1021,4 +1021,10 @@ export default {
   packages_dag_batch_read_size: '每批讀取條數',
   packages_dag_enableSkipErrorTable: '跳過異常表',
   packages_dag_error_skipped: '已跳過',
+  packages_dag_error_table_record: '異常表記錄',
+  packages_dag_skip_error_date: '跳過時間',
+  packages_dag_skip_error_no_data: '暫無異常表記錄',
+  packages_dag_skip_error_recover_selected: '恢復選中',
+  packages_dag_skip_error_recover_all: '恢復全部',
+  packages_dag_only_show_skip: '僅顯示已跳過',
 }

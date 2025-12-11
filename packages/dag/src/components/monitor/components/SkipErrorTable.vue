@@ -7,7 +7,8 @@ import {
 import { usePagination } from '@tap/api/src/request'
 import ErrorDialog from '@tap/business/src/components/ErrorDialog.vue'
 import { dayjs } from '@tap/business/src/shared/dayjs'
-import { computed, ref, useTemplateRef } from 'vue'
+import { useI18n } from '@tap/i18n'
+import { computed, ref, useTemplateRef, watch } from 'vue'
 import type { TableInstance } from 'element-plus'
 
 interface Props {
@@ -21,13 +22,15 @@ interface Props {
 const props = defineProps<Props>()
 const emit = defineEmits(['start'])
 
+const { t } = useI18n()
+
 const statusMap = {
   SKIPPED: {
-    text: '已跳过',
+    text: t('public_status_skipped'),
     type: 'danger',
   },
   RECOVERING: {
-    text: '恢复中',
+    text: t('public_status_recovering'),
     type: 'warning',
   },
 }
@@ -42,6 +45,15 @@ const dataTotal = ref(0)
 const isOperable = computed(() => {
   return props.dataflow.status === 'error'
 })
+
+watch(
+  () => props.currentTab,
+  (v) => {
+    if (v === 'skipErrorTable') {
+      refresh()
+    }
+  },
+)
 
 const {
   current,
@@ -92,10 +104,6 @@ const fetchPage = (current: number) => {
   })
 }
 
-const ifSelectable = () => {
-  return isOperable.value
-}
-
 const handleSelectionChange = (rows: SkipErrorTable[]) => {
   selectedRows.value = rows
 }
@@ -134,12 +142,15 @@ const handleRecover = async (isAll: boolean) => {
   <ElTabPane name="skipErrorTable">
     <template #label>
       <span class="flex align-center gap-2">
-        异常表记录
-        <span
-          class="rounded-pill lh-5 px-1.5 fw-sub"
-          style="background-color: var(--bg-code); min-width: 20px"
-          >1</span
-        >
+        {{ $t('packages_dag_error_table_record') }}
+        <transition name="el-fade-in">
+          <span
+            v-show="dataTotal > 0"
+            class="rounded-pill lh-5 px-1.5 fw-sub"
+            style="background-color: var(--bg-code); min-width: 20px"
+            >{{ dataTotal }}</span
+          >
+        </transition>
       </span>
     </template>
     <div class="h-100 w-100 flex flex-column">
@@ -147,7 +158,7 @@ const handleRecover = async (isAll: boolean) => {
         <el-input
           v-model="tableFilter"
           clearable
-          placeholder="搜索表名"
+          :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
           style="width: 240px"
           @input="fetchPage(1)"
         >
@@ -165,37 +176,44 @@ const handleRecover = async (isAll: boolean) => {
             <i-lucide-refresh-cw />
           </template>
         </el-button>
-        <div class="flex-1" />
-        <template v-if="isOperable">
-          <div class="font-color-light">
-            已选择 <span class="color-primary">{{ selectedRows.length }}</span
-            ><span> / {{ total }}</span> 个表
+        <transition name="el-fade-in">
+          <div v-if="isOperable" class="ml-auto flex align-center gap-3">
+            <i18n-t
+              tag="div"
+              class="font-color-light"
+              keypath="public_selected_tables"
+            >
+              <template #val>
+                <span class="color-primary">{{ selectedRows.length }}</span
+                ><span> / {{ total }}</span>
+              </template>
+            </i18n-t>
+            <el-divider direction="vertical" class="mx-0" />
+            <el-button
+              type="primary"
+              plaind
+              :disabled="!selectedRows.length"
+              :loading="recovering"
+              @click="handleRecover(false)"
+            >
+              <template #icon>
+                <i-lucide-rotate-ccw />
+              </template>
+              {{ $t('packages_dag_skip_error_recover_selected') }}
+            </el-button>
+            <el-button
+              plaind
+              :disabled="!dataTotal"
+              :loading="recovering"
+              @click="handleRecover(true)"
+            >
+              <template #icon>
+                <i-lucide-rotate-ccw />
+              </template>
+              {{ $t('packages_dag_skip_error_recover_all') }}
+            </el-button>
           </div>
-          <el-divider direction="vertical" class="mx-0" />
-          <el-button
-            type="primary"
-            plaind
-            :disabled="!selectedRows.length"
-            :loading="recovering"
-            @click="handleRecover(false)"
-          >
-            <template #icon>
-              <i-lucide-rotate-ccw />
-            </template>
-            恢复选中
-          </el-button>
-          <el-button
-            plaind
-            :disabled="!dataTotal"
-            :loading="recovering"
-            @click="handleRecover(true)"
-          >
-            <template #icon>
-              <i-lucide-rotate-ccw />
-            </template>
-            恢复全部
-          </el-button>
-        </template>
+        </transition>
       </div>
       <el-table
         ref="table"
@@ -214,10 +232,18 @@ const handleRecover = async (isAll: boolean) => {
           width="32"
           align="center"
         />
-        <el-table-column label="源表名" prop="sourceTable" width="180" />
-        <el-table-column label="目标表名" prop="targetTable" width="180" />
-        <el-table-column label="状态" prop="status" width="140">
-          <template #default="{ row }">
+        <el-table-column
+          :label="$t('packages_dag_components_initiallist_yuanbiaoming')"
+          prop="sourceTable"
+          width="180"
+        />
+        <el-table-column
+          :label="$t('packages_dag_components_initiallist_mubiaobiaoming')"
+          prop="targetTable"
+          width="180"
+        />
+        <el-table-column :label="$t('public_status')" prop="status" width="140">
+          <template #default="{ row }: { row: SkipErrorTable }">
             <div
               class="inline-flex align-center gap-1 border rounded-lg p-1 px-2 lh-1"
             >
@@ -231,8 +257,12 @@ const handleRecover = async (isAll: boolean) => {
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="跳过时间" prop="skipDate" width="180" />
-        <el-table-column label="错误信息" prop="errorMessage">
+        <el-table-column
+          :label="$t('packages_dag_skip_error_date')"
+          prop="skipDate"
+          width="180"
+        />
+        <el-table-column :label="$t('public_error_log')" prop="errorMessage">
           <template #default="{ row }">
             <div class="flex gap-1 lh-4 error-message">
               <el-icon class="color-danger" :size="16">
@@ -270,7 +300,9 @@ const handleRecover = async (isAll: boolean) => {
         <template #empty>
           <el-empty :image-size="48" class="lh-base">
             <template #description>
-              <span class="lh-base"> 暂无异常表记录 </span>
+              <span class="lh-base">
+                {{ $t('packages_dag_skip_error_no_data') }}
+              </span>
             </template>
           </el-empty>
         </template>

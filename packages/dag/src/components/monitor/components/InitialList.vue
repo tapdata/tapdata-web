@@ -2,13 +2,12 @@
 import { getFullStatistics } from '@tap/api/src/core/measurement'
 import { VTable } from '@tap/component/src/base/v-table'
 
-import { IconButton } from '@tap/component/src/icon-button'
 import i18n from '@tap/i18n'
 import { debounce } from 'lodash-es'
 
 export default {
   name: 'InitialList',
-  components: { VTable, IconButton },
+  components: { VTable },
   props: {
     dataflow: Object,
     value: {
@@ -20,6 +19,7 @@ export default {
     return {
       tableName: '',
       visible: false,
+      skipErrorTable: false,
       statusMap: {
         NOT_START: {
           text: i18n.t('packages_dag_components_initiallist_weikaishi'),
@@ -43,7 +43,7 @@ export default {
           type: 'scheduling',
         },
         ERROR_SKIPPED: {
-          text: i18n.t('packages_dag_error_skipped'),
+          text: i18n.t('public_status_skipped'),
           type: 'error',
         },
       },
@@ -51,23 +51,16 @@ export default {
         {
           label: i18n.t('packages_dag_components_initiallist_yuanbiaoming'),
           prop: 'originTable',
-          width: 180,
         },
         {
           label: i18n.t('packages_dag_components_initiallist_mubiaobiaoming'),
           prop: 'targetTable',
-          width: 180,
         },
-        // {
-        //   label: '表结构同步',
-        //   prop: 'structureStatus',
-        //   slotName: 'structureStatus',
-        //   width: 80
-        // },
         {
           label: i18n.t('packages_dag_components_initiallist_shujutongbu'),
           prop: 'progress',
           slotName: 'progress',
+          width: 240,
         },
         {
           label: i18n.t(
@@ -77,12 +70,6 @@ export default {
           slotName: 'syncStatus',
           width: 120,
         },
-        // {
-        //   label: '操作',
-        //   prop: 'operation',
-        //   slotName: 'operation',
-        //   width: 60
-        // }
       ],
       timer: null,
     }
@@ -95,6 +82,7 @@ export default {
       } else {
         this.clearTimer()
         this.tableName = ''
+        this.skipErrorTable = false
       }
     },
   },
@@ -103,6 +91,10 @@ export default {
     this.lazyLoadData = debounce((pageNum) => {
       this.$refs.table?.fetch(pageNum)
     }, 200)
+  },
+
+  unmounted() {
+    this.clearTimer()
   },
 
   methods: {
@@ -136,6 +128,11 @@ export default {
         page: current,
         tableName: this.tableName,
       }
+
+      if (this.skipErrorTable) {
+        filter.skipErrorTable = true
+      }
+
       return getFullStatistics(filter).then((data) => {
         return {
           total: data.total || 0,
@@ -165,7 +162,8 @@ export default {
 <template>
   <ElDialog
     v-model="visible"
-    width="774px"
+    width="50%"
+    class="min-w-800"
     :close-on-click-modal="false"
     :modal-append-to-body="false"
     @close="$emit('update:value', false)"
@@ -187,6 +185,12 @@ export default {
             <i-lucide-search />
           </template>
         </ElInput>
+        <el-checkbox
+          v-model="skipErrorTable"
+          :label="$t('packages_dag_only_show_skip')"
+          border
+          @change="startLoadData"
+        />
         <el-button class="rounded-lg" circle @click="startLoadData">
           <template #icon>
             <i-lucide-refresh-cw />

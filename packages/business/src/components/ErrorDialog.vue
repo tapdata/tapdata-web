@@ -120,10 +120,12 @@ defineExpose({
         <div class="fw-sub mb-3 font-color-dark">
           {{ $t('packages_business_milestone_list_cuowuxinxi') }}
         </div>
-        <div
-          class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
-          v-html="state.describe"
-        />
+        <div class="mb-6 border rounded-xl overflow-hidden">
+          <div
+            class="error-stack-wrap text-prewrap font-color-light overflow-y-auto bg-subtle p-4 lh-base"
+            v-html="state.describe"
+          />
+        </div>
       </template>
 
       <!--错误原因/描述-->
@@ -132,7 +134,7 @@ defineExpose({
           {{ $t('public_task_reasons_for_error') }}
         </div>
         <div
-          class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
+          class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-xl p-4 lh-base"
           v-html="state.dynamicDescribe"
         />
       </template>
@@ -143,7 +145,7 @@ defineExpose({
           {{ $t('packages_business_solution') }}
         </div>
         <div
-          class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
+          class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-xl p-4 lh-base"
           v-html="state.solution"
         />
       </template>
@@ -175,7 +177,7 @@ defineExpose({
           }}</span>
         </div>
         <div
-          class="error-stack-pre-wrap position-relative font-color-light rounded-lg"
+          class="error-stack-pre-wrap position-relative font-color-light rounded-xl"
         >
           <div class="position-absolute end-0 top-0 px-2 pt-1">
             <el-button
