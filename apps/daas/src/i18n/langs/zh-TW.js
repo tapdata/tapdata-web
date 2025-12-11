@@ -410,7 +410,8 @@ export default {
   share_detail_incremental_time: '所處的時間點',
   // 设置
   setting_auto_incremental_batch_size: '是否自動調整增量讀取批次數',
-  setting_auto_incremental_batch_size_doc: '開啟後將根據實时增量延遲、增量日誌讀取事件數、記憶體佔用等内容自動調整增量讀取批次數',
+  setting_auto_incremental_batch_size_doc:
+    '開啟後將根據實时增量延遲、增量日誌讀取事件數、記憶體佔用等内容自動調整增量讀取批次數',
   setting_Database_query_compression_enabled: '是否開啟數據庫查詢壓縮',
   setting_email_template: '郵件模板',
   setting_saveSuccess: '保存成功，一分鐘後生效',
@@ -628,6 +629,10 @@ export default {
   setting_Ldap_Bind_DN_doc:
     '用於進行身份驗證的用戶完整Distinguished Name (DN)，即登入AD伺服器的身份，範例：user@example.com',
   setting_Ldap_Bind_Password_doc: '與Bind DN對應的用戶密碼，用於身份驗證',
+  setting_Appearance: '外觀',
+  setting_enableEnvTag: '環境標籤',
+  setting_envTagContent: '自定義文字',
+  setting_envTagColor: '選擇顏色',
   user_list_user_name_email: '請輸入用戶名 / 郵箱',
   user_list_change_time: ' 修改時間',
   user_list_creat_user: '創建用戶',
