@@ -123,6 +123,7 @@ fetchSettings()
 
     if (initData.length) {
       localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(initData))
+      store.commit('setAppearanceBySetting', data)
     }
     if (token) {
       //无权限，说明是首次进入页面，重新请求后台获取

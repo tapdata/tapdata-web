@@ -411,8 +411,9 @@ export default {
   share_detail_incremental_time: '所处的时间点',
   // 设置
   setting_auto_incremental_batch_size: '是否自动调整增量读取批次数',
-  setting_auto_incremental_batch_size_doc: '开启后将根据实时增量延迟、增量日志读取事件数、内存占用等属性自动调整增量读取批次数',
-  setting_Database_query_compression_enabled: "是否开启数据库查询压缩",
+  setting_auto_incremental_batch_size_doc:
+    '开启后将根据实时增量延迟、增量日志读取事件数、内存占用等属性自动调整增量读取批次数',
+  setting_Database_query_compression_enabled: '是否开启数据库查询压缩',
   setting_email_template: '邮件模板',
   setting_saveSuccess: '保存成功，一分钟后生效',
   setting_nameserver: '服务器名称',
@@ -631,6 +632,11 @@ export default {
   setting_Ldap_Bind_DN_doc:
     '用于进行身份验证的用户的完整Distinguished Name (DN)，即登录AD服务器的身份，示例：user@example.com',
   setting_Ldap_Bind_Password_doc: '与Bind DN对应的用户密码，用于身份验证',
+  setting_Appearance: '外观',
+  setting_enableEnvTag: '环境标签',
+  setting_envTagContent: '自定义文字',
+  setting_envTagContent_placeholder: '请输入文字或 emoji 表情',
+  setting_envTagColor: '选择颜色',
   user_list_user_name_email: '请输入用户名 / 邮箱',
   user_list_change_time: ' 修改时间',
   user_list_creat_user: '创建用户',

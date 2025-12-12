@@ -818,7 +818,7 @@ export default {
                       >
                         <img
                           src="../../assets/static/serve.svg"
-                          class="rounded-4"
+                          class="rounded-lg"
                         />
                         <div class="server-main ml-5">
                           <div class="flex align-center gap-2">

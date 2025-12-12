@@ -88,6 +88,9 @@ export default {
       email: '',
       filterCategory: import.meta.env.VUE_APP_HIDE_SETTINGS_CATEGORY,
       adTesting: false,
+      appearanceForm: {},
+      colorEnum: ['red', 'orange', 'yellow', 'blue', 'green', 'purple'],
+      formItems: [],
     }
   },
   computed: {
@@ -121,12 +124,10 @@ export default {
           })
         }
       }
-      console.log('result', result)
       return result
     },
   },
   watch: {
-    deep: true,
     formData: {
       deep: true,
 
@@ -134,14 +135,39 @@ export default {
         this.formData = value
       },
     },
+    activePanel(v) {
+      if (v === 'Appearance') {
+        const result = {}
+        const items = this.formData.items
+        if (items && items.length) {
+          const Appearance = find(items, (item) => {
+            return item.category === 'Appearance'
+          })
+          if (Appearance && Appearance.items) {
+            Appearance.items.forEach((it) => {
+              const key = it.key_label.split(' ').join('_')
+              result[key] = it.value
+            })
+          }
+        }
+        this.appearanceForm = result
+      }
+    },
   },
   created() {
     this.getData()
     this.email = Cookie.get('email')
   },
   methods: {
-    changeName(name) {
-      this.activePanel = name
+    updateValue(key, value) {
+      const item = this.formItems.find((item) => item.key === key)
+      if (item) {
+        item.value = value
+      }
+    },
+    changeName(item) {
+      this.activePanel = item.category
+      this.formItems = item.items || []
     },
     // 获取设置数据
     getData() {
@@ -225,15 +251,49 @@ export default {
               ? -1
               : 0
         })
+
+        const Appearance = vals.find((item) => {
+          return item.category === 'Appearance'
+        })
+
+        if (!Appearance) {
+          vals.unshift({
+            category: 'Appearance',
+            items: [
+              {
+                category: 'Appearance',
+                key: 'enableEnvTag',
+                value: 'false',
+                enums: ['true', 'false'],
+                category_sort: '0',
+                sort: '1',
+                key_label: 'enableEnvTag',
+                user_visible: true,
+              },
+              {
+                category: 'Appearance',
+                key: 'envTagContent',
+                value: 'Production',
+                sort: '2',
+                key_label: 'envTagContent',
+                user_visible: true,
+              },
+              {
+                category: 'Appearance',
+                key: 'envTagColor',
+                value: 'red',
+                sort: '3',
+                key_label: 'envTagColor',
+                user_visible: true,
+                enums: ['red', 'orange', 'yellow', 'blue', 'green', 'purple'],
+              },
+            ],
+          })
+        }
+
         this.formData.items = vals
 
-        this.changeName(this.formData.items[0].category)
-
-        // this.formData.items.push({
-        //   liceseItems: auth_data,
-        //   items: auth_data,
-        //   category: 'license',
-        // })
+        this.changeName(this.formData.items[0])
       })
     },
     // 保存
@@ -246,6 +306,10 @@ export default {
       })
       saveSettings(settingData).then(() => {
         this.$message.success(this.$t('public_message_save_ok'))
+
+        if (this.appearanceForm && Object.keys(this.appearanceForm).length) {
+          this.$store.commit('setAppearance', this.appearanceForm)
+        }
       })
     },
     // 邮件模板
@@ -346,7 +410,7 @@ export default {
             :key="index"
             class="rounded-lg"
             :class="activePanel === item.category ? 'active' : ''"
-            @click="changeName(item.category)"
+            @click="changeName(item)"
           >
             <span class="title">{{ $t(`setting_${item.category}`) }}</span>
           </li>
@@ -355,18 +419,86 @@ export default {
     </div>
 
     <el-form :model="formData" class="e-form flex-1" label-position="top">
-      <!-- <div class="e-form-box flex-1"> -->
       <div class="e-form-box">
-        <div
-          v-for="(item, index) in formData.items"
-          v-show="activePanel === item.category"
-          :key="index"
-          class="item"
-        >
-          <template v-if="activePanel === item.category">
-            <span class="title">{{ $t(`setting_${item.category}`) }}</span>
+        <div class="item">
+          <span class="title">{{ $t(`setting_${activePanel}`) }}</span>
+          <div v-if="activePanel === 'Appearance'" class="box">
+            <el-row>
+              <el-col :span="24">
+                <el-form-item>
+                  <template #label>
+                    <span>{{ $t('setting_enableEnvTag') }}</span>
+                  </template>
+                  <el-switch
+                    v-model="appearanceForm.enableEnvTag"
+                    active-value="true"
+                    inactive-value="false"
+                    @change="updateValue('enableEnvTag', $event)"
+                  />
+                </el-form-item>
+              </el-col>
+              <template v-if="appearanceForm.enableEnvTag === 'true'">
+                <el-col :span="24">
+                  <el-form-item>
+                    <div
+                      class="border border-dashed p-3 rounded-lg bg-color-disable w-100 flex align-center"
+                    >
+                      <span
+                        class="inline-flex align-center justify-center rounded-lg flex-shrink-0 text-xs fw-sub px-2 py-1 gap-1.5"
+                        :class="`tag-${appearanceForm.envTagColor}`"
+                      >
+                        <span
+                          class="w-1.5 h-1.5 rounded-pill"
+                          style="background-color: currentColor"
+                        />
+                        {{ appearanceForm.envTagContent || '-' }}
+                      </span>
+                    </div>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item>
+                    <template #label>
+                      <span>{{ $t('setting_envTagContent') }}</span>
+                    </template>
+                    <el-input
+                      v-model="appearanceForm.envTagContent"
+                      :placeholder="$t('setting_envTagContent_placeholder')"
+                      @change="updateValue('envTagContent', $event.toString())"
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item>
+                    <template #label>
+                      <span>{{ $t('setting_envTagColor') }}</span>
+                    </template>
+                    <div class="flex align-center gap-3">
+                      <div
+                        v-for="color in colorEnum"
+                        :key="color"
+                        class="inline-flex align-center justify-center rounded-lg flex-shrink-0 text-xs fw-sub px-2 py-1 gap-1.5 w-8 h-8 cursor-pointer"
+                        :class="`tag-${color}`"
+                        @click="
+                          ((appearanceForm.envTagColor = color),
+                          updateValue('envTagColor', color))
+                        "
+                      >
+                        <el-icon :size="16">
+                          <i-lucide-check
+                            v-if="appearanceForm.envTagColor === color"
+                          />
+                        </el-icon>
+                      </div>
+                    </div>
+                  </el-form-item>
+                </el-col>
+              </template>
+            </el-row>
+          </div>
+          <template v-else>
             <div
-              v-for="(childItem, childIndex) in item.items"
+              v-for="(childItem, childIndex) in formItems"
               :key="childIndex"
               class="box"
             >
@@ -498,7 +630,7 @@ export default {
                       :type="
                         /password/.test(childItem.key) ? 'password' : 'text'
                       "
-                      :disabled="item.category === 'license'"
+                      :disabled="activePanel === 'license'"
                       :mask="childItem.mask"
                       :label="
                         $t(
