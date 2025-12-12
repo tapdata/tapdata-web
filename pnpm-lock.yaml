@@ -736,6 +736,9 @@ importers:
       vue:
         specifier: 'catalog:'
         version: 3.5.25(typescript@5.8.3)
+      vue-json-pretty:
+        specifier: 'catalog:'
+        version: 2.5.0(vue@3.5.25(typescript@5.8.3))
       vue-json-viewer:
         specifier: 'catalog:'
         version: 2.2.22(vue@3.5.25(typescript@5.8.3))

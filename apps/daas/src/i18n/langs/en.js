@@ -424,7 +424,12 @@ export default {
   share_detail_statistics_time: 'Statistics time',
   share_detail_incremental_time: 'The time point',
   // 设置
-  setting_Database_query_compression_enabled: "Enable database query compression",
+  setting_auto_incremental_batch_size:
+    'Whether to automatically adjust the number of incremental read batches',
+  setting_auto_incremental_batch_size_doc:
+    'After activation, the number of incremental read batches will be automatically adjusted based on real-time incremental delay, incremental log read event count, memory usage, and other attributes',
+  setting_Database_query_compression_enabled:
+    'Enable database query compression',
   setting_email_template: 'Email Template',
   setting_saveSuccess: 'Save successfully, take effect in one minute',
   setting_nameserver: 'Server Name',
@@ -605,7 +610,8 @@ export default {
   setting_job_cdc_record_ttl: 'Incremental event save time (days)',
   setting_job_cdc_record_ttl_doc: 'Incremental event save time (days)',
   setting_lagTime: 'incremental lag decision time (seconds)',
-  setting_Task_CPU_and_Memory_Metrics_Statistics: 'Task CPU and Memory Metrics Statistics',
+  setting_Task_CPU_and_Memory_Metrics_Statistics:
+    'Task CPU and Memory Metrics Statistics',
   setting_connection_schema_update_hour: 'Data source schema update time',
   setting_connection_schema_update_interval:
     'Data source schema update interval (days)',
@@ -2174,4 +2180,10 @@ export default {
     'Server response has not been updated for {val}',
   cluster_operation_success:
     'Operation instruction has been sent, please refresh later to view the result',
+  cluster_launcher_offline: 'Launcher is offline',
+  cluster_delete_confirm: 'Are you sure you want to delete this service?',
+  cluster_update_license_success: 'License updated successfully',
+  license_expired_today: 'License expires today',
+  license_expired_days: 'License has expired {val} days',
+  license_expire_days: 'License expires in {val} days',
 }

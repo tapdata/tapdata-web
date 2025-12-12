@@ -409,6 +409,9 @@ export default {
   share_detail_statistics_time: '統計時間',
   share_detail_incremental_time: '所處的時間點',
   // 设置
+  setting_auto_incremental_batch_size: '是否自動調整增量讀取批次數',
+  setting_auto_incremental_batch_size_doc:
+    '開啟後將根據實时增量延遲、增量日誌讀取事件數、記憶體佔用等内容自動調整增量讀取批次數',
   setting_Database_query_compression_enabled: '是否開啟數據庫查詢壓縮',
   setting_email_template: '郵件模板',
   setting_saveSuccess: '保存成功，一分鐘後生效',
@@ -2046,4 +2049,10 @@ export default {
   api_monitor_memory: '內存',
   api_monitor_server_ping_warning: '服務器響應已 {val} 未更新',
   cluster_operation_success: '操作指令已發送，請稍後刷新查看結果',
+  cluster_launcher_offline: '啟動器已離線',
+  cluster_delete_confirm: '確定刪除該服務嗎？',
+  cluster_update_license_success: 'License 更新成功',
+  license_expired_today: 'License 今日到期',
+  license_expired_days: 'License 已過期 {val} 天',
+  license_expire_days: 'License 還有 {val} 天到期',
 }
