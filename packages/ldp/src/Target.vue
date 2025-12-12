@@ -967,7 +967,7 @@ export default {
                   {{
                     $t(
                       'packages_business_data_console_target_connection_desc',
-                      { val: item.database_type },
+                      { val: item.pdkRealName },
                     )
                   }}
                 </div>
