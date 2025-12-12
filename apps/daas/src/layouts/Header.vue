@@ -259,17 +259,20 @@ defineExpose({
     <a v-else class="logo" href="/" :style="logoStyle">
       <img :src="logoUrl" />
     </a>
-    <span
-      v-if="appearance && appearance.enableEnvTag === 'true'"
-      class="inline-flex align-center justify-center rounded-lg flex-shrink-0 text-xs fw-sub px-2 py-1 gap-1.5"
-      :class="`tag-${appearance.envTagColor}`"
-    >
+    <transition name="el-zoom-in-center">
       <span
-        class="w-1.5 h-1.5 rounded-pill"
-        style="background-color: currentColor"
-      />
-      {{ appearance.envTagContent }}
-    </span>
+        v-if="appearance && appearance.enableEnvTag === 'true'"
+        class="inline-flex align-center justify-center rounded-lg flex-shrink-0 text-xs fw-sub px-2 py-1 gap-1.5"
+        :class="`tag-${appearance.envTagColor}`"
+      >
+        <span
+          class="w-1.5 h-1.5 rounded-pill"
+          style="background-color: currentColor"
+        />
+        {{ appearance.envTagContent }}
+      </span>
+    </transition>
+
     <div class="flex gap-3 align-center ml-auto">
       <el-alert
         v-if="licenseExpireVisible"

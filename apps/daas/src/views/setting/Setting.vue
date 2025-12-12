@@ -419,251 +419,240 @@ export default {
     </div>
 
     <el-form :model="formData" class="e-form flex-1" label-position="top">
-      <!-- <div class="e-form-box flex-1"> -->
       <div class="e-form-box">
-        <div
-          v-for="(item, index) in formData.items"
-          v-show="activePanel === item.category"
-          :key="index"
-          class="item"
-        >
-          <template v-if="activePanel === item.category">
-            <span class="title">{{ $t(`setting_${item.category}`) }}</span>
-            <div v-if="activePanel === 'Appearance'" class="box">
-              <el-row>
+        <div class="item">
+          <span class="title">{{ $t(`setting_${activePanel}`) }}</span>
+          <div v-if="activePanel === 'Appearance'" class="box">
+            <el-row>
+              <el-col :span="24">
+                <el-form-item>
+                  <template #label>
+                    <span>{{ $t('setting_enableEnvTag') }}</span>
+                  </template>
+                  <el-switch
+                    v-model="appearanceForm.enableEnvTag"
+                    active-value="true"
+                    inactive-value="false"
+                    @change="updateValue('enableEnvTag', $event)"
+                  />
+                </el-form-item>
+              </el-col>
+              <template v-if="appearanceForm.enableEnvTag === 'true'">
+                <el-col :span="24">
+                  <el-form-item>
+                    <div
+                      class="border border-dashed p-3 rounded-lg bg-color-disable w-100 flex align-center"
+                    >
+                      <span
+                        class="inline-flex align-center justify-center rounded-lg flex-shrink-0 text-xs fw-sub px-2 py-1 gap-1.5"
+                        :class="`tag-${appearanceForm.envTagColor}`"
+                      >
+                        <span
+                          class="w-1.5 h-1.5 rounded-pill"
+                          style="background-color: currentColor"
+                        />
+                        {{ appearanceForm.envTagContent || '-' }}
+                      </span>
+                    </div>
+                  </el-form-item>
+                </el-col>
                 <el-col :span="24">
                   <el-form-item>
                     <template #label>
-                      <span>{{ $t('setting_enableEnvTag') }}</span>
+                      <span>{{ $t('setting_envTagContent') }}</span>
                     </template>
-                    <el-switch
-                      v-model="appearanceForm.enableEnvTag"
-                      active-value="true"
-                      inactive-value="false"
-                      @change="updateValue('enableEnvTag', $event)"
+                    <el-input
+                      v-model="appearanceForm.envTagContent"
+                      :placeholder="$t('setting_envTagContent_placeholder')"
+                      @change="updateValue('envTagContent', $event.toString())"
                     />
                   </el-form-item>
                 </el-col>
-                <template v-if="appearanceForm.enableEnvTag === 'true'">
-                  <el-col :span="24">
-                    <el-form-item>
+                <el-col :span="24">
+                  <el-form-item>
+                    <template #label>
+                      <span>{{ $t('setting_envTagColor') }}</span>
+                    </template>
+                    <div class="flex align-center gap-3">
                       <div
-                        class="border border-dashed p-3 rounded-lg bg-color-disable w-100 flex align-center"
-                      >
-                        <span
-                          class="inline-flex align-center justify-center rounded-lg flex-shrink-0 text-xs fw-sub px-2 py-1 gap-1.5"
-                          :class="`tag-${appearanceForm.envTagColor}`"
-                        >
-                          <span
-                            class="w-1.5 h-1.5 rounded-pill"
-                            style="background-color: currentColor"
-                          />
-                          {{ appearanceForm.envTagContent || '-' }}
-                        </span>
-                      </div>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="24">
-                    <el-form-item>
-                      <template #label>
-                        <span>{{ $t('setting_envTagContent') }}</span>
-                      </template>
-                      <el-input
-                        v-model="appearanceForm.envTagContent"
-                        @change="
-                          updateValue('envTagContent', $event.toString())
+                        v-for="color in colorEnum"
+                        :key="color"
+                        class="inline-flex align-center justify-center rounded-lg flex-shrink-0 text-xs fw-sub px-2 py-1 gap-1.5 w-8 h-8 cursor-pointer"
+                        :class="`tag-${color}`"
+                        @click="
+                          ((appearanceForm.envTagColor = color),
+                          updateValue('envTagColor', color))
                         "
-                      />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="24">
-                    <el-form-item>
-                      <template #label>
-                        <span>{{ $t('setting_envTagColor') }}</span>
-                      </template>
-                      <div class="flex align-center gap-3">
-                        <div
-                          v-for="color in colorEnum"
-                          :key="color"
-                          class="inline-flex align-center justify-center rounded-lg flex-shrink-0 text-xs fw-sub px-2 py-1 gap-1.5 w-8 h-8 cursor-pointer"
-                          :class="`tag-${color}`"
-                          @click="
-                            ((appearanceForm.envTagColor = color),
-                            updateValue('envTagColor', color))
-                          "
-                        >
-                          <el-icon :size="16">
-                            <i-lucide-check
-                              v-if="appearanceForm.envTagColor === color"
-                            />
-                          </el-icon>
-                        </div>
+                      >
+                        <el-icon :size="16">
+                          <i-lucide-check
+                            v-if="appearanceForm.envTagColor === color"
+                          />
+                        </el-icon>
                       </div>
-                    </el-form-item>
-                  </el-col>
-                </template>
-              </el-row>
-            </div>
-            <template v-else>
-              <div
-                v-for="(childItem, childIndex) in item.items"
-                :key="childIndex"
-                class="box"
-              >
-                <el-row v-if="activePanel === childItem.category">
-                  <el-col :span="24">
-                    <el-form-item
-                      v-if="
-                        childItem.key_label !== 'Ldap SSL Cert' ||
-                        ldapForm.Ldap_SSL_Enable
-                      "
-                    >
-                      <template #label>
-                        <span>{{
-                          $t(
-                            `setting_${(childItem.key_label || '')
-                              .split(' ')
-                              .join('_')}`,
-                          ) || childItem.key_label
-                        }}</span>
-                        <el-tooltip
-                          v-if="
-                            childItem.documentation &&
-                            $te(`setting_${childItem.documentationKey}`)
-                          "
-                          effect="dark"
-                          placement="top"
-                        >
-                          <template #content>
-                            <div style="max-width: 300px">
-                              {{ $t(`setting_${childItem.documentationKey}`) }}
-                            </div>
-                          </template>
-
-                          <VIcon class="color-primary ml-3" size="14"
-                            >info</VIcon
-                          >
-                        </el-tooltip>
-                      </template>
-
-                      <TextFileReader
-                        v-if="childItem.key_label === 'Ldap SSL Cert'"
-                        :value="childItem.value"
-                        :file-name="childItem.fileName"
-                        @change="handleChangeCert(childItem, $event)"
-                        @update:file-name="handleChangeName(childItem, $event)"
-                      />
-
-                      <template v-if="childItem.key === 'license_rule'">
-                        <div
-                          class="flex flex-column gap-2 w-100 align-items-start"
-                        >
-                          <div
-                            v-for="(ruleItem, i) in childItem.value"
-                            :key="i"
-                            class="flex align-center gap-4"
-                          >
-                            <span class="text-secondary">{{
-                              $t('setting_license_remainingDaysThreshold')
-                            }}</span>
-                            <el-input-number
-                              v-model="ruleItem.remainingDaysThreshold"
-                              :min="0"
-                              :controls="false"
-                              style="width: 100px"
-                            />
-
-                            <span class="text-secondary">{{
-                              $t('packages_dag_components_alert_gaojingjibie')
-                            }}</span>
-                            <el-input
-                              v-model="ruleItem.level"
-                              style="width: 200px"
-                              :placeholder="
-                                $t('packages_dag_components_alert_gaojingjibie')
-                              "
-                            />
-
-                            <el-button
-                              text
-                              size="small"
-                              @click="removeRule(childItem, i)"
-                            >
-                              <template #icon>
-                                <i-mingcute-close-line />
-                              </template>
-                            </el-button>
+                    </div>
+                  </el-form-item>
+                </el-col>
+              </template>
+            </el-row>
+          </div>
+          <template v-else>
+            <div
+              v-for="(childItem, childIndex) in formItems"
+              :key="childIndex"
+              class="box"
+            >
+              <el-row v-if="activePanel === childItem.category">
+                <el-col :span="24">
+                  <el-form-item
+                    v-if="
+                      childItem.key_label !== 'Ldap SSL Cert' ||
+                      ldapForm.Ldap_SSL_Enable
+                    "
+                  >
+                    <template #label>
+                      <span>{{
+                        $t(
+                          `setting_${(childItem.key_label || '')
+                            .split(' ')
+                            .join('_')}`,
+                        ) || childItem.key_label
+                      }}</span>
+                      <el-tooltip
+                        v-if="
+                          childItem.documentation &&
+                          $te(`setting_${childItem.documentationKey}`)
+                        "
+                        effect="dark"
+                        placement="top"
+                      >
+                        <template #content>
+                          <div style="max-width: 300px">
+                            {{ $t(`setting_${childItem.documentationKey}`) }}
                           </div>
+                        </template>
 
-                          <el-button @click="addRule(childItem)">
+                        <VIcon class="color-primary ml-3" size="14">info</VIcon>
+                      </el-tooltip>
+                    </template>
+
+                    <TextFileReader
+                      v-if="childItem.key_label === 'Ldap SSL Cert'"
+                      :value="childItem.value"
+                      :file-name="childItem.fileName"
+                      @change="handleChangeCert(childItem, $event)"
+                      @update:file-name="handleChangeName(childItem, $event)"
+                    />
+
+                    <template v-if="childItem.key === 'license_rule'">
+                      <div
+                        class="flex flex-column gap-2 w-100 align-items-start"
+                      >
+                        <div
+                          v-for="(ruleItem, i) in childItem.value"
+                          :key="i"
+                          class="flex align-center gap-4"
+                        >
+                          <span class="text-secondary">{{
+                            $t('setting_license_remainingDaysThreshold')
+                          }}</span>
+                          <el-input-number
+                            v-model="ruleItem.remainingDaysThreshold"
+                            :min="0"
+                            :controls="false"
+                            style="width: 100px"
+                          />
+
+                          <span class="text-secondary">{{
+                            $t('packages_dag_components_alert_gaojingjibie')
+                          }}</span>
+                          <el-input
+                            v-model="ruleItem.level"
+                            style="width: 200px"
+                            :placeholder="
+                              $t('packages_dag_components_alert_gaojingjibie')
+                            "
+                          />
+
+                          <el-button
+                            text
+                            size="small"
+                            @click="removeRule(childItem, i)"
+                          >
                             <template #icon>
-                              <i-mingcute-add-line />
+                              <i-mingcute-close-line />
                             </template>
-                            {{ $t('public_rule_add') }}
                           </el-button>
                         </div>
-                      </template>
 
-                      <template
-                        v-else-if="childItem.key === 'license_alarm_template'"
-                      >
-                        <el-button @click="showCustomMailTemplate(childItem)">
+                        <el-button @click="addRule(childItem)">
                           <template #icon>
-                            <AdminOutlined />
+                            <i-mingcute-add-line />
                           </template>
-                          {{ $t('setting_license_alarm_template_custom') }}
+                          {{ $t('public_rule_add') }}
                         </el-button>
+                      </div>
+                    </template>
 
-                        <EmailTemplateDialog
-                          ref="emailTemplateDialog"
-                          hide-menu
-                          @save="handleSaveMailTemplate(childItem, $event)"
-                        />
-                      </template>
+                    <template
+                      v-else-if="childItem.key === 'license_alarm_template'"
+                    >
+                      <el-button @click="showCustomMailTemplate(childItem)">
+                        <template #icon>
+                          <AdminOutlined />
+                        </template>
+                        {{ $t('setting_license_alarm_template_custom') }}
+                      </el-button>
 
-                      <ElInputNumber
-                        v-else-if="'min' in childItem || 'max' in childItem"
-                        v-model="childItem.value"
-                        controls-position="right"
-                        :min="childItem.min"
-                        :max="childItem.max"
+                      <EmailTemplateDialog
+                        ref="emailTemplateDialog"
+                        hide-menu
+                        @save="handleSaveMailTemplate(childItem, $event)"
                       />
-                      <el-switch
-                        v-else-if="'open' in childItem"
-                        v-model="childItem.open"
-                      />
-                      <el-input
-                        v-else-if="
-                          !childItem.enums || childItem.enums.length === 0
-                        "
-                        v-model="childItem.value"
-                        :type="
-                          /password/.test(childItem.key) ? 'password' : 'text'
-                        "
-                        :disabled="item.category === 'license'"
-                        :mask="childItem.mask"
-                        :label="
-                          $t(
-                            `setting_${(childItem.key_label || '')
-                              .split(' ')
-                              .join('_')}`,
-                          ) || childItem.key_label
-                        "
-                      />
+                    </template>
 
-                      <el-select v-else v-model="childItem.value">
-                        <el-option
-                          v-for="options in childItem.enums"
-                          :key="options"
-                          :value="options"
-                          :label="options"
-                        />
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-              </div>
-            </template>
+                    <ElInputNumber
+                      v-else-if="'min' in childItem || 'max' in childItem"
+                      v-model="childItem.value"
+                      controls-position="right"
+                      :min="childItem.min"
+                      :max="childItem.max"
+                    />
+                    <el-switch
+                      v-else-if="'open' in childItem"
+                      v-model="childItem.open"
+                    />
+                    <el-input
+                      v-else-if="
+                        !childItem.enums || childItem.enums.length === 0
+                      "
+                      v-model="childItem.value"
+                      :type="
+                        /password/.test(childItem.key) ? 'password' : 'text'
+                      "
+                      :disabled="activePanel === 'license'"
+                      :mask="childItem.mask"
+                      :label="
+                        $t(
+                          `setting_${(childItem.key_label || '')
+                            .split(' ')
+                            .join('_')}`,
+                        ) || childItem.key_label
+                      "
+                    />
+
+                    <el-select v-else v-model="childItem.value">
+                      <el-option
+                        v-for="options in childItem.enums"
+                        :key="options"
+                        :value="options"
+                        :label="options"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
           </template>
         </div>
       </div>
