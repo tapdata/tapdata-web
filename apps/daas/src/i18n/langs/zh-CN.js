@@ -635,6 +635,7 @@ export default {
   setting_Appearance: '外观',
   setting_enableEnvTag: '环境标签',
   setting_envTagContent: '自定义文字',
+  setting_envTagContent_placeholder: '请输入文字或 emoji 表情',
   setting_envTagColor: '选择颜色',
   user_list_user_name_email: '请输入用户名 / 邮箱',
   user_list_change_time: ' 修改时间',

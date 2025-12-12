@@ -677,6 +677,7 @@ export default {
   setting_Appearance: 'Appearance',
   setting_enableEnvTag: 'Environment Tag',
   setting_envTagContent: 'Custom Text',
+  setting_envTagContent_placeholder: 'Please enter text or emoji',
   setting_envTagColor: 'Select Color',
   user_list_user_name_email: 'Please enter username/email',
   user_list_change_time: 'Modification time',

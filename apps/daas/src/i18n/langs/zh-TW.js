@@ -632,6 +632,7 @@ export default {
   setting_Appearance: '外觀',
   setting_enableEnvTag: '環境標籤',
   setting_envTagContent: '自定義文字',
+  setting_envTagContent_placeholder: '請輸入文字或 emoji 表情',
   setting_envTagColor: '選擇顏色',
   user_list_user_name_email: '請輸入用戶名 / 郵箱',
   user_list_change_time: ' 修改時間',
