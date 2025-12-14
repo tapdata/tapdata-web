@@ -3,7 +3,6 @@ import { InfoFilled, Loading, Plus } from '@element-plus/icons-vue'
 import { fetchConnections } from '@tap/api/src/core/connections'
 import {
   findInspect,
-  getNodeSchema,
   getNodeSchemaPage,
   getTapTables,
 } from '@tap/api/src/core/metadata-instances'
@@ -1352,10 +1351,15 @@ const onVisibleChange = async (opt: any = {}, visible: boolean) => {
 
     if (!opt.fields.length) {
       opt.fieldsLoading = true
-      const data = await getNodeSchema(opt.nodeId).finally(() => {
+      const data = await getNodeSchemaPage({
+        nodeId: opt.nodeId,
+        tableFilter: opt.table,
+        page: 1,
+        pageSize: 1,
+      }).finally(() => {
         opt.fieldsLoading = false
       })
-      const { fields } = mapFieldsData(data?.[0])
+      const { fields } = mapFieldsData(data?.items?.[0])
       opt.fields = fields
     }
     return
