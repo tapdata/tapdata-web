@@ -43,6 +43,7 @@ type TableItem = {
   additionalNum: number
   missingNum: number
   cannotWriteNum: number
+  primaryKeyInconsistencyNum: number
 }
 
 const { t } = useI18n()
@@ -60,7 +61,12 @@ const invalidApplyNum = ref<number>(0)
 const pageSize = ref<number>(10)
 const currentPage = ref<number>(1)
 const applyCompareRules = ref<string[]>(props.rules)
-const filterType = ref(['Different', 'Missing', 'CannotWrite'])
+const filterType = ref([
+  'PrimaryKeyInconsistency',
+  'Different',
+  'Missing',
+  'CannotWrite',
+])
 
 const typeMap = {
   Different: {
@@ -69,6 +75,11 @@ const typeMap = {
     doneText: 'packages_dag_compare_done_modify',
     btnText: t('public_button_revise'),
     numKey: 'differentNum',
+  },
+  PrimaryKeyInconsistency: {
+    text: t('packages_dag_compare_primary_key_inconsistency'),
+    type: 'warning',
+    numKey: 'primaryKeyInconsistencyNum',
   },
   Missing: {
     text: t('packages_dag_compare_missing'),
@@ -87,6 +98,10 @@ const typeMap = {
 }
 
 const filterOptions = ref([
+  {
+    label: t('packages_dag_compare_primary_key_inconsistency'),
+    value: 'PrimaryKeyInconsistency',
+  },
   {
     label: t('packages_dag_compare_different'),
     value: 'Different',
@@ -110,7 +125,7 @@ const filterOptions = ref([
 ])
 
 const ruleOptions = filterOptions.value.filter((item) => {
-  return item.value !== 'Additional'
+  return !['Additional', 'PrimaryKeyInconsistency'].includes(item.value)
 })
 
 const totalMap = ref<Record<string, number>>({})
@@ -179,25 +194,29 @@ const {
         Additional: 0,
         Missing: 0,
         CannotWrite: 0,
+        PrimaryKeyInconsistency: 0,
       }
       const fields: TableItem['fields'] = []
 
       item.differenceFieldList.forEach((field) => {
-        if (!field.applyType) totalMap[field.type as keyof typeof totalMap]++
+        if (!field.applyType) {
+          totalMap[field.type as keyof typeof totalMap]++
+          if (field.type !== 'PrimaryKeyInconsistency' && field.isPrimaryKey) {
+            // 只要是主键，其他差异也需要算进来
+            totalMap.PrimaryKeyInconsistency++
+          }
+        }
 
         let fieldType
-        let isPrimaryKey
         let isNullable
         let icon
 
         if (field.sourceField) {
           fieldType = field.sourceField.data_type
-          isPrimaryKey = field.sourceField.primary_key_position > 0
           isNullable = field.sourceField.is_nullable
           icon = getFieldIcon(field.sourceField.tapType)
         } else {
           fieldType = field.targetField.data_type
-          isPrimaryKey = field.targetField.primary_key_position > 0
           isNullable = field.targetField.is_nullable
           icon = getFieldIcon(field.targetField.tapType)
         }
@@ -212,9 +231,11 @@ const {
             field.sourceField?.data_type,
             field.targetField?.data_type,
           ),
+          sourcePrimaryKey: field.sourceField?.primaryKey,
+          targetPrimaryKey: field.targetField?.primaryKey,
           fieldType,
           icon,
-          isPrimaryKey,
+          isPrimaryKey: field.isPrimaryKey,
           isNullable,
         })
       })
@@ -227,6 +248,7 @@ const {
         additionalNum: totalMap.Additional,
         missingNum: totalMap.Missing,
         cannotWriteNum: totalMap.CannotWrite,
+        primaryKeyInconsistencyNum: totalMap.PrimaryKeyInconsistency,
       }
     })
 
@@ -294,10 +316,6 @@ const handleApplyTable = () => {
   ])
 }
 
-const handleApplyAll = () => {
-  saveApply(true)
-}
-
 const handleUndo = (item: Partial<ItemDifferenceFieldList>) => {
   deleteApply(false, [
     {
@@ -314,10 +332,6 @@ const handleUndoTable = () => {
       fieldNames: filteredFields.value.map((field) => field.fieldName),
     },
   ])
-}
-
-const handleUndoAll = () => {
-  deleteApply(true)
 }
 
 let unwatch: () => void
@@ -468,6 +482,8 @@ onBeforeUnmount(() => {
     width="60%"
     class="p-0 overflow-hidden compare-result-dialog"
     :show-close="false"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
     @open="onOpen"
     @close="onClose"
   >
@@ -805,6 +821,8 @@ onBeforeUnmount(() => {
                     <el-tooltip
                       :content="t('packages_dag_compare_result_apply_table')"
                       placement="top"
+                      :enterable="false"
+                      :hide-after="0"
                     >
                       <el-button
                         type="primary"
@@ -821,6 +839,8 @@ onBeforeUnmount(() => {
                     <el-tooltip
                       :content="t('packages_dag_compare_result_undo_table')"
                       placement="top"
+                      :enterable="false"
+                      :hide-after="0"
                     >
                       <el-button
                         type="primary"
@@ -862,6 +882,12 @@ onBeforeUnmount(() => {
                             (field.type === 'Missing' ||
                               field.type === 'CannotWrite'),
                         }"
+                        ><VIcon
+                          v-if="field.sourcePrimaryKey"
+                          size="12"
+                          class="text-warning mr-1"
+                        >
+                          key </VIcon
                         >{{ field.fieldName }}</span
                       >
                       <div class="flex align-center">
@@ -971,7 +997,15 @@ onBeforeUnmount(() => {
                     >
                     <div v-else>
                       <div class="mb-1 flex align-center gap-1">
-                        <span>{{ field.fieldName }}</span>
+                        <span
+                          ><VIcon
+                            v-if="field.targetPrimaryKey"
+                            size="12"
+                            class="text-warning mr-1"
+                          >
+                            key </VIcon
+                          >{{ field.fieldName }}</span
+                        >
                         <el-tag
                           v-if="field.type === 'CannotWrite'"
                           type="danger"

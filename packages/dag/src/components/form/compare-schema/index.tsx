@@ -67,7 +67,10 @@ const CompareSchema = defineComponent({
 
       const details = []
       const total =
-        (map.CannotWrite || 0) + (map.Missing || 0) + (map.Different || 0)
+        (map.CannotWrite || 0) +
+        (map.Missing || 0) +
+        (map.Different || 0) +
+        (map.PrimaryKeyInconsistency || 0)
       const resolved =
         (map.CannotWriteApply || 0) +
         (map.MissingApply || 0) +
@@ -135,15 +138,26 @@ const CompareSchema = defineComponent({
         )
       }
 
+      if (map.PrimaryKeyInconsistency) {
+        details.push(
+          t('packages_dag_compare_result_detail_primary_key_inconsistency', {
+            primaryKeyInconsistency: map.PrimaryKeyInconsistency,
+          }),
+        )
+      }
+
       return {
         type,
         title: t('packages_dag_compare_result_alert', {
           time1,
           time2,
-          result: t('packages_dag_compare_result_with_diff', {
-            count: total,
-            details: `(${details.join(',')})`,
-          }),
+          result:
+            details.length > 1
+              ? t('packages_dag_compare_result_with_diff', {
+                  count: total,
+                  details: `(${details.join(',')})`,
+                })
+              : details[0],
         }),
       }
     })

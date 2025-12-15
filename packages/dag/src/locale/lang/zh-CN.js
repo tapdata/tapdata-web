@@ -966,6 +966,7 @@ export default {
   packages_dag_compare_missing_source: '字段未定义',
   packages_dag_compare_precision: '类型差异(一般)',
   packages_dag_compare_cannot_write: '字段只读',
+  packages_dag_compare_primary_key_inconsistency: '主键差异',
   packages_dag_compare_done_modify: '已{type}修改',
   packages_dag_compare_done_add: '已{type}添加',
   packages_dag_compare_done_delete: '已{type}删除',
@@ -1000,6 +1001,8 @@ export default {
   packages_dag_compare_result_detail_readonly: '{readonly} 个只读',
   packages_dag_compare_result_detail_missing: '{missing} 个缺失',
   packages_dag_compare_result_detail_different: '{different} 个类型差异',
+  packages_dag_compare_result_detail_primary_key_inconsistency:
+    '{primaryKeyInconsistency} 个主键差异',
   packages_dag_compare_result_detail_all: '全部差异',
   packages_dag_compare_result_auto_process: '自动处理差异',
   packages_dag_compare_result_display_field: '显示字段',
