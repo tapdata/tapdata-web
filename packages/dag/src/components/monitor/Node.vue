@@ -489,7 +489,7 @@ export default defineComponent({
               reference: () => (
                 <div class="node-card px-3 pb-1">
                   <div class="flex align-center">
-                    <div class="node-card-content p-2 flex-1 rounded-lg">
+                    <div class="node-card-content p-2 flex-1 rounded-lg min-w-0">
                       {renderStatistic()}
                     </div>
                     <ElButton
@@ -599,7 +599,6 @@ export default defineComponent({
       //font-weight: 700;
       font-size: 12px;
       font-family: DIN;
-      white-space: nowrap;
     }
   }
 }
