@@ -68,67 +68,65 @@ const filterType = ref([
   'CannotWrite',
 ])
 
-const typeMap = {
-  Different: {
-    text: t('packages_dag_compare_different'),
-    type: 'warning',
-    doneText: 'packages_dag_compare_done_modify',
-    btnText: t('public_button_revise'),
-    numKey: 'differentNum',
-  },
-  PrimaryKeyInconsistency: {
-    text: t('packages_dag_compare_primary_key_inconsistency'),
-    type: 'warning',
-    numKey: 'primaryKeyInconsistencyNum',
-  },
-  Missing: {
-    text: t('packages_dag_compare_missing'),
-    type: 'danger',
-    doneText: 'packages_dag_compare_done_delete',
-    btnText: t('public_button_delete'),
-    numKey: 'missingNum',
-  },
-  CannotWrite: {
-    text: t('packages_dag_compare_cannot_write'),
-    type: 'danger',
-    doneText: 'packages_dag_compare_done_delete',
-    btnText: t('public_button_delete'),
-    numKey: 'cannotWriteNum',
-  },
-}
-
 const filterOptions = ref([
   {
     label: t('packages_dag_compare_primary_key_inconsistency'),
     value: 'PrimaryKeyInconsistency',
+    type: 'warning',
+    numKey: 'primaryKeyInconsistencyNum',
   },
   {
     label: t('packages_dag_compare_different'),
     value: 'Different',
+    type: 'warning',
+    numKey: 'differentNum',
+    doneText: 'packages_dag_compare_done_modify',
+    actionText: t('public_button_update'),
   },
   {
     label: t('packages_dag_compare_missing'),
     value: 'Missing',
+    type: 'danger',
+    numKey: 'missingNum',
+    doneText: 'packages_dag_compare_done_delete',
+    actionText: t('public_button_delete'),
   },
   {
     label: t('packages_dag_compare_cannot_write'),
     value: 'CannotWrite',
+    type: 'danger',
+    numKey: 'cannotWriteNum',
+    doneText: 'packages_dag_compare_done_delete',
+    actionText: t('public_button_delete'),
   },
   {
     label: t('packages_dag_compare_missing_source'),
     value: 'Additional',
+    type: 'info',
   },
   {
     label: t('packages_dag_compare_precision'),
     value: 'Precision',
+    type: 'info',
+    doneText: 'packages_dag_compare_done_modify',
+    actionText: t('public_button_update'),
   },
 ])
 
 const ruleOptions = filterOptions.value.filter((item) => {
-  return !['Additional', 'PrimaryKeyInconsistency'].includes(item.value)
+  return !!item.actionText
 })
 
 const totalMap = ref<Record<string, number>>({})
+
+const typeMap = filterOptions.value.reduce((acc: Record<string, any>, item) => {
+  acc[item.value] = item
+  return acc
+}, {})
+
+const importantOptions = filterOptions.value.filter((item) => {
+  return ['warning', 'danger'].includes(item.type)
+})
 
 const isLoading = computed(() => {
   return compareResultLoading.value || compareStatus.value === 'running'
@@ -577,7 +575,7 @@ onBeforeUnmount(() => {
               <el-tag
                 v-for="item in data"
                 :key="item.value"
-                :type="typeMap[item.value]?.type || 'info'"
+                :type="typeMap[item.value]?.type"
                 closable
                 @close="deleteTag($event, item)"
               >
@@ -619,19 +617,11 @@ onBeforeUnmount(() => {
             :label="item.label"
             :value="item.value"
           >
-            <el-tag
-              disable-transitions
-              :type="typeMap[item.value]?.type || 'info'"
-              class="px-1.5"
-            >
+            <el-tag disable-transitions :type="item.type" class="px-1.5">
               <span class="flex align-center">
                 {{ item.label }}
                 <el-icon><i-lucide-chevrons-right /></el-icon>
-                {{
-                  item.value === 'Different' || item.value === 'Precision'
-                    ? $t('public_button_update')
-                    : $t('public_button_delete')
-                }}
+                {{ item.actionText }}
               </span>
             </el-tag>
           </el-checkbox>
@@ -732,15 +722,18 @@ onBeforeUnmount(() => {
                     >
                   </div>
                   <div class="flex gap-1 flex-wrap mt-1 table-item-tags">
-                    <template v-for="(v, key) in typeMap" :key="key">
+                    <template
+                      v-for="option in importantOptions"
+                      :key="option.value"
+                    >
                       <el-tag
-                        v-if="item[v.numKey] > 0"
-                        :type="v.type"
+                        v-if="item[option.numKey] > 0"
+                        :type="option.type"
                         size="small"
                         class="px-1"
                       >
-                        {{ v.text
-                        }}<span class="ml-0.5">{{ item[v.numKey] }}</span>
+                        {{ option.label
+                        }}<span class="ml-0.5">{{ item[option.numKey] }}</span>
                       </el-tag>
                     </template>
                   </div>
@@ -779,16 +772,19 @@ onBeforeUnmount(() => {
                 <template v-if="singleTable">
                   <el-divider direction="vertical" class="mx-3" />
                   <div class="flex gap-2 flex-wrap">
-                    <template v-for="(v, key) in typeMap" :key="key">
+                    <template
+                      v-for="(item, index) in importantOptions"
+                      :key="index"
+                    >
                       <el-tag
-                        v-if="selectedTable[v.numKey] > 0"
-                        :type="v.type"
+                        v-if="selectedTable[item.numKey] > 0"
+                        :type="item.type"
                         size="small"
                         class="px-1"
                       >
-                        {{ t(v.text)
+                        {{ t(item.label)
                         }}<span class="ml-0.5">{{
-                          selectedTable[v.numKey]
+                          selectedTable[item.numKey]
                         }}</span>
                       </el-tag>
                     </template>
@@ -906,16 +902,9 @@ onBeforeUnmount(() => {
                         >
                           <el-icon><i-mingcute-check-line /></el-icon>
                           {{
-                            t(
-                              typeMap[
-                                field.type === 'Precision'
-                                  ? 'Different'
-                                  : field.type
-                              ].doneText,
-                              {
-                                type: t('public_automatically'),
-                              },
-                            )
+                            t(typeMap[field.type].doneText, {
+                              type: t('public_automatically'),
+                            })
                           }}
                         </div>
                         <div
@@ -924,16 +913,9 @@ onBeforeUnmount(() => {
                         >
                           <el-icon><i-mingcute-check-line /></el-icon>
                           {{
-                            t(
-                              typeMap[
-                                field.type === 'Precision'
-                                  ? 'Different'
-                                  : field.type
-                              ].doneText,
-                              {
-                                type: t('public_manually'),
-                              },
-                            )
+                            t(typeMap[field.type].doneText, {
+                              type: t('public_manually'),
+                            })
                           }}
                         </div>
                       </div>
