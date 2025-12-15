@@ -30,7 +30,7 @@ const emit = defineEmits<{
         @click.stop="$emit('clickName', row)"
       >
         <span class="inline-flex min-w-0">
-          <span class="ellipsis">{{ row.name }}</span>
+          <span class="ellipsis lh-6">{{ row.name }}</span>
           <el-tooltip
             v-if="!row.desc"
             placement="top"
