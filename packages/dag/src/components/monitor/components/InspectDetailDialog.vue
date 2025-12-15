@@ -465,6 +465,11 @@ function handleRowClick(row: InspectionRow): void {
   if (currentSelectedRow.value === row) return
   currentSelectedRow.value = row
   diffListContainer.value?.scrollTo({ top: 0 })
+
+  selectedMap.value = {}
+  checkAll.value = false
+  isIndeterminate.value = false
+
   fetchTableDiff(1).then(setFieldOptions)
 }
 
@@ -1208,8 +1213,8 @@ function handleDiffTypeChange(value: string): void {
           <div ref="diffListContainer" class="overflow-y-auto p-4 min-h-0">
             <div class="flex flex-column gap-4">
               <div
-                v-for="(row, index) in rowDiffList"
-                :key="index"
+                v-for="row in rowDiffList"
+                :key="row.id"
                 class="border rounded-xl overflow-hidden"
                 :class="{ 'border-primary': selectedMap[row.id] }"
               >

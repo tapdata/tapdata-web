@@ -347,7 +347,6 @@ const getAlarmData = async () => {
     const data = await fetchAlarmRules()
     alarmData.value = data.map((item: AlarmRule) => {
       item.point = getPoints(item.point)
-      item.ms = getSecond(item.ms)
       return item
     })
     initVariables()
@@ -381,18 +380,12 @@ const getPoints = (data: number): number => {
   return Math.max(Math.ceil(data / 12), 1)
 }
 
-const getSecond = (data: number): number => {
-  // ms => s 1000ms = 1s
-  return Math.max(Math.ceil(data / 1000), 1)
-}
-
 const saveAlarmRules = async () => {
   try {
     // 告警设置单独保存
     let data = cloneDeep(alarmData.value)
     data = data.map((item: AlarmRule) => {
       item.point = Math.max(Math.ceil(item.point * 12), 1)
-      item.ms = Math.max(Math.ceil(item.ms * 1000), 1)
       return item
     })
     await saveAlarmRulesApi(data)
@@ -787,7 +780,7 @@ onMounted(async () => {
                 style="width: 80px"
               />
               <span class="ml-2">{{
-                (scope.row.unit || 's') +
+                (scope.row.unit || 'ms') +
                 $t('packages_business_setting_alarmnotification_msshigaojing')
               }}</span>
             </template>

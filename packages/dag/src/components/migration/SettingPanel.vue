@@ -551,6 +551,27 @@ watch(
   { deep: true },
 )
 
+// 监听源节点
+// 源节点上的某些能力属性联动到任务设置
+watch(
+  () => sourceNodes.value.length,
+  () => {
+    const showAutoIncrementalBatchSize = sourceNodes.value.some(
+      ({ nodeId }: any) => {
+        const node = props.scope.findNodeById(nodeId)
+        return node.attrs.capabilities.some(
+          (item: any) => item.id === 'stream_read_one_by_one_function',
+        )
+      },
+    )
+
+    form.setFieldState('autoIncrementalBatchSize', {
+      visible: showAutoIncrementalBatchSize,
+    })
+  },
+  { immediate: true },
+)
+
 // Lifecycle
 onMounted(() => {
   nextTick(() => {
@@ -1100,6 +1121,18 @@ const schema = {
                           },
                           'x-component': 'Switch',
                         },
+                        autoIncrementalBatchSize: {
+                          title: t('packages_dag_autoIncrementalBatchSize'),
+                          type: 'boolean',
+                          default: true,
+                          'x-decorator': 'FormItem',
+                          'x-decorator-props': {
+                            tooltip: t(
+                              'packages_dag_autoIncrementalBatchSize_tip',
+                            ),
+                          },
+                          'x-component': 'Switch',
+                        },
                         accessNodeType: {
                           type: 'string',
                           title: t('packages_dag_connection_form_access_node'),
@@ -1639,7 +1672,7 @@ const schema = {
                       dependencies: ['._ms'],
                       fulfill: {
                         state: {
-                          value: `{{!isNaN($deps[0]) ? Math.ceil($deps[0] * 1000) < 1 ? 1 : Math.ceil($deps[0] * 1000) : $self.value}}`,
+                          value: `{{!isNaN($deps[0]) ? $deps[0] * 1000 : $self.value}}`,
                         },
                       },
                     },
@@ -1650,8 +1683,7 @@ const schema = {
                   'x-editable': true,
                   'x-component': 'InputNumber',
                   'x-component-props': {
-                    min: 1,
-                    precision: 0,
+                    min: 0,
                     style: {
                       width: '100px',
                     },
@@ -1661,7 +1693,7 @@ const schema = {
                       dependencies: ['.ms'],
                       fulfill: {
                         state: {
-                          value: `{{isNaN($self.value) ? Math.ceil($deps[0] / 1000) < 1 ? 1 : Math.ceil($deps[0] / 1000) : $self.value}}`,
+                          value: `{{isNaN($self.value) ? $deps[0] / 1000 : $self.value}}`,
                         },
                       },
                     },

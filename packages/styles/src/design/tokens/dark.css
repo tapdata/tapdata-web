@@ -202,9 +202,10 @@ html.dark .el-table {
   }
 }
 
-.el-table tr.hover-row {
+/* 这里会造成渲染层混乱，导致鼠标 hover 后单元格背景色不一致 */
+/* .el-table tr.hover-row {
   background: var(--el-table-row-hover-bg-color);
-}
+} */
 
 html.dark .el-table:not(.is-scrolling-none) {
   td.el-table-fixed-column--left,

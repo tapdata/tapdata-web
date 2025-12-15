@@ -1,12 +1,13 @@
 <script setup lang="ts">
+import { getTaskById } from '@tap/api/src/core/task'
 import {
   getTaskInspectConfig,
   updateTaskInspectConfig,
   type TaskInspectConfig,
 } from '@tap/api/src/core/task-inspect'
 import { useI18n } from '@tap/i18n'
-import { reactive, ref } from 'vue'
 
+import { reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import type { ElDialog } from 'element-plus'
 
@@ -15,11 +16,10 @@ const { t } = useI18n()
 
 interface Props {
   taskId: string
+  syncType: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  taskId: '',
-})
+const props = withDefaults(defineProps<Props>(), {})
 
 const loading = ref(false)
 const saving = ref(false)
@@ -37,9 +37,34 @@ const timeCheckModeOptions = [
 const config = reactive<Partial<TaskInspectConfig>>({
   checkNoPkTable: false,
   timeCheckMode: 'NORMAL',
+  tableFilter: {
+    type: 'NONE',
+    tables: [],
+    regex: '',
+  },
 })
 const dialogRef = ref<InstanceType<typeof ElDialog> | null>(null)
 const queueCapacityType = ref<'auto' | 'custom'>('auto')
+const filterOptions = [
+  {
+    label: t('public_include_tables'),
+    value: 'INCLUDES',
+  },
+  {
+    label: t('public_include_regex'),
+    value: 'INCLUDE_REGEX',
+  },
+  {
+    label: t('public_exclude_tables'),
+    value: 'EXCLUDES',
+  },
+  {
+    label: t('public_exclude_regex'),
+    value: 'EXCLUDE_REGEX',
+  },
+]
+const tableFilterEnabled = ref(false)
+const tableOptions = ref([])
 
 async function initFormData() {
   loading.value = true
@@ -55,7 +80,14 @@ async function initFormData() {
     config.timeCheckMode = res.timeCheckMode
     config.checkNoPkTable = res.checkNoPkTable
     config.queueCapacity = res.queueCapacity ?? 1000
+    config.tableFilter = res.tableFilter || { type: 'NONE' }
     queueCapacityType.value = 'queueCapacity' in res ? 'custom' : 'auto'
+    tableFilterEnabled.value =
+      config.tableFilter.type && config.tableFilter.type !== 'NONE'
+
+    if (props.syncType === 'migrate') {
+      loadTableOptions()
+    }
   } catch (error) {
     console.error('Failed to load validation settings:', error)
   } finally {
@@ -164,6 +196,28 @@ function validateAllowSave() {
   return true
 }
 
+async function loadTableOptions() {
+  const data = await getTaskById(props.taskId)
+  const tables = data.dag.nodes
+    .find(
+      (node: Record<string, any>) =>
+        node.type === 'database' &&
+        node.migrateTableSelectType &&
+        node.tableNames,
+    )
+    ?.tableNames?.map((value: string) => ({ label: value, value }))
+
+  tableOptions.value = tables || []
+}
+
+function handleTableFilterChange(enable) {
+  if (enable) {
+    config.tableFilter.type = 'INCLUDES'
+  } else {
+    config.tableFilter.type = 'NONE'
+  }
+}
+
 const validate = async () => {
   await initFormData()
 
@@ -182,6 +236,7 @@ defineExpose({
     append-to-body
     width="500px"
     custom-class="data-validation-dialog"
+    :close-on-click-modal="false"
     @open="initFormData"
   >
     <div v-loading="loading">
@@ -251,6 +306,105 @@ defineExpose({
         </div>
 
         <el-divider />
+
+        <div v-if="syncType === 'migrate'" class="mb-4">
+          <div class="flex align-center justify-content-between mb-3">
+            <div class="fw-sub">{{ $t('public_table_filter') }}</div>
+            <ElSwitch
+              v-model="tableFilterEnabled"
+              @change="handleTableFilterChange"
+            />
+          </div>
+
+          <div
+            v-if="tableFilterEnabled"
+            class="bg-color-disable border p-4 rounded-xl"
+          >
+            <el-form-item
+              :label="$t('public_filter_type')"
+              label-position="top"
+              inline-message
+            >
+              <el-select
+                v-model="config.tableFilter.type"
+                :options="filterOptions"
+              />
+            </el-form-item>
+            <el-form-item
+              v-if="
+                config.tableFilter.type === 'INCLUDES' ||
+                config.tableFilter.type === 'EXCLUDES'
+              "
+              :label="
+                $t(
+                  config.tableFilter.type === 'INCLUDES'
+                    ? 'public_tables_included'
+                    : 'public_tables_excluded',
+                )
+              "
+              label-position="top"
+              inline-message
+              class="mb-0"
+            >
+              <el-select-v2
+                v-model="config.tableFilter.tables"
+                multiple
+                filterable
+                :options="tableOptions"
+              />
+            </el-form-item>
+            <el-form-item
+              v-else-if="config.tableFilter.type.includes('REGEX')"
+              label-position="top"
+              inline-message
+              class="mb-0"
+            >
+              <template #label>
+                <div class="flex align-center gap-1">
+                  <span>{{ $t('public_regex') }}</span>
+                  <el-tooltip placement="top">
+                    <template #content>
+                      <div class="lh-4">
+                        <p class="fw-sub mb-1">
+                          {{ $t('public_regex_example') }}
+                        </p>
+                        <ul class="ml-4 list-disc flex flex-column gap-0.5">
+                          <li class="list-disc">
+                            <code class="font-mono rounded px-1 bg-white/15"
+                              >user_.*</code
+                            >
+                            - {{ $t('public_table_regex_example_1') }}
+                          </li>
+                          <li class="list-disc">
+                            <code class="font-mono rounded bg-white/15 px-1"
+                              >.*_temp</code
+                            >
+                            - {{ $t('public_table_regex_example_2') }}
+                          </li>
+                          <li class="list-disc">
+                            <code class="font-mono rounded bg-white/15 px-1"
+                              >test|demo</code
+                            >
+                            - {{ $t('public_table_regex_example_3') }}
+                          </li>
+                        </ul>
+                      </div>
+                    </template>
+                    <el-icon>
+                      <i-lucide-info />
+                    </el-icon>
+                  </el-tooltip>
+                </div>
+              </template>
+              <el-input
+                v-model="config.tableFilter.regex"
+                type="textarea"
+                :placeholder="$t('public_table_regex_placeholder')"
+                :autosize="{ minRows: 1, maxRows: 3 }"
+              />
+            </el-form-item>
+          </div>
+        </div>
 
         <div class="flex flex-column gap-4">
           <div class="flex align-center">
@@ -344,7 +498,7 @@ defineExpose({
 
     <template #footer>
       <ElButton @click="handleClose">{{ t('public_button_cancel') }}</ElButton>
-      <ElButton type="primary" @click="handleSave">{{
+      <ElButton type="primary" :loading="saving" @click="handleSave">{{
         t('public_button_save')
       }}</ElButton>
     </template>

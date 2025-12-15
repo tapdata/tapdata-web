@@ -1035,4 +1035,7 @@ export default {
   packages_dag_cache_no_data: '暂无缓存数据',
   packages_dag_batch_read_size_chart_title: '读取批次统计 (条/批)',
   packages_dag_batch_read_size: '每批读取条数',
+  packages_dag_autoIncrementalBatchSize: '自动调整增量读取批次',
+  packages_dag_autoIncrementalBatchSize_tip:
+    '开启后，增量同步会根据实时负载动态调整源端批次大小：日志突增时减少延迟，空闲时自动扩充以提升性能。',
 }

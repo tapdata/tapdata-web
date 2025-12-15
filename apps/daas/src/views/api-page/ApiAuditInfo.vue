@@ -19,6 +19,11 @@ export default {
           value: 0,
         },
         {
+          label: this.$t('apiaudit_total_records'),
+          key: 'totalRows',
+          value: 0,
+        },
+        {
           label: this.$t('apiaudit_average_access_rate'),
           key: 'speed',
           value: 0,
@@ -26,7 +31,7 @@ export default {
         { label: this.$t('apiaudit_access_time'), key: 'latency', value: 0 },
         {
           label: this.$t('apiaudit_average_response_time'),
-          key: 'averResponseTime',
+          key: 'dataQueryTotalTime',
           value: 0,
         },
       ],
@@ -160,7 +165,7 @@ export default {
             <div
               v-if="
                 item.value > 0 &&
-                ['latency', 'averResponseTime'].includes(item.key)
+                ['latency', 'dataQueryTotalTime'].includes(item.key)
               "
               class="link-primary pt-4 din-font details-box-item-num"
             >
