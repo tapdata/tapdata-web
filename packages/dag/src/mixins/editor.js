@@ -743,6 +743,7 @@ export default {
       this.dataflow.startTime = data.startTime
       this.dataflow.lastStartDate = data.lastStartDate
       this.dataflow.pingTime = data.pingTime
+      this.dataflow.autoIncrementalBatchSize = data.autoIncrementalBatchSize
 
       if (data.currentEventTimestamp) {
         this.dataflow.currentEventTimestampLabel = dayjs(

@@ -1124,7 +1124,6 @@ const schema = {
                         autoIncrementalBatchSize: {
                           title: t('packages_dag_autoIncrementalBatchSize'),
                           type: 'boolean',
-                          default: true,
                           'x-decorator': 'FormItem',
                           'x-decorator-props': {
                             tooltip: t(
