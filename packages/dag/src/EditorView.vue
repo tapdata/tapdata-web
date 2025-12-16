@@ -135,6 +135,7 @@ const onClickConnectionAdd = (connection) => {
 
 onMounted(async () => {
   await initNodeType()
+  await dataflowStore.initPdkProperties()
   await dataflowStore.fetchDataflow(route.params.id as string)
 })
 

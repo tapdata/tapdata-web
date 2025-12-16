@@ -6,6 +6,7 @@ import CanvasConnectionLine from './components/elements/CanvasConnectionLine.vue
 import CanvasEdge from './components/elements/CanvasEdge.vue'
 import Node from './components/elements/CanvasNode.vue'
 import NodesPanel from './components/NodesPanel.vue'
+import RightPanel from './components/RightPanel.vue'
 import { useCanvasMapping } from './composables/useCanvasMapping'
 import { useUiStore } from './stores/ui.store'
 
@@ -94,11 +95,14 @@ function onDeleteConnection(connection: Connection) {
 function onClickConnectionAdd(connection: Connection) {
   emit('click:connection:add', connection)
 }
+
+function onNodeClick() {}
 </script>
 
 <template>
   <div id="node-canvas" class="position-relative w-100 h-100">
     <NodesPanel />
+    <RightPanel />
 
     <svg style="position: absolute; left: -1000px; top: 0">
       <defs>
@@ -131,6 +135,7 @@ function onClickConnectionAdd(connection: Connection) {
       :max-zoom="10"
       @node-drag-stop="onNodeDragStop"
       @connect="onConnect"
+      @node-click="onNodeClick"
     >
       <template #node-canvas="nodeProps">
         <Node v-bind="nodeProps" />

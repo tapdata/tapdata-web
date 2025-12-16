@@ -1,9 +1,8 @@
 <script>
-import NodeIcon from './NodeIcon'
-
+import BaseNodeIcon from './BaseNodeIcon.vue'
 export default {
   name: 'BaseNode',
-  components: { NodeIcon },
+  components: { BaseNodeIcon },
   props: {
     node: Object,
   },
@@ -13,10 +12,7 @@ export default {
 <template>
   <div class="df-node pb-1">
     <div class="flex flex-1 pt-3 pb-2 px-3 align-center">
-      <div class="df-node-icon">
-        <NodeIcon class="df-node-icon-bg" :node="node" />
-        <NodeIcon class="df-node-icon-img" :node="node" />
-      </div>
+      <BaseNodeIcon :node="node" class="mr-2" />
       <slot :text="node.name" name="text">
         <div class="df-node-text">{{ node.name }}</div>
       </slot>

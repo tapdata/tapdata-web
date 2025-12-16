@@ -1,7 +1,8 @@
 import { fetchCustomNodes } from '@tap/api/src/core/custom-node'
+import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
 import { getTaskById } from '@tap/api/src/core/task'
 import { defineStore } from 'pinia'
-import { markRaw, ref } from 'vue'
+import { markRaw, ref, shallowRef } from 'vue'
 import { DEFAULT_SETTINGS } from '../constants'
 import { CustomProcessor } from '../nodes/extends/CustomProcessor'
 
@@ -17,6 +18,9 @@ export const useDataflowStore = defineStore('dataflow', () => {
   })
   const allResourceIns = ref([])
   const processorNodeTypes = ref([])
+  const pdkPropertiesMap = shallowRef({})
+  const pdkSchemaFreeMap = shallowRef({})
+  const pdkDoubleActiveMap = shallowRef({})
 
   function getResourceInsByNode(node) {
     return allResourceIns.value.find((ins) => ins.selector(node))
@@ -184,6 +188,39 @@ export const useDataflowStore = defineStore('dataflow', () => {
     if (~index) dag.value.edges.splice(index, 1)
   }
 
+  async function initPdkProperties() {
+    const databaseItems = await fetchDatabaseTypes({
+      fields: {
+        messages: true,
+        tags: true,
+        pdkHash: true,
+        properties: true,
+      },
+    })
+
+    const tagsMap = {}
+    const doubleActiveMap = {}
+    const propertiesMap = {}
+
+    databaseItems.forEach(({ properties, pdkHash, tags }) => {
+      const nodeProperties = properties?.node
+
+      if (nodeProperties) {
+        propertiesMap[pdkHash] = nodeProperties
+      }
+      if (tags?.includes('schema-free')) {
+        tagsMap[pdkHash] = true
+      }
+      if (tags?.includes('doubleActive')) {
+        doubleActiveMap[pdkHash] = true
+      }
+    })
+
+    pdkPropertiesMap.value = propertiesMap
+    pdkSchemaFreeMap.value = tagsMap
+    pdkDoubleActiveMap.value = doubleActiveMap
+  }
+
   return {
     dataflow,
     dag,
@@ -198,5 +235,6 @@ export const useDataflowStore = defineStore('dataflow', () => {
     setNodePositionById,
     addConnection,
     deleteConnection,
+    initPdkProperties,
   }
 })
