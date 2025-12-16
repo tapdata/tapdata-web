@@ -1,5 +1,5 @@
 import { observer } from '@formily/reactive-vue'
-import { defineComponent, computed, ref, onMounted, watch, onBeforeUnmount } from '@vue/composition-api'
+import { defineComponent, computed, ref, onMounted, watch, onBeforeUnmount, nextTick } from '@vue/composition-api'
 
 import { VEmpty } from '@tap/component'
 import i18n from '@tap/i18n'
@@ -158,24 +158,16 @@ export const TableSelect = observer(
 
       let cacheTables = []
 
-      watch(
-        () => props.syncPartitionTableEnable,
-        () => {
-          cacheTables = []
-          loadSelectData()
-        }
-      )
-
       const fetchMethod = async (filter, config) => {
         if (props.hasPartition) {
           if (cacheTables.length) {
-            if (!filter.where?.value?.like)
+            if (!filter.where?.value)
               return {
                 items: cacheTables,
                 total: cacheTables.length
               }
 
-            const search = filter.where?.value?.like.toLowerCase()
+            const search = filter.where?.value.toLowerCase()
             const filtered = cacheTables.filter(it => it.value.toLowerCase().includes(search))
             return {
               items: filtered,
@@ -203,8 +195,25 @@ export const TableSelect = observer(
         }
       }
 
+      let unWatchSyncPartitionTableEnable
+      onMounted(() => {
+        nextTick(() => {
+          // syncPartitionTableEnable 在 schema 中默认为true
+          // 虽然 visible:false 源节点始终都会触发一次 watch
+          // 为避免这种情况，放在 onMounted/nextTick 中
+          unWatchSyncPartitionTableEnable = watch(
+            () => props.syncPartitionTableEnable,
+            () => {
+              cacheTables = []
+              loadSelectData()
+            }
+          )
+        })
+      })
+
       onBeforeUnmount(() => {
         unWatch?.()
+        unWatchSyncPartitionTableEnable?.()
       })
 
       return () => {
@@ -253,6 +262,7 @@ export const TableSelect = observer(
 
         return (
           <AsyncSelect
+            lazy
             method={fetchMethod}
             loading={loading.value}
             class="async-select"
