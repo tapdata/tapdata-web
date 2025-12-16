@@ -246,7 +246,6 @@ export class Table extends NodeType {
                     default: true,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      class: 'flex-1',
                       tooltip: i18n.t('packages_dag_syncSourcePartitionTableEnable_tip')
                     },
                     'x-component': 'Switch',
@@ -1741,17 +1740,17 @@ export class Table extends NodeType {
                         default: true,
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          layout: 'horizontal',
+                          layout: 'horizontal'
                         },
                         'x-component': 'Switch',
                         'x-reactions': {
                           fulfill: {
                             state: {
                               visible:
-                                '{{$values.attrs.capabilities.some(item => item.id==="create_constraint_function")}}',
-                            },
-                          },
-                        },
+                                '{{$values.attrs.capabilities.some(item => item.id==="create_constraint_function")}}'
+                            }
+                          }
+                        }
                       },
                       noPkSyncMode: {
                         type: 'string',
