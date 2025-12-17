@@ -22,6 +22,7 @@ export const makeTree = (data: any[]) => {
           label: field_alias || name,
           name,
           children: [],
+          customDisabled: parent.customDisabled || parent.data_type === 'ARRAY',
         }
         parent.children.push(child)
       }
