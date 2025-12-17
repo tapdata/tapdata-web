@@ -2,6 +2,7 @@
 import {
   changeExternalStorage,
   createExternalStorage,
+  deleteExternalStorage,
   fetchExternalStorageList,
   getUsingTask,
   updateExternalStorageById,
@@ -319,7 +320,7 @@ export default {
         if (this.usingTasks?.length) {
           this.showUsingTaskDialog = true
         } else {
-          await changeExternalStorage(row.id)
+          await deleteExternalStorage(row.id)
           this.table.fetch()
         }
       }
