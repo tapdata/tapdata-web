@@ -59,3 +59,11 @@ export function updateExternalStorageById(id: string, params: any) {
 export function createExternalStorage(params: any) {
   return requestClient.post(BASE_URL, params)
 }
+
+// delete(id: string) {
+//   return this.axios.delete(`${this.url}/${id}`)
+// }
+
+export function deleteExternalStorage(id: string) {
+  return requestClient.delete(`${BASE_URL}/${id}`)
+}
