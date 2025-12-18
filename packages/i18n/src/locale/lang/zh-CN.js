@@ -330,6 +330,8 @@ export default {
   public_node_target: '目标节点',
   // 任务事件
   public_event_incremental_delay: '增量延迟',
+  public_event_incremental_delay_95th: '95 分位',
+  public_event_incremental_delay_99th: '99 分位',
   public_event_total_input: '总输入',
   public_event_total_output: '总输出',
   public_event_insert: '插入',

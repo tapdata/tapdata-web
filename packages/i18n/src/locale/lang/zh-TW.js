@@ -328,6 +328,8 @@ export default {
   public_node_target: '目標節點',
   // 任務事件
   public_event_incremental_delay: '增量延遲',
+  public_event_incremental_delay_95th: '95 分位',
+  public_event_incremental_delay_99th: '99 分位',
   public_event_total_input: '總輸入',
   public_event_total_output: '總輸出',
   public_event_insert: '插入',

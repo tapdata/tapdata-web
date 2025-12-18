@@ -329,6 +329,8 @@ export default {
   public_node_target: 'Target Node',
   // task event
   public_event_incremental_delay: 'Incremental Delay',
+  public_event_incremental_delay_95th: 'P95',
+  public_event_incremental_delay_99th: 'P99',
   public_event_total_input: 'Total Input',
   public_event_total_output: 'Total Output',
   public_event_insert: 'Insert',

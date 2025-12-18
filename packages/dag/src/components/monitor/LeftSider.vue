@@ -308,10 +308,6 @@ export default {
       }
     },
 
-    // allQpsMap() {
-    //   const qpsMap = this.qpsMap
-    // },
-
     // 处理耗时
     delayData() {
       const data = this.quota.samples?.lineChartData?.[0]
@@ -338,7 +334,8 @@ export default {
         }
       }
 
-      const { replicateLag = [] } = data
+      const name = [i18n.t('public_event_incremental_delay')]
+      const { replicateLag = [], replicateLag95th, replicateLag99th } = data
       const open = this.dataflow.alarmSettings?.find(
         (t) => t.key === 'TASK_INCREMENT_DELAY',
       )?.open
@@ -348,10 +345,26 @@ export default {
           )?.ms || 0
         : 60 * 1000
       const max = Math.max(...replicateLag)
+      const value = [replicateLag]
+      if (replicateLag95th?.some((v) => v !== null)) {
+        value.push(replicateLag95th)
+        name.push(i18n.t('public_event_incremental_delay_95th'))
+      }
+      if (replicateLag99th?.some((v) => v !== null)) {
+        value.push(replicateLag99th)
+        name.push(i18n.t('public_event_incremental_delay_99th'))
+      }
       return {
         x: time,
-        value: replicateLag,
+        name,
+        value,
         yAxisMax: Math.max(delay, max),
+        serieOptions: Array.from({ length: 3 }).fill(
+          {
+            areaStyle: undefined,
+          },
+          1,
+        ),
       }
     },
 
@@ -1067,7 +1080,7 @@ export default {
 
           <LineChart
             :data="replicateLagData"
-            :color="['#2C65FF']"
+            :color="['#2C65FF', '#91cc75', '#fac858']"
             :time-format="timeFormat"
             time-value
             class="line-chart"
@@ -1265,17 +1278,32 @@ export default {
         style="height: 200px"
       />
 
-      <div class="mt-6 font-color-dark fw-bold mb-2 lh-8">
+      <div class="mt-4 font-color-dark fw-bold mb-2 lh-8">
         {{ $t('public_event_incremental_delay') }}
       </div>
       <LineChart
         :data="replicateLagData"
-        :color="['#2C65FF']"
+        :color="['#2C65FF', '#91cc75', '#fac858']"
         :time-format="timeFormat"
         time-value
         style="height: 200px"
+        :options="{
+          legend: {
+            show: true,
+            type: 'scroll',
+            bottom: 0,
+          },
+          grid: {
+            outerBounds: {
+              left: 0,
+              top: 0,
+              right: 10,
+              bottom: 32,
+            },
+          },
+        }"
       />
-      <div class="mt-6 font-color-dark fw-bold mb-2 lh-8">
+      <div class="mt-4 font-color-dark fw-bold mb-2 lh-8">
         {{ $t('packages_dag_monitor_leftsider_chulihaoshim') }}
       </div>
       <LineChart
