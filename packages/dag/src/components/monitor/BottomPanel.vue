@@ -10,6 +10,7 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 
 import Alert from './components/Alert'
 import Record from './components/Record'
+import SkipErrorTable from './components/SkipErrorTable.vue'
 import TaskInspect from './components/TaskInspect.vue'
 import '@tap/component/src/directives/resize/index.scss'
 
@@ -22,6 +23,7 @@ export default {
     NodeLog,
     MilestoneList,
     TaskInspect,
+    SkipErrorTable,
   },
   directives: {
     resize,
@@ -247,6 +249,12 @@ export default {
             @open-inspect="$emit('open-inspect')"
           />
         </ElTabPane>
+        <SkipErrorTable
+          v-if="$attrs.dataflow && $attrs.dataflow.enableSkipErrorTable"
+          name="skipErrorTable"
+          :current-tab="currentTab"
+          v-bind="$attrs"
+        />
       </ElTabs>
 
       <el-button text class="close-icon" @click="$emit('showBottomPanel')">

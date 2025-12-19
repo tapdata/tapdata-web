@@ -209,8 +209,7 @@ export default {
   packages_dag_components_eventchart_suoxuanzhouqilei:
     'Selected cycle accumulation',
   packages_dag_components_eventchart_renwuyunxinglei: 'Task running cumulative',
-  packages_dag_components_initiallist_quanliangtongbuzhuang:
-    'Full synchronization status',
+  packages_dag_components_initiallist_quanliangtongbuzhuang: 'Status',
   packages_dag_components_initiallist_shujutongbu: 'Data synchronization',
   packages_dag_components_initiallist_mubiaobiaoming: 'Target table name',
   packages_dag_components_initiallist_yuanbiaoming: 'Source table name',
@@ -1185,4 +1184,14 @@ export default {
   packages_dag_autoIncrementalBatchSize: 'Auto Adjust Incremental Batch Size',
   packages_dag_autoIncrementalBatchSize_tip:
     'When enabled, incremental sync dynamically adjusts the source batch size based on real-time load: reducing delay during log spikes and expanding during idle periods to improve performance.',
+  packages_dag_enableSkipErrorTable: 'Skip Error Table',
+  packages_dag_enableSkipErrorTable_tip:
+    'When enabled, table write errors during the full sync phase will be skipped. The task will report an error and stop after all tables finish full synchronization.',
+  packages_dag_error_skipped: 'Error Skipped',
+  packages_dag_error_table_record: 'Error Table Record',
+  packages_dag_skip_error_date: 'Skip Date',
+  packages_dag_skip_error_no_data: 'No Error Table Record',
+  packages_dag_skip_error_recover_selected: 'Recover Selected',
+  packages_dag_skip_error_recover_all: 'Recover All',
+  packages_dag_only_show_skip: 'Only Show Skipped',
 }

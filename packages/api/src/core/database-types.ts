@@ -1,4 +1,4 @@
-import { PdkRenamedData, requestClient, type Filter } from '../request'
+import { requestClient, type Filter } from '../request'
 
 const BASE_URL = '/api/DatabaseTypes'
 
@@ -12,28 +12,18 @@ export function fetchDatabaseTypeByPdkHash(pdkHash: string) {
 /**
  * 获取数据库列表 - 用于连接器选择
  */
-export async function fetchDatabases(filter?: Filter) {
-  const data = await requestClient.get(`${BASE_URL}/getDatabases`, {
+export function fetchDatabases(filter?: Filter) {
+  return requestClient.get(`${BASE_URL}/getDatabases`, {
     params: {
       filter: filter ? JSON.stringify(filter) : undefined,
     },
-  })
-
-  return data?.map((it: any) => {
-    it.name = PdkRenamedData[it.name] || it.name
-    return it
   })
 }
 
-export async function fetchDatabaseTypes(filter?: Filter) {
-  const data = await requestClient.get(BASE_URL, {
+export function fetchDatabaseTypes(filter?: Filter) {
+  return requestClient.get(BASE_URL, {
     params: {
       filter: filter ? JSON.stringify(filter) : undefined,
     },
-  })
-
-  return data?.map((it: any) => {
-    it.name = PdkRenamedData[it.name] || it.name
-    return it
   })
 }

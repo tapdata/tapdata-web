@@ -627,6 +627,7 @@ const runfetchDatabaseTypes = async () => {
 
   ConnectorMap.value = databaseItems.reduce((map, item) => {
     map[item.type] = {
+      name: item.name,
       pdkHash: item.pdkHash,
       isNullsLast: item.tags?.includes('NullsLast'),
       capabilityMap:
