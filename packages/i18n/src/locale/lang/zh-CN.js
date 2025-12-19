@@ -96,6 +96,8 @@ export default {
   public_status_snapshot_completed: '全量已完成',
   public_status_do_cdc: '增量进行中',
   public_status_ping_timeout: '心跳超时',
+  public_status_skipped: '已跳过',
+  public_status_recovering: '恢复中',
   // 按钮
   public_button_edit: '编辑',
   public_button_ok: '知道了',
@@ -567,6 +569,7 @@ export default {
   public_select_encryption_rule: '选择加密规则',
   public_clear_alias_confirm: '确定清空所有字段别名吗?',
   public_selected_fields: '已选择 {val} 个字段',
+  public_selected_tables: '已选择 {val} 个表',
   public_quick_convert_alias: '快速转换别名',
   public_clear_alias: '清空别名',
   public_queue_capacity: '缓存队列大小',

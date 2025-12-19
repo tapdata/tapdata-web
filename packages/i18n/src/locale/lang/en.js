@@ -96,6 +96,8 @@ export default {
   public_status_snapshot_completed: 'Full Sync Completed',
   public_status_do_cdc: 'Incremental Syncing',
   public_status_ping_timeout: 'Ping Timeout',
+  public_status_skipped: 'Skipped',
+  public_status_recovering: 'Recovering',
   // button
   public_button_edit: 'Edit',
   public_button_ok: 'OK',
@@ -574,6 +576,7 @@ export default {
   public_select_encryption_rule: 'Select Encryption Rule',
   public_clear_alias_confirm: 'Are you sure to clear all field aliases?',
   public_selected_fields: 'Selected {val} fields',
+  public_selected_tables: 'Selected {val} tables',
   public_quick_convert_alias: 'Convert Alias',
   public_clear_alias: 'Clear Alias',
   public_queue_capacity: 'Queue Capacity',

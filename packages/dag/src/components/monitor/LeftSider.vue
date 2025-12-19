@@ -657,14 +657,9 @@ export default {
           class="flex-1"
           @change="changeFrequency"
         />
-        <ElTooltip
-          transition="tooltip-fade-in"
-          :content="$t('public_button_refresh')"
+        <IconButton class="color-primary" @click="$emit('load-data')">
+          refresh</IconButton
         >
-          <IconButton class="color-primary" @click="$emit('load-data')">
-            refresh</IconButton
-          >
-        </ElTooltip>
       </div>
       <div v-if="dataflow.type !== 'cdc'" class="info-box sync-info">
         <div class="flex justify-content-between mb-2">

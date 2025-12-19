@@ -1022,4 +1022,14 @@ export default {
   packages_dag_autoIncrementalBatchSize: '自動調整增量讀取批次',
   packages_dag_autoIncrementalBatchSize_tip:
     '開啓後，增量同步會根據實時負載動態調整源端批次大小：日誌突增時減少延遲，空閒時自動擴充以提升性能。',
+  packages_dag_enableSkipErrorTable: '跳過異常表',
+  packages_dag_enableSkipErrorTable_tip:
+    '開啓後，全量階段表寫入時異常將其跳過處理， 待所有表全量同步完成後任務報錯停止',
+  packages_dag_error_skipped: '已跳過',
+  packages_dag_error_table_record: '異常表記錄',
+  packages_dag_skip_error_date: '跳過時間',
+  packages_dag_skip_error_no_data: '暫無異常表記錄',
+  packages_dag_skip_error_recover_selected: '恢復選中',
+  packages_dag_skip_error_recover_all: '恢復全部',
+  packages_dag_only_show_skip: '僅顯示已跳過',
 }
