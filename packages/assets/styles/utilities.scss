@@ -624,6 +624,10 @@
   width: 1.25rem !important;
 }
 
+.w-8 {
+  width: 2rem !important;
+}
+
 .w-25 {
   width: 25% !important;
 }
@@ -812,6 +816,10 @@
 
 .gap-1 {
   gap: 0.25rem !important;
+}
+
+.gap-1\.5 {
+  gap: 0.375rem !important;
 }
 
 .gap-2 {
@@ -12815,7 +12823,7 @@
 }
 
 .border-dashed {
-  border-style: dashed;
+  border-style: dashed !important;
 }
 
 .text-gray-600 {
@@ -13004,4 +13012,40 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+}
+
+.tag-red {
+  background-color: oklch(0.936 0.032 17.717);
+  border: 1px solid oklch(0.885 0.062 18.334);
+  color: oklch(0.505 0.213 27.518);
+}
+
+.tag-orange {
+  background-color: oklch(0.954 0.038 75.164);
+  border: 1px solid oklch(0.901 0.076 70.697);
+  color: oklch(0.553 0.195 38.402);
+}
+
+.tag-yellow {
+  background-color: oklch(0.973 0.071 103.193);
+  border: 1px solid oklch(0.945 0.129 101.54);
+  color: oklch(0.554 0.135 66.442);
+}
+
+.tag-blue {
+  background-color: oklch(0.932 0.032 255.585);
+  border: 1px solid oklch(0.882 0.059 254.128);
+  color: oklch(0.488 0.243 264.376);
+}
+
+.tag-green {
+  background-color: oklch(0.962 0.044 156.743);
+  border: 1px solid oklch(0.925 0.084 155.995);
+  color: oklch(0.527 0.154 150.069);
+}
+
+.tag-purple {
+  background-color: oklch(0.946 0.033 307.174);
+  border: 1px solid oklch(0.902 0.063 306.703);
+  color: oklch(0.496 0.265 301.924);
 }

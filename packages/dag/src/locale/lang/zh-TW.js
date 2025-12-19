@@ -1019,6 +1019,9 @@ export default {
   packages_dag_cache_no_data: '暫無緩存數據',
   packages_dag_batch_read_size_chart_title: '批次讀取統計 (條/批)',
   packages_dag_batch_read_size: '每批讀取條數',
+  packages_dag_autoIncrementalBatchSize: '自動調整增量讀取批次',
+  packages_dag_autoIncrementalBatchSize_tip:
+    '開啓後，增量同步會根據實時負載動態調整源端批次大小：日誌突增時減少延遲，空閒時自動擴充以提升性能。',
   packages_dag_enableSkipErrorTable: '跳過異常表',
   packages_dag_error_skipped: '已跳過',
   packages_dag_error_table_record: '異常表記錄',

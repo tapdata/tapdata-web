@@ -13,6 +13,11 @@ const store = createStore({
       unRead: 0,
     },
     appVersion: '',
+    appearance: {
+      enableEnvTag: '',
+      envTagContent: '',
+      envTagColor: '',
+    },
   },
   actions,
 
@@ -20,6 +25,18 @@ const store = createStore({
     ...mutations,
     SET_APP_VERSION(state, version) {
       state.appVersion = version
+    },
+    setAppearance(state, appearance) {
+      Object.assign(state.appearance, appearance)
+    },
+    setAppearanceBySetting(state, setting) {
+      setting
+        .filter((item) => {
+          return item.category === 'Appearance'
+        })
+        .forEach((item) => {
+          state.appearance[item.key] = item.value
+        })
     },
   },
 

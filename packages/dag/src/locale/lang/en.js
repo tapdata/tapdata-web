@@ -1181,6 +1181,9 @@ export default {
   packages_dag_cache_no_data: 'No Cache Data',
   packages_dag_batch_read_size_chart_title: 'Batch Read Size (rows/batch)',
   packages_dag_batch_read_size: 'Each batch read size',
+  packages_dag_autoIncrementalBatchSize: 'Auto Adjust Incremental Batch Size',
+  packages_dag_autoIncrementalBatchSize_tip:
+    'When enabled, incremental sync dynamically adjusts the source batch size based on real-time load: reducing delay during log spikes and expanding during idle periods to improve performance.',
   packages_dag_enableSkipErrorTable: 'Skip Error Table',
   packages_dag_error_skipped: 'Error Skipped',
   packages_dag_error_table_record: 'Error Table Record',

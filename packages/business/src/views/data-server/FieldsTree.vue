@@ -184,7 +184,7 @@ const getCheckedFields = (needMap?: boolean) => {
     : fields
 }
 
-const handleCheck = (data: any) => {
+const handleCheck = (data: any, state: any) => {
   if (popoverVisible.value) {
     const node = treeRef.value?.getNode(data.field_name)
     if (!node || (!node.checked && !node.indeterminate)) {
@@ -196,6 +196,14 @@ const handleCheck = (data: any) => {
       popoverVisible.value = false
     }
   }
+
+  if (data.customDisabled) {
+    // array 下的字段，禁止选中/反选
+    const isChecked = state.checkedKeys.includes(data.field_name)
+    treeRef.value?.setChecked(data.field_name, !isChecked, true)
+    return
+  }
+
   emit('check', (treeRef.value?.getCheckedKeys(true) || []) as string[])
 }
 
@@ -371,6 +379,25 @@ defineExpose({
   :deep(.el-tree-node__content:hover) {
     .text-editable:not(:focus-within):not(:hover) {
       border-color: var(--el-border-color-dark);
+    }
+  }
+
+  :deep(.el-tree-node__content) {
+    &:has(.custom-disabled-node) .el-checkbox {
+      * {
+        pointer-events: none;
+      }
+      .el-checkbox__inner {
+        background-color: var(--el-checkbox-disabled-input-fill) !important;
+        border-color: var(
+          --el-checkbox-disabled-checked-input-border-color
+        ) !important;
+        &:after {
+          border-color: var(
+            --el-checkbox-disabled-checked-icon-color
+          ) !important;
+        }
+      }
     }
   }
 }

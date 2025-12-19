@@ -551,6 +551,27 @@ watch(
   { deep: true },
 )
 
+// 监听源节点
+// 源节点上的某些能力属性联动到任务设置
+watch(
+  () => sourceNodes.value.length,
+  () => {
+    const showAutoIncrementalBatchSize = sourceNodes.value.some(
+      ({ nodeId }: any) => {
+        const node = props.scope.findNodeById(nodeId)
+        return node.attrs.capabilities.some(
+          (item: any) => item.id === 'stream_read_one_by_one_function',
+        )
+      },
+    )
+
+    form.setFieldState('autoIncrementalBatchSize', {
+      visible: showAutoIncrementalBatchSize,
+    })
+  },
+  { immediate: true },
+)
+
 // Lifecycle
 onMounted(() => {
   nextTick(() => {
@@ -1110,6 +1131,17 @@ const schema = {
                           'x-decorator': 'FormItem',
                           'x-decorator-props': {
                             tooltip: t('packages_dag_dataSaving_tip'),
+                          },
+                          'x-component': 'Switch',
+                        },
+                        autoIncrementalBatchSize: {
+                          title: t('packages_dag_autoIncrementalBatchSize'),
+                          type: 'boolean',
+                          'x-decorator': 'FormItem',
+                          'x-decorator-props': {
+                            tooltip: t(
+                              'packages_dag_autoIncrementalBatchSize_tip',
+                            ),
                           },
                           'x-component': 'Switch',
                         },

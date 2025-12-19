@@ -45,9 +45,16 @@ const handleRemoveEncryption = (i: number) => {
 </script>
 
 <template>
-  <div class="flex flex-1 align-center gap-2 field-node min-w-0 pr-2">
+  <div
+    class="flex flex-1 align-center gap-2 field-node min-w-0 pr-2"
+    :class="{ 'custom-disabled-node': data.customDisabled }"
+  >
     <span
-      v-if="(!node.checked && !node.indeterminate) || readonly"
+      v-if="
+        (!node.checked && !node.indeterminate) ||
+        readonly ||
+        data.customDisabled
+      "
       class="px-1 py-0.5 node-name"
       >{{ data.name }}</span
     >

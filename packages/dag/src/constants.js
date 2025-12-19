@@ -18,6 +18,7 @@ export const DEFAULT_SETTINGS = {
   isAutoInspect: false,
   timeDifference: 0,
   currentEventTimestamp: null,
+  autoIncrementalBatchSize: true, // 新任务默认开启
 
   // readBatchSize: 100,
   // notificationWindow: 0,
