@@ -46,9 +46,9 @@ interface ConnectionTaskData {
 }
 
 interface SearchParams {
-  databaseType: string | null
+  pdkHash: string | null
   keyword: string
-  databaseModel: string
+  databaseModel: string | undefined
   status: string
   panelFlag: boolean
   sourceType: string
@@ -91,7 +91,7 @@ let timeout: NodeJS.Timeout | null = null
 const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 const showInstanceInfo = import.meta.env.VUE_APP_LICENSE_TYPE === 'PIPELINE'
 
-const filterItems = ref([])
+const filterItems = ref<Record<string, any>[]>([])
 const dialogDatabaseTypeVisible = ref(false)
 const multipleSelection = ref([])
 const order = ref('last_updated DESC')
@@ -132,7 +132,7 @@ const connectionTypeOptions = [
 ]
 
 const searchParams = ref<SearchParams>({
-  databaseType: null,
+  pdkHash: null,
   keyword: '',
   databaseModel: undefined,
   status: '',
@@ -211,7 +211,7 @@ const getData = async ({
   tags?: string[]
 }) => {
   const { current, size } = page
-  const { keyword, databaseType, databaseModel, status, sourceType } =
+  const { keyword, pdkHash, databaseModel, status, sourceType } =
     searchParams.value
   const where: any = {
     createType: {
@@ -222,7 +222,8 @@ const getData = async ({
   if (keyword && keyword.trim()) {
     where.name = { like: verify(keyword), options: 'i' }
   }
-  databaseType && (where.database_type = databaseType)
+
+  pdkHash && (where.pdkHash = pdkHash)
 
   if (databaseModel) {
     where.connection_type = {
@@ -575,28 +576,10 @@ const getFilterItems = () => {
     {
       slotName: 'databaseType',
       label: i18n.t('packages_business_connection_list_form_database_type'),
-      key: 'databaseType',
+      key: 'pdkHash',
       type: 'select-inner',
       width: 250,
       filterable: true,
-      items: async () => {
-        const data = await getConnectionDatabaseTypes()
-
-        if (!data?.length) {
-          return []
-        }
-
-        data.sort((t1: any, t2: any) =>
-          t1.databaseType.localeCompare(t2.databaseType),
-        )
-
-        return data.map((item: any) => {
-          return {
-            label: item.databaseType,
-            value: item.databaseType,
-          }
-        })
-      },
     },
     {
       placeholder: i18n.t('packages_business_connection_list_name'),
@@ -628,6 +611,7 @@ const handlePermissionsSettings = () => {
   permissionseSettingsCreate.value?.open(multipleSelection.value)
 }
 
+const PREFIX = '→ '
 const fetchDatabaseTypeOptions = async () => {
   const data = await getConnectionDatabaseTypes()
 
@@ -642,13 +626,17 @@ const fetchDatabaseTypeOptions = async () => {
   databaseTypeOptions.value = data.map(
     ({ databaseType: label, pdkHash }: any) => {
       return {
-        fakeLabel: `→ ${label}`,
+        fakeLabel: `${PREFIX}${label}`,
         label,
-        value: label,
+        value: pdkHash,
         pdkHash,
       }
     },
   )
+}
+
+const getRealLabel = (label: string) => {
+  return label.replace(PREFIX, '')
 }
 
 const handleChangeDatabaseType = (value: string) => {
@@ -661,7 +649,7 @@ const handleChangeDatabaseType = (value: string) => {
   })
 
   if (value) {
-    query.databaseType = value
+    query.pdkHash = value
   }
 
   router.replace({
@@ -670,7 +658,8 @@ const handleChangeDatabaseType = (value: string) => {
 }
 
 // Lifecycle hooks
-onMounted(() => {
+onMounted(async () => {
+  await fetchDatabaseTypeOptions()
   const { action, create } = route.query || {}
 
   if (create) {
@@ -690,6 +679,7 @@ onMounted(() => {
   timeout = setInterval(() => {
     table.value?.fetch(null, 0, true)
   }, 10000)
+
   getFilterItems()
 })
 
@@ -749,7 +739,7 @@ onUnmounted(() => {
 
           <template #databaseType>
             <SelectList
-              v-model="searchParams.databaseType"
+              v-model="searchParams.pdkHash"
               :label="
                 $t('packages_business_connection_list_form_database_type')
               "
@@ -762,7 +752,7 @@ onUnmounted(() => {
               @change="handleChangeDatabaseType"
               @visible-change="fetchDatabaseTypeOptions"
             >
-              <template #label="{ value }">{{ value }}</template>
+              <template #label="{ label }">{{ getRealLabel(label) }}</template>
               <template #default="{ item }">
                 <div class="flex align-center gap-2">
                   <img

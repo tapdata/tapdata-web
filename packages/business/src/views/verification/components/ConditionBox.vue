@@ -1195,11 +1195,17 @@ const validateCapabilities = (tasks: any[], capability: string) => {
   const noSupportList = new Set()
   tasks.forEach((item) => {
     if (!hasCapability(item.source.databaseType, capability)) {
-      noSupportList.add(item.source.databaseType)
+      noSupportList.add(
+        ConnectorMap.value[item.source.databaseType]?.name ||
+          item.source.databaseType,
+      )
     }
 
     if (!hasCapability(item.target.databaseType, capability)) {
-      noSupportList.add(item.target.databaseType)
+      noSupportList.add(
+        ConnectorMap.value[item.target.databaseType]?.name ||
+          item.target.databaseType,
+      )
     }
   })
 
