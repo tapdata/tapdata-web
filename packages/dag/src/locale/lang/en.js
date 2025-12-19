@@ -1185,6 +1185,8 @@ export default {
   packages_dag_autoIncrementalBatchSize_tip:
     'When enabled, incremental sync dynamically adjusts the source batch size based on real-time load: reducing delay during log spikes and expanding during idle periods to improve performance.',
   packages_dag_enableSkipErrorTable: 'Skip Error Table',
+  packages_dag_enableSkipErrorTable_tip:
+    'When enabled, table write errors during the full sync phase will be skipped. The task will report an error and stop after all tables finish full synchronization.',
   packages_dag_error_skipped: 'Error Skipped',
   packages_dag_error_table_record: 'Error Table Record',
   packages_dag_skip_error_date: 'Skip Date',

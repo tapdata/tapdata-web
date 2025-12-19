@@ -838,6 +838,9 @@ const schema = {
                           title: t('packages_dag_enableSkipErrorTable'),
                           type: 'boolean',
                           'x-decorator': 'FormItem',
+                          'x-decorator-props': {
+                            tooltip: t('packages_dag_enableSkipErrorTable_tip'),
+                          },
                           'x-component': 'Switch',
                           'x-reactions': {
                             fulfill: {
