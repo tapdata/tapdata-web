@@ -22,7 +22,6 @@ export const makeTree = (data: any[]) => {
           label: field_alias || name,
           name,
           children: [],
-          customDisabled: parent.customDisabled || parent.data_type === 'ARRAY',
         }
         parent.children.push(child)
       }
@@ -38,6 +37,20 @@ export const makeTree = (data: any[]) => {
       }
     }
   }
+
+  const setCustomDisabled = (nodes: any[], parentDisabled = false) => {
+    for (const node of nodes) {
+      node.customDisabled = parentDisabled
+      if (node.children?.length) {
+        // 如果当前节点是 ARRAY，则子节点全部禁用
+        setCustomDisabled(
+          node.children,
+          parentDisabled || node.data_type === 'ARRAY',
+        )
+      }
+    }
+  }
+  setCustomDisabled(root.children)
 
   return root.children
 }
