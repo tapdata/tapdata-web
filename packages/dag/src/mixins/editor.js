@@ -93,6 +93,8 @@ export default {
       'stateIsReadonly',
       'processorNodeTypes',
       'hasNodeError',
+      'getCapabilitiesMap',
+      'hasCapability',
     ]),
 
     selectBoxStyle() {
@@ -169,6 +171,7 @@ export default {
       'setPdkPropertiesMap',
       'setPdkSchemaFreeMap',
       'setPdkDoubleActiveMap',
+      'setPdkCapabilitiesMap',
       'setMaterializedViewVisible',
     ]),
 
@@ -1552,13 +1555,7 @@ export default {
         let hasNoStreamReadFunction = false
         this.allNodes.forEach((node) => {
           if (node.$outputs.length && !node.$inputs.length) {
-            const capbilitiesMap = node.attrs.capabilities.reduce(
-              (map, item) => {
-                map[item.id] = true
-                return map
-              },
-              {},
-            )
+            const capbilitiesMap = this.getCapabilitiesMap(node)
 
             if (
               !capbilitiesMap.stream_read_function &&
@@ -1938,16 +1935,10 @@ export default {
       )
 
       if (target && isEmpty(target.dmlPolicy)) {
-        const capabilities = target.attrs.capabilities
-        const insertPolicy = capabilities?.find(
-          ({ id }) => id === 'dml_insert_policy',
-        )
-        const updatePolicy = capabilities?.find(
-          ({ id }) => id === 'dml_update_policy',
-        )
-        const deletePolicy = capabilities?.find(
-          ({ id }) => id === 'dml_delete_policy',
-        )
+        const capabilities = this.getCapabilitiesMap(target)
+        const insertPolicy = capabilities.dml_insert_policy
+        const updatePolicy = capabilities.dml_update_policy
+        const deletePolicy = capabilities.dml_delete_policy
 
         const insertOptions = [
           'update_on_exists',
@@ -2853,13 +2844,15 @@ export default {
           tags: true,
           pdkHash: true,
           properties: true,
+          capabilities: true,
         },
       })
       const tagsMap = {}
       const doubleActiveMap = {}
       const propertiesMap = {}
+      const capabilitiesMap = {}
 
-      databaseItems.forEach(({ properties, pdkHash, tags }) => {
+      databaseItems.forEach(({ properties, pdkHash, tags, capabilities }) => {
         const nodeProperties = properties?.node
 
         if (nodeProperties) {
@@ -2871,12 +2864,17 @@ export default {
         if (tags?.includes('doubleActive')) {
           doubleActiveMap[pdkHash] = true
         }
+        if (capabilities?.length) {
+          capabilitiesMap[pdkHash] = capabilities.reduce((map, item) => {
+            map[item.id] = item
+            return map
+          }, {})
+        }
       })
       this.setPdkPropertiesMap(propertiesMap)
       this.setPdkSchemaFreeMap(tagsMap)
       this.setPdkDoubleActiveMap(doubleActiveMap)
-
-      // console.log(propertiesMap, tagsMap) // eslint-disable-line
+      this.setPdkCapabilitiesMap(capabilitiesMap)
     },
 
     getIsDataflow() {
