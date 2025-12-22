@@ -559,8 +559,10 @@ watch(
     const showAutoIncrementalBatchSize = sourceNodes.value.some(
       ({ nodeId }: any) => {
         const node = props.scope.findNodeById(nodeId)
-        return node.attrs.capabilities.some(
-          (item: any) => item.id === 'stream_read_one_by_one_function',
+
+        return store.getters['dataflow/hasCapability']?.(
+          node,
+          'stream_read_one_by_one_function',
         )
       },
     )
