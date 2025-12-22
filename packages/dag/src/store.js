@@ -7,7 +7,7 @@ import { isCancel } from '@tap/api/src/Http'
 import { Modal } from '@tap/component/src/modal'
 import i18n from '@tap/i18n'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
-import { isObject, lowerSnake, mergeLocales, uuid } from '@tap/shared'
+import { isObject, isString, lowerSnake, mergeLocales, uuid } from '@tap/shared'
 
 import { debounce } from 'lodash-es'
 import { markRaw } from 'vue'
@@ -84,6 +84,7 @@ const getState = () => ({
   pdkPropertiesMap: {},
   pdkSchemaFreeMap: {},
   pdkDoubleActiveMap: {},
+  pdkCapabilitiesMap: {},
   taskSaving: false,
   materializedViewVisible: false,
   schemaRefreshing: false,
@@ -234,6 +235,16 @@ const getters = {
     }
     // return Path.getIn(locale, lowerSnake(token))
     return Path.getIn(locale, token)
+  },
+
+  getCapabilitiesMap: (state) => (node) => {
+    const pdkHash = isString(node) ? node : node?.attrs?.pdkHash
+    return state.pdkCapabilitiesMap[pdkHash] || {}
+  },
+
+  hasCapability: (state) => (node, capabilityId) => {
+    const pdkHash = isString(node) ? node : node?.attrs?.pdkHash
+    return state.pdkCapabilitiesMap[pdkHash]?.[capabilityId]
   },
 }
 
@@ -1001,6 +1012,10 @@ const mutations = {
 
   setPdkDoubleActiveMap(state, map) {
     state.pdkDoubleActiveMap = map
+  },
+
+  setPdkCapabilitiesMap(state, map) {
+    state.pdkCapabilitiesMap = map
   },
 
   toggleTaskSaving(state, flag = !state.taskSaving) {
