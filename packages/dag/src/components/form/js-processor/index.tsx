@@ -1,5 +1,6 @@
 import { observe } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
+import { SchemaExpressionScopeSymbol } from '@formily/vue'
 import { fetchFunctions } from '@tap/api/src/core/function'
 import {
   getNodeSchema,
@@ -20,7 +21,7 @@ import { FormItem, HighlightCode, JsEditor, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
 import { groupBy } from 'lodash-es'
-import { defineComponent, onUnmounted, reactive, ref } from 'vue'
+import { defineComponent, inject, onUnmounted, reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 import { JsDeclare } from '../js-declare'
@@ -35,7 +36,9 @@ export const JsProcessor = observer(
     setup(props, { emit, attrs }) {
       const store = useStore()
       const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
-      const { id: taskId, syncType } = store.state.dataflow.taskInfo
+      const SchemaExpressionScopeContext = inject(SchemaExpressionScopeSymbol)
+      const { id: taskId, syncType } =
+        SchemaExpressionScopeContext!.value.$settings
       const formRef = useForm()
       const form = formRef.value
       const tableLoading = ref(false)

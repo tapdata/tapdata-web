@@ -236,5 +236,8 @@ export const useDataflowStore = defineStore('dataflow', () => {
     addConnection,
     deleteConnection,
     initPdkProperties,
+    pdkPropertiesMap,
+    pdkSchemaFreeMap,
+    pdkDoubleActiveMap,
   }
 })

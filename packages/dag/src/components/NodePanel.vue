@@ -5,11 +5,14 @@ import * as components from '@tap/form/src/components'
 import { createSchemaField } from '@tap/form/src/shared/create'
 import { nextTick, shallowRef, watch } from 'vue'
 import * as _components from '../components/form'
+import { useFormScope } from '../composables/useFormScope'
 import { useDataflowStore } from '../stores/dataflow.store'
 import { getSchema } from '../util'
 import BaseNodeIcon from './BaseNodeIcon.vue'
 
 const dataflowStore = useDataflowStore()
+
+const scope = useFormScope()
 
 const { Form } = components
 const { SchemaField } = createSchemaField({
@@ -19,23 +22,14 @@ const { SchemaField } = createSchemaField({
   },
 })
 
-const form = shallowRef(null)
+const form = shallowRef(createForm())
 const schema = shallowRef(null)
 
 const props = defineProps<{
   node: any
 }>()
 
-watch(
-  () => props.node.id,
-  (v) => {
-    console.log('node.id', v)
-    setSchema(props.node.ins.getSchema(dataflowStore.dataflow.syncType, false))
-  },
-  { immediate: true },
-)
-
-const setSchema = async (schema) => {
+const setSchema = async (nodeSchema) => {
   form.value?.onUnmount()
   schema.value = null
   await nextTick()
@@ -46,13 +40,31 @@ const setSchema = async (schema) => {
     // effects: this.useEffects,
   })
 
-  schema.value = getSchema(schema, props.node, dataflowStore.pdkPropertiesMap)
+  schema.value = getSchema(
+    nodeSchema,
+    props.node,
+    dataflowStore.pdkPropertiesMap,
+  )
 }
+
+watch(
+  () => props.node.id,
+  (v) => {
+    console.log('node.id', props.node)
+    setSchema(
+      props.node.__Ctor.getSchema(dataflowStore.dataflow.syncType, false),
+    )
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
   <!-- BasePanel -->
-  <div class="bg-card rounded-2xl h-100 shadow-canvas" style="width: 600px">
+  <div
+    class="bg-card rounded-2xl h-100 shadow-canvas flex flex-column node-panel overflow-y-auto"
+    style="width: 600px"
+  >
     <div class="flex align-center px-4 pt-4">
       <BaseNodeIcon :node="node" class="mr-1" />
       <TextEditable
@@ -69,7 +81,7 @@ const setSchema = async (schema) => {
         </template>
       </el-button>
     </div>
-    <div class="p-2">
+    <div class="p-2 pb-0">
       <el-input
         v-model="node.attrs.desc"
         class="desc-textarea"
@@ -79,16 +91,16 @@ const setSchema = async (schema) => {
         size="small"
       />
     </div>
-    <div>
+    <div v-if="form" class="flex-1 min-h-0">
       <Form
-        colon="false"
-        shallow="false"
+        :colon="false"
+        :shallow="false"
         layout="vertical"
         feedback-layout="terse"
         class-name="form-wrap"
         :form="form"
       >
-        <SchemaField v-if="schema" ref="schema" :schema="schema" :scope="{}" />
+        <SchemaField v-if="schema" :schema="schema" :scope="scope" />
       </Form>
     </div>
   </div>
@@ -112,6 +124,50 @@ const setSchema = async (schema) => {
 
     &:focus {
       box-shadow: 0px 1px 2px 0px #1018280d;
+    }
+  }
+}
+
+.node-panel {
+  $tabHeight: 40px;
+  :deep(.form-wrap) {
+    &,
+    > form,
+    .config-tabs-decorator,
+    .config-tabs-decorator .formily-element-plus-form-item-control,
+    .config-tabs-decorator .formily-element-plus-form-item-control-content,
+    .config-tabs {
+      height: 100%;
+    }
+    .el-tabs.config-tabs {
+      --el-tabs-header-height: 40px;
+      --el-tabs-padding-left: 16px;
+
+      > .el-tabs__header {
+        margin-bottom: 0;
+        // .el-tabs__nav-wrap {
+        //   &::after {
+        //     height: 1px;
+        //   }
+        // }
+
+        // .el-tabs__item {
+        //   //padding: 0 12px;
+        //   line-height: $tabHeight;
+        //   height: $tabHeight;
+        //   font-weight: 400;
+        // }
+      }
+
+      > .el-tabs__content {
+        height: calc(100% - $tabHeight);
+        padding: 0 16px;
+        overflow: auto;
+        .el-tab-pane {
+          // height: 100%;
+          display: contents;
+        }
+      }
     }
   }
 }
