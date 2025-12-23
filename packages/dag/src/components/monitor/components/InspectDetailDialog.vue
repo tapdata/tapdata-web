@@ -1296,7 +1296,7 @@ function handleDiffTypeChange(value: string): void {
                                   text
                                   size="small"
                                   :disabled="showExportRecoverSqlProgress"
-                                  @click.stop="handleExportRecoverSql(row.id)"
+                                  @click.stop="handleExportRecoverSql([row.id])"
                                 >
                                   <template #icon>
                                     <SettingInterOutlined />
