@@ -221,7 +221,7 @@ export default {
       this.form = createForm({
         disabled: this.stateIsReadonly,
         values,
-        // effects: this.useEffects,
+        effects: this.useEffects,
       })
 
       this.schema = getSchema(

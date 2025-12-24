@@ -96,7 +96,9 @@ function onClickConnectionAdd(connection: Connection) {
   emit('click:connection:add', connection)
 }
 
-function onNodeClick() {}
+function onNodeClick({ event, node }) {
+  emit('click:node', node)
+}
 </script>
 
 <template>
@@ -133,6 +135,7 @@ function onNodeClick() {}
       :edges="edges"
       :connection-radius="30"
       :max-zoom="10"
+      :delete-key-code="null"
       @node-drag-stop="onNodeDragStop"
       @connect="onConnect"
       @node-click="onNodeClick"

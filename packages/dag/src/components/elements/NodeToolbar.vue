@@ -1,3 +1,17 @@
+<script setup lang="ts">
+import { useDataflowStore } from '../../stores/dataflow.store'
+
+const props = defineProps<{
+  node: any
+}>()
+
+const dataflowStore = useDataflowStore()
+
+const handleDelete = () => {
+  dataflowStore.deleteNode(props.node)
+}
+</script>
+
 <template>
   <div class="position-absolute top-0 end-0 node-toolbar pb-1">
     <div class="node-toolbar-actions rounded-lg p-0.5" style="--btn-space: 0">
@@ -11,7 +25,7 @@
           <i-lucide-power />
         </template>
       </el-button>
-      <el-button text size="xs">
+      <el-button text size="xs" @click="handleDelete">
         <template #icon>
           <i-lucide-trash />
         </template>

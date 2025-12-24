@@ -218,10 +218,9 @@ export class Table extends NodeType {
                         },
                         'x-reactions': [
                           {
-                            target: 'name',
                             effects: ['onFieldInputValueChange'],
                             fulfill: {
-                              run: `{{ $self.value && !$values.attrs.hasNameEdited && ($target.value = $self.value) }}`,
+                              run: `{{ $self.value && !$values.attrs.hasNameEdited && ($values.name = $self.value) }}`,
                             },
                           },
                           {

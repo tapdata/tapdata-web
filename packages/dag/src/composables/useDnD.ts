@@ -45,10 +45,9 @@ export function useDnD(emit) {
       node.attrs = { position }
     }
 
-    return {
-      ...node,
-      id: uuid(),
-    }
+    node.id = uuid()
+
+    return node
   }
 
   const resolveNodeRecource = (node) => {

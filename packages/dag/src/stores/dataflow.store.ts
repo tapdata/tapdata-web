@@ -1,6 +1,11 @@
 import { fetchCustomNodes } from '@tap/api/src/core/custom-node'
 import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
-import { getTaskById } from '@tap/api/src/core/task'
+import { getTaskById, patchTask } from '@tap/api/src/core/task'
+import { isCancel } from '@tap/api/src/Http'
+import { Modal } from '@tap/component/src/modal'
+import { useI18n } from '@tap/i18n'
+import { isObject } from '@tap/shared'
+import { debounce } from 'lodash-es'
 import { defineStore } from 'pinia'
 import { markRaw, ref, shallowRef } from 'vue'
 import { DEFAULT_SETTINGS } from '../constants'
@@ -11,6 +16,7 @@ const createEmptyDataflow = (): any => ({
 })
 
 export const useDataflowStore = defineStore('dataflow', () => {
+  const { t } = useI18n()
   const dataflow = ref<any>(createEmptyDataflow())
   const dag = ref<any>({
     nodes: [],
@@ -21,6 +27,11 @@ export const useDataflowStore = defineStore('dataflow', () => {
   const pdkPropertiesMap = shallowRef({})
   const pdkSchemaFreeMap = shallowRef({})
   const pdkDoubleActiveMap = shallowRef({})
+  const editVersion = ref(null)
+  const pageVersion = ref(Date.now().toString())
+  const selectedNode = ref(null)
+  const selectedNodeId = ref(null)
+  const stateIsReadonly = ref(false)
 
   function getResourceInsByNode(node) {
     return allResourceIns.value.find((ins) => ins.selector(node))
@@ -119,6 +130,47 @@ export const useDataflowStore = defineStore('dataflow', () => {
     setDataflow(dataflowData)
   }
 
+  const taskSaving = ref(false)
+  async function patchDataflow() {
+    taskSaving.value = true
+    try {
+      const data = await patchTask(
+        {
+          id: dataflow.value.id,
+          editVersion: editVersion.value,
+          pageVersion: pageVersion.value,
+          dag: dag.value,
+        },
+        {
+          silenceMessage: true,
+        },
+      )
+
+      editVersion.value = data?.editVersion || editVersion.value
+    } catch (error) {
+      console.error(error)
+
+      if (isCancel(error)) return
+
+      if (error?.code === 'Task.OldVersion') {
+        const confirmed = await Modal.confirm(
+          t('packages_dag_task_old_version_confirm'),
+          {
+            confirmButtonText: t('public_button_refresh'),
+          },
+        )
+        if (confirmed) {
+          location.reload()
+        }
+      } else if (error?.message) {
+        ElMessage.error(error.message)
+      }
+    }
+    taskSaving.value = false
+  }
+
+  const patchDataflowDebounce = debounce(patchDataflow, 100)
+
   function addProcessorNode(nodes) {
     processorNodeTypes.value.push(...nodes)
   }
@@ -167,6 +219,11 @@ export const useDataflowStore = defineStore('dataflow', () => {
 
   function addNode(node) {
     dag.value.nodes.push(node)
+  }
+
+  function deleteNode(node) {
+    const index = dag.value.nodes.findIndex((n) => n.id === node.id)
+    if (~index) dag.value.nodes.splice(index, 1)
   }
 
   function setNodePositionById(id: string, position: { x: number; y: number }) {
@@ -221,13 +278,73 @@ export const useDataflowStore = defineStore('dataflow', () => {
     pdkDoubleActiveMap.value = doubleActiveMap
   }
 
+  function selectNode(node: any) {
+    selectedNodeId.value = node.id
+    selectedNode.value = node
+  }
+
+  function nodeById(id: string) {
+    return dag.value.nodes.find((node: any) => node.id === id)
+  }
+
+  function updateNodeProperties(updateInformation: Record<string, any>) {
+    // console.log('updateNodeProperties', updateInformation)
+    const filterProps = [
+      'id',
+      'isSource',
+      'isTarget',
+      'attrs.position',
+      'sourceNode',
+      '$inputs',
+      '$outputs',
+    ] // 排除属性的更新
+    const node = nodeById(updateInformation.id)
+
+    const syncRecursive = (target, source, path = '') => {
+      const pathPrefix = path ? `${path}.` : ''
+
+      if (!stateIsReadonly.value) {
+        for (const key in target) {
+          if (
+            !source.hasOwnProperty(key) &&
+            !filterProps.includes(`${pathPrefix}${key}`)
+          ) {
+            delete target[key]
+          }
+        }
+      }
+
+      // 更新或新增 source 中存在的属性到 target
+      for (const key in source) {
+        const sourceValue = source[key]
+        const targetValue = target[key]
+
+        if (isObject(sourceValue) && targetValue) {
+          syncRecursive(targetValue, sourceValue, `${pathPrefix}${key}`)
+        } else if (targetValue !== sourceValue) {
+          target[key] = sourceValue
+        }
+      }
+    }
+
+    if (node) {
+      syncRecursive(node, updateInformation.properties)
+    }
+
+    patchDataflowDebounce()
+  }
+
   return {
     dataflow,
     dag,
     fetchDataflow,
+    patchDataflow,
     processorNodeTypes,
+    selectedNode,
+    stateIsReadonly,
 
     addNode,
+    deleteNode,
     addProcessorNode,
     addResourceIns,
     loadCustomNode,
@@ -239,5 +356,8 @@ export const useDataflowStore = defineStore('dataflow', () => {
     pdkPropertiesMap,
     pdkSchemaFreeMap,
     pdkDoubleActiveMap,
+    selectNode,
+    nodeById,
+    updateNodeProperties,
   }
 })

@@ -99,7 +99,7 @@ const nodeErrorMsg = computed(() => {
       <template #extra>
         <NodeSourceHandle class="canvas-node-handle z-1" />
         <NodeTargetHandle class="canvas-node-handle z-1" />
-        <NodeToolbar />
+        <NodeToolbar :node="props.data" />
       </template>
     </BaseNode>
     <slot />

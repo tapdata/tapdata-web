@@ -318,9 +318,11 @@ export const SchemaPreview = defineComponent({
             {i18n.t('public_schema')}
             <el-divider direction="vertical" class="mr-1" />
             <el-tooltip
-              transition="tooltip-fade-in"
               content={i18n.t('packages_dag_refresh_schema')}
               placement="top"
+              hide-after={0}
+              enterable={false}
+              transition="none"
             >
               <IconButton
                 disabled={props.disabled}
@@ -331,13 +333,15 @@ export const SchemaPreview = defineComponent({
               </IconButton>
             </el-tooltip>
             <el-tooltip
-              transition="tooltip-fade-in"
               content={i18n.t(
                 isTreeView.value
                   ? 'packages_dag_switch_to_table_view'
                   : 'packages_dag_switch_to_tree_view',
               )}
               placement="top"
+              hide-after={0}
+              enterable={false}
+              transition="none"
             >
               <IconButton
                 onClick={() => {

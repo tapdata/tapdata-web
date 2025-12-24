@@ -29,7 +29,6 @@ const RadioGroupOption = defineComponent({
           ? {
               default: () =>
                 options.map((option) => {
-                  console.log('option', option)
                   if (typeof option === 'string') {
                     return h(
                       OptionType,

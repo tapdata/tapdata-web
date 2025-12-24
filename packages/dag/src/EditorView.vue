@@ -1,143 +1,43 @@
 <script setup lang="ts">
-import { useI18n } from '@tap/i18n'
-import { computed, onMounted, provide, reactive } from 'vue'
+import { provide, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useStore } from 'vuex'
 import Canvas from './Canvas.vue'
 import TaskOperations from './components/TaskOperations.vue'
-import { allResourceIns } from './nodes/loader'
+import { useCanvasOperation } from './composables/useCanvasOperation'
 import { useDataflowStore } from './stores/dataflow.store'
 
 const dataflowStore = useDataflowStore()
 const route = useRoute()
-const store = useStore()
-const { t } = useI18n()
 
-const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+const {
+  dag,
+  dataflow,
+  buttonShowMap,
+  initNodeType,
+  onCreateConnection,
+  onDeleteConnection,
+  onClickConnectionAdd,
+  onUpdateNodesPosition,
+  onClickNode,
+} = useCanvasOperation()
 
-const buttonShowMap = reactive({
-  View: true,
-  Edit: true,
-  Delete: true,
-  Reset: true,
-  Start: true,
-  Stop: true,
-})
+const isInitialized = ref(false)
 
-const dag = computed(() => dataflowStore.dag)
-const dataflow = computed(() => dataflowStore.dataflow)
-
-const hasFeature = (feature: string) => {
-  return !isDaas || store.getters['feature/hasFeature']?.(feature)
-}
-
-const initNodeType = async () => {
-  let nodes = [
-    {
-      name: t('packages_dag_src_editor_zhuconghebing'),
-      type: 'merge_table_processor',
-      hidden: !hasFeature('masterSlaveMergeProcessor'),
-    },
-    {
-      name: t('packages_dag_src_editor_zhuijiahebing'),
-      type: 'union_processor',
-      hidden: !hasFeature('appendMergeProcessor'),
-    },
-    {
-      name: t('packages_dag_src_migrationeditor_jSchuli_standard'),
-      type: 'standard_js_processor',
-    },
-    {
-      name: t('packages_dag_src_migrationeditor_jSchuli'),
-      type: 'js_processor',
-      beta: true,
-      hidden: !hasFeature('enhanceJsProcessor'),
-    },
-    {
-      name: t('packages_dag_src_editor_row_filter'),
-      type: 'row_filter_processor',
-      hidden: !hasFeature('rowFilterProcessor'),
-    },
-    {
-      name: t('packages_dag_src_editor_ziduanjisuan'),
-      type: 'field_calc_processor',
-    },
-    {
-      name: t('packages_dag_src_editor_leixingxiugai'),
-      type: 'field_mod_type_processor',
-    },
-    {
-      name: t('packages_dag_src_editor_ziduangaiming'),
-      type: 'field_rename_processor',
-    },
-    {
-      name: t('packages_dag_src_editor_zengshanziduan'),
-      type: 'field_add_del_processor',
-    },
-    {
-      name: t('packages_dag_date_processor'),
-      type: 'date_processor',
-    },
-    {
-      name: t('packages_dag_src_editor_leixingguolu'),
-      type: 'field_mod_type_filter_processor',
-    },
-    {
-      name: 'Unwind',
-      type: 'unwind_processor',
-      hidden: !hasFeature('unwindProcessor'),
-    },
-    {
-      name: t('packages_dag_time_field_injection'),
-      type: 'add_date_field_processor',
-      hidden: !hasFeature('appendDatetimeFieldProcessor'),
-    },
-    {
-      name: t('packages_dag_src_editor_huawei_drs_kafka_convertor'),
-      type: 'huawei_drs_kafka_convertor',
-    },
-  ]
-  //仅企业版有的节点
-  if (isDaas) {
-    const isDaasNode = [
-      {
-        name: t('packages_dag_src_editor_join'),
-        type: 'join_processor', //join 节点
-      },
-    ]
-    nodes = [...isDaasNode, ...nodes]
-  }
-  dataflowStore.addProcessorNode(nodes.filter((item) => !item.hidden))
-  dataflowStore.addResourceIns(allResourceIns)
-
-  if (hasFeature('customProcessor')) {
-    await dataflowStore.loadCustomNode()
-  }
-}
-
-const onUpdateNodesPosition = (events) => {
-  events.forEach(({ id, position }) => {
-    dataflowStore.setNodePositionById(id, position)
-  })
-}
-
-const onCreateConnection = (connection) => {
-  dataflowStore.addConnection(connection)
-}
-
-const onDeleteConnection = (connection) => {
-  dataflowStore.deleteConnection(connection)
-}
-
-const onClickConnectionAdd = (connection) => {
-  // dataflowStore.addConnection(connection)
-}
-
-onMounted(async () => {
+const init = async () => {
   await initNodeType()
   await dataflowStore.initPdkProperties()
   await dataflowStore.fetchDataflow(route.params.id as string)
+
+  isInitialized.value = true
+}
+
+watch([() => dag.value.nodes.length, () => dag.value.edges.length], () => {
+  if (isInitialized.value) {
+    dataflowStore.patchDataflow()
+  }
 })
+
+init()
 
 provide('dag', dag)
 provide('buttonShowMap', buttonShowMap)
@@ -167,6 +67,7 @@ provide('dataflow', dataflow)
       @create:connection="onCreateConnection"
       @delete:connection="onDeleteConnection"
       @click:connection:add="onClickConnectionAdd"
+      @click:node="onClickNode"
     />
   </div>
 </template>

@@ -1,8 +1,18 @@
 <script lang="ts" setup>
-import { createForm } from '@formily/core'
+import {
+  createForm,
+  onFieldValueChange,
+  onFormInputChange,
+  onFormValuesChange,
+} from '@formily/core'
+import { Path } from '@formily/path'
+import { toJS } from '@formily/reactive'
+import { updateTaskAlarm } from '@tap/api/src/core/alarm'
 import { TextEditable } from '@tap/component/src/base/text-editable'
 import * as components from '@tap/form/src/components'
 import { createSchemaField } from '@tap/form/src/shared/create'
+import { deepEqual } from '@tap/shared'
+import { debounce } from 'lodash-es'
 import { nextTick, shallowRef, watch } from 'vue'
 import * as _components from '../components/form'
 import { useFormScope } from '../composables/useFormScope'
@@ -29,6 +39,79 @@ const props = defineProps<{
   node: any
 }>()
 
+const updateNodePropsDebounce = debounce((form) => {
+  // console.log('updateNodePropsDebounce')
+  const node = dataflowStore.nodeById(form.values.id)
+  if (
+    node &&
+    !deepEqual(toJS(form.values), node, [
+      'alarmRules.0._ms',
+      'alarmRules.0._point',
+    ])
+  ) {
+    updateNodeProps(form)
+  }
+}, 40)
+
+const updateNodeProps = (form: any) => {
+  // console.trace('updateNodeProps')
+  updateNodePropsDebounce.cancel()
+
+  const formValues = toJS(form.values)
+  const filterProps = [
+    'id',
+    'isSource',
+    'isTarget',
+    'attrs.position',
+    'sourceNode',
+    '$inputs',
+    '$outputs',
+  ] // 排除属性的更新
+
+  filterProps.forEach((path) => {
+    Path.deleteIn(formValues, path)
+  })
+  dataflowStore.updateNodeProperties({
+    id: form.values.id,
+    properties: formValues,
+  })
+}
+
+const lazySaveNodeAlarmConfig = debounce(() => {
+  const formValues = form.value.values
+  dataflowStore.updateNodeProperties({
+    id: formValues.id,
+    properties: toJS(formValues),
+  })
+
+  updateTaskAlarm({
+    taskId: dataflowStore.dataflow.id,
+    nodeId: formValues.id,
+    alarmRules: formValues.alarmRules,
+    alarmSettings: formValues.alarmSettings,
+  })
+}, 100)
+
+const useEffects = () => {
+  // 放弃了onFieldInputValueChange(*)方案，因为有些字段没有主动在schema中定义
+  onFormValuesChange((form) => {
+    if (dataflowStore.stateIsReadonly) return
+    updateNodePropsDebounce(form)
+  })
+
+  onFormInputChange((form) => {
+    if (dataflowStore.stateIsReadonly) return
+    updateNodeProps(form)
+  })
+
+  onFieldValueChange(
+    '*(alarmSettings.0.*,alarmRules.0.*(!_point,_ms))',
+    (field, form) => {
+      lazySaveNodeAlarmConfig()
+    },
+  )
+}
+
 const setSchema = async (nodeSchema) => {
   form.value?.onUnmount()
   schema.value = null
@@ -37,8 +120,13 @@ const setSchema = async (nodeSchema) => {
   form.value = createForm({
     // disabled: this.stateIsReadonly,
     values: props.node,
-    // effects: this.useEffects,
+    effects: useEffects,
   })
+
+  Path.deleteIn(
+    nodeSchema,
+    'properties.tabs.properties.tab1.properties.nameWrap',
+  )
 
   schema.value = getSchema(
     nodeSchema,
@@ -65,7 +153,7 @@ watch(
     class="bg-card rounded-2xl h-100 shadow-canvas flex flex-column node-panel overflow-y-auto"
     style="width: 600px"
   >
-    <div class="flex align-center px-4 pt-4">
+    <div class="flex align-center px-4 pt-4 gap-1">
       <BaseNodeIcon :node="node" class="mr-1" />
       <TextEditable
         v-model:value="node.name"
@@ -74,6 +162,18 @@ watch(
         hidden-icon
         :maxlength="200"
       />
+      <el-tag
+        v-if="node.type === 'table' || node.type === 'database'"
+        class="px-1"
+        :disable-transitions="true"
+      >
+        <span class="flex align-center gap-0.5">
+          <el-icon>
+            <i-lucide-database />
+          </el-icon>
+          {{ node.attrs.connectionName }}
+        </span>
+      </el-tag>
       <div class="flex-1" />
       <el-button text>
         <template #icon>
