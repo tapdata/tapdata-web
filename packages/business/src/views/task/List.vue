@@ -1536,27 +1536,6 @@ export default {
       }
     }
 
-    .dataflow-name {
-      line-height: 24px;
-      .tag {
-        padding: 0 4px;
-        font-style: normal;
-        font-weight: 400;
-        font-size: 12px;
-        line-height: 20px;
-        color: var(--color-tag);
-        border: 1px solid var(--bg-tag);
-        border-radius: 6px;
-      }
-
-      .name {
-        &:not(.has-children) {
-          cursor: pointer;
-          // text-decoration: underline;
-        }
-      }
-    }
-
     .table-operations {
       display: flex;
       align-items: center;
