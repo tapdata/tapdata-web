@@ -951,6 +951,7 @@ export default {
   packages_dag_compare_missing_source: '字段未定義',
   packages_dag_compare_precision: '類型差異(一般)',
   packages_dag_compare_cannot_write: '字段只讀',
+  packages_dag_compare_primary_key_inconsistency: '主鍵差異',
   packages_dag_compare_done_modify: '已{type}修改',
   packages_dag_compare_done_add: '已{type}添加',
   packages_dag_compare_done_delete: '已{type}刪除',
@@ -983,6 +984,8 @@ export default {
   packages_dag_compare_result_detail_missing: '{missing} 個缺失',
   packages_dag_compare_result_detail_different: '{different} 個不同',
   packages_dag_compare_result_detail_precision: '{precision} 個精度差異',
+  packages_dag_compare_result_detail_primary_key_inconsistency:
+    '{primaryKeyInconsistency} 個主鍵差異',
   packages_dag_compare_result_detail_all: '全部差異',
   packages_dag_compare_result_auto_process: '自動處理差異',
   packages_dag_compare_result_display_field: '顯示字段',
