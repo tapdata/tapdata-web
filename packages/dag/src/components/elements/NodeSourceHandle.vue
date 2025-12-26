@@ -1,19 +1,39 @@
 <script setup lang="ts">
 import { Handle, Position, useNodeConnections } from '@vue-flow/core'
-import { computed } from 'vue'
+import { computed, inject, ref } from 'vue'
+
+const props = defineProps<{
+  node: any
+}>()
+
+defineEmits<{
+  showNodesPopover: [data: any, target: HTMLElement]
+}>()
+
+const popoverTarget = inject('popoverTarget', ref<HTMLElement | null>(null))
+const showPopover = inject('showPopover', ref(false))
+const popoverTargetKey = inject('popoverTargetKey', ref<string | null>(null))
 
 const connections = useNodeConnections({
   handleType: 'source',
 })
 
 const connected = computed(() => connections.value.length > 0)
+
+// 当 popover 显示时，且是当前节点触发的，保持图标可见
+const isPopoverActive = computed(
+  () => popoverTargetKey.value === `${props.node.id}_source`,
+)
 </script>
 
 <template>
   <Handle
     type="source"
     :position="Position.Right"
-    :class="{ 'after:opacity-0': !connected }"
+    :class="{
+      'after:opacity-0': !connected,
+      'popover-active': isPopoverActive,
+    }"
   >
     <div
       class="position-absolute handle-tooltip -top-1 left-1/2 rounded-lg border-[0.5px] border-components-panel-border bg-card p-1.5 shadow-lg group-hover/handle:block"
@@ -27,6 +47,15 @@ const connected = computed(() => connections.value.length > 0)
     </div>
     <div
       class="bg-primary rounded-pill align-center justify-center canvas-node-handle-icon position-absolute w-100 h-100 left-0 top-0 align-items-center justify-center color-white z-10"
+      :class="{ 'force-visible': isPopoverActive }"
+      @click.stop="
+        $emit(
+          'showNodesPopover',
+          node,
+          $event.target!.closest('.canvas-node-handle-icon'),
+          `${node.id}_source`,
+        )
+      "
     >
       <el-icon size="10" class="">
         <i-mingcute-add-fill />

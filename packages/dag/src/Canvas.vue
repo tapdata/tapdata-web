@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { Background } from '@vue-flow/background'
 import { useVueFlow, VueFlow } from '@vue-flow/core'
-import { inject, ref, watch } from 'vue'
+import { inject, nextTick, provide, ref, watch } from 'vue'
 import CanvasConnectionLine from './components/elements/CanvasConnectionLine.vue'
 import CanvasEdge from './components/elements/CanvasEdge.vue'
 import Node from './components/elements/CanvasNode.vue'
+import NodesPopover from './components/elements/NodesPopover.vue'
 import NodesPanel from './components/NodesPanel.vue'
 import RightPanel from './components/RightPanel.vue'
 import { useCanvasMapping } from './composables/useCanvasMapping'
@@ -34,6 +35,10 @@ const {
 } = vueFlow
 
 const nodesHoveredById = ref<Record<string, boolean>>({})
+const showPopover = ref(false)
+const popoverRef = ref<InstanceType<typeof NodesPopover> | null>(null)
+const popoverTarget = ref<HTMLElement | null>(null)
+const popoverTargetKey = ref<string | null>(null)
 
 onNodeMouseEnter(({ node }) => {
   nodesHoveredById.value = { [node.id]: true }
@@ -70,6 +75,10 @@ watch(
   () => viewport.value.zoom,
   (val) => {
     uiStore.zoom = val
+
+    if (showPopover.value) {
+      popoverRef.value?.update()
+    }
   },
 )
 
@@ -99,12 +108,40 @@ function onClickConnectionAdd(connection: Connection) {
 function onNodeClick({ event, node }) {
   emit('click:node', node)
 }
+
+async function onShowNodesPopover(data, target, key) {
+  showPopover.value = false
+  await nextTick()
+  popoverTarget.value = target
+  popoverTargetKey.value = key
+  await nextTick()
+  setTimeout(() => {
+    showPopover.value = true
+  }, 50)
+}
+
+function onHideNodesPopover() {
+  console.log('onHideNodesPopover')
+  popoverTarget.value = null
+  popoverTargetKey.value = null
+}
+
+provide('popoverTarget', popoverTarget)
+provide('showPopover', showPopover)
+provide('popoverTargetKey', popoverTargetKey)
 </script>
 
 <template>
   <div id="node-canvas" class="position-relative w-100 h-100">
     <NodesPanel />
     <RightPanel />
+    <NodesPopover
+      ref="popoverRef"
+      v-model="showPopover"
+      :teleported="false"
+      :reference="popoverTarget"
+      @after-leave="onHideNodesPopover"
+    />
 
     <svg style="position: absolute; left: -1000px; top: 0">
       <defs>
@@ -141,7 +178,7 @@ function onNodeClick({ event, node }) {
       @node-click="onNodeClick"
     >
       <template #node-canvas="nodeProps">
-        <Node v-bind="nodeProps" />
+        <Node v-bind="nodeProps" @show-nodes-popover="onShowNodesPopover" />
       </template>
       <template #edge-canvas="edge">
         <CanvasEdge

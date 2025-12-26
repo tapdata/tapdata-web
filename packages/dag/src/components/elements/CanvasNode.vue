@@ -97,8 +97,16 @@ const nodeErrorMsg = computed(() => {
       >
 
       <template #extra>
-        <NodeSourceHandle class="canvas-node-handle z-1" />
-        <NodeTargetHandle class="canvas-node-handle z-1" />
+        <NodeSourceHandle
+          v-bind="$attrs"
+          :node="props.data"
+          class="canvas-node-handle z-1"
+        />
+        <NodeTargetHandle
+          v-bind="$attrs"
+          :node="props.data"
+          class="canvas-node-handle z-1"
+        />
         <NodeToolbar :node="props.data" />
       </template>
     </BaseNode>
@@ -277,13 +285,18 @@ const nodeErrorMsg = computed(() => {
     // &:hover {
     //   transform: scale(1.25);
     // }
+
+    &.force-visible {
+      display: flex !important;
+    }
   }
 
   &:hover :deep(.canvas-node-handle-icon) {
     display: flex;
   }
   &:hover .canvas-node-handle,
-  .canvas-node-handle.active {
+  .canvas-node-handle.active,
+  .canvas-node-handle.popover-active {
     // width: 1rem;
     // height: 1rem;
     .canvas-node-handle-icon {
