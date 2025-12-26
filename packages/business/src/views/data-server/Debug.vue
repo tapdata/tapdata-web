@@ -3,7 +3,10 @@ import { debug } from '@tap/api/src/core/api-calls'
 import { fetchApiServerToken } from '@tap/api/src/core/api-client'
 import { fetchWorkers } from '@tap/api/src/core/workers'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
+import { IconButton } from '@tap/component/src/icon-button'
 import { useI18n } from '@tap/i18n'
+import { copyToClipboard } from '@tap/shared/src/util'
+import { useDark } from '@vueuse/core'
 import {
   computed,
   inject,
@@ -33,6 +36,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 const form = inject<Ref<any>>('form')!
 const { t } = useI18n()
+const isDark = useDark()
 const workerStatus = ref('')
 const token = ref<Record<string, any>>({})
 const templateType = ref('java')
@@ -42,6 +46,10 @@ const debugHttpInfo = ref<Record<string, any>>({})
 const templates = ref<Record<string, string>>({})
 const intervalId = ref()
 const loading = ref(false)
+const isFullscreen = ref(false)
+const resultRef = ref<HTMLElement | null>(null)
+const titleRef = ref<HTMLElement | null>(null)
+const jsonPrettyHeight = ref(280)
 
 const urlsMap = computed(() => {
   return props.urlList.reduce((acc: Record<string, string>, item) => {
@@ -63,6 +71,22 @@ watch(
     }
   },
 )
+
+watch(isFullscreen, (fullscreen) => {
+  if (fullscreen && titleRef.value) {
+    setTimeout(() => {
+      const titleElement = titleRef.value!
+      const titleHeight = titleElement.offsetHeight
+      const style = getComputedStyle(titleElement)
+      const marginTop = Number.parseFloat(style.marginTop)
+      const marginBottom = Number.parseFloat(style.marginBottom)
+      const totalHeight = titleHeight + marginTop + marginBottom
+      jsonPrettyHeight.value = window.innerHeight - totalHeight - 32
+    }, 100)
+  } else {
+    jsonPrettyHeight.value = 280
+  }
+})
 
 onBeforeUnmount(() => {
   intervalId.value && clearTimeout(intervalId.value)
@@ -237,6 +261,39 @@ const parseValue = (key: string, value: any, defaultVal?: any) => {
   }
 }
 
+function enterFullscreen(element: HTMLElement) {
+  if (element.requestFullscreen) {
+    element.requestFullscreen()
+  } else if (element.webkitRequestFullscreen) {
+    // Safari
+    element.webkitRequestFullscreen()
+  } else if (element.msRequestFullscreen) {
+    // IE11
+    element.msRequestFullscreen()
+  }
+}
+
+function exitFullscreen() {
+  if (document.exitFullscreen) {
+    document.exitFullscreen()
+  }
+}
+
+const toggleFullscreen = () => {
+  if (isFullscreen.value) {
+    exitFullscreen()
+  } else {
+    enterFullscreen(resultRef.value!)
+  }
+
+  isFullscreen.value = !isFullscreen.value
+}
+
+const handleCopy = () => {
+  copyToClipboard(JSON.stringify(debugResult.value, null, 2))
+  ElMessage.success(t('public_message_copy_success'))
+}
+
 onMounted(() => {
   reflshToken()
   getWorkers()
@@ -268,30 +325,53 @@ onMounted(() => {
       >{{ $t('public_button_submit') }}
     </ElButton>
   </div>
-  <div class="data-server-panel__title mt-4 mb-3">
-    {{ $t('packages_business_data_server_drawer_fanhuijieguo') }}
-    <el-tag
-      v-if="debugHttpInfo.httpCode"
-      style="margin-left: 0.5rem"
-      :type="
-        debugHttpInfo.httpCode &&
-        debugHttpInfo.httpCode >= 200 &&
-        debugHttpInfo.httpCode < 300
-          ? 'success'
-          : 'warning'
-      "
-      size="small"
-      >{{ debugHttpInfo.httpCode }}</el-tag
+  <div
+    ref="resultRef"
+    style="background-color: var(--el-bg-color)"
+    :class="{ 'px-4': isFullscreen }"
+  >
+    <div
+      ref="titleRef"
+      class="data-server-panel__title mt-4 mb-3 flex align-center gap-2"
+      style="--btn-space: 0"
     >
+      {{ $t('packages_business_data_server_drawer_fanhuijieguo') }}
+      <el-tag
+        v-if="debugHttpInfo.httpCode"
+        :type="
+          debugHttpInfo.httpCode &&
+          debugHttpInfo.httpCode >= 200 &&
+          debugHttpInfo.httpCode < 300
+            ? 'success'
+            : 'warning'
+        "
+        size="small"
+        >{{ debugHttpInfo.httpCode }}</el-tag
+      >
+      <div class="flex-1" />
+
+      <el-button text size="small" @click="handleCopy">
+        <template #icon>
+          <i-lucide-copy />
+        </template>
+      </el-button>
+
+      <IconButton size="small" @click="toggleFullscreen">{{
+        isFullscreen ? 'suoxiao' : 'fangda'
+      }}</IconButton>
+    </div>
+    <div class="bg-light rounded-xl p-2 pr-0 overflow-auto">
+      <VueJsonPretty
+        :data="debugResult"
+        :height="jsonPrettyHeight"
+        virtual
+        show-icon
+        :show-line="false"
+        :theme="isDark ? 'dark' : 'light'"
+      />
+    </div>
   </div>
-  <VueJsonPretty
-    class="bg-light rounded-xl p-2 pr-0"
-    :data="debugResult"
-    :height="280"
-    virtual
-    show-icon
-    :show-line="false"
-  />
+
   <div class="position-relative mt-4">
     <div
       class="fs-7 fw-sub font-color-dark flex align-center"
