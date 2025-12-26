@@ -244,6 +244,8 @@ export default {
         return
       }
       this.period = value
+
+      return findOne
     },
 
     getPeriod(value) {
@@ -341,7 +343,7 @@ export default {
 }
 
 .picker__item {
-  padding: 0 8px;
+  padding-right: 8px;
   border-radius: 4px;
 
   //&:hover {

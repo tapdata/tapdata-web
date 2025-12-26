@@ -136,7 +136,7 @@ export default {
 }
 
 .picker__item {
-  padding: 0 8px;
+  padding-right: 8px;
   border-radius: 4px;
 }
 </style>
