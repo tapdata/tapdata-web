@@ -60,4 +60,12 @@ export default {
     'You have already copied some tables, but you can still select more. Newly selected tables will be added to the existing list.',
   packages_ldp_fdm_create_task_has_expression:
     'You have selected tables by regex matching and cannot select more. Please use the Data Copy feature to continue copying tables.',
+  packages_ldp_task_delay_detail: 'Task Delay Details',
+  packages_ldp_task_delay_detail_tip:
+    'Displays all tasks involved in this model and their corresponding delay durations',
+  packages_ldp_task_delay_detail_logic: 'Calculation Logic',
+  packages_ldp_task_delay_detail_logic_tip1:
+    'Maximum data delay represents the longest time required for data changes generated in the source systems to be written into the model, after passing through all related synchronization and processing tasks.',
+  packages_ldp_task_delay_detail_logic_tip2:
+    'This metric aggregates the incremental delays across all upstream tables and their associated task pipelines involved in building the model, and takes the maximum value to indicate how late the most recently updated data in the model may be.',
 }

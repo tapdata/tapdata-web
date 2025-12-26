@@ -54,4 +54,11 @@ export default {
     '您已經複製過部分表，但您也可以繼續選擇表，新選擇表將追加到原表列表中',
   packages_ldp_fdm_create_task_has_expression:
     '您已經選擇了按正則表達式匹配表，無法繼續選擇表，請在通過數據複製功能繼續複製表',
+  packages_ldp_task_delay_detail: '任務延遲詳情',
+  packages_ldp_task_delay_detail_tip: '顯示所有參與該模型的任務及其延遲時間',
+  packages_ldp_task_delay_detail_logic: '計算邏輯說明',
+  packages_ldp_task_delay_detail_logic_tip1:
+    '最大數據延遲表示當前模型中，數據從源系統產生變更開始，經過所有參與的同步與處理任務，最終寫入該模型所需的最長時間。',
+  packages_ldp_task_delay_detail_logic_tip2:
+    '該指標會綜合計算構建此模型所涉及的所有上游表及其任務鏈路中的增量延遲，並取其中的最大值，反映模型中最晚更新的數據可能滯後的時間',
 }
