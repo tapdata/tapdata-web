@@ -6,7 +6,7 @@ import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import { IconButton } from '@tap/component/src/icon-button'
 import { useI18n } from '@tap/i18n'
 import { copyToClipboard } from '@tap/shared/src/util'
-import { useDark } from '@vueuse/core'
+import { useDark, useFullscreen } from '@vueuse/core'
 import {
   computed,
   inject,
@@ -46,10 +46,12 @@ const debugHttpInfo = ref<Record<string, any>>({})
 const templates = ref<Record<string, string>>({})
 const intervalId = ref()
 const loading = ref(false)
-const isFullscreen = ref(false)
+// const isFullscreen = ref(false)
 const resultRef = ref<HTMLElement | null>(null)
 const titleRef = ref<HTMLElement | null>(null)
 const jsonPrettyHeight = ref(280)
+
+const { isFullscreen, toggle: toggleFullscreen } = useFullscreen(resultRef)
 
 const urlsMap = computed(() => {
   return props.urlList.reduce((acc: Record<string, string>, item) => {
@@ -271,22 +273,6 @@ function enterFullscreen(element: HTMLElement) {
     // IE11
     element.msRequestFullscreen()
   }
-}
-
-function exitFullscreen() {
-  if (document.exitFullscreen) {
-    document.exitFullscreen()
-  }
-}
-
-const toggleFullscreen = () => {
-  if (isFullscreen.value) {
-    exitFullscreen()
-  } else {
-    enterFullscreen(resultRef.value!)
-  }
-
-  isFullscreen.value = !isFullscreen.value
 }
 
 const handleCopy = () => {
