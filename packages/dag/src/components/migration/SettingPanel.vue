@@ -714,10 +714,6 @@ const schema = {
                               },
                               default: 'Disable',
                               enum: [
-                                // {
-                                //   label: '直接跳过异常的表，任务继续运行 ',
-                                //   value: 'SkipTable'
-                                // },
                                 {
                                   label: t(
                                     'packages_dag_migration_settingpanel_anzhaomorenzhong',
@@ -730,7 +726,21 @@ const schema = {
                                   ),
                                   value: 'SkipData',
                                 },
+                                {
+                                  label: t(
+                                    'packages_dag_SkipTableForMigrateSnapshot',
+                                  ),
+                                  value: 'SkipTableForMigrateSnapshot',
+                                },
                               ],
+                              'x-reactions': {
+                                dependencies: ['type'],
+                                fulfill: {
+                                  schema: {
+                                    'x-component-props.options': `{{options=$self.dataSource,$values.syncType === "migrate" && $deps[0] !== "cdc" ? options : options.filter(item => item.value !== "SkipTableForMigrateSnapshot")}}`,
+                                  },
+                                },
+                              },
                             },
                             limitMode: {
                               type: 'string',
@@ -832,22 +842,6 @@ const schema = {
                                       '{{$deps[0] === "SkipData" && $deps[1] === "SkipByRate" ? "visible" : "hidden"}}',
                                   },
                                 },
-                              },
-                            },
-                          },
-                        },
-                        enableSkipErrorTable: {
-                          title: t('packages_dag_enableSkipErrorTable'),
-                          type: 'boolean',
-                          'x-decorator': 'FormItem',
-                          'x-decorator-props': {
-                            tooltip: t('packages_dag_enableSkipErrorTable_tip'),
-                          },
-                          'x-component': 'Switch',
-                          'x-reactions': {
-                            fulfill: {
-                              state: {
-                                visible: '{{$values.syncType === "migrate"}}',
                               },
                             },
                           },
