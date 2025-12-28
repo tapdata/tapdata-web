@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
-import { ref } from 'vue'
+import { onBeforeUnmount, ref, watch } from 'vue'
 import { useFetchConnections } from '../../composables/useFetchConnections'
 import ConnectionType from '../ConnectionType.vue'
 import NodeIcon from '../NodeIcon.vue'
@@ -25,6 +25,34 @@ const { runFetchConnections, runFetchMoreConnections, connections } =
   useFetchConnections()
 
 runFetchConnections()
+
+// 处理 mousedown 事件以关闭 popover
+const handleMouseDown = (event: MouseEvent) => {
+  if (!show.value) return
+
+  const popperElement = popoverRef.value?.popperRef?.contentRef
+  const target = event.target as Node
+
+  // 检查点击是否在 popover 外部
+  if (popperElement && !popperElement.contains(target)) {
+    show.value = false
+  }
+}
+
+// 监听 show 的变化，添加或移除事件监听器
+watch(show, (newValue) => {
+  if (newValue) {
+    // 使用 mousedown 而不是 click
+    document.addEventListener('mousedown', handleMouseDown, true)
+  } else {
+    document.removeEventListener('mousedown', handleMouseDown, true)
+  }
+})
+
+// 组件卸载时清理事件监听器
+onBeforeUnmount(() => {
+  document.removeEventListener('mousedown', handleMouseDown, true)
+})
 </script>
 
 <template>
