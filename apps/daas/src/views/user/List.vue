@@ -4,7 +4,10 @@ import { fetchRoles } from '@tap/api/src/core/roles'
 import {
   batchUpdateUserListtags,
   countUsers,
+  createUser,
+  deleteUser,
   fetchUsers,
+  updateUser,
   updateUserInfo,
 } from '@tap/api/src/core/users'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
@@ -507,9 +510,9 @@ export default {
             }))
           params.listtags = listtags
 
-          const data = await usersApi[this.createForm.id ? 'patch' : 'post'](
-            params,
-          ).finally(() => {
+          const method = this.createForm.id ? updateUser : createUser
+
+          const data = await method(params).finally(() => {
             this.createDialogVisible = false
           })
 
@@ -532,8 +535,7 @@ export default {
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
-            usersApi
-              .delete(item.id)
+            deleteUser(item.id)
               .then(() => {
                 this.$message.success(this.$t('public_message_delete_ok'))
                 this.table.fetch()
@@ -611,8 +613,7 @@ export default {
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
-            usersApi
-              .patch(data)
+            updateUser(data)
               .then(() => {
                 this.$message.success(successMsg)
                 this.table.fetch()
@@ -1107,7 +1108,6 @@ export default {
 
         <el-form-item
           :label="$t('packages_component_classification_userTitle')"
-          required
         >
           <el-tree-select
             ref="userGroupTree"
