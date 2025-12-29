@@ -136,3 +136,7 @@ export function patchUser(params: any, config?: any) {
 export function batchUpdateUserListtags(params: any) {
   return requestClient.patch(`${BASE_URL}/batchUpdateListtags`, params)
 }
+
+export function deleteUser(id: string) {
+  return requestClient.delete(`${BASE_URL}/${id}`)
+}
