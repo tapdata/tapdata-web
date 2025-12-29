@@ -12,7 +12,7 @@ import SharedCacheDetails from '@tap/business/src/views/shared-cache/Details'
 import SharedCacheEditor from '@tap/business/src/views/shared-cache/Editor'
 
 import SharedMiningEditor from '@tap/business/src/views/shared-mining/Editor'
-import { VEmpty, VExpandXTransition, VIcon } from '@tap/component'
+import { VEmpty, VIcon } from '@tap/component'
 import resize from '@tap/component/src/directives/resize'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
@@ -25,7 +25,6 @@ import { mapMutations, mapState } from 'vuex'
 import { $off, $on } from '../utils/gogocodeTransfer'
 
 import { MoveNodeCommand } from './command'
-import MaterializedView from './components/materialized-view/MaterializedView.vue'
 import ConfigPanel from './components/migration/ConfigPanel'
 import ConsolePanel from './components/migration/ConsolePanel'
 import BottomPanel from './components/monitor/BottomPanel'
@@ -57,11 +56,9 @@ export default {
 
   components: {
     SkipError,
-    MaterializedView,
     UpgradeFee,
     UpgradeCharges,
     AlarmStatistics,
-    VExpandXTransition,
     VEmpty,
     ConfigPanel,
     BottomPanel,
@@ -1432,13 +1429,6 @@ export default {
         "
         :go-page="upgradeFeeGoPage"
       />
-
-      <MaterializedView
-        ref="materializedView"
-        v-model:visible="materializedViewVisible"
-        disabled
-      />
-
       <SkipError ref="skipError" @skip="handleSkipAndRun" />
     </section>
   </section>

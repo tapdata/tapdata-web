@@ -120,6 +120,7 @@ export default {
       uploadType: 'dataflow',
       pipelineOptions: [],
       pipelineSelected: '',
+      spacer: h(ElDivider, { direction: 'vertical', class: 'mx-1' }),
     }
   },
 
@@ -1380,14 +1381,15 @@ export default {
           </div>
         </template>
         <template #default="{ row }">
-          <div v-if="!row.hasChildren" class="table-operations">
+          <!-- 经过不停的快照比对，发现如果多个按钮带有 v-readonlybtn 
+          则会影响 vnode 的 patch 导致内存泄露，每次列表刷新就会增加很多 vnode -->
+          <el-space :spacer="spacer" :size="0">
             <ElButton
               v-if="
                 row.btnDisabled.stop &&
                 row.btnDisabled.forceStop &&
                 havePermission(row, 'Start')
               "
-              v-readonlybtn="'SYNC_job_operation'"
               name="start-task-btn"
               text
               type="primary"
@@ -1400,7 +1402,6 @@ export default {
             <template v-else>
               <ElButton
                 v-if="row.status === 'stopping' && havePermission(row, 'Stop')"
-                v-readonlybtn="'SYNC_job_operation'"
                 text
                 type="primary"
                 data-testid="force-stop-task"
@@ -1411,7 +1412,6 @@ export default {
               </ElButton>
               <ElButton
                 v-else-if="havePermission(row, 'Stop')"
-                v-readonlybtn="'SYNC_job_operation'"
                 text
                 type="primary"
                 name="stop-task-btn"
@@ -1422,15 +1422,8 @@ export default {
                 {{ $t('public_button_stop') }}
               </ElButton>
             </template>
-            <ElDivider
-              v-if="havePermission(row, 'Start') || havePermission(row, 'Stop')"
-              v-readonlybtn="'SYNC_job_operation'"
-              class="mx-1"
-              direction="vertical"
-            />
             <ElButton
               v-if="havePermission(row, 'Edit')"
-              v-readonlybtn="'SYNC_job_edition'"
               text
               type="primary"
               data-testid="edit-task"
@@ -1439,14 +1432,8 @@ export default {
             >
               {{ $t('public_button_edit') }}
             </ElButton>
-            <ElDivider
-              v-if="havePermission(row, 'Edit')"
-              v-readonlybtn="'SYNC_job_edition'"
-              class="mx-1"
-              direction="vertical"
-            />
             <ElButton
-              v-readonlybtn="'SYNC_job_edition'"
+              key="monitor"
               text
               type="primary"
               data-testid="monitor-task"
@@ -1455,14 +1442,8 @@ export default {
             >
               {{ $t('packages_business_task_list_button_monitor') }}
             </ElButton>
-            <ElDivider
-              v-readonlybtn="'SYNC_job_edition'"
-              class="mx-1"
-              direction="vertical"
-            />
             <ElButton
-              v-if="havePermission(row, 'Reset')"
-              v-readonlybtn="'SYNC_job_edition'"
+              key="reset"
               text
               type="primary"
               data-testid="reset-task"
@@ -1471,15 +1452,9 @@ export default {
             >
               {{ $t('public_button_reset') }}
             </ElButton>
-            <ElDivider
-              v-if="havePermission(row, 'Reset')"
-              v-readonlybtn="'SYNC_job_edition'"
-              class="mx-1"
-              direction="vertical"
-            />
             <ElButton
               v-if="buttonShowMap.copy"
-              v-readonlybtn="'SYNC_job_edition'"
+              key="copy"
               text
               type="primary"
               data-testid="copy-task"
@@ -1487,15 +1462,9 @@ export default {
             >
               {{ $t('public_button_copy') }}
             </ElButton>
-            <ElDivider
-              v-if="buttonShowMap.copy && havePermission(row, 'Delete')"
-              v-readonlybtn="'SYNC_job_edition'"
-              class="mx-1"
-              direction="vertical"
-            />
             <ElButton
               v-if="havePermission(row, 'Delete')"
-              v-readonlybtn="'SYNC_job_edition'"
+              key="delete"
               text
               type="primary"
               name="delete-task-btn"
@@ -1505,7 +1474,7 @@ export default {
             >
               {{ $t('public_button_delete') }}
             </ElButton>
-          </div>
+          </el-space>
         </template>
       </el-table-column>
     </TablePage>
