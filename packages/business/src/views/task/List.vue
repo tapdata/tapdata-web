@@ -378,6 +378,7 @@ export default {
           type: 'select-inner',
           items: this.statusOptions,
           id: 'status-filter-select',
+          height: this.statusOptions * 34,
         },
         {
           label: this.$t('packages_business_task_list_sync_type'),
