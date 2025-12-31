@@ -224,6 +224,7 @@ const getDatabaseTypes = async () => {
     data.map((it: any) => {
       return {
         name: it.name,
+        type: it.type,
         pdkHash: it.pdkHash,
       }
     }) || []
@@ -243,7 +244,7 @@ const getConnectionOptions = async (filter: any) => {
       database_type: form.value.connectionType
         ? form.value.connectionType
         : {
-            in: AllowedTypes,
+            in: databaseTypes.value?.map((t: any) => t.type),
           },
       connection_type:
         import.meta.env.VUE_APP_MODE !== 'msa'
@@ -1102,7 +1103,7 @@ provide('form', form)
               <ElOption
                 v-for="item in databaseTypes"
                 :key="item"
-                :value="item.name"
+                :value="item.type"
                 :label="item.name"
               >
                 <div class="flex align-items-center gap-2">
