@@ -5,7 +5,7 @@ import { isCancel } from '@tap/api/src/Http'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import { isObject } from '@tap/shared'
-import { debounce } from 'lodash-es'
+import { debounce, isString } from 'lodash-es'
 import { defineStore } from 'pinia'
 import { markRaw, ref, shallowRef } from 'vue'
 import { DEFAULT_SETTINGS } from '../constants'
@@ -63,6 +63,15 @@ export const useDataflowStore = defineStore('dataflow', () => {
     return flag
   }
 
+  function setNodeResouce(node = {}) {
+    const ins = getResourceInsByNode(node)
+    Object.defineProperty(node, '__Ctor', {
+      value: ins,
+      enumerable: false,
+    })
+    return node
+  }
+
   function initialDag({ nodes, edges }) {
     if (!nodes?.length) return
     const outputsMap = {}
@@ -94,11 +103,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
       node.attrs.position = node.attrs.position ?? [0, 0]
       node.attrs.capabilities = node.attrs.capabilities ?? []
 
-      const ins = getResourceInsByNode(node)
-      Object.defineProperty(node, '__Ctor', {
-        value: ins,
-        enumerable: false,
-      })
+      setNodeResouce(node)
 
       // 需要隐藏的内容
       node.hiddenMap = {
@@ -218,10 +223,57 @@ export const useDataflowStore = defineStore('dataflow', () => {
   }
 
   function addNode(node) {
+    if (!node.__Ctor) {
+      setNodeResouce(node)
+    }
+    if (!node.$inputs) node.$inputs = []
+    if (!node.$outputs) node.$outputs = []
+
     dag.value.nodes.push(node)
   }
 
+  function deleteConnectionsByNodeId(nodeId) {
+    dag.value.edges = dag.value.edges.filter(
+      ({ source, target }) => nodeId !== source && nodeId !== target,
+    )
+  }
+
+  function connectAdjacentNodes(node) {
+    const { $inputs = [], $outputs = [] } = node
+
+    // TODO: 节点连线检查
+    for (const source of $inputs) {
+      for (const target of $outputs) {
+        addConnection({
+          source,
+          target,
+        })
+      }
+    }
+  }
+
   function deleteNode(node) {
+    const nodeId = node.id
+
+    connectAdjacentNodes(node)
+    deleteConnectionsByNodeId(nodeId)
+
+    if (node.$outputs?.length) {
+      node.$outputs.forEach((id) => {
+        const { $inputs = [] } = findNodeById(id)
+        const i = $inputs.indexOf(nodeId)
+        if (~i) $inputs.splice(i, 1)
+      })
+    }
+
+    if (node.$inputs?.length) {
+      node.$inputs.forEach((id) => {
+        const { $outputs = [] } = findNodeById(id)
+        const i = $outputs.indexOf(nodeId)
+        if (~i) $outputs.splice(i, 1)
+      })
+    }
+
     const index = dag.value.nodes.findIndex((n) => n.id === node.id)
     if (~index) dag.value.nodes.splice(index, 1)
   }
@@ -231,18 +283,54 @@ export const useDataflowStore = defineStore('dataflow', () => {
   }
 
   function addConnection(connection) {
-    dag.value.edges.push({
-      source: connection.source,
-      target: connection.target,
-    })
+    const { source, target } = connection
+    const index = dag.value.edges.findIndex(
+      (item) => item.source === source && item.target === target,
+    )
+    const sourceNode = findNodeById(source)
+    const targetNode = findNodeById(target)
+
+    if (!sourceNode || !targetNode) return
+
+    const { $outputs = [] } = sourceNode
+    const { $inputs = [] } = targetNode
+
+    if (!~index) dag.value.edges.push(connection)
+
+    if (!$outputs.includes(target)) {
+      $outputs.push(target)
+      sourceNode.$outputs = $outputs
+    }
+
+    if (!$inputs.includes(source)) {
+      $inputs.push(source)
+      targetNode.$inputs = $inputs
+    }
+
+    // dag.value.edges.push({
+    //   source: connection.source,
+    //   target: connection.target,
+    // })
   }
 
   function deleteConnection(connection) {
+    const { source, target } = connection
     const index = dag.value.edges.findIndex(
-      (item) =>
-        item.source === connection.source && item.target === connection.target,
+      (item) => item.source === source && item.target === target,
     )
     if (~index) dag.value.edges.splice(index, 1)
+
+    const sourceNode = findNodeById(source)
+    const targetNode = findNodeById(target)
+
+    const { $outputs = [] } = sourceNode
+    const { $inputs = [] } = targetNode
+
+    const ti = $outputs.indexOf(target)
+    const si = $inputs.indexOf(source)
+
+    if (~ti) $outputs.splice(ti, 1)
+    if (~si) $inputs.splice(si, 1)
   }
 
   async function initPdkProperties() {
@@ -334,6 +422,31 @@ export const useDataflowStore = defineStore('dataflow', () => {
     patchDataflowDebounce()
   }
 
+  function getAfterNodesInSameBranch(node) {
+    const currentNode = isString(node) ? findNodeById(node) : node
+
+    if (!currentNode) return []
+    const list: Node[] = [currentNode]
+
+    const traverse = (root: Node, callback: (node: Node) => void) => {
+      if (root) {
+        const outgoers = root.$outputs.map((id) => findNodeById(id))
+
+        if (outgoers.length) {
+          outgoers.forEach((node) => {
+            callback(node)
+            traverse(node, callback)
+          })
+        }
+      }
+    }
+    traverse(currentNode, (node) => {
+      list.push(node)
+    })
+
+    return list
+  }
+
   return {
     dataflow,
     dag,
@@ -359,5 +472,6 @@ export const useDataflowStore = defineStore('dataflow', () => {
     selectNode,
     nodeById,
     updateNodeProperties,
+    getAfterNodesInSameBranch,
   }
 })

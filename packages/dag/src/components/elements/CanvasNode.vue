@@ -83,7 +83,7 @@ const nodeErrorMsg = computed(() => {
           placement="top"
           :open-delay="400"
         />
-        <VIcon v-if="ins.beta" class="mr-1" size="32">beta</VIcon>
+        <!-- <VIcon v-if="ins.beta" class="mr-1" size="32">beta</VIcon> -->
       </template>
       <ElTooltip
         v-if="hasNodeError(props.data.id)"

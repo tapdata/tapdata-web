@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { BaseEdge, EdgeLabelRenderer, type Connection } from '@vue-flow/core'
-import { computed, ref, watch } from 'vue'
+import { computed, inject, ref, watch } from 'vue'
 import {
   useCanvasEdge,
   type CanvasEdgeProps,
@@ -12,7 +12,14 @@ defineOptions({
 
 const props = defineProps<CanvasEdgeProps>()
 
-const emit = defineEmits(['update:label:hovered'])
+const emit = defineEmits<{
+  'update:label:hovered': [hovered: boolean]
+  add: [connection: Connection]
+  delete: [connection: Connection]
+  showNodesPopover: [data: any, target: HTMLElement, key: string]
+}>()
+
+const popoverTargetKey = inject('popoverTargetKey', ref<string | null>(null))
 
 const { path, iconPositions } = useCanvasEdge(props)
 
@@ -29,6 +36,7 @@ const stroke = computed(() => {
   return 'var(--color-canvas-link-line-normal)'
 })
 const renderActions = computed(() => props.selected || delayedHovered.value)
+const isPopoverActive = computed(() => popoverTargetKey.value === props.id)
 
 const delayedHovered = ref(props.hovered)
 const delayedHoveredSetTimeoutRef = ref<number | null>(null)
@@ -58,8 +66,16 @@ function onEdgeLabelMouseLeave() {
   emit('update:label:hovered', false)
 }
 
-function onAdd() {
-  emit('add', connection.value)
+function onAdd(event: MouseEvent) {
+  emit(
+    'showNodesPopover',
+    {
+      prevNodeId: props.source,
+      nextNodeId: props.target,
+    },
+    event.target!.closest('.canvas-edge-add-icon'),
+    props.id,
+  )
 }
 
 function onDelete() {
@@ -89,8 +105,8 @@ function onDelete() {
       @mouseleave="onEdgeLabelMouseLeave"
     >
       <div
-        v-if="renderActions"
-        class="bg-primary rounded-pill flex align-center justify-center w-4 h-4 align-items-center justify-center color-white z-10 hover:scale-150 transition-all cursor-pointer"
+        v-if="renderActions || isPopoverActive"
+        class="bg-primary rounded-pill flex align-center justify-center w-4 h-4 align-items-center justify-center color-white z-10 hover:scale-150 transition-all cursor-pointer canvas-edge-add-icon"
         @click="onAdd"
       >
         <el-icon size="10" class="">

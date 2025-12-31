@@ -51,7 +51,9 @@ const isPopoverActive = computed(
       @click.stop="
         $emit(
           'showNodesPopover',
-          node,
+          {
+            prevNodeId: node.id,
+          },
           $event.target!.closest('.canvas-node-handle-icon'),
           `${node.id}_source`,
         )

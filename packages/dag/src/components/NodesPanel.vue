@@ -227,6 +227,7 @@ const onTableDragStart = (item) => {
       </div>
       <el-scrollbar
         class="flex-1 min-h-0"
+        :distance="10"
         @end-reached="runFetchMoreConnections"
       >
         <div class="p-1">
@@ -292,7 +293,11 @@ const onTableDragStart = (item) => {
           </el-button>
         </ElTooltip>
       </div>
-      <el-scrollbar class="flex-1 min-h-0" @end-reached="runFetchMoreTables">
+      <el-scrollbar
+        class="flex-1 min-h-0"
+        :distance="10"
+        @end-reached="runFetchMoreTables"
+      >
         <div class="p-1">
           <div
             v-for="item in tables"
@@ -363,7 +368,7 @@ const onTableDragStart = (item) => {
               placement="top"
               :open-delay="400"
             />
-            <VIcon v-if="item.beta" class="ml-1" size="32">beta</VIcon>
+            <!-- <VIcon v-if="item.beta" class="ml-1" size="32">beta</VIcon> -->
           </div>
         </div>
       </el-scrollbar>

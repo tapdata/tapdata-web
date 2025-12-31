@@ -154,7 +154,7 @@ watch(
     style="width: 600px"
   >
     <div class="flex align-center px-4 pt-4 gap-1">
-      <BaseNodeIcon :node="node" class="mr-1" />
+      <BaseNodeIcon :node="node" :size="28" class="mr-1" />
       <TextEditable
         v-model:value="node.name"
         :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"

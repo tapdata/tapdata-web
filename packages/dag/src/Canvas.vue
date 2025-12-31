@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import { Background } from '@vue-flow/background'
 import { useVueFlow, VueFlow } from '@vue-flow/core'
-import { inject, nextTick, provide, ref, watch } from 'vue'
+import {
+  computed,
+  inject,
+  nextTick,
+  provide,
+  ref,
+  shallowRef,
+  watch,
+} from 'vue'
 import CanvasConnectionLine from './components/elements/CanvasConnectionLine.vue'
 import CanvasEdge from './components/elements/CanvasEdge.vue'
 import Node from './components/elements/CanvasNode.vue'
@@ -39,6 +47,14 @@ const showPopover = ref(false)
 const popoverRef = ref<InstanceType<typeof NodesPopover> | null>(null)
 const popoverTarget = ref<HTMLElement | null>(null)
 const popoverTargetKey = ref<string | null>(null)
+const addNodeParams = shallowRef<any>(null)
+
+const popoverPlacement = computed(() => {
+  if (popoverTargetKey.value?.endsWith('_target')) {
+    return 'left'
+  }
+  return 'right'
+})
 
 onNodeMouseEnter(({ node }) => {
   nodesHoveredById.value = { [node.id]: true }
@@ -110,6 +126,7 @@ function onNodeClick({ event, node }) {
 }
 
 async function onShowNodesPopover(data, target, key) {
+  addNodeParams.value = data
   showPopover.value = false
   await nextTick()
   popoverTarget.value = target
@@ -138,6 +155,8 @@ provide('popoverTargetKey', popoverTargetKey)
     <NodesPopover
       ref="popoverRef"
       v-model="showPopover"
+      :placement="popoverPlacement"
+      :params="addNodeParams"
       :teleported="false"
       :reference="popoverTarget"
       @after-leave="onHideNodesPopover"
@@ -190,6 +209,7 @@ provide('popoverTargetKey', popoverTargetKey)
           @update:label:hovered="onUpdateEdgeLabelHovered(edge.id, $event)"
           @add="onClickConnectionAdd"
           @delete="onDeleteConnection"
+          @show-nodes-popover="onShowNodesPopover"
         />
       </template>
       <template #connection-line="connectionLineProps">

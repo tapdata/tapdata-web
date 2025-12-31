@@ -1048,4 +1048,5 @@ export default {
   packages_dag_skip_error_recover_selected: '恢复选中',
   packages_dag_skip_error_recover_all: '恢复全部',
   packages_dag_only_show_skip: '仅显示已跳过',
+  packages_dag_search_processor: '搜索处理节点',
 }

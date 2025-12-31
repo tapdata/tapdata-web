@@ -1194,4 +1194,5 @@ export default {
   packages_dag_skip_error_recover_selected: 'Recover Selected',
   packages_dag_skip_error_recover_all: 'Recover All',
   packages_dag_only_show_skip: 'Only Show Skipped',
+  packages_dag_search_processor: 'Search Processor',
 }

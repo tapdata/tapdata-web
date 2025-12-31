@@ -4,6 +4,45 @@ import { ref } from 'vue'
 import { useDataflowStore } from '../stores/dataflow.store'
 import { useUiStore } from '../stores/ui.store'
 
+export const makeNode = (
+  connection: Record<string, any>,
+  tableName: string,
+) => {
+  const nodeConfig = {}
+  const attrs = {
+    connectionName: connection.name,
+    connectionType: connection.connection_type,
+    accessNodeProcessId: connection.accessNodeProcessId,
+    priorityProcessId: connection.priorityProcessId,
+    pdkType: connection.pdkType,
+    pdkHash: connection.pdkHash,
+    capabilities: connection.capabilities || [],
+    db_version: connection.db_version,
+    hasCreated: false,
+    connectionTags: connection.definitionTags,
+  }
+
+  return {
+    id: uuid(),
+    name: tableName || connection.name,
+    type: 'table',
+    databaseType: connection.database_type,
+    connectionId: connection.id,
+    tableName,
+    nodeConfig,
+    attrs,
+    noPkSyncMode: 'ADD_HASH', // 无主键同步默认创建哈希列
+  }
+}
+
+export const makeProcessorNode = (item: any) => {
+  return {
+    ...item,
+    id: uuid(),
+    attrs: {},
+  }
+}
+
 export function useDnD(emit) {
   const uiStore = useUiStore()
   const dataflowStore = useDataflowStore()
@@ -11,62 +50,18 @@ export function useDnD(emit) {
   const dragStarting = ref(false)
   const { screenToFlowCoordinate, getNodes } = useVueFlow()
 
-  const makeNode = (connection, tableName) => {
-    const nodeConfig = {}
-    const attrs = {
-      connectionName: connection.name,
-      connectionType: connection.connection_type,
-      accessNodeProcessId: connection.accessNodeProcessId,
-      priorityProcessId: connection.priorityProcessId,
-      pdkType: connection.pdkType,
-      pdkHash: connection.pdkHash,
-      capabilities: connection.capabilities || [],
-      db_version: connection.db_version,
-      hasCreated: false,
-      connectionTags: connection.definitionTags,
-    }
-
-    return {
-      name: tableName || connection.name,
-      type: 'table',
-      databaseType: connection.database_type,
-      connectionId: connection.id,
-      tableName,
-      nodeConfig,
-      attrs,
-      noPkSyncMode: 'ADD_HASH', // 无主键同步默认创建哈希列
-    }
-  }
-
-  const resolveNodeData = (node, position) => {
-    if (node.attrs) {
-      node.attrs.position = position
-    } else {
-      node.attrs = { position }
-    }
-
-    node.id = uuid()
-
-    return node
-  }
-
-  const resolveNodeRecource = (node) => {
-    const ins = dataflowStore.getResourceInsByNode(node)
-    Object.defineProperty(node, '__Ctor', {
-      value: ins,
-      enumerable: false,
-    })
-    return node
-  }
-
   const onDragStart = (connection, tableName = '') => {
-    const node = resolveNodeRecource(makeNode(connection, tableName))
+    const node = makeNode(
+      connection,
+      tableName,
+      dataflowStore.getResourceInsByNode,
+    )
     dragNode.value = node
     dragStarting.value = true
   }
 
   const onProcessorDragStart = (item) => {
-    dragNode.value = resolveNodeRecource(item)
+    dragNode.value = makeProcessorNode(item)
     dragStarting.value = true
   }
 
@@ -218,11 +213,9 @@ export function useDnD(emit) {
       x: position[0],
       y: position[1],
     })
-    console.log('screenToFlowCoordinate', newPos)
-    console.log('dragNode', dragNode.value)
-
     emit('drop-node', dragNode.value, position, rect)
-    dataflowStore.addNode(resolveNodeData(dragNode.value, [newPos.x, newPos.y]))
+    dragNode.value.attrs.position = [newPos.x, newPos.y]
+    dataflowStore.addNode(dragNode.value)
   }
 
   const onDragStop = () => {
