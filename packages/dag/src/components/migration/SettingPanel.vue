@@ -1144,6 +1144,15 @@ const schema = {
                           },
                           'x-component': 'Switch',
                         },
+                        fileLog: {
+                          title: t('packages_dag_fileLog'),
+                          type: 'boolean',
+                          'x-decorator': 'FormItem',
+                          'x-decorator-props': {
+                            tooltip: t('packages_dag_fileLog_tip'),
+                          },
+                          'x-component': 'Switch',
+                        },
                         accessNodeType: {
                           type: 'string',
                           title: t('packages_dag_connection_form_access_node'),
