@@ -15,9 +15,12 @@ interface Props {
   params?: any
 }
 
+const X_OFFSET = 100
+const Y_OFFSET = 40
+
 const props = defineProps<Props>()
 
-const { findNode } = useVueFlow()
+const { findNode, getOutgoers } = useVueFlow()
 
 const { t } = useI18n()
 
@@ -125,9 +128,9 @@ const handleAddNode = (node: any) => {
   if (nextNodeId && prevNodeId) {
     // 在两个节点之间添加
     const afterNodes = dataflowStore.getAfterNodesInSameBranch(nextNodeId)
-    const prevNode = findNode(prevNodeId)
-    const nextNode = findNode(nextNodeId)
-    const offset = nextNode.dimensions.width + 100
+    const prevNode = findNode(prevNodeId)!
+    const nextNode = findNode(nextNodeId)!
+    const offset = nextNode.dimensions.width + X_OFFSET
 
     node.attrs.position = [nextNode.position.x, nextNode.position.y]
 
@@ -155,10 +158,20 @@ const handleAddNode = (node: any) => {
   } else if (prevNodeId && !nextNodeId) {
     // 在节点后面添加
     const canvasNode = findNode(prevNodeId)
-    const position = [
-      canvasNode.position.x + canvasNode.dimensions.width + 100,
-      canvasNode.position.y,
-    ]
+    const outgoers = getOutgoers(prevNodeId).sort(
+      (a, b) => a.position.y - b.position.y,
+    )
+    const lastOutgoer = outgoers.at(-1)
+    const position = lastOutgoer
+      ? [
+          lastOutgoer.position.x,
+          lastOutgoer.position.y + lastOutgoer.dimensions.height + Y_OFFSET,
+        ]
+      : [
+          canvasNode.position.x + canvasNode.dimensions.width + X_OFFSET,
+          canvasNode.position.y,
+        ]
+
     node.attrs.position = position
     connection = {
       source: prevNodeId,
@@ -166,12 +179,16 @@ const handleAddNode = (node: any) => {
     }
   } else if (!prevNodeId && nextNodeId) {
     // 在节点前面添加
-    const canvasNode = findNode(nextNodeId)
-    const position = [
-      canvasNode.position.x - canvasNode.dimensions.width - 100,
-      canvasNode.position.y,
-    ]
-    node.attrs.position = position
+    const nextNode = findNode(nextNodeId)
+    const afterNodes = dataflowStore.getAfterNodesInSameBranch(nextNodeId)
+    const offset = nextNode.dimensions.width + X_OFFSET
+
+    node.attrs.position = [nextNode.position.x, nextNode.position.y]
+
+    afterNodes.forEach((node) => {
+      node.attrs.position[0] += offset
+    })
+
     connection = {
       source: node.id,
       target: nextNodeId,

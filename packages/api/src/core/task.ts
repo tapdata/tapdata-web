@@ -4,6 +4,34 @@ import { requestClient, type Page } from '../request'
 
 const BASE_URL = '/api/Task'
 
+export interface Node {
+  id: string
+  type: string
+  name: string
+  attrs: {
+    position: [number, number]
+    [key: string]: any
+  }
+  [key: string]: any
+}
+
+export interface Edge {
+  source: string
+  target: string
+  [key: string]: any
+}
+
+export interface Task {
+  id: string
+  name: string
+  status: string
+  [key: string]: any
+  dag: {
+    edges: Edge[]
+    nodes: Node[]
+  }
+}
+
 export interface TaskChart {
   chart1: {
     total: number
@@ -88,12 +116,12 @@ export function tranModelVersionControl(params: any) {
 
 export function getTaskById(id: string, params?: any, headers?: any) {
   if (Array.isArray(params)) {
-    return requestClient.get(`${BASE_URL}/${id}${params.join('/')}`, {
+    return requestClient.get<Task>(`${BASE_URL}/${id}${params.join('/')}`, {
       headers,
     })
   }
   params = params || {}
-  return requestClient.get(`${BASE_URL}/${id}`, { params, headers })
+  return requestClient.get<Task>(`${BASE_URL}/${id}`, { params, headers })
 }
 
 export function editTask(params: any) {

@@ -1,6 +1,6 @@
 import { fetchCustomNodes } from '@tap/api/src/core/custom-node'
 import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
-import { getTaskById, patchTask } from '@tap/api/src/core/task'
+import { getTaskById, patchTask, type Node } from '@tap/api/src/core/task'
 import { isCancel } from '@tap/api/src/Http'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
@@ -455,6 +455,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     processorNodeTypes,
     selectedNode,
     stateIsReadonly,
+    taskSaving,
 
     addNode,
     deleteNode,

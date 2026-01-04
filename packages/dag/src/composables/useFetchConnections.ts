@@ -5,6 +5,19 @@ import { computed, reactive, ref, shallowRef } from 'vue'
 import { useDataflowStore } from '../stores/dataflow.store'
 import type { ScrollbarDirection } from 'element-plus'
 
+function calcMatchScore(name, keyword) {
+  if (!name || !keyword) return 0
+
+  const n = name.toLowerCase()
+  const k = keyword.toLowerCase()
+
+  if (n === k) return 3
+  if (n.startsWith(k)) return 2
+  if (n.includes(k)) return 1
+
+  return 0
+}
+
 export function useFetchConnections() {
   const pageSize = 20
 
@@ -129,7 +142,7 @@ export function useFetchConnections() {
         source: true,
         original_name: true,
       },
-      order: ['original_name ASC'],
+      // order: ['original_name ASC'],
     }
 
     const txt = escapeRegExp(tableState.query)
@@ -147,13 +160,25 @@ export function useFetchConnections() {
 
     tableState.total = data.total
 
-    return data.items.map((tb) => ({
-      id: tb.id,
-      name: tb.original_name,
-      comment: tb.comment,
-      sourceName: tb.source?.name,
-      sourceId: tb.source?.id,
-    }))
+    return data.items
+      .sort((a, b) => {
+        const scoreA = calcMatchScore(a.original_name, txt)
+        const scoreB = calcMatchScore(b.original_name, txt)
+
+        if (scoreA !== scoreB) {
+          return scoreB - scoreA // 分高的排前面
+        }
+
+        // 同分兜底排序（很重要，避免列表抖动）
+        return a.original_name.localeCompare(b.original_name)
+      })
+      .map((tb) => ({
+        id: tb.id,
+        name: tb.original_name,
+        comment: tb.comment,
+        sourceName: tb.source?.name,
+        sourceId: tb.source?.id,
+      }))
   }
 
   const runFetchTables = debounce(async () => {
