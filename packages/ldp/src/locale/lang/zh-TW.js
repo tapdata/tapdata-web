@@ -61,4 +61,6 @@ export default {
     '最大數據延遲表示當前模型中，數據從源系統產生變更開始，經過所有參與的同步與處理任務，最終寫入該模型所需的最長時間。',
   packages_ldp_task_delay_detail_logic_tip2:
     '該指標會綜合計算構建此模型所涉及的所有上游表及其任務鏈路中的增量延遲，並取其中的最大值，反映模型中最晚更新的數據可能滯後的時間',
+  packages_ldp_task_delay_detail_logic_tip3:
+    '參與該計算的任務將會高亮顯示其對應延遲',
 }

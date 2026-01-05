@@ -61,4 +61,6 @@ export default {
     '最大数据延迟表示当前模型中，数据从源系统产生变更开始，经过所有参与的同步与处理任务，最终写入该模型所需的最长时间。',
   packages_ldp_task_delay_detail_logic_tip2:
     '该指标会综合计算构建此模型所涉及的所有上游表及其任务链路中的增量延迟，并取其中的最大值，反映模型中最晚更新的数据可能滞后的时间',
+  packages_ldp_task_delay_detail_logic_tip3:
+    '参与该计算的任务将会高亮显示其对应延迟',
 }

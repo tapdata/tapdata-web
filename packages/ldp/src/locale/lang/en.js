@@ -68,4 +68,6 @@ export default {
     'Maximum data delay represents the longest time required for data changes generated in the source systems to be written into the model, after passing through all related synchronization and processing tasks.',
   packages_ldp_task_delay_detail_logic_tip2:
     'This metric aggregates the incremental delays across all upstream tables and their associated task pipelines involved in building the model, and takes the maximum value to indicate how late the most recently updated data in the model may be.',
+  packages_ldp_task_delay_detail_logic_tip3:
+    'Tasks included in this calculation are highlighted with their delay',
 }

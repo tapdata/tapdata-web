@@ -25,6 +25,7 @@ import VTable from '@tap/component/src/base/v-table'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import Drawer from '@tap/component/src/Drawer.vue'
 import { IconButton } from '@tap/component/src/icon-button'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import i18n from '@tap/i18n'
 
 import { calcTimeUnit, calcUnit, isNum } from '@tap/shared'
@@ -46,6 +47,7 @@ export default {
     VCodeEditor,
     IconButton,
     LineageGraph,
+    OverflowTooltip,
   },
   props: {
     tag: {
@@ -466,16 +468,28 @@ export default {
         this.lastDataChangeTime = res?.lastDataChangeTime
           ? dayjs(res?.lastDataChangeTime).format('YYYY-MM-DD HH:mm:ss')
           : '-'
-        this.upstreamTableStatus = res?.upstreamTableStatus?.map((item) => {
-          item.cdcDelayTime =
-            isNum(item.cdcDelayTime) && item.cdcDelayTime >= 0
-              ? calcTimeUnit(item.cdcDelayTime, 2, {
-                  autoHideMs: true,
-                })
-              : '-'
 
-          return item
-        })
+        this.upstreamTableStatus =
+          res?.upstreamTableStatus
+            ?.sort((a, b) => {
+              if (a.onDelayPath && !b.onDelayPath) {
+                return -1
+              } else if (!a.onDelayPath && b.onDelayPath) {
+                return 1
+              } else {
+                return b.cdcDelayTime - a.cdcDelayTime
+              }
+            })
+            ?.map((item) => {
+              item.cdcDelayTime =
+                isNum(item.cdcDelayTime) && item.cdcDelayTime >= 0
+                  ? calcTimeUnit(item.cdcDelayTime, 2, {
+                      autoHideMs: true,
+                    })
+                  : '-'
+
+              return item
+            }) || []
       })
     },
     getApisData() {
@@ -843,12 +857,12 @@ export default {
               </span>
               <el-popover
                 placement="bottom"
-                trigger="hover"
-                popper-style="min-width: 300px;max-width: 380px;width: auto;"
+                trigger="click"
+                popper-style="min-width: 400px;max-width: 480px;width: auto;"
                 :disabled="!upstreamTableStatus.length || !cdcDelayTime"
               >
-                <template #reference
-                  ><span
+                <template #reference>
+                  <span
                     class="table-dec-txt text-nowrap inline-flex align-center gap-0.5"
                     :class="{
                       'color-primary cursor-pointer':
@@ -860,7 +874,41 @@ export default {
                   ></template
                 >
                 <div>
-                  <div class="flex align-center gap-1">
+                  <el-alert
+                    :closable="false"
+                    :title="$t('packages_ldp_task_delay_detail_logic')"
+                    type="info"
+                    show-icon
+                    class="align-items-start mb-3 logic-alert"
+                  >
+                    <template #title>
+                      <div>
+                        <div class="fw-sub fs-7 mb-1">
+                          {{ $t('packages_ldp_task_delay_detail_logic') }}
+                        </div>
+                        <ul
+                          class="ml-4 list-disc flex flex-column gap-0.5 text-xs lh-base"
+                        >
+                          <li class="list-disc">
+                            {{
+                              $t('packages_ldp_task_delay_detail_logic_tip1')
+                            }}
+                          </li>
+                          <li class="list-disc">
+                            {{
+                              $t('packages_ldp_task_delay_detail_logic_tip2')
+                            }}
+                          </li>
+                          <li class="list-disc color-warning">
+                            {{
+                              $t('packages_ldp_task_delay_detail_logic_tip3')
+                            }}
+                          </li>
+                        </ul>
+                      </div>
+                    </template>
+                  </el-alert>
+                  <!-- <div class="flex align-center gap-1">
                     <div class="lh-base">
                       <div class="fw-sub font-color-dark">
                         {{ $t('packages_ldp_task_delay_detail') }}
@@ -871,7 +919,7 @@ export default {
                     </div>
                     <el-tooltip :hide-after="0" :teleported="false">
                       <template #content>
-                        <div class="fw-sub fs-7">
+                        <div class="fw-sub fs-7 mb-1">
                           {{ $t('packages_ldp_task_delay_detail_logic') }}
                         </div>
                         <ul
@@ -897,18 +945,23 @@ export default {
                         </el-icon>
                       </div>
                     </el-tooltip>
-                  </div>
-                  <el-divider class="my-3" />
+                  </div> -->
+                  <!-- <el-divider class="my-3" /> -->
                   <div class="mx-n3">
                     <el-scrollbar :max-height="280" class="px-3">
                       <div class="flex flex-column gap-2">
                         <div
                           v-for="item in upstreamTableStatus"
                           :key="item"
-                          class="flex align-center gap-2 hover:bg-fill-color-light rounded-lg p-2 cursor-pointer task-item border"
+                          class="flex align-center gap-2 hover:bg-fill-color-light rounded-lg p-2 cursor-pointer task-item border overflow-hidden"
                           @click="handleOpenTask(item)"
                         >
-                          {{ item.taskName }}
+                          <OverflowTooltip
+                            :hide-after="0"
+                            placement="left"
+                            class="text-truncate"
+                            :text="item.taskName"
+                          />
                           <el-icon
                             class="external-link-icon text-muted-foreground"
                           >
@@ -917,7 +970,7 @@ export default {
                           <el-tag
                             size="small"
                             class="px-1 ml-auto"
-                            :type="item.onDelayPath ? 'primary' : 'info'"
+                            :type="item.onDelayPath ? 'warning' : 'info'"
                           >
                             <span class="flex align-center gap-0.5">
                               <el-icon><i-lucide-clock /></el-icon>
@@ -1599,6 +1652,11 @@ export default {
   }
   &:hover .external-link-icon {
     opacity: 1;
+  }
+}
+.logic-alert {
+  :deep(.el-alert__icon) {
+    margin-top: 4px;
   }
 }
 </style>
