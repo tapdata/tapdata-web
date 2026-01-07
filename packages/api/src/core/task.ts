@@ -21,15 +21,17 @@ export interface Edge {
   [key: string]: any
 }
 
+export interface Dag {
+  edges: Edge[]
+  nodes: Node[]
+}
+
 export interface Task {
   id: string
   name: string
   status: string
   [key: string]: any
-  dag: {
-    edges: Edge[]
-    nodes: Node[]
-  }
+  dag: Dag
 }
 
 export interface TaskChart {

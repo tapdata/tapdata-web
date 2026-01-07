@@ -111,6 +111,20 @@ watch(show, (newValue) => {
   if (newValue) {
     // 使用 mousedown 而不是 click
     document.addEventListener('mousedown', handleMouseDown, true)
+
+    // 根据触发位置自动设置 activeTab
+    const { nextNodeId, prevNodeId } = props.params || {}
+
+    if (nextNodeId && !prevNodeId) {
+      // 节点左侧触发 - 激活 source tab
+      setActiveTab(0)
+    } else if (prevNodeId && !nextNodeId) {
+      // 节点右侧触发 - 激活 processor tab
+      setActiveTab(1)
+    } else if (nextNodeId && prevNodeId) {
+      // 连线上触发 - 激活 processor tab
+      setActiveTab(1)
+    }
   } else {
     document.removeEventListener('mousedown', handleMouseDown, true)
   }

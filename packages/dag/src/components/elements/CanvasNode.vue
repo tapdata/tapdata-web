@@ -3,6 +3,7 @@ import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { useI18n } from '@tap/i18n'
 import { computed } from 'vue'
 import { useStore } from 'vuex'
+import { useDataflowStore } from '../../stores/dataflow.store'
 import BaseNode from '../BaseNode.vue'
 import NodeSourceHandle from './NodeSourceHandle.vue'
 import NodeTargetHandle from './NodeTargetHandle.vue'
@@ -18,6 +19,7 @@ const { t } = useI18n()
 const props = defineProps<CanvasNodeProps>()
 
 const store = useStore()
+const dataflowStore = useDataflowStore()
 
 // Vuex state
 const canBeConnectedNodeIds = computed(
@@ -62,6 +64,14 @@ const nodeErrorMsg = computed(() => {
   }
   return null
 })
+
+const canBeSource = computed(() => {
+  return dataflowStore.checkAsSource(props.data)
+})
+
+const canBeTarget = computed(() => {
+  return dataflowStore.checkAsTarget(props.data)
+})
 </script>
 
 <template>
@@ -98,11 +108,13 @@ const nodeErrorMsg = computed(() => {
 
       <template #extra>
         <NodeSourceHandle
+          v-if="canBeSource"
           v-bind="$attrs"
           :node="props.data"
           class="canvas-node-handle z-1"
         />
         <NodeTargetHandle
+          v-if="canBeTarget"
           v-bind="$attrs"
           :node="props.data"
           class="canvas-node-handle z-1"

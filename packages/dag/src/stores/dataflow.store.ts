@@ -1,6 +1,12 @@
 import { fetchCustomNodes } from '@tap/api/src/core/custom-node'
 import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
-import { getTaskById, patchTask, type Node } from '@tap/api/src/core/task'
+import {
+  getTaskById,
+  patchTask,
+  type Dag,
+  type Edge,
+  type Node,
+} from '@tap/api/src/core/task'
 import { isCancel } from '@tap/api/src/Http'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
@@ -15,10 +21,24 @@ const createEmptyDataflow = (): any => ({
   ...DEFAULT_SETTINGS,
 })
 
+function hasCycle(
+  source: string,
+  target: string,
+  map: Record<string, string[]>,
+) {
+  let flag = false
+  if (!map[source]) return flag
+  for (const id of map[source]) {
+    flag = id === target
+    if (flag || hasCycle(id, target, map)) return true
+  }
+  return flag
+}
+
 export const useDataflowStore = defineStore('dataflow', () => {
   const { t } = useI18n()
   const dataflow = ref<any>(createEmptyDataflow())
-  const dag = ref<any>({
+  const dag = ref<Dag>({
     nodes: [],
     edges: [],
   })
@@ -447,6 +467,145 @@ export const useDataflowStore = defineStore('dataflow', () => {
     return list
   }
 
+  function checkAsSource(source: Node, showMsg?: boolean) {
+    let { allowTarget } = source.__Ctor
+    allowTarget = typeof allowTarget === 'boolean' ? allowTarget : true
+    const connectionType = source.attrs.connectionType
+    if (
+      !allowTarget ||
+      (connectionType && !connectionType.includes('source'))
+    ) {
+      showMsg &&
+        ElMessage.error(
+          t('packages_dag_node_only_as_target', {
+            val1: source.name,
+          }),
+        )
+      return false
+    }
+    return true
+  }
+
+  function checkAsTarget(target: Node, showMsg?: boolean) {
+    let { allowSource } = target.__Ctor
+    allowSource = typeof allowSource === 'boolean' ? allowSource : true
+    const connectionType = target.attrs.connectionType
+    if (
+      !allowSource ||
+      (connectionType && !connectionType.includes('target'))
+    ) {
+      showMsg &&
+        ElMessage.error(
+          t('packages_dag_node_only_as_source', {
+            val1: target.name,
+          }),
+        )
+      return false
+    }
+    return true
+  }
+
+  function checkTargetMaxInputs(targetNode: Node, showMsg?: boolean) {
+    const maxInputs = targetNode.__Ctor.maxInputs ?? -1
+    const connections = dag.value.edges.filter(
+      (item) => item.target === targetNode.id,
+    )
+
+    if (maxInputs !== -1 && connections.length >= maxInputs) {
+      showMsg &&
+        ElMessage.error(t('packages_dag_mixins_editor_gaijiedianyijing'))
+      return false
+    }
+    return true
+  }
+
+  function checkSourceMaxOutputs(sourceNode: Node, showMsg?: boolean) {
+    const maxOutputs = sourceNode.__Ctor.maxOutputs ?? -1
+    const connections = dag.value.edges.filter(
+      (item) => item.source === sourceNode.id,
+    )
+
+    if (maxOutputs !== -1 && connections.length >= maxOutputs) {
+      showMsg &&
+        ElMessage.error(t('packages_dag_mixins_editor_gaijiedianyijing'))
+      return false
+    }
+    return true
+  }
+
+  function checkAllowTargetOrSource(
+    sourceNode: Node,
+    targetNode: Node,
+    showMsg?: boolean,
+  ) {
+    const { allowSource } = targetNode.__Ctor
+    const { allowTarget } = sourceNode.__Ctor
+
+    if (
+      typeof allowSource === 'function' &&
+      !allowSource(sourceNode, targetNode)
+    ) {
+      showMsg &&
+        ElMessage.error(
+          t('packages_dag_mixins_editor_gaijiedianta', {
+            val1: targetNode.name,
+            val2: sourceNode.name,
+          }),
+        )
+      return false
+    }
+    if (
+      typeof allowTarget === 'function' &&
+      !allowTarget(targetNode, sourceNode)
+    ) {
+      showMsg &&
+        ElMessage.error(
+          t('packages_dag_mixins_editor_source', {
+            val1: sourceNode.name,
+            val2: targetNode.name,
+          }),
+        )
+      return false
+    }
+    return true
+  }
+
+  function allowConnect(source: string, target: string) {
+    const map = dag.value.edges.reduce(
+      (map: Record<string, string[]>, item) => {
+        const target = map[item.target]
+        if (target) {
+          target.push(item.source)
+        } else {
+          map[item.target] = [item.source]
+        }
+        return map
+      },
+      {},
+    )
+
+    if (!map[source]) return true
+
+    return !hasCycle(source, target, map)
+  }
+
+  function isValidConnection({ source, target }: Edge) {
+    if (source === target) return false
+
+    const sourceNode = findNodeById(source)!
+    const targetNode = findNodeById(target)!
+
+    if (sourceNode.attrs.disabled || targetNode.attrs.disabled) return false
+
+    if (!checkAsSource(sourceNode)) return false
+    if (!checkAsTarget(targetNode)) return false
+
+    return (
+      allowConnect(source, target) &&
+      checkAllowTargetOrSource(sourceNode, targetNode)
+    )
+  }
+
   return {
     dataflow,
     dag,
@@ -474,5 +633,12 @@ export const useDataflowStore = defineStore('dataflow', () => {
     nodeById,
     updateNodeProperties,
     getAfterNodesInSameBranch,
+    isValidConnection,
+    checkAsSource,
+    checkAsTarget,
+    checkTargetMaxInputs,
+    checkSourceMaxOutputs,
+    checkAllowTargetOrSource,
+    allowConnect,
   }
 })

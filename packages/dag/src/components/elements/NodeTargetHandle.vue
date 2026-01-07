@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Handle, Position, useNodeConnections } from '@vue-flow/core'
 import { computed, inject, ref } from 'vue'
+import { useDataflowStore } from '../../stores/dataflow.store'
 
 const props = defineProps<{
   node: any
@@ -11,6 +12,8 @@ defineEmits<{
 }>()
 
 const popoverTargetKey = inject('popoverTargetKey', ref<string | null>(null))
+
+const dataflowStore = useDataflowStore()
 
 const connections = useNodeConnections({
   handleType: 'target',
@@ -28,6 +31,7 @@ const isPopoverActive = computed(
     type="target"
     :position="Position.Left"
     :class="{ 'after:opacity-0': !connected }"
+    :is-valid-connection="dataflowStore.isValidConnection"
   >
     <div
       v-if="!connected"

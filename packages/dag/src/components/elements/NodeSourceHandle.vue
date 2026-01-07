@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Handle, Position, useNodeConnections } from '@vue-flow/core'
 import { computed, inject, ref } from 'vue'
+import { useDataflowStore } from '../../stores/dataflow.store'
 
 const props = defineProps<{
   node: any
@@ -13,6 +14,8 @@ defineEmits<{
 const popoverTarget = inject('popoverTarget', ref<HTMLElement | null>(null))
 const showPopover = inject('showPopover', ref(false))
 const popoverTargetKey = inject('popoverTargetKey', ref<string | null>(null))
+
+const dataflowStore = useDataflowStore()
 
 const connections = useNodeConnections({
   handleType: 'source',
@@ -34,6 +37,7 @@ const isPopoverActive = computed(
       'after:opacity-0': !connected,
       'popover-active': isPopoverActive,
     }"
+    :is-valid-connection="dataflowStore.isValidConnection"
   >
     <div
       class="position-absolute handle-tooltip -top-1 left-1/2 rounded-lg border-[0.5px] border-components-panel-border bg-card p-1.5 shadow-lg group-hover/handle:block"
