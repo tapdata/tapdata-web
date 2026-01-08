@@ -233,8 +233,6 @@ export default {
         result.value = [timeCostAvg, targetWriteTimeCostAvg]
       }
 
-      result.value = result.value.map((t) => t.map((t) => t * 1000))
-
       return result
     },
 
