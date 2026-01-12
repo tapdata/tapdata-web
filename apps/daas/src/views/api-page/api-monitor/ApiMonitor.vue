@@ -17,6 +17,7 @@ import { calcTimeUnit } from '@tap/shared'
 import { escapeRegExp, isString } from 'lodash-es'
 import { computed, onUnmounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import TimeRangeSelector from './components/TimeRangeSelector.vue'
 import ServiceCard from './ServiceCard.vue'
 import type { ApiServerCpuMem } from '@tap/api/src/core/api-server'
 
@@ -143,10 +144,9 @@ const topCards = computed(() => {
   })
 })
 
-// 时间周期选择
-const timeRange = ref('1h')
+// 时间周期选择 - 从 route.query 中恢复
+const timeRange = ref((route.query.timeRange as string) || '1h')
 const customTimeRange = ref<[Date, Date] | null>(null)
-const customTimePickerVisible = ref(false)
 
 // 获取实际的时间范围（返回10位时间戳，单位：秒）
 const getActualTimeRange = () => {
@@ -218,118 +218,10 @@ const searchParams = ref<SearchParams>({
   status: '',
 })
 
-// 时间周期选项
-const timeRangeOptions = [
-  { label: '最近5分钟', value: '5m' },
-  { label: '最近15分钟', value: '15m' },
-  { label: '最近1小时', value: '1h' },
-  { label: '最近6小时', value: '6h' },
-  { label: '最近12小时', value: '12h' },
-  { label: '最近24小时', value: '24h' },
-  { label: '最近7天', value: '7d' },
-  { label: '最近14天', value: '14d' },
-  { label: '最近30天', value: '30d' },
-  { label: '自定义时间', value: 'custom' },
-]
-
-// 处理时间范围变化
-const handleTimeRangeChange = (value: string) => {
-  if (value === 'custom') {
-    customTimePickerVisible.value = true
-  } else {
-    customTimeRange.value = null
-    // 这里可以触发数据刷新
-    runFetch()
-  }
-}
-
-// 处理自定义时间范围确认
-const handleCustomTimeConfirm = () => {
-  if (customTimeRange.value) {
-    const [start, end] = customTimeRange.value
-    const diffDays = dayjs(end).diff(dayjs(start), 'day')
-
-    if (diffDays > 30) {
-      // 提示时间范围不能超过30天
-      ElMessage.warning('自定义时间范围不能超过30天')
-      return
-    }
-
-    customTimePickerVisible.value = false
-    // 触发数据刷新
-    refreshData()
-  }
-}
-
-// 处理自定义时间范围取消
-const handleCustomTimeCancel = () => {
-  customTimePickerVisible.value = false
-  timeRange.value = '1h' // 恢复默认值
-  customTimeRange.value = null
-}
-
 // 刷新数据
 const refreshData = () => {
-  const { startAt, endAt } = getActualTimeRange()
-  // 这里调用实际的数据刷新逻辑
-  runFetchMonitorServer()
-  runFetchMonitorServerList()
+  runFetch()
 }
-
-// 日期选择器禁用日期
-const disabledDate = (time: Date) => {
-  // 禁用未来日期
-  return time.getTime() > Date.now()
-}
-
-// 日期选择器快捷选项
-const datePickerShortcuts = [
-  {
-    text: '最近1小时',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000)
-      return [start, end]
-    },
-  },
-  {
-    text: '最近6小时',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 6)
-      return [start, end]
-    },
-  },
-  {
-    text: '最近24小时',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24)
-      return [start, end]
-    },
-  },
-  {
-    text: '最近7天',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-      return [start, end]
-    },
-  },
-  {
-    text: '最近30天',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-      return [start, end]
-    },
-  },
-]
 
 const statusOptions = computed<StatusOption[]>(() => [
   { label: t('task_list_status_all'), value: '' },
@@ -550,6 +442,13 @@ const onClickApi = (row: any) => {
     },
     query: {
       name: row.apiName,
+      timeRange: timeRange.value,
+      ...(timeRange.value === 'custom' && customTimeRange.value
+        ? {
+            customStart: customTimeRange.value[0].toISOString(),
+            customEnd: customTimeRange.value[1].toISOString(),
+          }
+        : {}),
     },
   })
 }
@@ -576,19 +475,11 @@ onUnmounted(() => {
   >
     <template #actions>
       <div class="flex align-center gap-4">
-        <el-select
+        <TimeRangeSelector
           v-model="timeRange"
-          placeholder="选择时间范围"
-          style="width: 160px"
-          @change="handleTimeRangeChange"
-        >
-          <el-option
-            v-for="option in timeRangeOptions"
-            :key="option.value"
-            :label="option.label"
-            :value="option.value"
-          />
-        </el-select>
+          v-model:custom-time="customTimeRange"
+          @change="refreshData"
+        />
         <el-button type="primary" @click="refreshData">
           <el-icon class="mr-1"><i-lucide-refresh-cw /></el-icon>
           刷新
@@ -740,41 +631,6 @@ onUnmounted(() => {
       v-model:visible="serverDetailsVisible"
       :server-details="serverDetails"
     />
-
-    <!-- 自定义时间范围弹窗 -->
-    <el-dialog
-      v-model="customTimePickerVisible"
-      title="自定义时间范围"
-      width="500px"
-      :close-on-click-modal="false"
-    >
-      <div class="custom-time-picker">
-        <el-date-picker
-          v-model="customTimeRange"
-          type="datetimerange"
-          range-separator="至"
-          start-placeholder="开始时间"
-          end-placeholder="结束时间"
-          :disabled-date="disabledDate"
-          :shortcuts="datePickerShortcuts"
-          format="YYYY-MM-DD HH:mm:ss"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          style="width: 100%"
-        />
-        <div class="mt-2 text-sm text-gray-500">
-          <el-icon class="mr-1"><i-lucide-info /></el-icon>
-          时间范围不能超过30天
-        </div>
-      </div>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="handleCustomTimeCancel">取消</el-button>
-          <el-button type="primary" @click="handleCustomTimeConfirm">
-            确定
-          </el-button>
-        </div>
-      </template>
-    </el-dialog>
   </PageContainer>
 </template>
 
