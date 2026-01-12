@@ -1,109 +1,31 @@
 <script setup lang="ts">
-import { fetchApiClientNames } from '@tap/api/src/core/api-calls'
+import { fetchApiList, fetchApiRankLists } from '@tap/api/src/core/api-monitor'
 import {
-  fetchApiList,
-  fetchApiMonitorPreview,
-  fetchApiRankLists,
-} from '@tap/api/src/core/api-monitor'
-import {
-  fetchApiServerCpuMem,
-  type ApiServerCpuMem,
-} from '@tap/api/src/core/api-server'
+  fetchMonitorApi,
+  fetchMonitorApiList,
+  fetchMonitorServer,
+  fetchMonitorServerList,
+  type ApiOverview,
+  type MonitorServer,
+  type ServerItem,
+} from '@tap/api/src/core/monitor-server'
 import { useRequest } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { dayjs } from '@tap/business/src/shared/dayjs'
-import { VTable } from '@tap/component/src/base/v-table'
-import { Chart } from '@tap/component/src/chart'
-import { FilterBar } from '@tap/component/src/filter-bar'
 import { useI18n } from '@tap/i18n'
-import { calcTimeUnit, calcUnit } from '@tap/shared'
-import { escapeRegExp } from 'lodash-es'
-import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
-import Detail from './Detail.vue'
-import ServerDetails from './ServerDetails.vue'
+import { calcTimeUnit } from '@tap/shared'
+import { escapeRegExp, isString } from 'lodash-es'
+import { computed, onUnmounted, reactive, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import ServiceCard from './ServiceCard.vue'
+import type { ApiServerCpuMem } from '@tap/api/src/core/api-server'
 
 import type { TableInstance } from 'element-plus'
-
-// Types
-interface Column {
-  label: string
-  prop?: string
-  slotName?: string
-}
-
-interface PreviewData {
-  totalCount?: number
-  warningApiCount?: number
-  warningVisitTotalCount?: number
-  visitTotalCount?: number
-  visitTotalLine?: number
-  transmitTotal?: number
-  lastUpdAt?: string
-}
-
-interface ChartDataItem {
-  itemStyle: {
-    color: string
-  }
-  name: string
-  value: number
-}
-
-interface FailRateItem {
-  name: string
-  failed: number
-}
-
-interface ApiItem {
-  id: string
-  name: string
-  status: string
-  visitLine: number
-  visitCount: number
-  transitQuantity: number
-}
-
-interface PageInfo {
-  size: number
-  failRateCurrent: number
-  failRateTotal: number
-  failRateOrder: 'ASC' | 'DESC'
-  consumingTimeCurrent: number
-  consumingTimeTotal: number
-  consumingTimeOrder: 'ASC' | 'DESC'
-  apiListCurrent: number
-  apiListTotal: number
-}
-
-interface SearchParams {
-  keyword: string
-  clientName: string
-  status: string
-}
-
-interface StatusOption {
-  label: string
-  value: string
-}
-
-interface ClientNameItem {
-  label: string
-  value: string
-}
-
-interface FilterItem {
-  label?: string
-  placeholder?: string
-  key: string
-  type: string
-  items?: StatusOption[] | ClientNameItem[]
-  selectedWidth?: string
-}
 
 // Composables
 const { t } = useI18n()
 const route = useRoute()
+const router = useRouter()
 
 // Refs
 const loadingTimeList = ref(false)
@@ -126,6 +48,158 @@ const apiList = ref<ApiItem[]>([])
 const filterItems = ref<FilterItem[]>([])
 const clientNameList = ref<ClientNameItem[]>([])
 
+const serverData = ref<MonitorServer | {}>({})
+const apiOverview = ref<ApiOverview | {}>({})
+const serverList = ref<ServerItem[]>([])
+const apiListData = ref<any[]>([])
+const apiListSortBy = ref('p99')
+const apiListSortOrder = ref<'ASC' | 'DESC'>('DESC')
+
+const currentTab = ref('server')
+const serverTopCards = [
+  {
+    title: '总请求数',
+    key: 'totalRequestCount',
+    value: 1500,
+  },
+  {
+    title: '总错误率',
+    unit: '%',
+    key: 'totalErrorRate',
+    value: 1500,
+  },
+  {
+    title: '平均响应时间',
+    unit: 'ms',
+    key: 'responseTimeAvg',
+    value: 1500,
+  },
+  {
+    title: 'P95 响应时间',
+    unit: 'ms',
+    key: 'p95',
+    value: 1500,
+  },
+  {
+    title: 'P99 响应时间',
+    unit: 'ms',
+    key: 'p99',
+    value: 1500,
+  },
+  {
+    title: '不健康的 API',
+    key: 'notHealthyApiCount',
+    value: 1500,
+  },
+  {
+    title: '不健康的 Server',
+    key: 'notHealthyServerCount',
+    value: 1500,
+  },
+]
+const apiTopCards = [
+  {
+    title: 'API 累计请求次数',
+    key: 'totalRequestCount',
+    value: 1500,
+  },
+  {
+    title: '全局吞吐量',
+    key: 'totalRps',
+    value: 1500,
+  },
+  {
+    title: '平均响应时间',
+    unit: 'ms',
+    key: 'responseTimeAvg',
+    value: 1500,
+  },
+]
+
+const topCards = computed(() => {
+  let data = apiOverview.value
+  let items = apiTopCards
+  if (currentTab.value === 'server') {
+    data = serverData.value
+    items = serverTopCards
+  }
+  return items.map((item) => {
+    let value = data[item.key]
+    let unit = item.unit ?? ''
+    // 正则判断下 value 是不是带单位的
+    if (isString(value)) {
+      // 正则解析出value 和 unit
+      const match = value.match(/(\d+(?:\.\d*)?)([a-z%/]+)?/i)
+      if (match) {
+        value = Number(match[1])
+        unit = match[2] || unit
+      }
+    }
+    return {
+      ...item,
+      value,
+      unit,
+    }
+  })
+})
+
+// 时间周期选择
+const timeRange = ref('1h')
+const customTimeRange = ref<[Date, Date] | null>(null)
+const customTimePickerVisible = ref(false)
+
+// 获取实际的时间范围（返回10位时间戳，单位：秒）
+const getActualTimeRange = () => {
+  if (timeRange.value === 'custom' && customTimeRange.value) {
+    return {
+      start: dayjs(customTimeRange.value[0]).unix(),
+      end: dayjs(customTimeRange.value[1]).unix(),
+    }
+  }
+
+  const now = dayjs()
+  const rangeMap: Record<string, number> = {
+    '5m': 5 * 60,
+    '15m': 15 * 60,
+    '1h': 60 * 60,
+    '6h': 6 * 60 * 60,
+    '12h': 12 * 60 * 60,
+    '24h': 24 * 60 * 60,
+    '7d': 7 * 24 * 60 * 60,
+    '14d': 14 * 24 * 60 * 60,
+    '30d': 30 * 24 * 60 * 60,
+  }
+
+  const duration = rangeMap[timeRange.value] || rangeMap['1h']
+  const nowTimestamp = now.unix()
+  return {
+    startAt: nowTimestamp - duration!,
+    endAt: nowTimestamp,
+  }
+}
+const { run: runFetch, cancel: cancelFetch } = useRequest(
+  async () => {
+    const params = getActualTimeRange()
+
+    if (currentTab.value === 'api') {
+      apiOverview.value = await fetchMonitorApi(params)
+      const apiListResult = await fetchMonitorApiList({
+        ...params,
+        sortBy: apiListSortBy.value,
+        order: apiListSortOrder.value,
+      })
+      apiListData.value = apiListResult || []
+      return
+    }
+
+    serverData.value = await fetchMonitorServer(params)
+    serverList.value = await fetchMonitorServerList(params)
+  },
+  {
+    pollingInterval: 6000,
+  },
+)
+
 const page = reactive<PageInfo>({
   size: 5,
   failRateCurrent: 1,
@@ -143,6 +217,119 @@ const searchParams = ref<SearchParams>({
   clientName: '',
   status: '',
 })
+
+// 时间周期选项
+const timeRangeOptions = [
+  { label: '最近5分钟', value: '5m' },
+  { label: '最近15分钟', value: '15m' },
+  { label: '最近1小时', value: '1h' },
+  { label: '最近6小时', value: '6h' },
+  { label: '最近12小时', value: '12h' },
+  { label: '最近24小时', value: '24h' },
+  { label: '最近7天', value: '7d' },
+  { label: '最近14天', value: '14d' },
+  { label: '最近30天', value: '30d' },
+  { label: '自定义时间', value: 'custom' },
+]
+
+// 处理时间范围变化
+const handleTimeRangeChange = (value: string) => {
+  if (value === 'custom') {
+    customTimePickerVisible.value = true
+  } else {
+    customTimeRange.value = null
+    // 这里可以触发数据刷新
+    runFetch()
+  }
+}
+
+// 处理自定义时间范围确认
+const handleCustomTimeConfirm = () => {
+  if (customTimeRange.value) {
+    const [start, end] = customTimeRange.value
+    const diffDays = dayjs(end).diff(dayjs(start), 'day')
+
+    if (diffDays > 30) {
+      // 提示时间范围不能超过30天
+      ElMessage.warning('自定义时间范围不能超过30天')
+      return
+    }
+
+    customTimePickerVisible.value = false
+    // 触发数据刷新
+    refreshData()
+  }
+}
+
+// 处理自定义时间范围取消
+const handleCustomTimeCancel = () => {
+  customTimePickerVisible.value = false
+  timeRange.value = '1h' // 恢复默认值
+  customTimeRange.value = null
+}
+
+// 刷新数据
+const refreshData = () => {
+  const { startAt, endAt } = getActualTimeRange()
+  // 这里调用实际的数据刷新逻辑
+  runFetchMonitorServer()
+  runFetchMonitorServerList()
+}
+
+// 日期选择器禁用日期
+const disabledDate = (time: Date) => {
+  // 禁用未来日期
+  return time.getTime() > Date.now()
+}
+
+// 日期选择器快捷选项
+const datePickerShortcuts = [
+  {
+    text: '最近1小时',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000)
+      return [start, end]
+    },
+  },
+  {
+    text: '最近6小时',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 6)
+      return [start, end]
+    },
+  },
+  {
+    text: '最近24小时',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24)
+      return [start, end]
+    },
+  },
+  {
+    text: '最近7天',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+      return [start, end]
+    },
+  },
+  {
+    text: '最近30天',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+      return [start, end]
+    },
+  },
+]
 
 const statusOptions = computed<StatusOption[]>(() => [
   { label: t('task_list_status_all'), value: '' },
@@ -200,95 +387,10 @@ watch(
   },
 )
 
-// Methods
-const initData = () => {
-  if (isDestroyed.value) return
-
-  Promise.all([
-    getPreview(),
-    getClientName(),
-    remoteFailedMethod(),
-    consumingMethod(),
-    getApiList(),
-  ]).finally(() => {
-    silenceLoading.value = true
-    timer.value = setTimeout(() => {
-      initData()
-    }, 10000)
-  })
-}
-
 const formatMs = (time: number): string | number => {
   if (time === 0 || !time) return 0
   if (time < 1000) return `${time} ms`
   return calcTimeUnit(time, 'ms', 2)
-}
-
-// 获取统计数据
-const getPreview = () => {
-  loadingTotal.value = !silenceLoading.value
-  return fetchApiMonitorPreview()
-    .then((data) => {
-      data.lastUpdAt = data.lastUpdAt
-        ? dayjs(data.lastUpdAt).format('YYYY-MM-DD HH:mm:ss')
-        : '-'
-      Object.assign(previewData, data)
-    })
-    .finally(() => {
-      loadingTotal.value = false
-    })
-}
-
-// 获取所有客户端
-const getClientName = () => {
-  return fetchApiClientNames().then((data) => {
-    clientNameList.value = data.map((item: any) => ({
-      label: item.name,
-      value: item.id,
-    }))
-    getFilterItems()
-  })
-}
-
-// 图表数据组装
-const getPieOption = () => {
-  const data: ChartDataItem[] = [
-    {
-      itemStyle: {
-        color: '#8FD8C0',
-      },
-      name: t('api_monitor_total_successCount'),
-      value: (previewData.totalCount || 0) - (previewData.warningApiCount || 0),
-    },
-    {
-      itemStyle: {
-        color: '#f7d762',
-      },
-      name: t('api_monitor_total_warningCount'),
-      value: previewData.warningApiCount || 0,
-    },
-  ]
-  chartData.value = data
-  return {
-    backgroundColor: 'transparent',
-    tooltip: {
-      confine: true,
-      borderRadius: 12,
-    },
-    series: [
-      {
-        type: 'pie',
-        data,
-        radius: ['60%', '90%'],
-        label: {
-          show: false,
-        },
-        labelLine: {
-          show: false,
-        },
-      },
-    ],
-  }
 }
 
 // 失败率排行榜
@@ -318,54 +420,6 @@ const remoteFailedMethod = () => {
     })
     .finally(() => {
       loadingFailRateList.value = false
-    })
-}
-
-// 处理失败率排序
-const handleFDOrder = () => {
-  const time = JSON.parse(JSON.stringify(page.failRateOrder))
-  page.failRateOrder = time === 'DESC' ? 'ASC' : 'DESC'
-  remoteFailedMethod()
-}
-
-const handleFailRateOrder = ({ order }: { order: string }) => {
-  page.failRateOrder = order === 'ascending' ? 'ASC' : 'DESC'
-  remoteFailedMethod()
-}
-
-const handleConsumingTimeOrder = ({ order }: { order: string }) => {
-  page.consumingTimeOrder = order === 'ascending' ? 'ASC' : 'DESC'
-  consumingMethod()
-}
-
-// 响应时间排行榜
-const consumingMethod = () => {
-  const { consumingTimeCurrent, size, consumingTimeOrder } = page
-  const filter = {
-    where: {
-      type: 'responseTime',
-    },
-    limit: size,
-    order: consumingTimeOrder,
-    skip: size * (consumingTimeCurrent - 1),
-  }
-  loadingTimeList.value = !silenceLoading.value
-  return fetchApiRankLists(filter)
-    .then((data) => {
-      // map
-      const items = data?.items?.map((item: any) => {
-        const abj: FailRateItem = { name: '', failed: 0 }
-        Object.keys(item).forEach((key) => {
-          abj.name = key
-          abj.failed = item[key]
-        })
-        return abj
-      })
-      page.consumingTimeTotal = data?.total || 0
-      consumingTimeList.value = items || []
-    })
-    .finally(() => {
-      loadingTimeList.value = false
     })
 }
 
@@ -404,88 +458,107 @@ const getApiList = (pageNum?: number) => {
     })
 }
 
-// api 列表筛选
-const getFilterItems = () => {
-  filterItems.value = [
-    {
-      label: t('api_monitor_total_api_list_status'),
-      key: 'status',
-      type: 'select-inner',
-      items: statusOptions.value,
-      selectedWidth: '200px',
-    },
-    {
-      label: t('api_monitor_total_clientName'),
-      key: 'clientName',
-      type: 'select-inner',
-      items: clientNameList.value,
-      selectedWidth: '200px',
-    },
-    {
-      placeholder: t('api_monitor_total_api_list_name'),
-      key: 'keyword',
-      type: 'input',
-    },
-  ]
-}
-
-// 控制手风琴（只展示一行)
-const expandChange = (row: ApiItem, expandRows: ApiItem[]) => {
-  if (expandRows.length > 1) {
-    apiList.value.forEach((expandrow) => {
-      if (row.id !== expandrow.id) {
-        // 这里需要判断一下展开行的length>1
-        // toggleRowExpansion 设置是否展开，true则展开
-        table.value?.toggleRowExpansion(expandrow, false)
-      }
-    })
+// 生成模拟历史数据
+const generateHistory = (current: number, points = 20) => {
+  const history: number[] = []
+  for (let i = 0; i < points; i++) {
+    const variance = Math.random() * 20 - 10 // -10 到 +10 的随机波动
+    const value = Math.max(0, Math.min(100, current + variance))
+    history.push(Math.round(value))
   }
+  return history
 }
 
-const getStatusLabel = (status: string) => {
-  return statusOptions.value.find((t) => t.value === status)?.label
-}
-
-const { data: apiServerList, loading: loadingApiServerList } = useRequest(
-  async () => {
-    const data = await fetchApiServerCpuMem()
-    return data.map((item) => {
-      return {
-        ...item,
-        pingWarning:
-          Date.now() - item.pingTime > 10000
-            ? dayjs(item.pingTime).fromNow(true)
-            : '',
-        metricValues: item.metricValues
-          ? {
-              cpuUsage: item.metricValues.cpuUsage
-                ? `${Number(item.metricValues.cpuUsage.toFixed(2))}%`
-                : '--',
-              heapMemoryUsage: item.metricValues.heapMemoryUsage
-                ? calcUnit(item.metricValues.heapMemoryUsage, 'b', 2)
-                : '--',
-            }
-          : {
-              cpuUsage: '--',
-              heapMemoryUsage: '--',
-            },
-      }
-    })
+// 示例服务数据
+const mockServices = ref([
+  {
+    id: '1',
+    name: 'api-gateway-1',
+    code: 'srv-001',
+    status: 'Normal' as const,
+    cpuUsage: 45,
+    memoryUsage: 62,
+    cpuHistory: generateHistory(45),
+    memoryHistory: generateHistory(62),
+    rps: 450,
+    errorRate: 0.2,
+    p95Latency: 95,
+    p99Latency: 120,
   },
   {
-    pollingInterval: 10000,
+    id: '2',
+    name: 'user-service',
+    code: 'srv-002',
+    status: 'Warning' as const,
+    cpuUsage: 78,
+    memoryUsage: 85,
+    cpuHistory: generateHistory(78),
+    memoryHistory: generateHistory(85),
+    rps: 320,
+    errorRate: 1.5,
+    p95Latency: 150,
+    p99Latency: 200,
   },
-)
+  {
+    id: '3',
+    name: 'payment-service',
+    code: 'srv-003',
+    status: 'Normal' as const,
+    cpuUsage: 35,
+    memoryUsage: 48,
+    cpuHistory: generateHistory(35),
+    memoryHistory: generateHistory(48),
+    rps: 180,
+    errorRate: 0.1,
+    p95Latency: 80,
+    p99Latency: 110,
+  },
+  {
+    id: '4',
+    name: 'order-service',
+    code: 'srv-004',
+    status: 'Error' as const,
+    cpuUsage: 92,
+    memoryUsage: 95,
+    cpuHistory: generateHistory(92),
+    memoryHistory: generateHistory(95),
+    rps: 520,
+    errorRate: 5.2,
+    p95Latency: 280,
+    p99Latency: 350,
+  },
+])
 
-const handleServerClick = (item: Partial<ApiServerCpuMem>) => {
-  serverDetails.value = item
+const handleViewServiceDetails = (service: any) => {
+  // 打开服务详情
+  serverDetails.value = {
+    processId: service.id,
+    name: service.name,
+    metricValues: {
+      cpuUsage: service.cpuUsage,
+      heapMemoryUsage: service.memoryUsage * 1024 * 1024, // 转换为字节
+    },
+  }
   serverDetailsVisible.value = true
 }
 
-// Lifecycle
-onMounted(() => {
-  initData()
-})
+const onClickApi = (row: any) => {
+  router.push({
+    name: 'apiMonitorDetail',
+    params: {
+      id: row.apiId,
+    },
+    query: {
+      name: row.apiName,
+    },
+  })
+}
+
+const handleViewApiDetails = (api: any) => {
+  // 打开 API 详情页面
+  console.log('View API details:', api)
+  // TODO: 实现 API 详情页面跳转或弹窗
+}
 
 onUnmounted(() => {
   if (timer.value) {
@@ -496,374 +569,212 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <PageContainer mode="blank" hide-header>
-    <section class="api-monitor-wrap isCardBox">
-      <main class="api-monitor-main">
-        <div class="flex gap-5 mb-5">
-          <section
-            v-loading="loadingTotal"
-            class="bg-card api-monitor-card rounded-xl flex-1"
-          >
-            <div class="p-6">
-              <span class="fs-6">{{ t(route.meta.title as string) }}</span
-              ><span class="fs-7 ml-3 font-color-sslight">
-                {{ t('public_data_update_time') }}:
-                {{ previewData.lastUpdAt }}</span
-              >
-            </div>
-
-            <div class="flex">
-              <div class="flex-1 text-center">
-                <header class="api-monitor-total__tittle">
-                  {{ t('api_monitor_total_totalCount') }}
-                </header>
-                <div class="api-monitor-total__text din-font">
-                  {{ previewData.totalCount || 0 }}
-                </div>
-              </div>
-              <div class="flex-1 text-center">
-                <header class="api-monitor-total__tittle">
-                  {{ t('api_monitor_total_warningVisitCount') }}
-                </header>
-                <div class="api-monitor-total__text din-font">
-                  <el-tooltip
-                    :open-delay="400"
-                    :disabled="
-                      !previewData.warningVisitTotalCount ||
-                      previewData.warningVisitTotalCount < 1000
-                    "
-                    :content="`${previewData.warningVisitTotalCount}`"
-                    placement="bottom"
-                  >
-                    <span>{{
-                      calcUnit(previewData.warningVisitTotalCount || 0)
-                    }}</span>
-                  </el-tooltip>
-                </div>
-              </div>
-              <div class="flex-1 text-center">
-                <header class="api-monitor-total__tittle">
-                  {{ t('api_monitor_total_warningApiCount') }}
-                </header>
-                <div class="api-monitor-total__text din-font">
-                  <el-tooltip
-                    :open-delay="400"
-                    :disabled="
-                      !previewData.visitTotalCount ||
-                      previewData.visitTotalCount < 1000
-                    "
-                    :content="`${previewData.visitTotalCount}`"
-                    placement="bottom"
-                  >
-                    <span>{{
-                      calcUnit(previewData.visitTotalCount || 0)
-                    }}</span>
-                  </el-tooltip>
-                </div>
-              </div>
-              <div class="flex-1 text-center">
-                <header class="api-monitor-total__tittle">
-                  {{ t('api_monitor_total_visitTotalLine') }}
-                </header>
-                <el-tooltip
-                  :open-delay="400"
-                  :disabled="
-                    !previewData.visitTotalLine ||
-                    previewData.visitTotalLine < 1000
-                  "
-                  :content="`${previewData.visitTotalLine}`"
-                  placement="bottom"
-                >
-                  <div class="api-monitor-total__text din-font">
-                    {{ calcUnit(previewData.visitTotalLine || 0) }}
-                  </div>
-                </el-tooltip>
-              </div>
-              <div class="flex-1 text-center">
-                <header class="api-monitor-total__tittle">
-                  {{ t('api_monitor_total_transmitTotal') }}
-                </header>
-                <div class="api-monitor-total__text din-font">
-                  {{ calcUnit(previewData.transmitTotal, 'b') || 0 }}
-                </div>
-              </div>
-            </div>
-          </section>
-          <div
-            v-loading="loadingTotal"
-            class="flex flex-column api-monitor-card bg-card overflow-hidden pt-5 rounded-xl"
-          >
-            <div class="api-monitor-chart__text mb-2 pl-5">
-              {{ t('api_monitor_total_warningCount') }}
-            </div>
-            <div class="flex align-center flex-1 p-3">
-              <Chart style="width: 140px" type="pie" :extend="getPieOption()" />
-              <div class="flex flex-column gap-2 pr-2">
-                <div class="flex">
-                  <div
-                    class="tooltip-bar my-0.5 ml-0.5 mr-2 rounded-pill"
-                    style="width: 4px; background: #8fd8c0"
-                  />
-                  <div>
-                    <div class="font-color-sslight lh-5">
-                      {{ t('api_monitor_total_successCount') }}
-                    </div>
-                    <div class="fs-6 fw-sub lh-6">
-                      {{
-                        (previewData.totalCount || 0) -
-                        (previewData.warningApiCount || 0)
-                      }}
-                    </div>
-                  </div>
-                </div>
-                <div class="flex">
-                  <div
-                    class="tooltip-bar my-0.5 ml-0.5 mr-2 rounded-pill"
-                    style="width: 4px; background: #f7d762"
-                  />
-                  <div>
-                    <div class="font-color-sslight lh-5">
-                      {{ t('api_monitor_total_warningCount') }}
-                    </div>
-                    <div class="fs-6 fw-sub lh-6">
-                      {{ previewData.warningApiCount }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!--api 排行榜 -->
-        <section class="flex flex-direction mb-5">
-          <section
-            class="rounded-xl bg-card api-monitor-card"
-            style="width: 380px"
-          >
-            <div class="p-5 fw-sub flex align-center gap-2 pb-3">
-              <el-icon size="16" class="color-primary"
-                ><i-lucide-server
-              /></el-icon>
-              {{ $t('api_monitor_server_title') }}
-            </div>
-            <div
-              v-loading="loadingApiServerList"
-              class="p-5 pt-0 flex flex-column gap-3"
-            >
-              <div
-                v-for="item in apiServerList"
-                :key="item.processId"
-                class="border rounded-xl p-3 cursor-pointer server-item position-relative flex align-center"
-                @click="handleServerClick(item)"
-              >
-                <div class="flex-1">
-                  <div class="flex align-center gap-2 mb-2 flex-wrap">
-                    <el-tooltip
-                      v-if="item.pingWarning"
-                      :content="
-                        $t('api_monitor_server_ping_warning', {
-                          val: item.pingWarning,
-                        })
-                      "
-                      placement="bottom"
-                    >
-                      <el-icon class="color-warning"
-                        ><i-lucide-triangle-alert
-                      /></el-icon>
-                    </el-tooltip>
-
-                    <div
-                      v-else
-                      class="rounded-pill w-2 h-2"
-                      :class="`${item.status !== 'running' ? 'bg-red-500' : 'bg-green-500'}`"
-                    />
-                    <span>{{ item.name }}</span>
-                    <span
-                      v-if="item.pid"
-                      class="font-mono font-color-light lh-4 border rounded-4 px-1.5 fs-8"
-                      >{{ item.pid }}</span
-                    >
-                  </div>
-                  <div class="flex gap-3">
-                    <div class="flex align-center gap-2">
-                      <el-icon class="color-primary"><i-lucide-cpu /></el-icon>
-                      <span class="text-gray-600">CPU</span>
-                      <span class="fw-sub ml-auto">{{
-                        item.metricValues.cpuUsage
-                      }}</span>
-                    </div>
-                    <div class="flex align-center gap-2">
-                      <el-icon class="color-primary"
-                        ><i-lucide-memory-stick
-                      /></el-icon>
-                      <span class="font-color-sslight">{{
-                        $t('api_monitor_memory')
-                      }}</span>
-                      <span class="fw-sub ml-auto">{{
-                        item.metricValues.heapMemoryUsage
-                      }}</span>
-                    </div>
-                  </div>
-                </div>
-                <el-icon color="var(--icon-n2)" class="">
-                  <!-- <RightBoldOutlined /> -->
-                  <i-lucide-chevron-right />
-                </el-icon>
-                <!-- <div class="flex align-center gap-2 fs-8">
-                  <span class="text-gray-500">PID</span>
-                  <span class="font-mono ml-auto text-gray-700">{{
-                    item.workerPid || '666666'
-                  }}</span>
-                </div> -->
-              </div>
-              <!-- <el-table :data="apiServerList">
-                <el-table-column prop="name" label="服务名称" />
-                <el-table-column prop="metricValues.cpuUsage" label="% CPU" />
-                <el-table-column
-                  prop="metricValues.heapMemoryUsage"
-                  label="内存"
-                />
-              </el-table> -->
-            </div>
-          </section>
-          <div
-            class="flex flex-column flex-1 bg-card api-monitor-table api-monitor-card overflow-hidden ml-5 mr-5 rounded-xl"
-          >
-            <div class="api-monitor-chart__text p-5 pb-2 lh-5">
-              {{ t('api_monitor_total_FailRate') }}
-            </div>
-            <div class="px-4 flex flex-column flex-1">
-              <VTable
-                v-loading="loadingFailRateList"
-                class="h-auto"
-                :has-pagination="false"
-                :data="failRateList"
-                :columns="columns"
-                :default-sort="{ prop: 'failed', order: 'descending' }"
-                @sort-change="handleFailRateOrder"
-              >
-                <template #failed="{ row }">
-                  <span> {{ Math.round(row.failed * 100) }}</span>
-                </template>
-              </VTable>
-              <el-pagination
-                v-model:current-page="page.failRateCurrent"
-                class="my-3 flex-wrap"
-                layout="->, total, prev,pager, next"
-                :page-size="5"
-                :pager-count="5"
-                :total="page.failRateTotal"
-                @current-change="remoteFailedMethod"
-              />
-            </div>
-          </div>
-          <div
-            class="flex flex-column flex-1 bg-card api-monitor-card overflow-hidden rounded-xl"
-          >
-            <div class="api-monitor-chart__text p-5 pb-2 lh-5">
-              {{ t('api_monitor_total_consumingTime') }}
-            </div>
-            <div class="px-4 flex flex-column flex-1">
-              <VTable
-                v-loading="loadingTimeList"
-                background
-                class="h-auto"
-                :has-pagination="false"
-                :data="consumingTimeList"
-                :columns="columnsRT"
-                :default-sort="{ prop: 'failed', order: 'descending' }"
-                @sort-change="handleConsumingTimeOrder"
-              >
-                <template #failed="{ row }: { row: FailRateItem }">
-                  <span>
-                    {{ formatMs(row.failed) }}
-                  </span>
-                </template>
-              </VTable>
-              <el-pagination
-                v-model:current-page="page.consumingTimeCurrent"
-                class="my-3 flex-wrap"
-                layout="->, total, prev,pager, next"
-                :pager-count="5"
-                :page-size="5"
-                :total="page.consumingTimeTotal"
-                @current-change="consumingMethod"
-              />
-            </div>
-          </div>
-        </section>
-        <!--api list -->
-        <section
-          class="flex flex-column bg-card api-monitor-card api-monitor-list__min__height px-5 pt-5 rounded-xl"
+  <PageContainer
+    mode="auto"
+    container-class="bg-card rounded-xl shadow-sm gap-1"
+    content-class="flex-1 min-h-0 overflow-auto px-6 pb-5 position-relative flex flex-column"
+  >
+    <template #actions>
+      <div class="flex align-center gap-4">
+        <el-select
+          v-model="timeRange"
+          placeholder="选择时间范围"
+          style="width: 160px"
+          @change="handleTimeRangeChange"
         >
-          <header class="api-monitor-chart__text mb-2">
-            {{ t('api_monitor_total_api_list') }}
-          </header>
-          <FilterBar
-            v-model:value="searchParams"
-            class="mb-4"
-            :items="filterItems"
-            @fetch="getApiList(1)"
+          <el-option
+            v-for="option in timeRangeOptions"
+            :key="option.value"
+            :label="option.label"
+            :value="option.value"
           />
-          <el-table
-            ref="table"
-            v-loading="loadingApiList"
-            row-key="id"
-            class="data-flow-list has-border-t"
-            :data="apiList"
-            :default-sort="{ prop: 'createTime', order: 'descending' }"
-            @expand-change="expandChange"
-          >
-            <el-table-column type="expand" width="45">
-              <template #default="{ row }">
-                <Detail :id="row.id" />
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="name"
-              :label="t('api_monitor_total_api_list_name')"
-            />
-            <el-table-column
-              prop="status"
-              :label="t('api_monitor_total_api_list_status')"
-            >
-              <template #default="{ row }">
-                <span :class="[`status-${row.status}`, 'status-block', 'mr-2']">
-                  {{ getStatusLabel(row.status) }}
-                </span>
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="visitLine"
-              :label="t('api_monitor_total_api_list_visitLine')"
-            />
-            <el-table-column
-              prop="visitCount"
-              :label="t('api_monitor_total_api_list_visitCount')"
-            />
-            <el-table-column
-              prop="transitQuantity"
-              :label="t('api_monitor_total_api_list_transitQuantity')"
-            >
-              <template #default="{ row }">
-                <span>{{ calcUnit(row.transitQuantity, 'b') || '-' }}</span>
-              </template>
-            </el-table-column>
-          </el-table>
-          <el-pagination
-            v-model:current-page="page.apiListCurrent"
-            class="my-3"
-            layout="->, total, prev, pager, next, jumper"
-            :page-size="5"
-            :total="page.apiListTotal"
-            @current-change="getApiList"
-          />
-        </section>
-      </main>
-    </section>
+        </el-select>
+        <el-button type="primary" @click="refreshData">
+          <el-icon class="mr-1"><i-lucide-refresh-cw /></el-icon>
+          刷新
+        </el-button>
+      </div>
+    </template>
+    <el-tabs
+      v-model="currentTab"
+      class="position-sticky top-0 z-10 bg-white dark:bg-transparent dark:backdrop-blur-md"
+      @tab-change="runFetch"
+    >
+      <el-tab-pane name="server">
+        <template #label>
+          <span> Server 总览 </span>
+        </template>
+      </el-tab-pane>
+      <el-tab-pane name="api">
+        <template #label>
+          <span> API 总览 </span>
+        </template>
+      </el-tab-pane>
+    </el-tabs>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+      <div
+        v-for="item in topCards"
+        :key="item.key"
+        class="border rounded-xl p-3 top-card"
+      >
+        <div class="card-header mb-6">
+          <div class="card-title font-color-light">{{ item.title }}</div>
+        </div>
+        <div class="card-content">
+          <div class="text-2xl fw-sub">{{ item.value }}{{ item.unit }}</div>
+        </div>
+      </div>
+    </div>
 
-    <ServerDetails v-model="serverDetailsVisible" :server="serverDetails" />
+    <div v-if="currentTab === 'server'" class="mt-8">
+      <div
+        class="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4"
+      >
+        <h2 class="text-lg font-bold text-gray-800">Server List</h2>
+      </div>
+
+      <!-- 服务卡片网格 -->
+      <div class="service-grid">
+        <ServiceCard
+          v-for="item in serverList"
+          :key="item.serverId"
+          :data="item"
+        />
+      </div>
+    </div>
+
+    <!-- API 列表 -->
+    <div v-if="currentTab === 'api'" class="mt-8">
+      <div
+        class="flex flex-col sm:flex-row items-center justify-between mb-4 gap-4"
+      >
+        <h2 class="text-lg font-bold text-gray-800">API List</h2>
+        <!-- <el-select
+          v-model="apiListSortBy"
+          placeholder="Sort by"
+          style="width: 180px"
+          @change="runFetch"
+        >
+          <el-option label="Sort by P99 Latency" value="p99" />
+          <el-option label="Sort by P95 Latency" value="p95" />
+          <el-option label="Sort by Error Rate" value="errorRate" />
+          <el-option label="Sort by Total Calls" value="totalCalls" />
+        </el-select> -->
+      </div>
+
+      <!-- API 列表表格 -->
+      <div class="api-list-table">
+        <el-table
+          :data="apiListData"
+          style="width: 100%"
+          @row-click="onClickApi"
+        >
+          <el-table-column label="API NAME" min-width="200">
+            <template #default="{ row }">
+              <el-link type="primary">
+                {{ row.apiName }}
+              </el-link>
+            </template>
+          </el-table-column>
+          <el-table-column label="API 路径" min-width="200">
+            <template #default="{ row }">
+              <el-tag
+                type="info"
+                class="is-code is-wrap px-1.5 font-mono"
+                disable-transitions
+              >
+                {{ row.apiPath }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="TOTAL CALLS"
+            prop="requestCount"
+            min-width="120"
+          />
+          <el-table-column label="AVG LATENCY" width="120">
+            <template #default="{ row }"> {{ row.requestCostAvg }} </template>
+          </el-table-column>
+          <el-table-column label="P95 LATENCY" width="120">
+            <template #default="{ row }">
+              <span :class="{ 'text-orange-500': row.p95 > 1000 }">
+                {{ row.p95 }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column label="P99 LATENCY" width="120">
+            <template #default="{ row }">
+              <span
+                :class="{
+                  'text-orange-500': row.p99 > 1000 && row.p99 < 2000,
+                  'text-red-500': row.p99 >= 2000,
+                }"
+              >
+                {{ row.p99 }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column label="ERROR RATE" width="120">
+            <template #default="{ row }">
+              <span
+                :class="{
+                  'text-orange-500': row.errorRate > 1 && row.errorRate < 3,
+                  'text-red-500': row.errorRate >= 3,
+                }"
+              >
+                {{ row.errorRate }}%
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column label="THROUGHPUT" min-width="120">
+            <template #default="{ row }">
+              {{ row.totalRps }}
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </div>
+
+    <!-- 服务详情弹窗 -->
+    <ServerDetails
+      v-model:visible="serverDetailsVisible"
+      :server-details="serverDetails"
+    />
+
+    <!-- 自定义时间范围弹窗 -->
+    <el-dialog
+      v-model="customTimePickerVisible"
+      title="自定义时间范围"
+      width="500px"
+      :close-on-click-modal="false"
+    >
+      <div class="custom-time-picker">
+        <el-date-picker
+          v-model="customTimeRange"
+          type="datetimerange"
+          range-separator="至"
+          start-placeholder="开始时间"
+          end-placeholder="结束时间"
+          :disabled-date="disabledDate"
+          :shortcuts="datePickerShortcuts"
+          format="YYYY-MM-DD HH:mm:ss"
+          value-format="YYYY-MM-DD HH:mm:ss"
+          style="width: 100%"
+        />
+        <div class="mt-2 text-sm text-gray-500">
+          <el-icon class="mr-1"><i-lucide-info /></el-icon>
+          时间范围不能超过30天
+        </div>
+      </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="handleCustomTimeCancel">取消</el-button>
+          <el-button type="primary" @click="handleCustomTimeConfirm">
+            确定
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
   </PageContainer>
 </template>
 
@@ -917,10 +828,77 @@ onUnmounted(() => {
   }
 }
 
+// 自定义时间选择器样式
+.custom-time-picker {
+  padding: 10px 0;
+
+  .text-gray-500 {
+    color: var(--el-text-color-secondary);
+    display: flex;
+    align-items: center;
+  }
+}
+
 .server-item {
   min-width: 300px;
   &:hover:not(.border-warning) {
     border: 1px solid var(--el-color-primary) !important;
+  }
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.api-list-table {
+  // :deep(.el-table) {
+  //   border-radius: 8px;
+  //   overflow: hidden;
+  // }
+
+  // :deep(.el-table__header) {
+  //   th {
+  //     background-color: var(--el-fill-color-light);
+  //     font-weight: 600;
+  //     font-size: 12px;
+  //     color: var(--el-text-color-secondary);
+  //     text-transform: uppercase;
+  //   }
+  // }
+
+  .method-tag {
+    font-weight: 600;
+    min-width: 60px;
+    text-align: center;
+  }
+
+  .text-blue-600 {
+    color: #2563eb;
+    font-family: monospace;
+  }
+
+  .text-orange-500 {
+    color: #f97316;
+    font-weight: 600;
+  }
+
+  .text-red-500 {
+    color: #ef4444;
+    font-weight: 600;
+  }
+}
+.top-card {
+  transition: all 0.3s ease;
+  &:hover {
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
   }
 }
 </style>
