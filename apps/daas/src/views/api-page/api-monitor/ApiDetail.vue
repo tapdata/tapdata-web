@@ -91,10 +91,10 @@ const getActualTimeRange = (): Params => {
 const { run: runFetch } = useRequest(
   async () => {
     const params = getActualTimeRange()
-
-    apiDetail.value = await fetchMonitorApiDetail(apiId, params)
-    apiChart.value = await fetchMonitorApiChart(apiId, params)
-    serverList.value = await fetchMonitorApiServer(apiId, params)
+    params.apiId = apiId
+    apiDetail.value = await fetchMonitorApiDetail(params)
+    apiChart.value = await fetchMonitorApiChart(params)
+    serverList.value = await fetchMonitorApiServer(params)
   },
   {
     pollingInterval: 6000,
