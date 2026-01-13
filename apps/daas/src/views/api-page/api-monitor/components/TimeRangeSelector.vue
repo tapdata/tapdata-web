@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { dayjs } from '@tap/business/src/shared/dayjs'
+import { useI18n } from '@tap/i18n'
 import { ElMessage } from 'element-plus'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 interface Props {
   modelValue: string
@@ -20,25 +21,26 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<Emits>()
+const { t } = useI18n()
 
 const customTimeRange = ref<[Date, Date] | null>(props.customTime)
 
-const timeRangeOptions = [
-  { label: '最近5分钟', value: '5m' },
-  { label: '最近15分钟', value: '15m' },
-  { label: '最近1小时', value: '1h' },
-  { label: '最近6小时', value: '6h' },
-  { label: '最近12小时', value: '12h' },
-  { label: '最近24小时', value: '24h' },
-  { label: '最近7天', value: '7d' },
-  { label: '最近14天', value: '14d' },
-  { label: '最近30天', value: '30d' },
-  { label: '自定义时间', value: 'custom' },
-]
+const timeRangeOptions = computed(() => [
+  { label: t('api_monitor_time_range_5m'), value: '5m' },
+  { label: t('api_monitor_time_range_15m'), value: '15m' },
+  { label: t('api_monitor_time_range_1h'), value: '1h' },
+  { label: t('api_monitor_time_range_6h'), value: '6h' },
+  { label: t('api_monitor_time_range_12h'), value: '12h' },
+  { label: t('api_monitor_time_range_24h'), value: '24h' },
+  { label: t('api_monitor_time_range_7d'), value: '7d' },
+  { label: t('api_monitor_time_range_14d'), value: '14d' },
+  { label: t('api_monitor_time_range_30d'), value: '30d' },
+  { label: t('api_monitor_time_range_custom'), value: 'custom' },
+])
 
-const datePickerShortcuts = [
+const datePickerShortcuts = computed(() => [
   {
-    text: '最近1小时',
+    text: t('api_monitor_time_range_1h'),
     value: () => {
       const end = new Date()
       const start = new Date()
@@ -47,7 +49,7 @@ const datePickerShortcuts = [
     },
   },
   {
-    text: '最近6小时',
+    text: t('api_monitor_time_range_6h'),
     value: () => {
       const end = new Date()
       const start = new Date()
@@ -56,7 +58,7 @@ const datePickerShortcuts = [
     },
   },
   {
-    text: '最近24小时',
+    text: t('api_monitor_time_range_24h'),
     value: () => {
       const end = new Date()
       const start = new Date()
@@ -65,7 +67,7 @@ const datePickerShortcuts = [
     },
   },
   {
-    text: '最近7天',
+    text: t('api_monitor_time_range_7d'),
     value: () => {
       const end = new Date()
       const start = new Date()
@@ -73,7 +75,7 @@ const datePickerShortcuts = [
       return [start, end]
     },
   },
-]
+])
 
 const disabledDate = (time: Date) => {
   return time.getTime() > Date.now()
@@ -96,7 +98,7 @@ const handleCustomTimeChange = (value: [Date, Date] | null) => {
     const diffDays = dayjs(end).diff(dayjs(start), 'day')
 
     if (diffDays > 30) {
-      ElMessage.warning('自定义时间范围不能超过30天')
+      ElMessage.warning(t('api_monitor_time_range_max_30_days'))
       customTimeRange.value = null
       emit('update:customTime', null)
       emit('update:modelValue', '1h')
@@ -121,7 +123,7 @@ watch(
   <div class="time-range-selector flex align-center gap-3">
     <el-select
       :model-value="modelValue"
-      placeholder="选择时间范围"
+      :placeholder="t('api_monitor_time_range_placeholder')"
       style="width: 160px"
       @update:model-value="handleChange"
     >
@@ -138,13 +140,13 @@ watch(
       v-if="modelValue === 'custom'"
       v-model="customTimeRange"
       type="datetimerange"
-      range-separator="至"
-      start-placeholder="开始时间"
-      end-placeholder="结束时间"
+      :range-separator="t('api_monitor_time_range_to')"
+      :start-placeholder="t('api_monitor_time_range_start')"
+      :end-placeholder="t('api_monitor_time_range_end')"
       :disabled-date="disabledDate"
       :shortcuts="datePickerShortcuts"
       format="YYYY-MM-DD HH:mm:ss"
-      value-format="YYYY-MM-DD HH:mm:ss"
+      value-format="x"
       style="width: 400px"
       @change="handleCustomTimeChange"
     />

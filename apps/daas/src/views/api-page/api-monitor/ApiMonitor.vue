@@ -57,75 +57,79 @@ const apiListSortBy = ref('p99')
 const apiListSortOrder = ref<'ASC' | 'DESC'>('DESC')
 
 const currentTab = ref('server')
-const serverTopCards = [
+
+interface TopCardItem {
+  title: string
+  key: string
+  unit?: string
+  value?: number | string
+  class?: string
+}
+
+const serverTopCards = computed<TopCardItem[]>(() => [
   {
-    title: '总请求数',
+    title: t('api_monitor_total_request_count'),
     key: 'totalRequestCount',
-    value: 1500,
   },
   {
-    title: '总错误率',
+    title: t('api_monitor_total_error_rate'),
     unit: '%',
     key: 'totalErrorRate',
-    value: 1500,
   },
   {
-    title: '平均响应时间',
+    title: t('api_monitor_avg_response_time'),
     unit: 'ms',
     key: 'responseTimeAvg',
-    value: 1500,
   },
   {
-    title: 'P95 响应时间',
+    title: t('api_monitor_p95_response_time'),
     unit: 'ms',
     key: 'p95',
-    value: 1500,
+    class: 'color-warning',
   },
   {
-    title: 'P99 响应时间',
+    title: t('api_monitor_p99_response_time'),
     unit: 'ms',
     key: 'p99',
-    value: 1500,
+    class: 'color-danger',
   },
   {
-    title: '不健康的 API',
+    title: t('api_monitor_unhealthy_api_count'),
     key: 'notHealthyApiCount',
-    value: 1500,
+    class: 'color-danger',
   },
   {
-    title: '不健康的 Server',
+    title: t('api_monitor_unhealthy_server_count'),
     key: 'notHealthyServerCount',
-    value: 1500,
+    class: 'color-danger',
   },
-]
-const apiTopCards = [
+])
+
+const apiTopCards = computed<TopCardItem[]>(() => [
   {
-    title: 'API 累计请求次数',
+    title: t('api_monitor_total_request_count'),
     key: 'totalRequestCount',
-    value: 1500,
   },
   {
-    title: '全局吞吐量',
+    title: t('api_monitor_throughput'),
     key: 'totalRps',
-    value: 1500,
   },
   {
-    title: '平均响应时间',
+    title: t('api_monitor_avg_response_time'),
     unit: 'ms',
     key: 'responseTimeAvg',
-    value: 1500,
   },
-]
+])
 
-const topCards = computed(() => {
+const topCards = computed<TopCardItem[]>(() => {
   let data = apiOverview.value
-  let items = apiTopCards
+  let items = apiTopCards.value
   if (currentTab.value === 'server') {
     data = serverData.value
-    items = serverTopCards
+    items = serverTopCards.value
   }
   return items.map((item) => {
-    let value = data[item.key]
+    let value = (data as any)[item.key]
     let unit = item.unit ?? ''
     // 正则判断下 value 是不是带单位的
     if (isString(value)) {
@@ -421,17 +425,21 @@ const mockServices = ref([
   },
 ])
 
-const handleViewServiceDetails = (service: any) => {
-  // 打开服务详情
-  serverDetails.value = {
-    processId: service.id,
-    name: service.name,
-    metricValues: {
-      cpuUsage: service.cpuUsage,
-      heapMemoryUsage: service.memoryUsage * 1024 * 1024, // 转换为字节
+const handleViewServiceDetails = (data: any) => {
+  router.push({
+    name: 'apiMonitorServerDetail',
+    params: { id: data.serverId },
+    query: {
+      name: data.serverName,
+      timeRange: timeRange.value,
+      ...(timeRange.value === 'custom' && customTimeRange.value
+        ? {
+            customStart: customTimeRange.value[0],
+            customEnd: customTimeRange.value[1],
+          }
+        : {}),
     },
-  }
-  serverDetailsVisible.value = true
+  })
 }
 
 const onClickApi = (row: any) => {
@@ -445,18 +453,12 @@ const onClickApi = (row: any) => {
       timeRange: timeRange.value,
       ...(timeRange.value === 'custom' && customTimeRange.value
         ? {
-            customStart: customTimeRange.value[0].toISOString(),
-            customEnd: customTimeRange.value[1].toISOString(),
+            customStart: customTimeRange.value[0],
+            customEnd: customTimeRange.value[1],
           }
         : {}),
     },
   })
-}
-
-const handleViewApiDetails = (api: any) => {
-  // 打开 API 详情页面
-  console.log('View API details:', api)
-  // TODO: 实现 API 详情页面跳转或弹窗
 }
 
 onUnmounted(() => {
@@ -493,12 +495,12 @@ onUnmounted(() => {
     >
       <el-tab-pane name="server">
         <template #label>
-          <span> Server 总览 </span>
+          <span> {{ t('api_monitor_tab_server') }} </span>
         </template>
       </el-tab-pane>
       <el-tab-pane name="api">
         <template #label>
-          <span> API 总览 </span>
+          <span> {{ t('api_monitor_tab_api') }} </span>
         </template>
       </el-tab-pane>
     </el-tabs>
@@ -512,7 +514,14 @@ onUnmounted(() => {
           <div class="card-title font-color-light">{{ item.title }}</div>
         </div>
         <div class="card-content">
-          <div class="text-2xl fw-sub">{{ item.value }}{{ item.unit }}</div>
+          <div
+            v-if="item.value !== undefined"
+            class="text-2xl fw-sub"
+            :class="item.class"
+          >
+            {{ item.value }}{{ item.unit }}
+          </div>
+          <div v-else class="text-2xl fw-sub">--</div>
         </div>
       </div>
     </div>
@@ -521,7 +530,9 @@ onUnmounted(() => {
       <div
         class="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4"
       >
-        <h2 class="text-lg font-bold text-gray-800">Server List</h2>
+        <h2 class="text-lg font-bold text-gray-800">
+          {{ t('api_monitor_server_list') }}
+        </h2>
       </div>
 
       <!-- 服务卡片网格 -->
@@ -530,6 +541,7 @@ onUnmounted(() => {
           v-for="item in serverList"
           :key="item.serverId"
           :data="item"
+          @view-details="handleViewServiceDetails"
         />
       </div>
     </div>
@@ -539,7 +551,9 @@ onUnmounted(() => {
       <div
         class="flex flex-col sm:flex-row items-center justify-between mb-4 gap-4"
       >
-        <h2 class="text-lg font-bold text-gray-800">API List</h2>
+        <h2 class="text-lg font-bold text-gray-800">
+          {{ t('api_monitor_api_list') }}
+        </h2>
         <!-- <el-select
           v-model="apiListSortBy"
           placeholder="Sort by"
@@ -560,14 +574,17 @@ onUnmounted(() => {
           style="width: 100%"
           @row-click="onClickApi"
         >
-          <el-table-column label="API NAME" min-width="200">
+          <el-table-column
+            :label="t('api_monitor_total_api_list_name')"
+            min-width="200"
+          >
             <template #default="{ row }">
               <el-link type="primary">
                 {{ row.apiName }}
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column label="API 路径" min-width="200">
+          <el-table-column :label="t('api_monitor_api_path')" min-width="200">
             <template #default="{ row }">
               <el-tag
                 type="info"
@@ -579,21 +596,21 @@ onUnmounted(() => {
             </template>
           </el-table-column>
           <el-table-column
-            label="TOTAL CALLS"
+            :label="t('api_monitor_total_calls')"
             prop="requestCount"
             min-width="120"
           />
-          <el-table-column label="AVG LATENCY" width="120">
+          <el-table-column :label="t('api_monitor_avg_latency')" width="120">
             <template #default="{ row }"> {{ row.requestCostAvg }} </template>
           </el-table-column>
-          <el-table-column label="P95 LATENCY" width="120">
+          <el-table-column :label="t('api_monitor_p95_latency')" width="120">
             <template #default="{ row }">
               <span :class="{ 'text-orange-500': row.p95 > 1000 }">
                 {{ row.p95 }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column label="P99 LATENCY" width="120">
+          <el-table-column :label="t('api_monitor_p99_latency')" width="120">
             <template #default="{ row }">
               <span
                 :class="{
@@ -605,7 +622,7 @@ onUnmounted(() => {
               </span>
             </template>
           </el-table-column>
-          <el-table-column label="ERROR RATE" width="120">
+          <el-table-column :label="t('api_monitor_error_rate')" width="120">
             <template #default="{ row }">
               <span
                 :class="{
@@ -617,7 +634,7 @@ onUnmounted(() => {
               </span>
             </template>
           </el-table-column>
-          <el-table-column label="THROUGHPUT" min-width="120">
+          <el-table-column :label="t('api_monitor_throughput')" min-width="120">
             <template #default="{ row }">
               {{ row.totalRps }}
             </template>

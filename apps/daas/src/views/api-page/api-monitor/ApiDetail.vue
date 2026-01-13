@@ -9,6 +9,7 @@ import {
 import { useRequest } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { dayjs } from '@tap/business/src/shared/dayjs'
+import { useI18n } from '@tap/i18n'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
 import { LineChart } from 'echarts/charts'
 import {
@@ -35,6 +36,7 @@ use([
 
 const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
 const apiId = route.params.id as string
 const apiDetail = ref<any>()
 const apiChart = ref<ApiChart>()
@@ -42,15 +44,12 @@ const serverList = ref<any[]>([])
 
 // 时间周期选择 - 从 route.query 中恢复
 const timeRange = ref((route.query.timeRange as string) || '1h')
-const customTimeRange = ref<[Date, Date] | null>(null)
+const customTimeRange = ref<[number, number] | null>(null)
 
 // 从 query 中恢复自定义时间范围
 onMounted(() => {
   if (route.query.customStart && route.query.customEnd) {
-    customTimeRange.value = [
-      new Date(route.query.customStart as string),
-      new Date(route.query.customEnd as string),
-    ]
+    customTimeRange.value = [+route.query.customStart, +route.query.customEnd]
     timeRange.value = 'custom'
   }
 })
@@ -206,7 +205,7 @@ const throughputLatencyChartOption = computed(() => {
     yAxis: [
       {
         type: 'value',
-        name: '吞吐量',
+        name: t('api_monitor_throughput'),
         position: 'left',
         axisLabel: {
           formatter(value: number) {
@@ -216,7 +215,7 @@ const throughputLatencyChartOption = computed(() => {
       },
       {
         type: 'value',
-        name: '延迟 (ms)',
+        name: t('api_monitor_latency_ms'),
         position: 'right',
         axisLabel: {
           formatter: '{value}',
@@ -225,7 +224,7 @@ const throughputLatencyChartOption = computed(() => {
     ],
     series: [
       {
-        name: '吞吐量',
+        name: t('api_monitor_throughput'),
         type: isSinglePoint ? 'scatter' : 'line',
         data: apiChart.value?.rps || [],
         smooth: !isSinglePoint,
@@ -358,7 +357,7 @@ const onClickServer = (row: any) => {
         />
         <el-button type="primary" @click="refreshData">
           <el-icon class="mr-1"><i-lucide-refresh-cw /></el-icon>
-          刷新
+          {{ t('api_monitor_refresh') }}
         </el-button>
       </div>
     </template>
@@ -368,25 +367,25 @@ const onClickServer = (row: any) => {
       <div class="status-overview-card border mt-2">
         <div class="status-grid">
           <div class="status-item">
-            <div class="status-label">总调用数</div>
+            <div class="status-label">{{ t('api_monitor_total_calls') }}</div>
             <div class="status-value">{{ totalCalls }}</div>
           </div>
           <div class="status-item">
-            <div class="status-label">错误率</div>
+            <div class="status-label">{{ t('api_monitor_error_rate') }}</div>
             <div class="status-value">{{ errorRate }}</div>
           </div>
           <div class="status-item">
-            <div class="status-label">平均耗时</div>
+            <div class="status-label">{{ t('api_monitor_avg_latency') }}</div>
             <div class="status-value">{{ avgLatency }}</div>
           </div>
           <div class="status-item">
-            <div class="status-label">P95 延迟</div>
+            <div class="status-label">{{ t('api_monitor_p95_latency') }}</div>
             <div class="status-value status-value-warning">
               {{ p95Latency }}
             </div>
           </div>
           <div class="status-item">
-            <div class="status-label">P99 延迟</div>
+            <div class="status-label">{{ t('api_monitor_p99_latency') }}</div>
             <div class="status-value status-value-danger">{{ p99Latency }}</div>
           </div>
           <!-- <div class="status-item">
@@ -399,19 +398,32 @@ const onClickServer = (row: any) => {
       <!-- Server List Section -->
       <div class="server-list-section border">
         <div class="section-header mb-3 flex items-center justify-between">
-          <h3 class="section-title">各 Server 表现分布</h3>
+          <h3 class="section-title">
+            {{ t('api_monitor_server_distribution') }}
+          </h3>
         </div>
 
         <el-table :data="serverList" class="server-list-table">
-          <el-table-column label="Server 名称" min-width="200">
+          <el-table-column
+            :label="t('api_monitor_server_name')"
+            min-width="200"
+          >
             <template #default="{ row }">
               <el-link type="primary" @click="onClickServer(row)">{{
                 row.serverName
               }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column label="调用次数" prop="requestCount" width="120" />
-          <el-table-column label="错误率" prop="errorRate" width="100">
+          <el-table-column
+            :label="t('api_monitor_request_count')"
+            prop="requestCount"
+            width="120"
+          />
+          <el-table-column
+            :label="t('api_monitor_error_rate')"
+            prop="errorRate"
+            width="100"
+          >
             <template #default="{ row }">
               <span
                 :class="{
@@ -423,12 +435,20 @@ const onClickServer = (row: any) => {
               </span>
             </template>
           </el-table-column>
-          <el-table-column label="平均耗时" prop="avg" width="120">
+          <el-table-column
+            :label="t('api_monitor_avg_latency')"
+            prop="avg"
+            width="120"
+          >
             <template #default="{ row }">
               {{ row.requestCostAvg }}
             </template>
           </el-table-column>
-          <el-table-column label="P99 延迟" prop="p99" width="120">
+          <el-table-column
+            :label="t('api_monitor_p99_latency')"
+            prop="p99"
+            width="120"
+          >
             <template #default="{ row }"> {{ row.p99Time }} </template>
           </el-table-column>
         </el-table>
@@ -436,7 +456,9 @@ const onClickServer = (row: any) => {
 
       <!-- Throughput & Latency Trend Chart -->
       <div class="chart-section border">
-        <h3 class="section-title mb-4">吞吐量与延迟趋势</h3>
+        <h3 class="section-title mb-4">
+          {{ t('api_monitor_throughput_latency_trend') }}
+        </h3>
         <div class="chart-container-large">
           <VChart :option="throughputLatencyChartOption" :autoresize="true" />
         </div>

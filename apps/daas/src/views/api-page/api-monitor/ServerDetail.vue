@@ -11,6 +11,7 @@ import {
 import { useRequest } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { dayjs } from '@tap/business/src/shared/dayjs'
+import { useI18n } from '@tap/i18n'
 import { calcTimeUnit } from '@tap/shared'
 import { LineChart } from 'echarts/charts'
 import {
@@ -38,6 +39,7 @@ use([
 
 const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
 const serverId = route.params.id as string
 const serverDetail = ref<ServerDetail>()
 const serverChart = ref<ServerChart>()
@@ -46,15 +48,12 @@ const workerData = ref<ServerWorker>()
 
 // 时间周期选择 - 从 route.query 中恢复
 const timeRange = ref((route.query.timeRange as string) || '1h')
-const customTimeRange = ref<[Date, Date] | null>(null)
+const customTimeRange = ref<[number, number] | null>(null)
 
 // 从 query 中恢复自定义时间范围
 onMounted(() => {
   if (route.query.customStart && route.query.customEnd) {
-    customTimeRange.value = [
-      new Date(route.query.customStart as string),
-      new Date(route.query.customEnd as string),
-    ]
+    customTimeRange.value = [+route.query.customStart, +route.query.customEnd]
     timeRange.value = 'custom'
   }
 })
@@ -602,7 +601,7 @@ const onClickApi = (row: any) => {
         />
         <el-button type="primary" @click="refreshData">
           <el-icon class="mr-1"><i-lucide-refresh-cw /></el-icon>
-          刷新
+          {{ t('api_monitor_refresh') }}
         </el-button>
       </div>
     </template>
@@ -613,29 +612,29 @@ const onClickApi = (row: any) => {
         <!-- <h3 class="section-title">Status Overview</h3> -->
         <div class="status-grid">
           <div class="status-item">
-            <div class="status-label">CPU Usage</div>
+            <div class="status-label">{{ t('api_monitor_cpu_usage') }}</div>
             <div class="status-value">{{ cpuUsage }}%</div>
           </div>
           <div class="status-item">
-            <div class="status-label">Memory</div>
+            <div class="status-label">{{ t('api_monitor_memory_usage') }}</div>
             <div class="status-value">{{ memoryUsage }}%</div>
           </div>
           <div class="status-item">
-            <div class="status-label">Request Count</div>
+            <div class="status-label">{{ t('api_monitor_request_count') }}</div>
             <div class="status-value">{{ requestCount }}</div>
           </div>
           <div class="status-item">
-            <div class="status-label">Error Rate</div>
+            <div class="status-label">{{ t('api_monitor_error_rate') }}</div>
             <div class="status-value">{{ errorRate }}</div>
           </div>
           <div class="status-item">
-            <div class="status-label">P95 Latency</div>
+            <div class="status-label">{{ t('api_monitor_p95_latency') }}</div>
             <div class="status-value status-value-warning">
               {{ p95Latency }}
             </div>
           </div>
           <div class="status-item">
-            <div class="status-label">P99 Latency</div>
+            <div class="status-label">{{ t('api_monitor_p99_latency') }}</div>
             <div class="status-value status-value-danger">{{ p99Latency }}</div>
           </div>
         </div>
@@ -649,7 +648,7 @@ const onClickApi = (row: any) => {
           <div class="chart-card border">
             <h3 class="chart-title">
               <!-- <span class="chart-legend-dot chart-legend-blue" /> -->
-              CPU Usage (%)
+              {{ t('api_monitor_cpu_usage_trend') }}
             </h3>
             <div class="chart-container">
               <VChart :option="cpuChartOption" :autoresize="true" />
@@ -660,7 +659,7 @@ const onClickApi = (row: any) => {
           <div class="chart-card border">
             <h3 class="chart-title">
               <!-- <span class="chart-legend-dot chart-legend-green" /> -->
-              Memory Usage (%)
+              {{ t('api_monitor_memory_usage_trend') }}
             </h3>
             <div class="chart-container">
               <VChart :option="memoryChartOption" :autoresize="true" />
@@ -669,7 +668,9 @@ const onClickApi = (row: any) => {
 
           <!-- Request & Error Rate -->
           <div class="chart-card border">
-            <h3 class="chart-title">请求数 & 错误率趋势</h3>
+            <h3 class="chart-title">
+              {{ t('api_monitor_request_error_trend') }}
+            </h3>
             <div class="chart-container">
               <VChart :option="requestChartOption" :autoresize="true" />
             </div>
@@ -677,7 +678,7 @@ const onClickApi = (row: any) => {
 
           <!-- Latency Trend -->
           <div class="chart-card border">
-            <h3 class="chart-title">延迟趋势 (Avg/P95/P99)</h3>
+            <h3 class="chart-title">{{ t('api_monitor_latency_trend') }}</h3>
             <div class="chart-container">
               <VChart :option="latencyChartOption" :autoresize="true" />
             </div>
@@ -688,7 +689,7 @@ const onClickApi = (row: any) => {
       <!-- Top API Section -->
       <div class="top-api-section border">
         <div class="section-header mb-3 flex items-center justify-between">
-          <h3 class="section-title">Top API 列表</h3>
+          <h3 class="section-title">{{ t('api_monitor_top_api_list') }}</h3>
           <!-- <el-select
             v-model="topApiSortBy"
             placeholder="排序方式"
@@ -701,14 +702,17 @@ const onClickApi = (row: any) => {
         </div>
 
         <el-table :data="apiList" class="top-api-table">
-          <el-table-column label="API 名称" min-width="200">
+          <el-table-column
+            :label="t('api_monitor_server_api_name')"
+            min-width="200"
+          >
             <template #default="{ row }">
               <el-link type="primary" @click="onClickApi(row)">{{
                 row.apiName
               }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column label="API 路径" min-width="200">
+          <el-table-column :label="t('api_monitor_api_path')" min-width="200">
             <template #default="{ row }">
               <el-tag
                 type="info"
@@ -719,8 +723,16 @@ const onClickApi = (row: any) => {
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="调用次数" prop="requestCount" width="120" />
-          <el-table-column label="错误率" prop="errorRate" width="100">
+          <el-table-column
+            :label="t('api_monitor_server_call_count')"
+            prop="requestCount"
+            width="120"
+          />
+          <el-table-column
+            :label="t('api_monitor_error_rate')"
+            prop="errorRate"
+            width="100"
+          >
             <template #default="{ row }">
               <span
                 :class="{
@@ -732,12 +744,20 @@ const onClickApi = (row: any) => {
               </span>
             </template>
           </el-table-column>
-          <el-table-column label="平均耗时" prop="avg" width="120">
+          <el-table-column
+            :label="t('api_monitor_avg_latency')"
+            prop="avg"
+            width="120"
+          >
             <template #default="{ row }">
               {{ row.avgTime }}
             </template>
           </el-table-column>
-          <el-table-column label="P99 延迟" prop="p99" width="120">
+          <el-table-column
+            :label="t('api_monitor_p99_latency')"
+            prop="p99"
+            width="120"
+          >
             <template #default="{ row }"> {{ row.p99Time }} </template>
           </el-table-column>
         </el-table>
@@ -746,12 +766,16 @@ const onClickApi = (row: any) => {
       <!-- Worker Section -->
       <div class="worker-section border">
         <div class="worker-header">
-          <h3 class="section-title">Worker 资源诊断</h3>
+          <h3 class="section-title">{{ t('api_monitor_worker_diagnosis') }}</h3>
           <el-icon class="expand-icon"><i-lucide-chevron-down /></el-icon>
         </div>
         <div class="worker-summary">
-          CPU 分布：最小值 {{ workerData?.cpuUsageMin }}% ~ 最大值
-          {{ workerData?.cpuUsageMax }}%
+          {{
+            t('api_monitor_cpu_distribution', {
+              min: workerData?.cpuUsageMin,
+              max: workerData?.cpuUsageMax,
+            })
+          }}
         </div>
       </div>
     </div>

@@ -13,7 +13,7 @@ interface ServiceCardProps {
 const props = withDefaults(defineProps<ServiceCardProps>(), {})
 
 const emit = defineEmits<{
-  viewDetails: []
+  viewDetails: [data: any]
 }>()
 
 const configs = {
@@ -47,13 +47,7 @@ const memoryColor = computed(() => {
 })
 
 const handleViewDetails = () => {
-  router.push({
-    name: 'apiMonitorServerDetail',
-    params: { id: props.data.serverId },
-    query: {
-      name: props.data.serverName,
-    },
-  })
+  emit('viewDetails', props.data)
 }
 </script>
 
@@ -142,7 +136,7 @@ const handleViewDetails = () => {
     </div>
 
     <!-- Footer - 悬停时显示，浮动在底部 -->
-    <div class="service-footer-overlay">
+    <div>
       <ElButton type="primary" class="w-100" @click="handleViewDetails">
         View Details
       </ElButton>
@@ -260,8 +254,8 @@ const handleViewDetails = () => {
   gap: 12px;
   padding: 16px 0;
   border-top: 1px solid var(--el-border-color-lighter);
-  // border-bottom: 1px solid var(--el-border-color-lighter);
-  // margin-bottom: 20px;
+  border-bottom: 1px solid var(--el-border-color-lighter);
+  margin-bottom: 16px;
 
   .stat-group {
     display: flex;

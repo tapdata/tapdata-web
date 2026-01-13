@@ -4,6 +4,7 @@ import { LineChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent } from 'echarts/components'
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
+import { isNumber } from 'lodash-es'
 import { computed } from 'vue'
 import VChart from 'vue-echarts'
 import type { EChartsOption } from 'echarts'
@@ -60,11 +61,13 @@ const chartOption = computed<EChartsOption>(() => ({
     padding: [8, 12],
     formatter: (params: any) => {
       const dataIndex = params[0]?.dataIndex ?? 0
-      const value = params[0]?.value || 0
+      const value = isNumber(params[0]?.value)
+        ? params[0].value + props.unit
+        : '--'
       const timestamp = props.time[dataIndex]
-      if (!timestamp) return `${props.label || 'Value'}: ${value}${props.unit}`
+      if (!timestamp) return `${props.label || 'Value'}: ${value}`
       const timeStr = dayjs.unix(timestamp).format('MM-DD HH:mm:ss')
-      return `${timeStr}<br/>${props.label || 'Value'}: ${value}${props.unit}`
+      return `${timeStr}<br/>${props.label || 'Value'}: ${value}`
     },
   },
   series: [
