@@ -42,6 +42,30 @@ const apiDetail = ref<any>()
 const apiChart = ref<ApiChart>()
 const serverList = ref<any[]>([])
 
+// 排序相关
+const serverListDefaultSort = { prop: 'requestCount', order: 'descending' }
+const serverListSortBy = ref(serverListDefaultSort.prop)
+const serverListSortOrder = ref<'ASC' | 'DESC'>('DESC')
+
+// 排序处理函数
+const handleServerListSortChange = ({
+  prop,
+  order,
+}: {
+  prop: string
+  order: string | null
+}) => {
+  if (!order) {
+    // 取消排序，恢复默认排序
+    serverListSortBy.value = serverListDefaultSort.prop
+    serverListSortOrder.value = 'DESC'
+  } else {
+    serverListSortBy.value = prop
+    serverListSortOrder.value = order === 'ascending' ? 'ASC' : 'DESC'
+  }
+  runFetch()
+}
+
 // 时间周期选择 - 从 route.query 中恢复
 const timeRange = ref((route.query.timeRange as string) || '1h')
 const customTimeRange = ref<[number, number] | null>(null)
@@ -93,7 +117,10 @@ const { run: runFetch } = useRequest(
     params.apiId = apiId
     apiDetail.value = await fetchMonitorApiDetail(params)
     apiChart.value = await fetchMonitorApiChart(params)
-    serverList.value = await fetchMonitorApiServer(params)
+    serverList.value = await fetchMonitorApiServer({
+      ...params,
+      orderBy: `${serverListSortBy.value} ${serverListSortOrder.value}`,
+    })
   },
   {
     pollingInterval: 6000,
@@ -129,22 +156,6 @@ const avgLatency = computed(() => {
   })
 })
 
-const p95Latency = computed(() => {
-  if (!apiDetail.value?.p95) return '0ms'
-  return calcTimeUnit(apiDetail.value.p95, 2, {
-    keepDecimal: true,
-    decimalPlaces: 2,
-  })
-})
-
-const p99Latency = computed(() => {
-  if (!apiDetail.value?.p99) return '0ms'
-  return calcTimeUnit(apiDetail.value.p99, 2, {
-    keepDecimal: true,
-    decimalPlaces: 2,
-  })
-})
-
 // 吞吐量与延迟趋势图表（双轴）
 const throughputLatencyChartOption = computed(() => {
   const dataLength = apiChart.value?.ts?.length || 0
@@ -167,9 +178,9 @@ const throughputLatencyChartOption = computed(() => {
     },
     tooltip: {
       trigger: 'axis',
-      axisPointer: {
-        type: 'cross',
-      },
+      // axisPointer: {
+      //   type: 'cross',
+      // },
       borderRadius: 12,
       borderColor: '#dee0e3',
       extraCssText:
@@ -380,13 +391,23 @@ const onClickServer = (row: any) => {
           </div>
           <div class="status-item">
             <div class="status-label">{{ t('api_monitor_p95_latency') }}</div>
-            <div class="status-value status-value-warning">
-              {{ p95Latency }}
+            <div
+              v-if="apiDetail?.p95 !== undefined"
+              class="status-value status-value-warning"
+            >
+              {{ apiDetail.p95 }}
             </div>
+            <div v-else class="status-value">--</div>
           </div>
           <div class="status-item">
             <div class="status-label">{{ t('api_monitor_p99_latency') }}</div>
-            <div class="status-value status-value-danger">{{ p99Latency }}</div>
+            <div
+              v-if="apiDetail?.p99 !== undefined"
+              class="status-value status-value-danger"
+            >
+              {{ apiDetail.p99 }}
+            </div>
+            <div v-else class="status-value">--</div>
           </div>
           <!-- <div class="status-item">
             <div class="status-label">吞吐量</div>
@@ -403,7 +424,12 @@ const onClickServer = (row: any) => {
           </h3>
         </div>
 
-        <el-table :data="serverList" class="server-list-table">
+        <el-table
+          :data="serverList"
+          class="server-list-table"
+          :default-sort="serverListDefaultSort"
+          @sort-change="handleServerListSortChange"
+        >
           <el-table-column
             :label="t('api_monitor_server_name')"
             min-width="200"
@@ -437,11 +463,11 @@ const onClickServer = (row: any) => {
           </el-table-column>
           <el-table-column
             :label="t('api_monitor_avg_latency')"
-            prop="avg"
+            prop="requestCostAvg"
             width="120"
           >
             <template #default="{ row }">
-              {{ row.requestCostAvg }}
+              {{ row.requestCostAvg ?? '--' }}
             </template>
           </el-table-column>
           <el-table-column
@@ -449,7 +475,7 @@ const onClickServer = (row: any) => {
             prop="p99"
             width="120"
           >
-            <template #default="{ row }"> {{ row.p99Time }} </template>
+            <template #default="{ row }"> {{ row.p99 ?? '--' }} </template>
           </el-table-column>
         </el-table>
       </div>
@@ -469,7 +495,6 @@ const onClickServer = (row: any) => {
 
 <style lang="scss" scoped>
 .status-overview-card {
-  background: white;
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -533,7 +558,6 @@ const onClickServer = (row: any) => {
 }
 
 .table-card {
-  background: white;
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -557,7 +581,6 @@ const onClickServer = (row: any) => {
 }
 
 .chart-section {
-  background: white;
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -579,7 +602,6 @@ const onClickServer = (row: any) => {
 }
 
 .server-list-section {
-  background: white;
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);

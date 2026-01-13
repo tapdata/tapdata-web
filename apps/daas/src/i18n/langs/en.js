@@ -2241,6 +2241,10 @@ export default {
   api_monitor_top_api_list: 'Top API List',
   api_monitor_worker_diagnosis: 'Worker Resource Diagnosis',
   api_monitor_cpu_distribution: 'CPU Distribution: Min {min}% ~ Max {max}%',
+  api_monitor_worker_name: 'Worker Name',
+  api_monitor_worker_cpu_usage: 'Worker CPU Usage',
+  api_monitor_worker_memory_usage: 'Worker Memory Usage',
+  api_monitor_no_worker_data: 'No Worker Data',
 
   cluster_operation_success:
     'Operation instruction has been sent, please refresh later to view the result',

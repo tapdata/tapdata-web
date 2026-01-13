@@ -53,8 +53,28 @@ const serverData = ref<MonitorServer | {}>({})
 const apiOverview = ref<ApiOverview | {}>({})
 const serverList = ref<ServerItem[]>([])
 const apiListData = ref<any[]>([])
-const apiListSortBy = ref('p99')
+const apiListDefaultSort = { prop: 'requestCount', order: 'descending' }
+const apiListSortBy = ref(apiListDefaultSort.prop)
 const apiListSortOrder = ref<'ASC' | 'DESC'>('DESC')
+
+// 排序处理函数
+const handleSortChange = ({
+  prop,
+  order,
+}: {
+  prop: string
+  order: string | null
+}) => {
+  if (!order) {
+    // 取消排序，恢复默认排序
+    apiListSortBy.value = apiListDefaultSort.prop
+    apiListSortOrder.value = 'DESC'
+  } else {
+    apiListSortBy.value = prop
+    apiListSortOrder.value = order === 'ascending' ? 'ASC' : 'DESC'
+  }
+  runFetch()
+}
 
 const currentTab = ref('server')
 
@@ -189,8 +209,7 @@ const { run: runFetch, cancel: cancelFetch } = useRequest(
       apiOverview.value = await fetchMonitorApi(params)
       const apiListResult = await fetchMonitorApiList({
         ...params,
-        sortBy: apiListSortBy.value,
-        order: apiListSortOrder.value,
+        orderBy: `${apiListSortBy.value} ${apiListSortOrder.value}`,
       })
       apiListData.value = apiListResult || []
       return
@@ -572,7 +591,9 @@ onUnmounted(() => {
         <el-table
           :data="apiListData"
           style="width: 100%"
+          :default-sort="{ prop: 'requestCount', order: 'descending' }"
           @row-click="onClickApi"
+          @sort-change="handleSortChange"
         >
           <el-table-column
             :label="t('api_monitor_total_api_list_name')"
@@ -599,18 +620,34 @@ onUnmounted(() => {
             :label="t('api_monitor_total_calls')"
             prop="requestCount"
             min-width="120"
+            sortable="custom"
           />
-          <el-table-column :label="t('api_monitor_avg_latency')" width="120">
+          <el-table-column
+            :label="t('api_monitor_avg_latency')"
+            prop="requestCostAvg"
+            width="120"
+            sortable="custom"
+          >
             <template #default="{ row }"> {{ row.requestCostAvg }} </template>
           </el-table-column>
-          <el-table-column :label="t('api_monitor_p95_latency')" width="120">
+          <el-table-column
+            :label="t('api_monitor_p95_latency')"
+            prop="p95"
+            width="120"
+            sortable="custom"
+          >
             <template #default="{ row }">
               <span :class="{ 'text-orange-500': row.p95 > 1000 }">
                 {{ row.p95 }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="t('api_monitor_p99_latency')" width="120">
+          <el-table-column
+            :label="t('api_monitor_p99_latency')"
+            prop="p99"
+            width="120"
+            sortable="custom"
+          >
             <template #default="{ row }">
               <span
                 :class="{
@@ -622,7 +659,12 @@ onUnmounted(() => {
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="t('api_monitor_error_rate')" width="120">
+          <el-table-column
+            :label="t('api_monitor_error_rate')"
+            prop="errorRate"
+            width="120"
+            sortable="custom"
+          >
             <template #default="{ row }">
               <span
                 :class="{
@@ -634,7 +676,12 @@ onUnmounted(() => {
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="t('api_monitor_throughput')" min-width="120">
+          <el-table-column
+            :label="t('api_monitor_throughput')"
+            prop="totalRps"
+            min-width="120"
+            sortable="custom"
+          >
             <template #default="{ row }">
               {{ row.totalRps }}
             </template>

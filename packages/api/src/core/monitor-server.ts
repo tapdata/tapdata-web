@@ -1,4 +1,5 @@
 import { calcTimeUnit, calcUnit } from '@tap/shared'
+import { isNumber } from 'lodash-es'
 import { requestClient } from '../request'
 
 const BASE_URL = '/api/monitor/server'
@@ -13,6 +14,7 @@ export interface Params {
    * 秒级时间戳
    */
   startAt?: number
+  orderBy?: string // 'field DESC'
   [property: string]: any
 }
 
@@ -25,8 +27,8 @@ export interface MonitorServer {
   totalErrorRate: number
   responseTime: number
   responseTimeAvg: number | string
-  p95: number | string
-  p99: number | string
+  p95?: number | string
+  p99?: number | string
   notHealthyApiCount: number
   notHealthyServerCount: number
 }
@@ -44,8 +46,8 @@ export interface ServerItem {
   ts: number[]
   requestCount: number
   errorRate: number
-  p95: number | string
-  p99: number | string
+  p95?: number | string
+  p99?: number | string
   deleted: boolean
 }
 
@@ -58,7 +60,9 @@ export interface ApiOverview {
   totalBytes: number
   totalDelayMs: number
   totalRps: number | string
-  responseTimeAvg: number
+  responseTimeAvg: number | string
+  p95?: number | string
+  p99?: number | string
 }
 
 export interface ServerDetail {
@@ -71,7 +75,9 @@ export interface ServerDetail {
   memoryUsage: number
   usagePingTime: number
   requestCount: number
-  errorRate: string
+  errorRate: number
+  p95?: number | string
+  p99?: number | string
 }
 
 export interface ServerChart {
@@ -83,6 +89,7 @@ export interface ServerChart {
     memoryUsage: number[]
     maxCpuUsage: number[]
     minCpuUsage: number[]
+    maxMemoryUsage: number[]
     minMemoryUsage: number[]
     ts: number[]
   }
@@ -123,9 +130,15 @@ export interface ServerWorker {
   workerList: {
     workerId: string
     workerName: string
+    errorRate?: number
+    requestCount?: number
     usage: {
       cpuUsage: number[]
+      minCpuUsage: number[]
+      maxCpuUsage: number[]
       memoryUsage: number[]
+      minMemoryUsage: number[]
+      maxMemoryUsage: number[]
       ts: number[]
     }
   }[]
@@ -196,13 +209,24 @@ export async function fetchMonitorServer(params?: Params) {
       totalRequestCount: 0,
       totalErrorRate: 0,
       responseTimeAvg: 0,
-      notHealthyApiCount: 0,
-      notHealthyServerCount: 0,
+      notHealthyApiCount: 1,
+      notHealthyServerCount: 1,
     }))
-  data.totalErrorRate = Number(data.totalErrorRate.toFixed(2))
-  data.responseTimeAvg = calcTimeUnit(data.responseTimeAvg)
-  data.p95 = calcTimeUnit(data.p95)
-  data.p99 = calcTimeUnit(data.p99)
+
+  if (isNumber(data.totalErrorRate)) {
+    data.totalErrorRate = Number(data.totalErrorRate.toFixed(2))
+  }
+
+  if (isNumber(data.responseTimeAvg)) {
+    data.responseTimeAvg = calcTimeUnit(data.responseTimeAvg)
+  }
+
+  if (isNumber(data.p95)) {
+    data.p95 = calcTimeUnit(data.p95)
+  }
+  if (isNumber(data.p99)) {
+    data.p99 = calcTimeUnit(data.p99)
+  }
 
   return data
 }
@@ -221,128 +245,21 @@ export async function fetchMonitorServerList(params?: Params) {
           serverName: 'GavinXiaodeMacBook-Pro.local',
           serverId: 'f3ebe1b88623ca4f933af4e27f4075a0',
           cpuUsage: [
-            44.83,
-            1.27,
-            0.96,
-            0.74,
-            0.71,
-            0.77,
-            0.76,
-            0.71,
-            0.85,
-            0.81,
-            0.8,
-            0.71,
-            0.77,
-            0.66,
-            0.74,
-            0.91,
-            0.84,
-            0.74,
-            0.86,
-            0.97,
-            1.68,
-            1.21,
-            1.02,
-            1.88,
-            1.58,
-            1.36,
-            1.35,
-            1.29,
-            1.4,
-            0.9,
-            0.8,
-            1.01,
-            1.2,
-            1.08,
-            0.93,
-            1.59,
-            1.61,
-            1.03,
-            0.89,
-            null,
-            0.98,
-            1.34,
-            1.09,
-            0.78,
-            1.02,
-            1.34,
-            1.53,
-            1.52,
-            0.97,
-            0.96,
-            0.8,
-            0.97,
-            1.38,
-            1.08,
-            null,
-            1.27,
-            1.13,
-            1.17,
-            null,
-            null,
+            44.83, 1.27, 0.96, 0.74, 0.71, 0.77, 0.76, 0.71, 0.85, 0.81, 0.8,
+            0.71, 0.77, 0.66, 0.74, 0.91, 0.84, 0.74, 0.86, 0.97, 1.68, 1.21,
+            1.02, 1.88, 1.58, 1.36, 1.35, 1.29, 1.4, 0.9, 0.8, 1.01, 1.2, 1.08,
+            0.93, 1.59, 1.61, 1.03, 0.89, 0.95, 0.98, 1.34, 1.09, 0.78, 1.02,
+            1.34, 1.53, 1.52, 0.97, 0.96, 0.8, 0.97, 1.38, 1.08, 1.15, 1.27,
+            1.13, 1.17, 1.05, 1.12,
           ],
           memoryUsage: [
-            26.52,
-            16.7,
-            18.39,
-            18.33,
-            15.44,
-            18.84,
-            18.1,
-            17.88,
-            16.73,
-            18.48,
-            17.9,
-            18.66,
-            17.56,
-            18.4,
-            18.3,
-            18.09,
-            17.41,
-            18.08,
-            18.43,
-            19.65,
-            22.58,
-            14.35,
-            14.77,
-            20.39,
-            17.25,
-            14.43,
-            15.78,
-            18.07,
-            16.42,
-            17.41,
-            17.29,
-            14.09,
-            17.06,
-            17.75,
-            17.99,
-            14.46,
-            15.19,
-            18.2,
-            17.3,
-            null,
-            16.49,
-            21.46,
-            19.07,
-            20.44,
-            18.83,
-            18.35,
-            18.07,
-            10.57,
-            16.28,
-            11.26,
-            15.35,
-            10.65,
-            18.21,
-            15.07,
-            null,
-            21.28,
-            22.66,
-            12.05,
-            null,
-            null,
+            26.52, 16.7, 18.39, 18.33, 15.44, 18.84, 18.1, 17.88, 16.73, 18.48,
+            17.9, 18.66, 17.56, 18.4, 18.3, 18.09, 17.41, 18.08, 18.43, 19.65,
+            22.58, 14.35, 14.77, 20.39, 17.25, 14.43, 15.78, 18.07, 16.42,
+            17.41, 17.29, 14.09, 17.06, 17.75, 17.99, 14.46, 15.19, 18.2, 17.3,
+            17.85, 16.49, 21.46, 19.07, 20.44, 18.83, 18.35, 18.07, 10.57,
+            16.28, 11.26, 15.35, 10.65, 18.21, 15.07, 18.45, 21.28, 22.66,
+            12.05, 16.75, 19.32,
           ],
           ts: [
             1767865320, 1767865380, 1767865440, 1767865500, 1767865560,
@@ -368,16 +285,25 @@ export async function fetchMonitorServerList(params?: Params) {
     })
 
   data.forEach((item) => {
-    item.errorRate = Number(item.errorRate.toFixed(2))
-    item.p95 = calcTimeUnit(item.p95)
-    item.p99 = calcTimeUnit(item.p99)
+    if (isNumber(item.errorRate)) {
+      item.errorRate = Number(item.errorRate.toFixed(2))
+    }
+    if (isNumber(item.p95)) {
+      item.p95 = calcTimeUnit(item.p95)
+    }
+    if (isNumber(item.p99)) {
+      item.p99 = calcTimeUnit(item.p99)
+    }
   })
 
   return data
 }
 
-export function fetchMonitorServerDetail(serverId: string, params?: Params) {
-  return requestClient
+export async function fetchMonitorServerDetail(
+  serverId: string,
+  params?: Params,
+) {
+  const data = await requestClient
     .get<ServerDetail>(`${BASE_URL}/detail/${serverId}`, {
       params,
     })
@@ -391,8 +317,21 @@ export function fetchMonitorServerDetail(serverId: string, params?: Params) {
       memoryUsage: 864305152,
       usagePingTime: 1767445635295,
       requestCount: 0,
-      errorRate: 'NaN',
     }))
+
+  if (isNumber(data.errorRate)) {
+    data.errorRate = Number(data.errorRate.toFixed(2))
+  }
+
+  if (isNumber(data.p95)) {
+    data.p95 = calcTimeUnit(data.p95)
+  }
+
+  if (isNumber(data.p99)) {
+    data.p99 = calcTimeUnit(data.p99)
+  }
+
+  return data
 }
 
 export function fetchMonitorServerChart(serverId: string, params?: Params) {
@@ -435,8 +374,12 @@ export async function fetchMonitorServerApi(serverId: string, params?: Params) {
 
   data.forEach((item) => {
     item.errorRate = Number(item.errorRate.toFixed(2))
-    item.avgTime = calcTimeUnit(item.avg)
-    item.p99Time = calcTimeUnit(item.p99)
+    if (isNumber(item.avg)) {
+      item.avg = calcTimeUnit(item.avg)
+    }
+    if (isNumber(item.p99)) {
+      item.p99 = calcTimeUnit(item.p99)
+    }
   })
 
   return data
@@ -462,11 +405,21 @@ export async function fetchMonitorApi(params?: Params) {
       responseTimeAvg: 0,
     }))
 
-  data.responseTimeAvg = calcTimeUnit(data.responseTimeAvg)
+  if (isNumber(data.responseTimeAvg)) {
+    data.responseTimeAvg = calcTimeUnit(data.responseTimeAvg)
+  }
 
-  data.totalRps = data.totalRps
-    ? `${calcUnit(data.totalRps, 'b')}/s`
-    : data.totalRps
+  if (isNumber(data.p95)) {
+    data.p95 = calcTimeUnit(data.p95)
+  }
+
+  if (isNumber(data.p99)) {
+    data.p99 = calcTimeUnit(data.p99)
+  }
+
+  if (isNumber(data.totalRps)) {
+    data.totalRps = `${calcUnit(data.totalRps, 'b')}/s`
+  }
 
   return data
 }
@@ -526,11 +479,30 @@ export function fetchMonitorApiDetail(params?: Params) {
   })
 }
 
-export function fetchMonitorApiServer(params?: Params) {
-  return requestClient.get<ApiInServerItem[]>(
+export async function fetchMonitorApiServer(params?: Params) {
+  const data = await requestClient.get<ApiInServerItem[]>(
     `${API_BASE_URL}/server`,
-    { params },
+    {
+      params,
+    },
   )
+
+  data.forEach((item) => {
+    if (isNumber(item.errorRate)) {
+      item.errorRate = Number(item.errorRate.toFixed(2))
+    }
+    if (isNumber(item.requestCostAvg)) {
+      item.requestCostAvg = calcTimeUnit(item.requestCostAvg)
+    }
+    if (isNumber(item.p95)) {
+      item.p95 = calcTimeUnit(item.p95)
+    }
+    if (isNumber(item.p99)) {
+      item.p99 = calcTimeUnit(item.p99)
+    }
+  })
+
+  return data
 }
 
 export function fetchMonitorApiChart(params?: Params) {

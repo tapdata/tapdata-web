@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import MiniChart from './MiniChart.vue'
@@ -18,8 +19,8 @@ const emit = defineEmits<{
 
 const configs = {
   running: { type: 'success' as const, text: 'Running' },
-  Warning: { type: 'warning' as const, text: 'Warning' },
-  Error: { type: 'danger' as const, text: 'Error' },
+  starting: { type: 'primary' as const, text: 'Starting' },
+  stopped: { type: 'danger' as const, text: 'Stopped' },
 }
 
 const statusConfig = computed(() => {
@@ -61,7 +62,13 @@ const handleViewDetails = () => {
           </el-icon>
         </div>
         <div class="service-title">
-          <div class="service-name">{{ data.serverName }}</div>
+          <div class="service-name">
+            <OverflowTooltip
+              placement="top"
+              :enerable="false"
+              :text="data.serverName"
+            />
+          </div>
           <!-- <div class="service-code">{{ data.serverCode }}</div> -->
         </div>
       </div>
@@ -126,11 +133,11 @@ const handleViewDetails = () => {
       <div class="stat-group">
         <div class="stat-item">
           <div class="stat-label">P95 LATENCY</div>
-          <div class="stat-value">{{ data.p95 }}</div>
+          <div class="stat-value">{{ data.p95 ?? '--' }}</div>
         </div>
         <div class="stat-item">
           <div class="stat-label">P99 LATENCY</div>
-          <div class="stat-value">{{ data.p99 }}</div>
+          <div class="stat-value">{{ data.p99 ?? '--' }}</div>
         </div>
       </div>
     </div>

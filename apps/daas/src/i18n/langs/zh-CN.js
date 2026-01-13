@@ -2128,6 +2128,10 @@ export default {
   api_monitor_top_api_list: 'Top API 列表',
   api_monitor_worker_diagnosis: 'Worker 资源诊断',
   api_monitor_cpu_distribution: 'CPU 分布：最小值 {min}% ~ 最大值 {max}%',
+  api_monitor_worker_name: 'Worker 名称',
+  api_monitor_worker_cpu_usage: 'Worker CPU 使用率',
+  api_monitor_worker_memory_usage: 'Worker 内存使用率',
+  api_monitor_no_worker_data: '暂无 Worker 数据',
 
   cluster_operation_success: '操作指令已发送，请稍后刷新查看结果',
   cluster_launcher_offline: '启动器已离线',

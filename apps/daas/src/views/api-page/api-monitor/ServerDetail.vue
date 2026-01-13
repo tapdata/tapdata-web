@@ -45,6 +45,55 @@ const serverDetail = ref<ServerDetail>()
 const serverChart = ref<ServerChart>()
 const apiList = ref<any>()
 const workerData = ref<ServerWorker>()
+const workerCollapseActive = ref<string[]>([])
+
+// Top API 列表排序相关
+const apiListDefaultSort = { prop: 'requestCount', order: 'descending' }
+const apiListSortBy = ref(apiListDefaultSort.prop)
+const apiListSortOrder = ref<'ASC' | 'DESC'>('DESC')
+
+// Top API 列表排序处理函数
+const handleApiListSortChange = ({
+  prop,
+  order,
+}: {
+  prop: string
+  order: string | null
+}) => {
+  if (!order) {
+    // 取消排序，恢复默认排序
+    apiListSortBy.value = apiListDefaultSort.prop
+    apiListSortOrder.value = 'DESC'
+  } else {
+    apiListSortBy.value = prop
+    apiListSortOrder.value = order === 'ascending' ? 'ASC' : 'DESC'
+  }
+  runFetch()
+}
+
+// Worker 表格排序相关
+const workerListDefaultSort = { prop: 'requestCount', order: 'descending' }
+const workerListSortBy = ref(workerListDefaultSort.prop)
+const workerListSortOrder = ref<'ASC' | 'DESC'>('DESC')
+
+// Worker 表格排序处理函数
+const handleWorkerListSortChange = ({
+  prop,
+  order,
+}: {
+  prop: string
+  order: string | null
+}) => {
+  if (!order) {
+    // 取消排序，恢复默认排序
+    workerListSortBy.value = workerListDefaultSort.prop
+    workerListSortOrder.value = 'DESC'
+  } else {
+    workerListSortBy.value = prop
+    workerListSortOrder.value = order === 'ascending' ? 'ASC' : 'DESC'
+  }
+  runFetch()
+}
 
 // 时间周期选择 - 从 route.query 中恢复
 const timeRange = ref((route.query.timeRange as string) || '1h')
@@ -97,8 +146,14 @@ const { run: runFetch } = useRequest(
 
     serverDetail.value = await fetchMonitorServerDetail(serverId, params)
     serverChart.value = await fetchMonitorServerChart(serverId, params)
-    apiList.value = await fetchMonitorServerApi(serverId, params)
-    workerData.value = await fetchMonitorServerWorker(serverId, params)
+    apiList.value = await fetchMonitorServerApi(serverId, {
+      ...params,
+      orderBy: `${apiListSortBy.value} ${apiListSortOrder.value}`,
+    })
+    workerData.value = await fetchMonitorServerWorker(serverId, {
+      ...params,
+      orderBy: `${workerListSortBy.value} ${workerListSortOrder.value}`,
+    })
   },
   {
     pollingInterval: 6000,
@@ -162,7 +217,7 @@ const cpuChartOption = computed<EChartsOption>(() => ({
     bottom: 0,
     outerBounds: {
       left: 0,
-      top: 0,
+      top: 28,
       right: 10,
       bottom: 0,
     },
@@ -179,7 +234,6 @@ const cpuChartOption = computed<EChartsOption>(() => ({
   },
   yAxis: {
     type: 'value',
-    name: 'CPU (%)',
   },
   tooltip: {
     borderRadius: 12,
@@ -198,6 +252,11 @@ const cpuChartOption = computed<EChartsOption>(() => ({
       return result
     },
   },
+  legend: {
+    data: ['CPU Usage', 'Max CPU', 'Min CPU'],
+    top: 0,
+    type: 'scroll',
+  },
   series: [
     {
       name: 'CPU Usage',
@@ -206,32 +265,40 @@ const cpuChartOption = computed<EChartsOption>(() => ({
       smooth: true,
       symbol: 'circle',
       symbolSize: 6,
-      showAllSymbol: true,
       lineStyle: {
         color: '#3b82f6',
-        width: 1,
+        width: 2,
       },
       itemStyle: {
         color: '#3b82f6',
       },
-      areaStyle: {
-        color: {
-          type: 'linear',
-          x: 0,
-          y: 0,
-          x2: 0,
-          y2: 1,
-          colorStops: [
-            {
-              offset: 0,
-              color: 'rgba(59, 130, 246, 0.3)',
-            },
-            {
-              offset: 1,
-              color: 'rgba(59, 130, 246, 0.05)',
-            },
-          ],
-        },
+    },
+    {
+      name: 'Max CPU',
+      type: 'line',
+      data: serverChart.value?.usage.maxCpuUsage || [],
+      smooth: true,
+      showSymbol: false,
+      lineStyle: {
+        color: '#ef4444',
+        width: 1,
+      },
+      itemStyle: {
+        color: '#ef4444',
+      },
+    },
+    {
+      name: 'Min CPU',
+      type: 'line',
+      data: serverChart.value?.usage.minCpuUsage || [],
+      smooth: true,
+      showSymbol: false,
+      lineStyle: {
+        color: '#10b981',
+        width: 1,
+      },
+      itemStyle: {
+        color: '#10b981',
       },
     },
   ],
@@ -245,7 +312,7 @@ const memoryChartOption = computed<EChartsOption>(() => ({
     bottom: 0,
     outerBounds: {
       left: 0,
-      top: 0,
+      top: 28,
       right: 10,
       bottom: 0,
     },
@@ -262,7 +329,6 @@ const memoryChartOption = computed<EChartsOption>(() => ({
   },
   yAxis: {
     type: 'value',
-    name: 'Memory (%)',
   },
   tooltip: {
     borderRadius: 12,
@@ -281,40 +347,53 @@ const memoryChartOption = computed<EChartsOption>(() => ({
       return result
     },
   },
+  legend: {
+    data: ['Memory Usage', 'Max Memory', 'Min Memory'],
+    top: 0,
+    type: 'scroll',
+  },
   series: [
     {
       name: 'Memory Usage',
       type: 'line',
       data: serverChart.value?.usage.memoryUsage || [],
       smooth: true,
-      showAllSymbol: true,
       symbol: 'circle',
       symbolSize: 6,
       lineStyle: {
         color: '#10b981',
-        width: 1,
+        width: 2,
       },
       itemStyle: {
         color: '#10b981',
       },
-      areaStyle: {
-        color: {
-          type: 'linear',
-          x: 0,
-          y: 0,
-          x2: 0,
-          y2: 1,
-          colorStops: [
-            {
-              offset: 0,
-              color: 'rgba(16, 185, 129, 0.3)',
-            },
-            {
-              offset: 1,
-              color: 'rgba(16, 185, 129, 0.05)',
-            },
-          ],
-        },
+    },
+    {
+      name: 'Max Memory',
+      type: 'line',
+      data: serverChart.value?.usage.maxMemoryUsage || [],
+      smooth: true,
+      showSymbol: false,
+      lineStyle: {
+        color: '#ef4444',
+        width: 1,
+      },
+      itemStyle: {
+        color: '#ef4444',
+      },
+    },
+    {
+      name: 'Min Memory',
+      type: 'line',
+      data: serverChart.value?.usage.minMemoryUsage || [],
+      smooth: true,
+      showSymbol: false,
+      lineStyle: {
+        color: '#3b82f6',
+        width: 1,
+      },
+      itemStyle: {
+        color: '#3b82f6',
       },
     },
   ],
@@ -385,7 +464,7 @@ const requestChartOption = computed<EChartsOption>(() => ({
       yAxisIndex: 0,
       data: serverChart.value?.request.requestCount || [],
       smooth: true,
-      showAllSymbol: true,
+      // showAllSymbol: true,
       symbol: 'circle',
       symbolSize: 6,
       lineStyle: {
@@ -402,7 +481,7 @@ const requestChartOption = computed<EChartsOption>(() => ({
       yAxisIndex: 1,
       data: serverChart.value?.request.errorRate || [],
       smooth: true,
-      showAllSymbol: true,
+      // showAllSymbol: true,
       symbol: 'circle',
       symbolSize: 6,
       lineStyle: {
@@ -473,7 +552,7 @@ const latencyChartOption = computed<EChartsOption>(() => ({
       type: 'line',
       data: serverChart.value?.delay.avg || [],
       smooth: true,
-      showAllSymbol: true,
+      // showAllSymbol: true,
       symbol: 'circle',
       symbolSize: 6,
       lineStyle: {
@@ -489,7 +568,7 @@ const latencyChartOption = computed<EChartsOption>(() => ({
       type: 'line',
       data: serverChart.value?.delay.p95 || [],
       smooth: true,
-      showAllSymbol: true,
+      // showAllSymbol: true,
       symbol: 'circle',
       symbolSize: 6,
       lineStyle: {
@@ -505,7 +584,7 @@ const latencyChartOption = computed<EChartsOption>(() => ({
       type: 'line',
       data: serverChart.value?.delay.p99 || [],
       smooth: true,
-      showAllSymbol: true,
+      // showAllSymbol: true,
       symbol: 'circle',
       symbolSize: 6,
       lineStyle: {
@@ -519,50 +598,144 @@ const latencyChartOption = computed<EChartsOption>(() => ({
   ],
 }))
 
-// Top API 列表排序
-const topApiSortBy = ref('p99')
-const topApiList = ref([
-  {
-    method: 'GET',
-    path: '/orders',
-    callCount: 45000,
-    errorRate: 4.2,
-    avgLatency: 180,
-    p99Latency: 450,
-  },
-  {
-    method: 'POST',
-    path: '/users',
-    callCount: 32000,
-    errorRate: 0.8,
-    avgLatency: 120,
-    p99Latency: 280,
-  },
-  {
-    method: 'GET',
-    path: '/products',
-    callCount: 28000,
-    errorRate: 1.1,
-    avgLatency: 95,
-    p99Latency: 220,
-  },
-  {
-    method: 'PUT',
-    path: '/inventory',
-    callCount: 15000,
-    errorRate: 0.5,
-    avgLatency: 140,
-    p99Latency: 320,
-  },
-  {
-    method: 'DELETE',
-    path: '/cache',
-    callCount: 8500,
-    errorRate: 0.2,
-    avgLatency: 65,
-    p99Latency: 180,
-  },
-])
+// Worker Charts
+const workerCpuChartOption = computed<EChartsOption>(() => {
+  if (!workerData.value?.workerList?.length) {
+    return {}
+  }
+
+  const timestamps = workerData.value.workerList[0]?.usage?.ts || []
+
+  return {
+    grid: {
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      outerBounds: {
+        left: 0,
+        top: 28,
+        right: 10,
+        bottom: 0,
+      },
+      outerBoundsMode: 'auto',
+      outerBoundsContain: 'auto',
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: timestamps,
+      axisLabel: {
+        formatter: (value: number) => dayjs.unix(value).format('HH:mm'),
+      },
+    },
+    yAxis: {
+      type: 'value',
+      // name: 'CPU Usage (%)',
+      axisLabel: {
+        formatter: '{value}%',
+      },
+    },
+    tooltip: {
+      borderRadius: 12,
+      borderColor: '#dee0e3',
+      extraCssText:
+        'box-shadow: 0px 4px 16px 4px rgba(31,35,41,0.03),0px 4px 8px 0px rgba(31,35,41,0.02),0px 2px 4px -4px rgba(31,35,41,0.02);',
+      padding: [8, 12],
+      trigger: 'axis',
+      formatter: (params: any) => {
+        const timestamp = params[0]?.axisValue
+        const timeStr = dayjs.unix(timestamp).format('MM-DD HH:mm:ss')
+        let result = `${timeStr}<br/>`
+        params.forEach((param: any) => {
+          result += `${param.marker}${param.seriesName}: ${isNumber(param.value) ? `${param.value}%` : '--'}<br/>`
+        })
+        return result
+      },
+    },
+    legend: {
+      data: workerData.value.workerList.map((w) => w.workerName),
+      top: 0,
+      type: 'scroll',
+    },
+    series: workerData.value.workerList.map((worker) => ({
+      name: worker.workerName,
+      type: 'line',
+      data: worker.usage.cpuUsage,
+      smooth: true,
+      showSymbol: false,
+    })),
+  }
+})
+
+const workerMemoryChartOption = computed<EChartsOption>(() => {
+  if (!workerData.value?.workerList?.length) {
+    return {}
+  }
+
+  const timestamps = workerData.value.workerList[0]?.usage?.ts || []
+
+  return {
+    grid: {
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      outerBounds: {
+        left: 0,
+        top: 28,
+        right: 10,
+        bottom: 0,
+      },
+      outerBoundsMode: 'auto',
+      outerBoundsContain: 'auto',
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: timestamps,
+      axisLabel: {
+        formatter: (value: number) => dayjs.unix(value).format('HH:mm'),
+      },
+    },
+    yAxis: {
+      type: 'value',
+      // name: 'Memory Usage (%)',
+      axisLabel: {
+        formatter: '{value}%',
+      },
+    },
+    tooltip: {
+      borderRadius: 12,
+      borderColor: '#dee0e3',
+      extraCssText:
+        'box-shadow: 0px 4px 16px 4px rgba(31,35,41,0.03),0px 4px 8px 0px rgba(31,35,41,0.02),0px 2px 4px -4px rgba(31,35,41,0.02);',
+      padding: [8, 12],
+      trigger: 'axis',
+      formatter: (params: any) => {
+        const timestamp = params[0]?.axisValue
+        const timeStr = dayjs.unix(timestamp).format('MM-DD HH:mm:ss')
+        let result = `${timeStr}<br/>`
+        params.forEach((param: any) => {
+          result += `${param.marker}${param.seriesName}: ${isNumber(param.value) ? `${param.value}%` : '--'}<br/>`
+        })
+        return result
+      },
+    },
+    legend: {
+      data: workerData.value.workerList.map((w) => w.workerName),
+      top: 0,
+      type: 'scroll',
+    },
+    series: workerData.value.workerList.map((worker) => ({
+      name: worker.workerName,
+      type: 'line',
+      data: worker.usage.memoryUsage,
+      smooth: true,
+      showSymbol: false,
+    })),
+  }
+})
 
 const onClickApi = (row: any) => {
   router.push({
@@ -629,13 +802,23 @@ const onClickApi = (row: any) => {
           </div>
           <div class="status-item">
             <div class="status-label">{{ t('api_monitor_p95_latency') }}</div>
-            <div class="status-value status-value-warning">
-              {{ p95Latency }}
+            <div
+              v-if="serverData?.p95 !== undefined"
+              class="status-value status-value-warning"
+            >
+              {{ serverData.p95 }}
             </div>
+            <div v-else class="status-value">--</div>
           </div>
           <div class="status-item">
             <div class="status-label">{{ t('api_monitor_p99_latency') }}</div>
-            <div class="status-value status-value-danger">{{ p99Latency }}</div>
+            <div
+              v-if="serverData?.p99 !== undefined"
+              class="status-value status-value-danger"
+            >
+              {{ serverData.p99 }}
+            </div>
+            <div v-else class="status-value">--</div>
           </div>
         </div>
       </div>
@@ -701,7 +884,12 @@ const onClickApi = (row: any) => {
           </el-select> -->
         </div>
 
-        <el-table :data="apiList" class="top-api-table">
+        <el-table
+          :data="apiList"
+          class="top-api-table"
+          :default-sort="apiListDefaultSort"
+          @sort-change="handleApiListSortChange"
+        >
           <el-table-column
             :label="t('api_monitor_server_api_name')"
             min-width="200"
@@ -727,11 +915,13 @@ const onClickApi = (row: any) => {
             :label="t('api_monitor_server_call_count')"
             prop="requestCount"
             width="120"
+            sortable="custom"
           />
           <el-table-column
             :label="t('api_monitor_error_rate')"
             prop="errorRate"
             width="100"
+            sortable="custom"
           >
             <template #default="{ row }">
               <span
@@ -748,35 +938,127 @@ const onClickApi = (row: any) => {
             :label="t('api_monitor_avg_latency')"
             prop="avg"
             width="120"
+            sortable="custom"
           >
             <template #default="{ row }">
-              {{ row.avgTime }}
+              {{ row.avg }}
             </template>
           </el-table-column>
           <el-table-column
             :label="t('api_monitor_p99_latency')"
             prop="p99"
             width="120"
+            sortable="custom"
           >
-            <template #default="{ row }"> {{ row.p99Time }} </template>
+            <template #default="{ row }"> {{ row.p99 ?? '--' }} </template>
           </el-table-column>
         </el-table>
       </div>
 
       <!-- Worker Section -->
       <div class="worker-section border">
-        <div class="worker-header">
-          <h3 class="section-title">{{ t('api_monitor_worker_diagnosis') }}</h3>
-          <el-icon class="expand-icon"><i-lucide-chevron-down /></el-icon>
-        </div>
-        <div class="worker-summary">
-          {{
-            t('api_monitor_cpu_distribution', {
-              min: workerData?.cpuUsageMin,
-              max: workerData?.cpuUsageMax,
-            })
-          }}
-        </div>
+        <el-collapse v-model="workerCollapseActive">
+          <el-collapse-item name="worker">
+            <template #title>
+              <div class="worker-header-content">
+                <h3 class="section-title">
+                  {{ t('api_monitor_worker_diagnosis') }}
+                </h3>
+                <!-- <div class="worker-summary">
+                  {{
+                    t('api_monitor_cpu_distribution', {
+                      min: workerData?.cpuUsageMin?.toFixed(2) || 0,
+                      max: workerData?.cpuUsageMax?.toFixed(2) || 0,
+                    })
+                  }}
+                </div> -->
+              </div>
+            </template>
+
+            <!-- Worker Charts -->
+            <div v-if="workerData?.workerList?.length" class="worker-charts">
+              <div class="chart-row">
+                <!-- CPU Usage Chart -->
+                <div class="chart-card border shadow-none">
+                  <div class="chart-title">
+                    <el-icon class="color-primary"><i-lucide-cpu /></el-icon>
+                    {{ t('api_monitor_worker_cpu_usage') }}
+                  </div>
+                  <div class="chart-container">
+                    <v-chart :option="workerCpuChartOption" autoresize />
+                  </div>
+                </div>
+
+                <!-- Memory Usage Chart -->
+                <div class="chart-card border shadow-none">
+                  <div class="chart-title">
+                    <el-icon class="color-primary"
+                      ><i-lucide-memory-stick
+                    /></el-icon>
+                    {{ t('api_monitor_worker_memory_usage') }}
+                  </div>
+                  <div class="chart-container">
+                    <v-chart :option="workerMemoryChartOption" autoresize />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Worker Table -->
+              <div class="worker-table-section">
+                <el-table
+                  :data="workerData.workerList"
+                  stripe
+                  class="has-border-t"
+                  :default-sort="workerListDefaultSort"
+                  @sort-change="handleWorkerListSortChange"
+                >
+                  <el-table-column
+                    prop="workerName"
+                    :label="t('api_monitor_worker_name')"
+                    min-width="200"
+                  />
+                  <el-table-column
+                    prop="requestCount"
+                    :label="t('api_monitor_request_count')"
+                    min-width="120"
+                    align="right"
+                  >
+                    <template #default="{ row }">
+                      {{ row.requestCount?.toLocaleString() || 0 }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    prop="errorRate"
+                    :label="t('api_monitor_error_rate')"
+                    min-width="120"
+                    align="right"
+                  >
+                    <template #default="{ row }">
+                      <span
+                        v-if="row.errorRate !== undefined"
+                        :class="{
+                          'error-rate-high': (row.errorRate || 0) > 5,
+                          'error-rate-medium':
+                            (row.errorRate || 0) > 1 &&
+                            (row.errorRate || 0) <= 5,
+                          'error-rate-low': (row.errorRate || 0) <= 1,
+                        }"
+                      >
+                        {{ (row.errorRate || 0).toFixed(2) }}%
+                      </span>
+                      <span v-else>--</span>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+            </div>
+
+            <!-- No Data -->
+            <div v-else class="no-data">
+              {{ t('api_monitor_no_worker_data') }}
+            </div>
+          </el-collapse-item>
+        </el-collapse>
       </div>
     </div>
   </PageContainer>
@@ -784,7 +1066,6 @@ const onClickApi = (row: any) => {
 
 <style lang="scss" scoped>
 .status-overview-card {
-  background: white;
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -848,7 +1129,6 @@ const onClickApi = (row: any) => {
 }
 
 .chart-card {
-  background: white;
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -895,7 +1175,6 @@ const onClickApi = (row: any) => {
 }
 
 .top-api-section {
-  background: white;
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -935,35 +1214,80 @@ const onClickApi = (row: any) => {
 }
 
 .worker-section {
-  background: white;
   border-radius: 12px;
-  padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: all 0.2s;
 
-  &:hover {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  :deep(.el-collapse) {
+    border: none;
+  }
+
+  :deep(.el-collapse-item__header) {
+    padding: 24px;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    font-weight: 600;
+    height: auto;
+    line-height: 1.5;
+  }
+
+  :deep(.el-collapse-item__wrap) {
+    border: none;
+    background: transparent;
+  }
+
+  :deep(.el-collapse-item__content) {
+    padding: 0 24px 24px;
   }
 }
 
-.worker-header {
+.worker-header-content {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
 
   .section-title {
     margin-bottom: 0;
-  }
-
-  .expand-icon {
-    transition: transform 0.2s;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
   }
 }
 
 .worker-summary {
   font-size: 14px;
   color: #6b7280;
+  font-weight: 400;
+}
+
+.worker-table-section {
+  margin-top: 24px;
+
+  :deep(.el-table) {
+    font-size: 14px;
+  }
+
+  .error-rate-high {
+    color: #ef4444;
+    font-weight: 600;
+  }
+
+  .error-rate-medium {
+    color: #f59e0b;
+    font-weight: 600;
+  }
+
+  .error-rate-low {
+    color: #10b981;
+    font-weight: 600;
+  }
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px;
+  color: #9ca3af;
+  font-size: 14px;
 }
 </style>
