@@ -981,8 +981,10 @@ export default {
             item.class,
           ]"
         >
-          <div class="font-color-light">{{ item.label }}:</div>
-          <div class="font-color-dark">{{ item.value || '-' }}</div>
+          <div class="font-color-light text-nowrap">{{ item.label }}:</div>
+          <div class="font-color-dark text-break pl-3">
+            {{ item.value || '-' }}
+          </div>
         </div>
       </div>
 

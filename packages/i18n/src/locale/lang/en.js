@@ -55,6 +55,9 @@ export default {
   public_is_not_null: 'is not null',
   public_field_value: 'Field Value',
   public_cache: 'Cache',
+  public_light: 'Light',
+  public_dark: 'Dark',
+  public_follow_system: 'Follow System',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',
@@ -159,6 +162,7 @@ export default {
   // information
   public_message_title_prompt: 'Prompt',
   public_message_delete_confirm: 'Delete',
+  public_message_delete_confirm_with_name: 'Delete {val}?',
   public_message_save_ok: 'Saved Successfully',
   public_message_save_fail: 'Save Failed',
   public_message_copy_success: 'Copy Successful',
