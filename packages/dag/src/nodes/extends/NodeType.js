@@ -331,6 +331,8 @@ export class NodeType {
             },
           },
         }
+      } else {
+        delete formSchema.properties.tabs.properties.previewTab
       }
     }
 
