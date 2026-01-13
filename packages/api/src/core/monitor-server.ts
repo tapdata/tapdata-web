@@ -520,21 +520,21 @@ export async function fetchMonitorApiList(params?: Params) {
   return data
 }
 
-export function fetchMonitorApiDetail(apiId: string, params?: Params) {
-  return requestClient.get<ApiDetail>(`${API_BASE_URL}/detail/${apiId}`, {
+export function fetchMonitorApiDetail(params?: Params) {
+  return requestClient.get<ApiDetail>(`${API_BASE_URL}/detail`, {
     params,
   })
 }
 
-export function fetchMonitorApiServer(apiId: string, params?: Params) {
+export function fetchMonitorApiServer(params?: Params) {
   return requestClient.get<ApiInServerItem[]>(
-    `${API_BASE_URL}/server/${apiId}`,
+    `${API_BASE_URL}/server`,
     { params },
   )
 }
 
-export function fetchMonitorApiChart(apiId: string, params?: Params) {
-  return requestClient.get<ApiChart>(`${API_BASE_URL}/chart/${apiId}`, {
+export function fetchMonitorApiChart(params?: Params) {
+  return requestClient.get<ApiChart>(`${API_BASE_URL}/chart`, {
     params,
   })
 }
