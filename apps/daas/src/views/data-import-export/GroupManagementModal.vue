@@ -195,13 +195,11 @@ const loadResources = async () => {
 
     switch (activeTab.value) {
       case 'SYNC_TASK':
-        // 复制任务：syncType = 'sync'
-        filter.where.syncType = 'sync'
+        filter.where.syncType = 'migrate'
         result = await fetchTasks(filter)
         break
       case 'MIGRATE_TASK':
-        // 开发任务：syncType = 'migrate'
-        filter.where.syncType = 'migrate'
+        filter.where.syncType = 'sync'
         result = await fetchTasks(filter)
         break
       case 'MODULE':
