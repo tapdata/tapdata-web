@@ -62,6 +62,7 @@ export default {
   page_title_verification_edit: 'Edit Verification',
   page_title_verification_history: 'Verification History',
   page_title_data_console: 'Data Console',
+  page_title_data_import_export: 'Data Import Export',
   // -- 多表选择器
   component_table_selector_candidate_label: 'To be selected',
   component_table_selector_checked_label: 'Selected ',

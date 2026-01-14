@@ -62,6 +62,7 @@ export default {
   page_title_verification_edit: '编辑校验',
   page_title_verification_history: '校验历史',
   page_title_data_console: '数据面板',
+  page_title_data_import_export: '数据导入导出',
   // -- 多表选择器
   component_table_selector_candidate_label: '待复制表',
   component_table_selector_checked_label: '已选择表',

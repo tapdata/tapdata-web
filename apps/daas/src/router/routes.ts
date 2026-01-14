@@ -842,6 +842,14 @@ export const routes = [
           // code: 'v2_data-encryption',
         },
       },
+      {
+        path: 'data-import-export',
+        name: 'dataImportExport',
+        component: () => import('@/views/data-import-export/List.vue'),
+        meta: {
+          title: 'page_title_data_import_export',
+        },
+      },
     ],
   },
 
