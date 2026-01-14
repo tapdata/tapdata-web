@@ -143,14 +143,14 @@ const getActualTimeRange = () => {
 const { run: runFetch } = useRequest(
   async () => {
     const params = getActualTimeRange()
-
-    serverDetail.value = await fetchMonitorServerDetail(serverId, params)
-    serverChart.value = await fetchMonitorServerChart(serverId, params)
-    apiList.value = await fetchMonitorServerApi(serverId, {
+    params.serverId = serverId
+    serverDetail.value = await fetchMonitorServerDetail(params)
+    serverChart.value = await fetchMonitorServerChart(params)
+    apiList.value = await fetchMonitorServerApi({
       ...params,
       orderBy: `${apiListSortBy.value} ${apiListSortOrder.value}`,
     })
-    workerData.value = await fetchMonitorServerWorker(serverId, {
+    workerData.value = await fetchMonitorServerWorker({
       ...params,
       orderBy: `${workerListSortBy.value} ${workerListSortOrder.value}`,
     })

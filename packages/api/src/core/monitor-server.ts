@@ -300,11 +300,10 @@ export async function fetchMonitorServerList(params?: Params) {
 }
 
 export async function fetchMonitorServerDetail(
-  serverId: string,
   params?: Params,
 ) {
   const data = await requestClient
-    .get<ServerDetail>(`${BASE_URL}/detail/${serverId}`, {
+    .get<ServerDetail>(`${BASE_URL}/detail`, {
       params,
     })
     .catch(() => ({
@@ -334,9 +333,9 @@ export async function fetchMonitorServerDetail(
   return data
 }
 
-export function fetchMonitorServerChart(serverId: string, params?: Params) {
+export function fetchMonitorServerChart(params?: Params) {
   return requestClient
-    .get<ServerChart>(`${BASE_URL}/chart/${serverId}`, { params })
+    .get<ServerChart>(`${BASE_URL}/chart`, { params })
     .catch(() => ({
       queryFrom: 1765209600,
       queryEnd: 1767801600,
@@ -364,9 +363,9 @@ export function fetchMonitorServerChart(serverId: string, params?: Params) {
     }))
 }
 
-export async function fetchMonitorServerApi(serverId: string, params?: Params) {
+export async function fetchMonitorServerApi(params?: Params) {
   const data = await requestClient.get<ServerApiItem[]>(
-    `${BASE_URL}/api/${serverId}`,
+    `${BASE_URL}/api`,
     {
       params,
     },
@@ -385,8 +384,8 @@ export async function fetchMonitorServerApi(serverId: string, params?: Params) {
   return data
 }
 
-export function fetchMonitorServerWorker(serverId: string, params?: Params) {
-  return requestClient.get<ServerWorker>(`${BASE_URL}/worker/${serverId}`, {
+export function fetchMonitorServerWorker(params?: Params) {
+  return requestClient.get<ServerWorker>(`${BASE_URL}/worker`, {
     params,
   })
 }
