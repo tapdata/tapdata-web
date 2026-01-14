@@ -5,6 +5,7 @@ import {
   type GroupInfoDto,
   type ResourceItem,
 } from '@tap/api/core/group-info'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { downloadBlob } from '@tap/shared'
 import { ElMessage } from 'element-plus'
 import { computed, ref, watch } from 'vue'
@@ -199,7 +200,7 @@ const handleExport = async () => {
       </div>
       <div class="p-2 flex-1 min-w-0 flex flex-column">
         <div
-          class="bg-card rounded-xl min-h-0 flex flex-column flex-1"
+          class="bg-card rounded-xl min-h-0 flex flex-column flex-1 overflow-auto"
           style="border: 1px solid #f2f4f7"
         >
           <div class="p-2 min-h-0 overflow-y-auto">
@@ -215,11 +216,20 @@ const handleExport = async () => {
               }"
             >
               <template #default="{ node, data }">
-                <div class="tree-node flex align-center gap-2">
-                  <el-icon v-if="data.children">
-                    <i-lucide-folder-open />
+                <div class="tree-node flex align-center gap-2 min-w-0">
+                  <el-icon v-if="data.children" :size="16">
+                    <i-lucide-folder-open v-if="node.expanded" />
+                    <i-lucide-folder-closed v-else />
                   </el-icon>
-                  <span class="node-label">{{ node.label }}</span>
+                  <span class="node-label min-w-0 elipsis">
+                    <overflow-tooltip
+                      :text="node.label"
+                      :endable="false"
+                      :show-after="300"
+                      :hide-after="0"
+                      placement="left"
+                    />
+                  </span>
                   <el-tag
                     v-if="data.children"
                     size="small"
@@ -310,9 +320,7 @@ const handleExport = async () => {
 
   .group-item {
     padding: 12px;
-    border: 1px solid var(--el-border-color);
     border-radius: 8px;
-    // background-color: white;
     transition: all 0.2s;
     cursor: pointer;
     display: flex;
@@ -320,7 +328,7 @@ const handleExport = async () => {
     gap: 8px;
 
     &:hover {
-      border-color: var(--el-color-primary);
+      background-color: var(--fill-hover);
     }
 
     &.is-current {

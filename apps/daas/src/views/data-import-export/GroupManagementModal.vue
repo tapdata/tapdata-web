@@ -10,6 +10,7 @@ import {
 } from '@tap/api/core/group-info'
 import { fetchApiModules } from '@tap/api/core/modules'
 import { fetchTasks } from '@tap/api/core/task'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { computed, nextTick, ref, watch } from 'vue'
 
@@ -476,8 +477,14 @@ const handleSelectAll = (checked: any) => {
                 <i-lucide-folder />
               </el-icon>
               <div class="flex flex-column gap-1 flex-1 min-w-0">
-                <div class="group-name ellipsis" :title="group.name">
-                  {{ group.name }}
+                <div class="group-name ellipsis">
+                  <OverflowTooltip
+                    :text="group.name"
+                    :endable="false"
+                    :show-after="300"
+                    :hide-after="0"
+                    placement="left"
+                  />
                 </div>
                 <div
                   v-if="group.description && selectedGroup?.id === group.id"
@@ -525,7 +532,7 @@ const handleSelectAll = (checked: any) => {
 
       <!-- 中间：资源选择 -->
       <div class="resources-panel">
-        <div class="panel-header p-3">
+        <div class="panel-header p-3 py-2">
           <el-input
             v-model="searchKeyword"
             placeholder="Search resources..."
@@ -669,14 +676,19 @@ const handleSelectAll = (checked: any) => {
             "
           >
             <template #default="{ node, data }">
-              <div class="tree-node pr-2">
-                <!-- <el-icon v-if="!data.children">
-                  <component :is="getResourceIcon(data.type)" />
-                </el-icon> -->
-                <el-icon v-if="data.children">
-                  <i-lucide-folder />
+              <div class="tree-node pr-2 min-w-0">
+                <el-icon v-if="data.children" :size="16">
+                  <i-lucide-folder-open v-if="node.expanded" />
+                  <i-lucide-folder-closed v-else />
                 </el-icon>
-                <span class="node-label">{{ node.label }}</span>
+                <OverflowTooltip
+                  class="node-label min-w-0 elipsis"
+                  :text="node.label"
+                  :endable="false"
+                  :show-after="300"
+                  :hide-after="0"
+                  placement="left"
+                />
                 <el-tag
                   v-if="data.children?.length"
                   size="small"
@@ -733,7 +745,7 @@ const handleSelectAll = (checked: any) => {
 
 // 左侧分组面板
 .groups-panel {
-  width: 220px;
+  width: 240px;
   display: flex;
   flex-direction: column;
   background-color: var(--el-fill-color-lighter);
@@ -761,7 +773,7 @@ const handleSelectAll = (checked: any) => {
     position: relative;
 
     &:hover {
-      background-color: var(--el-fill-color);
+      background-color: var(--fill-hover);
 
       .btn-menu {
         opacity: 1;
@@ -939,18 +951,18 @@ const handleSelectAll = (checked: any) => {
       margin-bottom: 2px;
     }
 
-    :deep(.el-tree-node__expand-icon) {
-      font-size: 14px;
-    }
+    // :deep(.el-tree-node__expand-icon) {
+    //   font-size: 14px;
+    // }
 
-    :deep(.el-checkbox) {
-      height: auto;
-    }
+    // :deep(.el-checkbox) {
+    //   height: auto;
+    // }
 
-    :deep(.el-checkbox__inner) {
-      width: 16px;
-      height: 16px;
-    }
+    // :deep(.el-checkbox__inner) {
+    //   width: 16px;
+    //   height: 16px;
+    // }
 
     .tree-node {
       display: flex;
