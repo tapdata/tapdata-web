@@ -10,6 +10,8 @@ import {
 } from '@tap/api/core/group-info'
 import { fetchApiModules } from '@tap/api/core/modules'
 import { fetchTasks } from '@tap/api/core/task'
+import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
+import { makeStatusAndDisabled } from '@tap/business/src/shared'
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { computed, nextTick, ref, watch } from 'vue'
@@ -194,25 +196,47 @@ const loadResources = async () => {
       filter.where.name = { like: searchKeyword.value, options: 'i' }
     }
 
-    switch (activeTab.value) {
+    const type = activeTab.value
+
+    const mapTask = (item: any) => {
+      makeStatusAndDisabled(item)
+
+      return {
+        id: item.id,
+        name: item.name,
+        status: item.status,
+        type,
+      }
+    }
+
+    switch (type) {
       case 'SYNC_TASK':
         filter.where.syncType = 'migrate'
         result = await fetchTasks(filter)
+        resourceList.value = result.items.map(mapTask)
         break
       case 'MIGRATE_TASK':
         filter.where.syncType = 'sync'
         result = await fetchTasks(filter)
+        resourceList.value = result.items.map(mapTask)
         break
       case 'MODULE':
         result = await fetchApiModules(filter)
+        resourceList.value = result.items.map((item) => {
+          const pathJoin: string[] = []
+          item.apiVersion && pathJoin.push(item.apiVersion)
+          item.prefix && pathJoin.push(item.prefix)
+          item.basePath && pathJoin.push(item.basePath)
+          return {
+            id: item.id,
+            name: item.name,
+            path: `/${pathJoin.join('/')}`,
+            type,
+          }
+        })
         break
     }
 
-    resourceList.value = (result?.items || result || []).map((item: any) => ({
-      id: item.id,
-      name: item.name || item.value || item.tableName,
-      type: activeTab.value,
-    }))
     totalCount.value = result?.total || 0
   } catch {
     ElMessage.error('加载资源列表失败')
@@ -561,7 +585,7 @@ const handleSelectAll = (checked: any) => {
         <div class="panel-header p-3 py-2">
           <el-input
             v-model="searchKeyword"
-            placeholder="Search resources..."
+            placeholder="搜索名称"
             clearable
             @input="loadResources"
           >
@@ -599,14 +623,15 @@ const handleSelectAll = (checked: any) => {
               >
                 <div class="resource-content">
                   <div class="resource-name">{{ resource.name }}</div>
-                  <!-- <el-tag
-                    v-if="isResourceAdded(resource.id)"
-                    size="small"
+                  <el-tag
+                    v-if="activeTab === 'MODULE'"
                     type="info"
+                    class="is-code is-wrap px-1.5 font-mono"
                     disable-transitions
                   >
-                    Added
-                  </el-tag> -->
+                    {{ resource.path }}
+                  </el-tag>
+                  <TaskStatus v-else :task="resource" class="zoom-xs" />
                 </div>
               </el-checkbox>
               <el-button
