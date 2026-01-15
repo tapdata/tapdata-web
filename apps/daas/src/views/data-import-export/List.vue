@@ -13,10 +13,14 @@ import TablePage from '@tap/business/src/components/TablePage.vue'
 import { FilterBar } from '@tap/component'
 import dayjs from 'dayjs'
 import { ElIcon, ElTag } from 'element-plus'
-import { computed, reactive, ref } from 'vue'
+import { ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import GroupExportDialog from './GroupExportDialog.vue'
 import GroupImportDialog from './GroupImportDialog.vue'
 import GroupManagementModal from './GroupManagementModal.vue'
+import RecordDetailDialog from './RecordDetailDialog.vue'
+
+const route = useRoute()
 
 // 表格引用
 const table = ref()
@@ -27,30 +31,39 @@ const importDialogVisible = ref(false)
 // 导出对话框
 const exportDialogVisible = ref(false)
 
+// 记录详情对话框
+const detailDialogVisible = ref(false)
+const currentRecord = ref<GroupInfoRecordDto | null>(null)
+
+// 打开详情弹窗
+const handleViewDetail = (row: GroupInfoRecordDto) => {
+  currentRecord.value = row
+  detailDialogVisible.value = true
+}
+
 // 搜索参数
-const searchParams = reactive({
+const searchParams = ref({
   keyword: '',
   type: '',
   status: '',
 })
 
+Object.assign(searchParams.value, route.query)
+
 // 筛选项配置
-const filterItems = computed(() => [
+const filterItems = ref([
   {
     label: '关键词',
     key: 'keyword',
     type: 'input',
-    placeholder: '搜索文件名或操作人',
-    value: searchParams.keyword,
+    placeholder: '搜索文件名',
   },
   {
     label: '类型',
     key: 'type',
-    type: 'select',
-    placeholder: '全部类型',
-    value: searchParams.type,
+    type: 'select-inner',
     options: [
-      { label: '全部类型', value: '' },
+      { label: '全部', value: '' },
       { label: '导入', value: 'import' },
       { label: '导出', value: 'export' },
     ],
@@ -59,16 +72,23 @@ const filterItems = computed(() => [
     label: '状态',
     key: 'status',
     type: 'select',
-    placeholder: '全部状态',
-    value: searchParams.status,
+    placeholder: '全部',
     options: [
-      { label: '全部状态', value: '' },
+      { label: '全部', value: '' },
       { label: '进行中', value: 'importing,exporting' },
       { label: '已完成', value: 'completed' },
       { label: '失败', value: 'failed' },
     ],
   },
 ])
+
+watch(
+  () => route.query,
+  () => {
+    Object.assign(searchParams.value, route.query)
+    table.value.fetch(1)
+  },
+)
 
 // 排序参数
 const sortParams = ref({
@@ -83,27 +103,25 @@ const getData = async ({
   page: { current: number; size: number }
 }) => {
   const where: Record<string, any> = {}
+  const { type, status, keyword } = searchParams.value
 
   // 关键词搜索
-  if (searchParams.keyword) {
-    where.or = [
-      { fileName: { like: searchParams.keyword, options: 'i' } },
-      { operator: { like: searchParams.keyword, options: 'i' } },
-    ]
+  if (keyword) {
+    where.fileName = { like: keyword, options: 'i' }
   }
 
   // 类型筛选
-  if (searchParams.type) {
-    where.type = searchParams.type
+  if (type) {
+    where.type = type
   }
 
   // 状态筛选
-  if (searchParams.status) {
-    const statuses = searchParams.status.split(',')
+  if (status) {
+    const statuses = status.split(',')
     if (statuses.length > 1) {
       where.status = { inq: statuses }
     } else {
-      where.status = searchParams.status
+      where.status = status
     }
   }
 
@@ -158,20 +176,6 @@ const getTypeText = (type: string) => {
   return type === 'import' ? '导入' : '导出'
 }
 
-// 展开行
-const expandedRows = ref<string[]>([])
-
-const handleExpandChange = (row: GroupInfoRecordDto, expanded: boolean) => {
-  if (expanded) {
-    expandedRows.value.push(row.id)
-  } else {
-    const index = expandedRows.value.indexOf(row.id)
-    if (index !== -1) {
-      expandedRows.value.splice(index, 1)
-    }
-  }
-}
-
 // 分组管理弹窗
 const groupManagementVisible = ref(false)
 
@@ -218,7 +222,6 @@ const handleImportSuccess = () => {
       :remote-method="getData"
       :default-sort="{ prop: 'operationTime', order: 'descending' }"
       @sort-change="handleSortTable"
-      @expand-change="handleExpandChange"
     >
       <template #search>
         <div class="search-bar">
@@ -285,101 +288,12 @@ const handleImportSuccess = () => {
         </template>
       </el-table-column>
 
-      <!-- 错误信息列 -->
-      <el-table-column
-        prop="message"
-        label="备注"
-        min-width="200"
-        show-overflow-tooltip
-      >
+      <!-- 操作列 -->
+      <el-table-column label="操作" width="100" align="center" fixed="right">
         <template #default="{ row }">
-          <span v-if="row.message" class="color-danger">{{ row.message }}</span>
-          <span v-else class="font-color-slight">-</span>
-        </template>
-      </el-table-column>
-
-      <!-- 展开详情 -->
-      <el-table-column type="expand">
-        <template #default="{ row }">
-          <div class="expand-content p-4">
-            <div v-if="row.details && row.details.length > 0">
-              <div
-                v-for="(detail, index) in row.details"
-                :key="index"
-                class="detail-group mb-4"
-              >
-                <div class="detail-group-header mb-2">
-                  <span class="fw-bold">分组：{{ detail.groupName }}</span>
-                  <span v-if="detail.message" class="ml-2 color-warning">{{
-                    detail.message
-                  }}</span>
-                </div>
-                <el-table
-                  :data="detail.recordDetails"
-                  size="small"
-                  border
-                  class="detail-table"
-                >
-                  <el-table-column
-                    prop="resourceType"
-                    label="资源类型"
-                    width="150"
-                  >
-                    <template #default="{ row: detailRow }">
-                      <ElTag size="small" type="info" disable-transitions>
-                        {{ detailRow.resourceType }}
-                      </ElTag>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    prop="resourceName"
-                    label="资源名称"
-                    min-width="200"
-                    show-overflow-tooltip
-                  />
-                  <el-table-column
-                    prop="action"
-                    label="操作"
-                    width="120"
-                    align="center"
-                  >
-                    <template #default="{ row: detailRow }">
-                      <ElTag
-                        size="small"
-                        :type="
-                          detailRow.action === 'IMPORTED' ||
-                          detailRow.action === 'EXPORTED'
-                            ? 'success'
-                            : detailRow.action === 'REPLACED'
-                              ? 'warning'
-                              : detailRow.action === 'ERRORED'
-                                ? 'danger'
-                                : 'info'
-                        "
-                        disable-transitions
-                      >
-                        {{ detailRow.action }}
-                      </ElTag>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    prop="message"
-                    label="备注"
-                    min-width="200"
-                    show-overflow-tooltip
-                  >
-                    <template #default="{ row: detailRow }">
-                      <span v-if="detailRow.message" class="color-danger">{{
-                        detailRow.message
-                      }}</span>
-                      <span v-else class="font-color-slight">-</span>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </div>
-            </div>
-            <div v-else class="text-center font-color-slight">暂无详细记录</div>
-          </div>
+          <el-button type="primary" text @click="handleViewDetail(row)">
+            查看详情
+          </el-button>
         </template>
       </el-table-column>
     </TablePage>
@@ -398,33 +312,14 @@ const handleImportSuccess = () => {
 
     <!-- 分组导出弹窗 -->
     <GroupExportDialog v-model="exportDialogVisible" />
+
+    <!-- 导入记录详情弹窗 -->
+    <RecordDetailDialog v-model="detailDialogVisible" :record="currentRecord" />
   </PageContainer>
 </template>
 
 <style lang="scss" scoped>
 .search-bar {
   width: 100%;
-}
-
-.expand-content {
-  background-color: var(--bg-color-light);
-}
-
-.detail-group {
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-.detail-group-header {
-  padding: 8px 12px;
-  background-color: var(--bg-color);
-  border-radius: 4px;
-}
-
-.detail-table {
-  :deep(.el-table__body) {
-    background-color: white;
-  }
 }
 </style>

@@ -273,6 +273,24 @@ const removeSelectedResources = () => {
   })
 }
 
+// 计算已选资源总数
+const totalSelectedCount = computed(() => addedResources.value.length)
+
+// 计算不存在的资源数量
+const nonExistentResourcesCount = computed(() => {
+  return addedResources.value.filter((item) => !item.name).length
+})
+
+// 一键清理不存在的资源
+const removeNonExistentResources = () => {
+  addedResources.value = addedResources.value.filter((item) => item.name)
+  selectedAddedResources.value = []
+  // 清空树的选中状态
+  nextTick(() => {
+    treeRef.value?.setCheckedKeys([])
+  })
+}
+
 // 保存修改
 const saving = ref(false)
 const handleSave = async () => {
@@ -314,31 +332,39 @@ const treeData = computed(() => {
     }
   })
 
-  return [
-    {
-      id: 'group-SYNC_TASK',
-      label: '复制任务',
-      type: 'SYNC_TASK',
-      children: groups.SYNC_TASK,
-    },
-    {
+  const data: any[] = []
+
+  if (groups.MIGRATE_TASK.length > 0) {
+    data.push({
       id: 'group-MIGRATE_TASK',
-      label: '开发任务',
+      label: '复制任务',
       type: 'MIGRATE_TASK',
       children: groups.MIGRATE_TASK,
-    },
-    {
+    })
+  }
+
+  if (groups.SYNC_TASK.length > 0) {
+    data.push({
+      id: 'group-SYNC_TASK',
+      label: '开发任务',
+      type: 'SYNC_TASK',
+      children: groups.SYNC_TASK,
+    })
+  }
+
+  if (groups.MODULE.length > 0) {
+    data.push({
       id: 'group-MODULE',
       label: 'API',
       type: 'MODULE',
       children: groups.MODULE,
-    },
-  ]
+    })
+  }
+
+  return data
 })
 
 // 已选资源总数
-const totalSelectedCount = computed(() => addedResources.value.length)
-
 // 可批量添加的数量
 const canAddCount = computed(() => selectedResources.value.length)
 
@@ -573,14 +599,14 @@ const handleSelectAll = (checked: any) => {
               >
                 <div class="resource-content">
                   <div class="resource-name">{{ resource.name }}</div>
-                  <el-tag
+                  <!-- <el-tag
                     v-if="isResourceAdded(resource.id)"
                     size="small"
                     type="info"
                     disable-transitions
                   >
                     Added
-                  </el-tag>
+                  </el-tag> -->
                 </div>
               </el-checkbox>
               <el-button
@@ -641,18 +667,32 @@ const handleSelectAll = (checked: any) => {
       <div class="selected-panel">
         <div class="panel-header p-3">
           <span class="fw-sub font-color-dark lh-6">Selected</span>
-          <el-button
-            v-if="selectedAddedResources.length > 0"
-            text
-            type="danger"
-            size="small"
-            @click="removeSelectedResources"
-          >
-            <template #icon>
-              <el-icon><i-lucide-trash-2 /></el-icon>
-            </template>
-            Remove ({{ selectedAddedResources.length }})
-          </el-button>
+          <div class="flex gap-2" style="--btn-space: 0">
+            <el-button
+              v-if="nonExistentResourcesCount > 0"
+              text
+              type="warning"
+              size="small"
+              @click="removeNonExistentResources"
+            >
+              <template #icon>
+                <el-icon><i-lucide-trash-2 /></el-icon>
+              </template>
+              清理不存在 ({{ nonExistentResourcesCount }})
+            </el-button>
+            <el-button
+              v-if="selectedAddedResources.length > 0"
+              text
+              type="danger"
+              size="small"
+              @click="removeSelectedResources"
+            >
+              <template #icon>
+                <el-icon><i-lucide-trash-2 /></el-icon>
+              </template>
+              Remove ({{ selectedAddedResources.length }})
+            </el-button>
+          </div>
         </div>
 
         <div class="selected-tree">
@@ -682,6 +722,7 @@ const handleSelectAll = (checked: any) => {
                   <i-lucide-folder-closed v-else />
                 </el-icon>
                 <OverflowTooltip
+                  v-if="node.label"
                   class="node-label min-w-0 elipsis"
                   :text="node.label"
                   :endable="false"
@@ -689,6 +730,11 @@ const handleSelectAll = (checked: any) => {
                   :hide-after="0"
                   placement="left"
                 />
+                <span
+                  v-else
+                  class="font-color-slight text-decoration-line-through"
+                  >不存在</span
+                >
                 <el-tag
                   v-if="data.children?.length"
                   size="small"
@@ -913,7 +959,7 @@ const handleSelectAll = (checked: any) => {
 
 // 右侧已选面板
 .selected-panel {
-  width: 320px;
+  width: 360px;
   display: flex;
   flex-direction: column;
   background-color: var(--el-bg-color);
@@ -951,19 +997,6 @@ const handleSelectAll = (checked: any) => {
       margin-bottom: 2px;
     }
 
-    // :deep(.el-tree-node__expand-icon) {
-    //   font-size: 14px;
-    // }
-
-    // :deep(.el-checkbox) {
-    //   height: auto;
-    // }
-
-    // :deep(.el-checkbox__inner) {
-    //   width: 16px;
-    //   height: 16px;
-    // }
-
     .tree-node {
       display: flex;
       align-items: center;
@@ -972,7 +1005,6 @@ const handleSelectAll = (checked: any) => {
       min-width: 0;
 
       .node-label {
-        flex: 1;
         font-size: 14px;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -984,7 +1016,6 @@ const handleSelectAll = (checked: any) => {
   .panel-footer {
     padding: 16px;
     border-top: 1px solid var(--el-border-color);
-    // background-color: var(--el-fill-color-lighter);
 
     .footer-stats {
       display: flex;
