@@ -322,7 +322,7 @@ export class CountUp {
   formatNumber = (num: number): string => {
     const neg = num < 0 ? '-' : ''
     let result: string, x1: string, x2: string, x3: string
-    result = Math.abs(num).toFixed(this.options.decimalPlaces)
+    result = Number(Math.abs(num).toFixed(this.options.decimalPlaces))
     result += ''
     const x = result.split('.')
     x1 = x[0]

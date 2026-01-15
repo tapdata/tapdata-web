@@ -1,9 +1,26 @@
-import { calcTimeUnit, calcUnit } from '@tap/shared'
+import { calcUnit } from '@tap/shared'
 import { isNumber } from 'lodash-es'
 import { requestClient } from '../request'
 
 const BASE_URL = '/api/monitor/server'
 const API_BASE_URL = '/api/monitor/api'
+
+/**
+ * 格式化响应时间
+ * @param val 毫秒值
+ * @returns 格式化后的字符串，小于1s显示ms，否则显示s，保留2位小数
+ */
+export function formatResponseTime(val: number | string | undefined) {
+  if (!isNumber(val)) return val
+
+  if (val < 1000) {
+    // 小于 1s，固定单位 ms，保留 2 位小数
+    return `${Number(val.toFixed(2))}ms`
+  } else {
+    // 大于等于 1s，固定单位 s，保留 2 位小数
+    return `${Number((val / 1000).toFixed(2))}s`
+  }
+}
 
 export interface Params {
   /**
@@ -26,7 +43,7 @@ export interface MonitorServer {
   errorCount: number
   totalErrorRate: number
   responseTime: number
-  responseTimeAvg: number | string
+  responseTimeAvg?: number | string
   p95?: number | string
   p99?: number | string
   notHealthyApiCount: number
@@ -115,8 +132,8 @@ export interface ServerApiItem {
   apiName: string
   requestCount: number
   errorRate: number
-  avg: number
-  p99: number
+  avg?: number | string
+  p99?: number | string
   avgTime: string
   p99Time: string
 }
@@ -152,11 +169,13 @@ export interface ApiItem {
   apiPath: string
   apiName: string
   requestCount: number
-  requestCostAvg: number
+  requestCostAvg: number | string
+  p95?: number | string
+  p99?: number | string
   maxDelay: number
   minDelay: number
   errorRate: number
-  totalRps: number
+  totalRps: number | string
 }
 
 export interface ApiDetail {
@@ -166,7 +185,8 @@ export interface ApiDetail {
   requestCount: number
   errorRate: number
   requestCostAvg: number | string
-  p99: number | string
+  p95?: number | string
+  p99?: number | string
   maxDelay: number
   minDelay: number
 }
@@ -178,8 +198,9 @@ export interface ApiInServerItem {
   serverId: string
   serverName: string
   requestCount: number
-  requestCostAvg: number
-  p99: number
+  requestCostAvg: number | string
+  p95?: number | string
+  p99?: number | string
   maxDelay: number
   minDelay: number
   errorRate: number
@@ -200,99 +221,35 @@ export interface ApiChart {
 }
 
 export async function fetchMonitorServer(params?: Params) {
-  const data = await requestClient
-    .get<MonitorServer>(BASE_URL, { params })
-    .catch(() => ({
-      queryFrom: 1767865320,
-      queryEnd: 1767868920,
-      granularity: 1,
-      totalRequestCount: 0,
-      totalErrorRate: 0,
-      responseTimeAvg: 0,
-      notHealthyApiCount: 1,
-      notHealthyServerCount: 1,
-    }))
+  const data = await requestClient.get<MonitorServer>(BASE_URL, { params })
 
   if (isNumber(data.totalErrorRate)) {
     data.totalErrorRate = Number(data.totalErrorRate.toFixed(2))
   }
 
-  if (isNumber(data.responseTimeAvg)) {
-    data.responseTimeAvg = calcTimeUnit(data.responseTimeAvg)
-  }
+  data.responseTimeAvg = formatResponseTime(data.responseTimeAvg)
 
-  if (isNumber(data.p95)) {
-    data.p95 = calcTimeUnit(data.p95)
-  }
-  if (isNumber(data.p99)) {
-    data.p99 = calcTimeUnit(data.p99)
-  }
+  data.p95 = formatResponseTime(data.p95)
+
+  data.p99 = formatResponseTime(data.p99)
 
   return data
 }
 
 export async function fetchMonitorServerList(params?: Params) {
-  const data = await requestClient
-    .get<ServerItem[]>(`${BASE_URL}/list`, { params })
-    .catch(() => {
-      return [
-        {
-          queryFrom: 1767865320,
-          queryEnd: 1767868920,
-          granularity: 1,
-          serverPingStatus: 'running',
-          serverPingTime: 1767868925069,
-          serverName: 'GavinXiaodeMacBook-Pro.local',
-          serverId: 'f3ebe1b88623ca4f933af4e27f4075a0',
-          cpuUsage: [
-            44.83, 1.27, 0.96, 0.74, 0.71, 0.77, 0.76, 0.71, 0.85, 0.81, 0.8,
-            0.71, 0.77, 0.66, 0.74, 0.91, 0.84, 0.74, 0.86, 0.97, 1.68, 1.21,
-            1.02, 1.88, 1.58, 1.36, 1.35, 1.29, 1.4, 0.9, 0.8, 1.01, 1.2, 1.08,
-            0.93, 1.59, 1.61, 1.03, 0.89, 0.95, 0.98, 1.34, 1.09, 0.78, 1.02,
-            1.34, 1.53, 1.52, 0.97, 0.96, 0.8, 0.97, 1.38, 1.08, 1.15, 1.27,
-            1.13, 1.17, 1.05, 1.12,
-          ],
-          memoryUsage: [
-            26.52, 16.7, 18.39, 18.33, 15.44, 18.84, 18.1, 17.88, 16.73, 18.48,
-            17.9, 18.66, 17.56, 18.4, 18.3, 18.09, 17.41, 18.08, 18.43, 19.65,
-            22.58, 14.35, 14.77, 20.39, 17.25, 14.43, 15.78, 18.07, 16.42,
-            17.41, 17.29, 14.09, 17.06, 17.75, 17.99, 14.46, 15.19, 18.2, 17.3,
-            17.85, 16.49, 21.46, 19.07, 20.44, 18.83, 18.35, 18.07, 10.57,
-            16.28, 11.26, 15.35, 10.65, 18.21, 15.07, 18.45, 21.28, 22.66,
-            12.05, 16.75, 19.32,
-          ],
-          ts: [
-            1767865320, 1767865380, 1767865440, 1767865500, 1767865560,
-            1767865620, 1767865680, 1767865740, 1767865800, 1767865860,
-            1767865920, 1767865980, 1767866040, 1767866100, 1767866160,
-            1767866220, 1767866280, 1767866340, 1767866400, 1767866460,
-            1767866520, 1767866580, 1767866640, 1767866700, 1767866760,
-            1767866820, 1767866880, 1767866940, 1767867000, 1767867060,
-            1767867120, 1767867180, 1767867240, 1767867300, 1767867360,
-            1767867420, 1767867480, 1767867540, 1767867600, 1767867660,
-            1767867720, 1767867780, 1767867840, 1767867900, 1767867960,
-            1767868020, 1767868080, 1767868140, 1767868200, 1767868260,
-            1767868320, 1767868380, 1767868440, 1767868500, 1767868560,
-            1767868620, 1767868680, 1767868740, 1767868800, 1767868860,
-          ],
-          requestCount: 0,
-          errorRate: 0,
-          p95: 0,
-          p99: 0,
-          deleted: false,
-        },
-      ]
-    })
+  const data = await requestClient.get<ServerItem[]>(`${BASE_URL}/list`, {
+    params,
+  })
 
   data.forEach((item) => {
     if (isNumber(item.errorRate)) {
       item.errorRate = Number(item.errorRate.toFixed(2))
     }
     if (isNumber(item.p95)) {
-      item.p95 = calcTimeUnit(item.p95)
+      item.p95 = formatResponseTime(item.p95)
     }
     if (isNumber(item.p99)) {
-      item.p99 = calcTimeUnit(item.p99)
+      item.p99 = formatResponseTime(item.p99)
     }
   })
 
@@ -300,33 +257,15 @@ export async function fetchMonitorServerList(params?: Params) {
 }
 
 export async function fetchMonitorServerDetail(params?: Params) {
-  const data = await requestClient
-    .get<ServerDetail>(`${BASE_URL}/detail`, {
-      params,
-    })
-    .catch(() => ({
-      queryFrom: 1767509965,
-      queryEnd: 1767510265,
-      granularity: 0,
-      serverName: 'GavinXiaodeMacBook-Pro.local',
-      serverId: 'f3ebe1b88623ca4f933af4e27f4075a0',
-      cpuUsage: 40.06666666666666,
-      memoryUsage: 864305152,
-      usagePingTime: 1767445635295,
-      requestCount: 0,
-    }))
-
+  const data = await requestClient.get<ServerDetail>(`${BASE_URL}/detail`, {
+    params,
+  })
   if (isNumber(data.errorRate)) {
     data.errorRate = Number(data.errorRate.toFixed(2))
   }
 
-  if (isNumber(data.p95)) {
-    data.p95 = calcTimeUnit(data.p95)
-  }
-
-  if (isNumber(data.p99)) {
-    data.p99 = calcTimeUnit(data.p99)
-  }
+  data.p95 = formatResponseTime(data.p95)
+  data.p99 = formatResponseTime(data.p99)
 
   return data
 }
@@ -368,12 +307,8 @@ export async function fetchMonitorServerApi(params?: Params) {
 
   data.forEach((item) => {
     item.errorRate = Number(item.errorRate.toFixed(2))
-    if (isNumber(item.avg)) {
-      item.avg = calcTimeUnit(item.avg)
-    }
-    if (isNumber(item.p99)) {
-      item.p99 = calcTimeUnit(item.p99)
-    }
+    item.avg = formatResponseTime(item.avg)
+    item.p99 = formatResponseTime(item.p99)
   })
 
   return data
@@ -400,15 +335,15 @@ export async function fetchMonitorApi(params?: Params) {
     }))
 
   if (isNumber(data.responseTimeAvg)) {
-    data.responseTimeAvg = calcTimeUnit(data.responseTimeAvg)
+    data.responseTimeAvg = formatResponseTime(data.responseTimeAvg)
   }
 
   if (isNumber(data.p95)) {
-    data.p95 = calcTimeUnit(data.p95)
+    data.p95 = formatResponseTime(data.p95)
   }
 
   if (isNumber(data.p99)) {
-    data.p99 = calcTimeUnit(data.p99)
+    data.p99 = formatResponseTime(data.p99)
   }
 
   if (isNumber(data.totalRps)) {
@@ -456,9 +391,9 @@ export async function fetchMonitorApiList(params?: Params) {
     ])
   data.forEach((item) => {
     item.errorRate = Number(item.errorRate.toFixed(2))
-    item.requestCostAvg = calcTimeUnit(item.requestCostAvg)
-    item.p95 = item.p95 ? calcTimeUnit(item.p95) : item.p95
-    item.p99 = item.p99 ? calcTimeUnit(item.p99) : item.p99
+    item.requestCostAvg = formatResponseTime(item.requestCostAvg)
+    item.p95 = item.p95 ? formatResponseTime(item.p95) : item.p95
+    item.p99 = item.p99 ? formatResponseTime(item.p99) : item.p99
     item.totalRps = item.totalRps
       ? `${calcUnit(item.totalRps, 'b')}/s`
       : item.totalRps
@@ -477,15 +412,15 @@ export async function fetchMonitorApiDetail(params?: Params) {
   }
 
   if (isNumber(data.requestCostAvg)) {
-    data.requestCostAvg = calcTimeUnit(data.requestCostAvg)
+    data.requestCostAvg = formatResponseTime(data.requestCostAvg)
   }
 
   if (isNumber(data.p95)) {
-    data.p95 = calcTimeUnit(data.p95)
+    data.p95 = formatResponseTime(data.p95)
   }
 
   if (isNumber(data.p99)) {
-    data.p99 = calcTimeUnit(data.p99)
+    data.p99 = formatResponseTime(data.p99)
   }
 
   return data
@@ -504,13 +439,13 @@ export async function fetchMonitorApiServer(params?: Params) {
       item.errorRate = Number(item.errorRate.toFixed(2))
     }
     if (isNumber(item.requestCostAvg)) {
-      item.requestCostAvg = calcTimeUnit(item.requestCostAvg)
+      item.requestCostAvg = formatResponseTime(item.requestCostAvg)
     }
     if (isNumber(item.p95)) {
-      item.p95 = calcTimeUnit(item.p95)
+      item.p95 = formatResponseTime(item.p95)
     }
     if (isNumber(item.p99)) {
-      item.p99 = calcTimeUnit(item.p99)
+      item.p99 = formatResponseTime(item.p99)
     }
   })
 

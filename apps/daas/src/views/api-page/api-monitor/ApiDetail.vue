@@ -9,6 +9,7 @@ import {
 import { useRequest } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { dayjs } from '@tap/business/src/shared/dayjs'
+import CountUp from '@tap/component/src/CountUp.vue'
 import { useI18n } from '@tap/i18n'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
 import { LineChart } from 'echarts/charts'
@@ -19,7 +20,7 @@ import {
 } from 'echarts/components'
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
-import { isNumber } from 'lodash-es'
+import { isNumber, isString } from 'lodash-es'
 import { computed, onMounted, ref } from 'vue'
 import VChart from 'vue-echarts'
 import { useRoute, useRouter } from 'vue-router'
@@ -134,6 +135,62 @@ const refreshData = () => {
   runFetch()
 }
 
+const cards = [
+  {
+    title: t('api_monitor_total_request_count'),
+    key: 'requestCount',
+    decimals: 0,
+  },
+  {
+    title: t('api_monitor_total_error_rate'),
+    key: 'errorRate',
+    unit: '%',
+  },
+  {
+    title: t('api_monitor_avg_latency'),
+    key: 'requestCostAvg',
+    unit: 'ms',
+  },
+  {
+    title: t('api_monitor_p95_latency'),
+    key: 'p95',
+    unit: 'ms',
+    class: 'color-warning',
+  },
+  {
+    title: t('api_monitor_p99_latency'),
+    key: 'p99',
+    unit: 'ms',
+    class: 'color-danger',
+  },
+]
+
+const topCards = computed(() => {
+  const data = apiDetail.value || {}
+  const items = cards
+
+  return items.map((item) => {
+    let value = (data as any)[item.key]
+    let unit = item.unit ?? ''
+    // 正则判断下 value 是不是带单位的
+    if (isString(value)) {
+      // 正则解析出value 和 unit
+      const match = value.match(/(\d+(?:\.\d*)?)([a-z%/]+)?/i)
+      if (match) {
+        value = Number(match[1])
+        unit = match[2] || unit
+      }
+    }
+    return {
+      ...item,
+      value,
+      unit,
+    }
+  })
+})
+
+console.log('topCards', topCards)
+
 // Computed values for status overview
 const totalCalls = computed(() => {
   if (!apiDetail.value?.requestCount) return '0'
@@ -246,7 +303,7 @@ const throughputLatencyChartOption = computed(() => {
         symbol: 'circle',
         symbolSize: isSinglePoint ? 12 : 8,
         showSymbol: true,
-        showAllSymbol: true,
+        // showAllSymbol: true,
         lineStyle: {
           color: '#10b981',
           width: 2,
@@ -271,7 +328,7 @@ const throughputLatencyChartOption = computed(() => {
         symbol: 'circle',
         symbolSize: isSinglePoint ? 12 : 8,
         showSymbol: true,
-        showAllSymbol: true,
+        // showAllSymbol: true,
         lineStyle: {
           color: '#3b82f6',
           width: 2,
@@ -291,7 +348,7 @@ const throughputLatencyChartOption = computed(() => {
         symbol: 'circle',
         symbolSize: isSinglePoint ? 12 : 8,
         showSymbol: true,
-        showAllSymbol: true,
+        // showAllSymbol: true,
         lineStyle: {
           color: '#f59e0b',
           width: 2,
@@ -311,7 +368,7 @@ const throughputLatencyChartOption = computed(() => {
         symbol: 'circle',
         symbolSize: isSinglePoint ? 12 : 8,
         showSymbol: true,
-        showAllSymbol: true,
+        // showAllSymbol: true,
         lineStyle: {
           color: '#ef4444',
           width: 2,
@@ -380,35 +437,19 @@ const onClickServer = (row: any) => {
       <!-- Status Overview -->
       <div class="status-overview-card border mt-2">
         <div v-if="apiDetail" class="status-grid">
-          <div class="status-item">
-            <div class="status-label">{{ t('api_monitor_total_calls') }}</div>
-            <div class="status-value">{{ apiDetail.requestCount }}</div>
-          </div>
-          <div class="status-item">
-            <div class="status-label">{{ t('api_monitor_error_rate') }}</div>
-            <div class="status-value">{{ apiDetail.errorRate }}%</div>
-          </div>
-          <div class="status-item">
-            <div class="status-label">{{ t('api_monitor_avg_latency') }}</div>
-            <div class="status-value">{{ apiDetail.requestCostAvg }}</div>
-          </div>
-          <div class="status-item">
-            <div class="status-label">{{ t('api_monitor_p95_latency') }}</div>
+          <div v-for="item in topCards" :key="item.key" class="status-item">
+            <div class="status-label">{{ item.title }}</div>
             <div
-              v-if="apiDetail?.p95 !== undefined"
-              class="status-value status-value-warning"
+              v-if="item.value !== undefined"
+              class="status-value"
+              :class="item.class"
             >
-              {{ apiDetail.p95 }}
-            </div>
-            <div v-else class="status-value">--</div>
-          </div>
-          <div class="status-item">
-            <div class="status-label">{{ t('api_monitor_p99_latency') }}</div>
-            <div
-              v-if="apiDetail?.p99 !== undefined"
-              class="status-value status-value-danger"
-            >
-              {{ apiDetail.p99 }}
+              <CountUp
+                :end-val="item.value"
+                :suffix="item.unit"
+                :decimals="item.decimals ?? 2"
+                :duration="0.5"
+              />
             </div>
             <div v-else class="status-value">--</div>
           </div>
@@ -472,6 +513,13 @@ const onClickServer = (row: any) => {
             <template #default="{ row }">
               {{ row.requestCostAvg ?? '--' }}
             </template>
+          </el-table-column>
+          <el-table-column
+            :label="t('api_monitor_p95_latency')"
+            prop="p95"
+            width="120"
+          >
+            <template #default="{ row }"> {{ row.p95 ?? '--' }} </template>
           </el-table-column>
           <el-table-column
             :label="t('api_monitor_p99_latency')"

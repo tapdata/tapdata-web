@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { fetchApiList, fetchApiRankLists } from '@tap/api/src/core/api-monitor'
 import {
-  fetchMonitorApi,
   fetchMonitorApiList,
   fetchMonitorServer,
   fetchMonitorServerList,
@@ -12,15 +10,14 @@ import {
 import { useRequest } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { dayjs } from '@tap/business/src/shared/dayjs'
+import CountUp from '@tap/component/src/CountUp.vue'
 import { useI18n } from '@tap/i18n'
-import { calcTimeUnit } from '@tap/shared'
-import { escapeRegExp, isString } from 'lodash-es'
-import { computed, onUnmounted, reactive, ref, watch } from 'vue'
+import { isString } from 'lodash-es'
+import { computed, nextTick, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import TimeRangeSelector from './components/TimeRangeSelector.vue'
 import ServiceCard from './ServiceCard.vue'
 import type { ApiServerCpuMem } from '@tap/api/src/core/api-server'
-
 import type { TableInstance } from 'element-plus'
 
 // Composables
@@ -29,26 +26,12 @@ const route = useRoute()
 const router = useRouter()
 
 // Refs
-const loadingTimeList = ref(false)
-const loadingApiList = ref(false)
-const loadingFailRateList = ref(false)
-const loadingTotal = ref(false)
-const silenceLoading = ref(false)
 const isDestroyed = ref(false)
 const timer = ref<number | null>(null)
-const table = ref<TableInstance>()
 const serverDetailsVisible = ref(false)
 const serverDetails = ref<Partial<ApiServerCpuMem>>({})
 
 // Reactive data
-const previewData = reactive<PreviewData>({})
-const chartData = ref<ChartDataItem[]>([])
-const failRateList = ref<FailRateItem[]>([])
-const consumingTimeList = ref<FailRateItem[]>([])
-const apiList = ref<ApiItem[]>([])
-const filterItems = ref<FilterItem[]>([])
-const clientNameList = ref<ClientNameItem[]>([])
-
 const serverData = ref<MonitorServer | {}>({})
 const apiOverview = ref<ApiOverview | {}>({})
 const serverList = ref<ServerItem[]>([])
@@ -56,6 +39,7 @@ const apiListData = ref<any[]>([])
 const apiListDefaultSort = { prop: 'requestCount', order: 'descending' }
 const apiListSortBy = ref(apiListDefaultSort.prop)
 const apiListSortOrder = ref<'ASC' | 'DESC'>('DESC')
+const tableRef = ref<TableInstance>()
 
 // 排序处理函数
 const handleSortChange = ({
@@ -81,25 +65,31 @@ const currentTab = ref('server')
 interface TopCardItem {
   title: string
   key: string
+  sortKey?: string
+  decimals?: number
   unit?: string
   value?: number | string
   class?: string
 }
 
-const serverTopCards = computed<TopCardItem[]>(() => [
+const serverTopCards = [
   {
     title: t('api_monitor_total_request_count'),
     key: 'totalRequestCount',
+    sortKey: 'requestCount',
+    decimals: 0,
   },
   {
     title: t('api_monitor_total_error_rate'),
     unit: '%',
     key: 'totalErrorRate',
+    sortKey: 'errorRate',
   },
   {
     title: t('api_monitor_avg_response_time'),
     unit: 'ms',
     key: 'responseTimeAvg',
+    sortKey: 'requestCostAvg',
   },
   {
     title: t('api_monitor_p95_response_time'),
@@ -116,38 +106,16 @@ const serverTopCards = computed<TopCardItem[]>(() => [
   {
     title: t('api_monitor_unhealthy_api_count'),
     key: 'notHealthyApiCount',
+    sortKey: 'errorRate',
     class: 'color-danger',
+    decimals: 0,
   },
-  {
-    title: t('api_monitor_unhealthy_server_count'),
-    key: 'notHealthyServerCount',
-    class: 'color-danger',
-  },
-])
-
-const apiTopCards = computed<TopCardItem[]>(() => [
-  {
-    title: t('api_monitor_total_request_count'),
-    key: 'totalRequestCount',
-  },
-  {
-    title: t('api_monitor_throughput'),
-    key: 'totalRps',
-  },
-  {
-    title: t('api_monitor_avg_response_time'),
-    unit: 'ms',
-    key: 'responseTimeAvg',
-  },
-])
+]
 
 const topCards = computed<TopCardItem[]>(() => {
-  let data = apiOverview.value
-  let items = apiTopCards.value
-  if (currentTab.value === 'server') {
-    data = serverData.value
-    items = serverTopCards.value
-  }
+  const data = serverData.value
+  const items = serverTopCards
+
   return items.map((item) => {
     let value = (data as any)[item.key]
     let unit = item.unit ?? ''
@@ -205,17 +173,16 @@ const { run: runFetch, cancel: cancelFetch } = useRequest(
   async () => {
     const params = getActualTimeRange()
 
+    serverData.value = await fetchMonitorServer(params)
+
     if (currentTab.value === 'api') {
-      apiOverview.value = await fetchMonitorApi(params)
-      const apiListResult = await fetchMonitorApiList({
+      apiListData.value = await fetchMonitorApiList({
         ...params,
         orderBy: `${apiListSortBy.value} ${apiListSortOrder.value}`,
       })
-      apiListData.value = apiListResult || []
       return
     }
 
-    serverData.value = await fetchMonitorServer(params)
     serverList.value = await fetchMonitorServerList(params)
   },
   {
@@ -223,226 +190,10 @@ const { run: runFetch, cancel: cancelFetch } = useRequest(
   },
 )
 
-const page = reactive<PageInfo>({
-  size: 5,
-  failRateCurrent: 1,
-  failRateTotal: 0,
-  failRateOrder: 'DESC',
-  consumingTimeCurrent: 1,
-  consumingTimeTotal: 0,
-  consumingTimeOrder: 'DESC',
-  apiListCurrent: 1,
-  apiListTotal: 0,
-})
-
-const searchParams = ref<SearchParams>({
-  keyword: '',
-  clientName: '',
-  status: '',
-})
-
 // 刷新数据
 const refreshData = () => {
   runFetch()
 }
-
-const statusOptions = computed<StatusOption[]>(() => [
-  { label: t('task_list_status_all'), value: '' },
-  {
-    label: t('api_monitor_total_api_list_status_active'),
-    value: 'active',
-  },
-  {
-    label: t('api_monitor_total_api_list_status_pending'),
-    value: 'pending',
-  },
-  {
-    label: t('api_monitor_total_api_list_status_generating'),
-    value: 'generating',
-  },
-])
-
-const columns = computed<Column[]>(() => [
-  {
-    label: t('api_monitor_total_api_list_name'),
-    prop: 'name',
-  },
-  {
-    label: t('api_monitor_total_columns_failed'),
-    slotName: 'failed',
-    prop: 'failed',
-    sortable: 'custom',
-  },
-])
-
-const columnsRT = computed<Column[]>(() => [
-  {
-    label: t('api_monitor_total_api_list_name'),
-    prop: 'name',
-  },
-  {
-    label: t('api_monitor_total_rTime'),
-    slotName: 'failed',
-    prop: 'failed',
-    sortable: 'custom',
-  },
-])
-
-// Computed
-
-// Watchers
-watch(
-  () => route.query,
-  () => {
-    // 只有api list 条件筛选才更新
-    const { status, clientName } = route.query
-    if (status || clientName) {
-      getApiList(1)
-    }
-  },
-)
-
-const formatMs = (time: number): string | number => {
-  if (time === 0 || !time) return 0
-  if (time < 1000) return `${time} ms`
-  return calcTimeUnit(time, 'ms', 2)
-}
-
-// 失败率排行榜
-const remoteFailedMethod = () => {
-  const { failRateCurrent, size, failRateOrder } = page
-  const filter = {
-    where: {
-      type: 'failRate',
-    },
-    limit: size,
-    order: failRateOrder,
-    skip: size * (failRateCurrent - 1),
-  }
-  loadingFailRateList.value = !silenceLoading.value
-  return fetchApiRankLists(filter)
-    .then((data) => {
-      const items = data?.items?.map((item: any) => {
-        const abj: FailRateItem = { name: '', failed: 0 }
-        Object.keys(item).forEach((key) => {
-          abj.name = key
-          abj.failed = item[key]
-        })
-        return abj
-      })
-      page.failRateTotal = data?.total || 0
-      failRateList.value = items || []
-    })
-    .finally(() => {
-      loadingFailRateList.value = false
-    })
-}
-
-// 获取api列表数据
-const getApiList = (pageNum?: number) => {
-  if (pageNum) {
-    page.apiListCurrent = pageNum
-  }
-  const { apiListCurrent } = page
-  const { keyword, status, clientName } = searchParams.value
-
-  const where: any = {}
-  if (keyword && keyword.trim()) {
-    where.name = { like: escapeRegExp(keyword), options: 'i' }
-  }
-  if (status) {
-    where.status = status
-  }
-  if (clientName) {
-    where.clientId = clientName
-  }
-  const filter = {
-    order: 'createTime DESC',
-    limit: 5,
-    skip: (apiListCurrent - 1) * 5,
-    where,
-  }
-  loadingApiList.value = !silenceLoading.value
-  return fetchApiList(filter)
-    .then((data) => {
-      apiList.value = data.items
-      page.apiListTotal = data.total
-    })
-    .finally(() => {
-      loadingApiList.value = false
-    })
-}
-
-// 生成模拟历史数据
-const generateHistory = (current: number, points = 20) => {
-  const history: number[] = []
-  for (let i = 0; i < points; i++) {
-    const variance = Math.random() * 20 - 10 // -10 到 +10 的随机波动
-    const value = Math.max(0, Math.min(100, current + variance))
-    history.push(Math.round(value))
-  }
-  return history
-}
-
-// 示例服务数据
-const mockServices = ref([
-  {
-    id: '1',
-    name: 'api-gateway-1',
-    code: 'srv-001',
-    status: 'Normal' as const,
-    cpuUsage: 45,
-    memoryUsage: 62,
-    cpuHistory: generateHistory(45),
-    memoryHistory: generateHistory(62),
-    rps: 450,
-    errorRate: 0.2,
-    p95Latency: 95,
-    p99Latency: 120,
-  },
-  {
-    id: '2',
-    name: 'user-service',
-    code: 'srv-002',
-    status: 'Warning' as const,
-    cpuUsage: 78,
-    memoryUsage: 85,
-    cpuHistory: generateHistory(78),
-    memoryHistory: generateHistory(85),
-    rps: 320,
-    errorRate: 1.5,
-    p95Latency: 150,
-    p99Latency: 200,
-  },
-  {
-    id: '3',
-    name: 'payment-service',
-    code: 'srv-003',
-    status: 'Normal' as const,
-    cpuUsage: 35,
-    memoryUsage: 48,
-    cpuHistory: generateHistory(35),
-    memoryHistory: generateHistory(48),
-    rps: 180,
-    errorRate: 0.1,
-    p95Latency: 80,
-    p99Latency: 110,
-  },
-  {
-    id: '4',
-    name: 'order-service',
-    code: 'srv-004',
-    status: 'Error' as const,
-    cpuUsage: 92,
-    memoryUsage: 95,
-    cpuHistory: generateHistory(92),
-    memoryHistory: generateHistory(95),
-    rps: 520,
-    errorRate: 5.2,
-    p95Latency: 280,
-    p99Latency: 350,
-  },
-])
 
 const handleViewServiceDetails = (data: any) => {
   router.push({
@@ -480,6 +231,16 @@ const onClickApi = (row: any) => {
   })
 }
 
+const handleSortApi = (item: TopCardItem) => {
+  currentTab.value = 'api'
+  nextTick(() => {
+    setTimeout(() => {
+      tableRef.value?.clearSort()
+      tableRef.value?.sort(item.sortKey || item.key, 'descending')
+    }, 50)
+  })
+}
+
 onUnmounted(() => {
   if (timer.value) {
     clearTimeout(timer.value)
@@ -492,7 +253,7 @@ onUnmounted(() => {
   <PageContainer
     mode="auto"
     container-class="bg-card rounded-xl shadow-sm gap-1"
-    content-class="flex-1 min-h-0 overflow-auto px-6 pb-5 position-relative flex flex-column"
+    content-class="flex-1 min-h-0 overflow-auto p-6 position-relative flex flex-column"
   >
     <template #actions>
       <div class="flex align-center gap-4">
@@ -507,11 +268,35 @@ onUnmounted(() => {
         </el-button>
       </div>
     </template>
-    <el-tabs
-      v-model="currentTab"
-      class="position-sticky top-0 z-10 bg-white dark:bg-transparent dark:backdrop-blur-md"
-      @tab-change="runFetch"
-    >
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+      <div
+        v-for="item in topCards"
+        :key="item.key"
+        class="border rounded-xl p-3 top-card cursor-pointer"
+        @click="handleSortApi(item)"
+      >
+        <div class="card-header mb-6">
+          <div class="card-title font-color-light">{{ item.title }}</div>
+        </div>
+        <div class="card-content">
+          <div
+            v-if="item.value !== undefined"
+            class="text-2xl fw-sub"
+            :class="item.class"
+          >
+            <CountUp
+              :end-val="item.value"
+              :suffix="item.unit"
+              :decimals="item.decimals ?? 2"
+              :duration="0.5"
+            />
+          </div>
+          <div v-else class="text-2xl fw-sub">--</div>
+        </div>
+      </div>
+    </div>
+
+    <el-tabs v-model="currentTab" class="mt-4" @tab-change="runFetch">
       <el-tab-pane name="server">
         <template #label>
           <span> {{ t('api_monitor_tab_server') }} </span>
@@ -523,38 +308,8 @@ onUnmounted(() => {
         </template>
       </el-tab-pane>
     </el-tabs>
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
-      <div
-        v-for="item in topCards"
-        :key="item.key"
-        class="border rounded-xl p-3 top-card"
-      >
-        <div class="card-header mb-6">
-          <div class="card-title font-color-light">{{ item.title }}</div>
-        </div>
-        <div class="card-content">
-          <div
-            v-if="item.value !== undefined"
-            class="text-2xl fw-sub"
-            :class="item.class"
-          >
-            {{ item.value }}{{ item.unit }}
-          </div>
-          <div v-else class="text-2xl fw-sub">--</div>
-        </div>
-      </div>
-    </div>
 
-    <div v-if="currentTab === 'server'" class="mt-8">
-      <div
-        class="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4"
-      >
-        <h2 class="text-lg font-bold text-gray-800">
-          {{ t('api_monitor_server_list') }}
-        </h2>
-      </div>
-
-      <!-- 服务卡片网格 -->
+    <div v-if="currentTab === 'server'">
       <div class="service-grid">
         <ServiceCard
           v-for="item in serverList"
@@ -565,30 +320,10 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- API 列表 -->
-    <div v-if="currentTab === 'api'" class="mt-8">
-      <div
-        class="flex flex-col sm:flex-row items-center justify-between mb-4 gap-4"
-      >
-        <h2 class="text-lg font-bold text-gray-800">
-          {{ t('api_monitor_api_list') }}
-        </h2>
-        <!-- <el-select
-          v-model="apiListSortBy"
-          placeholder="Sort by"
-          style="width: 180px"
-          @change="runFetch"
-        >
-          <el-option label="Sort by P99 Latency" value="p99" />
-          <el-option label="Sort by P95 Latency" value="p95" />
-          <el-option label="Sort by Error Rate" value="errorRate" />
-          <el-option label="Sort by Total Calls" value="totalCalls" />
-        </el-select> -->
-      </div>
-
-      <!-- API 列表表格 -->
+    <div v-if="currentTab === 'api'">
       <div class="api-list-table">
         <el-table
+          ref="tableRef"
           :data="apiListData"
           style="width: 100%"
           :default-sort="{ prop: 'requestCount', order: 'descending' }"
@@ -617,7 +352,7 @@ onUnmounted(() => {
             </template>
           </el-table-column>
           <el-table-column
-            :label="t('api_monitor_total_calls')"
+            :label="t('api_monitor_total_request_count')"
             prop="requestCount"
             min-width="120"
             sortable="custom"
@@ -689,12 +424,6 @@ onUnmounted(() => {
         </el-table>
       </div>
     </div>
-
-    <!-- 服务详情弹窗 -->
-    <ServerDetails
-      v-model:visible="serverDetailsVisible"
-      :server-details="serverDetails"
-    />
   </PageContainer>
 </template>
 
