@@ -165,8 +165,8 @@ export interface ApiDetail {
   granularity: number
   requestCount: number
   errorRate: number
-  requestCostAvg: number
-  p99: number
+  requestCostAvg: number | string
+  p99: number | string
   maxDelay: number
   minDelay: number
 }
@@ -299,9 +299,7 @@ export async function fetchMonitorServerList(params?: Params) {
   return data
 }
 
-export async function fetchMonitorServerDetail(
-  params?: Params,
-) {
+export async function fetchMonitorServerDetail(params?: Params) {
   const data = await requestClient
     .get<ServerDetail>(`${BASE_URL}/detail`, {
       params,
@@ -364,12 +362,9 @@ export function fetchMonitorServerChart(params?: Params) {
 }
 
 export async function fetchMonitorServerApi(params?: Params) {
-  const data = await requestClient.get<ServerApiItem[]>(
-    `${BASE_URL}/api`,
-    {
-      params,
-    },
-  )
+  const data = await requestClient.get<ServerApiItem[]>(`${BASE_URL}/api`, {
+    params,
+  })
 
   data.forEach((item) => {
     item.errorRate = Number(item.errorRate.toFixed(2))
@@ -472,10 +467,28 @@ export async function fetchMonitorApiList(params?: Params) {
   return data
 }
 
-export function fetchMonitorApiDetail(params?: Params) {
-  return requestClient.get<ApiDetail>(`${API_BASE_URL}/detail`, {
+export async function fetchMonitorApiDetail(params?: Params) {
+  const data = await requestClient.get<ApiDetail>(`${API_BASE_URL}/detail`, {
     params,
   })
+
+  if (isNumber(data.errorRate)) {
+    data.errorRate = Number(data.errorRate.toFixed(2))
+  }
+
+  if (isNumber(data.requestCostAvg)) {
+    data.requestCostAvg = calcTimeUnit(data.requestCostAvg)
+  }
+
+  if (isNumber(data.p95)) {
+    data.p95 = calcTimeUnit(data.p95)
+  }
+
+  if (isNumber(data.p99)) {
+    data.p99 = calcTimeUnit(data.p99)
+  }
+
+  return data
 }
 
 export async function fetchMonitorApiServer(params?: Params) {

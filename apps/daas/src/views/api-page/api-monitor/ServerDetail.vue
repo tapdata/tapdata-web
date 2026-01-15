@@ -105,6 +105,7 @@ onMounted(() => {
     customTimeRange.value = [+route.query.customStart, +route.query.customEnd]
     timeRange.value = 'custom'
   }
+  runFetch()
 })
 
 const serverName = computed(
@@ -157,6 +158,7 @@ const { run: runFetch } = useRequest(
   },
   {
     pollingInterval: 6000,
+    manual: true,
   },
 )
 
@@ -191,23 +193,6 @@ const errorRate = computed(() => {
   return `${rate.toFixed(1)}%`
 })
 
-const p95Latency = computed(() => {
-  if (!serverDetail.value?.p95) return '0ms'
-  const latency = serverDetail.value.p95
-  if (latency >= 1000) {
-    return `${(latency / 1000).toFixed(1)}s`
-  }
-  return `${latency}ms`
-})
-
-const p99Latency = computed(() => {
-  if (!serverDetail.value?.p99) return '0ms'
-  const latency = serverDetail.value.p99
-  if (latency >= 1000) {
-    return `${(latency / 1000).toFixed(1)}s`
-  }
-  return `${latency}ms`
-})
 // Chart options
 const cpuChartOption = computed<EChartsOption>(() => ({
   grid: {

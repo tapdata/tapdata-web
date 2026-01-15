@@ -176,8 +176,8 @@ const customTimeRange = ref<[Date, Date] | null>(null)
 const getActualTimeRange = () => {
   if (timeRange.value === 'custom' && customTimeRange.value) {
     return {
-      start: dayjs(customTimeRange.value[0]).unix(),
-      end: dayjs(customTimeRange.value[1]).unix(),
+      startAt: dayjs(customTimeRange.value[0]).unix(),
+      endAt: dayjs(customTimeRange.value[1]).unix(),
     }
   }
 

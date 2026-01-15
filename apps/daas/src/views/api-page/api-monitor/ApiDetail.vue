@@ -76,6 +76,8 @@ onMounted(() => {
     customTimeRange.value = [+route.query.customStart, +route.query.customEnd]
     timeRange.value = 'custom'
   }
+
+  runFetch()
 })
 
 const apiName = computed(
@@ -124,6 +126,7 @@ const { run: runFetch } = useRequest(
   },
   {
     pollingInterval: 6000,
+    manual: true,
   },
 )
 
@@ -334,8 +337,8 @@ const onClickServer = (row: any) => {
       timeRange: timeRange.value,
       ...(timeRange.value === 'custom' && customTimeRange.value
         ? {
-            customStart: customTimeRange.value[0].toISOString(),
-            customEnd: customTimeRange.value[1].toISOString(),
+            customStart: customTimeRange.value[0],
+            customEnd: customTimeRange.value[1],
           }
         : {}),
     },
@@ -376,18 +379,18 @@ const onClickServer = (row: any) => {
     <div class="flex flex-column gap-6">
       <!-- Status Overview -->
       <div class="status-overview-card border mt-2">
-        <div class="status-grid">
+        <div v-if="apiDetail" class="status-grid">
           <div class="status-item">
             <div class="status-label">{{ t('api_monitor_total_calls') }}</div>
-            <div class="status-value">{{ totalCalls }}</div>
+            <div class="status-value">{{ apiDetail.requestCount }}</div>
           </div>
           <div class="status-item">
             <div class="status-label">{{ t('api_monitor_error_rate') }}</div>
-            <div class="status-value">{{ errorRate }}</div>
+            <div class="status-value">{{ apiDetail.errorRate }}%</div>
           </div>
           <div class="status-item">
             <div class="status-label">{{ t('api_monitor_avg_latency') }}</div>
-            <div class="status-value">{{ avgLatency }}</div>
+            <div class="status-value">{{ apiDetail.requestCostAvg }}</div>
           </div>
           <div class="status-item">
             <div class="status-label">{{ t('api_monitor_p95_latency') }}</div>
