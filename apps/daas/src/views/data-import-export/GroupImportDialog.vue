@@ -103,7 +103,7 @@ const submitUpload = async () => {
     </div>
 
     <!-- 导入模式选择 -->
-    <el-form :model="importForm" class="mt-6" label-position="top">
+    <!-- <el-form :model="importForm" class="mt-6" label-position="top">
       <el-form-item prop="importMode" label="导入模式">
         <el-radio-group
           v-model="importForm.importMode"
@@ -131,7 +131,7 @@ const submitUpload = async () => {
           </el-radio>
         </el-radio-group>
       </el-form-item>
-    </el-form>
+    </el-form> -->
 
     <template #footer>
       <span class="dialog-footer">
