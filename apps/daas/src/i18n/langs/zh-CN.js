@@ -2075,11 +2075,12 @@ export default {
   api_monitor_tab_server: 'Server 总览',
   api_monitor_tab_api: 'API 总览',
   api_monitor_total_request_count: '总请求数',
+  api_monitor_total_error_count: '总错误数',
   api_monitor_total_error_rate: '总错误率',
   api_monitor_avg_response_time: '平均响应时间',
   api_monitor_p95_response_time: 'P95 响应时间',
   api_monitor_p99_response_time: 'P99 响应时间',
-  api_monitor_unhealthy_api_count: '不健康的 API',
+  api_monitor_unhealthy_api_count: '异常请求API',
   api_monitor_unhealthy_server_count: '不健康的 Server',
   api_monitor_server_list: 'Server List',
   api_monitor_api_list: 'API List',
@@ -2116,6 +2117,7 @@ export default {
   api_monitor_server_name: 'Server 名称',
   api_monitor_throughput_latency_trend: '吞吐量与延迟趋势',
   api_monitor_latency_ms: '延迟 (ms)',
+  api_monitor_response_time_trend: 'API 响应时间趋势',
 
   // Server 详情页
   api_monitor_server_detail: 'Server 详情',

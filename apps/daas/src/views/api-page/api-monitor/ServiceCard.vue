@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
 import MiniChart from './MiniChart.vue'
 import type { ServerItem } from '@tap/api/src/core/monitor-server'
-
-const router = useRouter()
 
 interface ServiceCardProps {
   data: ServerItem
@@ -84,7 +81,7 @@ const handleViewDetails = () => {
             <el-icon :size="14" class="metric-icon">
               <i-lucide-cpu />
             </el-icon>
-            <span>CPU Usage</span>
+            <span>{{ $t('api_monitor_cpu_usage') }}</span>
           </div>
           <div class="metric-value">{{ cpuUsage }}%</div>
         </div>
@@ -104,7 +101,7 @@ const handleViewDetails = () => {
             <el-icon :size="14" class="metric-icon">
               <i-lucide-memory-stick />
             </el-icon>
-            <span>Memory Usage</span>
+            <span>{{ $t('api_monitor_memory_usage') }}</span>
           </div>
           <div class="metric-value">{{ memoryUsage }}%</div>
         </div>
@@ -122,21 +119,25 @@ const handleViewDetails = () => {
     <div class="service-stats">
       <div class="stat-group">
         <div class="stat-item">
-          <div class="stat-label">REQUEST COUNT</div>
+          <div class="stat-label">{{ $t('api_monitor_request_count') }}</div>
           <div class="stat-value">{{ data.requestCount }}</div>
         </div>
         <div class="stat-item">
-          <div class="stat-label">ERROR RATE</div>
+          <div class="stat-label">{{ $t('api_monitor_error_rate') }}</div>
           <div class="stat-value">{{ data.errorRate }}%</div>
         </div>
       </div>
       <div class="stat-group">
         <div class="stat-item">
-          <div class="stat-label">P95 LATENCY</div>
+          <div class="stat-label">
+            {{ $t('api_monitor_p95_response_time') }}
+          </div>
           <div class="stat-value">{{ data.p95 ?? '--' }}</div>
         </div>
         <div class="stat-item">
-          <div class="stat-label">P99 LATENCY</div>
+          <div class="stat-label">
+            {{ $t('api_monitor_p99_response_time') }}
+          </div>
           <div class="stat-value">{{ data.p99 ?? '--' }}</div>
         </div>
       </div>
@@ -145,7 +146,7 @@ const handleViewDetails = () => {
     <!-- Footer - 悬停时显示，浮动在底部 -->
     <div>
       <ElButton type="primary" class="w-100" @click="handleViewDetails">
-        View Details
+        {{ $t('public_view_details') }}
       </ElButton>
     </div>
   </ElCard>

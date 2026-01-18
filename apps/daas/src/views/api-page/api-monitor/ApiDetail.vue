@@ -135,89 +135,67 @@ const refreshData = () => {
   runFetch()
 }
 
-const cards = [
-  {
-    title: t('api_monitor_total_request_count'),
-    key: 'requestCount',
-    decimals: 0,
-  },
-  {
-    title: t('api_monitor_total_error_rate'),
-    key: 'errorRate',
-    unit: '%',
-  },
-  {
-    title: t('api_monitor_avg_latency'),
-    key: 'requestCostAvg',
-    unit: 'ms',
-  },
-  {
-    title: t('api_monitor_p95_latency'),
-    key: 'p95',
-    unit: 'ms',
-    class: 'color-warning',
-  },
-  {
-    title: t('api_monitor_p99_latency'),
-    key: 'p99',
-    unit: 'ms',
-    class: 'color-danger',
-  },
-]
-
-const topCards = computed(() => {
-  const data = apiDetail.value || {}
-  const items = cards
-
-  return items.map((item) => {
-    let value = (data as any)[item.key]
-    let unit = item.unit ?? ''
-    // 正则判断下 value 是不是带单位的
-    if (isString(value)) {
-      // 正则解析出value 和 unit
-      const match = value.match(/(\d+(?:\.\d*)?)([a-z%/]+)?/i)
-      if (match) {
-        value = Number(match[1])
-        unit = match[2] || unit
+const matchValueUnit = (value: any) => {
+  if (isString(value)) {
+    const match = value.match(/(\d+(?:\.\d*)?)([a-z%/]+)?/i)
+    if (match) {
+      return {
+        value: Number(match[1]),
+        unit: match[2] || '',
       }
     }
-    return {
-      ...item,
-      value,
-      unit,
-    }
-  })
-})
-
-console.log('topCards', topCards)
-
-// Computed values for status overview
-const totalCalls = computed(() => {
-  if (!apiDetail.value?.requestCount) return '0'
-  const count = apiDetail.value.requestCount
-  if (count >= 1000) {
-    return `${(count / 1000).toFixed(1)}k`
   }
-  return count.toString()
+  return {
+    value,
+    unit: '',
+  }
+}
+
+const requestCount = computed(() => {
+  const { value, unit } = matchValueUnit(apiDetail.value?.requestCount)
+  return {
+    value,
+    unit,
+  }
 })
 
-const errorRate = computed(() => {
-  if (!apiDetail.value?.errorRate) return '0%'
-  const rate = Number.parseFloat(apiDetail.value.errorRate)
-  if (Number.isNaN(rate)) return '0%'
-  return `${rate.toFixed(1)}%`
+const errorCount = computed(() => {
+  const { value, unit } = matchValueUnit(apiDetail.value?.errorCount)
+  return {
+    value,
+    unit,
+    errorRate: apiDetail.value?.errorRate,
+  }
 })
 
-const avgLatency = computed(() => {
-  if (!apiDetail.value?.requestCostAvg) return '0ms'
-  return calcTimeUnit(apiDetail.value.requestCostAvg, 2, {
-    keepDecimal: true,
-    decimalPlaces: 2,
-  })
+const responseTimeAvg = computed(() => {
+  const { value, unit } = matchValueUnit(apiDetail.value?.responseTimeAvg)
+  return {
+    value,
+    unit,
+    minDelay: apiDetail.value?.minDelay,
+    maxDelay: apiDetail.value?.maxDelay,
+  }
 })
 
-// 吞吐量与延迟趋势图表（双轴）
-const throughputLatencyChartOption = computed(() => {
+const p95 = computed(() => {
+  const { value, unit } = matchValueUnit(apiDetail.value?.p95)
+  return {
+    value,
+    unit,
+  }
+})
+
+const p99 = computed(() => {
+  const { value, unit } = matchValueUnit(apiDetail.value?.p99)
+  return {
+    value,
+    unit,
+  }
+})
+
+// 响应时间趋势图表
+const latencyChartOption = computed(() => {
   const dataLength = apiChart.value?.ts?.length || 0
   const isSinglePoint = dataLength === 1
 
@@ -238,9 +216,6 @@ const throughputLatencyChartOption = computed(() => {
     },
     tooltip: {
       trigger: 'axis',
-      // axisPointer: {
-      //   type: 'cross',
-      // },
       borderRadius: 12,
       borderColor: '#dee0e3',
       extraCssText:
@@ -250,19 +225,15 @@ const throughputLatencyChartOption = computed(() => {
         const timestamp = params[0]?.axisValue
         const timeStr = dayjs.unix(timestamp).format('MM-DD HH:mm:ss')
         let result = `${timeStr}<br/>`
-        params.forEach((param: any, index: number) => {
-          const value = isNumber(param.value)
-            ? index === 0
-              ? `${calcUnit(param.value, 'b')}/s`
-              : calcTimeUnit(param.value)
-            : '--'
+        params.forEach((param: any) => {
+          const value = isNumber(param.value) ? calcTimeUnit(param.value) : '--'
           result += `${param.marker}${param.seriesName}: ${value}<br/>`
         })
         return result
       },
     },
     legend: {
-      data: ['吞吐量', 'Avg', 'P95', 'P99'],
+      data: ['Avg', 'P95', 'P99'],
       top: 0,
     },
     xAxis: {
@@ -273,62 +244,22 @@ const throughputLatencyChartOption = computed(() => {
         formatter: (value: number) => dayjs.unix(value).format('HH:mm'),
       },
     },
-    yAxis: [
-      {
-        type: 'value',
-        name: t('api_monitor_throughput'),
-        position: 'left',
-        axisLabel: {
-          formatter(value: number) {
-            return `${calcUnit(value, 'b')}/s`
-          },
-        },
+    yAxis: {
+      type: 'value',
+      name: t('api_monitor_latency_ms'),
+      axisLabel: {
+        formatter: '{value}',
       },
-      {
-        type: 'value',
-        name: t('api_monitor_latency_ms'),
-        position: 'right',
-        axisLabel: {
-          formatter: '{value}',
-        },
-      },
-    ],
+    },
     series: [
-      {
-        name: t('api_monitor_throughput'),
-        type: isSinglePoint ? 'scatter' : 'line',
-        data: apiChart.value?.rps || [],
-        smooth: !isSinglePoint,
-        yAxisIndex: 0,
-        symbol: 'circle',
-        symbolSize: isSinglePoint ? 12 : 8,
-        showSymbol: true,
-        // showAllSymbol: true,
-        lineStyle: {
-          color: '#10b981',
-          width: 2,
-        },
-        itemStyle: {
-          color: '#10b981',
-          borderColor: '#fff',
-          borderWidth: 2,
-        },
-        areaStyle: isSinglePoint
-          ? undefined
-          : {
-              color: 'rgba(16, 185, 129, 0.1)',
-            },
-      },
       {
         name: 'Avg',
         type: isSinglePoint ? 'scatter' : 'line',
         data: apiChart.value?.requestCostAvg || [],
         smooth: !isSinglePoint,
-        yAxisIndex: 1,
         symbol: 'circle',
         symbolSize: isSinglePoint ? 12 : 8,
         showSymbol: true,
-        // showAllSymbol: true,
         lineStyle: {
           color: '#3b82f6',
           width: 2,
@@ -344,11 +275,9 @@ const throughputLatencyChartOption = computed(() => {
         type: isSinglePoint ? 'scatter' : 'line',
         data: apiChart.value?.p95 || [],
         smooth: !isSinglePoint,
-        yAxisIndex: 1,
         symbol: 'circle',
         symbolSize: isSinglePoint ? 12 : 8,
         showSymbol: true,
-        // showAllSymbol: true,
         lineStyle: {
           color: '#f59e0b',
           width: 2,
@@ -364,11 +293,9 @@ const throughputLatencyChartOption = computed(() => {
         type: isSinglePoint ? 'scatter' : 'line',
         data: apiChart.value?.p99 || [],
         smooth: !isSinglePoint,
-        yAxisIndex: 1,
         symbol: 'circle',
         symbolSize: isSinglePoint ? 12 : 8,
         showSymbol: true,
-        // showAllSymbol: true,
         lineStyle: {
           color: '#ef4444',
           width: 2,
@@ -378,6 +305,95 @@ const throughputLatencyChartOption = computed(() => {
           borderColor: '#fff',
           borderWidth: 2,
         },
+      },
+    ],
+  }
+})
+
+// 吞吐量趋势图表
+const throughputChartOption = computed(() => {
+  const dataLength = apiChart.value?.ts?.length || 0
+  const isSinglePoint = dataLength === 1
+
+  return {
+    grid: {
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      outerBounds: {
+        left: 0,
+        top: 0,
+        right: 10,
+        bottom: 0,
+      },
+      outerBoundsMode: 'auto',
+      outerBoundsContain: 'auto',
+    },
+    tooltip: {
+      trigger: 'axis',
+      borderRadius: 12,
+      borderColor: '#dee0e3',
+      extraCssText:
+        'box-shadow: 0px 4px 16px 4px rgba(31,35,41,0.03),0px 4px 8px 0px rgba(31,35,41,0.02),0px 2px 4px -4px rgba(31,35,41,0.02);',
+      padding: [8, 12],
+      formatter: (params: any) => {
+        const timestamp = params[0]?.axisValue
+        const timeStr = dayjs.unix(timestamp).format('MM-DD HH:mm:ss')
+        let result = `${timeStr}<br/>`
+        params.forEach((param: any) => {
+          const value = isNumber(param.value)
+            ? `${calcUnit(param.value, 'b')}/s`
+            : '--'
+          result += `${param.marker}${param.seriesName}: ${value}<br/>`
+        })
+        return result
+      },
+    },
+    // legend: {
+    //   data: [t('api_monitor_throughput')],
+    //   top: 0,
+    // },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: apiChart.value?.ts || [],
+      axisLabel: {
+        formatter: (value: number) => dayjs.unix(value).format('HH:mm'),
+      },
+    },
+    yAxis: {
+      type: 'value',
+      // name: t('api_monitor_throughput'),
+      axisLabel: {
+        formatter(value: number) {
+          return `${calcUnit(value, 'b')}/s`
+        },
+      },
+    },
+    series: [
+      {
+        name: t('api_monitor_throughput'),
+        type: isSinglePoint ? 'scatter' : 'line',
+        data: apiChart.value?.rps || [],
+        smooth: !isSinglePoint,
+        symbol: 'circle',
+        symbolSize: isSinglePoint ? 12 : 8,
+        showSymbol: true,
+        lineStyle: {
+          color: '#10b981',
+          width: 2,
+        },
+        itemStyle: {
+          color: '#10b981',
+          borderColor: '#fff',
+          borderWidth: 2,
+        },
+        areaStyle: isSinglePoint
+          ? undefined
+          : {
+              color: 'rgba(16, 185, 129, 0.1)',
+            },
       },
     ],
   }
@@ -436,27 +452,89 @@ const onClickServer = (row: any) => {
     <div class="flex flex-column gap-6">
       <!-- Status Overview -->
       <div class="status-overview-card border mt-2">
-        <div v-if="apiDetail" class="status-grid">
-          <div v-for="item in topCards" :key="item.key" class="status-item">
-            <div class="status-label">{{ item.title }}</div>
-            <div
-              v-if="item.value !== undefined"
-              class="status-value"
-              :class="item.class"
-            >
+        <div class="status-grid">
+          <div class="status-item">
+            <div class="status-label">
+              {{ $t('api_monitor_total_request_count') }}
+            </div>
+            <div v-if="requestCount.value !== undefined" class="status-value">
               <CountUp
-                :end-val="item.value"
-                :suffix="item.unit"
-                :decimals="item.decimals ?? 2"
+                :end-val="requestCount.value"
+                :suffix="requestCount.unit"
                 :duration="0.5"
               />
             </div>
             <div v-else class="status-value">--</div>
           </div>
-          <!-- <div class="status-item">
-            <div class="status-label">吞吐量</div>
-            <div class="status-value">{{ throughput }}</div>
-          </div> -->
+          <div class="status-item">
+            <div class="status-label">
+              {{ $t('api_monitor_total_error_count') }}
+            </div>
+            <div
+              v-if="errorCount.value !== undefined"
+              class="status-value flex align-items-end gap-2"
+            >
+              <CountUp :end-val="errorCount.value" :duration="0.5" />
+
+              <el-tag type="danger" size="small"
+                ><span>{{ $t('api_monitor_error_rate') }}</span
+                >{{ errorCount.errorRate }}%</el-tag
+              >
+            </div>
+            <div v-else class="status-value">--</div>
+          </div>
+          <div class="status-item">
+            <div class="status-label">
+              {{ $t('api_monitor_avg_response_time') }}
+            </div>
+            <div
+              v-if="responseTimeAvg.value !== undefined"
+              class="status-value flex align-items-end gap-2"
+            >
+              <CountUp
+                :end-val="responseTimeAvg.value"
+                :suffix="responseTimeAvg.unit"
+                :duration="0.5"
+              />
+              <el-tag size="small" class="is-code">
+                {{ responseTimeAvg.minDelay }} -
+                {{ responseTimeAvg.maxDelay }}
+              </el-tag>
+            </div>
+            <div v-else class="status-value">--</div>
+          </div>
+          <div class="status-item">
+            <div class="status-label">
+              {{ $t('api_monitor_p95_response_time') }}
+            </div>
+            <div
+              v-if="p95.value !== undefined"
+              class="status-value color-warning"
+            >
+              <CountUp
+                :end-val="p95.value"
+                :suffix="p95.unit"
+                :duration="0.5"
+              />
+            </div>
+            <div v-else class="status-value">--</div>
+          </div>
+          <div class="status-item">
+            <div class="status-label">
+              {{ $t('api_monitor_p99_response_time') }}
+            </div>
+            <div
+              v-if="p99.value !== undefined"
+              class="status-value color-danger"
+            >
+              <CountUp
+                :end-val="p99.value"
+                :suffix="p99.unit"
+                :duration="0.5"
+              />
+            </div>
+            <div v-else class="status-value">--</div>
+          </div>
         </div>
       </div>
 
@@ -531,13 +609,21 @@ const onClickServer = (row: any) => {
         </el-table>
       </div>
 
-      <!-- Throughput & Latency Trend Chart -->
+      <!-- Response Time Trend Chart -->
       <div class="chart-section border">
         <h3 class="section-title mb-4">
-          {{ t('api_monitor_throughput_latency_trend') }}
+          {{ t('api_monitor_response_time_trend') }}
         </h3>
-        <div class="chart-container-large">
-          <VChart :option="throughputLatencyChartOption" :autoresize="true" />
+        <div class="chart-container">
+          <VChart :option="latencyChartOption" :autoresize="true" />
+        </div>
+      </div>
+
+      <!-- Throughput Trend Chart -->
+      <div class="chart-section border">
+        <h3 class="section-title mb-4">{{ t('api_monitor_throughput') }}</h3>
+        <div class="chart-container">
+          <VChart :option="throughputChartOption" :autoresize="true" />
         </div>
       </div>
     </div>
@@ -559,16 +645,8 @@ const onClickServer = (row: any) => {
 
 .status-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 32px;
-
-  @media (max-width: 1200px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  grid-template-columns: repeat(5, 1fr);
+  gap: 24px;
 }
 
 .status-item {
@@ -637,8 +715,8 @@ const onClickServer = (row: any) => {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.chart-container-large {
-  height: 400px;
+.chart-container {
+  height: 300px;
   width: 100%;
 }
 

@@ -14,10 +14,8 @@ export function formatResponseTime(val: number | string | undefined) {
   if (!isNumber(val)) return val
 
   if (val < 1000) {
-    // 小于 1s，固定单位 ms，保留 2 位小数
-    return `${Number(val.toFixed(2))}ms`
+    return `${Math.round(val)}ms`
   } else {
-    // 大于等于 1s，固定单位 s，保留 2 位小数
     return `${Number((val / 1000).toFixed(2))}s`
   }
 }
@@ -93,6 +91,10 @@ export interface ServerDetail {
   usagePingTime: number
   requestCount: number
   errorRate: number
+  errorCount: number
+  responseTimeAvg: number | string
+  maxDelay: number
+  minDelay: number
   p95?: number | string
   p99?: number | string
 }
@@ -221,7 +223,23 @@ export interface ApiChart {
 }
 
 export async function fetchMonitorServer(params?: Params) {
-  const data = await requestClient.get<MonitorServer>(BASE_URL, { params })
+  const data = await requestClient
+    .get<MonitorServer>(BASE_URL, { params })
+    .catch(() => {
+      return {
+        totalErrorRate: 0,
+        errorCount: 0,
+        responseTimeAvg: 100,
+        minDelay: 0,
+        maxDelay: 200,
+        notHealthyApiCount: 0,
+        notHealthyServerCount: 0,
+        queryEnd: 0,
+        queryFrom: 0,
+        responseTime: 0,
+        totalRequestCount: 0,
+      }
+    })
 
   if (isNumber(data.totalErrorRate)) {
     data.totalErrorRate = Number(data.totalErrorRate.toFixed(2))
@@ -260,12 +278,14 @@ export async function fetchMonitorServerDetail(params?: Params) {
   const data = await requestClient.get<ServerDetail>(`${BASE_URL}/detail`, {
     params,
   })
+
   if (isNumber(data.errorRate)) {
     data.errorRate = Number(data.errorRate.toFixed(2))
   }
 
-  data.p95 = formatResponseTime(data.p95)
-  data.p99 = formatResponseTime(data.p99)
+  ;['responseTimeAvg', 'p95', 'p99', 'minDelay', 'maxDelay'].forEach((key) => {
+    data[key] = formatResponseTime(data[key])
+  })
 
   return data
 }

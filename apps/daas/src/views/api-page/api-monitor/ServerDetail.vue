@@ -84,13 +84,28 @@ const cards = [
     decimals: 0,
   },
   {
+    title: '请求异常数',
+    key: 'errorCount',
+    decimals: 0,
+  },
+  {
     title: t('api_monitor_total_error_rate'),
     key: 'errorRate',
     unit: '%',
   },
   {
     title: t('api_monitor_avg_latency'),
-    key: 'requestCostAvg',
+    key: 'responseTimeAvg',
+    unit: 'ms',
+  },
+  {
+    title: '最大响应时间',
+    key: 'maxDelay',
+    unit: 'ms',
+  },
+  {
+    title: '最小响应时间',
+    key: 'minDelay',
     unit: 'ms',
   },
   {
@@ -107,28 +122,63 @@ const cards = [
   },
 ]
 
-const topCards = computed(() => {
-  const data = serverDetail.value || {}
-  const items = cards
-
-  return items.map((item) => {
-    let value = (data as any)[item.key]
-    let unit = item.unit ?? ''
-    // 正则判断下 value 是不是带单位的
-    if (isString(value)) {
-      // 正则解析出value 和 unit
-      const match = value.match(/(\d+(?:\.\d*)?)([a-z%/]+)?/i)
-      if (match) {
-        value = Number(match[1])
-        unit = match[2] || unit
+const matchValueUnit = (value: any) => {
+  if (isString(value)) {
+    const match = value.match(/(\d+(?:\.\d*)?)([a-z%/]+)?/i)
+    if (match) {
+      return {
+        value: Number(match[1]),
+        unit: match[2] || '',
       }
     }
-    return {
-      ...item,
-      value,
-      unit,
-    }
-  })
+  }
+  return {
+    value,
+    unit: '',
+  }
+}
+
+const requestCount = computed(() => {
+  const { value, unit } = matchValueUnit(serverDetail.value?.requestCount)
+  return {
+    value,
+    unit,
+  }
+})
+
+const errorCount = computed(() => {
+  const { value, unit } = matchValueUnit(serverDetail.value?.errorCount)
+  return {
+    value,
+    unit,
+    errorRate: serverDetail.value?.errorRate,
+  }
+})
+
+const responseTimeAvg = computed(() => {
+  const { value, unit } = matchValueUnit(serverDetail.value?.responseTimeAvg)
+  return {
+    value,
+    unit,
+    minDelay: serverDetail.value?.minDelay,
+    maxDelay: serverDetail.value?.maxDelay,
+  }
+})
+
+const p95 = computed(() => {
+  const { value, unit } = matchValueUnit(serverDetail.value?.p95)
+  return {
+    value,
+    unit,
+  }
+})
+
+const p99 = computed(() => {
+  const { value, unit } = matchValueUnit(serverDetail.value?.p99)
+  return {
+    value,
+    unit,
+  }
 })
 
 // Worker 表格排序处理函数
@@ -230,15 +280,6 @@ const cpuUsage = computed(() => {
 const memoryUsage = computed(() => {
   if (!serverDetail.value?.memoryUsage) return 0
   return Number(serverDetail.value.memoryUsage.toFixed(2))
-})
-
-const requestCount = computed(() => {
-  if (!serverDetail.value?.requestCount) return '0'
-  const count = serverDetail.value.requestCount
-  if (count >= 1000) {
-    return `${(count / 1000).toFixed(1)}k`
-  }
-  return count.toString()
 })
 
 const errorRate = computed(() => {
@@ -822,19 +863,83 @@ const onClickApi = (row: any) => {
     <div class="flex flex-column gap-6">
       <!-- Status Overview -->
       <div class="status-overview-card border mt-2">
-        <!-- <h3 class="section-title">Status Overview</h3> -->
         <div class="status-grid">
-          <div v-for="item in topCards" :key="item.key" class="status-item">
-            <div class="status-label">{{ item.title }}</div>
+          <div class="status-item">
+            <div class="status-label">
+              {{ $t('api_monitor_total_request_count') }}
+            </div>
+            <div v-if="requestCount.value !== undefined" class="status-value">
+              <CountUp
+                :end-val="requestCount.value"
+                :suffix="requestCount.unit"
+                :duration="0.5"
+              />
+            </div>
+            <div v-else class="status-value">--</div>
+          </div>
+          <div class="status-item">
+            <div class="status-label">
+              {{ $t('api_monitor_total_error_count') }}
+            </div>
             <div
-              v-if="item.value !== undefined"
-              class="status-value"
-              :class="item.class"
+              v-if="errorCount.value !== undefined"
+              class="status-value flex align-items-end gap-2"
+            >
+              <CountUp :end-val="errorCount.value" :duration="0.5" />
+
+              <el-tag type="danger" size="small" class="mb-1"
+                ><span>{{ $t('api_monitor_error_rate') }}</span
+                >{{ errorCount.errorRate }}%</el-tag
+              >
+            </div>
+            <div v-else class="status-value">--</div>
+          </div>
+          <div class="status-item">
+            <div class="status-label">
+              {{ $t('api_monitor_avg_response_time') }}
+            </div>
+            <div
+              v-if="responseTimeAvg.value !== undefined"
+              class="status-value flex align-items-end gap-2"
             >
               <CountUp
-                :end-val="item.value"
-                :suffix="item.unit"
-                :decimals="item.decimals ?? 2"
+                :end-val="responseTimeAvg.value"
+                :suffix="responseTimeAvg.unit"
+                :duration="0.5"
+              />
+              <el-tag size="small" class="is-code mb-1">
+                {{ responseTimeAvg.minDelay }} - {{ responseTimeAvg.maxDelay }}
+              </el-tag>
+            </div>
+            <div v-else class="status-value">--</div>
+          </div>
+          <div class="status-item">
+            <div class="status-label">
+              {{ $t('api_monitor_p95_response_time') }}
+            </div>
+            <div
+              v-if="p95.value !== undefined"
+              class="status-value color-warning"
+            >
+              <CountUp
+                :end-val="p95.value"
+                :suffix="p95.unit"
+                :duration="0.5"
+              />
+            </div>
+            <div v-else class="status-value">--</div>
+          </div>
+          <div class="status-item">
+            <div class="status-label">
+              {{ $t('api_monitor_p99_response_time') }}
+            </div>
+            <div
+              v-if="p99.value !== undefined"
+              class="status-value color-danger"
+            >
+              <CountUp
+                :end-val="p99.value"
+                :suffix="p99.unit"
                 :duration="0.5"
               />
             </div>
@@ -1099,16 +1204,8 @@ const onClickApi = (row: any) => {
 
 .status-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 32px;
-
-  @media (max-width: 1200px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  grid-template-columns: repeat(5, 1fr);
+  gap: 24px;
 }
 
 .status-item {

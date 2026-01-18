@@ -6,12 +6,12 @@ import { computed, ref, watch } from 'vue'
 
 interface Props {
   modelValue: string
-  customTime?: [Date, Date] | null
+  customTime?: [number, number] | null
 }
 
 interface Emits {
   (e: 'update:modelValue', value: string): void
-  (e: 'update:customTime', value: [Date, Date] | null): void
+  (e: 'update:customTime', value: [number, number] | null): void
   (e: 'change'): void
 }
 
@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>()
 const { t } = useI18n()
 
-const customTimeRange = ref<[Date, Date] | null>(props.customTime)
+const customTimeRange = ref<[number, number] | null>(props.customTime)
 
 const timeRangeOptions = computed(() => [
   { label: t('api_monitor_time_range_5m'), value: '5m' },
@@ -92,7 +92,7 @@ const handleChange = (value: string) => {
   }
 }
 
-const handleCustomTimeChange = (value: [Date, Date] | null) => {
+const handleCustomTimeChange = (value: [number, number] | null) => {
   if (value) {
     const [start, end] = value
     const diffDays = dayjs(end).diff(dayjs(start), 'day')

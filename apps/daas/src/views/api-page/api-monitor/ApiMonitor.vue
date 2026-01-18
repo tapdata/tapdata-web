@@ -136,6 +136,67 @@ const topCards = computed<TopCardItem[]>(() => {
   })
 })
 
+const matchValueUnit = (value: any) => {
+  if (isString(value)) {
+    const match = value.match(/(\d+(?:\.\d*)?)([a-z%/]+)?/i)
+    if (match) {
+      return {
+        value: Number(match[1]),
+        unit: match[2] || '',
+      }
+    }
+  }
+  return {
+    value,
+    unit: '',
+  }
+}
+
+const requestCount = computed(() => {
+  return {
+    value: serverData.value?.totalRequestCount,
+  }
+})
+
+const errorCount = computed(() => {
+  return {
+    value: serverData.value?.errorCount,
+    errorRate: serverData.value?.totalErrorRate,
+  }
+})
+
+const responseTimeAvg = computed(() => {
+  const { value, unit } = matchValueUnit(serverData.value?.responseTimeAvg)
+  return {
+    value,
+    unit,
+    minDelay: serverData.value?.minDelay,
+    maxDelay: serverData.value?.maxDelay,
+  }
+})
+
+const p95 = computed(() => {
+  const { value, unit } = matchValueUnit(serverData.value?.p95)
+  return {
+    value,
+    unit,
+  }
+})
+
+const p99 = computed(() => {
+  const { value, unit } = matchValueUnit(serverData.value?.p99)
+  return {
+    value,
+    unit,
+  }
+})
+
+const notHealthyApiCount = computed(() => {
+  return {
+    value: serverData.value?.notHealthyApiCount,
+  }
+})
+
 // 时间周期选择 - 从 route.query 中恢复
 const timeRange = ref((route.query.timeRange as string) || '1h')
 const customTimeRange = ref<[Date, Date] | null>(null)
@@ -231,12 +292,12 @@ const onClickApi = (row: any) => {
   })
 }
 
-const handleSortApi = (item: TopCardItem) => {
+const handleSortApi = (sortKey: string) => {
   currentTab.value = 'api'
   nextTick(() => {
     setTimeout(() => {
       tableRef.value?.clearSort()
-      tableRef.value?.sort(item.sortKey || item.key, 'descending')
+      tableRef.value?.sort(sortKey, 'descending')
     }, 50)
   })
 }
@@ -270,26 +331,119 @@ onUnmounted(() => {
     </template>
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
       <div
-        v-for="item in topCards"
-        :key="item.key"
         class="border rounded-xl p-3 top-card cursor-pointer"
-        @click="handleSortApi(item)"
+        @click="handleSortApi('requestCount')"
       >
         <div class="card-header mb-6">
-          <div class="card-title font-color-light">{{ item.title }}</div>
+          <div class="card-title font-color-light">
+            {{ $t('api_monitor_total_request_count') }}
+          </div>
+        </div>
+        <div class="card-content">
+          <div v-if="requestCount.value !== undefined" class="text-2xl fw-sub">
+            <CountUp :end-val="requestCount.value" :duration="0.5" />
+          </div>
+          <div v-else class="text-2xl fw-sub">--</div>
+        </div>
+      </div>
+      <div
+        class="border rounded-xl p-3 top-card cursor-pointer"
+        @click="handleSortApi('errorRate')"
+      >
+        <div class="card-header mb-6">
+          <div class="card-title font-color-light">
+            {{ $t('api_monitor_total_error_count') }}
+          </div>
         </div>
         <div class="card-content">
           <div
-            v-if="item.value !== undefined"
-            class="text-2xl fw-sub"
-            :class="item.class"
+            v-if="errorCount.value !== undefined"
+            class="text-2xl fw-sub flex align-items-end gap-2 color-danger"
           >
-            <CountUp
-              :end-val="item.value"
-              :suffix="item.unit"
-              :decimals="item.decimals ?? 2"
-              :duration="0.5"
-            />
+            <CountUp :end-val="errorCount.value" :duration="0.5" />
+            <el-tag type="danger" size="small" class="mb-1"
+              ><span>{{ $t('api_monitor_error_rate') }}</span
+              >{{ errorCount.errorRate }}%</el-tag
+            >
+          </div>
+          <div v-else class="text-2xl fw-sub">--</div>
+        </div>
+      </div>
+      <div
+        class="border rounded-xl p-3 top-card cursor-pointer"
+        @click="handleSortApi('requestCostAvg')"
+      >
+        <div class="card-header mb-6">
+          <div class="card-title font-color-light">
+            {{ $t('api_monitor_avg_response_time') }}
+          </div>
+        </div>
+        <div class="card-content">
+          <div
+            v-if="responseTimeAvg.value !== undefined"
+            class="text-2xl fw-sub flex align-items-end gap-2"
+          >
+            <CountUp :end-val="responseTimeAvg.value" :duration="0.5" />
+            <el-tag size="small" class="is-code mb-1">
+              {{ responseTimeAvg.minDelay }} - {{ responseTimeAvg.maxDelay }}
+            </el-tag>
+          </div>
+          <div v-else class="text-2xl fw-sub">--</div>
+        </div>
+      </div>
+      <div
+        class="border rounded-xl p-3 top-card cursor-pointer"
+        @click="handleSortApi('p95')"
+      >
+        <div class="card-header mb-6">
+          <div class="card-title font-color-light">
+            {{ $t('api_monitor_p95_response_time') }}
+          </div>
+        </div>
+        <div class="card-content">
+          <div
+            v-if="p95.value !== undefined"
+            class="text-2xl fw-sub color-warning"
+          >
+            <CountUp :end-val="p95.value" :duration="0.5" />
+          </div>
+          <div v-else class="text-2xl fw-sub">--</div>
+        </div>
+      </div>
+      <div
+        class="border rounded-xl p-3 top-card cursor-pointer"
+        @click="handleSortApi('p99')"
+      >
+        <div class="card-header mb-6">
+          <div class="card-title font-color-light">
+            {{ $t('api_monitor_p99_response_time') }}
+          </div>
+        </div>
+        <div class="card-content">
+          <div
+            v-if="p99.value !== undefined"
+            class="text-2xl fw-sub color-danger"
+          >
+            <CountUp :end-val="p99.value" :duration="0.5" />
+          </div>
+          <div v-else class="text-2xl fw-sub">--</div>
+        </div>
+      </div>
+      <div
+        class="border rounded-xl p-3 top-card cursor-pointer"
+        @click="handleSortApi('notHealthyApiCount')"
+      >
+        <div class="card-header mb-6">
+          <div class="card-title font-color-light">
+            {{ $t('api_monitor_unhealthy_api_count') }}
+          </div>
+        </div>
+        <div class="card-content">
+          <div
+            v-if="notHealthyApiCount.value !== undefined"
+            class="text-2xl fw-sub color-danger"
+          >
+            <CountUp :end-val="notHealthyApiCount.value" :duration="0.5" />
           </div>
           <div v-else class="text-2xl fw-sub">--</div>
         </div>

@@ -2062,7 +2062,7 @@ export default {
   api_monitor_avg_response_time: '平均響應時間',
   api_monitor_p95_response_time: 'P95 響應時間',
   api_monitor_p99_response_time: 'P99 響應時間',
-  api_monitor_unhealthy_api_count: '不健康的 API',
+  api_monitor_unhealthy_api_count: '異常請求API',
   api_monitor_unhealthy_server_count: '不健康的 Server',
   api_monitor_server_list: 'Server List',
   api_monitor_api_list: 'API List',
@@ -2099,6 +2099,7 @@ export default {
   api_monitor_server_name: 'Server 名稱',
   api_monitor_throughput_latency_trend: '吞吐量與延遲趨勢',
   api_monitor_latency_ms: '延遲 (ms)',
+  api_monitor_response_time_trend: 'API 響應時間趨勢',
 
   // Server 詳情頁
   api_monitor_server_detail: 'Server 詳情',

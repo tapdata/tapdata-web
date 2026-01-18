@@ -2192,7 +2192,7 @@ export default {
   api_monitor_avg_response_time: 'Avg Response Time',
   api_monitor_p95_response_time: 'P95 Response Time',
   api_monitor_p99_response_time: 'P99 Response Time',
-  api_monitor_unhealthy_api_count: 'Unhealthy APIs',
+  api_monitor_unhealthy_api_count: 'Error Request APIs',
   api_monitor_unhealthy_server_count: 'Unhealthy Servers',
   api_monitor_server_list: 'Server List',
   api_monitor_api_list: 'API List',
@@ -2229,6 +2229,7 @@ export default {
   api_monitor_server_name: 'Server Name',
   api_monitor_throughput_latency_trend: 'Throughput & Latency Trend',
   api_monitor_latency_ms: 'Latency (ms)',
+  api_monitor_response_time_trend: 'Response Time Trend',
 
   // Server Detail Page
   api_monitor_server_detail: 'Server Details',
