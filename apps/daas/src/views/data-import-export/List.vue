@@ -11,6 +11,7 @@ import {
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import { FilterBar } from '@tap/component'
+import { useI18n } from '@tap/i18n'
 import dayjs from 'dayjs'
 import { ElIcon, ElTag } from 'element-plus'
 import { ref, watch } from 'vue'
@@ -20,6 +21,7 @@ import GroupImportDialog from './GroupImportDialog.vue'
 import GroupManagementModal from './GroupManagementModal.vue'
 import RecordDetailDialog from './RecordDetailDialog.vue'
 
+const { t } = useI18n()
 const route = useRoute()
 
 // 表格引用
@@ -53,33 +55,33 @@ Object.assign(searchParams.value, route.query)
 // 筛选项配置
 const filterItems = ref([
   {
-    label: '关键词',
+    label: t('public_keywords'),
     key: 'keyword',
     type: 'input',
-    placeholder: '搜索文件名',
+    placeholder: t('public_input_placeholder_search'),
   },
   {
-    label: '类型',
+    label: t('public_type'),
     key: 'type',
     type: 'select-inner',
     options: [
-      { label: '全部', value: '' },
-      { label: '导入', value: 'import' },
-      { label: '导出', value: 'export' },
+      { label: t('public_select_option_all'), value: '' },
+      { label: t('data_import_export_import'), value: 'import' },
+      { label: t('data_import_export_export'), value: 'export' },
     ],
   },
-  {
-    label: '状态',
-    key: 'status',
-    type: 'select',
-    placeholder: '全部',
-    options: [
-      { label: '全部', value: '' },
-      { label: '进行中', value: 'importing,exporting' },
-      { label: '已完成', value: 'completed' },
-      { label: '失败', value: 'failed' },
-    ],
-  },
+  // {
+  //   label: t('public_status'),
+  //   key: 'status',
+  //   type: 'select',
+  //   placeholder: t('public_select_option_all'),
+  //   options: [
+  //     { label: t('public_select_option_all'), value: '' },
+  //     { label: t('public_status_running'), value: 'importing,exporting' },
+  //     { label: t('data_import_export_completed'), value: 'completed' },
+  //     { label: t('data_import_export_failed'), value: 'failed' },
+  //   ],
+  // },
 ])
 
 watch(
@@ -157,10 +159,26 @@ const formatTime = (time: string | Date) => {
 // 获取状态配置
 const getStatusConfig = (status: string) => {
   const statusMap = {
-    importing: { type: 'warning', text: '导入中', icon: WarningFilled },
-    exporting: { type: 'warning', text: '导出中', icon: WarningFilled },
-    completed: { type: 'success', text: '已完成', icon: CircleCheckFilled },
-    failed: { type: 'danger', text: '失败', icon: CircleCloseFilled },
+    importing: {
+      type: 'warning',
+      text: t('data_import_export_importing'),
+      icon: WarningFilled,
+    },
+    exporting: {
+      type: 'warning',
+      text: t('data_import_export_exporting'),
+      icon: WarningFilled,
+    },
+    completed: {
+      type: 'success',
+      text: t('data_import_export_completed'),
+      icon: CircleCheckFilled,
+    },
+    failed: {
+      type: 'danger',
+      text: t('data_import_export_failed'),
+      icon: CircleCloseFilled,
+    },
   }
   return (
     statusMap[status as keyof typeof statusMap] || {
@@ -173,7 +191,9 @@ const getStatusConfig = (status: string) => {
 
 // 获取类型文本
 const getTypeText = (type: string) => {
-  return type === 'import' ? '导入' : '导出'
+  return type === 'import'
+    ? t('data_import_export_import')
+    : t('data_import_export_export')
 }
 
 // 分组管理弹窗
@@ -201,19 +221,19 @@ const handleImportSuccess = () => {
         <template #icon>
           <i-lucide-layers />
         </template>
-        分组管理
+        {{ t('data_import_export_group_management') }}
       </el-button>
       <el-button @click="importDialogVisible = true">
         <template #icon>
           <i-lucide-download />
         </template>
-        导入
+        {{ t('data_import_export_import') }}
       </el-button>
       <el-button @click="exportDialogVisible = true">
         <template #icon>
           <i-lucide-upload />
         </template>
-        导出
+        {{ t('data_import_export_export') }}
       </el-button>
     </template>
     <TablePage
@@ -234,7 +254,12 @@ const handleImportSuccess = () => {
       </template>
 
       <!-- 类型列 -->
-      <el-table-column prop="type" label="类型" width="100" align="center">
+      <el-table-column
+        prop="type"
+        :label="t('public_type')"
+        width="100"
+        align="center"
+      >
         <template #default="{ row }">
           <ElTag
             :type="row.type === 'import' ? 'primary' : 'success'"
@@ -248,13 +273,18 @@ const handleImportSuccess = () => {
       <!-- 文件名列 -->
       <el-table-column
         prop="fileName"
-        label="文件名"
+        :label="t('public_file_name')"
         min-width="250"
         show-overflow-tooltip
       />
 
       <!-- 状态列 -->
-      <el-table-column prop="status" label="状态" width="120" align="center">
+      <el-table-column
+        prop="status"
+        :label="t('public_status')"
+        width="120"
+        align="center"
+      >
         <template #default="{ row }">
           <div class="flex align-center justify-center gap-1">
             <ElIcon
@@ -271,7 +301,7 @@ const handleImportSuccess = () => {
       <!-- 操作人列 -->
       <el-table-column
         prop="operator"
-        label="操作人"
+        :label="t('data_import_export_operator')"
         width="150"
         show-overflow-tooltip
       />
@@ -279,7 +309,7 @@ const handleImportSuccess = () => {
       <!-- 操作时间列 -->
       <el-table-column
         prop="operationTime"
-        label="操作时间"
+        :label="t('data_import_export_operation_time')"
         width="180"
         sortable="custom"
       >
@@ -289,10 +319,15 @@ const handleImportSuccess = () => {
       </el-table-column>
 
       <!-- 操作列 -->
-      <el-table-column label="操作" width="100" align="center" fixed="right">
+      <el-table-column
+        :label="t('public_operation')"
+        width="100"
+        align="center"
+        fixed="right"
+      >
         <template #default="{ row }">
           <el-button type="primary" text @click="handleViewDetail(row)">
-            查看详情
+            {{ t('data_import_export_view_detail') }}
           </el-button>
         </template>
       </el-table-column>

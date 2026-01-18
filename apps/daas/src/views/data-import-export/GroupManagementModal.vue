@@ -13,9 +13,11 @@ import { fetchTasks } from '@tap/api/core/task'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import { makeStatusAndDisabled } from '@tap/business/src/shared'
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
+import { useI18n } from '@tap/i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { computed, nextTick, ref, watch } from 'vue'
 
+const { t } = useI18n()
 const visible = defineModel<boolean>()
 const emit = defineEmits(['saved'])
 
@@ -28,7 +30,7 @@ const showGroupSearch = ref(false)
 const groupSearchInput = ref()
 
 // 中间资源列表
-const activeTab = ref<'SYNC_TASK' | 'MIGRATE_TASK' | 'MODULE'>('SYNC_TASK')
+const activeTab = ref<'SYNC_TASK' | 'MIGRATE_TASK' | 'MODULE'>('MIGRATE_TASK')
 const searchKeyword = ref('')
 const resourceList = ref<any[]>([])
 const resourceLoading = ref(false)
@@ -46,11 +48,20 @@ const selectedAddedResources = ref<string[]>([])
 const treeRef = ref()
 
 // Tab 配置
-const tabs = [
-  { label: '复制任务', value: 'SYNC_TASK', icon: 'i-lucide-copy' },
-  { label: '开发任务', value: 'MIGRATE_TASK', icon: 'i-lucide-code' },
-  { label: 'API', value: 'MODULE', icon: 'i-lucide-globe' },
-]
+const tabs = computed(() => [
+  {
+    label: t('data_import_export_migrate_task'),
+    value: 'MIGRATE_TASK',
+  },
+  {
+    label: t('data_import_export_sync_task'),
+    value: 'SYNC_TASK',
+  },
+  {
+    label: 'API',
+    value: 'MODULE',
+  },
+])
 
 // 过滤后的分组列表
 const filteredGroupList = computed(() => {
@@ -77,7 +88,7 @@ const loadGroups = async () => {
       selectedGroup.value = groupList.value[0]
     }
   } catch {
-    ElMessage.error('加载分组列表失败')
+    ElMessage.error(t('public_message_operation_failed'))
   } finally {
     groupLoading.value = false
   }
@@ -97,12 +108,16 @@ const openGroupSearch = () => {
 
 // 添加分组
 const handleAddGroup = async () => {
-  ElMessageBox.prompt('请输入分组名称', '新增分组', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    inputPattern: /\S+/,
-    inputErrorMessage: '分组名称不能为空',
-  })
+  ElMessageBox.prompt(
+    t('data_import_export_group_name_placeholder'),
+    t('data_import_export_add_group'),
+    {
+      confirmButtonText: t('public_button_confirm'),
+      cancelButtonText: t('public_button_cancel'),
+      inputPattern: /\S+/,
+      inputErrorMessage: t('data_import_export_group_name_required'),
+    },
+  )
     .then(async ({ value }) => {
       try {
         const newGroup = await createGroupInfo({
@@ -110,11 +125,11 @@ const handleAddGroup = async () => {
           description: '',
           resourceItemList: [],
         })
-        ElMessage.success('创建成功')
+        ElMessage.success(t('public_message_create_ok'))
         await loadGroups()
         selectedGroup.value = newGroup
       } catch {
-        ElMessage.error('创建失败')
+        ElMessage.error(t('public_message_create_fail'))
       }
     })
     .catch(() => {
@@ -124,23 +139,27 @@ const handleAddGroup = async () => {
 
 // 编辑分组
 const handleEditGroup = async (group: GroupInfoDto) => {
-  ElMessageBox.prompt('请输入分组名称', '编辑分组', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    inputPattern: /\S+/,
-    inputErrorMessage: '分组名称不能为空',
-    inputValue: group.name,
-  })
+  ElMessageBox.prompt(
+    t('data_import_export_group_name_placeholder'),
+    t('data_import_export_edit_group'),
+    {
+      confirmButtonText: t('public_button_confirm'),
+      cancelButtonText: t('public_button_cancel'),
+      inputPattern: /\S+/,
+      inputErrorMessage: t('data_import_export_group_name_required'),
+      inputValue: group.name,
+    },
+  )
     .then(async ({ value }) => {
       try {
         await updateGroupInfo({
           ...group,
           name: value,
         })
-        ElMessage.success('修改成功')
+        ElMessage.success(t('public_message_update_ok'))
         await loadGroups()
       } catch {
-        ElMessage.error('修改失败')
+        ElMessage.error(t('public_message_update_fail'))
       }
     })
     .catch(() => {
@@ -150,21 +169,25 @@ const handleEditGroup = async (group: GroupInfoDto) => {
 
 // 删除分组
 const handleDeleteGroup = async (group: GroupInfoDto) => {
-  ElMessageBox.confirm(`确定要删除分组"${group.name}"吗？`, '删除确认', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  })
+  ElMessageBox.confirm(
+    t('data_import_export_delete_group_confirm', { name: group.name }),
+    t('data_import_export_delete_confirm_title'),
+    {
+      confirmButtonText: t('public_button_confirm'),
+      cancelButtonText: t('public_button_cancel'),
+      type: 'warning',
+    },
+  )
     .then(async () => {
       try {
         await deleteGroupInfo(group.id!)
-        ElMessage.success('删除成功')
+        ElMessage.success(t('public_message_delete_ok'))
         if (selectedGroup.value?.id === group.id) {
           selectedGroup.value = null
         }
         await loadGroups()
       } catch {
-        ElMessage.error('删除失败')
+        ElMessage.error(t('public_message_delete_fail'))
       }
     })
     .catch(() => {
@@ -319,7 +342,7 @@ const removeNonExistentResources = () => {
 const saving = ref(false)
 const handleSave = async () => {
   if (!selectedGroup.value) {
-    ElMessage.warning('请选择一个分组')
+    ElMessage.warning(t('data_import_export_select_group_tip'))
     return
   }
 
@@ -332,11 +355,11 @@ const handleSave = async () => {
         type: item.type,
       })),
     })
-    ElMessage.success('保存成功')
+    ElMessage.success(t('public_message_save_ok'))
     emit('saved')
     // visible.value = false
   } catch {
-    ElMessage.error('保存失败')
+    ElMessage.error(t('public_message_save_fail'))
   } finally {
     saving.value = false
   }
@@ -361,7 +384,7 @@ const treeData = computed(() => {
   if (groups.MIGRATE_TASK.length > 0) {
     data.push({
       id: 'group-MIGRATE_TASK',
-      label: '复制任务',
+      label: t('data_import_export_migrate_task'),
       type: 'MIGRATE_TASK',
       children: groups.MIGRATE_TASK,
     })
@@ -370,7 +393,7 @@ const treeData = computed(() => {
   if (groups.SYNC_TASK.length > 0) {
     data.push({
       id: 'group-SYNC_TASK',
-      label: '开发任务',
+      label: t('data_import_export_sync_task'),
       type: 'SYNC_TASK',
       children: groups.SYNC_TASK,
     })
@@ -470,7 +493,9 @@ const handleSelectAll = (checked: any) => {
               <i-lucide-layers />
             </el-icon>
             <!-- </div> -->
-            <div :class="titleClass">Group Management</div>
+            <div :class="titleClass">
+              {{ t('data_import_export_group_management') }}
+            </div>
           </div>
         </div>
       </div>
@@ -482,7 +507,9 @@ const handleSelectAll = (checked: any) => {
         <div class="panel-header p-3 pb-0">
           <div class="flex align-center gap-1" style="--btn-space: 0">
             <div class="fs-6 flex-1">
-              <span class="fw-sub font-color-dark">GROUPS</span>
+              <span class="fw-sub font-color-dark">{{
+                t('data_import_export_groups').toUpperCase()
+              }}</span>
             </div>
             <el-button
               text
@@ -505,7 +532,7 @@ const handleSelectAll = (checked: any) => {
           <el-input
             ref="groupSearchInput"
             v-model="groupFilterText"
-            placeholder="搜索分组..."
+            :placeholder="t('data_import_export_search_group')"
             clearable
           >
             <template #prefix>
@@ -574,9 +601,15 @@ const handleSelectAll = (checked: any) => {
           </div>
           <el-empty
             v-if="!groupLoading && filteredGroupList.length === 0"
-            description="暂无分组"
+            :description="t('data_import_export_no_group')"
             :image-size="60"
-          />
+          >
+            <template #description>
+              <el-button @click="handleAddGroup">
+                {{ t('data_import_export_add_group') }}
+              </el-button>
+            </template>
+          </el-empty>
         </div>
       </div>
 
@@ -585,7 +618,7 @@ const handleSelectAll = (checked: any) => {
         <div class="panel-header p-3 py-2">
           <el-input
             v-model="searchKeyword"
-            placeholder="搜索名称"
+            :placeholder="t('data_import_export_search_name')"
             clearable
             @input="loadResources"
           >
@@ -656,10 +689,10 @@ const handleSelectAll = (checked: any) => {
               :indeterminate="selectedResources.length > 0 && !isAllSelected"
               @change="handleSelectAll"
             >
-              Select All Available
+              {{ t('data_import_export_select_all_available') }}
             </el-checkbox>
             <span class="font-color-sslight fs-8">
-              {{ resourceList.length }} items
+              {{ resourceList.length }} {{ t('data_import_export_items') }}
             </span>
             <el-button
               class="ml-auto"
@@ -667,7 +700,8 @@ const handleSelectAll = (checked: any) => {
               :disabled="canAddCount === 0"
               @click="addSelectedResources"
             >
-              Add {{ canAddCount > 0 ? canAddCount : '' }} Selected
+              {{ t('data_import_export_add_selected') }}
+              {{ canAddCount > 0 ? canAddCount : '' }}
               <el-icon class="ml-1.5"><i-lucide-arrow-right /></el-icon>
             </el-button>
           </div>
@@ -691,7 +725,9 @@ const handleSelectAll = (checked: any) => {
       <!-- 右侧：已选资源树 -->
       <div class="selected-panel">
         <div class="panel-header p-3">
-          <span class="fw-sub font-color-dark lh-6">Selected</span>
+          <span class="fw-sub font-color-dark lh-6">{{
+            t('data_import_export_selected')
+          }}</span>
           <div class="flex gap-2" style="--btn-space: 0">
             <el-button
               v-if="nonExistentResourcesCount > 0"
@@ -703,7 +739,9 @@ const handleSelectAll = (checked: any) => {
               <template #icon>
                 <el-icon><i-lucide-trash-2 /></el-icon>
               </template>
-              清理不存在 ({{ nonExistentResourcesCount }})
+              {{ t('data_import_export_clean_nonexistent') }} ({{
+                nonExistentResourcesCount
+              }})
             </el-button>
             <el-button
               v-if="selectedAddedResources.length > 0"
@@ -715,7 +753,9 @@ const handleSelectAll = (checked: any) => {
               <template #icon>
                 <el-icon><i-lucide-trash-2 /></el-icon>
               </template>
-              Remove ({{ selectedAddedResources.length }})
+              {{ t('data_import_export_remove_selected') }} ({{
+                selectedAddedResources.length
+              }})
             </el-button>
           </div>
         </div>
@@ -758,7 +798,7 @@ const handleSelectAll = (checked: any) => {
                 <span
                   v-else
                   class="font-color-slight text-decoration-line-through"
-                  >不存在</span
+                  >{{ t('data_import_export_nonexistent') }}</span
                 >
                 <el-tag
                   v-if="data.children?.length"
@@ -775,7 +815,7 @@ const handleSelectAll = (checked: any) => {
 
           <el-empty
             v-if="totalSelectedCount === 0"
-            description="暂无选中资源"
+            :description="t('data_import_export_no_selected_resource')"
             :image-size="80"
           />
         </div>

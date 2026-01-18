@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
+import { useI18n } from '@tap/i18n'
 import { computed, ref } from 'vue'
+
+const { t } = useI18n()
 
 interface RecordDetail {
   resourceName: string
@@ -37,7 +40,9 @@ const currentGroupId = ref<string>('') // 当前选中的分组（用于预览�
 
 // 获取类型文本
 const getTypeText = (type: string) => {
-  return type === 'import' ? '导入' : '导出'
+  return type === 'import'
+    ? t('data_import_export_import')
+    : t('data_import_export_export')
 }
 
 const title = computed(() => {
@@ -79,7 +84,7 @@ const treeData = computed(() => {
   if (resourcesByType.SYNC_TASK.length > 0) {
     result.push({
       id: `${group.groupId}-SYNC_TASK`,
-      label: '复制任务',
+      label: t('data_import_export_sync_task'),
       type: 'SYNC_TASK',
       children: resourcesByType.SYNC_TASK.map((item, index) => ({
         id: `${group.groupId}-SYNC_TASK-${index}`,
@@ -94,7 +99,7 @@ const treeData = computed(() => {
   if (resourcesByType.MIGRATE_TASK.length > 0) {
     result.push({
       id: `${group.groupId}-MIGRATE_TASK`,
-      label: '开发任务',
+      label: t('data_import_export_migrate_task'),
       type: 'MIGRATE_TASK',
       children: resourcesByType.MIGRATE_TASK.map((item, index) => ({
         id: `${group.groupId}-MIGRATE_TASK-${index}`,
@@ -189,7 +194,8 @@ const handleOpen = () => {
                   </el-tooltip>
                 </div>
                 <div class="group-meta fs-8 font-color-sslight">
-                  {{ group.recordDetails?.length || 0 }} 个资源
+                  {{ group.recordDetails?.length || 0 }}
+                  {{ t('data_import_export_resource_count') }}
                 </div>
               </div>
             </div>
@@ -249,7 +255,11 @@ const handleOpen = () => {
                     disable-transitions
                     class="flex-shrink-0"
                   >
-                    {{ data.action }}
+                    {{
+                      t(
+                        `data_import_export_action_${data.action.toLowerCase()}`,
+                      )
+                    }}
                   </el-tag>
                   <el-tooltip
                     v-if="data.message"
@@ -268,7 +278,7 @@ const handleOpen = () => {
 
             <el-empty
               v-else
-              description="请在左侧点击分组查看资源"
+              :description="t('data_import_export_click_group_to_view')"
               :image-size="100"
             />
           </div>

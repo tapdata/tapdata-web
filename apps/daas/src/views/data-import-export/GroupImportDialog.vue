@@ -57,7 +57,7 @@ const submitUpload = async () => {
     v-model="visible"
     width="600px"
     class="import-upload-dialog"
-    title="导入分组"
+    :title="$t('data_import_export_import_group')"
     :close-on-click-modal="false"
     @closed="onClosed"
   >
@@ -71,10 +71,10 @@ const submitUpload = async () => {
       :show-file-list="false"
     >
       <el-icon size="40"><FileAddColorful /></el-icon>
-      <div class="el-upload__text mt-6">
-        拖拽文件到此处或 <em>点击上传</em>
-        <div class="fs-8 font-color-sslight mt-2">支持 .tar 格式文件</div>
-      </div>
+      <div
+        class="el-upload__text mt-6"
+        v-html="$t('packages_business_drag_file_here', { type: '.tar' })"
+      />
     </el-upload>
 
     <!-- 已选文件显示 -->
@@ -135,9 +135,11 @@ const submitUpload = async () => {
 
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="visible = false">取消</el-button>
+        <el-button @click="visible = false">
+          {{ $t('public_button_cancel') }}
+        </el-button>
         <el-button :loading="uploading" type="primary" @click="submitUpload">
-          确定
+          {{ $t('public_button_confirm') }}
         </el-button>
       </span>
     </template>

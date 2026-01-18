@@ -6,6 +6,7 @@ import {
   type ResourceItem,
 } from '@tap/api/core/group-info'
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
+import { t } from '@tap/i18n'
 import { downloadBlob } from '@tap/shared'
 import { ElMessage } from 'element-plus'
 import { computed, ref, watch } from 'vue'
@@ -68,7 +69,7 @@ const treeData = computed(() => {
   if (resourcesByType.SYNC_TASK.length > 0) {
     result.push({
       id: `${group.id}-SYNC_TASK`,
-      label: '复制任务',
+      label: t('data_import_export_sync_task'),
       type: 'SYNC_TASK',
       children: resourcesByType.SYNC_TASK.map((item) => ({
         id: item.id,
@@ -81,7 +82,7 @@ const treeData = computed(() => {
   if (resourcesByType.MIGRATE_TASK.length > 0) {
     result.push({
       id: `${group.id}-MIGRATE_TASK`,
-      label: '开发任务',
+      label: t('data_import_export_migrate_task'),
       type: 'MIGRATE_TASK',
       children: resourcesByType.MIGRATE_TASK.map((item) => ({
         id: item.id,
@@ -143,7 +144,7 @@ const handleExport = async () => {
   <el-dialog
     v-model="visible"
     width="900px"
-    title="导出分组"
+    :title="$t('data_import_export_export_group')"
     :close-on-click-modal="false"
   >
     <div
@@ -155,7 +156,9 @@ const handleExport = async () => {
         class="flex-shrink-0 flex flex-column flex-1"
         style="min-width: 200px"
       >
-        <div class="text-caption p-2 pb-0 pl-4">选择分组</div>
+        <div class="text-caption p-2 pb-0 pl-4">
+          {{ $t('data_import_export_select_group') }}
+        </div>
         <div class="p-2 pt-0 min-h-0 overflow-y-auto">
           <div class="flex flex-column gap-1">
             <div v-loading="groupLoading" class="groups-list pr-0">
@@ -174,7 +177,8 @@ const handleExport = async () => {
                       </div>
                       <div class="group-meta flex align-center gap-2">
                         <span class="fs-8 font-color-sslight">
-                          {{ group.resourceItemList?.length || 0 }} 个资源
+                          {{ group.resourceItemList?.length || 0 }}
+                          {{ $t('data_import_export_resource_count') }}
                         </span>
                         <span
                           v-if="group.description"
@@ -191,7 +195,7 @@ const handleExport = async () => {
 
               <el-empty
                 v-if="groupList.length === 0 && !groupLoading"
-                description="暂无分组"
+                :description="$t('data_import_export_no_group')"
                 :image-size="80"
               />
             </div>
@@ -245,7 +249,7 @@ const handleExport = async () => {
 
             <el-empty
               v-else
-              description="请在左侧点击分组查看资源"
+              :description="t('data_import_export_click_group_to_view')"
               :image-size="100"
             />
           </div>
