@@ -358,10 +358,10 @@ onUnmounted(() => {
         <div class="card-content">
           <div
             v-if="errorCount.value !== undefined"
-            class="text-2xl fw-sub flex align-items-end gap-2 color-danger"
+            class="text-2xl fw-sub flex flex-column align-items-start gap-2 color-danger"
           >
             <CountUp :end-val="errorCount.value" :duration="0.5" />
-            <el-tag type="danger" size="small" class="mb-1"
+            <el-tag type="danger" size="small"
               ><span class="mr-1">{{ $t('api_monitor_error_rate') }}</span
               >{{ errorCount.errorRate }}%</el-tag
             >
@@ -381,10 +381,14 @@ onUnmounted(() => {
         <div class="card-content">
           <div
             v-if="responseTimeAvg.value !== undefined"
-            class="text-2xl fw-sub flex align-items-end gap-2"
+            class="text-2xl fw-sub gap-2 flex flex-column align-items-start"
           >
-            <CountUp :end-val="responseTimeAvg.value" :duration="0.5" />
-            <el-tag size="small" class="is-code mb-1">
+            <CountUp
+              :end-val="responseTimeAvg.value"
+              :suffix="responseTimeAvg.unit"
+              :duration="0.5"
+            />
+            <el-tag size="small" class="is-code">
               {{ responseTimeAvg.minDelay }} - {{ responseTimeAvg.maxDelay }}
             </el-tag>
           </div>
