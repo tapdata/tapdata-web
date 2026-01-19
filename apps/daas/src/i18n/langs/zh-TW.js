@@ -2058,6 +2058,7 @@ export default {
   api_monitor_tab_server: 'Server 總覽',
   api_monitor_tab_api: 'API 總覽',
   api_monitor_total_request_count: '總請求數',
+  api_monitor_total_error_count: '總錯誤數',
   api_monitor_total_error_rate: '總錯誤率',
   api_monitor_avg_response_time: '平均響應時間',
   api_monitor_p95_response_time: 'P95 響應時間',
@@ -2100,6 +2101,7 @@ export default {
   api_monitor_throughput_latency_trend: '吞吐量與延遲趨勢',
   api_monitor_latency_ms: '延遲 (ms)',
   api_monitor_response_time_trend: 'API 響應時間趨勢',
+  api_monitor_db_cost_trend: '資料庫耗時趨勢',
 
   // Server 詳情頁
   api_monitor_server_detail: 'Server 詳情',

@@ -220,6 +220,11 @@ export interface ApiChart {
   p99: number[]
   minDelay: number[]
   maxDelay: number[]
+  dbCostAvg: number[]
+  dbCostMax: number[]
+  dbCostMin: number[]
+  dbCostP95: number[]
+  dbCostP99: number[]
 }
 
 export async function fetchMonitorServer(params?: Params) {
@@ -245,11 +250,9 @@ export async function fetchMonitorServer(params?: Params) {
     data.totalErrorRate = Number(data.totalErrorRate.toFixed(2))
   }
 
-  data.responseTimeAvg = formatResponseTime(data.responseTimeAvg)
-
-  data.p95 = formatResponseTime(data.p95)
-
-  data.p99 = formatResponseTime(data.p99)
+  ;['responseTimeAvg', 'p95', 'p99', 'minDelay', 'maxDelay'].forEach((key) => {
+    data[key] = formatResponseTime(data[key])
+  })
 
   return data
 }
@@ -431,17 +434,9 @@ export async function fetchMonitorApiDetail(params?: Params) {
     data.errorRate = Number(data.errorRate.toFixed(2))
   }
 
-  if (isNumber(data.requestCostAvg)) {
-    data.requestCostAvg = formatResponseTime(data.requestCostAvg)
-  }
-
-  if (isNumber(data.p95)) {
-    data.p95 = formatResponseTime(data.p95)
-  }
-
-  if (isNumber(data.p99)) {
-    data.p99 = formatResponseTime(data.p99)
-  }
+  ;['responseTimeAvg', 'p95', 'p99', 'minDelay', 'maxDelay'].forEach((key) => {
+    data[key] = formatResponseTime(data[key])
+  })
 
   return data
 }

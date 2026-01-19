@@ -2118,6 +2118,7 @@ export default {
   api_monitor_throughput_latency_trend: '吞吐量与延迟趋势',
   api_monitor_latency_ms: '延迟 (ms)',
   api_monitor_response_time_trend: 'API 响应时间趋势',
+  api_monitor_db_cost_trend: '数据库耗时趋势',
 
   // Server 详情页
   api_monitor_server_detail: 'Server 详情',

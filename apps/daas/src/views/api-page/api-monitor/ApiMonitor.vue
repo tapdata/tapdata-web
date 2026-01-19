@@ -362,7 +362,7 @@ onUnmounted(() => {
           >
             <CountUp :end-val="errorCount.value" :duration="0.5" />
             <el-tag type="danger" size="small" class="mb-1"
-              ><span>{{ $t('api_monitor_error_rate') }}</span
+              ><span class="mr-1">{{ $t('api_monitor_error_rate') }}</span
               >{{ errorCount.errorRate }}%</el-tag
             >
           </div>

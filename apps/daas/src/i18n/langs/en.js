@@ -2188,6 +2188,7 @@ export default {
   api_monitor_tab_server: 'Server Overview',
   api_monitor_tab_api: 'API Overview',
   api_monitor_total_request_count: 'Total Requests',
+  api_monitor_total_error_count: 'Total Errors',
   api_monitor_total_error_rate: 'Total Error Rate',
   api_monitor_avg_response_time: 'Avg Response Time',
   api_monitor_p95_response_time: 'P95 Response Time',
@@ -2230,6 +2231,7 @@ export default {
   api_monitor_throughput_latency_trend: 'Throughput & Latency Trend',
   api_monitor_latency_ms: 'Latency (ms)',
   api_monitor_response_time_trend: 'Response Time Trend',
+  api_monitor_db_cost_trend: 'Database Cost Trend',
 
   // Server Detail Page
   api_monitor_server_detail: 'Server Details',

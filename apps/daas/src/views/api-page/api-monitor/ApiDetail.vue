@@ -207,7 +207,7 @@ const latencyChartOption = computed(() => {
       bottom: 0,
       outerBounds: {
         left: 0,
-        top: 0,
+        top: 24,
         right: 10,
         bottom: 0,
       },
@@ -246,7 +246,7 @@ const latencyChartOption = computed(() => {
     },
     yAxis: {
       type: 'value',
-      name: t('api_monitor_latency_ms'),
+      // name: t('api_monitor_latency_ms'),
       axisLabel: {
         formatter: '{value}',
       },
@@ -292,6 +292,159 @@ const latencyChartOption = computed(() => {
         name: 'P99',
         type: isSinglePoint ? 'scatter' : 'line',
         data: apiChart.value?.p99 || [],
+        smooth: !isSinglePoint,
+        symbol: 'circle',
+        symbolSize: isSinglePoint ? 12 : 8,
+        showSymbol: true,
+        lineStyle: {
+          color: '#ef4444',
+          width: 2,
+        },
+        itemStyle: {
+          color: '#ef4444',
+          borderColor: '#fff',
+          borderWidth: 2,
+        },
+      },
+    ],
+  }
+})
+
+// 数据库耗时趋势图表
+const dbCostChartOption = computed(() => {
+  const dataLength = apiChart.value?.ts?.length || 0
+  const isSinglePoint = dataLength === 1
+
+  return {
+    grid: {
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      outerBounds: {
+        left: 0,
+        top: 24,
+        right: 10,
+        bottom: 0,
+      },
+      outerBoundsMode: 'auto',
+      outerBoundsContain: 'auto',
+    },
+    tooltip: {
+      trigger: 'axis',
+      borderRadius: 12,
+      borderColor: '#dee0e3',
+      extraCssText:
+        'box-shadow: 0px 4px 16px 4px rgba(31,35,41,0.03),0px 4px 8px 0px rgba(31,35,41,0.02),0px 2px 4px -4px rgba(31,35,41,0.02);',
+      padding: [8, 12],
+      formatter: (params: any) => {
+        const timestamp = params[0]?.axisValue
+        const timeStr = dayjs.unix(timestamp).format('MM-DD HH:mm:ss')
+        let result = `${timeStr}<br/>`
+        params.forEach((param: any) => {
+          const value = isNumber(param.value) ? calcTimeUnit(param.value) : '--'
+          result += `${param.marker}${param.seriesName}: ${value}<br/>`
+        })
+        return result
+      },
+    },
+    legend: {
+      data: ['Avg', 'Max', 'Min', 'P95', 'P99'],
+      top: 0,
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: apiChart.value?.ts || [],
+      axisLabel: {
+        formatter: (value: number) => dayjs.unix(value).format('HH:mm'),
+      },
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter(value: number) {
+          return calcTimeUnit(value)
+        },
+      },
+    },
+    series: [
+      {
+        name: 'Avg',
+        type: isSinglePoint ? 'scatter' : 'line',
+        data: apiChart.value?.dbCostAvg || [],
+        smooth: !isSinglePoint,
+        symbol: 'circle',
+        symbolSize: isSinglePoint ? 12 : 8,
+        showSymbol: true,
+        lineStyle: {
+          color: '#3b82f6',
+          width: 2,
+        },
+        itemStyle: {
+          color: '#3b82f6',
+          borderColor: '#fff',
+          borderWidth: 2,
+        },
+      },
+      {
+        name: 'Max',
+        type: isSinglePoint ? 'scatter' : 'line',
+        data: apiChart.value?.dbCostMax || [],
+        smooth: !isSinglePoint,
+        symbol: 'circle',
+        symbolSize: isSinglePoint ? 12 : 8,
+        showSymbol: true,
+        lineStyle: {
+          color: '#8b5cf6',
+          width: 2,
+        },
+        itemStyle: {
+          color: '#8b5cf6',
+          borderColor: '#fff',
+          borderWidth: 2,
+        },
+      },
+      {
+        name: 'Min',
+        type: isSinglePoint ? 'scatter' : 'line',
+        data: apiChart.value?.dbCostMin || [],
+        smooth: !isSinglePoint,
+        symbol: 'circle',
+        symbolSize: isSinglePoint ? 12 : 8,
+        showSymbol: true,
+        lineStyle: {
+          color: '#06b6d4',
+          width: 2,
+        },
+        itemStyle: {
+          color: '#06b6d4',
+          borderColor: '#fff',
+          borderWidth: 2,
+        },
+      },
+      {
+        name: 'P95',
+        type: isSinglePoint ? 'scatter' : 'line',
+        data: apiChart.value?.dbCostP95 || [],
+        smooth: !isSinglePoint,
+        symbol: 'circle',
+        symbolSize: isSinglePoint ? 12 : 8,
+        showSymbol: true,
+        lineStyle: {
+          color: '#f59e0b',
+          width: 2,
+        },
+        itemStyle: {
+          color: '#f59e0b',
+          borderColor: '#fff',
+          borderWidth: 2,
+        },
+      },
+      {
+        name: 'P99',
+        type: isSinglePoint ? 'scatter' : 'line',
+        data: apiChart.value?.dbCostP99 || [],
         smooth: !isSinglePoint,
         symbol: 'circle',
         symbolSize: isSinglePoint ? 12 : 8,
@@ -616,6 +769,16 @@ const onClickServer = (row: any) => {
         </h3>
         <div class="chart-container">
           <VChart :option="latencyChartOption" :autoresize="true" />
+        </div>
+      </div>
+
+      <!-- Database Cost Trend Chart -->
+      <div class="chart-section border">
+        <h3 class="section-title mb-4">
+          {{ t('api_monitor_db_cost_trend') }}
+        </h3>
+        <div class="chart-container">
+          <VChart :option="dbCostChartOption" :autoresize="true" />
         </div>
       </div>
 
