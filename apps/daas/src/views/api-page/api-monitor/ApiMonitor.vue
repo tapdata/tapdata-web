@@ -498,71 +498,34 @@ onUnmounted(() => {
           <el-table-column
             :label="t('api_monitor_total_api_list_name')"
             min-width="200"
+            fixed
           >
             <template #default="{ row }">
-              <el-link type="primary">
-                {{ row.apiName }}
-              </el-link>
+              <div class="flex flex-wrap align-center gap-2">
+                <el-link type="primary">
+                  {{ row.apiName }}
+                </el-link>
+                <el-tag
+                  type="info"
+                  class="is-code is-wrap px-1.5 font-mono"
+                  disable-transitions
+                >
+                  {{ row.apiPath }}
+                </el-tag>
+              </div>
             </template>
           </el-table-column>
-          <el-table-column :label="t('api_monitor_api_path')" min-width="200">
-            <template #default="{ row }">
-              <el-tag
-                type="info"
-                class="is-code is-wrap px-1.5 font-mono"
-                disable-transitions
-              >
-                {{ row.apiPath }}
-              </el-tag>
-            </template>
-          </el-table-column>
+
           <el-table-column
             :label="t('api_monitor_total_request_count')"
             prop="requestCount"
-            min-width="120"
+            width="120"
             sortable="custom"
           />
           <el-table-column
-            :label="t('api_monitor_avg_latency')"
-            prop="responseTimeAvg"
-            width="120"
-            sortable="custom"
-          >
-            <template #default="{ row }"> {{ row.responseTimeAvg }} </template>
-          </el-table-column>
-          <el-table-column
-            :label="t('api_monitor_p95_latency')"
-            prop="p95"
-            width="120"
-            sortable="custom"
-          >
-            <template #default="{ row }">
-              <span :class="{ 'text-orange-500': row.p95 > 1000 }">
-                {{ row.p95 }}
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            :label="t('api_monitor_p99_latency')"
-            prop="p99"
-            width="120"
-            sortable="custom"
-          >
-            <template #default="{ row }">
-              <span
-                :class="{
-                  'text-orange-500': row.p99 > 1000 && row.p99 < 2000,
-                  'text-red-500': row.p99 >= 2000,
-                }"
-              >
-                {{ row.p99 }}
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column
             :label="t('api_monitor_error_rate')"
             prop="errorRate"
-            width="120"
+            width="90"
             sortable="custom"
           >
             <template #default="{ row }">
@@ -577,9 +540,62 @@ onUnmounted(() => {
             </template>
           </el-table-column>
           <el-table-column
+            :label="t('api_monitor_avg_response_time')"
+            prop="responseTimeAvg"
+            width="140"
+            sortable="custom"
+          >
+            <template #default="{ row }"> {{ row.responseTimeAvg }} </template>
+          </el-table-column>
+          <el-table-column
+            :label="t('api_monitor_max_response_time')"
+            prop="maxDelay"
+            width="100"
+            sortable="custom"
+          >
+            <template #default="{ row }"> {{ row.maxDelay }} </template>
+          </el-table-column>
+          <el-table-column
+            :label="t('api_monitor_min_response_time')"
+            prop="minDelay"
+            width="100"
+            sortable="custom"
+          >
+            <template #default="{ row }"> {{ row.minDelay }} </template>
+          </el-table-column>
+          <el-table-column
+            :label="t('api_monitor_p99_response_time')"
+            prop="p95"
+            width="100"
+            sortable="custom"
+          >
+            <template #default="{ row }">
+              <span :class="{ 'text-orange-500': row.p95 > 1000 }">
+                {{ row.p95 }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            :label="t('api_monitor_p99_response_time')"
+            prop="p99"
+            width="100"
+            sortable="custom"
+          >
+            <template #default="{ row }">
+              <span
+                :class="{
+                  'text-orange-500': row.p99 > 1000 && row.p99 < 2000,
+                  'text-red-500': row.p99 >= 2000,
+                }"
+              >
+                {{ row.p99 }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column
             :label="t('api_monitor_throughput')"
             prop="totalRps"
-            min-width="120"
+            width="126"
             sortable="custom"
           >
             <template #default="{ row }">

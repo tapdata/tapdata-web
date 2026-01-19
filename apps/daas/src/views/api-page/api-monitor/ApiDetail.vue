@@ -753,25 +753,39 @@ const onClickServer = (row: any) => {
             </template>
           </el-table-column>
           <el-table-column
-            :label="t('api_monitor_avg_latency')"
+            :label="t('api_monitor_avg_response_time')"
             prop="responseTimeAvg"
-            width="120"
+            width="140"
           >
             <template #default="{ row }">
               {{ row.responseTimeAvg ?? '--' }}
             </template>
           </el-table-column>
           <el-table-column
-            :label="t('api_monitor_p95_latency')"
+            :label="t('api_monitor_max_response_time')"
+            prop="maxDelay"
+            width="100"
+          >
+            <template #default="{ row }"> {{ row.maxDelay }} </template>
+          </el-table-column>
+          <el-table-column
+            :label="t('api_monitor_min_response_time')"
+            prop="minDelay"
+            width="100"
+          >
+            <template #default="{ row }"> {{ row.minDelay }} </template>
+          </el-table-column>
+          <el-table-column
+            :label="t('api_monitor_p95_response_time')"
             prop="p95"
-            width="120"
+            width="100"
           >
             <template #default="{ row }"> {{ row.p95 ?? '--' }} </template>
           </el-table-column>
           <el-table-column
-            :label="t('api_monitor_p99_latency')"
+            :label="t('api_monitor_p99_response_time')"
             prop="p99"
-            width="120"
+            width="100"
           >
             <template #default="{ row }"> {{ row.p99 ?? '--' }} </template>
           </el-table-column>

@@ -990,24 +990,22 @@ const onClickApi = (row: any) => {
             min-width="200"
           >
             <template #default="{ row }">
-              <el-link type="primary" @click="onClickApi(row)">{{
-                row.apiName
-              }}</el-link>
-            </template>
-          </el-table-column>
-          <el-table-column :label="t('api_monitor_api_path')" min-width="200">
-            <template #default="{ row }">
-              <el-tag
-                type="info"
-                class="is-code is-wrap px-1.5 font-mono"
-                disable-transitions
-              >
-                {{ row.apiPath }}
-              </el-tag>
+              <div class="flex flex-wrap align-center gap-2">
+                <el-link type="primary" @click="onClickApi(row)">{{
+                  row.apiName
+                }}</el-link>
+                <el-tag
+                  type="info"
+                  class="is-code is-wrap px-1.5 font-mono"
+                  disable-transitions
+                >
+                  {{ row.apiPath }}
+                </el-tag>
+              </div>
             </template>
           </el-table-column>
           <el-table-column
-            :label="t('api_monitor_server_call_count')"
+            :label="t('api_monitor_request_count')"
             prop="requestCount"
             width="120"
             sortable="custom"
@@ -1030,9 +1028,9 @@ const onClickApi = (row: any) => {
             </template>
           </el-table-column>
           <el-table-column
-            :label="t('api_monitor_avg_latency')"
+            :label="t('api_monitor_avg_response_time')"
             prop="responseTimeAvg"
-            width="120"
+            width="140"
             sortable="custom"
           >
             <template #default="{ row }">
@@ -1040,17 +1038,33 @@ const onClickApi = (row: any) => {
             </template>
           </el-table-column>
           <el-table-column
-            :label="t('api_monitor_p95_latency')"
+            :label="t('api_monitor_max_response_time')"
+            prop="maxDelay"
+            width="100"
+            sortable="custom"
+          >
+            <template #default="{ row }"> {{ row.maxDelay }} </template>
+          </el-table-column>
+          <el-table-column
+            :label="t('api_monitor_min_response_time')"
+            prop="minDelay"
+            width="100"
+            sortable="custom"
+          >
+            <template #default="{ row }"> {{ row.minDelay }} </template>
+          </el-table-column>
+          <el-table-column
+            :label="t('api_monitor_p95_response_time')"
             prop="p95"
-            width="120"
+            width="100"
             sortable="custom"
           >
             <template #default="{ row }"> {{ row.p95 ?? '--' }} </template>
           </el-table-column>
           <el-table-column
-            :label="t('api_monitor_p99_latency')"
+            :label="t('api_monitor_p99_response_time')"
             prop="p99"
-            width="120"
+            width="100"
             sortable="custom"
           >
             <template #default="{ row }"> {{ row.p99 ?? '--' }} </template>

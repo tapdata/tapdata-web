@@ -266,12 +266,11 @@ export async function fetchMonitorServerList(params?: Params) {
     if (isNumber(item.errorRate)) {
       item.errorRate = Number(item.errorRate.toFixed(2))
     }
-    if (isNumber(item.p95)) {
-      item.p95 = formatResponseTime(item.p95)
-    }
-    if (isNumber(item.p99)) {
-      item.p99 = formatResponseTime(item.p99)
-    }
+    ;['responseTimeAvg', 'p95', 'p99', 'minDelay', 'maxDelay'].forEach(
+      (key) => {
+        item[key] = formatResponseTime(item[key])
+      },
+    )
   })
 
   return data
@@ -330,9 +329,11 @@ export async function fetchMonitorServerApi(params?: Params) {
 
   data.forEach((item) => {
     item.errorRate = Number(item.errorRate.toFixed(2))
-    item.responseTimeAvg = formatResponseTime(item.responseTimeAvg)
-    item.p95 = formatResponseTime(item.p95)
-    item.p99 = formatResponseTime(item.p99)
+    ;['responseTimeAvg', 'p95', 'p99', 'minDelay', 'maxDelay'].forEach(
+      (key) => {
+        item[key] = formatResponseTime(item[key])
+      },
+    )
   })
 
   return data
@@ -358,17 +359,9 @@ export async function fetchMonitorApi(params?: Params) {
       responseTimeAvg: 0,
     }))
 
-  if (isNumber(data.responseTimeAvg)) {
-    data.responseTimeAvg = formatResponseTime(data.responseTimeAvg)
-  }
-
-  if (isNumber(data.p95)) {
-    data.p95 = formatResponseTime(data.p95)
-  }
-
-  if (isNumber(data.p99)) {
-    data.p99 = formatResponseTime(data.p99)
-  }
+  ;['responseTimeAvg', 'p95', 'p99'].forEach((key) => {
+    data[key] = formatResponseTime(data[key])
+  })
 
   if (isNumber(data.totalRps)) {
     data.totalRps = `${calcUnit(data.totalRps, 'b')}/s`
@@ -378,46 +371,17 @@ export async function fetchMonitorApi(params?: Params) {
 }
 
 export async function fetchMonitorApiList(params?: Params) {
-  const data = await requestClient
-    .get<ApiItem[]>(`${API_BASE_URL}/list`, {
-      params,
-    })
-    .catch(() => [
-      {
-        queryFrom: 1767510000,
-        queryEnd: 1767510600,
-        granularity: 0,
-        apiId: '694b92121a818d0270a1b913',
-        apiPath: '/v1/tjq7duqpvs7',
-        apiName: 'MDM1_copy_tjq7duqpvs7',
-        requestCount: 6,
-        requestCostAvg: 0,
-        maxDelay: 60,
-        minDelay: 34,
-        errorRate: 0,
-        totalRps: 1.2,
-      },
-      {
-        queryFrom: 1767510000,
-        queryEnd: 1767510600,
-        granularity: 0,
-        apiId: '694b52e6a40d9d8479f447d6',
-        apiPath: '/v1/aslw80no7ze',
-        apiName: 'MDM',
-        requestCount: 19,
-        requestCostAvg: 0,
-        p99: 134,
-        maxDelay: 134,
-        minDelay: 17,
-        errorRate: 0,
-        totalRps: 3.8,
-      },
-    ])
+  const data = await requestClient.get<ApiItem[]>(`${API_BASE_URL}/list`, {
+    params,
+  })
+
   data.forEach((item) => {
     item.errorRate = Number(item.errorRate.toFixed(2))
-    item.requestCostAvg = formatResponseTime(item.requestCostAvg)
-    item.p95 = item.p95 ? formatResponseTime(item.p95) : item.p95
-    item.p99 = item.p99 ? formatResponseTime(item.p99) : item.p99
+    ;['responseTimeAvg', 'p95', 'p99', 'minDelay', 'maxDelay'].forEach(
+      (key) => {
+        item[key] = formatResponseTime(item[key])
+      },
+    )
     item.totalRps = item.totalRps
       ? `${calcUnit(item.totalRps, 'b')}/s`
       : item.totalRps
@@ -454,9 +418,11 @@ export async function fetchMonitorApiServer(params?: Params) {
     if (isNumber(item.errorRate)) {
       item.errorRate = Number(item.errorRate.toFixed(2))
     }
-    item.responseTimeAvg = formatResponseTime(item.responseTimeAvg)
-    item.p95 = formatResponseTime(item.p95)
-    item.p99 = formatResponseTime(item.p99)
+    ;['responseTimeAvg', 'p95', 'p99', 'minDelay', 'maxDelay'].forEach(
+      (key) => {
+        item[key] = formatResponseTime(item[key])
+      },
+    )
   })
 
   return data
