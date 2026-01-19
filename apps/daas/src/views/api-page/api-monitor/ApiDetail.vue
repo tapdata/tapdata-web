@@ -625,12 +625,14 @@ const onClickServer = (row: any) => {
             </div>
             <div
               v-if="errorCount.value !== undefined"
-              class="status-value flex align-items-end gap-2"
+              class="status-value flex flex-column align-items-start gap-2"
             >
               <CountUp :end-val="errorCount.value" :duration="0.5" />
 
-              <el-tag type="danger" size="small"
-                ><span>{{ $t('api_monitor_error_rate') }}</span
+              <el-tag type="danger" size="small" class="border-0"
+                ><span class="fw-sub mr-1">{{
+                  $t('api_monitor_error_rate')
+                }}</span
                 >{{ errorCount.errorRate }}%</el-tag
               >
             </div>
@@ -642,17 +644,31 @@ const onClickServer = (row: any) => {
             </div>
             <div
               v-if="responseTimeAvg.value !== undefined"
-              class="status-value flex align-items-end gap-2"
+              class="status-value flex flex-column align-items-start gap-2"
             >
               <CountUp
                 :end-val="responseTimeAvg.value"
                 :suffix="responseTimeAvg.unit"
                 :duration="0.5"
               />
-              <el-tag size="small" class="is-code">
-                {{ responseTimeAvg.minDelay }} -
-                {{ responseTimeAvg.maxDelay }}
-              </el-tag>
+              <div class="flex align-center gap-1">
+                <el-tag
+                  v-if="responseTimeAvg.maxDelay !== undefined"
+                  size="small"
+                  class="is-code fw-sub"
+                >
+                  <span class="fw-sub mr-1">Max</span
+                  >{{ responseTimeAvg.maxDelay }}
+                </el-tag>
+                <el-tag
+                  v-if="responseTimeAvg.minDelay !== undefined"
+                  size="small"
+                  class="is-code fw-sub"
+                >
+                  <span class="fw-sub mr-1">Min</span
+                  >{{ responseTimeAvg.minDelay }}
+                </el-tag>
+              </div>
             </div>
             <div v-else class="status-value">--</div>
           </div>
@@ -738,11 +754,11 @@ const onClickServer = (row: any) => {
           </el-table-column>
           <el-table-column
             :label="t('api_monitor_avg_latency')"
-            prop="requestCostAvg"
+            prop="responseTimeAvg"
             width="120"
           >
             <template #default="{ row }">
-              {{ row.requestCostAvg ?? '--' }}
+              {{ row.responseTimeAvg ?? '--' }}
             </template>
           </el-table-column>
           <el-table-column

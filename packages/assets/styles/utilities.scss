@@ -2685,6 +2685,10 @@
   font-weight: bolder !important;
 }
 
+.font-semibold {
+  font-weight: 600 !important;
+}
+
 .lh-1 {
   line-height: 1 !important;
 }
@@ -13068,6 +13072,12 @@
 .lg\:grid-cols-4 {
   @media (width >= 64rem) {
       grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.xl\:grid-cols-6 {
+  @media (width >= 80rem) {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 }
 

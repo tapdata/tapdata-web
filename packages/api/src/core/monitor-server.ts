@@ -330,7 +330,8 @@ export async function fetchMonitorServerApi(params?: Params) {
 
   data.forEach((item) => {
     item.errorRate = Number(item.errorRate.toFixed(2))
-    item.avg = formatResponseTime(item.avg)
+    item.responseTimeAvg = formatResponseTime(item.responseTimeAvg)
+    item.p95 = formatResponseTime(item.p95)
     item.p99 = formatResponseTime(item.p99)
   })
 
@@ -453,15 +454,9 @@ export async function fetchMonitorApiServer(params?: Params) {
     if (isNumber(item.errorRate)) {
       item.errorRate = Number(item.errorRate.toFixed(2))
     }
-    if (isNumber(item.requestCostAvg)) {
-      item.requestCostAvg = formatResponseTime(item.requestCostAvg)
-    }
-    if (isNumber(item.p95)) {
-      item.p95 = formatResponseTime(item.p95)
-    }
-    if (isNumber(item.p99)) {
-      item.p99 = formatResponseTime(item.p99)
-    }
+    item.responseTimeAvg = formatResponseTime(item.responseTimeAvg)
+    item.p95 = formatResponseTime(item.p95)
+    item.p99 = formatResponseTime(item.p99)
   })
 
   return data

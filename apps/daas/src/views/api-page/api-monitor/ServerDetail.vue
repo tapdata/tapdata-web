@@ -77,51 +77,6 @@ const workerListDefaultSort = { prop: 'requestCount', order: 'descending' }
 const workerListSortBy = ref(workerListDefaultSort.prop)
 const workerListSortOrder = ref<'ASC' | 'DESC'>('DESC')
 
-const cards = [
-  {
-    title: t('api_monitor_total_request_count'),
-    key: 'requestCount',
-    decimals: 0,
-  },
-  {
-    title: '请求异常数',
-    key: 'errorCount',
-    decimals: 0,
-  },
-  {
-    title: t('api_monitor_total_error_rate'),
-    key: 'errorRate',
-    unit: '%',
-  },
-  {
-    title: t('api_monitor_avg_latency'),
-    key: 'responseTimeAvg',
-    unit: 'ms',
-  },
-  {
-    title: '最大响应时间',
-    key: 'maxDelay',
-    unit: 'ms',
-  },
-  {
-    title: '最小响应时间',
-    key: 'minDelay',
-    unit: 'ms',
-  },
-  {
-    title: t('api_monitor_p95_latency'),
-    key: 'p95',
-    unit: 'ms',
-    class: 'color-warning',
-  },
-  {
-    title: t('api_monitor_p99_latency'),
-    key: 'p99',
-    unit: 'ms',
-    class: 'color-danger',
-  },
-]
-
 const matchValueUnit = (value: any) => {
   if (isString(value)) {
     const match = value.match(/(\d+(?:\.\d*)?)([a-z%/]+)?/i)
@@ -883,12 +838,12 @@ const onClickApi = (row: any) => {
             </div>
             <div
               v-if="errorCount.value !== undefined"
-              class="status-value flex align-items-end gap-2"
+              class="status-value flex flex-column align-items-start gap-2"
             >
               <CountUp :end-val="errorCount.value" :duration="0.5" />
 
-              <el-tag type="danger" size="small" class="mb-1"
-                ><span>{{ $t('api_monitor_error_rate') }}</span
+              <el-tag type="danger" size="small" class="fw-sub"
+                ><span class="mr-1">{{ $t('api_monitor_error_rate') }}</span
                 >{{ errorCount.errorRate }}%</el-tag
               >
             </div>
@@ -900,16 +855,31 @@ const onClickApi = (row: any) => {
             </div>
             <div
               v-if="responseTimeAvg.value !== undefined"
-              class="status-value flex align-items-end gap-2"
+              class="status-value flex flex-column align-items-start gap-2"
             >
               <CountUp
                 :end-val="responseTimeAvg.value"
                 :suffix="responseTimeAvg.unit"
                 :duration="0.5"
               />
-              <el-tag size="small" class="is-code mb-1">
-                {{ responseTimeAvg.minDelay }} - {{ responseTimeAvg.maxDelay }}
-              </el-tag>
+              <div class="flex align-center gap-1">
+                <el-tag
+                  v-if="responseTimeAvg.maxDelay !== undefined"
+                  size="small"
+                  class="is-code fw-sub"
+                >
+                  <span class="fw-sub mr-1">Max</span
+                  >{{ responseTimeAvg.maxDelay }}
+                </el-tag>
+                <el-tag
+                  v-if="responseTimeAvg.minDelay !== undefined"
+                  size="small"
+                  class="is-code fw-sub"
+                >
+                  <span class="fw-sub mr-1">Min</span
+                  >{{ responseTimeAvg.minDelay }}
+                </el-tag>
+              </div>
             </div>
             <div v-else class="status-value">--</div>
           </div>
@@ -1061,13 +1031,21 @@ const onClickApi = (row: any) => {
           </el-table-column>
           <el-table-column
             :label="t('api_monitor_avg_latency')"
-            prop="avg"
+            prop="responseTimeAvg"
             width="120"
             sortable="custom"
           >
             <template #default="{ row }">
-              {{ row.avg }}
+              {{ row.responseTimeAvg }}
             </template>
+          </el-table-column>
+          <el-table-column
+            :label="t('api_monitor_p95_latency')"
+            prop="p95"
+            width="120"
+            sortable="custom"
+          >
+            <template #default="{ row }"> {{ row.p95 ?? '--' }} </template>
           </el-table-column>
           <el-table-column
             :label="t('api_monitor_p99_latency')"

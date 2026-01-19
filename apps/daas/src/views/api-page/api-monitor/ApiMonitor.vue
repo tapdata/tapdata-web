@@ -89,7 +89,7 @@ const serverTopCards = [
     title: t('api_monitor_avg_response_time'),
     unit: 'ms',
     key: 'responseTimeAvg',
-    sortKey: 'requestCostAvg',
+    sortKey: 'responseTimeAvg',
   },
   {
     title: t('api_monitor_p95_response_time'),
@@ -325,11 +325,11 @@ onUnmounted(() => {
         />
         <el-button type="primary" @click="refreshData">
           <el-icon class="mr-1"><i-lucide-refresh-cw /></el-icon>
-          刷新
+          {{ t('api_monitor_refresh') }}
         </el-button>
       </div>
     </template>
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
       <div
         class="border rounded-xl p-3 top-card cursor-pointer"
         @click="handleSortApi('requestCount')"
@@ -339,11 +339,11 @@ onUnmounted(() => {
             {{ $t('api_monitor_total_request_count') }}
           </div>
         </div>
-        <div class="card-content">
-          <div v-if="requestCount.value !== undefined" class="text-2xl fw-sub">
+        <div class="card-content font-semibold">
+          <div v-if="requestCount.value !== undefined">
             <CountUp :end-val="requestCount.value" :duration="0.5" />
           </div>
-          <div v-else class="text-2xl fw-sub">--</div>
+          <div v-else>--</div>
         </div>
       </div>
       <div
@@ -358,41 +358,54 @@ onUnmounted(() => {
         <div class="card-content">
           <div
             v-if="errorCount.value !== undefined"
-            class="text-2xl fw-sub flex flex-column align-items-start gap-2 color-danger"
+            class="flex flex-column align-items-start gap-2 color-danger font-semibold"
           >
             <CountUp :end-val="errorCount.value" :duration="0.5" />
-            <el-tag type="danger" size="small"
+            <el-tag type="danger" size="small" class="border-0 fw-sub"
               ><span class="mr-1">{{ $t('api_monitor_error_rate') }}</span
               >{{ errorCount.errorRate }}%</el-tag
             >
           </div>
-          <div v-else class="text-2xl fw-sub">--</div>
+          <div v-else>--</div>
         </div>
       </div>
       <div
         class="border rounded-xl p-3 top-card cursor-pointer"
-        @click="handleSortApi('requestCostAvg')"
+        @click="handleSortApi('responseTimeAvg')"
       >
         <div class="card-header mb-6">
           <div class="card-title font-color-light">
             {{ $t('api_monitor_avg_response_time') }}
           </div>
         </div>
-        <div class="card-content">
+        <div class="card-content font-semibold">
           <div
             v-if="responseTimeAvg.value !== undefined"
-            class="text-2xl fw-sub gap-2 flex flex-column align-items-start"
+            class="gap-2 flex flex-column align-items-start"
           >
             <CountUp
               :end-val="responseTimeAvg.value"
               :suffix="responseTimeAvg.unit"
               :duration="0.5"
             />
-            <el-tag size="small" class="is-code">
-              {{ responseTimeAvg.minDelay }} - {{ responseTimeAvg.maxDelay }}
-            </el-tag>
+            <div class="flex align-center gap-1">
+              <el-tag
+                v-if="responseTimeAvg.maxDelay !== undefined"
+                size="small"
+                class="is-code fw-sub"
+              >
+                <span class="mr-1">Max</span>{{ responseTimeAvg.maxDelay }}
+              </el-tag>
+              <el-tag
+                v-if="responseTimeAvg.minDelay !== undefined"
+                size="small"
+                class="is-code fw-sub"
+              >
+                <span class="mr-1">Min</span>{{ responseTimeAvg.minDelay }}
+              </el-tag>
+            </div>
           </div>
-          <div v-else class="text-2xl fw-sub">--</div>
+          <div v-else>--</div>
         </div>
       </div>
       <div
@@ -404,14 +417,11 @@ onUnmounted(() => {
             {{ $t('api_monitor_p95_response_time') }}
           </div>
         </div>
-        <div class="card-content">
-          <div
-            v-if="p95.value !== undefined"
-            class="text-2xl fw-sub color-warning"
-          >
-            <CountUp :end-val="p95.value" :duration="0.5" />
+        <div class="card-content font-semibold">
+          <div v-if="p95.value !== undefined" class="color-warning">
+            <CountUp :end-val="p95.value" :suffix="p95.unit" :duration="0.5" />
           </div>
-          <div v-else class="text-2xl fw-sub">--</div>
+          <div v-else>--</div>
         </div>
       </div>
       <div
@@ -423,14 +433,11 @@ onUnmounted(() => {
             {{ $t('api_monitor_p99_response_time') }}
           </div>
         </div>
-        <div class="card-content">
-          <div
-            v-if="p99.value !== undefined"
-            class="text-2xl fw-sub color-danger"
-          >
-            <CountUp :end-val="p99.value" :duration="0.5" />
+        <div class="card-content font-semibold">
+          <div v-if="p99.value !== undefined" class="color-danger">
+            <CountUp :end-val="p99.value" :suffix="p99.unit" :duration="0.5" />
           </div>
-          <div v-else class="text-2xl fw-sub">--</div>
+          <div v-else>--</div>
         </div>
       </div>
       <div
@@ -442,14 +449,14 @@ onUnmounted(() => {
             {{ $t('api_monitor_unhealthy_api_count') }}
           </div>
         </div>
-        <div class="card-content">
+        <div class="card-content font-semibold">
           <div
             v-if="notHealthyApiCount.value !== undefined"
-            class="text-2xl fw-sub color-danger"
+            class="color-danger"
           >
             <CountUp :end-val="notHealthyApiCount.value" :duration="0.5" />
           </div>
-          <div v-else class="text-2xl fw-sub">--</div>
+          <div v-else>--</div>
         </div>
       </div>
     </div>
@@ -517,11 +524,11 @@ onUnmounted(() => {
           />
           <el-table-column
             :label="t('api_monitor_avg_latency')"
-            prop="requestCostAvg"
+            prop="responseTimeAvg"
             width="120"
             sortable="custom"
           >
-            <template #default="{ row }"> {{ row.requestCostAvg }} </template>
+            <template #default="{ row }"> {{ row.responseTimeAvg }} </template>
           </el-table-column>
           <el-table-column
             :label="t('api_monitor_p95_latency')"
@@ -586,6 +593,9 @@ onUnmounted(() => {
 </template>
 
 <style lang="scss" scoped>
+.card-content {
+  font-size: 2rem;
+}
 .api-monitor-wrap {
   display: flex;
   -ms-flex: 1;
