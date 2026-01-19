@@ -231,6 +231,7 @@ const handleOpen = () => {
                     <i-lucide-folder-closed v-else />
                   </el-icon>
                   <OverflowTooltip
+                    v-if="data.label"
                     class="node-label min-w-0 elipsis"
                     :text="data.label"
                     :endable="false"
@@ -238,6 +239,11 @@ const handleOpen = () => {
                     :hide-after="0"
                     placement="left"
                   />
+                  <span
+                    v-else
+                    class="font-color-slight text-decoration-line-through"
+                    >{{ t('data_import_export_nonexistent') }}</span
+                  >
                   <el-tag
                     v-if="data.children"
                     size="small"
@@ -248,19 +254,6 @@ const handleOpen = () => {
                     {{ data.children.length }}
                   </el-tag>
                   <div class="flex-1" />
-                  <el-tag
-                    v-if="data.action"
-                    size="small"
-                    :type="getActionType(data.action)"
-                    disable-transitions
-                    class="flex-shrink-0"
-                  >
-                    {{
-                      t(
-                        `data_import_export_action_${data.action.toLowerCase()}`,
-                      )
-                    }}
-                  </el-tag>
                   <el-tooltip
                     v-if="data.message"
                     :content="data.message"
@@ -268,10 +261,39 @@ const handleOpen = () => {
                     :enterable="false"
                     :hide-after="0"
                   >
-                    <el-icon class="color-warning flex-shrink-0" size="14">
-                      <i-lucide-alert-circle />
-                    </el-icon>
+                    <el-tag
+                      size="small"
+                      :type="getActionType(data.action)"
+                      disable-transitions
+                      class="flex-shrink-0"
+                    >
+                      <el-icon class="color-warning flex-shrink-0" size="14">
+                        <i-lucide-alert-circle />
+                      </el-icon>
+                      {{
+                        data.action
+                          ? t(
+                              `data_import_export_action_${data.action.toLowerCase()}`,
+                            )
+                          : '--'
+                      }}
+                    </el-tag>
                   </el-tooltip>
+                  <el-tag
+                    v-else
+                    size="small"
+                    :type="getActionType(data.action)"
+                    disable-transitions
+                    class="flex-shrink-0"
+                  >
+                    {{
+                      data.action
+                        ? t(
+                            `data_import_export_action_${data.action.toLowerCase()}`,
+                          )
+                        : '--'
+                    }}
+                  </el-tag>
                 </div>
               </template>
             </el-tree>

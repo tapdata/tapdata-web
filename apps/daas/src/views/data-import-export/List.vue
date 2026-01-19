@@ -70,18 +70,18 @@ const filterItems = ref([
       { label: t('data_import_export_export'), value: 'export' },
     ],
   },
-  // {
-  //   label: t('public_status'),
-  //   key: 'status',
-  //   type: 'select',
-  //   placeholder: t('public_select_option_all'),
-  //   options: [
-  //     { label: t('public_select_option_all'), value: '' },
-  //     { label: t('public_status_running'), value: 'importing,exporting' },
-  //     { label: t('data_import_export_completed'), value: 'completed' },
-  //     { label: t('data_import_export_failed'), value: 'failed' },
-  //   ],
-  // },
+  {
+    label: t('public_status'),
+    key: 'status',
+    type: 'select',
+    placeholder: t('public_select_option_all'),
+    options: [
+      { label: t('public_select_option_all'), value: '' },
+      { label: t('public_status_running'), value: 'importing,exporting' },
+      { label: t('data_import_export_completed'), value: 'completed' },
+      { label: t('data_import_export_failed'), value: 'failed' },
+    ],
+  },
 ])
 
 watch(

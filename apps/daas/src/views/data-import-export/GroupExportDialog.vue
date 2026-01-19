@@ -287,8 +287,9 @@ const handleExport = async () => {
                     {{ data.children.length }}
                   </el-tag>
                   <el-switch
-                    v-if="
-                      data.type === 'MIGRATE_TASK' || data.type === 'SYNC_TASK'
+                    v-else-if="
+                      (node.label && data.type === 'MIGRATE_TASK') ||
+                      data.type === 'SYNC_TASK'
                     "
                     v-model="data.rerun"
                     class="ml-auto"
