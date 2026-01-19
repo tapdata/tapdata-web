@@ -189,6 +189,8 @@ export default {
   public_message_send_success: 'Send Successfully',
   public_message_download_ok: 'Download Successfully',
   public_message_publish_successful: 'Publish Successful',
+  public_message_export_ok: 'Export Successfully',
+  public_message_export_fail: 'Export Failed',
   // drop-down list
   public_select_placeholder: 'Please Select',
   public_select_option_all: 'Select All',

@@ -113,6 +113,7 @@ export default {
   data_import_export_import_group: '導入分組',
   data_import_export_export_group: '導出分組',
   data_import_export_select_group: '選擇分組',
+  data_import_export_rerun: '重跑',
 
   // -- 多表選擇器
   component_table_selector_candidate_label: '待覆制表',

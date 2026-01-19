@@ -113,6 +113,7 @@ export default {
   data_import_export_import_group: '导入分组',
   data_import_export_export_group: '导出分组',
   data_import_export_select_group: '选择分组',
+  data_import_export_rerun: '重跑',
 
   // -- 多表选择器
   component_table_selector_candidate_label: '待复制表',

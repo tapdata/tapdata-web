@@ -189,6 +189,8 @@ export default {
   public_message_send_success: '發送成功',
   public_message_download_ok: '下載成功',
   public_message_publish_successful: '發佈成功',
+  public_message_export_ok: '導出成功',
+  public_message_export_fail: '導出失敗',
   // 下拉列表
   public_select_placeholder: '請選擇',
   public_select_option_all: '全部',

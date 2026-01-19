@@ -33,6 +33,7 @@ export interface ResourceItem {
   id: string
   name?: string
   type: ResourceType
+  rerun?: boolean // 是否开启 rerun（仅用于导出时）
 }
 
 // 分组信息数据传输对象
@@ -113,8 +114,13 @@ export function deleteGroupInfo(id: string) {
 /**
  * 批量导出分组
  */
-export function exportGroupInfoBatch(ids: string[]) {
-  return requestClient.get(`${BASE_URL}/batch/load`, {
+export function exportGroupInfoBatch(
+  ids: string[],
+  data?: {
+    [groupId: string]: string[]
+  },
+) {
+  return requestClient.post(`${BASE_URL}/batch/load`, data, {
     params: {
       id: ids,
     },

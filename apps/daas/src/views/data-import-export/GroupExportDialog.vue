@@ -65,6 +65,21 @@ const treeData = computed(() => {
     }
   })
 
+  if (resourcesByType.MIGRATE_TASK.length > 0) {
+    result.push({
+      id: `${group.id}-MIGRATE_TASK`,
+      label: t('data_import_export_migrate_task'),
+      type: 'MIGRATE_TASK',
+      children: resourcesByType.MIGRATE_TASK.map((item) => ({
+        id: item.id,
+        label: item.name,
+        type: item.type,
+        rerun: item.rerun || false,
+        _resource: item, // 保存原始资源引用
+      })),
+    })
+  }
+
   // 添加类型分组节点
   if (resourcesByType.SYNC_TASK.length > 0) {
     result.push({
@@ -73,21 +88,10 @@ const treeData = computed(() => {
       type: 'SYNC_TASK',
       children: resourcesByType.SYNC_TASK.map((item) => ({
         id: item.id,
-        label: item.name || item.id,
+        label: item.name,
         type: item.type,
-      })),
-    })
-  }
-
-  if (resourcesByType.MIGRATE_TASK.length > 0) {
-    result.push({
-      id: `${group.id}-MIGRATE_TASK`,
-      label: t('data_import_export_migrate_task'),
-      type: 'MIGRATE_TASK',
-      children: resourcesByType.MIGRATE_TASK.map((item) => ({
-        id: item.id,
-        label: item.name || item.id,
-        type: item.type,
+        rerun: item.rerun || false,
+        _resource: item, // 保存原始资源引用
       })),
     })
   }
@@ -99,7 +103,7 @@ const treeData = computed(() => {
       type: 'MODULE',
       children: resourcesByType.MODULE.map((item) => ({
         id: item.id,
-        label: item.name || item.id,
+        label: item.name,
         type: item.type,
       })),
     })
@@ -117,6 +121,15 @@ watch(visible, (val) => {
   }
 })
 
+// 处理 rerun 状态变化
+const handleRerunChange = (treeNode: any, value: string | number | boolean) => {
+  // 同步到原始资源对象
+  const boolValue = Boolean(value)
+  if (treeNode._resource) {
+    treeNode._resource.rerun = boolValue
+  }
+}
+
 // 导出分组
 const handleExport = async () => {
   if (selectedGroupIds.value.length === 0) {
@@ -127,13 +140,37 @@ const handleExport = async () => {
   exporting.value = true
 
   try {
-    const res = await exportGroupInfoBatch(selectedGroupIds.value)
+    // 收集开启了 rerun 的任务
+    const rerunData: { [groupId: string]: string[] } = {}
+
+    selectedGroupIds.value.forEach((groupId) => {
+      const group = groupList.value.find((g) => g.id === groupId)
+      if (!group?.resourceItemList) return
+
+      const rerunTaskIds = group.resourceItemList
+        .filter(
+          (item) =>
+            item.rerun &&
+            (item.type === 'SYNC_TASK' || item.type === 'MIGRATE_TASK'),
+        )
+        .map((item) => item.id)
+
+      if (rerunTaskIds.length > 0) {
+        rerunData[groupId] = rerunTaskIds
+      }
+    })
+
+    // 调用导出接口，如果有 rerun 数据则传递
+    const res = await exportGroupInfoBatch(
+      selectedGroupIds.value,
+      Object.keys(rerunData).length > 0 ? rerunData : undefined,
+    )
     downloadBlob(res)
-    ElMessage.success('导出成功')
+    ElMessage.success(t('public_message_export_ok'))
     visible.value = false
   } catch (error) {
     console.error('导出失败:', error)
-    ElMessage.error('导出失败')
+    ElMessage.error(t('public_message_export_fail'))
   } finally {
     exporting.value = false
   }
@@ -218,14 +255,15 @@ const handleExport = async () => {
                 label: 'label',
                 children: 'children',
               }"
+              class="preview-tree"
             >
               <template #default="{ node, data }">
-                <div class="tree-node flex align-center gap-2 min-w-0">
+                <div class="tree-node flex align-center gap-2 min-w-0 flex-1">
                   <el-icon v-if="data.children" :size="16">
                     <i-lucide-folder-open v-if="node.expanded" />
                     <i-lucide-folder-closed v-else />
                   </el-icon>
-                  <span class="node-label min-w-0 elipsis">
+                  <span v-if="node.label" class="node-label min-w-0 elipsis">
                     <overflow-tooltip
                       :text="node.label"
                       :endable="false"
@@ -234,6 +272,11 @@ const handleExport = async () => {
                       placement="left"
                     />
                   </span>
+                  <span
+                    v-else
+                    class="font-color-slight text-decoration-line-through"
+                    >{{ t('data_import_export_nonexistent') }}</span
+                  >
                   <el-tag
                     v-if="data.children"
                     size="small"
@@ -243,6 +286,18 @@ const handleExport = async () => {
                   >
                     {{ data.children.length }}
                   </el-tag>
+                  <el-switch
+                    v-if="
+                      data.type === 'MIGRATE_TASK' || data.type === 'SYNC_TASK'
+                    "
+                    v-model="data.rerun"
+                    class="ml-auto"
+                    size="small"
+                    inline-prompt
+                    :active-text="$t('data_import_export_rerun')"
+                    inactive-text=""
+                    @change="(val) => handleRerunChange(data, val)"
+                  />
                 </div>
               </template>
             </el-tree>
@@ -259,14 +314,16 @@ const handleExport = async () => {
 
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="visible = false">取消</el-button>
+        <el-button @click="visible = false">{{
+          $t('public_button_cancel')
+        }}</el-button>
         <el-button
           :loading="exporting"
           type="primary"
           :disabled="selectedGroupIds.length === 0"
           @click="handleExport"
         >
-          导出
+          {{ $t('public_button_export') }}
           {{
             selectedGroupIds.length > 0 ? `(${selectedGroupIds.length})` : ''
           }}
@@ -369,33 +426,37 @@ const handleExport = async () => {
 }
 
 .preview-tree {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
+  // flex: 1;
+  // overflow-y: auto;
+  // padding: 16px;
 
-  :deep(.el-tree) {
-    background-color: transparent;
+  // :deep(.el-tree) {
+  //   background-color: transparent;
+  // }
+
+  // :deep(.el-tree-node__content) {
+  //   height: 32px;
+  //   margin-bottom: 2px;
+  // }
+
+  :deep(.el-tree-node__content .el-switch .is-text) {
+    padding: 0 2px 0 4px;
   }
 
-  :deep(.el-tree-node__content) {
-    height: 32px;
-    margin-bottom: 2px;
-  }
+  // .tree-node {
+  //   display: flex;
+  //   align-items: center;
+  //   gap: 8px;
+  //   flex: 1;
+  //   min-width: 0;
 
-  .tree-node {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 1;
-    min-width: 0;
-
-    .node-label {
-      flex: 1;
-      font-size: 14px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-  }
+  //   .node-label {
+  //     flex: 1;
+  //     font-size: 14px;
+  //     overflow: hidden;
+  //     text-overflow: ellipsis;
+  //     white-space: nowrap;
+  //   }
+  // }
 }
 </style>

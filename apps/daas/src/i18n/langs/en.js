@@ -115,6 +115,7 @@ export default {
   data_import_export_import_group: 'Import Group',
   data_import_export_export_group: 'Export Group',
   data_import_export_select_group: 'Select Group',
+  data_import_export_rerun: 'Rerun',
 
   // -- 多表选择器
   component_table_selector_candidate_label: 'To be selected',
