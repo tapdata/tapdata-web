@@ -46,6 +46,13 @@ export interface GroupInfoDto {
   lastUpdAt?: Date | string
   createUser?: string
   lastUpdBy?: string
+  gitInfo?: {
+    // GitRepoUrlType: 'HTTPS' | 'SSH'
+    repoUrl: string
+    token: string
+    // username: string
+    // password: string
+  }
 }
 
 // 记录详情

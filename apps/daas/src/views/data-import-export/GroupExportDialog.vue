@@ -10,14 +10,24 @@ import { t } from '@tap/i18n'
 import { downloadBlob } from '@tap/shared'
 import { ElMessage } from 'element-plus'
 import { computed, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
 const visible = defineModel<boolean>()
+const router = useRouter()
+
+// Props
+const props = defineProps<{
+  initialGroupId?: string
+}>()
+
+const emit = defineEmits(['createProject'])
 
 // 分组列表
 const groupList = ref<GroupInfoDto[]>([])
 const groupLoading = ref(false)
 const selectedGroupIds = ref<string[]>([])
 const currentGroupId = ref<string>('') // 当前选中的分组（用于预览）
+const searchKeyword = ref('') // 搜索关键词
 
 // 导出状态
 const exporting = ref(false)
@@ -28,6 +38,7 @@ const loadGroups = async () => {
   try {
     const result = await fetchGroupInfoList({
       limit: 1000,
+      order: 'createAt DESC',
       skip: 0,
     })
     groupList.value = result.items || []
@@ -37,6 +48,16 @@ const loadGroups = async () => {
     groupLoading.value = false
   }
 }
+
+// 过滤后的分组列表
+const filteredGroupList = computed(() => {
+  const keyword = searchKeyword.value.toLowerCase()
+  return groupList.value.filter(
+    (group) =>
+      group.name.toLowerCase().includes(keyword) ||
+      group.description?.toLowerCase().includes(keyword),
+  )
+})
 
 // 当前选中的分组
 const currentGroup = computed(() => {
@@ -113,11 +134,18 @@ const treeData = computed(() => {
 })
 
 // 监听弹窗打开
-watch(visible, (val) => {
+watch(visible, async (val) => {
   if (val) {
-    loadGroups()
-    selectedGroupIds.value = []
-    currentGroupId.value = ''
+    await loadGroups()
+
+    // 如果有初始项目 ID，自动选中
+    if (props.initialGroupId) {
+      selectedGroupIds.value = [props.initialGroupId]
+      currentGroupId.value = props.initialGroupId
+    } else {
+      selectedGroupIds.value = []
+      currentGroupId.value = ''
+    }
   }
 })
 
@@ -175,6 +203,21 @@ const handleExport = async () => {
     exporting.value = false
   }
 }
+
+// 跳转到项目管理页面并新建项目
+const handleCreateProject = () => {
+  visible.value = false
+  // 不在当前路由时，跳转到项目管理页面并新建项目
+  if (router.currentRoute.value.name !== 'projectManagement') {
+    router.push({
+      name: 'projectManagement',
+      query: { action: 'create' },
+    })
+  } else {
+    // 如果已经在项目管理页面，则调用新增项目方法
+    emit('createProject')
+  }
+}
 </script>
 
 <template>
@@ -193,15 +236,29 @@ const handleExport = async () => {
         class="flex-shrink-0 flex flex-column flex-1"
         style="min-width: 200px"
       >
-        <div class="text-caption p-2 pb-0 pl-4">
+        <!-- <div class="text-caption p-2 pb-0 pl-4">
           {{ $t('data_import_export_select_group') }}
-        </div>
-        <div class="p-2 pt-0 min-h-0 overflow-y-auto">
-          <div class="flex flex-column gap-1">
-            <div v-loading="groupLoading" class="groups-list pr-0">
+        </div> -->
+        <div class="flex flex-column flex-1 min-h-0">
+          <div class="flex align-center gap-2 p-2">
+            <!-- 搜索框 -->
+            <el-input
+              v-model="searchKeyword"
+              :placeholder="$t('public_button_search')"
+              clearable
+            >
+              <template #prefix>
+                <i-lucide-search class="fs-6" />
+              </template>
+            </el-input>
+          </div>
+
+          <!-- 项目列表 -->
+          <el-scrollbar v-loading="groupLoading" class="flex-1 min-h-0 px-2">
+            <div class="groups-list">
               <el-checkbox-group v-model="selectedGroupIds" class="w-100">
                 <div
-                  v-for="group in groupList"
+                  v-for="group in filteredGroupList"
                   :key="group.id"
                   class="group-item"
                   :class="{ 'is-current': currentGroupId === group.id }"
@@ -231,15 +288,42 @@ const handleExport = async () => {
               </el-checkbox-group>
 
               <el-empty
-                v-if="groupList.length === 0 && !groupLoading"
-                :description="$t('data_import_export_no_group')"
+                v-if="filteredGroupList.length === 0 && !groupLoading"
+                :description="
+                  searchKeyword
+                    ? $t('public_data_no_result')
+                    : $t('data_import_export_no_group')
+                "
                 :image-size="80"
-              />
+              >
+                <template #description>
+                  <el-button v-if="!searchKeyword" @click="handleCreateProject">
+                    <template #icon>
+                      <i-lucide-plus />
+                    </template>
+                    {{ $t('data_import_export_add_group') }}
+                  </el-button>
+                  <span v-else>
+                    {{ $t('public_data_no_result') }}
+                  </span>
+                </template>
+              </el-empty>
             </div>
-          </div>
+          </el-scrollbar>
+
+          <el-button
+            v-if="filteredGroupList.length || searchKeyword"
+            class="border-dashed m-2"
+            @click="handleCreateProject"
+          >
+            <template #icon>
+              <i-lucide-plus />
+            </template>
+            {{ $t('data_import_export_add_group') }}
+          </el-button>
         </div>
       </div>
-      <div class="p-2 flex-1 min-w-0 flex flex-column">
+      <div class="p-2 pl-0 flex-1 min-w-0 flex flex-column">
         <div
           class="bg-card rounded-xl min-h-0 flex flex-column flex-1 overflow-auto"
           style="border: 1px solid #f2f4f7"
@@ -372,7 +456,6 @@ const handleExport = async () => {
 .groups-list {
   flex: 1;
   overflow-y: auto;
-  padding: 8px;
 
   :deep(.el-checkbox-group) {
     display: flex;

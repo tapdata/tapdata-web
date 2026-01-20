@@ -15,7 +15,7 @@ import { useI18n } from '@tap/i18n'
 import dayjs from 'dayjs'
 import { ElIcon, ElTag } from 'element-plus'
 import { ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import GroupExportDialog from './GroupExportDialog.vue'
 import GroupImportDialog from './GroupImportDialog.vue'
 import GroupManagementModal from './GroupManagementModal.vue'
@@ -23,6 +23,7 @@ import RecordDetailDialog from './RecordDetailDialog.vue'
 
 const { t } = useI18n()
 const route = useRoute()
+const router = useRouter()
 
 // 表格引用
 const table = ref()
@@ -200,7 +201,7 @@ const getTypeText = (type: string) => {
 const groupManagementVisible = ref(false)
 
 const handleOpenGroupManagement = () => {
-  groupManagementVisible.value = true
+  router.push({ name: 'projectManagement' })
 }
 
 const handleGroupManagementSaved = () => {

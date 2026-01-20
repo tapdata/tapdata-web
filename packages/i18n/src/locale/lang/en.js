@@ -640,4 +640,5 @@ export default {
   public_table_regex_example_1: 'Matches tables starting with user_',
   public_table_regex_example_2: 'Matches tables ending with _temp',
   public_table_regex_example_3: 'Matches tables containing test or demo',
+  public_data_no_result: 'No Data Found',
 }

@@ -631,4 +631,5 @@ export default {
   public_table_regex_example_1: '匹配以 user_ 开头的表',
   public_table_regex_example_2: '匹配以 _temp 结尾的表',
   public_table_regex_example_3: '匹配包含 test 或 demo 的表',
+  public_data_no_result: '未找到数据',
 }
