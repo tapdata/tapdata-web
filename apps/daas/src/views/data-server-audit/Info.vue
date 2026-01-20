@@ -151,7 +151,7 @@ export default {
           >
           <ElCol class="font-color-normal pb-4" :span="12"
             ><span class="font-text">{{ $t('apiaudit_interview_time') }}:</span>
-            <span class="fw-sub"> {{ auditData.createAt }}</span></ElCol
+            <span class="fw-sub"> {{ auditData.reqTime }}</span></ElCol
           >
           <ElCol class="font-color-normal pb-4" :span="12"
             ><span class="font-text">{{ $t('apiaudit_ip') }}:</span>

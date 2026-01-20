@@ -220,9 +220,9 @@ export default {
       <el-table-column
         :label="$t('apiaudit_interview_time')"
         :show-overflow-tooltip="true"
-        prop="createTime"
+        prop="reqTime"
         width="160"
-        sortable="createTime"
+        sortable="reqTime"
       >
         <template #default="{ row }">
           {{ row.createTimeFmt }}
@@ -235,7 +235,7 @@ export default {
         :show-overflow-tooltip="true"
       >
         <template #default="{ row }">
-          <span v-if="row.code == 200" class="success">
+          <span v-if="row.failed" class="success">
             <el-icon class="connections-status__icon"
               ><SuccessFilled
             /></el-icon>

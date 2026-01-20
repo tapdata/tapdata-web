@@ -243,22 +243,22 @@ export default {
       <el-table-column
         :label="$t('apiaudit_interview_time')"
         :show-overflow-tooltip="true"
-        prop="createTime"
+        prop="reqTime"
         width="170"
-        sortable="createTime"
+        sortable="reqTime"
       >
         <template #default="{ row }">
           {{ row.createTimeFmt }}
         </template>
       </el-table-column>
       <el-table-column
-        prop="code"
+        prop="failed"
         width="100"
         :label="$t('apiaudit_visit_result')"
         :show-overflow-tooltip="true"
       >
         <template #default="{ row }">
-          <el-text v-if="String(row.code) === '200'" type="success">
+          <el-text v-if="row.failed" type="success">
             <el-icon><SuccessFilled /></el-icon>
             <span class="ml-1">
               {{ $t('apiaudit_success') }}
