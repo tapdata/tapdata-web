@@ -230,6 +230,8 @@ export default {
   application_false: 'No',
   application_create: 'Create Client',
   application_edit: 'Edit client',
+  api_response_time: 'Response time',
+  api_db_cost_time: 'DB cost time',
   api_monitor_total_totalCount: 'Total number of APIs',
   api_monitor_total_warningApiCount: 'Total API Access',
   api_monitor_total_warningVisitCount: 'Total API Access Warning',

@@ -3,7 +3,6 @@ import {
   fetchMonitorApiList,
   fetchMonitorServer,
   fetchMonitorServerList,
-  type ApiOverview,
   type MonitorServer,
   type ServerItem,
 } from '@tap/api/src/core/monitor-server'
@@ -17,7 +16,6 @@ import { computed, nextTick, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import TimeRangeSelector from './components/TimeRangeSelector.vue'
 import ServiceCard from './ServiceCard.vue'
-import type { ApiServerCpuMem } from '@tap/api/src/core/api-server'
 import type { TableInstance } from 'element-plus'
 
 // Composables
@@ -28,12 +26,9 @@ const router = useRouter()
 // Refs
 const isDestroyed = ref(false)
 const timer = ref<number | null>(null)
-const serverDetailsVisible = ref(false)
-const serverDetails = ref<Partial<ApiServerCpuMem>>({})
 
 // Reactive data
 const serverData = ref<MonitorServer | {}>({})
-const apiOverview = ref<ApiOverview | {}>({})
 const serverList = ref<ServerItem[]>([])
 const apiListData = ref<any[]>([])
 const apiListDefaultSort = { prop: 'requestCount', order: 'descending' }
@@ -61,80 +56,6 @@ const handleSortChange = ({
 }
 
 const currentTab = ref('server')
-
-interface TopCardItem {
-  title: string
-  key: string
-  sortKey?: string
-  decimals?: number
-  unit?: string
-  value?: number | string
-  class?: string
-}
-
-const serverTopCards = [
-  {
-    title: t('api_monitor_total_request_count'),
-    key: 'totalRequestCount',
-    sortKey: 'requestCount',
-    decimals: 0,
-  },
-  {
-    title: t('api_monitor_total_error_rate'),
-    unit: '%',
-    key: 'totalErrorRate',
-    sortKey: 'errorRate',
-  },
-  {
-    title: t('api_monitor_avg_response_time'),
-    unit: 'ms',
-    key: 'responseTimeAvg',
-    sortKey: 'responseTimeAvg',
-  },
-  {
-    title: t('api_monitor_p95_response_time'),
-    unit: 'ms',
-    key: 'p95',
-    class: 'color-warning',
-  },
-  {
-    title: t('api_monitor_p99_response_time'),
-    unit: 'ms',
-    key: 'p99',
-    class: 'color-danger',
-  },
-  {
-    title: t('api_monitor_unhealthy_api_count'),
-    key: 'notHealthyApiCount',
-    sortKey: 'errorRate',
-    class: 'color-danger',
-    decimals: 0,
-  },
-]
-
-const topCards = computed<TopCardItem[]>(() => {
-  const data = serverData.value
-  const items = serverTopCards
-
-  return items.map((item) => {
-    let value = (data as any)[item.key]
-    let unit = item.unit ?? ''
-    // 正则判断下 value 是不是带单位的
-    if (isString(value)) {
-      // 正则解析出value 和 unit
-      const match = value.match(/(\d+(?:\.\d*)?)([a-z%/]+)?/i)
-      if (match) {
-        value = Number(match[1])
-        unit = match[2] || unit
-      }
-    }
-    return {
-      ...item,
-      value,
-      unit,
-    }
-  })
-})
 
 const matchValueUnit = (value: any) => {
   if (isString(value)) {
@@ -200,6 +121,7 @@ const notHealthyApiCount = computed(() => {
 // 时间周期选择 - 从 route.query 中恢复
 const timeRange = ref((route.query.timeRange as string) || '1h')
 const customTimeRange = ref<[Date, Date] | null>(null)
+const timeRangeParams = ref<[number, number] | null>(null)
 
 // 获取实际的时间范围（返回10位时间戳，单位：秒）
 const getActualTimeRange = () => {
@@ -233,6 +155,8 @@ const getActualTimeRange = () => {
 const { run: runFetch, cancel: cancelFetch } = useRequest(
   async () => {
     const params = getActualTimeRange()
+
+    timeRangeParams.value = params
 
     serverData.value = await fetchMonitorServer(params)
 
@@ -302,6 +226,48 @@ const handleSortApi = (sortKey: string) => {
   })
 }
 
+// 跳转到审计页面 - 错误率
+const handleNavigateToAuditWithError = (apiName?: string) => {
+  const timeRange = timeRangeParams.value
+  const query: any = {
+    code: ' ', // 失败的状态码
+    start: timeRange.startAt * 1000, // 转换为毫秒
+    end: timeRange.endAt * 1000, // 转换为毫秒
+  }
+
+  if (apiName) {
+    query.keyword = apiName
+  }
+
+  router.push({
+    name: 'dataServerAuditList',
+    query,
+  })
+}
+
+// 跳转到审计页面 - 响应时间排序
+const handleNavigateToAuditWithResponseTime = (
+  apiName?: string,
+  sortOrder: 'ASC' | 'DESC' = 'DESC',
+) => {
+  const timeRange = timeRangeParams.value
+  const query: any = {
+    start: timeRange.startAt * 1000, // 转换为毫秒
+    end: timeRange.endAt * 1000, // 转换为毫秒
+    sortBy: 'latency',
+    sortOrder,
+  }
+
+  if (apiName) {
+    query.keyword = apiName
+  }
+
+  router.push({
+    name: 'dataServerAuditList',
+    query,
+  })
+}
+
 onUnmounted(() => {
   if (timer.value) {
     clearTimeout(timer.value)
@@ -346,10 +312,7 @@ onUnmounted(() => {
           <div v-else>--</div>
         </div>
       </div>
-      <div
-        class="border rounded-xl p-3 top-card cursor-pointer"
-        @click="handleSortApi('errorRate')"
-      >
+      <div class="border rounded-xl p-3 top-card cursor-pointer">
         <div class="card-header mb-6">
           <div class="card-title font-color-light">
             {{ $t('api_monitor_total_error_count') }}
@@ -358,13 +321,41 @@ onUnmounted(() => {
         <div class="card-content">
           <div
             v-if="errorCount.value !== undefined"
-            class="flex flex-column align-items-start gap-2 color-danger font-semibold"
+            class="flex flex-column align-items-start gap-2 font-semibold"
+            :class="{ 'color-danger': errorCount.value > 0 }"
           >
-            <CountUp :end-val="errorCount.value" :duration="0.5" />
-            <el-tag type="danger" size="small" class="border-0 fw-sub"
+            <CountUp
+              :end-val="errorCount.value"
+              :duration="0.5"
+              @click="handleSortApi('errorRate')"
+            />
+            <el-tag
+              type="danger"
+              size="small"
+              class="border-0 fw-sub cursor-pointer"
+              @click.stop="handleNavigateToAuditWithError()"
               ><span class="mr-1">{{ $t('api_monitor_error_rate') }}</span
               >{{ errorCount.errorRate }}%</el-tag
             >
+          </div>
+          <div v-else>--</div>
+        </div>
+      </div>
+      <div
+        class="border rounded-xl p-3 top-card cursor-pointer"
+        @click="handleSortApi('notHealthyApiCount')"
+      >
+        <div class="card-header mb-6">
+          <div class="card-title font-color-light">
+            {{ $t('api_monitor_unhealthy_api_count') }}
+          </div>
+        </div>
+        <div class="card-content font-semibold">
+          <div
+            v-if="notHealthyApiCount.value !== undefined"
+            :class="{ 'color-danger': notHealthyApiCount.value > 0 }"
+          >
+            <CountUp :end-val="notHealthyApiCount.value" :duration="0.5" />
           </div>
           <div v-else>--</div>
         </div>
@@ -392,14 +383,20 @@ onUnmounted(() => {
               <el-tag
                 v-if="responseTimeAvg.maxDelay !== undefined"
                 size="small"
-                class="is-code fw-sub"
+                class="is-code fw-sub cursor-pointer"
+                @click.stop="
+                  handleNavigateToAuditWithResponseTime(undefined, 'DESC')
+                "
               >
                 <span class="mr-1">Max</span>{{ responseTimeAvg.maxDelay }}
               </el-tag>
               <el-tag
                 v-if="responseTimeAvg.minDelay !== undefined"
                 size="small"
-                class="is-code fw-sub"
+                class="is-code fw-sub cursor-pointer"
+                @click.stop="
+                  handleNavigateToAuditWithResponseTime(undefined, 'ASC')
+                "
               >
                 <span class="mr-1">Min</span>{{ responseTimeAvg.minDelay }}
               </el-tag>
@@ -418,7 +415,7 @@ onUnmounted(() => {
           </div>
         </div>
         <div class="card-content font-semibold">
-          <div v-if="p95.value !== undefined" class="color-warning">
+          <div v-if="p95.value !== undefined">
             <CountUp :end-val="p95.value" :suffix="p95.unit" :duration="0.5" />
           </div>
           <div v-else>--</div>
@@ -434,27 +431,8 @@ onUnmounted(() => {
           </div>
         </div>
         <div class="card-content font-semibold">
-          <div v-if="p99.value !== undefined" class="color-danger">
+          <div v-if="p99.value !== undefined">
             <CountUp :end-val="p99.value" :suffix="p99.unit" :duration="0.5" />
-          </div>
-          <div v-else>--</div>
-        </div>
-      </div>
-      <div
-        class="border rounded-xl p-3 top-card cursor-pointer"
-        @click="handleSortApi('notHealthyApiCount')"
-      >
-        <div class="card-header mb-6">
-          <div class="card-title font-color-light">
-            {{ $t('api_monitor_unhealthy_api_count') }}
-          </div>
-        </div>
-        <div class="card-content font-semibold">
-          <div
-            v-if="notHealthyApiCount.value !== undefined"
-            class="color-danger"
-          >
-            <CountUp :end-val="notHealthyApiCount.value" :duration="0.5" />
           </div>
           <div v-else>--</div>
         </div>
@@ -530,13 +508,16 @@ onUnmounted(() => {
           >
             <template #default="{ row }">
               <span
-                :class="{
-                  'text-orange-500': row.errorRate > 1 && row.errorRate < 3,
-                  'text-red-500': row.errorRate >= 3,
-                }"
+                v-if="row.errorRate > 0"
+                class="text-red-500 cursor-pointer is-external-link flex align-center gap-1"
+                @click.stop="handleNavigateToAuditWithError(row.apiName)"
               >
                 {{ row.errorRate }}%
+                <el-icon>
+                  <i-lucide-external-link />
+                </el-icon>
               </span>
+              <span v-else> {{ row.errorRate }}% </span>
             </template>
           </el-table-column>
           <el-table-column
@@ -553,7 +534,21 @@ onUnmounted(() => {
             width="100"
             sortable="custom"
           >
-            <template #default="{ row }"> {{ row.maxDelay }} </template>
+            <template #default="{ row }">
+              <span
+                v-if="row.maxDelay !== undefined"
+                class="is-external-link cursor-pointer flex align-center gap-1"
+                @click.stop="
+                  handleNavigateToAuditWithResponseTime(row.apiName, 'DESC')
+                "
+              >
+                {{ row.maxDelay }}
+                <el-icon>
+                  <i-lucide-external-link />
+                </el-icon>
+              </span>
+              <span v-else>--</span>
+            </template>
           </el-table-column>
           <el-table-column
             :label="t('api_monitor_min_response_time')"
@@ -561,10 +556,24 @@ onUnmounted(() => {
             width="100"
             sortable="custom"
           >
-            <template #default="{ row }"> {{ row.minDelay }} </template>
+            <template #default="{ row }">
+              <span
+                v-if="row.minDelay !== undefined"
+                class="is-external-link cursor-pointer flex align-center gap-1"
+                @click.stop="
+                  handleNavigateToAuditWithResponseTime(row.apiName, 'ASC')
+                "
+              >
+                {{ row.minDelay }}
+                <el-icon>
+                  <i-lucide-external-link />
+                </el-icon>
+              </span>
+              <span v-else>--</span>
+            </template>
           </el-table-column>
           <el-table-column
-            :label="t('api_monitor_p99_response_time')"
+            :label="t('api_monitor_p95_response_time')"
             prop="p95"
             width="100"
             sortable="custom"
@@ -732,6 +741,16 @@ onUnmounted(() => {
     box-shadow:
       0 4px 6px -1px rgb(0 0 0 / 0.1),
       0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+  }
+}
+.is-external-link {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: currentColor;
+  &:hover {
+    text-decoration-style: solid;
   }
 }
 </style>

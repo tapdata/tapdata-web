@@ -44,6 +44,7 @@ export default {
         DELETE: '#DB5050',
         GET: '#09819C',
       },
+      defaultSort: { prop: 'createTime', order: 'descending' },
     }
   },
   computed: {
@@ -52,15 +53,40 @@ export default {
     },
   },
   watch: {
-    '$route.query': function () {
+    '$route.query': function (newQuery) {
+      this.initFromQuery(newQuery)
       this.table.fetch(1)
     },
     'searchParams.createTime': function () {},
   },
   created() {
     this.getFilterItems()
+    this.initFromQuery(this.$route.query)
   },
   methods: {
+    // 从 route.query 初始化参数
+    initFromQuery(query) {
+      if (query.keyword) {
+        this.searchParams.keyword = query.keyword
+      }
+      if (query.code) {
+        this.searchParams.code = query.code
+      }
+      if (query.start) {
+        this.searchParams.start = Number(query.start)
+      }
+      if (query.end) {
+        this.searchParams.end = Number(query.end)
+      }
+      if (query.sortBy && query.sortOrder) {
+        this.order = `${query.sortBy} ${query.sortOrder}`
+        this.defaultSort = {
+          prop: query.sortBy,
+          order: query.sortOrder === 'ASC' ? 'ascending' : 'descending',
+        }
+      }
+    },
+
     toDetails(item) {
       this.$router.push({
         name: 'dataServerAuditDetails',
@@ -211,6 +237,7 @@ export default {
       ref="table"
       row-key="id"
       class="apiaudit-list"
+      :default-sort="defaultSort"
       :remote-method="getData"
       @sort-change="handleSortTable"
     >
@@ -223,7 +250,7 @@ export default {
           />
         </div>
       </template>
-      <el-table-column prop="name" :label="$t('apiaudit_name')" width="220">
+      <el-table-column prop="name" :label="$t('apiaudit_name')" min-width="220">
         <template #default="{ row }">
           <div>{{ row.name }}</div>
           <el-tag class="is-code" size="small" type="info" disable-transitions>
@@ -256,9 +283,9 @@ export default {
       <el-table-column
         :label="$t('apiaudit_interview_time')"
         :show-overflow-tooltip="true"
-        prop="reqTime"
+        prop="createTime"
         width="170"
-        sortable="reqTime"
+        sortable="createTime"
       >
         <template #default="{ row }">
           {{ row.createTimeFmt }}
@@ -266,7 +293,7 @@ export default {
       </el-table-column>
       <el-table-column
         prop="failed"
-        width="100"
+        width="110"
         :label="$t('apiaudit_visit_result')"
         :show-overflow-tooltip="true"
       >
@@ -277,34 +304,53 @@ export default {
               {{ $t('apiaudit_success') }}
             </span>
           </el-text>
-          <el-text v-else type="danger">
-            <el-icon><CircleCloseFilled /></el-icon>
-            <span class="ml-1">
-              {{ $t('public_status_failed') }}
-            </span>
-          </el-text>
+          <el-tooltip
+            v-else
+            :disabled="!row.codeMsg"
+            :content="row.codeMsg"
+            placement="top"
+            :hide-after="0"
+          >
+            <el-text type="danger">
+              <el-icon><CircleCloseFilled /></el-icon>
+              <span class="ml-1" :class="{ underline_dashed: row.codeMsg }">
+                {{ $t('public_status_failed') }}
+              </span>
+            </el-text>
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="latency"
+        width="170"
+        sortable="latency"
+        :label="$t('api_response_time')"
+        :show-overflow-tooltip="true"
+      >
+        <template #default="{ row }">
+          {{ row.latency ? formatDuring(row.latency) : '-' }}
         </template>
       </el-table-column>
       <el-table-column
         prop="dbCost"
         width="170"
         sortable="dbCost"
-        :label="$t('apiaudit_average_response_time')"
+        :label="$t('api_db_cost_time')"
         :show-overflow-tooltip="true"
       >
         <template #default="{ row }">
           {{ row.dbCost ? formatDuring(row.dbCost) : '-' }}
         </template>
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         prop="codeMsg"
         :label="$t('apiaudit_reason_fail')"
         :show-overflow-tooltip="true"
       >
         <template #default="{ row }">
-          {{ row.code == 200 ? '-' : row.codeMsg }}
+          {{ row.code === 200 ? '-' : row.codeMsg }}
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         :label="$t('public_operation')"
         width="100"

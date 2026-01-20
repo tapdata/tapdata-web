@@ -226,6 +226,8 @@ export default {
   application_false: '否',
   application_create: '創建客戶端',
   application_edit: '編輯客戶端',
+  api_response_time: '響應時間',
+  api_db_cost_time: '數據庫耗時',
   //api 监控
   api_monitor_total_totalCount: 'API總數',
   api_monitor_total_warningApiCount: 'API訪問總數',

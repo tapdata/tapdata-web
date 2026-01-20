@@ -382,9 +382,10 @@ export async function fetchMonitorApiList(params?: Params) {
         item[key] = formatResponseTime(item[key])
       },
     )
-    item.totalRps = item.totalRps
-      ? `${calcUnit(item.totalRps, 'b')}/s`
-      : item.totalRps
+
+    if (isNumber(item.totalRps)) {
+      item.totalRps = `${calcUnit(item.totalRps, 'b')}/s`
+    }
   })
 
   return data

@@ -299,6 +299,7 @@ const cpuChartOption = computed<EChartsOption>(() => ({
       type: 'line',
       data: serverChart.value?.usage.cpuUsage || [],
       smooth: true,
+      showSymbol: false,
       symbol: 'circle',
       symbolSize: 6,
       lineStyle: {
@@ -394,6 +395,7 @@ const memoryChartOption = computed<EChartsOption>(() => ({
       type: 'line',
       data: serverChart.value?.usage.memoryUsage || [],
       smooth: true,
+      showSymbol: false,
       symbol: 'circle',
       symbolSize: 6,
       lineStyle: {
@@ -500,7 +502,7 @@ const requestChartOption = computed<EChartsOption>(() => ({
       yAxisIndex: 0,
       data: serverChart.value?.request.requestCount || [],
       smooth: true,
-      // showAllSymbol: true,
+      showSymbol: false,
       symbol: 'circle',
       symbolSize: 6,
       lineStyle: {
@@ -517,7 +519,7 @@ const requestChartOption = computed<EChartsOption>(() => ({
       yAxisIndex: 1,
       data: serverChart.value?.request.errorRate || [],
       smooth: true,
-      // showAllSymbol: true,
+      showSymbol: false,
       symbol: 'circle',
       symbolSize: 6,
       lineStyle: {
@@ -588,7 +590,7 @@ const latencyChartOption = computed<EChartsOption>(() => ({
       type: 'line',
       data: serverChart.value?.delay.avg || [],
       smooth: true,
-      // showAllSymbol: true,
+      showSymbol: false,
       symbol: 'circle',
       symbolSize: 6,
       lineStyle: {
@@ -604,7 +606,7 @@ const latencyChartOption = computed<EChartsOption>(() => ({
       type: 'line',
       data: serverChart.value?.delay.p95 || [],
       smooth: true,
-      // showAllSymbol: true,
+      showSymbol: false,
       symbol: 'circle',
       symbolSize: 6,
       lineStyle: {
@@ -620,7 +622,7 @@ const latencyChartOption = computed<EChartsOption>(() => ({
       type: 'line',
       data: serverChart.value?.delay.p99 || [],
       smooth: true,
-      // showAllSymbol: true,
+      showSymbol: false,
       symbol: 'circle',
       symbolSize: 6,
       lineStyle: {

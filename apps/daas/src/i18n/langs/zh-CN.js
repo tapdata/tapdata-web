@@ -226,6 +226,8 @@ export default {
   application_false: '否',
   application_create: '创建客户端',
   application_edit: '编辑客户端',
+  api_response_time: '响应时间',
+  api_db_cost_time: '数据库耗时',
   //api 监控
   api_monitor_total_totalCount: 'API总数',
   api_monitor_total_warningApiCount: 'API访问总数',

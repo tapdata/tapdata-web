@@ -13086,3 +13086,15 @@
       grid-template-columns: repeat(7, minmax(0, 1fr));
   }
 }
+
+
+.underline_dashed {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: currentColor;
+  &:hover {
+    text-decoration-style: solid;
+  }
+}

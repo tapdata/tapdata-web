@@ -676,10 +676,7 @@ const onClickServer = (row: any) => {
             <div class="status-label">
               {{ $t('api_monitor_p95_response_time') }}
             </div>
-            <div
-              v-if="p95.value !== undefined"
-              class="status-value color-warning"
-            >
+            <div v-if="p95.value !== undefined" class="status-value">
               <CountUp
                 :end-val="p95.value"
                 :suffix="p95.unit"
@@ -692,10 +689,7 @@ const onClickServer = (row: any) => {
             <div class="status-label">
               {{ $t('api_monitor_p99_response_time') }}
             </div>
-            <div
-              v-if="p99.value !== undefined"
-              class="status-value color-danger"
-            >
+            <div v-if="p99.value !== undefined" class="status-value">
               <CountUp
                 :end-val="p99.value"
                 :suffix="p99.unit"
