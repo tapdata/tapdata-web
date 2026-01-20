@@ -215,8 +215,8 @@ const {
       ...timeRangeParams.value,
       serverId,
       orderBy: `${apiListSortBy.value} ${apiListSortOrder.value}`,
-      skip: (current - 1) * pageSize,
-      limit: pageSize,
+      skip: ((current || 1) - 1) * (pageSize || 10),
+      limit: pageSize || 10,
     }
     const apiResult = await fetchMonitorServerApi(params)
     return apiResult

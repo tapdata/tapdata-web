@@ -163,8 +163,8 @@ const {
     const params = {
       ...timeRangeParams.value,
       orderBy: `${apiListSortBy.value} ${apiListSortOrder.value}`,
-      skip: (current - 1) * pageSize,
-      limit: pageSize,
+      skip: ((current || 1) - 1) * (pageSize || 10),
+      limit: pageSize || 10,
     }
     return fetchMonitorApiList(params)
   },
