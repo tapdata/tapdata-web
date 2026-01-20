@@ -112,6 +112,19 @@ export default {
         }
       })
     },
+    formatDuring(mss) {
+      let time = ''
+      const minutes = Number.parseInt((mss % (1000 * 60 * 60)) / (1000 * 60))
+      const seconds = (mss % (1000 * 60)) / 1000
+      if (minutes > 1) {
+        time = `${minutes.toFixed(2)}min`
+      } else if (minutes < 1 && seconds > 1) {
+        time = `${seconds.toFixed(2)}s`
+      } else if (minutes < 1 && seconds < 1 && mss > 0) {
+        time = `${mss}ms`
+      }
+      return time
+    },
 
     // 表格排序
     handleSortTable({ order, prop }) {
@@ -270,6 +283,17 @@ export default {
               {{ $t('public_status_failed') }}
             </span>
           </el-text>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="dbCost"
+        width="170"
+        sortable="dbCost"
+        :label="$t('apiaudit_average_response_time')"
+        :show-overflow-tooltip="true"
+      >
+        <template #default="{ row }">
+          {{ row.dbCost ? formatDuring(row.dbCost) : '-' }}
         </template>
       </el-table-column>
       <el-table-column
