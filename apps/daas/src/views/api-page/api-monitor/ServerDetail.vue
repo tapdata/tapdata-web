@@ -8,7 +8,7 @@ import {
   type ServerDetail,
   type ServerWorker,
 } from '@tap/api/src/core/monitor-server'
-import { useRequest } from '@tap/api/src/request'
+import { usePagination, useRequest } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 import CountUp from '@tap/component/src/CountUp.vue'
@@ -69,7 +69,8 @@ const handleApiListSortChange = ({
     apiListSortBy.value = prop
     apiListSortOrder.value = order === 'ascending' ? 'ASC' : 'DESC'
   }
-  runFetch()
+  apiListPage.value = 1 // 排序时重置到第一页
+  // runFetch()
 }
 
 // Worker 表格排序相关
@@ -158,6 +159,7 @@ const handleWorkerListSortChange = ({
 // 时间周期选择 - 从 route.query 中恢复
 const timeRange = ref((route.query.timeRange as string) || '1h')
 const customTimeRange = ref<[number, number] | null>(null)
+const timeRangeParams = ref<{ startAt: number; endAt: number } | null>(null)
 
 // 从 query 中恢复自定义时间范围
 onMounted(() => {
@@ -201,16 +203,47 @@ const getActualTimeRange = () => {
   }
 }
 
+const {
+  data: apiListData,
+  current: apiListPage,
+  pageSize: apiListPageSize,
+  total: apiListTotal,
+  refresh: refreshApiList,
+} = usePagination(
+  async ({ current, pageSize } = {}) => {
+    const params = {
+      ...timeRangeParams.value,
+      serverId,
+      orderBy: `${apiListSortBy.value} ${apiListSortOrder.value}`,
+      skip: (current - 1) * pageSize,
+      limit: pageSize,
+    }
+    const apiResult = await fetchMonitorServerApi(params)
+    return apiResult
+  },
+  {
+    manual: true,
+    defaultParams: [
+      {
+        current: 1,
+        pageSize: 10,
+      },
+    ],
+    initialData: {
+      total: 0,
+      items: [],
+    },
+  },
+)
+
 const { run: runFetch } = useRequest(
   async () => {
     const params = getActualTimeRange()
+    timeRangeParams.value = params
     params.serverId = serverId
+    refreshApiList()
     serverDetail.value = await fetchMonitorServerDetail(params)
     serverChart.value = await fetchMonitorServerChart(params)
-    apiList.value = await fetchMonitorServerApi({
-      ...params,
-      orderBy: `${apiListSortBy.value} ${apiListSortOrder.value}`,
-    })
     workerData.value = await fetchMonitorServerWorker({
       ...params,
       orderBy: `${workerListSortBy.value} ${workerListSortOrder.value}`,
@@ -225,24 +258,6 @@ const { run: runFetch } = useRequest(
 const refreshData = () => {
   runFetch()
 }
-
-// Computed values for status overview
-const cpuUsage = computed(() => {
-  if (!serverDetail.value?.cpuUsage) return 0
-  return Number(serverDetail.value.cpuUsage.toFixed(2))
-})
-
-const memoryUsage = computed(() => {
-  if (!serverDetail.value?.memoryUsage) return 0
-  return Number(serverDetail.value.memoryUsage.toFixed(2))
-})
-
-const errorRate = computed(() => {
-  if (!serverDetail.value?.errorRate) return '0%'
-  const rate = Number.parseFloat(serverDetail.value.errorRate)
-  if (Number.isNaN(rate)) return '0%'
-  return `${rate.toFixed(1)}%`
-})
 
 // Chart options
 const cpuChartOption = computed<EChartsOption>(() => ({
@@ -793,6 +808,48 @@ const onClickApi = (row: any) => {
     },
   })
 }
+
+// 跳转到审计页面 - 错误率
+const handleNavigateToAuditWithError = (apiName?: string) => {
+  const timeRange = timeRangeParams.value
+  const query: any = {
+    code: ' ', // 失败的状态码
+    start: timeRange.startAt * 1000, // 转换为毫秒
+    end: timeRange.endAt * 1000, // 转换为毫秒
+  }
+
+  if (apiName) {
+    query.keyword = apiName
+  }
+
+  router.push({
+    name: 'dataServerAuditList',
+    query,
+  })
+}
+
+// 跳转到审计页面 - 响应时间排序
+const handleNavigateToAuditWithResponseTime = (
+  apiName?: string,
+  sortOrder: 'ASC' | 'DESC' = 'DESC',
+) => {
+  const timeRange = timeRangeParams.value
+  const query: any = {
+    start: timeRange.startAt * 1000, // 转换为毫秒
+    end: timeRange.endAt * 1000, // 转换为毫秒
+    sortBy: 'latency',
+    sortOrder,
+  }
+
+  if (apiName) {
+    query.keyword = apiName
+  }
+
+  router.push({
+    name: 'dataServerAuditList',
+    query,
+  })
+}
 </script>
 
 <template>
@@ -982,7 +1039,7 @@ const onClickApi = (row: any) => {
         </div>
 
         <el-table
-          :data="apiList"
+          :data="apiListData?.items"
           class="top-api-table"
           :default-sort="apiListDefaultSort"
           @sort-change="handleApiListSortChange"
@@ -1020,13 +1077,16 @@ const onClickApi = (row: any) => {
           >
             <template #default="{ row }">
               <span
-                :class="{
-                  'text-danger': row.errorRate >= 3,
-                  'text-warning': row.errorRate >= 1 && row.errorRate < 3,
-                }"
+                v-if="row.errorRate > 0"
+                class="text-red-500 cursor-pointer underline-dashed flex align-center gap-1"
+                @click.stop="handleNavigateToAuditWithError(row.apiName)"
               >
                 {{ row.errorRate }}%
+                <el-icon>
+                  <i-lucide-external-link />
+                </el-icon>
               </span>
+              <span v-else> {{ row.errorRate }}% </span>
             </template>
           </el-table-column>
           <el-table-column
@@ -1045,7 +1105,21 @@ const onClickApi = (row: any) => {
             width="100"
             sortable="custom"
           >
-            <template #default="{ row }"> {{ row.maxDelay }} </template>
+            <template #default="{ row }">
+              <span
+                v-if="row.maxDelay !== undefined"
+                class="underline-dashed cursor-pointer flex align-center gap-1"
+                @click.stop="
+                  handleNavigateToAuditWithResponseTime(row.apiName, 'DESC')
+                "
+              >
+                {{ row.maxDelay }}
+                <el-icon>
+                  <i-lucide-external-link />
+                </el-icon>
+              </span>
+              <span v-else>--</span>
+            </template>
           </el-table-column>
           <el-table-column
             :label="t('api_monitor_min_response_time')"
@@ -1053,7 +1127,21 @@ const onClickApi = (row: any) => {
             width="100"
             sortable="custom"
           >
-            <template #default="{ row }"> {{ row.minDelay }} </template>
+            <template #default="{ row }">
+              <span
+                v-if="row.minDelay !== undefined"
+                class="underline-dashed cursor-pointer flex align-center gap-1"
+                @click.stop="
+                  handleNavigateToAuditWithResponseTime(row.apiName, 'ASC')
+                "
+              >
+                {{ row.minDelay }}
+                <el-icon>
+                  <i-lucide-external-link />
+                </el-icon>
+              </span>
+              <span v-else>--</span>
+            </template>
           </el-table-column>
           <el-table-column
             :label="t('api_monitor_p95_response_time')"
@@ -1072,6 +1160,16 @@ const onClickApi = (row: any) => {
             <template #default="{ row }"> {{ row.p99 ?? '--' }} </template>
           </el-table-column>
         </el-table>
+
+        <!-- API 列表分页 -->
+        <el-pagination
+          v-model:current-page="apiListPage"
+          v-model:page-size="apiListPageSize"
+          class="mt-4"
+          :total="apiListTotal"
+          :page-sizes="[10, 20, 50, 100]"
+          layout="->,total, prev, pager, next, sizes"
+        />
       </div>
 
       <!-- Worker Section -->

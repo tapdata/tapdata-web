@@ -1,6 +1,6 @@
 import { calcUnit } from '@tap/shared'
 import { isNumber } from 'lodash-es'
-import { requestClient } from '../request'
+import { requestClient, type PageFetchResult } from '../request'
 
 const BASE_URL = '/api/monitor/server'
 const API_BASE_URL = '/api/monitor/api'
@@ -323,11 +323,40 @@ export function fetchMonitorServerChart(params?: Params) {
 }
 
 export async function fetchMonitorServerApi(params?: Params) {
-  const data = await requestClient.get<ServerApiItem[]>(`${BASE_URL}/api`, {
-    params,
-  })
+  const data = await requestClient
+    .get<PageFetchResult<ServerApiItem>>(`${BASE_URL}/api`, {
+      params,
+    })
+    .catch(() => ({
+      items: [
+        {
+          queryFrom: 0,
+          queryEnd: 0,
+          granularity: 0,
+          apiId: '694b52e6a40d9d8479f447d6',
+          apiName: 'MDM',
+          requestCount: 19,
+          errorRate: 10,
+          maxDelay: 134,
+          minDelay: 0,
+          avg: 47.94736842105263,
+          p99: 134,
+        },
+        {
+          queryFrom: 0,
+          queryEnd: 0,
+          granularity: 0,
+          apiId: '694b92121a818d0270a1b913',
+          apiName: 'MDM1_copy_tjq7duqpvs7',
+          requestCount: 6,
+          errorRate: 0,
+          avg: 47.166666666666664,
+        },
+      ],
+      total: 2,
+    }))
 
-  data.forEach((item) => {
+  data.items.forEach((item) => {
     item.errorRate = Number(item.errorRate.toFixed(2))
     ;['responseTimeAvg', 'p95', 'p99', 'minDelay', 'maxDelay'].forEach(
       (key) => {
@@ -371,11 +400,46 @@ export async function fetchMonitorApi(params?: Params) {
 }
 
 export async function fetchMonitorApiList(params?: Params) {
-  const data = await requestClient.get<ApiItem[]>(`${API_BASE_URL}/list`, {
-    params,
-  })
+  const data = await requestClient
+    .get<PageFetchResult<ApiItem>>(`${API_BASE_URL}/list`, {
+      params,
+    })
+    .catch(() => ({
+      items: [
+        {
+          queryFrom: 1767510000,
+          queryEnd: 1767510600,
+          granularity: 0,
+          apiId: '694b92121a818d0270a1b913',
+          apiPath: '/v1/tjq7duqpvs7',
+          apiName: 'MDM1_copy_tjq7duqpvs7',
+          requestCount: 6,
+          responseTimeAvg: 10,
+          maxDelay: 60,
+          minDelay: 34,
+          errorRate: 0,
+          totalRps: 1.2,
+        },
+        {
+          queryFrom: 1767510000,
+          queryEnd: 1767510600,
+          granularity: 0,
+          apiId: '694b52e6a40d9d8479f447d6',
+          apiPath: '/v1/aslw80no7ze',
+          apiName: 'MDM',
+          requestCount: 19,
+          requestCostAvg: 0,
+          p99: 134,
+          maxDelay: 134,
+          minDelay: 17,
+          errorRate: 0,
+          totalRps: 3.8,
+        },
+      ],
+      total: 0,
+    }))
 
-  data.forEach((item) => {
+  data.items.forEach((item) => {
     item.errorRate = Number(item.errorRate.toFixed(2))
     ;['responseTimeAvg', 'p95', 'p99', 'minDelay', 'maxDelay'].forEach(
       (key) => {

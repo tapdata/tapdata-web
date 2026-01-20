@@ -6,7 +6,7 @@ import {
   type MonitorServer,
   type ServerItem,
 } from '@tap/api/src/core/monitor-server'
-import { useRequest } from '@tap/api/src/request'
+import { usePagination, useRequest } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 import CountUp from '@tap/component/src/CountUp.vue'
@@ -30,7 +30,6 @@ const timer = ref<number | null>(null)
 // Reactive data
 const serverData = ref<MonitorServer | {}>({})
 const serverList = ref<ServerItem[]>([])
-const apiListData = ref<any[]>([])
 const apiListDefaultSort = { prop: 'requestCount', order: 'descending' }
 const apiListSortBy = ref(apiListDefaultSort.prop)
 const apiListSortOrder = ref<'ASC' | 'DESC'>('DESC')
@@ -52,7 +51,7 @@ const handleSortChange = ({
     apiListSortBy.value = prop
     apiListSortOrder.value = order === 'ascending' ? 'ASC' : 'DESC'
   }
-  runFetch()
+  apiListPage.value = 1 // 排序时重置到第一页
 }
 
 const currentTab = ref('server')
@@ -121,7 +120,7 @@ const notHealthyApiCount = computed(() => {
 // 时间周期选择 - 从 route.query 中恢复
 const timeRange = ref((route.query.timeRange as string) || '1h')
 const customTimeRange = ref<[Date, Date] | null>(null)
-const timeRangeParams = ref<[number, number] | null>(null)
+const timeRangeParams = ref<{ startAt: number; endAt: number } | null>(null)
 
 // 获取实际的时间范围（返回10位时间戳，单位：秒）
 const getActualTimeRange = () => {
@@ -152,6 +151,38 @@ const getActualTimeRange = () => {
     endAt: nowTimestamp,
   }
 }
+
+const {
+  data: apiListData,
+  current: apiListPage,
+  pageSize: apiListPageSize,
+  total: apiListTotal,
+  refresh: refreshApiList,
+} = usePagination(
+  ({ current, pageSize } = {}) => {
+    const params = {
+      ...timeRangeParams.value,
+      orderBy: `${apiListSortBy.value} ${apiListSortOrder.value}`,
+      skip: (current - 1) * pageSize,
+      limit: pageSize,
+    }
+    return fetchMonitorApiList(params)
+  },
+  {
+    manual: true,
+    defaultParams: [
+      {
+        current: 1,
+        pageSize: 10,
+      },
+    ],
+    initialData: {
+      total: 0,
+      items: [],
+    },
+  },
+)
+
 const { run: runFetch, cancel: cancelFetch } = useRequest(
   async () => {
     const params = getActualTimeRange()
@@ -161,10 +192,7 @@ const { run: runFetch, cancel: cancelFetch } = useRequest(
     serverData.value = await fetchMonitorServer(params)
 
     if (currentTab.value === 'api') {
-      apiListData.value = await fetchMonitorApiList({
-        ...params,
-        orderBy: `${apiListSortBy.value} ${apiListSortOrder.value}`,
-      })
+      refreshApiList()
       return
     }
 
@@ -467,7 +495,7 @@ onUnmounted(() => {
       <div class="api-list-table">
         <el-table
           ref="tableRef"
-          :data="apiListData"
+          :data="apiListData.items"
           style="width: 100%"
           :default-sort="{ prop: 'requestCount', order: 'descending' }"
           @row-click="onClickApi"
@@ -612,6 +640,16 @@ onUnmounted(() => {
             </template>
           </el-table-column>
         </el-table>
+
+        <!-- API 列表分页 -->
+        <el-pagination
+          v-model:current-page="apiListPage"
+          v-model:page-size="apiListPageSize"
+          class="mt-4"
+          :total="apiListTotal"
+          :page-sizes="[10, 20, 50, 100]"
+          layout="->,total, prev, pager, next, sizes"
+        />
       </div>
     </div>
   </PageContainer>

@@ -313,7 +313,7 @@ export default {
           >
             <el-text type="danger">
               <el-icon><CircleCloseFilled /></el-icon>
-              <span class="ml-1" :class="{ underline_dashed: row.codeMsg }">
+              <span class="ml-1" :class="{ 'underline-dashed': row.codeMsg }">
                 {{ $t('public_status_failed') }}
               </span>
             </el-text>
