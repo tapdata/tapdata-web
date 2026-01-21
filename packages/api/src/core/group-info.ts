@@ -118,23 +118,30 @@ export function deleteGroupInfo(id: string) {
   return requestClient.delete(`${BASE_URL}/${id}`)
 }
 
+export interface ExportGroupInfoBatchParams {
+  groupIds: string[]
+  groupTransferType: 'FILE' | 'GIT'
+  groupResetTask: {
+    [groupId: string]: string[]
+  }
+  gitTag?: string
+}
+
 /**
  * 批量导出分组
  */
-export function exportGroupInfoBatch(
-  ids: string[],
-  data?: {
-    [groupId: string]: string[]
-  },
-) {
-  return requestClient.post(`${BASE_URL}/batch/load`, data, {
-    params: {
-      id: ids,
-    },
-    responseType: 'blob',
-    responseReturn: 'raw',
-    skipErrorHandler: true,
-  })
+export function exportGroupInfoBatch(data: ExportGroupInfoBatchParams) {
+  return requestClient.post(
+    `${BASE_URL}/batch/load`,
+    data,
+    data.groupTransferType === 'FILE'
+      ? {
+          responseType: 'blob',
+          responseReturn: 'raw',
+          skipErrorHandler: true,
+        }
+      : {},
+  )
 }
 
 /**
@@ -169,4 +176,12 @@ export function fetchGroupInfoRecordList(filter?: Filter) {
       },
     },
   )
+}
+
+// /api/groupInfo/lastestGitTag/696dcd5d9eb86c3ac67ec9f5
+// 当填入了github信息的时候，才可以调用这个接口，获取该项目对应的github仓库，最新的tag名称
+// 导出时，需要使用这个值
+
+export function fetchLastestGitTag(groupId: string) {
+  return requestClient.get(`${BASE_URL}/lastestGitTag/${groupId}`)
 }

@@ -245,12 +245,12 @@ const loadResources = async () => {
 
     switch (type) {
       case 'SYNC_TASK':
-        filter.where.syncType = 'migrate'
+        filter.where.syncType = 'sync'
         result = await fetchTasks(filter)
         resourceList.value = result.items.map(mapTask)
         break
       case 'MIGRATE_TASK':
-        filter.where.syncType = 'sync'
+        filter.where.syncType = 'migrate'
         result = await fetchTasks(filter)
         resourceList.value = result.items.map(mapTask)
         break
@@ -735,8 +735,8 @@ const handleSelectAll = (checked: any) => {
                 :indeterminate="selectedResources.length > 0 && !isAllSelected"
                 @change="handleSelectAll"
               >
-                {{ t('data_import_export_select_all_available') }}
-                {{ resourceList.length }} {{ t('data_import_export_items') }}
+                {{ t('public_all_selected') }}
+                ({{ resourceList.length }})
               </el-checkbox>
               <el-pagination
                 v-model:current-page="currentPage"
@@ -1072,6 +1072,9 @@ const handleSelectAll = (checked: any) => {
     .table-pagination {
       :deep(.el-pagination__jump) {
         margin-left: 0;
+      }
+      :deep(.el-pagination__goto) {
+        display: none;
       }
     }
   }

@@ -125,6 +125,14 @@ export default {
   data_import_export_git_username_placeholder: '请输入用户名',
   data_import_export_git_password: '密码',
   data_import_export_git_password_placeholder: '请输入密码',
+  data_import_export_transfer_type: '导出类型',
+  data_import_export_file_export: '文件导出',
+  data_import_export_git_export: 'Git 导出',
+  data_import_export_git_config_required: '该项目尚未配置 Git 信息',
+  data_import_export_config_git: '配置 Git',
+  data_import_export_latest_tag: '最新 Tag',
+  data_import_export_enter_git_tag: '请输入 Git Tag, 例如：v1.0.0',
+  data_import_export_quick_fill: '快速填入',
 
   // -- 多表选择器
   component_table_selector_candidate_label: '待复制表',

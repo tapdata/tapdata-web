@@ -2,6 +2,7 @@
 import {
   exportGroupInfoBatch,
   fetchGroupInfoList,
+  fetchLastestGitTag,
   type GroupInfoDto,
   type ResourceItem,
 } from '@tap/api/core/group-info'
@@ -11,6 +12,7 @@ import { downloadBlob } from '@tap/shared'
 import { ElMessage } from 'element-plus'
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import GitConfigDialog from './GitConfigDialog.vue'
 
 const visible = defineModel<boolean>()
 const router = useRouter()
@@ -31,6 +33,14 @@ const searchKeyword = ref('') // 搜索关键词
 
 // 导出状态
 const exporting = ref(false)
+const groupTransferType = ref<'FILE' | 'GIT'>('FILE') // 导出类型
+const gitTag = ref('') // Git tag
+const latestGitTag = ref('') // 最新的 Git tag
+const loadingGitTag = ref(false) // 加载 Git tag 状态
+
+// Git 配置弹窗
+const gitConfigDialogVisible = ref(false)
+const currentConfigGroup = ref<GroupInfoDto | null>(null)
 
 // 加载分组列表
 const loadGroups = async () => {
@@ -64,6 +74,28 @@ const currentGroup = computed(() => {
   return groupList.value.find((group) => group.id === currentGroupId.value)
 })
 
+// 当前选中的项目是否有 Git 配置
+const hasGitConfig = computed(() => {
+  if (!currentGroup.value) return false
+  return !!(
+    currentGroup.value.gitInfo?.repoUrl && currentGroup.value.gitInfo?.token
+  )
+})
+
+// 是否需要显示 Git 配置入口
+const needGitConfig = computed(() => {
+  return groupTransferType.value === 'GIT' && !hasGitConfig.value
+})
+
+// 是否需要显示 Tag 输入框
+const needGitTag = computed(() => {
+  return groupTransferType.value === 'GIT' && hasGitConfig.value
+})
+
+const defaultExpandedKeys = computed(() => {
+  return treeData.value.map((item) => item.id)
+})
+
 // 树形结构数据（只显示当前选中的分组）
 const treeData = computed(() => {
   if (!currentGroup.value) {
@@ -88,7 +120,7 @@ const treeData = computed(() => {
 
   if (resourcesByType.MIGRATE_TASK.length > 0) {
     result.push({
-      id: `${group.id}-MIGRATE_TASK`,
+      id: `MIGRATE_TASK`,
       label: t('data_import_export_migrate_task'),
       type: 'MIGRATE_TASK',
       children: resourcesByType.MIGRATE_TASK.map((item) => ({
@@ -104,7 +136,7 @@ const treeData = computed(() => {
   // 添加类型分组节点
   if (resourcesByType.SYNC_TASK.length > 0) {
     result.push({
-      id: `${group.id}-SYNC_TASK`,
+      id: `SYNC_TASK`,
       label: t('data_import_export_sync_task'),
       type: 'SYNC_TASK',
       children: resourcesByType.SYNC_TASK.map((item) => ({
@@ -119,7 +151,7 @@ const treeData = computed(() => {
 
   if (resourcesByType.MODULE.length > 0) {
     result.push({
-      id: `${group.id}-MODULE`,
+      id: `MODULE`,
       label: 'API',
       type: 'MODULE',
       children: resourcesByType.MODULE.map((item) => ({
@@ -138,10 +170,19 @@ watch(visible, async (val) => {
   if (val) {
     await loadGroups()
 
+    // 重置导出类型和 tag
+    groupTransferType.value = 'FILE'
+    gitTag.value = ''
+    latestGitTag.value = ''
+
     // 如果有初始项目 ID，自动选中
     if (props.initialGroupId) {
       selectedGroupIds.value = [props.initialGroupId]
       currentGroupId.value = props.initialGroupId
+    } else if (groupList.value.length > 0) {
+      // 默认选择第一个项目
+      selectedGroupIds.value = [groupList.value[0].id!]
+      currentGroupId.value = groupList.value[0].id!
     } else {
       selectedGroupIds.value = []
       currentGroupId.value = ''
@@ -158,11 +199,100 @@ const handleRerunChange = (treeNode: any, value: string | number | boolean) => {
   }
 }
 
+// 处理项目选择（单选）
+const handleSelectGroup = async (groupId: string) => {
+  if (!selectedGroupIds.value.includes(groupId)) {
+    selectedGroupIds.value = [groupId]
+    currentGroupId.value = groupId
+
+    // 如果是 GIT 导出模式，自动加载最新 tag
+    if (groupTransferType.value === 'GIT' && hasGitConfig.value) {
+      await loadLatestGitTag()
+    }
+  } /*  else {
+    selectedGroupIds.value = [groupId]
+    currentGroupId.value = groupId
+  } */
+}
+
+// 处理导出类型切换
+const handleTransferTypeChange = async (
+  type: string | number | boolean | undefined,
+) => {
+  if (type === 'GIT' && hasGitConfig.value) {
+    // 如果切换到 GIT 且有配置，加载最新的 tag
+    await loadLatestGitTag()
+  }
+}
+
+// 获取最新的 Git tag
+const loadLatestGitTag = async () => {
+  if (!currentGroupId.value) return
+
+  loadingGitTag.value = true
+  try {
+    const result = await fetchLastestGitTag(currentGroupId.value)
+    latestGitTag.value = result || ''
+  } catch (error) {
+    console.error('获取最新 Git tag 失败:', error)
+    latestGitTag.value = ''
+  } finally {
+    loadingGitTag.value = false
+  }
+}
+
+// 计算下一个版本号
+const getNextVersion = (version: string): string => {
+  if (!version) return 'v1.0.1'
+
+  // 匹配版本号格式 v1.0.0 或 1.0.0
+  const match = version.match(/^v?(\d+)\.(\d+)\.(\d+)/)
+  if (!match) return 'v1.0.1'
+
+  const [, major, minor, patch] = match
+  const nextPatch = Number.parseInt(patch || '0') + 1
+  return `v${major}.${minor}.${nextPatch}`
+}
+
+// 快速填入下一个版本号
+const fillNextVersion = () => {
+  gitTag.value = getNextVersion(latestGitTag.value)
+}
+
+// 打开 Git 配置弹窗
+const handleOpenGitConfig = () => {
+  if (!currentGroup.value) return
+  currentConfigGroup.value = currentGroup.value
+  gitConfigDialogVisible.value = true
+}
+
+// Git 配置保存成功后的回调
+const handleGitConfigSaved = async () => {
+  // 重新加载分组列表以获取最新的 Git 配置
+  await loadGroups()
+  // 如果有 Git 配置，加载最新的 tag
+  if (hasGitConfig.value) {
+    await loadLatestGitTag()
+  }
+}
+
 // 导出分组
 const handleExport = async () => {
   if (selectedGroupIds.value.length === 0) {
     ElMessage.warning('请至少选择一个分组')
     return
+  }
+
+  // 如果是 GIT 导出，验证必填项
+  if (groupTransferType.value === 'GIT') {
+    if (!hasGitConfig.value) {
+      ElMessage.warning('请先配置 Git 信息')
+      return
+    }
+    if (!gitTag.value) {
+      ElMessage.warning('请输入 Git Tag')
+      return
+    }
   }
 
   exporting.value = true
@@ -188,12 +318,18 @@ const handleExport = async () => {
       }
     })
 
-    // 调用导出接口，如果有 rerun 数据则传递
-    const res = await exportGroupInfoBatch(
-      selectedGroupIds.value,
-      Object.keys(rerunData).length > 0 ? rerunData : undefined,
-    )
-    downloadBlob(res)
+    // 调用导出接口
+    const res = await exportGroupInfoBatch({
+      groupIds: selectedGroupIds.value,
+      groupTransferType: groupTransferType.value,
+      groupResetTask: rerunData,
+      gitTag: groupTransferType.value === 'GIT' ? gitTag.value : undefined,
+    })
+
+    if (groupTransferType.value === 'FILE') {
+      downloadBlob(res)
+    }
+
     ElMessage.success(t('public_message_export_ok'))
     visible.value = false
   } catch (error) {
@@ -230,15 +366,8 @@ const handleCreateProject = () => {
     <div
       v-loading="groupLoading"
       class="flex bg-light dark:bg-white/5 rounded-xl overflow-hidden w-100 lh-base"
-      style="max-height: 400px"
     >
-      <div
-        class="flex-shrink-0 flex flex-column flex-1"
-        style="min-width: 200px"
-      >
-        <!-- <div class="text-caption p-2 pb-0 pl-4">
-          {{ $t('data_import_export_select_group') }}
-        </div> -->
+      <div class="flex-shrink-0 flex flex-column" style="width: 280px">
         <div class="flex flex-column flex-1 min-h-0">
           <div class="flex align-center gap-2 p-2">
             <!-- 搜索框 -->
@@ -255,37 +384,44 @@ const handleCreateProject = () => {
 
           <!-- 项目列表 -->
           <el-scrollbar v-loading="groupLoading" class="flex-1 min-h-0 px-2">
-            <div class="groups-list">
-              <el-checkbox-group v-model="selectedGroupIds" class="w-100">
-                <div
-                  v-for="group in filteredGroupList"
-                  :key="group.id"
-                  class="group-item"
-                  :class="{ 'is-current': currentGroupId === group.id }"
-                  @click="currentGroupId = group.id!"
-                >
-                  <el-checkbox :value="group.id" class="w-100">
-                    <div class="flex flex-column gap-1 flex-1 min-w-0">
-                      <div class="group-name ellipsis" :title="group.name">
-                        {{ group.name }}
-                      </div>
-                      <div class="group-meta flex align-center gap-2">
-                        <span class="fs-8 font-color-sslight">
-                          {{ group.resourceItemList?.length || 0 }}
-                          {{ $t('data_import_export_resource_count') }}
-                        </span>
-                        <span
-                          v-if="group.description"
-                          class="fs-8 font-color-sslight ellipsis"
-                          :title="group.description"
-                        >
-                          {{ group.description }}
-                        </span>
-                      </div>
+            <div class="groups-list gap-1 flex flex-column">
+              <div
+                v-for="group in filteredGroupList"
+                :key="group.id"
+                class="group-item"
+                :class="{
+                  'is-selected': selectedGroupIds.includes(group.id!),
+                  'is-current': currentGroupId === group.id,
+                }"
+                @click="handleSelectGroup(group.id!)"
+              >
+                <div class="flex align-center gap-2 flex-1 min-w-0">
+                  <div class="flex flex-column gap-1 flex-1 min-w-0">
+                    <div class="group-name ellipsis" :title="group.name">
+                      {{ group.name }}
                     </div>
-                  </el-checkbox>
+                    <div class="group-meta flex align-center gap-2">
+                      <span class="fs-8 font-color-sslight">
+                        {{ group.resourceItemList?.length || 0 }}
+                        {{ $t('data_import_export_resource_count') }}
+                      </span>
+                      <span
+                        v-if="group.description"
+                        class="fs-8 font-color-sslight ellipsis"
+                        :title="group.description"
+                      >
+                        {{ group.description }}
+                      </span>
+                    </div>
+                  </div>
+                  <VIcon
+                    v-if="selectedGroupIds.includes(group.id!)"
+                    class="text-primary"
+                  >
+                    check
+                  </VIcon>
                 </div>
-              </el-checkbox-group>
+              </div>
 
               <el-empty
                 v-if="filteredGroupList.length === 0 && !groupLoading"
@@ -328,21 +464,103 @@ const handleCreateProject = () => {
           class="bg-card rounded-xl min-h-0 flex flex-column flex-1 overflow-auto"
           style="border: 1px solid #f2f4f7"
         >
-          <div class="p-2 min-h-0 overflow-y-auto">
-            <el-tree
+          <!-- 导出类型选择 -->
+          <div class="p-3 border-bottom">
+            <div class="mb-1">
+              <span class="fw-sub">{{
+                $t('data_import_export_transfer_type')
+              }}</span>
+            </div>
+            <el-radio-group
+              v-model="groupTransferType"
+              class="w-100"
+              @change="handleTransferTypeChange"
+            >
+              <el-radio value="FILE">
+                <div class="flex align-center gap-1">
+                  <el-icon>
+                    <i-lucide-file-archive />
+                  </el-icon>
+                  {{ $t('data_import_export_file_export') }}
+                </div>
+              </el-radio>
+              <el-radio value="GIT">
+                <div class="flex align-center gap-1">
+                  <el-icon>
+                    <i-lucide-git-branch />
+                  </el-icon>
+                  {{ $t('data_import_export_git_export') }}
+                </div>
+              </el-radio>
+            </el-radio-group>
+
+            <!-- Git 配置入口 -->
+            <div v-if="needGitConfig" class="mt-2">
+              <el-alert type="warning" :closable="false" show-icon>
+                <template #title>
+                  <div class="flex align-center gap-2">
+                    <span>{{
+                      $t('data_import_export_git_config_required')
+                    }}</span>
+                    <el-button
+                      type="primary"
+                      size="small"
+                      link
+                      @click="handleOpenGitConfig"
+                    >
+                      {{ $t('data_import_export_config_git') }}
+                    </el-button>
+                  </div>
+                </template>
+              </el-alert>
+            </div>
+
+            <!-- Git Tag 输入 -->
+            <div v-if="needGitTag" class="mt-2">
+              <div class="mb-1 flex align-center gap-2">
+                <el-icon>
+                  <i-lucide-tag />
+                </el-icon>
+                <span class="fs-7 fw-sub">Git Tag</span>
+                <span v-if="latestGitTag" class="fs-7 font-color-light">
+                  {{ $t('data_import_export_latest_tag') }}: {{ latestGitTag }}
+                </span>
+              </div>
+              <el-input
+                v-model="gitTag"
+                :placeholder="$t('data_import_export_enter_git_tag')"
+                clearable
+              >
+                <template v-if="latestGitTag" #append>
+                  <el-button class="font-color-dark" @click="fillNextVersion">
+                    {{ $t('data_import_export_quick_fill') }}
+                    {{ getNextVersion(latestGitTag) }}
+                  </el-button>
+                </template>
+              </el-input>
+            </div>
+          </div>
+
+          <div class="p-2 min-h-0">
+            <el-tree-v2
               v-if="treeData.length > 0"
               :data="treeData"
               node-key="id"
+              :default-expanded-keys="defaultExpandedKeys"
               :indent="12"
-              default-expand-all
+              :expand-on-click-node="false"
               :props="{
                 label: 'label',
                 children: 'children',
               }"
+              :item-size="32"
+              :height="384"
               class="preview-tree"
             >
               <template #default="{ node, data }">
-                <div class="tree-node flex align-center gap-2 min-w-0 flex-1">
+                <div
+                  class="tree-node flex align-center gap-2 min-w-0 flex-1 pr-2"
+                >
                   <el-icon v-if="data.children" :size="16">
                     <i-lucide-folder-open v-if="node.expanded" />
                     <i-lucide-folder-closed v-else />
@@ -385,7 +603,7 @@ const handleCreateProject = () => {
                   />
                 </div>
               </template>
-            </el-tree>
+            </el-tree-v2>
 
             <el-empty
               v-else
@@ -416,6 +634,14 @@ const handleCreateProject = () => {
       </span>
     </template>
   </el-dialog>
+
+  <!-- Git 配置弹窗 -->
+  <git-config-dialog
+    v-if="currentConfigGroup"
+    v-model="gitConfigDialogVisible"
+    :group="currentConfigGroup"
+    @saved="handleGitConfigSaved"
+  />
 </template>
 
 <style lang="scss" scoped>
@@ -457,15 +683,9 @@ const handleCreateProject = () => {
   flex: 1;
   overflow-y: auto;
 
-  :deep(.el-checkbox-group) {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
   .group-item {
-    padding: 12px;
-    border-radius: 8px;
+    padding: 8px 12px;
+    border-radius: 12px;
     transition: all 0.2s;
     cursor: pointer;
     display: flex;
@@ -481,30 +701,16 @@ const handleCreateProject = () => {
       background-color: var(--el-color-primary-light-9);
     }
 
-    :deep(.el-checkbox) {
-      flex: 1;
-      height: auto;
-      align-items: flex-start;
-
-      .el-checkbox__label {
-        flex: 1;
-        min-width: 0;
-        padding-left: 8px;
-      }
-
-      .el-checkbox__input {
-        margin-top: 2px;
-      }
+    &.is-selected {
+      border-color: var(--el-color-primary);
+      background-color: var(--el-color-primary-light-9);
+      color: var(--el-color-primary);
     }
 
     .group-name {
       font-size: 14px;
       font-weight: 500;
-      color: var(--el-text-color-primary);
-    }
-
-    .group-meta {
-      margin-top: 4px;
+      // color: var(--el-text-color-primary);
     }
   }
 }

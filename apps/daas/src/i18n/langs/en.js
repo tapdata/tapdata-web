@@ -122,11 +122,21 @@ export default {
   data_import_export_git_repo_url: 'Repository URL',
   data_import_export_git_repo_url_required: 'Repository URL is required',
   data_import_export_git_token: 'Token',
-  data_import_export_git_token_placeholder: 'Please enter Personal Access Token',
+  data_import_export_git_token_placeholder:
+    'Please enter Personal Access Token',
   data_import_export_git_username: 'Username',
   data_import_export_git_username_placeholder: 'Please enter username',
   data_import_export_git_password: 'Password',
   data_import_export_git_password_placeholder: 'Please enter password',
+  data_import_export_transfer_type: 'Export Type',
+  data_import_export_file_export: 'File Export',
+  data_import_export_git_export: 'Git Export',
+  data_import_export_git_config_required:
+    'Git configuration is required for this project',
+  data_import_export_config_git: 'Configure Git',
+  data_import_export_latest_tag: 'Latest Tag',
+  data_import_export_enter_git_tag: 'Please enter Git Tag, e.g. v1.0.0',
+  data_import_export_quick_fill: 'Quick Fill',
 
   // -- 多表选择器
   component_table_selector_candidate_label: 'To be selected',
