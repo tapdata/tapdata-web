@@ -196,9 +196,6 @@ const p99 = computed(() => {
 
 // 响应时间趋势图表
 const latencyChartOption = computed(() => {
-  const dataLength = apiChart.value?.ts?.length || 0
-  const isSinglePoint = dataLength === 1
-
   return {
     grid: {
       left: 0,
@@ -254,12 +251,11 @@ const latencyChartOption = computed(() => {
     series: [
       {
         name: 'Avg',
-        type: isSinglePoint ? 'scatter' : 'line',
+        type: 'line',
         data: apiChart.value?.requestCostAvg || [],
-        smooth: !isSinglePoint,
+        smooth: true,
         symbol: 'circle',
-        symbolSize: isSinglePoint ? 12 : 8,
-        showSymbol: true,
+        showSymbol: false,
         lineStyle: {
           color: '#3b82f6',
           width: 2,
@@ -272,12 +268,11 @@ const latencyChartOption = computed(() => {
       },
       {
         name: 'P95',
-        type: isSinglePoint ? 'scatter' : 'line',
+        type: 'line',
         data: apiChart.value?.p95 || [],
-        smooth: !isSinglePoint,
+        smooth: true,
         symbol: 'circle',
-        symbolSize: isSinglePoint ? 12 : 8,
-        showSymbol: true,
+        showSymbol: false,
         lineStyle: {
           color: '#f59e0b',
           width: 2,
@@ -290,12 +285,11 @@ const latencyChartOption = computed(() => {
       },
       {
         name: 'P99',
-        type: isSinglePoint ? 'scatter' : 'line',
+        type: 'line',
         data: apiChart.value?.p99 || [],
-        smooth: !isSinglePoint,
+        smooth: true,
         symbol: 'circle',
-        symbolSize: isSinglePoint ? 12 : 8,
-        showSymbol: true,
+        showSymbol: false,
         lineStyle: {
           color: '#ef4444',
           width: 2,
@@ -312,9 +306,6 @@ const latencyChartOption = computed(() => {
 
 // 数据库耗时趋势图表
 const dbCostChartOption = computed(() => {
-  const dataLength = apiChart.value?.ts?.length || 0
-  const isSinglePoint = dataLength === 1
-
   return {
     grid: {
       left: 0,
@@ -371,12 +362,11 @@ const dbCostChartOption = computed(() => {
     series: [
       {
         name: 'Avg',
-        type: isSinglePoint ? 'scatter' : 'line',
+        type: 'line',
         data: apiChart.value?.dbCostAvg || [],
-        smooth: !isSinglePoint,
+        smooth: true,
         symbol: 'circle',
-        symbolSize: isSinglePoint ? 12 : 8,
-        showSymbol: true,
+        showSymbol: false,
         lineStyle: {
           color: '#3b82f6',
           width: 2,
@@ -389,15 +379,14 @@ const dbCostChartOption = computed(() => {
       },
       {
         name: 'Max',
-        type: isSinglePoint ? 'scatter' : 'line',
+        type: 'line',
         data: apiChart.value?.dbCostMax || [],
-        smooth: !isSinglePoint,
+        smooth: true,
         symbol: 'circle',
-        symbolSize: isSinglePoint ? 12 : 8,
-        showSymbol: true,
+        showSymbol: false,
         lineStyle: {
           color: '#8b5cf6',
-          width: 2,
+          width: 1,
         },
         itemStyle: {
           color: '#8b5cf6',
@@ -407,15 +396,14 @@ const dbCostChartOption = computed(() => {
       },
       {
         name: 'Min',
-        type: isSinglePoint ? 'scatter' : 'line',
+        type: 'line',
         data: apiChart.value?.dbCostMin || [],
-        smooth: !isSinglePoint,
+        smooth: true,
         symbol: 'circle',
-        symbolSize: isSinglePoint ? 12 : 8,
-        showSymbol: true,
+        showSymbol: false,
         lineStyle: {
           color: '#06b6d4',
-          width: 2,
+          width: 1,
         },
         itemStyle: {
           color: '#06b6d4',
@@ -425,12 +413,11 @@ const dbCostChartOption = computed(() => {
       },
       {
         name: 'P95',
-        type: isSinglePoint ? 'scatter' : 'line',
+        type: 'line',
         data: apiChart.value?.dbCostP95 || [],
-        smooth: !isSinglePoint,
+        smooth: true,
         symbol: 'circle',
-        symbolSize: isSinglePoint ? 12 : 8,
-        showSymbol: true,
+        showSymbol: false,
         lineStyle: {
           color: '#f59e0b',
           width: 2,
@@ -443,12 +430,11 @@ const dbCostChartOption = computed(() => {
       },
       {
         name: 'P99',
-        type: isSinglePoint ? 'scatter' : 'line',
+        type: 'line',
         data: apiChart.value?.dbCostP99 || [],
-        smooth: !isSinglePoint,
+        smooth: true,
         symbol: 'circle',
-        symbolSize: isSinglePoint ? 12 : 8,
-        showSymbol: true,
+        showSymbol: false,
         lineStyle: {
           color: '#ef4444',
           width: 2,
@@ -465,9 +451,6 @@ const dbCostChartOption = computed(() => {
 
 // 吞吐量趋势图表
 const throughputChartOption = computed(() => {
-  const dataLength = apiChart.value?.ts?.length || 0
-  const isSinglePoint = dataLength === 1
-
   return {
     grid: {
       left: 0,
@@ -527,12 +510,11 @@ const throughputChartOption = computed(() => {
     series: [
       {
         name: t('api_monitor_throughput'),
-        type: isSinglePoint ? 'scatter' : 'line',
+        type: 'line',
         data: apiChart.value?.rps || [],
-        smooth: !isSinglePoint,
+        smooth: true,
         symbol: 'circle',
-        symbolSize: isSinglePoint ? 12 : 8,
-        showSymbol: true,
+        showSymbol: false,
         lineStyle: {
           color: '#10b981',
           width: 2,
@@ -542,11 +524,6 @@ const throughputChartOption = computed(() => {
           borderColor: '#fff',
           borderWidth: 2,
         },
-        areaStyle: isSinglePoint
-          ? undefined
-          : {
-              color: 'rgba(16, 185, 129, 0.1)',
-            },
       },
     ],
   }

@@ -203,6 +203,11 @@ const getActualTimeRange = () => {
   }
 }
 
+const defaultApiListParams = {
+  current: 1,
+  pageSize: 10,
+}
+
 const {
   data: apiListData,
   current: apiListPage,
@@ -210,25 +215,20 @@ const {
   total: apiListTotal,
   refresh: refreshApiList,
 } = usePagination(
-  async ({ current, pageSize } = {}) => {
+  async ({ current, pageSize } = defaultApiListParams) => {
     const params = {
       ...timeRangeParams.value,
       serverId,
       orderBy: `${apiListSortBy.value} ${apiListSortOrder.value}`,
-      skip: ((current || 1) - 1) * (pageSize || 10),
-      limit: pageSize || 10,
+      skip: (current - 1) * pageSize,
+      limit: pageSize,
     }
     const apiResult = await fetchMonitorServerApi(params)
     return apiResult
   },
   {
     manual: true,
-    defaultParams: [
-      {
-        current: 1,
-        pageSize: 10,
-      },
-    ],
+    defaultParams: [defaultApiListParams],
     initialData: {
       total: 0,
       items: [],
@@ -314,8 +314,9 @@ const cpuChartOption = computed<EChartsOption>(() => ({
       type: 'line',
       data: serverChart.value?.usage.cpuUsage || [],
       smooth: true,
-      showSymbol: false,
+
       symbol: 'circle',
+      showSymbol: false,
       symbolSize: 6,
       lineStyle: {
         color: '#3b82f6',

@@ -152,6 +152,11 @@ const getActualTimeRange = () => {
   }
 }
 
+const defaultApiListParams = {
+  current: 1,
+  pageSize: 10,
+}
+
 const {
   data: apiListData,
   current: apiListPage,
@@ -159,23 +164,18 @@ const {
   total: apiListTotal,
   refresh: refreshApiList,
 } = usePagination(
-  ({ current, pageSize } = {}) => {
+  ({ current, pageSize } = defaultApiListParams) => {
     const params = {
       ...timeRangeParams.value,
       orderBy: `${apiListSortBy.value} ${apiListSortOrder.value}`,
-      skip: ((current || 1) - 1) * (pageSize || 10),
-      limit: pageSize || 10,
+      skip: (current - 1) * pageSize,
+      limit: pageSize,
     }
     return fetchMonitorApiList(params)
   },
   {
     manual: true,
-    defaultParams: [
-      {
-        current: 1,
-        pageSize: 10,
-      },
-    ],
+    defaultParams: [defaultApiListParams],
     initialData: {
       total: 0,
       items: [],
