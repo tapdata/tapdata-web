@@ -1100,7 +1100,7 @@ const handleNavigateToAuditWithResponseTime = (
             sortable="custom"
           >
             <template #default="{ row }">
-              {{ row.responseTimeAvg }}
+              {{ row.responseTimeAvg ?? '--' }}
             </template>
           </el-table-column>
           <el-table-column

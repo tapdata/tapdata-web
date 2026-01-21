@@ -410,7 +410,7 @@ onUnmounted(() => {
               :suffix="responseTimeAvg.unit"
               :duration="0.5"
             />
-            <div class="flex align-center gap-1">
+            <div class="flex align-center gap-1 flex-wrap">
               <el-tag
                 v-if="responseTimeAvg.maxDelay !== undefined"
                 size="small"
@@ -557,7 +557,9 @@ onUnmounted(() => {
             width="140"
             sortable="custom"
           >
-            <template #default="{ row }"> {{ row.responseTimeAvg }} </template>
+            <template #default="{ row }">
+              {{ row.responseTimeAvg ?? '--' }}
+            </template>
           </el-table-column>
           <el-table-column
             :label="t('api_monitor_max_response_time')"
