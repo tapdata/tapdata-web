@@ -101,8 +101,7 @@ const handleCancel = () => {
       ref="formRef"
       :model="formData"
       :rules="rules"
-      label-width="120px"
-      label-position="left"
+      label-position="top"
       autocomplete="off"
     >
       <el-form-item
