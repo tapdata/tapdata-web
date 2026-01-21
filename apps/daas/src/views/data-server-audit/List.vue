@@ -1,10 +1,6 @@
 <script>
 import { CircleCloseFilled, SuccessFilled } from '@element-plus/icons-vue'
-import {
-  fetchAllMethods,
-  fetchAllResponseCodes,
-  fetchApiCalls,
-} from '@tap/api/src/core/api-calls'
+import { fetchAllMethods, fetchApiCalls } from '@tap/api/src/core/api-calls'
 import { fetchApiClients } from '@tap/api/src/core/api-client'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
@@ -179,19 +175,16 @@ export default {
           label: this.$t('apiaudit_visit_result'),
           key: 'code',
           type: 'select-inner',
-          items: async () => {
-            let data = await fetchAllResponseCodes()
-            data = data || []
-            return data.map((item) => {
-              return {
-                label:
-                  item == 200
-                    ? this.$t('apiaudit_success')
-                    : this.$t('public_status_failed'),
-                value: item,
-              }
-            })
-          },
+          items: [
+            {
+              label: this.$t('apiaudit_success'),
+              value: '200',
+            },
+            {
+              label: this.$t('public_status_failed'),
+              value: '500',
+            },
+          ],
           selectedWidth: '200px',
         },
         {

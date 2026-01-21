@@ -261,7 +261,7 @@ const handleSortApi = (sortKey: string) => {
 const handleNavigateToAuditWithError = (apiName?: string) => {
   const timeRange = timeRangeParams.value
   const query: any = {
-    code: ' ', // 失败的状态码
+    code: '500', // 失败的状态码
     start: timeRange.startAt * 1000, // 转换为毫秒
     end: timeRange.endAt * 1000, // 转换为毫秒
   }
