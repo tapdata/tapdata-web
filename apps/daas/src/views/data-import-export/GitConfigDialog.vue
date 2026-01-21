@@ -8,6 +8,8 @@ const { t } = useI18n()
 
 const visible = defineModel<boolean>()
 
+const emit = defineEmits(['saved'])
+
 const props = defineProps<{
   group: GroupInfoDto | null
 }>()
@@ -77,6 +79,7 @@ const handleSave = async () => {
     })
     ElMessage.success(t('public_message_save_ok'))
     visible.value = false
+    emit('saved')
   } catch {
     ElMessage.error(t('public_message_save_fail'))
   } finally {
