@@ -215,7 +215,10 @@ const {
   total: apiListTotal,
   refresh: refreshApiList,
 } = usePagination(
-  async ({ current, pageSize } = defaultApiListParams) => {
+  async ({
+    current = defaultApiListParams.current,
+    pageSize = defaultApiListParams.pageSize,
+  } = {}) => {
     const params = {
       ...timeRangeParams.value,
       serverId,

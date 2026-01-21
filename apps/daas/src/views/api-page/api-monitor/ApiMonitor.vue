@@ -164,7 +164,10 @@ const {
   total: apiListTotal,
   refresh: refreshApiList,
 } = usePagination(
-  ({ current, pageSize } = defaultApiListParams) => {
+  ({
+    current = defaultApiListParams.current,
+    pageSize = defaultApiListParams.pageSize,
+  } = {}) => {
     const params = {
       ...timeRangeParams.value,
       orderBy: `${apiListSortBy.value} ${apiListSortOrder.value}`,
