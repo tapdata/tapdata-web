@@ -606,7 +606,11 @@ const onClickServer = (row: any) => {
             >
               <CountUp :end-val="errorCount.value" :duration="0.5" />
 
-              <el-tag type="danger" size="small" class="border-0"
+              <el-tag
+                v-if="errorCount.errorRate > 0"
+                type="danger"
+                size="small"
+                class="border-0"
                 ><span class="fw-sub mr-1">{{
                   $t('api_monitor_error_rate')
                 }}</span

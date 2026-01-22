@@ -905,7 +905,11 @@ const handleNavigateToAuditWithResponseTime = (
             >
               <CountUp :end-val="errorCount.value" :duration="0.5" />
 
-              <el-tag type="danger" size="small" class="fw-sub"
+              <el-tag
+                v-if="errorCount.errorRate > 0"
+                type="danger"
+                size="small"
+                class="fw-sub"
                 ><span class="mr-1">{{ $t('api_monitor_error_rate') }}</span
                 >{{ errorCount.errorRate }}%</el-tag
               >

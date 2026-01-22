@@ -627,8 +627,8 @@ onUnmounted(() => {
             sortable="custom"
           >
             <template #default="{ row }">
-              <span :class="{ 'text-orange-500': row.p95 > 1000 }">
-                {{ row.p95 }}
+              <span>
+                {{ row.p95 ?? '--' }}
               </span>
             </template>
           </el-table-column>
@@ -639,13 +639,8 @@ onUnmounted(() => {
             sortable="custom"
           >
             <template #default="{ row }">
-              <span
-                :class="{
-                  'text-orange-500': row.p99 > 1000 && row.p99 < 2000,
-                  'text-red-500': row.p99 >= 2000,
-                }"
-              >
-                {{ row.p99 }}
+              <span>
+                {{ row.p99 ?? '--' }}
               </span>
             </template>
           </el-table-column>
