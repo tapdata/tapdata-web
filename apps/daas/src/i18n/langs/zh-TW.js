@@ -109,6 +109,8 @@ export default {
   data_import_export_action_imported: '已導入',
   data_import_export_action_exported: '已導出',
   data_import_export_action_replaced: '已替換',
+  data_import_export_action_no_update: '無需更新',
+  data_import_export_action_importing: '導入中',
   data_import_export_action_errored: '錯誤',
   data_import_export_action_skipped: '已跳過',
   data_import_export_import_group: '導入項目',

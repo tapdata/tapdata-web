@@ -111,6 +111,8 @@ export default {
   data_import_export_action_imported: 'Imported',
   data_import_export_action_exported: 'Exported',
   data_import_export_action_replaced: 'Replaced',
+  data_import_export_action_no_update: 'No Update',
+  data_import_export_action_importing: 'Importing',
   data_import_export_action_errored: 'Errored',
   data_import_export_action_skipped: 'Skipped',
   data_import_export_import_group: 'Import Project',
