@@ -343,7 +343,10 @@ onUnmounted(() => {
           <div v-else>--</div>
         </div>
       </div>
-      <div class="border rounded-xl p-3 top-card cursor-pointer">
+      <div
+        class="border rounded-xl p-3 top-card cursor-pointer"
+        @click="handleSortApi('errorRate')"
+      >
         <div class="card-header mb-6">
           <div class="card-title font-color-light">
             {{ $t('api_monitor_total_error_count') }}
