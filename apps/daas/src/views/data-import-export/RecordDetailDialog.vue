@@ -19,6 +19,15 @@ interface GroupDetail {
   recordDetails: RecordDetail[]
 }
 
+interface GitOperationStep {
+  stepName: string
+  status: 'SUCCESS' | 'FAILED'
+  message: string
+  timestamp: number
+  durationMs: number
+  stackTrace?: string
+}
+
 interface ImportRecord {
   id: string
   type: 'import' | 'export'
@@ -28,6 +37,7 @@ interface ImportRecord {
   fileName: string
   details: GroupDetail[]
   progress: number
+  gitOperationSteps?: GitOperationStep[]
 }
 
 const props = defineProps<{
@@ -143,6 +153,45 @@ const getActionType = (action: string) => {
     default:
       return 'info'
   }
+}
+
+// Git 操作步骤（从 record 直接获取）
+const gitSteps = computed(() => {
+  return props.record?.gitOperationSteps || []
+})
+
+// 是否有 Git 操作步骤
+const hasGitSteps = computed(() => {
+  return gitSteps.value.length > 0
+})
+
+// 格式化时间戳
+const formatTimestamp = (timestamp: number) => {
+  if (!timestamp) return '--'
+  // 使用 dayjs 格式化时间
+  const date = new Date(timestamp)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
+
+// 格式化持续时间
+const formatDuration = (durationMs: number) => {
+  if (!durationMs) return '--'
+  if (durationMs < 1000) {
+    return `${durationMs}ms`
+  }
+  const seconds = (durationMs / 1000).toFixed(2)
+  return `${seconds}s`
+}
+
+// 获取 Git 步骤状态类型
+const getGitStepType = (status: string) => {
+  return status === 'SUCCESS' ? 'success' : 'danger'
 }
 
 // 监听弹窗打开，自动选中第一个分组
@@ -329,6 +378,73 @@ const handleOpen = () => {
         </div>
       </div>
     </div>
+
+    <!-- Git 操作记录 -->
+    <div v-if="hasGitSteps" class="mt-4">
+      <el-collapse>
+        <el-collapse-item name="git">
+          <template #title>
+            <div class="flex align-center gap-2">
+              <el-icon>
+                <i-lucide-git-branch />
+              </el-icon>
+              <span class="fw-sub">{{
+                $t('data_import_export_git_operation_records')
+              }}</span>
+              <el-tag size="small" type="info" round>
+                {{ gitSteps.length }}
+              </el-tag>
+            </div>
+          </template>
+          <div class="git-steps-list">
+            <div
+              v-for="(step, index) in gitSteps"
+              :key="index"
+              class="git-step-item"
+            >
+              <div class="flex align-center gap-2 mb-1">
+                <el-tag
+                  size="small"
+                  :type="getGitStepType(step.status)"
+                  disable-transitions
+                >
+                  {{ step.status }}
+                </el-tag>
+                <span class="fw-sub">{{ step.stepName }}</span>
+                <div class="flex-1" />
+                <span class="fs-7 font-color-light">
+                  {{ formatDuration(step.durationMs) }}
+                </span>
+              </div>
+              <div class="fs-7 font-color-light mb-1">
+                {{ formatTimestamp(step.timestamp) }}
+              </div>
+              <div v-if="step.message" class="fs-7 font-color-secondary mb-1">
+                {{ step.message }}
+              </div>
+              <!-- 堆栈信息 -->
+              <div v-if="step.stackTrace" class="mt-2">
+                <el-collapse>
+                  <el-collapse-item name="stackTrace">
+                    <template #title>
+                      <div class="flex align-center gap-1">
+                        <el-icon size="14">
+                          <i-lucide-bug />
+                        </el-icon>
+                        <span class="fs-7 font-color-secondary">{{
+                          $t('data_import_export_stack_trace')
+                        }}</span>
+                      </div>
+                    </template>
+                    <pre class="stack-trace-content">{{ step.stackTrace }}</pre>
+                  </el-collapse-item>
+                </el-collapse>
+              </div>
+            </div>
+          </div>
+        </el-collapse-item>
+      </el-collapse>
+    </div>
   </el-dialog>
 </template>
 
@@ -397,6 +513,36 @@ const handleOpen = () => {
   :deep(.el-tree-node__label) {
     flex: 1;
     overflow: hidden;
+  }
+}
+
+.git-steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.git-step-item {
+  padding: 12px;
+  background-color: var(--el-fill-color-lighter);
+  border-radius: 8px;
+  border-left: 3px solid var(--el-color-primary);
+
+  .stack-trace-content {
+    margin: 0;
+    padding: 12px;
+    background-color: var(--el-fill-color-dark);
+    border-radius: 4px;
+    font-family:
+      'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--el-text-color-regular);
+    overflow-x: auto;
+    max-height: 300px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
   }
 }
 </style>

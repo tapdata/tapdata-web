@@ -47,11 +47,8 @@ export interface GroupInfoDto {
   createUser?: string
   lastUpdBy?: string
   gitInfo?: {
-    // GitRepoUrlType: 'HTTPS' | 'SSH'
     repoUrl: string
     token: string
-    // username: string
-    // password: string
   }
 }
 
@@ -81,6 +78,14 @@ export interface GroupInfoRecordDto {
   operationTime: Date | string
   message?: string
   details: GroupInfoRecordDetail[]
+  gitOperationSteps?: {
+    stepName: string
+    status: 'SUCCESS' | 'FAILED'
+    message: string
+    timestamp: number
+    durationMs: number
+    stackTrace?: string
+  }[]
 }
 
 /**
@@ -131,17 +136,16 @@ export interface ExportGroupInfoBatchParams {
  * 批量导出分组
  */
 export function exportGroupInfoBatch(data: ExportGroupInfoBatchParams) {
-  return requestClient.post(
-    `${BASE_URL}/batch/load`,
-    data,
-    data.groupTransferType === 'FILE'
-      ? {
-          responseType: 'blob',
-          responseReturn: 'raw',
-          skipErrorHandler: true,
-        }
-      : {},
-  )
+  return requestClient.post(`${BASE_URL}/batch/load`, data, {
+    responseType: 'blob',
+    responseReturn: 'raw',
+    skipErrorHandler: true,
+  })
+}
+
+// /batch/load/git
+export function exportGroupInfoBatchGit(data: ExportGroupInfoBatchParams) {
+  return requestClient.post(`${BASE_URL}/batch/load/git`, data)
 }
 
 /**

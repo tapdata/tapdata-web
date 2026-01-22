@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   exportGroupInfoBatch,
+  exportGroupInfoBatchGit,
   fetchGroupInfoList,
   fetchLastestGitTag,
   type GroupInfoDto,
@@ -284,15 +285,9 @@ const handleExport = async () => {
   }
 
   // 如果是 GIT 导出，验证必填项
-  if (groupTransferType.value === 'GIT') {
-    if (!hasGitConfig.value) {
-      ElMessage.warning('请先配置 Git 信息')
-      return
-    }
-    if (!gitTag.value) {
-      ElMessage.warning('请输入 Git Tag')
-      return
-    }
+  if (groupTransferType.value === 'GIT' && !hasGitConfig.value) {
+    ElMessage.warning('请先配置 Git 信息')
+    return
   }
 
   exporting.value = true
@@ -318,16 +313,22 @@ const handleExport = async () => {
       }
     })
 
-    // 调用导出接口
-    const res = await exportGroupInfoBatch({
-      groupIds: selectedGroupIds.value,
-      groupTransferType: groupTransferType.value,
-      groupResetTask: rerunData,
-      gitTag: groupTransferType.value === 'GIT' ? gitTag.value : undefined,
-    })
-
     if (groupTransferType.value === 'FILE') {
+      // 调用导出接口
+      const res = await exportGroupInfoBatch({
+        groupIds: selectedGroupIds.value,
+        groupTransferType: groupTransferType.value,
+        groupResetTask: rerunData,
+      })
       downloadBlob(res)
+    } else {
+      // 调用导出接口
+      await exportGroupInfoBatchGit({
+        groupIds: selectedGroupIds.value,
+        groupTransferType: groupTransferType.value,
+        groupResetTask: rerunData,
+        gitTag: gitTag.value,
+      })
     }
 
     ElMessage.success(t('public_message_export_ok'))

@@ -274,7 +274,7 @@ const handleImportSuccess = () => {
       <!-- 文件名列 -->
       <el-table-column
         prop="fileName"
-        :label="t('public_file_name')"
+        :label="`${t('public_file_name')} | Git Repo`"
         min-width="250"
         show-overflow-tooltip
       />

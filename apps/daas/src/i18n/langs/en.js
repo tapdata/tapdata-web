@@ -139,6 +139,8 @@ export default {
   data_import_export_latest_tag: 'Latest Tag',
   data_import_export_enter_git_tag: 'Please enter Git Tag, e.g. v1.0.0',
   data_import_export_quick_fill: 'Quick Fill',
+  data_import_export_git_operation_records: 'Git Operation Records',
+  data_import_export_stack_trace: 'Stack Trace',
 
   // -- 多表选择器
   component_table_selector_candidate_label: 'To be selected',

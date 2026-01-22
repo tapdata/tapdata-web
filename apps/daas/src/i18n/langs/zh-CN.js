@@ -135,6 +135,8 @@ export default {
   data_import_export_latest_tag: '最新 Tag',
   data_import_export_enter_git_tag: '请输入 Git Tag, 例如：v1.0.0',
   data_import_export_quick_fill: '快速填入',
+  data_import_export_git_operation_records: 'Git 操作记录',
+  data_import_export_stack_trace: '堆栈信息',
 
   // -- 多表选择器
   component_table_selector_candidate_label: '待复制表',
