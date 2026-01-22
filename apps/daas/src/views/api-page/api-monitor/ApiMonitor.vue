@@ -364,6 +364,7 @@ onUnmounted(() => {
               @click="handleSortApi('errorRate')"
             />
             <el-tag
+              v-if="errorCount.errorRate > 0"
               type="danger"
               size="small"
               class="border-0 fw-sub cursor-pointer"
@@ -412,6 +413,7 @@ onUnmounted(() => {
               :end-val="responseTimeAvg.value"
               :suffix="responseTimeAvg.unit"
               :duration="0.5"
+              :decimals="2"
             />
             <div class="flex align-center gap-1 flex-wrap">
               <el-tag
@@ -450,7 +452,12 @@ onUnmounted(() => {
         </div>
         <div class="card-content font-semibold">
           <div v-if="p95.value !== undefined">
-            <CountUp :end-val="p95.value" :suffix="p95.unit" :duration="0.5" />
+            <CountUp
+              :end-val="p95.value"
+              :suffix="p95.unit"
+              :duration="0.5"
+              :decimals="2"
+            />
           </div>
           <div v-else>--</div>
         </div>
@@ -466,7 +473,12 @@ onUnmounted(() => {
         </div>
         <div class="card-content font-semibold">
           <div v-if="p99.value !== undefined">
-            <CountUp :end-val="p99.value" :suffix="p99.unit" :duration="0.5" />
+            <CountUp
+              :end-val="p99.value"
+              :suffix="p99.unit"
+              :duration="0.5"
+              :decimals="2"
+            />
           </div>
           <div v-else>--</div>
         </div>

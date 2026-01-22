@@ -627,6 +627,7 @@ const onClickServer = (row: any) => {
                 :end-val="responseTimeAvg.value"
                 :suffix="responseTimeAvg.unit"
                 :duration="0.5"
+                :decimals="2"
               />
               <div class="flex align-center gap-1">
                 <el-tag
@@ -658,6 +659,7 @@ const onClickServer = (row: any) => {
                 :end-val="p95.value"
                 :suffix="p95.unit"
                 :duration="0.5"
+                :decimals="2"
               />
             </div>
             <div v-else class="status-value">--</div>
@@ -671,6 +673,7 @@ const onClickServer = (row: any) => {
                 :end-val="p99.value"
                 :suffix="p99.unit"
                 :duration="0.5"
+                :decimals="2"
               />
             </div>
             <div v-else class="status-value">--</div>
