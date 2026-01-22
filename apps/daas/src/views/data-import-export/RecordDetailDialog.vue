@@ -80,25 +80,9 @@ const treeData = computed(() => {
     }
   })
 
-  // 添加类型分组节点
-  if (resourcesByType.SYNC_TASK.length > 0) {
-    result.push({
-      id: `${group.groupId}-SYNC_TASK`,
-      label: t('data_import_export_sync_task'),
-      type: 'SYNC_TASK',
-      children: resourcesByType.SYNC_TASK.map((item, index) => ({
-        id: `${group.groupId}-SYNC_TASK-${index}`,
-        label: item.resourceName,
-        type: item.resourceType,
-        action: item.action,
-        message: item.message,
-      })),
-    })
-  }
-
   if (resourcesByType.MIGRATE_TASK.length > 0) {
     result.push({
-      id: `${group.groupId}-MIGRATE_TASK`,
+      id: `MIGRATE_TASK`,
       label: t('data_import_export_migrate_task'),
       type: 'MIGRATE_TASK',
       children: resourcesByType.MIGRATE_TASK.map((item, index) => ({
@@ -107,13 +91,31 @@ const treeData = computed(() => {
         type: item.resourceType,
         action: item.action,
         message: item.message,
+        reset: item.reset,
+      })),
+    })
+  }
+
+  // 添加类型分组节点
+  if (resourcesByType.SYNC_TASK.length > 0) {
+    result.push({
+      id: `SYNC_TASK`,
+      label: t('data_import_export_sync_task'),
+      type: 'SYNC_TASK',
+      children: resourcesByType.SYNC_TASK.map((item, index) => ({
+        id: `${group.groupId}-SYNC_TASK-${index}`,
+        label: item.resourceName,
+        type: item.resourceType,
+        action: item.action,
+        message: item.message,
+        reset: item.reset,
       })),
     })
   }
 
   if (resourcesByType.MODULE.length > 0) {
     result.push({
-      id: `${group.groupId}-MODULE`,
+      id: `MODULE`,
       label: 'API',
       type: 'MODULE',
       children: resourcesByType.MODULE.map((item, index) => ({
@@ -121,7 +123,6 @@ const treeData = computed(() => {
         label: item.resourceName,
         type: item.resourceType,
         action: item.action,
-        message: item.message,
       })),
     })
   }
@@ -163,7 +164,6 @@ const handleOpen = () => {
     <div
       v-if="record"
       class="flex bg-light dark:bg-white/5 rounded-xl overflow-hidden w-100 lh-base"
-      style="max-height: 500px"
     >
       <!-- 左侧：分组列表 -->
       <div class="flex-shrink-0 flex flex-column" style="min-width: 280px">
@@ -209,13 +209,15 @@ const handleOpen = () => {
           style="border: 1px solid #f2f4f7"
         >
           <div class="p-2 min-h-0 overflow-y-auto">
-            <el-tree
+            <el-tree-v2
               v-if="treeData.length > 0"
               :data="treeData"
               :props="{ children: 'children', label: 'label' }"
-              default-expand-all
+              :default-expanded-keys="['MIGRATE_TASK', 'SYNC_TASK', 'MODULE']"
               node-key="id"
               class="resource-tree"
+              :item-size="32"
+              :height="480"
             >
               <template #default="{ node, data }">
                 <div class="flex align-center gap-2 flex-1 min-w-0 pr-2">
@@ -230,15 +232,26 @@ const handleOpen = () => {
                     <i-lucide-folder-open v-if="node.expanded" />
                     <i-lucide-folder-closed v-else />
                   </el-icon>
-                  <OverflowTooltip
+                  <div
                     v-if="data.label"
-                    class="node-label min-w-0 elipsis"
-                    :text="data.label"
-                    :endable="false"
-                    :show-after="300"
-                    :hide-after="0"
-                    placement="left"
-                  />
+                    class="node-label min-w-0 elipsis flex align-center gap-1"
+                    :class="{
+                      'color-primary': data.reset,
+                    }"
+                  >
+                    <OverflowTooltip
+                      class="min-w-0 elipsis"
+                      :text="data.label"
+                      :endable="false"
+                      :show-after="300"
+                      :hide-after="0"
+                      placement="left"
+                    />
+                    <el-icon v-if="data.reset">
+                      <i-lucide-rotate-ccw />
+                    </el-icon>
+                  </div>
+
                   <span
                     v-else
                     class="font-color-slight text-decoration-line-through"
@@ -250,26 +263,50 @@ const handleOpen = () => {
                     type="info"
                     disable-transitions
                     class="flex-shrink-0"
+                    round
                   >
                     {{ data.children.length }}
                   </el-tag>
-                  <div class="flex-1" />
-                  <el-tooltip
-                    v-if="data.message"
-                    :content="data.message"
-                    placement="top"
-                    :enterable="false"
-                    :hide-after="0"
-                  >
+                  <template v-else>
+                    <!-- <el-tag v-if="data.reset" size="small" class="border-0">
+                      <el-icon>
+                        <i-lucide-rotate-ccw />
+                      </el-icon>
+                      重跑
+                    </el-tag> -->
+                    <div class="flex-1" />
+                    <el-tooltip
+                      v-if="data.message"
+                      :content="data.message"
+                      placement="top"
+                      :enterable="false"
+                      :hide-after="0"
+                    >
+                      <el-tag
+                        size="small"
+                        :type="getActionType(data.action)"
+                        disable-transitions
+                        class="flex-shrink-0"
+                      >
+                        <el-icon class="color-warning flex-shrink-0" size="14">
+                          <i-lucide-alert-circle />
+                        </el-icon>
+                        {{
+                          data.action
+                            ? t(
+                                `data_import_export_action_${data.action.toLowerCase()}`,
+                              )
+                            : '--'
+                        }}
+                      </el-tag>
+                    </el-tooltip>
                     <el-tag
+                      v-else
                       size="small"
                       :type="getActionType(data.action)"
                       disable-transitions
                       class="flex-shrink-0"
                     >
-                      <el-icon class="color-warning flex-shrink-0" size="14">
-                        <i-lucide-alert-circle />
-                      </el-icon>
                       {{
                         data.action
                           ? t(
@@ -278,25 +315,10 @@ const handleOpen = () => {
                           : '--'
                       }}
                     </el-tag>
-                  </el-tooltip>
-                  <el-tag
-                    v-else
-                    size="small"
-                    :type="getActionType(data.action)"
-                    disable-transitions
-                    class="flex-shrink-0"
-                  >
-                    {{
-                      data.action
-                        ? t(
-                            `data_import_export_action_${data.action.toLowerCase()}`,
-                          )
-                        : '--'
-                    }}
-                  </el-tag>
+                  </template>
                 </div>
               </template>
-            </el-tree>
+            </el-tree-v2>
 
             <el-empty
               v-else

@@ -740,6 +740,7 @@ const handleSelectAll = (checked: any) => {
               </el-checkbox>
               <el-pagination
                 v-model:current-page="currentPage"
+                hide-on-single-page
                 class="table-pagination position-absolute start-50 top-50 translate-middle z-10"
                 layout="prev, jumper, slot, next"
                 :total="totalCount"
