@@ -189,11 +189,6 @@ const formatDuration = (durationMs: number) => {
   return `${seconds}s`
 }
 
-// 获取 Git 步骤状态类型
-const getGitStepType = (status: string) => {
-  return status === 'SUCCESS' ? 'success' : 'danger'
-}
-
 // 监听弹窗打开，自动选中第一个分组
 const handleOpen = () => {
   if (props.record?.details && props.record.details.length > 0) {
@@ -381,7 +376,10 @@ const handleOpen = () => {
 
     <!-- Git 操作记录 -->
     <div v-if="hasGitSteps" class="mt-4">
-      <el-collapse>
+      <el-collapse
+        style="--el-collapse-content-bg-color: #f6f8fa"
+        class="git-collapse"
+      >
         <el-collapse-item name="git">
           <template #title>
             <div class="flex align-center gap-2">
@@ -400,46 +398,55 @@ const handleOpen = () => {
             <div
               v-for="(step, index) in gitSteps"
               :key="index"
-              class="git-step-item"
+              class="git-step-wrapper"
             >
-              <div class="flex align-center gap-2 mb-1">
-                <el-tag
-                  size="small"
-                  :type="getGitStepType(step.status)"
-                  disable-transitions
-                >
-                  {{ step.status }}
-                </el-tag>
-                <span class="fw-sub">{{ step.stepName }}</span>
-                <div class="flex-1" />
-                <span class="fs-7 font-color-light">
-                  {{ formatDuration(step.durationMs) }}
-                </span>
-              </div>
-              <div class="fs-7 font-color-light mb-1">
-                {{ formatTimestamp(step.timestamp) }}
-              </div>
-              <div v-if="step.message" class="fs-7 font-color-secondary mb-1">
-                {{ step.message }}
-              </div>
-              <!-- 堆栈信息 -->
-              <div v-if="step.stackTrace" class="mt-2">
-                <el-collapse>
-                  <el-collapse-item name="stackTrace">
-                    <template #title>
-                      <div class="flex align-center gap-1">
+              <el-collapse style="--el-collapse-content-bg-color: transparent">
+                <el-collapse-item :name="index">
+                  <template #title>
+                    <div class="git-step-header">
+                      <el-icon
+                        :class="[
+                          'step-status-icon',
+                          step.status === 'SUCCESS'
+                            ? 'status-success'
+                            : 'status-failed',
+                        ]"
+                        size="16"
+                      >
+                        <i-lucide-circle-check
+                          v-if="step.status === 'SUCCESS'"
+                        />
+                        <i-lucide-circle-x v-else />
+                      </el-icon>
+                      <span class="step-name">{{ step.stepName }}</span>
+                      <span class="step-time">{{
+                        formatTimestamp(step.timestamp)
+                      }}</span>
+                      <span class="step-duration ml-auto">{{
+                        formatDuration(step.durationMs)
+                      }}</span>
+                    </div>
+                  </template>
+                  <div class="git-step-content">
+                    <div class="step-message">
+                      <pre class="message-content">{{
+                        step.message || '--'
+                      }}</pre>
+                    </div>
+                    <div v-if="step.stackTrace" class="step-stack-trace">
+                      <div class="stack-trace-label color-danger">
                         <el-icon size="14">
                           <i-lucide-bug />
                         </el-icon>
-                        <span class="fs-7 font-color-secondary">{{
-                          $t('data_import_export_stack_trace')
-                        }}</span>
+                        <span>{{ $t('data_import_export_stack_trace') }}</span>
                       </div>
-                    </template>
-                    <pre class="stack-trace-content">{{ step.stackTrace }}</pre>
-                  </el-collapse-item>
-                </el-collapse>
-              </div>
+                      <pre class="stack-trace-content">{{
+                        step.stackTrace
+                      }}</pre>
+                    </div>
+                  </div>
+                </el-collapse-item>
+              </el-collapse>
             </div>
           </div>
         </el-collapse-item>
@@ -519,30 +526,147 @@ const handleOpen = () => {
 .git-steps-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0;
 }
 
-.git-step-item {
-  padding: 12px;
-  background-color: var(--el-fill-color-lighter);
-  border-radius: 8px;
-  border-left: 3px solid var(--el-color-primary);
+.git-step-wrapper {
+  :deep(.el-collapse) {
+    border: none;
+  }
 
-  .stack-trace-content {
-    margin: 0;
-    padding: 12px;
-    background-color: var(--el-fill-color-dark);
-    border-radius: 4px;
-    font-family:
-      'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+  :deep(.el-collapse-item__header) {
+    --el-collapse-header-height: 36px;
+    padding: 0 12px;
+    border: none;
+    background-color: transparent;
+    font-size: 14px;
+    border-radius: 8px;
+
+    &:hover {
+      background-color: #818b981a;
+    }
+
+    &.is-active {
+      background-color: #e6eaef;
+    }
+  }
+
+  :deep(.el-collapse-item__wrap) {
+    border: none;
+    // background-color: var(--el-bg-color);
+  }
+
+  :deep(.el-collapse-item__content) {
+    padding: 0;
+  }
+}
+
+.git-collapse {
+  --el-collapse-header-height: 40px;
+  border: none;
+  :deep(.el-collapse-item__wrap) {
+    border: none;
+  }
+  :deep(.el-collapse-item__header) {
+    border: none;
+  }
+  :deep(
+    > .el-collapse-item > .el-collapse-item__wrap > .el-collapse-item__content
+  ) {
+    padding: 8px 12px;
+  }
+  :deep(.el-collapse-item__wrap) {
+    border-radius: 12px;
+  }
+}
+
+.git-step-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding-right: 12px;
+
+  .step-status-icon {
+    flex-shrink: 0;
+
+    &.status-success {
+      color: var(--el-color-success);
+    }
+
+    &.status-failed {
+      color: var(--el-color-danger);
+    }
+  }
+
+  .step-name {
+    font-weight: 500;
+    color: var(--el-text-color-primary);
+  }
+
+  .step-time {
+    flex-shrink: 0;
     font-size: 12px;
-    line-height: 1.5;
-    color: var(--el-text-color-regular);
-    overflow-x: auto;
-    max-height: 300px;
-    overflow-y: auto;
-    white-space: pre-wrap;
-    word-break: break-all;
+    color: var(--el-text-color-secondary);
+    margin-right: 8px;
+  }
+
+  .step-duration {
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--el-text-color-secondary);
+    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+  }
+}
+
+.git-step-content {
+  padding: 12px;
+
+  .step-message {
+    &:not(:first-child) {
+      margin-top: 12px;
+    }
+  }
+
+  .step-stack-trace {
+    margin-top: 12px;
+  }
+
+  .step-message,
+  .step-stack-trace {
+    .message-label,
+    .stack-trace-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--el-text-color-secondary);
+    }
+
+    .message-content,
+    .stack-trace-content {
+      margin: 0;
+      // padding: 12px;
+      // background-color: var(--el-fill-color-dark);
+      // border: 1px solid var(--el-border-color-light);
+      // border-radius: 4px;
+      font-family:
+        'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro',
+        monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--el-text-color-regular);
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .stack-trace-content {
+      max-height: 300px;
+      overflow-y: auto;
+    }
   }
 }
 </style>
