@@ -47,6 +47,8 @@ const props = defineProps<{
 const visible = defineModel<boolean>()
 
 const currentGroupId = ref<string>('') // 当前选中的分组（用于预览）
+const gitCollapseActiveNames = ref<string[]>([]) // Git 记录折叠面板的激活项
+const stepCollapseActiveNames = ref<(string | number)[]>([]) // 步骤折叠面板的激活项
 
 // 获取类型文本
 const getTypeText = (type: string) => {
@@ -195,6 +197,12 @@ const handleOpen = () => {
     currentGroupId.value = props.record.details[0].groupId
   }
 }
+
+const handleClosed = () => {
+  // 重置所有折叠面板状态
+  gitCollapseActiveNames.value = []
+  stepCollapseActiveNames.value = []
+}
 </script>
 
 <template>
@@ -204,6 +212,7 @@ const handleOpen = () => {
     :title="title"
     :close-on-click-modal="false"
     @open="handleOpen"
+    @closed="handleClosed"
   >
     <div
       v-if="record"
@@ -377,6 +386,7 @@ const handleOpen = () => {
     <!-- Git 操作记录 -->
     <div v-if="hasGitSteps" class="mt-4">
       <el-collapse
+        v-model="gitCollapseActiveNames"
         style="--el-collapse-content-bg-color: #f6f8fa"
         class="git-collapse"
       >
@@ -395,59 +405,57 @@ const handleOpen = () => {
             </div>
           </template>
           <div class="git-steps-list">
-            <div
-              v-for="(step, index) in gitSteps"
-              :key="index"
-              class="git-step-wrapper"
+            <el-collapse
+              v-model="stepCollapseActiveNames"
+              style="--el-collapse-content-bg-color: transparent"
             >
-              <el-collapse style="--el-collapse-content-bg-color: transparent">
-                <el-collapse-item :name="index">
-                  <template #title>
-                    <div class="git-step-header">
-                      <el-icon
-                        :class="[
-                          'step-status-icon',
-                          step.status === 'SUCCESS'
-                            ? 'status-success'
-                            : 'status-failed',
-                        ]"
-                        size="16"
-                      >
-                        <i-lucide-circle-check
-                          v-if="step.status === 'SUCCESS'"
-                        />
-                        <i-lucide-circle-x v-else />
-                      </el-icon>
-                      <span class="step-name">{{ step.stepName }}</span>
-                      <span class="step-time">{{
-                        formatTimestamp(step.timestamp)
-                      }}</span>
-                      <span class="step-duration ml-auto">{{
-                        formatDuration(step.durationMs)
-                      }}</span>
-                    </div>
-                  </template>
-                  <div class="git-step-content">
-                    <div class="step-message">
-                      <pre class="message-content">{{
-                        step.message || '--'
-                      }}</pre>
-                    </div>
-                    <div v-if="step.stackTrace" class="step-stack-trace">
-                      <div class="stack-trace-label color-danger">
-                        <el-icon size="14">
-                          <i-lucide-bug />
-                        </el-icon>
-                        <span>{{ $t('data_import_export_stack_trace') }}</span>
-                      </div>
-                      <pre class="stack-trace-content">{{
-                        step.stackTrace
-                      }}</pre>
-                    </div>
+              <el-collapse-item
+                v-for="(step, index) in gitSteps"
+                :key="index"
+                :name="index"
+                class="git-step-wrapper"
+              >
+                <template #title>
+                  <div class="git-step-header">
+                    <el-icon
+                      :class="[
+                        'step-status-icon',
+                        step.status === 'SUCCESS'
+                          ? 'status-success'
+                          : 'status-failed',
+                      ]"
+                      size="16"
+                    >
+                      <i-lucide-circle-check v-if="step.status === 'SUCCESS'" />
+                      <i-lucide-circle-x v-else />
+                    </el-icon>
+                    <span class="step-name">{{ step.stepName }}</span>
+                    <span class="step-time">{{
+                      formatTimestamp(step.timestamp)
+                    }}</span>
+                    <span class="step-duration ml-auto">{{
+                      formatDuration(step.durationMs)
+                    }}</span>
                   </div>
-                </el-collapse-item>
-              </el-collapse>
-            </div>
+                </template>
+                <div class="git-step-content">
+                  <div class="step-message">
+                    <pre class="message-content">{{
+                      step.message || '--'
+                    }}</pre>
+                  </div>
+                  <div v-if="step.stackTrace" class="step-stack-trace">
+                    <div class="stack-trace-label color-danger">
+                      <el-icon size="14">
+                        <i-lucide-bug />
+                      </el-icon>
+                      <span>{{ $t('data_import_export_stack_trace') }}</span>
+                    </div>
+                    <pre class="stack-trace-content">{{ step.stackTrace }}</pre>
+                  </div>
+                </div>
+              </el-collapse-item>
+            </el-collapse>
           </div>
         </el-collapse-item>
       </el-collapse>
@@ -524,40 +532,34 @@ const handleOpen = () => {
 }
 
 .git-steps-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.git-step-wrapper {
   :deep(.el-collapse) {
     border: none;
   }
 
-  :deep(.el-collapse-item__header) {
-    --el-collapse-header-height: 36px;
-    padding: 0 12px;
-    border: none;
-    background-color: transparent;
-    font-size: 14px;
-    border-radius: 8px;
+  :deep(.el-collapse-item.git-step-wrapper) {
+    .el-collapse-item__header {
+      --el-collapse-header-height: 36px;
+      padding: 0 12px;
+      border: none;
+      background-color: transparent;
+      font-size: 14px;
+      border-radius: 8px;
+      &:hover {
+        background-color: #818b981a;
+      }
 
-    &:hover {
-      background-color: #818b981a;
+      &.is-active {
+        background-color: #e6eaef;
+      }
     }
 
-    &.is-active {
-      background-color: #e6eaef;
+    .el-collapse-item__wrap {
+      border: none;
     }
-  }
 
-  :deep(.el-collapse-item__wrap) {
-    border: none;
-    // background-color: var(--el-bg-color);
-  }
-
-  :deep(.el-collapse-item__content) {
-    padding: 0;
+    .el-collapse-item__content {
+      padding: 0;
+    }
   }
 }
 
@@ -567,8 +569,11 @@ const handleOpen = () => {
   :deep(.el-collapse-item__wrap) {
     border: none;
   }
-  :deep(.el-collapse-item__header) {
+  :deep(> .el-collapse-item > .el-collapse-item__header) {
     border: none;
+    position: sticky;
+    top: 0;
+    z-index: 10;
   }
   :deep(
     > .el-collapse-item > .el-collapse-item__wrap > .el-collapse-item__content
