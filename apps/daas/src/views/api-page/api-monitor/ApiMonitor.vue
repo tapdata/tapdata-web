@@ -141,7 +141,7 @@ const getActualTimeRange = () => {
       type: 'minute'
     },
     '1h':  {
-      step: 60,
+      step: 1,
       type: 'hours'
     },
     '6h':  {

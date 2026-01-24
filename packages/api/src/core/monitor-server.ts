@@ -346,12 +346,6 @@ export async function fetchMonitorServerApi(params?: Params) {
   return data
 }
 
-export function fetchMonitorServerWorker(params?: Params) {
-  return requestClient.get<ServerWorker>(`${BASE_URL}/worker`, {
-    params,
-  })
-}
-
 export async function fetchMonitorApi(params?: Params) {
   const data = await requestClient
     .get<ApiOverview>(API_BASE_URL, { params })

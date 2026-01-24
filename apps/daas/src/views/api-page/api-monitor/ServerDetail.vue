@@ -3,7 +3,6 @@ import {
   fetchMonitorServerApi,
   fetchMonitorServerChart,
   fetchMonitorServerDetail,
-  fetchMonitorServerWorker,
   type ServerChart,
   type ServerDetail,
   type ServerWorker,
@@ -192,7 +191,7 @@ const getActualTimeRange = () => {
       type: 'minute'
     },
     '1h':  {
-      step: 60,
+      step: 1,
       type: 'hours'
     },
     '6h':  {
@@ -267,11 +266,10 @@ const { run: runFetch } = useRequest(
     params.serverId = serverId
     refreshApiList()
     serverDetail.value = await fetchMonitorServerDetail(params)
+    const workerList = serverDetail.value.workerInfo;
+    delete serverDetail.value.workerInfo;
     serverChart.value = await fetchMonitorServerChart(params)
-    workerData.value = await fetchMonitorServerWorker({
-      ...params,
-      orderBy: `${workerListSortBy.value} ${workerListSortOrder.value}`,
-    })
+    workerData.value = workerList;
   },
   {
     pollingInterval: 6000,
