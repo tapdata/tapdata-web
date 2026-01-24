@@ -177,30 +177,51 @@ const serverName = computed(
 const getActualTimeRange = () => {
   if (timeRange.value === 'custom' && customTimeRange.value) {
     return {
+      type: 'range',
       startAt: dayjs(customTimeRange.value[0]).unix(),
       endAt: dayjs(customTimeRange.value[1]).unix(),
     }
   }
-
-  const now = dayjs()
-  const rangeMap: Record<string, number> = {
-    '5m': 5 * 60,
-    '15m': 15 * 60,
-    '1h': 60 * 60,
-    '6h': 6 * 60 * 60,
-    '12h': 12 * 60 * 60,
-    '24h': 24 * 60 * 60,
-    '7d': 7 * 24 * 60 * 60,
-    '14d': 14 * 24 * 60 * 60,
-    '30d': 30 * 24 * 60 * 60,
+  const rangeMap: Record<string, Record<string, string | number>> = {
+    '5m': {
+      step: 5,
+      type: 'minute'
+    },
+    '15m':  {
+      step: 15,
+      type: 'minute'
+    },
+    '1h':  {
+      step: 60,
+      type: 'hours'
+    },
+    '6h':  {
+      step: 6,
+      type: 'hours'
+    },
+    '12h':  {
+      step: 12,
+      type: 'hours'
+    },
+    '24h':  {
+      step: 24,
+      type: 'hours'
+    },
+    '7d':  {
+      step: 7,
+      type: 'days'
+    },
+    '14d':  {
+      step: 14,
+      type: 'days'
+    },
+    '30d':  {
+      step: 30,
+      type: 'days'
+    },
   }
 
-  const duration = rangeMap[timeRange.value] || rangeMap['1h']
-  const nowTimestamp = now.unix()
-  return {
-    startAt: nowTimestamp - duration!,
-    endAt: nowTimestamp,
-  }
+  return rangeMap[timeRange.value] || rangeMap['1h'];
 }
 
 const defaultApiListParams = {
