@@ -18,6 +18,7 @@ const configs = {
   running: { type: 'success' as const, text: 'Running' },
   starting: { type: 'primary' as const, text: 'Starting' },
   stopped: { type: 'danger' as const, text: 'Stopped' },
+  deploy_fail: { type: 'danger' as const, text: 'Deploy Fail' },
 }
 
 const statusConfig = computed(() => {
