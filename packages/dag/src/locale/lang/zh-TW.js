@@ -317,6 +317,7 @@ export default {
     '任務中含有不支持增量的節點，請將任務類型修改為全量',
   packages_dag_mixins_editor_buzhichiduotiao:
     '不支持多條鏈路，請重新編輯任務鏈路',
+  packages_dag_not_support_multi_target: '當前不支持寫入到多個目標節點',
   packages_dag_mixins_editor_renwulianlubu: '任務鏈路不完整',
   packages_dag_mixins_editor_renwushezhiyi: '任務設置異常',
   packages_dag_mixins_editor_suoshuage: '所屬agent節點衝突',

@@ -368,6 +368,8 @@ export default {
     'The task contains nodes that do not support CDC, change the task type to full',
   packages_dag_mixins_editor_buzhichiduotiao:
     'Multiple links are not supported, please re-edit the task link',
+  packages_dag_not_support_multi_target:
+    'Writing to multiple target nodes is not currently supported',
   packages_dag_mixins_editor_renwulianlubu: 'The task link is incomplete',
   packages_dag_mixins_editor_renwushezhiyi: 'The task setting is abnormal',
   packages_dag_mixins_editor_suoshuage:
