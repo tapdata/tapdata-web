@@ -240,7 +240,7 @@ const {
     pageSize = defaultApiListParams.pageSize,
   } = {}) => {
     const params = {
-      ...timeRangeParams.value,
+      ...getActualTimeRange(),
       serverId,
       orderBy: `${apiListSortBy.value} ${apiListSortOrder.value}`,
       skip: (current - 1) * pageSize,
