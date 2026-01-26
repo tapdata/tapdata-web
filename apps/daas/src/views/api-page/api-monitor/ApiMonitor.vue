@@ -134,43 +134,43 @@ const getActualTimeRange = () => {
   const rangeMap: Record<string, Record<string, string | number>> = {
     '5m': {
       step: 5,
-      type: 'minute'
+      type: 'minute',
     },
-    '15m':  {
+    '15m': {
       step: 15,
-      type: 'minute'
+      type: 'minute',
     },
-    '1h':  {
+    '1h': {
       step: 1,
-      type: 'hours'
+      type: 'hours',
     },
-    '6h':  {
+    '6h': {
       step: 6,
-      type: 'hours'
+      type: 'hours',
     },
-    '12h':  {
+    '12h': {
       step: 12,
-      type: 'hours'
+      type: 'hours',
     },
-    '24h':  {
+    '24h': {
       step: 24,
-      type: 'hours'
+      type: 'hours',
     },
-    '7d':  {
+    '7d': {
       step: 7,
-      type: 'days'
+      type: 'days',
     },
-    '14d':  {
+    '14d': {
       step: 14,
-      type: 'days'
+      type: 'days',
     },
-    '30d':  {
+    '30d': {
       step: 30,
-      type: 'days'
+      type: 'days',
     },
   }
 
-  return rangeMap[timeRange.value] || rangeMap['1h'];
+  return rangeMap[timeRange.value] || rangeMap['1h']
 }
 
 const defaultApiListParams = {
@@ -211,9 +211,12 @@ const { run: runFetch, cancel: cancelFetch } = useRequest(
   async () => {
     const params = getActualTimeRange()
 
-    timeRangeParams.value = params
-
     serverData.value = await fetchMonitorServer(params)
+
+    timeRangeParams.value = {
+      startAt: serverData.value.queryFrom,
+      endAt: serverData.value.queryEnd,
+    }
 
     if (currentTab.value === 'api') {
       refreshApiList()
@@ -291,10 +294,11 @@ const handleNavigateToAuditWithError = (apiName?: string) => {
     query.keyword = apiName
   }
 
-  router.push({
+  const href = router.resolve({
     name: 'dataServerAuditList',
     query,
-  })
+  }).href
+  window.open(href, `Audit-${apiName}`)
 }
 
 // 跳转到审计页面 - 响应时间排序
@@ -314,10 +318,11 @@ const handleNavigateToAuditWithResponseTime = (
     query.keyword = apiName
   }
 
-  router.push({
+  const href = router.resolve({
     name: 'dataServerAuditList',
     query,
-  })
+  }).href
+  window.open(href, `Audit-${apiName}`)
 }
 
 onUnmounted(() => {
