@@ -271,6 +271,7 @@ export default {
   public_connection_schema_status: 'Schema状态',
   public_connection_schema_status_tip: 'Schema加载完成的连接才可以正常创建任务',
   public_connection_table_structure_update_time: '表结构更新时间',
+  public_connection_button_import: '导入连接',
   public_connection_button_create: '创建连接',
   public_connection_button_copy: '复制连接',
   public_connection_button_test: '连接测试',

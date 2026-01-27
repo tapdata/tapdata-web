@@ -271,6 +271,7 @@ export default {
   public_connection_schema_status_tip:
     'The connection can only be created normally once the Schema has been loaded.',
   public_connection_table_structure_update_time: 'Schema Load Time',
+  public_connection_button_import: 'Import Connection',
   public_connection_button_create: 'Create Connection',
   public_connection_button_copy: 'Copy Connection',
   public_connection_button_test: 'Test',
