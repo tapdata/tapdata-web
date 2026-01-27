@@ -81,11 +81,8 @@ export default {
             'MongoDB Atlas',
             'PostgreSQL',
             'Clickhouse',
-            'Elasticsearch',
-            'Dummy',
             'Kafka-Enhanced',
             'Doris',
-            'BigQuery',
           ],
         },
         {
@@ -959,7 +956,7 @@ export default {
           <div
             v-for="item in specialScene[currentScene]"
             :key="item.key"
-            class="connector-item rounded-lg p-3 overflow-hidden bg-card dark:bg-white/10 clickable"
+            class="connector-item rounded-xl p-3 overflow-hidden bg-card dark:bg-white/10 clickable"
             @click="handleSelectSpecial(item)"
           >
             <div class="flex gap-3">
@@ -982,7 +979,7 @@ export default {
             <div
               v-for="item in demoDatabase"
               :key="`demo-${item.pdkId}`"
-              class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
+              class="connector-item rounded-xl p-3 overflow-hidden bg-white clickable"
               :class="{ active: item.pdkId === selected.pdkId }"
               @click="handleSelect(item, true)"
             >
@@ -1012,7 +1009,7 @@ export default {
           <div
             v-for="item in sceneDatabases"
             :key="item.type"
-            class="connector-item rounded-lg p-3 overflow-hidden bg-card dark:bg-white/10 clickable"
+            class="connector-item rounded-xl p-3 overflow-hidden bg-card dark:bg-white/10 clickable"
             :class="{ active: item.pdkId === selected.pdkId }"
             @click="handleSelect(item)"
           >
@@ -1039,11 +1036,28 @@ export default {
                     class="ml-auto color-success"
                     >verified</VIcon
                   >
-                  <ElTag
+                  <el-tooltip
                     v-else-if="item.qcType"
-                    class="text-uppercase ml-auto px-1 connector-item-tag"
-                    >{{ item.qcType }}
-                  </ElTag>
+                    :hide-after="0"
+                    :enterable="false"
+                    :content="
+                      $t(
+                        item.qcType === 'Beta'
+                          ? 'public_connector_beta_tip'
+                          : 'public_connector_alpha_tip',
+                      )
+                    "
+                  >
+                    <ElTag
+                      :type="item.qcType === 'Beta' ? 'primary' : 'warning'"
+                      class="text-uppercase ml-auto px-1 connector-item-tag tag-amber"
+                    >
+                      <span class="flex align-center gap-0.5">
+                        <el-icon><i-lucide-badge-alert /></el-icon>
+                        {{ item.qcType }}
+                      </span>
+                    </ElTag>
+                  </el-tooltip>
                 </div>
               </div>
             </div>
