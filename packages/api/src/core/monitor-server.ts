@@ -20,6 +20,19 @@ export function formatResponseTime(val: number | string | undefined) {
   }
 }
 
+export function formatErrorRate(val: number | string) {
+  if (!isNumber(val)) return val
+
+  if (val >= 1) {
+    return `${Number(val.toFixed(2))}%`
+  } else if (val >= 0.01) {
+    return `${Number(val.toFixed(2))}%`
+  } else if (val >= 0.001) {
+    return `${Number(val.toFixed(3))}%`
+  } else if (val > 0) {
+    return `< 0.001%`
+  }
+}
 export interface Params {
   /**
    * 秒级时间戳
@@ -39,7 +52,7 @@ export interface MonitorServer {
   granularity: number
   totalRequestCount: number
   errorCount: number
-  totalErrorRate: number
+  totalErrorRate: number | string
   responseTime: number
   responseTimeAvg?: number | string
   p95?: number | string
@@ -60,7 +73,7 @@ export interface ServerItem {
   memoryUsage: number[]
   ts: number[]
   requestCount: number
-  errorRate: number
+  errorRate: number | string
   p95?: number | string
   p99?: number | string
   deleted: boolean
@@ -90,13 +103,14 @@ export interface ServerDetail {
   memoryUsage: number
   usagePingTime: number
   requestCount: number
-  errorRate: number
+  errorRate: number | string
   errorCount: number
   responseTimeAvg: number | string
   maxDelay: number
   minDelay: number
   p95?: number | string
   p99?: number | string
+  workerInfo: ServerWorker
 }
 
 export interface ServerChart {
@@ -149,7 +163,7 @@ export interface ServerWorker {
   workerList: {
     workerId: string
     workerName: string
-    errorRate?: number
+    errorRate?: number | string
     requestCount?: number
     usage: {
       cpuUsage: number[]
@@ -176,7 +190,7 @@ export interface ApiItem {
   p99?: number | string
   maxDelay: number
   minDelay: number
-  errorRate: number
+  errorRate: number | string
   totalRps: number | string
 }
 
@@ -185,7 +199,7 @@ export interface ApiDetail {
   queryEnd: number
   granularity: number
   requestCount: number
-  errorRate: number
+  errorRate: number | string
   requestCostAvg: number | string
   p95?: number | string
   p99?: number | string
@@ -205,7 +219,7 @@ export interface ApiInServerItem {
   p99?: number | string
   maxDelay: number
   minDelay: number
-  errorRate: number
+  errorRate: number | string
 }
 
 export interface ApiChart {
@@ -246,10 +260,7 @@ export async function fetchMonitorServer(params?: Params) {
       }
     })
 
-  if (isNumber(data.totalErrorRate)) {
-    data.totalErrorRate = Number(data.totalErrorRate.toFixed(2))
-  }
-
+  data.totalErrorRate = formatErrorRate(data.totalErrorRate)
   ;['responseTimeAvg', 'p95', 'p99', 'minDelay', 'maxDelay'].forEach((key) => {
     data[key] = formatResponseTime(data[key])
   })
@@ -263,9 +274,7 @@ export async function fetchMonitorServerList(params?: Params) {
   })
 
   data.forEach((item) => {
-    if (isNumber(item.errorRate)) {
-      item.errorRate = Number(item.errorRate.toFixed(2))
-    }
+    item.errorRate = formatErrorRate(item.errorRate)
     ;['responseTimeAvg', 'p95', 'p99', 'minDelay', 'maxDelay'].forEach(
       (key) => {
         item[key] = formatResponseTime(item[key])
@@ -281,12 +290,13 @@ export async function fetchMonitorServerDetail(params?: Params) {
     params,
   })
 
-  if (isNumber(data.errorRate)) {
-    data.errorRate = Number(data.errorRate.toFixed(2))
-  }
-
+  data.errorRate = formatErrorRate(data.errorRate)
   ;['responseTimeAvg', 'p95', 'p99', 'minDelay', 'maxDelay'].forEach((key) => {
     data[key] = formatResponseTime(data[key])
+  })
+
+  data.workerInfo?.workerList?.forEach((worker) => {
+    worker.errorRate = formatErrorRate(worker.errorRate)
   })
 
   return data
@@ -331,11 +341,7 @@ export async function fetchMonitorServerApi(params?: Params) {
   )
 
   data.items.forEach((item) => {
-    if (isNumber(item.errorRate)) {
-      item.errorRate = Number(item.errorRate.toFixed(2))
-    } else {
-      item.errorRate = 0
-    }
+    item.errorRate = formatErrorRate(item.errorRate)
     ;['responseTimeAvg', 'p95', 'p99', 'minDelay', 'maxDelay'].forEach(
       (key) => {
         item[key] = formatResponseTime(item[key])
@@ -380,11 +386,7 @@ export async function fetchMonitorApiList(params?: Params) {
   )
 
   data.items.forEach((item) => {
-    if (isNumber(item.errorRate)) {
-      item.errorRate = Number(item.errorRate.toFixed(2))
-    } else {
-      item.errorRate = 0
-    }
+    item.errorRate = formatErrorRate(item.errorRate)
     ;['responseTimeAvg', 'p95', 'p99', 'minDelay', 'maxDelay'].forEach(
       (key) => {
         item[key] = formatResponseTime(item[key])
@@ -404,12 +406,7 @@ export async function fetchMonitorApiDetail(params?: Params) {
     params,
   })
 
-  if (isNumber(data.errorRate)) {
-    data.errorRate = Number(data.errorRate.toFixed(2))
-  } else {
-    data.errorRate = 0
-  }
-
+  data.errorRate = formatErrorRate(data.errorRate)
   ;['responseTimeAvg', 'p95', 'p99', 'minDelay', 'maxDelay'].forEach((key) => {
     data[key] = formatResponseTime(data[key])
   })
@@ -426,9 +423,7 @@ export async function fetchMonitorApiServer(params?: Params) {
   )
 
   data.forEach((item) => {
-    if (isNumber(item.errorRate)) {
-      item.errorRate = Number(item.errorRate.toFixed(2))
-    }
+    item.errorRate = formatErrorRate(item.errorRate)
     ;['responseTimeAvg', 'p95', 'p99', 'minDelay', 'maxDelay'].forEach(
       (key) => {
         item[key] = formatResponseTime(item[key])

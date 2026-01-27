@@ -2208,6 +2208,7 @@ export default {
   api_monitor_p99_latency: 'P99 Latency',
   api_monitor_error_rate: 'Error Rate',
   api_monitor_request_count: 'Request Count',
+  api_monitor_error_count: 'Error Count',
   api_monitor_throughput: 'Throughput',
   api_monitor_refresh: 'Refresh',
 

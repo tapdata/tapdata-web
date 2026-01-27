@@ -827,8 +827,8 @@ const onClickApi = (row: any) => {
       timeRange: timeRange.value,
       ...(timeRange.value === 'custom' && customTimeRange.value
         ? {
-            customStart: customTimeRange.value[0].toISOString(),
-            customEnd: customTimeRange.value[1].toISOString(),
+            customStart: customTimeRange.value[0],
+            customEnd: customTimeRange.value[1],
           }
         : {}),
     },
@@ -878,6 +878,21 @@ const handleNavigateToAuditWithResponseTime = (
   }).href
   window.open(href, `Audit-${apiName}`)
 }
+
+const handleBack = () => {
+  router.push({
+    name: 'apiMonitor',
+    query: {
+      timeRange: timeRange.value,
+      ...(timeRange.value === 'custom' && customTimeRange.value
+        ? {
+            customStart: customTimeRange.value[0],
+            customEnd: customTimeRange.value[1],
+          }
+        : {}),
+    },
+  })
+}
 </script>
 
 <template>
@@ -885,6 +900,14 @@ const handleNavigateToAuditWithResponseTime = (
     mode="auto"
     content-class="flex flex-column flex-1 min-h-0 overflow-auto px-6 pb-6 position-relative"
   >
+    <template #back>
+      <el-button text class="mr-1" @click="handleBack">
+        <template #icon>
+          <VIcon>left</VIcon>
+        </template>
+      </el-button>
+    </template>
+
     <template #title>
       <span class="fs-5 font-color-dark lh-8 ellipsis">{{ serverName }}</span>
     </template>
@@ -930,12 +953,12 @@ const handleNavigateToAuditWithResponseTime = (
               <CountUp :end-val="errorCount.value" :duration="0.5" />
 
               <el-tag
-                v-if="errorCount.errorRate > 0"
+                v-if="errorCount.errorRate"
                 type="danger"
                 size="small"
                 class="fw-sub"
                 ><span class="mr-1">{{ $t('api_monitor_error_rate') }}</span
-                >{{ errorCount.errorRate }}%</el-tag
+                >{{ errorCount.errorRate }}</el-tag
               >
             </div>
             <div v-else class="status-value">--</div>
@@ -1056,15 +1079,6 @@ const handleNavigateToAuditWithResponseTime = (
       <div class="top-api-section border">
         <div class="section-header mb-3 flex items-center justify-between">
           <h3 class="section-title">{{ t('api_monitor_top_api_list') }}</h3>
-          <!-- <el-select
-            v-model="topApiSortBy"
-            placeholder="排序方式"
-            style="width: 160px"
-          >
-            <el-option label="按错误率排序" value="errorRate" />
-            <el-option label="按P99延迟排序" value="p99" />
-            <el-option label="按调用次数排序" value="callCount" />
-          </el-select> -->
         </div>
 
         <el-table
@@ -1099,23 +1113,25 @@ const handleNavigateToAuditWithResponseTime = (
             sortable="custom"
           />
           <el-table-column
-            :label="t('api_monitor_error_rate')"
-            prop="errorRate"
-            width="100"
+            :label="t('api_monitor_error_count')"
+            prop="errorCount"
+            width="130"
             sortable="custom"
           >
             <template #default="{ row }">
               <span
-                v-if="row.errorRate > 0"
-                class="text-red-500 cursor-pointer underline-dashed flex align-center gap-1"
+                v-if="row.errorCount > 0"
+                class="color-danger cursor-pointer underline-dashed flex align-center gap-1 flex-wrap"
                 @click.stop="handleNavigateToAuditWithError(row.apiName)"
               >
-                {{ row.errorRate }}%
+                {{ row.errorCount }}
+                ({{ row.errorRate }})
                 <el-icon>
                   <i-lucide-external-link />
                 </el-icon>
               </span>
-              <span v-else> {{ row.errorRate }}% </span>
+              <span v-else-if="row.errorCount === 0">0</span>
+              <span v-else> -- </span>
             </template>
           </el-table-column>
           <el-table-column
@@ -1274,24 +1290,17 @@ const handleNavigateToAuditWithResponseTime = (
                     </template>
                   </el-table-column>
                   <el-table-column
-                    prop="errorRate"
-                    :label="t('api_monitor_error_rate')"
+                    prop="errorCount"
+                    :label="t('api_monitor_error_count')"
                     min-width="120"
                     align="right"
                   >
                     <template #default="{ row }">
-                      <span
-                        v-if="row.errorRate !== undefined"
-                        :class="{
-                          'error-rate-high': (row.errorRate || 0) > 5,
-                          'error-rate-medium':
-                            (row.errorRate || 0) > 1 &&
-                            (row.errorRate || 0) <= 5,
-                          'error-rate-low': (row.errorRate || 0) <= 1,
-                        }"
-                      >
-                        {{ (row.errorRate || 0).toFixed(2) }}%
+                      <span v-if="row.errorCount > 0" class="color-danger">
+                        {{ row.errorCount }}
+                        ({{ row.errorRate }})
                       </span>
+                      <span v-else-if="row.errorCount === 0">0</span>
                       <span v-else>--</span>
                     </template>
                   </el-table-column>

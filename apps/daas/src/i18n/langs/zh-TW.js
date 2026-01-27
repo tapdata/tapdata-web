@@ -2078,6 +2078,7 @@ export default {
   api_monitor_p99_latency: 'P99 延遲',
   api_monitor_error_rate: '錯誤率',
   api_monitor_request_count: '請求數',
+  api_monitor_error_count: '錯誤數',
   api_monitor_throughput: '吞吐量',
   api_monitor_refresh: '刷新',
 

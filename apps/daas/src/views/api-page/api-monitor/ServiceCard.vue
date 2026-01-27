@@ -124,8 +124,11 @@ const handleViewDetails = () => {
           <div class="stat-value">{{ data.requestCount }}</div>
         </div>
         <div class="stat-item">
-          <div class="stat-label">{{ $t('api_monitor_error_rate') }}</div>
-          <div class="stat-value">{{ data.errorRate }}%</div>
+          <div class="stat-label">{{ $t('api_monitor_error_count') }}</div>
+          <div v-if="data.errorCount > 0" class="stat-value">
+            {{ data.errorCount }} ({{ data.errorRate }})
+          </div>
+          <div v-else class="stat-value">0</div>
         </div>
       </div>
       <div class="stat-group">

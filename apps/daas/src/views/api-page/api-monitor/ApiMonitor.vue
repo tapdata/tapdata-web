@@ -12,7 +12,7 @@ import { dayjs } from '@tap/business/src/shared/dayjs'
 import CountUp from '@tap/component/src/CountUp.vue'
 import { useI18n } from '@tap/i18n'
 import { isString } from 'lodash-es'
-import { computed, nextTick, onUnmounted, ref } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import TimeRangeSelector from './components/TimeRangeSelector.vue'
 import ServiceCard from './ServiceCard.vue'
@@ -227,6 +227,7 @@ const { run: runFetch, cancel: cancelFetch } = useRequest(
   },
   {
     pollingInterval: 6000,
+    manual: true,
   },
 )
 
@@ -325,6 +326,15 @@ const handleNavigateToAuditWithResponseTime = (
   window.open(href, `Audit-${apiName}`)
 }
 
+// 从 query 中恢复自定义时间范围
+onMounted(() => {
+  if (route.query.customStart && route.query.customEnd) {
+    customTimeRange.value = [+route.query.customStart, +route.query.customEnd]
+    timeRange.value = 'custom'
+  }
+  runFetch()
+})
+
 onUnmounted(() => {
   if (timer.value) {
     clearTimeout(timer.value)
@@ -371,7 +381,7 @@ onUnmounted(() => {
       </div>
       <div
         class="border rounded-xl p-3 top-card cursor-pointer"
-        @click="handleSortApi('errorRate')"
+        @click="handleSortApi('errorCount')"
       >
         <div class="card-header mb-6">
           <div class="card-title font-color-light">
@@ -384,19 +394,15 @@ onUnmounted(() => {
             class="flex flex-column align-items-start gap-2 font-semibold"
             :class="{ 'color-danger': errorCount.value > 0 }"
           >
-            <CountUp
-              :end-val="errorCount.value"
-              :duration="0.5"
-              @click="handleSortApi('errorRate')"
-            />
+            <CountUp :end-val="errorCount.value" :duration="0.5" />
             <el-tag
-              v-if="errorCount.errorRate > 0"
+              v-if="errorCount.errorRate"
               type="danger"
               size="small"
               class="border-0 fw-sub cursor-pointer"
               @click.stop="handleNavigateToAuditWithError()"
               ><span class="mr-1">{{ $t('api_monitor_error_rate') }}</span
-              >{{ errorCount.errorRate }}%</el-tag
+              >{{ errorCount.errorRate }}</el-tag
             >
           </div>
           <div v-else>--</div>
@@ -573,23 +579,25 @@ onUnmounted(() => {
             sortable="custom"
           />
           <el-table-column
-            :label="t('api_monitor_error_rate')"
-            prop="errorRate"
-            width="90"
+            :label="t('api_monitor_error_count')"
+            prop="errorCount"
+            width="130"
             sortable="custom"
           >
             <template #default="{ row }">
               <span
-                v-if="row.errorRate > 0"
-                class="text-red-500 cursor-pointer is-external-link flex align-center gap-1"
+                v-if="row.errorCount > 0"
+                class="color-danger cursor-pointer is-external-link flex align-center gap-1 flex-wrap"
                 @click.stop="handleNavigateToAuditWithError(row.apiName)"
               >
-                {{ row.errorRate }}%
+                {{ row.errorCount }}
+                ({{ row.errorRate }})
                 <el-icon>
                   <i-lucide-external-link />
                 </el-icon>
               </span>
-              <span v-else> {{ row.errorRate }}% </span>
+              <span v-else-if="row.errorCount === 0">0 </span>
+              <span v-else> -- </span>
             </template>
           </el-table-column>
           <el-table-column

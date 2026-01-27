@@ -96,43 +96,43 @@ const getActualTimeRange = (): Params => {
   const rangeMap: Record<string, Record<string, string | number>> = {
     '5m': {
       step: 5,
-      type: 'minute'
+      type: 'minute',
     },
-    '15m':  {
+    '15m': {
       step: 15,
-      type: 'minute'
+      type: 'minute',
     },
-    '1h':  {
+    '1h': {
       step: 1,
-      type: 'hours'
+      type: 'hours',
     },
-    '6h':  {
+    '6h': {
       step: 6,
-      type: 'hours'
+      type: 'hours',
     },
-    '12h':  {
+    '12h': {
       step: 12,
-      type: 'hours'
+      type: 'hours',
     },
-    '24h':  {
+    '24h': {
       step: 24,
-      type: 'hours'
+      type: 'hours',
     },
-    '7d':  {
+    '7d': {
       step: 7,
-      type: 'days'
+      type: 'days',
     },
-    '14d':  {
+    '14d': {
       step: 14,
-      type: 'days'
+      type: 'days',
     },
-    '30d':  {
+    '30d': {
       step: 30,
-      type: 'days'
+      type: 'days',
     },
   }
 
-  return rangeMap[timeRange.value] || rangeMap['1h'];
+  return rangeMap[timeRange.value] || rangeMap['1h']
 }
 
 const { run: runFetch } = useRequest(
@@ -568,6 +568,21 @@ const onClickServer = (row: any) => {
     },
   })
 }
+
+const handleBack = () => {
+  router.push({
+    name: 'apiMonitor',
+    query: {
+      timeRange: timeRange.value,
+      ...(timeRange.value === 'custom' && customTimeRange.value
+        ? {
+            customStart: customTimeRange.value[0],
+            customEnd: customTimeRange.value[1],
+          }
+        : {}),
+    },
+  })
+}
 </script>
 
 <template>
@@ -575,6 +590,13 @@ const onClickServer = (row: any) => {
     mode="auto"
     content-class="flex flex-column flex-1 min-h-0 overflow-auto px-6 pb-6 position-relative"
   >
+    <template #back>
+      <el-button text class="mr-1" @click="handleBack">
+        <template #icon>
+          <VIcon>left</VIcon>
+        </template>
+      </el-button>
+    </template>
     <template #title>
       <span class="fs-5 font-color-dark lh-8 ellipsis">{{ apiName }}</span>
       <el-tag
@@ -628,14 +650,14 @@ const onClickServer = (row: any) => {
               <CountUp :end-val="errorCount.value" :duration="0.5" />
 
               <el-tag
-                v-if="errorCount.errorRate > 0"
+                v-if="errorCount.errorRate"
                 type="danger"
                 size="small"
                 class="border-0"
                 ><span class="fw-sub mr-1">{{
                   $t('api_monitor_error_rate')
                 }}</span
-                >{{ errorCount.errorRate }}%</el-tag
+                >{{ errorCount.errorRate }}</el-tag
               >
             </div>
             <div v-else class="status-value">--</div>
@@ -736,19 +758,17 @@ const onClickServer = (row: any) => {
             width="120"
           />
           <el-table-column
-            :label="t('api_monitor_error_rate')"
-            prop="errorRate"
-            width="100"
+            :label="t('api_monitor_error_count')"
+            prop="errorCount"
+            width="120"
           >
             <template #default="{ row }">
-              <span
-                :class="{
-                  'text-danger': row.errorRate >= 3,
-                  'text-warning': row.errorRate >= 1 && row.errorRate < 3,
-                }"
-              >
-                {{ row.errorRate }}%
+              <span v-if="row.errorCount > 0" class="color-danger">
+                {{ row.errorCount }}
+                ({{ row.errorRate }})
               </span>
+              <span v-else-if="row.errorCount === 0">0</span>
+              <span v-else> -- </span>
             </template>
           </el-table-column>
           <el-table-column
