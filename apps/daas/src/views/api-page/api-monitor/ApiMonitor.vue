@@ -410,7 +410,7 @@ onUnmounted(() => {
       </div>
       <div
         class="border rounded-xl p-3 top-card cursor-pointer"
-        @click="handleSortApi('notHealthyApiCount')"
+        @click="handleSortApi('errorCount')"
       >
         <div class="card-header mb-6">
           <div class="card-title font-color-light">
