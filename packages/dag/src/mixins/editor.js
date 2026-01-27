@@ -1995,6 +1995,8 @@ export default {
     },
 
     async validateDropTableEnabled() {
+      if (this.dataflow.type === 'cdc') return true
+
       if (
         this.allNodes.some(
           (node) =>
