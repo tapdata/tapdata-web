@@ -27,6 +27,7 @@ export default {
   mixins: [syncTaskAgent],
   props: {
     loading: Boolean,
+    isSaving: Boolean,
     dataflowName: String,
     dataflow: Object,
     scale: Number,
@@ -401,6 +402,11 @@ export default {
           v-if="
             !(dataflow.disabledData && dataflow.disabledData.start) &&
             buttonShowMap.Start
+          "
+          :disabled="
+            isSaving ||
+            (dataflow.disabledData && dataflow.disabledData.start) ||
+            transformLoading
           "
           class="ml-3"
           type="primary"
