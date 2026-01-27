@@ -106,6 +106,9 @@ export default {
               item.createTimeFmt = item.createTime
                 ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
                 : '-'
+              item.reqTimeFmt = item.reqTime
+                ? dayjs(item.reqTime).format('YYYY-MM-DD HH:mm:ss')
+                : '-'
               return item
             }) || [],
         }
@@ -225,7 +228,7 @@ export default {
         sortable="reqTime"
       >
         <template #default="{ row }">
-          {{ row.createTimeFmt }}
+          {{ row.reqTimeFmt }}
         </template>
       </el-table-column>
       <el-table-column

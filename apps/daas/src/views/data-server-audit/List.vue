@@ -129,6 +129,9 @@ export default {
               item.createTimeFmt = item.createTime
                 ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
                 : '-'
+              item.reqTimeFmt = item.reqTime
+                ? dayjs(item.reqTime).format('YYYY-MM-DD HH:mm:ss')
+                : '-'
               return item
             }) || [],
         }
@@ -276,12 +279,12 @@ export default {
       <el-table-column
         :label="$t('apiaudit_interview_time')"
         :show-overflow-tooltip="true"
-        prop="createTime"
+        prop="reqTime"
         width="170"
-        sortable="createTime"
+        sortable="reqTime"
       >
         <template #default="{ row }">
-          {{ row.createTimeFmt }}
+          {{ row.reqTimeFmt }}
         </template>
       </el-table-column>
       <el-table-column
