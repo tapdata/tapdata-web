@@ -336,7 +336,9 @@ export default defineComponent({
     }
 
     const getNewTask = async () => {
-      const sourceNode = genDatabaseNode()
+      const sourceNode = genDatabaseNode({
+        tableNames: []
+      })
       const targetNode = genDatabaseNode()
       const tableEditNode = genProcessorNode('table_rename_processor', {
         name: i18n.t('packages_dag_src_migrationeditor_biaobianji')
