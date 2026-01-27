@@ -55,6 +55,9 @@ export default {
   public_is_not_null: '不為空',
   public_field_value: '字段值',
   public_cache: '緩存',
+  public_light: '淺色',
+  public_dark: '深色',
+  public_follow_system: '跟隨系統',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '無效',
@@ -159,6 +162,7 @@ export default {
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否刪除',
+  public_message_delete_confirm_with_name: '是否刪除：{val}？',
   public_message_save_ok: '保存成功',
   public_message_save_fail: '保存失敗',
   public_message_copy_success: '複製成功',
@@ -221,6 +225,10 @@ export default {
   public_time_output: '輸出',
   public_time_avg_output: '輸出 (平均/{unit})',
   public_time_max_output: '輸出 (最大/{unit})',
+  public_time_avg_input_95th: '輸入 (95%)',
+  public_time_avg_output_95th: '輸出 (95%)',
+  public_time_avg_input_99th: '輸入 (99%)',
+  public_time_avg_output_99th: '輸出 (99%)',
   public_time_five_min: '最近五分鐘',
   public_time_ten_min: '最近十分鐘',
   public_time_thirty_min: '最近三十分鐘',
@@ -326,6 +334,8 @@ export default {
   public_node_target: '目標節點',
   // 任務事件
   public_event_incremental_delay: '增量延遲',
+  public_event_incremental_delay_95th: '95 分位',
+  public_event_incremental_delay_99th: '99 分位',
   public_event_total_input: '總輸入',
   public_event_total_output: '總輸出',
   public_event_insert: '插入',

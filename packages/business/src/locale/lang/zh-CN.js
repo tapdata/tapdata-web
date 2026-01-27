@@ -1549,4 +1549,6 @@ export default {
     '若任务名或数据源名冲突，则终止导入操作，不导入任何内容。',
   packages_business_import_reuse_existing_tip:
     '若任务名冲突则替换任务，数据源名冲突则复用系统中已有数据源。',
+  public_connector_beta_tip: '正在测试阶段，我们正在不断优化体验',
+  public_connector_alpha_tip: '正在持续开发中，部分功能可能还在完善',
 }

@@ -227,7 +227,7 @@ export default {
   },
 
   methods: {
-    getData({ page, tags }) {
+    getData({ page, tags, isSelectedNoTag }) {
       const { current, size } = page
       const { syncType } = this
       const { keyword, status, type, agentId, syncStatus, id } =
@@ -282,6 +282,13 @@ export default {
           in: tags,
         }
       }
+      if (isSelectedNoTag) {
+        where.$or = [
+          { listtags: { $exists: false } },
+          { listtags: { $size: 0 } },
+        ]
+      }
+
       type && (where.type = type)
       if (status) {
         if (status.includes(',')) {
@@ -351,12 +358,20 @@ export default {
             map[item.id] = item
             return map
           }, {})
+          const deleted = []
           this.multipleSelection.forEach((item, i) => {
             const temp = tempMap[item.id]
             if (temp) {
               this.multipleSelection[i] = temp
+            } else {
+              deleted.push(item)
             }
           })
+          deleted.forEach((item) => {
+            this.table.toggleRowSelection(item, false)
+          })
+        } else if (!list.length) {
+          this.table.clearSelection()
         }
 
         return {
@@ -378,6 +393,7 @@ export default {
           type: 'select-inner',
           items: this.statusOptions,
           id: 'status-filter-select',
+          height: this.statusOptions * 34,
         },
         {
           label: this.$t('packages_business_task_list_sync_type'),
@@ -1221,6 +1237,8 @@ export default {
         "
       />
       <el-table-column
+        prop="name"
+        sortable
         min-width="240"
         :label="$t('public_task_name')"
         show-overflow-tooltip
@@ -1532,27 +1550,6 @@ export default {
 
         &.btn-createText {
           margin-left: 12px;
-        }
-      }
-    }
-
-    .dataflow-name {
-      line-height: 24px;
-      .tag {
-        padding: 0 4px;
-        font-style: normal;
-        font-weight: 400;
-        font-size: 12px;
-        line-height: 20px;
-        color: var(--color-tag);
-        border: 1px solid var(--bg-tag);
-        border-radius: 6px;
-      }
-
-      .name {
-        &:not(.has-children) {
-          cursor: pointer;
-          // text-decoration: underline;
         }
       }
     }

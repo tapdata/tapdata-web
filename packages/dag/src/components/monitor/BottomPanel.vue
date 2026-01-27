@@ -250,7 +250,12 @@ export default {
           />
         </ElTabPane>
         <SkipErrorTable
-          v-if="$attrs.dataflow && $attrs.dataflow.enableSkipErrorTable"
+          v-if="
+            $attrs.dataflow &&
+            $attrs.dataflow.skipErrorEvent &&
+            $attrs.dataflow.skipErrorEvent.errorMode ===
+              'SkipTableForMigrateSnapshot'
+          "
           name="skipErrorTable"
           :current-tab="currentTab"
           v-bind="$attrs"

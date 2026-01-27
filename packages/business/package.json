@@ -16,6 +16,7 @@
     "@tap/form": "workspace:*",
     "@tap/i18n": "workspace:*",
     "@tap/shared": "workspace:*",
+    "@vueuse/core": "catalog:",
     "axios": "catalog:",
     "cron-parser": "catalog:",
     "dayjs": "catalog:",

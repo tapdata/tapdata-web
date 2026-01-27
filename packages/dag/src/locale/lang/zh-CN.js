@@ -319,6 +319,7 @@ export default {
     '任务中含有不支持增量的节点，请将任务类型修改为全量',
   packages_dag_mixins_editor_buzhichiduotiao:
     '不支持多条链路，请重新编辑任务链路',
+  packages_dag_not_support_multi_target: '当前不支持写入多个目标节点',
   packages_dag_mixins_editor_renwulianlubu: '任务链路不完整',
   packages_dag_mixins_editor_renwushezhiyi: '任务设置异常',
   packages_dag_mixins_editor_suoshuage: '所属agent节点冲突',
@@ -966,6 +967,7 @@ export default {
   packages_dag_compare_missing_source: '字段未定义',
   packages_dag_compare_precision: '类型差异(一般)',
   packages_dag_compare_cannot_write: '字段只读',
+  packages_dag_compare_primary_key_inconsistency: '主键差异',
   packages_dag_compare_done_modify: '已{type}修改',
   packages_dag_compare_done_add: '已{type}添加',
   packages_dag_compare_done_delete: '已{type}删除',
@@ -1000,6 +1002,8 @@ export default {
   packages_dag_compare_result_detail_readonly: '{readonly} 个只读',
   packages_dag_compare_result_detail_missing: '{missing} 个缺失',
   packages_dag_compare_result_detail_different: '{different} 个类型差异',
+  packages_dag_compare_result_detail_primary_key_inconsistency:
+    '{primaryKeyInconsistency} 个主键差异',
   packages_dag_compare_result_detail_all: '全部差异',
   packages_dag_compare_result_auto_process: '自动处理差异',
   packages_dag_compare_result_display_field: '显示字段',
@@ -1022,6 +1026,7 @@ export default {
   packages_dag_qpSshizhi3_tip:
     '查询范围大于等于24小时小于30天，取每小时的数据点计算平均和最大的QPS值',
   packages_dag_task_resource_usage: '任务资源占用',
+  packages_dag_cache: '数据缓存',
   packages_dag_cache_expired: '缓存已过期，需要重建缓存',
   packages_dag_rebuild_cache: '重建缓存',
   packages_dag_rebuild_cache_tips: '自动重建过期的缓存数据',
@@ -1048,5 +1053,8 @@ export default {
   packages_dag_skip_error_recover_selected: '恢复选中',
   packages_dag_skip_error_recover_all: '恢复全部',
   packages_dag_only_show_skip: '仅显示已跳过',
+  packages_dag_SkipTableForMigrateSnapshot: '跳过异常表，完成全量后报错停止',
+  packages_dag_fileLog: '数据库日志',
+  packages_dag_fileLog_tip: '开启后，将在引擎后台输出数据库 JDBC 执行日志',
   packages_dag_search_processor: '搜索处理节点',
 }

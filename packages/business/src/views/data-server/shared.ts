@@ -38,14 +38,20 @@ export const makeTree = (data: any[]) => {
     }
   }
 
-  const setCustomDisabled = (nodes: any[], parentDisabled = false) => {
+  const setCustomDisabled = (
+    nodes: any[],
+    parentDisabled = false,
+    parentType?: string,
+  ) => {
     for (const node of nodes) {
-      node.customDisabled = parentDisabled
+      node.customDisabled =
+        parentDisabled || (node.data_type === 'ARRAY' && !!parentType)
       if (node.children?.length) {
         // 如果当前节点是 ARRAY，则子节点全部禁用
         setCustomDisabled(
           node.children,
           parentDisabled || node.data_type === 'ARRAY',
+          node.data_type,
         )
       }
     }
@@ -85,7 +91,7 @@ export const useDrawer = (t: any, apiApplication?: Ref<any>) => {
   ]
   // Regex validation patterns
   const PARAM_PATTERN = /^[a-z$_\u4E00-\u9FA5][\w$\u4E00-\u9FA5]*$/i
-  const PATH_PATTERN = /^[\w$-]+$/
+  const PATH_PATTERN = /^(?!\/)[\w$/-]+$/
 
   // Validation rules
   const validateParams = (rule: any, value: string, callback: Function) => {

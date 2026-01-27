@@ -1435,15 +1435,13 @@ export default {
     validateDag() {
       let someErrorMsg = ''
       // 检查每个节点的源节点个数、连线个数、节点的错误状态
+      let targetDataNodeCount = 0
       this.allNodes.some((node) => {
         const { id } = node
         const minInputs = node.__Ctor.minInputs ?? 1
+        const isDataNode = node.type === 'database' || node.type === 'table'
         // 非数据节点至少有一个目标
-        const minOutputs =
-          (node.__Ctor.minOutputs ??
-          (node.type !== 'database' && node.type !== 'table'))
-            ? 1
-            : 0
+        const minOutputs = (node.__Ctor.minOutputs ?? !isDataNode) ? 1 : 0
         const inputNum = node.$inputs.length
         const outputNum = node.$outputs.length
 
@@ -1476,6 +1474,15 @@ export default {
           someErrorMsg = i18n.t('packages_dag_node_none_connection', {
             val1: node.name,
           })
+          return true
+        }
+
+        if (isDataNode && inputNum && !outputNum) {
+          targetDataNodeCount += 1
+        }
+
+        if (targetDataNodeCount > 1) {
+          someErrorMsg = i18n.t('packages_dag_not_support_multi_target')
           return true
         }
       })
@@ -1988,6 +1995,8 @@ export default {
     },
 
     async validateDropTableEnabled() {
+      if (this.dataflow.type === 'cdc') return true
+
       if (
         this.allNodes.some(
           (node) =>

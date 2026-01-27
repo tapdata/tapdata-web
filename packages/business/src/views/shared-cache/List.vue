@@ -130,8 +130,9 @@ export default {
     },
     del(row = {}) {
       this.$confirm(
-        this.$t('public_message_title_prompt'),
-        this.$t('public_message_delete_confirm'),
+        this.$t('public_message_delete_confirm_with_name', {
+          val: row.name,
+        }),
       ).then((flag) => {
         if (flag) {
           deleteSharedCache(row.id).then(() => {

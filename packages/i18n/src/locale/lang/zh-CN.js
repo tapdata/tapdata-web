@@ -55,6 +55,9 @@ export default {
   public_is_not_null: '不为空',
   public_field_value: '字段值',
   public_cache: '缓存',
+  public_light: '浅色',
+  public_dark: '深色',
+  public_follow_system: '跟随系统',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '无效',
@@ -159,6 +162,7 @@ export default {
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否删除',
+  public_message_delete_confirm_with_name: '是否删除：{val}？',
   public_message_save_ok: '保存成功',
   public_message_save_fail: '保存失败',
   public_message_copy_success: '复制成功',
@@ -222,6 +226,10 @@ export default {
   public_time_output: '输出',
   public_time_avg_output: '输出 (平均/{unit})',
   public_time_max_output: '输出 (最大/{unit})',
+  public_time_avg_input_95th: '输入 95 分位',
+  public_time_avg_output_95th: '输出 95 分位',
+  public_time_avg_input_99th: '输入 99 分位',
+  public_time_avg_output_99th: '输出 99 分位',
   public_time_five_min: '最近五分钟',
   public_time_ten_min: '最近十分钟',
   public_time_thirty_min: '最近三十分钟',
@@ -328,6 +336,8 @@ export default {
   public_node_target: '目标节点',
   // 任务事件
   public_event_incremental_delay: '增量延迟',
+  public_event_incremental_delay_95th: '95 分位',
+  public_event_incremental_delay_99th: '99 分位',
   public_event_total_input: '总输入',
   public_event_total_output: '总输出',
   public_event_insert: '插入',
