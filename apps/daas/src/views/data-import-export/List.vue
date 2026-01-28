@@ -8,6 +8,7 @@ import {
   fetchGroupInfoRecordList,
   type GroupInfoRecordDto,
 } from '@tap/api/core/group-info'
+import { ErrorMessage } from '@tap/business/src/components/error-message'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import { FilterBar } from '@tap/component'
@@ -295,6 +296,14 @@ const handleImportSuccess = () => {
               <component :is="getStatusConfig(row.status).icon" />
             </ElIcon>
             <span>{{ getStatusConfig(row.status).text }}</span>
+
+            <ElButton
+              v-if="row.message && row.status === 'failed'"
+              text
+              type="primary"
+              @click="ErrorMessage(row.message)"
+              >{{ $t('public_button_check') }}
+            </ElButton>
           </div>
         </template>
       </el-table-column>
