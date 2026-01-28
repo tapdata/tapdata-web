@@ -15,6 +15,7 @@ import {
 } from '@tap/api/src/core/task'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
+import VIcon from '@tap/component/src/base/VIcon.vue'
 import resize from '@tap/component/src/directives/resize'
 
 import { FormItem, HighlightCode, JsEditor, useForm } from '@tap/form'
@@ -25,6 +26,7 @@ import { defineComponent, inject, onUnmounted, reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 import { JsDeclare } from '../js-declare'
+import AiCodeDialog from './AiCodeDialog.vue'
 import './style.scss'
 
 export const JsProcessor = observer(
@@ -48,6 +50,7 @@ export const JsProcessor = observer(
       const showDoc = ref(false)
       const isMigrate = syncType === 'migrate'
       const showJsonArea = ref(false)
+      const aiDialogRef = ref(null)
       const docSrc = `${
         isDaas
           ? `${location.origin}/docs${i18n.locale === 'en' ? '/en' : ''}`
@@ -275,6 +278,17 @@ export const JsProcessor = observer(
       const toggleDoc = (event) => {
         event.stopPropagation()
         showDoc.value = !showDoc.value
+      }
+
+      const handleOpenAiDialog = () => {
+        aiDialogRef.value?.open()
+      }
+
+      const handleAiGenerate = (userInput: string) => {
+        // TODO: Implement AI code generation logic
+        // For now, just append a comment to the code
+        const generatedComment = `\n// AI Generated: ${userInput}\n`
+        emit('change', props.value + generatedComment)
       }
 
       const functionGroup = ref({})
@@ -512,6 +526,18 @@ export const JsProcessor = observer(
               </ElTooltip>
             </div>
             <div class="flex align-center" style="--btn-space: 4px;">
+              <ElButton
+                text
+                tag="a"
+                onClick={handleOpenAiDialog}
+                type="primary"
+                disabled={props.disabled}
+              >
+                <el-icon>
+                  <i-lucide-sparkle />
+                </el-icon>
+                {i18n.t('packages_dag_ai_generate')}
+              </ElButton>
               <ElButton text tag="a" onClick={toggleDoc} type="primary">
                 {i18n.t('packages_dag_api_docs')}
               </ElButton>
@@ -531,6 +557,7 @@ export const JsProcessor = observer(
 
         return (
           <div class="js-processor font-color-light">
+            <AiCodeDialog ref={aiDialogRef} onGenerate={handleAiGenerate} />
             <ElDrawer
               append-to-body
               modal={false}
