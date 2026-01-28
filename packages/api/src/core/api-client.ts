@@ -62,10 +62,10 @@ export async function fetchApiServerToken() {
   const result = await baseRequestClient.post('/oauth/token', data, {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'debug': 'true'
+      debug: 'true',
     },
   })
-  return result?.data || {}
+  return result?.data?.access_token || ''
 }
 
 export function fetchApisByClient(clientId: string) {
