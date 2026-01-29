@@ -82,6 +82,8 @@ const errorCount = computed(() => {
   return {
     value: serverData.value?.errorCount,
     errorRate: serverData.value?.totalErrorRate,
+    queryFrom: serverData.value?.queryFrom,
+    queryEnd: serverData.value?.queryEnd
   }
 })
 
@@ -92,6 +94,8 @@ const responseTimeAvg = computed(() => {
     unit,
     minDelay: serverData.value?.minDelay,
     maxDelay: serverData.value?.maxDelay,
+    queryFrom: serverData.value?.queryFrom,
+    queryEnd: serverData.value?.queryEnd
   }
 })
 
@@ -283,47 +287,45 @@ const handleSortApi = (sortKey: string) => {
 }
 
 // 跳转到审计页面 - 错误率
-const handleNavigateToAuditWithError = (apiName?: string) => {
-  const timeRange = timeRangeParams.value
+const handleNavigateToAuditWithError = (row?: Record<string, any>) => {
   const query: any = {
     code: '500', // 失败的状态码
-    start: timeRange.startAt * 1000, // 转换为毫秒
-    end: timeRange.endAt * 1000, // 转换为毫秒
+    start: row.queryFrom * 1000, // 转换为毫秒
+    end: row.queryEnd * 1000, // 转换为毫秒
   }
 
-  if (apiName) {
-    query.keyword = apiName
+  if (row.apiName) {
+    query.keyword = row.apiName
   }
 
   const href = router.resolve({
     name: 'dataServerAuditList',
     query,
   }).href
-  window.open(href, `Audit-${apiName}`)
+  window.open(href, `Audit-${row.apiName}`)
 }
 
 // 跳转到审计页面 - 响应时间排序
 const handleNavigateToAuditWithResponseTime = (
-  apiName?: string,
+    row?: Record<string, any>,
   sortOrder: 'ASC' | 'DESC' = 'DESC',
 ) => {
-  const timeRange = timeRangeParams.value
   const query: any = {
-    start: timeRange.startAt * 1000, // 转换为毫秒
-    end: timeRange.endAt * 1000, // 转换为毫秒
+    start: row.queryFrom * 1000, // 转换为毫秒
+    end: row.queryEnd * 1000, // 转换为毫秒
     sortBy: 'latency',
     sortOrder,
   }
 
-  if (apiName) {
-    query.keyword = apiName
+  if (row.apiName) {
+    query.keyword = row.apiName
   }
 
   const href = router.resolve({
     name: 'dataServerAuditList',
     query,
   }).href
-  window.open(href, `Audit-${apiName}`)
+  window.open(href, `Audit-${row.apiName}`)
 }
 
 // 从 query 中恢复自定义时间范围
@@ -400,7 +402,7 @@ onUnmounted(() => {
               type="danger"
               size="small"
               class="border-0 fw-sub cursor-pointer"
-              @click.stop="handleNavigateToAuditWithError()"
+              @click.stop="handleNavigateToAuditWithError(errorCount)"
               ><span class="mr-1">{{ $t('api_monitor_error_rate') }}</span
               >{{ errorCount.errorRate }}</el-tag
             >
@@ -453,7 +455,7 @@ onUnmounted(() => {
                 size="small"
                 class="is-code fw-sub cursor-pointer"
                 @click.stop="
-                  handleNavigateToAuditWithResponseTime(undefined, 'DESC')
+                  handleNavigateToAuditWithResponseTime(responseTimeAvg, 'DESC')
                 "
               >
                 <span class="mr-1">Max</span>{{ responseTimeAvg.maxDelay }}
@@ -463,7 +465,7 @@ onUnmounted(() => {
                 size="small"
                 class="is-code fw-sub cursor-pointer"
                 @click.stop="
-                  handleNavigateToAuditWithResponseTime(undefined, 'ASC')
+                  handleNavigateToAuditWithResponseTime(responseTimeAvg, 'ASC')
                 "
               >
                 <span class="mr-1">Min</span>{{ responseTimeAvg.minDelay }}
@@ -588,7 +590,7 @@ onUnmounted(() => {
               <span
                 v-if="row.errorCount > 0"
                 class="color-danger cursor-pointer is-external-link flex align-center gap-1 flex-wrap"
-                @click.stop="handleNavigateToAuditWithError(row.apiName)"
+                @click.stop="handleNavigateToAuditWithError(row)"
               >
                 {{ row.errorCount }}
                 ({{ row.errorRate }})
@@ -621,7 +623,7 @@ onUnmounted(() => {
                 v-if="row.maxDelay !== undefined"
                 class="is-external-link cursor-pointer flex align-center gap-1"
                 @click.stop="
-                  handleNavigateToAuditWithResponseTime(row.apiName, 'DESC')
+                  handleNavigateToAuditWithResponseTime(row, 'DESC')
                 "
               >
                 {{ row.maxDelay }}
@@ -643,7 +645,7 @@ onUnmounted(() => {
                 v-if="row.minDelay !== undefined"
                 class="is-external-link cursor-pointer flex align-center gap-1"
                 @click.stop="
-                  handleNavigateToAuditWithResponseTime(row.apiName, 'ASC')
+                  handleNavigateToAuditWithResponseTime(row, 'ASC')
                 "
               >
                 {{ row.minDelay }}
