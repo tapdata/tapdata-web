@@ -25,6 +25,7 @@ export default {
         code: '',
         start: '',
         end: '',
+        options: 'i'
       },
       filterItems: [],
       order: 'createTime DESC',
@@ -93,7 +94,7 @@ export default {
     // 获取数据
     getData({ page }) {
       const { current, size } = page
-      const { method, code, start, end, clientId, keyword } = this.searchParams
+      const { method, code, start, end, clientId, keyword, options } = this.searchParams
       const where = {}
       if (method) {
         where.method = method
@@ -111,7 +112,7 @@ export default {
         where.clientId = clientId
       }
       if (keyword && keyword.trim()) {
-        const filterObj = { like: escapeRegExp(keyword), options: 'i' }
+        const filterObj = { like: escapeRegExp(keyword), options: options ? '-' : options }
         where.or = [{ name: filterObj }, { id: filterObj }]
       }
 

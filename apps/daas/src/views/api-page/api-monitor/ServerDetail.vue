@@ -843,15 +843,16 @@ const handleNavigateToAuditWithError = (row?: string) => {
     end: row.queryEnd * 1000, // 转换为毫秒
   }
 
-  if (row.apiName) {
-    query.keyword = row.apiName
+  if (row.apiPath) {
+    query.keyword = row.apiPath
+    query.options='-'
   }
 
   const href = router.resolve({
     name: 'dataServerAuditList',
     query,
   }).href
-  window.open(href, `Audit-${row.apiName}`)
+  window.open(href, `Audit-${encodeURI(row.apiPath)}`)
 }
 
 // 跳转到审计页面 - 响应时间排序
@@ -866,15 +867,16 @@ const handleNavigateToAuditWithResponseTime = (
     sortOrder,
   }
 
-  if (row.apiName) {
-    query.keyword = row.apiName
+  if (row.apiPath) {
+    query.keyword = row.apiPath
+    query.options='-'
   }
 
   const href = router.resolve({
     name: 'dataServerAuditList',
     query,
   }).href
-  window.open(href, `Audit-${row.apiName}`)
+  window.open(href, `Audit-${encodeURI(row.apiPath)}`)
 }
 
 const handleBack = () => {
