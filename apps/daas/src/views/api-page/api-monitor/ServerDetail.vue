@@ -1088,21 +1088,21 @@ const handleBack = () => {
           @sort-change="handleApiListSortChange"
         >
           <el-table-column
-            :label="t('api_monitor_server_api_name')"
+            :label="t('apiaudit_req_path')"
             min-width="200"
           >
             <template #default="{ row }">
               <div class="flex flex-wrap align-center gap-2">
                 <el-link type="primary" @click="onClickApi(row)">{{
-                  row.apiName
+                  row.apiPath
                 }}</el-link>
-                <el-tag
-                  type="info"
-                  class="is-code is-wrap px-1.5 font-mono"
-                  disable-transitions
-                >
-                  {{ row.apiPath }}
-                </el-tag>
+<!--                <el-tag-->
+<!--                  type="info"-->
+<!--                  class="is-code is-wrap px-1.5 font-mono"-->
+<!--                  disable-transitions-->
+<!--                >-->
+<!--                  {{ row.apiPath }}-->
+<!--                </el-tag>-->
               </div>
             </template>
           </el-table-column>

@@ -291,6 +291,7 @@ export default {
   dataExplorer_base_path: '基础路径',
   // 服务审计
   apiaudit_name: 'API名称',
+  apiaudit_req_path: '访问路径',
   apiaudit_access_type: '访问类型',
   apiaudit_visitor: '客户端名称',
   apiaudit_ip: '访问人员IP',

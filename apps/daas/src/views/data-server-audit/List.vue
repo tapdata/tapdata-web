@@ -247,14 +247,9 @@ export default {
           />
         </div>
       </template>
-      <el-table-column prop="name" :label="$t('apiaudit_name')" min-width="220">
+      <el-table-column prop="name" :label="$t('apiaudit_req_path')" min-width="220">
         <template #default="{ row }">
-          <div>{{ row.name }}</div>
-          <el-tag class="is-code" size="small" type="info" disable-transitions>
-            <span class="text-caption">
-              {{ row.apiId }}
-            </span>
-          </el-tag>
+          <div>{{ row.apiPath }}</div>
         </template>
       </el-table-column>
       <el-table-column

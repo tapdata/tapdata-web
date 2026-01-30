@@ -292,6 +292,7 @@ export default {
   dataExplorer_base_path: '基礎路徑',
   // api審計
   apiaudit_name: 'API名稱',
+  apiaudit_req_path: '訪問路徑',
   apiaudit_access_type: '訪問類型',
   apiaudit_visitor: '客戶端名稱',
   apiaudit_ip: '訪問人員IP',

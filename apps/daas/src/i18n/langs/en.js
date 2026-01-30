@@ -298,6 +298,7 @@ export default {
   dataExplorer_base_path: 'Base path',
   // server audit 服务审计
   apiaudit_name: 'API name',
+  apiaudit_req_path: 'Access Path',
   apiaudit_access_type: 'Access Type',
   apiaudit_visitor: 'Client Name',
   apiaudit_ip: 'Visitor IP',

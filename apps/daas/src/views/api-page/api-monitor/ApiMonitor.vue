@@ -556,22 +556,22 @@ onUnmounted(() => {
           @sort-change="handleSortChange"
         >
           <el-table-column
-            :label="t('api_monitor_total_api_list_name')"
+            :label="t('apiaudit_req_path')"
             min-width="200"
             fixed
           >
             <template #default="{ row }">
               <div class="flex flex-wrap align-center gap-2">
                 <el-link type="primary">
-                  {{ row.apiName }}
-                </el-link>
-                <el-tag
-                  type="info"
-                  class="is-code is-wrap px-1.5 font-mono"
-                  disable-transitions
-                >
                   {{ row.apiPath }}
-                </el-tag>
+                </el-link>
+<!--                <el-tag-->
+<!--                  type="info"-->
+<!--                  class="is-code is-wrap px-1.5 font-mono"-->
+<!--                  disable-transitions-->
+<!--                >-->
+<!--                  {{ row.apiPath }}-->
+<!--                </el-tag>-->
               </div>
             </template>
           </el-table-column>
