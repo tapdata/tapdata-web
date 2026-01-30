@@ -42,6 +42,7 @@ export default {
     this.getData()
   },
   methods: {
+    dayjs,
     // 获取数据
     getData() {
       const id = this.$route.params?.id
@@ -52,7 +53,10 @@ export default {
             this.auditData = data
             this.auditData.createAt = data.createAt
               ? dayjs(data.createAt).format('YYYY-MM-DD HH:mm:ss')
-              : '-'
+              : '-';
+            this.auditData.reqTime = this.auditData.reqTime ?
+                dayjs(this.auditData.reqTime).format('YYYY-MM-DD HH:mm:ss')
+                : '-'
             const jsonData = this.auditData.body
               ? this.auditData.body
               : this.auditData.query
