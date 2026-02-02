@@ -1076,4 +1076,5 @@ export default {
   packages_dag_fileLog: '数据库日志',
   packages_dag_fileLog_tip: '开启后，将在引擎后台输出数据库 JDBC 执行日志',
   packages_dag_search_processor: '搜索处理节点',
+  packages_dag_canvas_add_node: '添加节点',
 }

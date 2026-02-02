@@ -1227,4 +1227,5 @@ export default {
   packages_dag_fileLog_tip:
     'When enabled, database JDBC execution logs will be output in the engine background',
   packages_dag_search_processor: 'Search Processor',
+  packages_dag_canvas_add_node: 'Add Node',
 }

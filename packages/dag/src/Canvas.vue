@@ -9,6 +9,7 @@ import {
   ref,
   shallowRef,
   watch,
+  type Ref,
 } from 'vue'
 import CanvasConnectionLine from './components/elements/CanvasConnectionLine.vue'
 import CanvasEdge from './components/elements/CanvasEdge.vue'
@@ -31,6 +32,7 @@ const emit = defineEmits<{
 
 const uiStore = useUiStore()
 const dag = inject('dag')
+const nodesPanelExpanded = inject<Ref<boolean>>('nodesPanelExpanded', ref(true))
 const { nodes, edges } = useCanvasMapping(dag)
 const vueFlow = useVueFlow()
 const {
@@ -40,6 +42,8 @@ const {
   onEdgeMouseMove,
   onNodeMouseEnter,
   onNodeMouseLeave,
+  onPaneContextMenu,
+  screenToFlowCoordinate,
 } = vueFlow
 
 const nodesHoveredById = ref<Record<string, boolean>>({})
@@ -48,6 +52,31 @@ const popoverRef = ref<InstanceType<typeof NodesPopover> | null>(null)
 const popoverTarget = ref<HTMLElement | null>(null)
 const popoverTargetKey = ref<string | null>(null)
 const addNodeParams = shallowRef<any>(null)
+
+// Context menu state
+const contextMenuVisible = ref(false)
+const contextMenuPosition = ref({ x: 0, y: 0 })
+
+// Create virtual element for context menu position
+const virtualContextMenuTarget = computed(() => {
+  return {
+    getBoundingClientRect() {
+      return {
+        width: 0,
+        height: 0,
+        top: contextMenuPosition.value.y,
+        left: contextMenuPosition.value.x,
+        right: contextMenuPosition.value.x,
+        bottom: contextMenuPosition.value.y,
+        x: contextMenuPosition.value.x,
+        y: contextMenuPosition.value.y,
+        toJSON() {
+          return this
+        },
+      }
+    },
+  } as HTMLElement
+})
 
 const popoverPlacement = computed(() => {
   if (popoverTargetKey.value?.endsWith('_target')) {
@@ -138,9 +167,36 @@ async function onShowNodesPopover(data, target, key) {
 }
 
 function onHideNodesPopover() {
-  console.log('onHideNodesPopover')
   popoverTarget.value = null
   popoverTargetKey.value = null
+}
+
+// Context menu handlers - use VueFlow's onPaneContextMenu hook
+onPaneContextMenu((event) => {
+  event.preventDefault()
+  contextMenuPosition.value = { x: event.clientX, y: event.clientY }
+  contextMenuVisible.value = true
+})
+
+async function onAddNodeFromContextMenu() {
+  contextMenuVisible.value = false
+  // Convert screen coordinates to flow coordinates
+  const flowPosition = screenToFlowCoordinate({
+    x: contextMenuPosition.value.x,
+    y: contextMenuPosition.value.y,
+  })
+  // Use the virtual element as the popover target
+  addNodeParams.value = {
+    flowPosition, // Pass the converted flow coordinates
+  }
+  showPopover.value = false
+  await nextTick()
+  popoverTarget.value = virtualContextMenuTarget.value
+  popoverTargetKey.value = 'context_menu'
+  await nextTick()
+  setTimeout(() => {
+    showPopover.value = true
+  }, 50)
 }
 
 provide('popoverTarget', popoverTarget)
@@ -150,7 +206,9 @@ provide('popoverTargetKey', popoverTargetKey)
 
 <template>
   <div id="node-canvas" class="position-relative w-100 h-100">
-    <NodesPanel />
+    <Transition name="slide-left">
+      <NodesPanel v-if="nodesPanelExpanded" />
+    </Transition>
     <RightPanel />
     <NodesPopover
       ref="popoverRef"
@@ -184,6 +242,31 @@ provide('popoverTargetKey', popoverTargetKey)
         </marker>
       </defs>
     </svg>
+
+    <!-- Context Menu -->
+    <Teleport to="body">
+      <Transition name="fade">
+        <div
+          v-if="contextMenuVisible"
+          class="canvas-context-menu"
+          :style="{
+            left: `${contextMenuPosition.x}px`,
+            top: `${contextMenuPosition.y}px`,
+          }"
+        >
+          <div class="context-menu-item" @click="onAddNodeFromContextMenu">
+            <el-icon><i-lucide-plus /></el-icon>
+            <span>{{ $t('packages_dag_canvas_add_node') }}</span>
+          </div>
+        </div>
+      </Transition>
+      <div
+        v-if="contextMenuVisible"
+        class="context-menu-overlay"
+        @click="contextMenuVisible = false"
+        @contextmenu.prevent="contextMenuVisible = false"
+      />
+    </Teleport>
 
     <VueFlow
       data-id="flow-container"
@@ -223,5 +306,71 @@ provide('popoverTargetKey', popoverTargetKey)
 <style scoped lang="scss">
 .bg-dataflow-canvas {
   background-color: var(--color-dataflow-canvas-bg, #f2f4f7);
+}
+
+// Slide left transition for NodesPanel
+.slide-left-enter-active,
+.slide-left-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-left-enter-from,
+.slide-left-leave-to {
+  transform: translateX(-100%);
+}
+
+// Fade transition for context menu
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.15s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
+
+<style lang="scss">
+// Context menu styles (unscoped for Teleport)
+.canvas-context-menu {
+  position: fixed;
+  z-index: 3000;
+  min-width: 160px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  padding: 4px;
+  user-select: none;
+
+  .context-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #333;
+    transition: background-color 0.15s;
+
+    &:hover {
+      background-color: var(--el-fill-color-light, #f5f7fa);
+    }
+
+    .el-icon {
+      font-size: 16px;
+      color: #666;
+    }
+  }
+}
+
+.context-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2999;
 }
 </style>
