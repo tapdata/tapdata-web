@@ -232,6 +232,10 @@
     color: var(--icon-n3);
     font-size: 12px;
   }
+
+  .el-select__wrapper.is-disabled .el-select__selected-item {
+    user-select: text;
+  }
 }
 
 .el-select__popper.el-select__popper {

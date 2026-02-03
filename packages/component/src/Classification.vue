@@ -75,6 +75,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   'update:visible': [value: boolean]
   nodeChecked: [checkedNodes: TreeKey[]]
+  selectNoTag: [isSelectedNoTag: boolean]
   dropInTag: []
   setUserGroupData: [data: TreeNode[]]
 }>()
@@ -102,6 +103,7 @@ const dialogConfig = ref<DialogConfig>({
   title: '',
   visible: false,
 })
+const isSelectedNoTag = ref(false)
 
 const priorityOptions = [
   {
@@ -222,13 +224,14 @@ const checkHandler = (
 }
 
 const nodeClickHandler = (data: TreeNode) => {
-  const checkedNodes = tree.value?.getCheckedKeys() || []
+  let checkedNodes = tree.value?.getCheckedKeys() || []
   const index = checkedNodes.indexOf(data.id)
 
   if (index !== -1) {
     checkedNodes.splice(index, 1)
   } else {
-    checkedNodes.push(data.id)
+    // checkedNodes.push(data.id)
+    checkedNodes = [data.id]
   }
 
   // setChecked 不缓存，setCheckedKeys 缓存，采用缓存的方式
@@ -238,6 +241,7 @@ const nodeClickHandler = (data: TreeNode) => {
 }
 
 const emitCheckedNodes = () => {
+  isSelectedNoTag.value = false
   const checkedNodes = tree.value?.getCheckedKeys() || []
   emit('nodeChecked', checkedNodes)
   setTag({
@@ -622,6 +626,16 @@ const handleNodeCollapse = (data, node) => {
   expandedKeys.value = expandedKeys.value.filter((item) => item !== data.id)
 }
 
+const onClickUnclassified = () => {
+  isSelectedNoTag.value = !isSelectedNoTag.value
+  tree.value?.setCheckedKeys([])
+  setTag({
+    value: [],
+    type: props.viewPage || '',
+  })
+  emit('selectNoTag', isSelectedNoTag.value)
+}
+
 // Watchers
 watch(
   () => props.types,
@@ -759,7 +773,7 @@ defineExpose({
               <VIcon v-if="types[0] === 'user'" class="color-primary"
                 >folder-close</VIcon
               >
-              <el-icon v-else class="color-primary"><i-lucide-tag /></el-icon>
+              <el-icon v-else><i-lucide-tag /></el-icon>
               <span class="table-label" :title="data.value">{{
                 data.value
               }}</span>
@@ -816,6 +830,21 @@ defineExpose({
           </slot>
         </template>
       </ElTree>
+    </div>
+
+    <div v-if="treeData.length && type === 'dataflow'" class="mt-auto px-2">
+      <el-divider class="mt-0 mb-2" />
+
+      <div
+        class="position-relative gap-2 unclassified rounded-lg h-8 flex align-center px-3 lh-8 mb-2 cursor-pointer font-color-light"
+        :class="{ active: isSelectedNoTag }"
+        @click="onClickUnclassified"
+      >
+        <el-icon>
+          <i-lucide-inbox />
+        </el-icon>
+        <span>无标签</span>
+      </div>
     </div>
 
     <div
@@ -1022,6 +1051,9 @@ defineExpose({
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: 26px;
+    &:where(.is-checked *) {
+      color: var(--el-color-primary) !important;
+    }
     .icon-folder {
       margin-right: 5px;
       font-size: 12px;
@@ -1085,6 +1117,15 @@ defineExpose({
     .el-tree-node.is-checked > .el-tree-node__content {
       background-color: var(--el-color-primary-light-9);
     }
+  }
+}
+.unclassified {
+  &:hover {
+    background-color: var(--fill-hover);
+  }
+  &.active {
+    background-color: var(--el-color-primary-light-9);
+    color: var(--el-color-primary) !important;
   }
 }
 </style>

@@ -54,4 +54,13 @@ export default {
     '您已经复制过部分表，但您也可以继续选择表，新选择表将追加到原表列表中',
   packages_ldp_fdm_create_task_has_expression:
     '您已经选择了按正则表达式匹配表，无法继续选择表，请在通过数据复制功能继续复制表',
+  packages_ldp_task_delay_detail: '任务延迟详情',
+  packages_ldp_task_delay_detail_tip: '显示所有参与该模型的任务及其延迟时间',
+  packages_ldp_task_delay_detail_logic: '计算逻辑说明',
+  packages_ldp_task_delay_detail_logic_tip1:
+    '最大数据延迟表示当前模型中，数据从源系统产生变更开始，经过所有参与的同步与处理任务，最终写入该模型所需的最长时间。',
+  packages_ldp_task_delay_detail_logic_tip2:
+    '该指标会综合计算构建此模型所涉及的所有上游表及其任务链路中的增量延迟，并取其中的最大值，反映模型中最晚更新的数据可能滞后的时间',
+  packages_ldp_task_delay_detail_logic_tip3:
+    '参与该计算的任务将会高亮显示其对应延迟',
 }

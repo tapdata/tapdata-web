@@ -13,9 +13,9 @@ import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash-es'
 import { mapGetters } from 'vuex'
 import { $emit } from '../../../utils/gogocodeTransfer'
-import Frequency from './components/Frequency'
-import InitialList from './components/InitialList'
-import LineChart from './components/LineChart'
+import Frequency from './components/Frequency.vue'
+import InitialList from './components/InitialList.vue'
+import LineChart from './components/LineChart.vue'
 
 export default {
   name: 'LeftSider',
@@ -128,6 +128,17 @@ export default {
           },
         ],
       },
+      qpsColors: [
+        '#5470c6',
+        '#91cc75',
+        '#fac858',
+        '#ee6666',
+        '#73c0de',
+        '#3ba272',
+        '#fc8452',
+        '#9a60b4',
+        '#ea7ccc',
+      ],
     }
   },
   computed: {
@@ -154,6 +165,15 @@ export default {
       const outputQps = data.outputQps?.map(Math.abs)
       const inputSizeQps = data.inputSizeQps?.map(Math.abs)
       const outputSizeQps = data.outputSizeQps?.map(Math.abs)
+      const inputQps95th = data.inputQps95th
+      const inputQps99th = data.inputQps99th
+      const outputQps95th = data.outputQps95th
+      const outputQps99th = data.outputQps99th
+      const inputSizeQps95th = data.inputSizeQps95th
+      const inputSizeQps99th = data.inputSizeQps99th
+      const outputSizeQps95th = data.outputSizeQps95th
+      const outputSizeQps99th = data.outputSizeQps99th
+
       // 计算距离增量时间点，最近的时间点
       const milestone = this.dataflow.attrs?.milestone || {}
       const snapshotDoneAt = milestone.SNAPSHOT?.end
@@ -167,8 +187,6 @@ export default {
         }
       })
 
-      const countValues = [inputQps, outputQps]
-      const sizeValues = [inputSizeQps, outputSizeQps]
       let unit = '5s'
 
       switch (interval) {
@@ -185,10 +203,50 @@ export default {
           unit = 'd'
           break
       }
-      const name = [
+
+      const countNames = [
         i18n.t('public_time_avg_input', { unit }),
         i18n.t('public_time_avg_output', { unit }),
       ]
+
+      const sizeNames = [
+        i18n.t('public_time_avg_input', { unit }),
+        i18n.t('public_time_avg_output', { unit }),
+      ]
+
+      const countValues = [inputQps, outputQps]
+      const countP95Values = [
+        inputQps95th,
+        outputQps95th,
+        inputQps99th,
+        outputQps99th,
+      ]
+      const sizeValues = [inputSizeQps, outputSizeQps]
+      const sizeP95Values = [
+        inputSizeQps95th,
+        outputSizeQps95th,
+        inputSizeQps99th,
+        outputSizeQps99th,
+      ]
+      const p95Names = [
+        i18n.t('public_time_avg_input_95th'),
+        i18n.t('public_time_avg_output_95th'),
+        i18n.t('public_time_avg_input_99th'),
+        i18n.t('public_time_avg_output_99th'),
+      ]
+
+      countP95Values.forEach((values, i) => {
+        if (values?.some((v) => v !== null)) {
+          countValues.push(values)
+          countNames.push(p95Names[i])
+        }
+      })
+      sizeP95Values.forEach((values, i) => {
+        if (values?.some((v) => v !== null)) {
+          sizeValues.push(values)
+          sizeNames.push(p95Names[i])
+        }
+      })
 
       if (interval > 5000) {
         countValues.push(
@@ -199,17 +257,24 @@ export default {
           data.maxInputSizeQps?.map(Math.abs),
           data.maxOutputSizeQps?.map(Math.abs),
         )
-        name.push(
+        const names = [
           i18n.t('public_time_max_input', { unit }),
           i18n.t('public_time_max_output', { unit }),
-        )
+        ]
+        countNames.push(...names)
+        sizeNames.push(...names)
       }
 
       const opt = {
         x: time,
-        name,
         value: [],
         zoomValue: 10,
+        serieOptions: Array.from({ length: 8 }).fill(
+          {
+            areaStyle: undefined,
+          },
+          2,
+        ),
       }
 
       if (this.dataflow.type === 'initial_sync+cdc') {
@@ -234,9 +299,11 @@ export default {
       return {
         count: Object.assign(cloneDeep(opt), {
           value: countValues,
+          name: countNames,
         }),
         size: Object.assign(cloneDeep(opt), {
           value: sizeValues,
+          name: sizeNames,
         }),
       }
     },
@@ -267,7 +334,8 @@ export default {
         }
       }
 
-      const { replicateLag = [] } = data
+      const name = [i18n.t('public_event_incremental_delay')]
+      const { replicateLag = [], replicateLag95th, replicateLag99th } = data
       const open = this.dataflow.alarmSettings?.find(
         (t) => t.key === 'TASK_INCREMENT_DELAY',
       )?.open
@@ -277,10 +345,26 @@ export default {
           )?.ms || 0
         : 60 * 1000
       const max = Math.max(...replicateLag)
+      const value = [replicateLag]
+      if (replicateLag95th?.some((v) => v !== null)) {
+        value.push(replicateLag95th)
+        name.push(i18n.t('public_event_incremental_delay_95th'))
+      }
+      if (replicateLag99th?.some((v) => v !== null)) {
+        value.push(replicateLag99th)
+        name.push(i18n.t('public_event_incremental_delay_99th'))
+      }
       return {
         x: time,
-        value: replicateLag,
+        name,
+        value,
         yAxisMax: Math.max(delay, max),
+        serieOptions: Array.from({ length: 3 }).fill(
+          {
+            areaStyle: undefined,
+          },
+          1,
+        ),
       }
     },
 
@@ -475,7 +559,14 @@ export default {
   methods: {
     changeTimeSelect(val, isTime, source) {
       this.$emit('changeTimeSelect', val, isTime, source)
-      this.timeSelectLabel = this.$refs.timeSelect?.getPeriod()?.label
+      // this.timeSelectLabel = this.$refs.timeSelect?.getPeriod()?.label
+
+      this.isUpdatingTimeSelect = true
+      this.$refs.dialogTimeSelect?.setPeriod(val)
+
+      setTimeout(() => {
+        this.isUpdatingTimeSelect = false
+      }, 10)
     },
 
     changeFrequency(val) {
@@ -634,6 +725,17 @@ export default {
       }
       map[this.$route.name]?.(this.dataflow.id)
     },
+
+    onChangeDialogTimeSelect(val, isTime, source) {
+      if (this.isUpdatingTimeSelect) {
+        return
+      }
+      const selected = this.$refs.timeSelect?.setPeriod(val)
+
+      if (selected) {
+        this.$emit('changeTimeSelect', val, isTime, source)
+      }
+    },
   },
   emits: ['load-data', 'verifyDetails', 'changeTimeSelect', 'changeFrequency'],
 }
@@ -657,14 +759,9 @@ export default {
           class="flex-1"
           @change="changeFrequency"
         />
-        <ElTooltip
-          transition="tooltip-fade-in"
-          :content="$t('public_button_refresh')"
+        <IconButton class="color-primary" @click="$emit('load-data')">
+          refresh</IconButton
         >
-          <IconButton class="color-primary" @click="$emit('load-data')">
-            refresh</IconButton
-          >
-        </ElTooltip>
       </div>
       <div v-if="dataflow.type !== 'cdc'" class="info-box sync-info">
         <div class="flex justify-content-between mb-2">
@@ -884,8 +981,10 @@ export default {
             item.class,
           ]"
         >
-          <div class="font-color-light">{{ item.label }}:</div>
-          <div class="font-color-dark">{{ item.value || '-' }}</div>
+          <div class="font-color-light text-nowrap">{{ item.label }}:</div>
+          <div class="font-color-dark text-break pl-3">
+            {{ item.value || '-' }}
+          </div>
         </div>
       </div>
 
@@ -941,7 +1040,7 @@ export default {
 
           <LineChart
             :data="qpsMap[qpsChartsType]"
-            :color="['#26CF6C', '#2C65FF', '#b6d634', '#5070dd']"
+            :color="qpsColors"
             :time-format="timeFormat"
             :label-unit-type="qpsChartsType === 'size' ? 'byte' : ''"
             auto-scale
@@ -978,7 +1077,7 @@ export default {
 
           <LineChart
             :data="replicateLagData"
-            :color="['#2C65FF']"
+            :color="['#2C65FF', '#91cc75', '#fac858']"
             :time-format="timeFormat"
             time-value
             class="line-chart"
@@ -1115,11 +1214,24 @@ export default {
 
     <ElDialog
       v-model="lineChartDialog"
-      :title="$t('packages_dag_components_nodedetaildialog_xingnengzhibiao')"
       width="774px"
       :close-on-click-modal="false"
       :modal-append-to-body="false"
     >
+      <template #header="{ titleClass }">
+        <div class="flex align-center gap-3">
+          <span :class="titleClass">{{
+            $t('packages_dag_components_nodedetaildialog_xingnengzhibiao')
+          }}</span>
+          <el-divider class="mx-0" direction="vertical" />
+          <TimeSelect
+            ref="dialogTimeSelect"
+            :options="timeOptions"
+            :range="$attrs.range"
+            @change="onChangeDialogTimeSelect"
+          />
+        </div>
+      </template>
       <div class="line-chart__box mb-2">
         <div class="flex justify-content-between">
           <ElTooltip
@@ -1136,36 +1248,66 @@ export default {
               <VIcon size="16" class="color-primary">info</VIcon>
             </span>
           </ElTooltip>
-          <ElRadioGroup v-model="qpsChartsType" class="chart__radio">
-            <ElRadioButton label="count">count</ElRadioButton>
-            <ElRadioButton label="size">size</ElRadioButton>
-          </ElRadioGroup>
+          <el-segmented v-model="qpsChartsType" :options="['count', 'size']" />
         </div>
       </div>
 
       <LineChart
         :data="qpsMap[qpsChartsType]"
-        :color="['#26CF6C', '#2C65FF']"
+        :color="qpsColors"
         :time-format="timeFormat"
         :label-unit-type="qpsChartsType === 'size' ? 'byte' : ''"
+        :options="{
+          legend: {
+            show: true,
+            type: 'scroll',
+            bottom: 0,
+          },
+          grid: {
+            outerBounds: {
+              left: 0,
+              top: 0,
+              right: 10,
+              bottom: 32,
+            },
+          },
+        }"
         style="height: 200px"
       />
+
+      <div class="mt-4 font-color-dark fw-bold mb-2 lh-8">
+        {{ $t('public_event_incremental_delay') }}
+      </div>
       <LineChart
         :data="replicateLagData"
-        :title="$t('public_event_incremental_delay')"
-        :color="['#2C65FF']"
+        :color="['#2C65FF', '#91cc75', '#fac858']"
         :time-format="timeFormat"
         time-value
-        class="mt-8"
         style="height: 200px"
+        :options="{
+          legend: {
+            show: true,
+            type: 'scroll',
+            bottom: 0,
+          },
+          grid: {
+            outerBounds: {
+              left: 0,
+              top: 0,
+              right: 10,
+              bottom: 32,
+            },
+          },
+        }"
       />
+      <div class="mt-4 font-color-dark fw-bold mb-2 lh-8">
+        {{ $t('packages_dag_monitor_leftsider_chulihaoshim') }}
+      </div>
       <LineChart
         :data="delayData"
-        :title="$t('packages_dag_monitor_leftsider_chulihaoshim')"
         :color="['#2C65FF']"
         :time-format="timeFormat"
         time-value
-        class="mt-8"
         style="height: 200px"
       />
     </ElDialog>

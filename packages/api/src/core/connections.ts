@@ -1,4 +1,4 @@
-import { PdkRenamedData, requestClient, type Filter } from '../request'
+import { requestClient, type Filter } from '../request'
 
 const BASE_URL = '/api/Connections'
 
@@ -87,13 +87,8 @@ export function getUsingDigginTaskByConnectionId(connectionId: string) {
   )
 }
 
-export async function getConnectionDatabaseTypes() {
-  const data = await requestClient.get(`${BASE_URL}/databaseTypes`)
-
-  return data?.map((it: any) => {
-    it.databaseType = PdkRenamedData[it.databaseType] || it.databaseType
-    return it
-  })
+export function getConnectionDatabaseTypes() {
+  return requestClient.get(`${BASE_URL}/databaseTypes`)
 }
 
 // Base Http methods that are used in the codebase

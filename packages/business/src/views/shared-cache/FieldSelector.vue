@@ -66,7 +66,7 @@ export default {
     </ElSelect>
     <template v-if="values.length">
       <div class="flex fields-selector--display mt-2 rounded-lg">
-        <div class="flex flex-warp flex-1 gap-2 p-2">
+        <div class="flex flex-wrap flex-1 gap-2 p-2">
           <el-tag
             v-for="(field, index) in values"
             :key="field"

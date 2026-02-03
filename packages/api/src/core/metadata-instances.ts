@@ -345,6 +345,7 @@ export interface CompareResultStatistics {
     MissingApply: 0
     DifferentApply: 0
     Different: 0
+    PrimaryKeyInconsistency: 0
   }
 }
 

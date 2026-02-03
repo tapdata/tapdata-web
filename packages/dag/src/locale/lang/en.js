@@ -209,8 +209,7 @@ export default {
   packages_dag_components_eventchart_suoxuanzhouqilei:
     'Selected cycle accumulation',
   packages_dag_components_eventchart_renwuyunxinglei: 'Task running cumulative',
-  packages_dag_components_initiallist_quanliangtongbuzhuang:
-    'Full synchronization status',
+  packages_dag_components_initiallist_quanliangtongbuzhuang: 'Status',
   packages_dag_components_initiallist_shujutongbu: 'Data synchronization',
   packages_dag_components_initiallist_mubiaobiaoming: 'Target table name',
   packages_dag_components_initiallist_yuanbiaoming: 'Source table name',
@@ -1107,11 +1106,12 @@ export default {
   packages_dag_applyCompareRules_Different: 'Update Field Type',
   packages_dag_applyCompareRules_CannotWrite: 'Delete Read-Only Fields',
   packages_dag_view_compare_result: 'View Schema Comparison Result',
-  packages_dag_compare_different: 'Type Different',
+  packages_dag_compare_different: 'Type Diff',
   packages_dag_compare_missing: 'Missing',
   packages_dag_compare_missing_source: 'Not Defined',
-  packages_dag_compare_precision: 'Type Different (General)',
+  packages_dag_compare_precision: 'Type Diff (General)',
   packages_dag_compare_cannot_write: 'Read-Only',
+  packages_dag_compare_primary_key_inconsistency: 'PK Diff',
   packages_dag_compare_done_modify: '{type} Modified',
   packages_dag_compare_done_add: '{type} Added',
   packages_dag_compare_done_delete: '{type} Deleted',
@@ -1145,7 +1145,9 @@ export default {
     '{time1} No Database Model Found, No Comparison',
   packages_dag_compare_result_detail_readonly: '{readonly} Read-Only',
   packages_dag_compare_result_detail_missing: '{missing} Missing',
-  packages_dag_compare_result_detail_different: '{different} Type Different',
+  packages_dag_compare_result_detail_different: '{different} Type Diff',
+  packages_dag_compare_result_detail_primary_key_inconsistency:
+    '{primaryKeyInconsistency} PK Diff',
   packages_dag_compare_result_detail_precision:
     '{precision} Precision Different',
   packages_dag_compare_result_detail_all: 'All Differences',
@@ -1170,6 +1172,7 @@ export default {
   packages_dag_qpSshizhi3_tip:
     '24h ≤ Query < 30d: avg & max QPS from 1h data points',
   packages_dag_task_resource_usage: 'Task Resource Usage',
+  packages_dag_cache: 'Cache',
   packages_dag_cache_expired: 'Cache Expired, Need to Rebuild',
   packages_dag_rebuild_cache: 'Rebuild Cache',
   packages_dag_rebuild_cache_tips: 'Auto Rebuild Expired Cache',
@@ -1183,4 +1186,22 @@ export default {
   packages_dag_cache_no_data: 'No Cache Data',
   packages_dag_batch_read_size_chart_title: 'Batch Read Size (rows/batch)',
   packages_dag_batch_read_size: 'Each batch read size',
+  packages_dag_autoIncrementalBatchSize: 'Auto Adjust Incremental Batch Size',
+  packages_dag_autoIncrementalBatchSize_tip:
+    'When enabled, incremental sync dynamically adjusts the source batch size based on real-time load: reducing delay during log spikes and expanding during idle periods to improve performance.',
+  packages_dag_enableSkipErrorTable: 'Skip Error Table',
+  packages_dag_enableSkipErrorTable_tip:
+    'When enabled, table write errors during the full sync phase will be skipped. The task will report an error and stop after all tables finish full synchronization.',
+  packages_dag_error_skipped: 'Error Skipped',
+  packages_dag_error_table_record: 'Error Table Record',
+  packages_dag_skip_error_date: 'Skip Date',
+  packages_dag_skip_error_no_data: 'No Error Table Record',
+  packages_dag_skip_error_recover_selected: 'Recover Selected',
+  packages_dag_skip_error_recover_all: 'Recover All',
+  packages_dag_only_show_skip: 'Only Show Skipped',
+  packages_dag_SkipTableForMigrateSnapshot:
+    'Skip failed tables, then stop after full sync',
+  packages_dag_fileLog: 'Database Log',
+  packages_dag_fileLog_tip:
+    'When enabled, database JDBC execution logs will be output in the engine background',
 }

@@ -1740,4 +1740,8 @@ export default {
     'If a task or data source with the same name exists, cancel the import.',
   packages_business_import_reuse_existing_tip:
     'If a task name conflict, replace the task; if a data source name conflict, reuse the existing data source in the system.',
+  public_connector_beta_tip:
+    'Currently in testing. We are continuously optimizing the experience.',
+  public_connector_alpha_tip:
+    'Under active development. Some features may still be incomplete.',
 }

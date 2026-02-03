@@ -244,7 +244,7 @@ const getConnectionOptions = async (filter: any) => {
       database_type: form.value.connectionType
         ? form.value.connectionType
         : {
-            in: databaseTypes.value.map((it) => it.type),
+            in: databaseTypes.value?.map((t: any) => t.type),
           },
       connection_type:
         import.meta.env.VUE_APP_MODE !== 'msa'

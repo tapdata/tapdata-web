@@ -70,14 +70,18 @@ export function calcUnit(val: any, type?: any, fix = 1, sp = [1000]) {
  * @fix Number 需要保留几个单位
  * @options.separator String 分割符
  * @options.autoHideMs Boolean > 10s 自动隐藏ms
+ * @options.keepDecimal Boolean 是否保留小数位（仅对单一单位有效，如 7.44ms）
+ * @options.decimalPlaces Number 保留的小数位数，默认为 2
  * @return string
  */
-export function calcTimeUnit(val, fix = 2, op) {
+export function calcTimeUnit(val: any, fix = 2, op?: any) {
   const options = Object.assign(
     {
       separator: ' ',
       autoHideMs: false,
       digits: 2,
+      keepDecimal: false,
+      decimalPlaces: 2,
     },
     op || {},
   )
@@ -123,6 +127,14 @@ export function calcTimeUnit(val, fix = 2, op) {
     const p = 10 ** options.digits
     return prefix + Math.ceil(val * p) / p + units[0].unit
   }
+
+  // 如果启用 keepDecimal 且值小于第一个单位的间隔（1000ms），直接返回带小数的值
+  if (options.keepDecimal && val < units[0].interval) {
+    const p = 10 ** options.decimalPlaces
+    const rounded = Math.round(val * p) / p
+    return prefix + rounded + units[0].unit
+  }
+
   const ts = Math.floor(val)
 
   for (let i = 0, tmpTs = ts; i < units.length && tmpTs >= 0; i++) {

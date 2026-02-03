@@ -24,6 +24,11 @@ export interface PageFetchResult<T> {
   items: T[]
 }
 
+export interface Page<T> {
+  total: number
+  items: T[]
+}
+
 export interface CountFetchResult {
   count: number
 }
@@ -38,10 +43,5 @@ export interface Filter {
   fields?: any
 }
 
-export { useRequest } from 'vue-request'
+export { usePagination, useRequest } from 'vue-request'
 export { CancelToken, isCancel }
-
-export const PdkRenamedData: Record<string, string> = {
-  Mysql: 'MySQL',
-  "HuaWei'Cloud GaussDB": 'Huawei Cloud GaussDB',
-}

@@ -111,6 +111,7 @@ export default defineComponent({
         (params: {
           page: Page
           tags: any[]
+          isSelectedNoTag: boolean
         }) => Promise<{ data: any[]; total: number }>
       >,
     },
@@ -159,6 +160,7 @@ export default defineComponent({
     const list = shallowRef([])
     const multipleSelection = ref([])
     const tags = ref([])
+    const isSelectedNoTag = ref(false)
     const classificationVisible = ref(false)
     const dragState = ref<DragState>({
       isDragging: false,
@@ -212,6 +214,7 @@ export default defineComponent({
         .remoteMethod({
           page: page.value,
           tags: tags.value,
+          isSelectedNoTag: isSelectedNoTag.value,
         })
         .then(({ data, total }: { data: any[]; total: number }) => {
           page.value.total = total
@@ -241,7 +244,14 @@ export default defineComponent({
     }
 
     const nodeChecked = (newTags: any[]) => {
+      isSelectedNoTag.value = false
       tags.value = newTags
+      fetch(1)
+    }
+
+    const onSelectNoTag = (enable: boolean) => {
+      isSelectedNoTag.value = enable
+      tags.value = []
       fetch(1)
     }
 
@@ -260,6 +270,10 @@ export default defineComponent({
 
     const clearSelection = () => {
       table.value?.clearSelection()
+    }
+
+    const toggleRowSelection = (row: any, selected: boolean) => {
+      table.value?.toggleRowSelection(row, selected)
     }
 
     const handleToggleClassify = () => {
@@ -381,11 +395,13 @@ export default defineComponent({
       showClassify,
       getData,
       clearSelection,
+      toggleRowSelection,
       handleToggleClassify,
       handleDragStart,
       handleDragEnd,
       onSelectRow,
       handleSizeChange,
+      onSelectNoTag,
     }
   },
 })
@@ -417,6 +433,7 @@ export default defineComponent({
           :kai-title="classify.title"
           :drag-state="dragState"
           @node-checked="nodeChecked"
+          @select-no-tag="onSelectNoTag"
           @update:visible="classificationVisible = $event"
           @drop-in-tag="fetch(1)"
           @set-user-group-data="$emit('setUserGroupData', $event)"

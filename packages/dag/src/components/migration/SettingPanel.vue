@@ -551,6 +551,29 @@ watch(
   { deep: true },
 )
 
+// 监听源节点
+// 源节点上的某些能力属性联动到任务设置
+watch(
+  () => sourceNodes.value.length,
+  () => {
+    const showAutoIncrementalBatchSize = sourceNodes.value.some(
+      ({ nodeId }: any) => {
+        const node = props.scope.findNodeById(nodeId)
+
+        return store.getters['dataflow/hasCapability']?.(
+          node,
+          'stream_read_one_by_one_function',
+        )
+      },
+    )
+
+    form.setFieldState('autoIncrementalBatchSize', {
+      visible: showAutoIncrementalBatchSize,
+    })
+  },
+  { immediate: true },
+)
+
 // Lifecycle
 onMounted(() => {
   nextTick(() => {
@@ -691,10 +714,6 @@ const schema = {
                               },
                               default: 'Disable',
                               enum: [
-                                // {
-                                //   label: '直接跳过异常的表，任务继续运行 ',
-                                //   value: 'SkipTable'
-                                // },
                                 {
                                   label: t(
                                     'packages_dag_migration_settingpanel_anzhaomorenzhong',
@@ -707,7 +726,21 @@ const schema = {
                                   ),
                                   value: 'SkipData',
                                 },
+                                {
+                                  label: t(
+                                    'packages_dag_SkipTableForMigrateSnapshot',
+                                  ),
+                                  value: 'SkipTableForMigrateSnapshot',
+                                },
                               ],
+                              'x-reactions': {
+                                dependencies: ['type'],
+                                fulfill: {
+                                  schema: {
+                                    'x-component-props.options': `{{options=$self.dataSource,$values.syncType === "migrate" && $deps[0] !== "cdc" ? options : options.filter(item => item.value !== "SkipTableForMigrateSnapshot")}}`,
+                                  },
+                                },
+                              },
                             },
                             limitMode: {
                               type: 'string',
@@ -1097,6 +1130,26 @@ const schema = {
                           'x-decorator': 'FormItem',
                           'x-decorator-props': {
                             tooltip: t('packages_dag_dataSaving_tip'),
+                          },
+                          'x-component': 'Switch',
+                        },
+                        autoIncrementalBatchSize: {
+                          title: t('packages_dag_autoIncrementalBatchSize'),
+                          type: 'boolean',
+                          'x-decorator': 'FormItem',
+                          'x-decorator-props': {
+                            tooltip: t(
+                              'packages_dag_autoIncrementalBatchSize_tip',
+                            ),
+                          },
+                          'x-component': 'Switch',
+                        },
+                        fileLog: {
+                          title: t('packages_dag_fileLog'),
+                          type: 'boolean',
+                          'x-decorator': 'FormItem',
+                          'x-decorator-props': {
+                            tooltip: t('packages_dag_fileLog_tip'),
                           },
                           'x-component': 'Switch',
                         },

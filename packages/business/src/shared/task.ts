@@ -139,25 +139,30 @@ export const STATUS_MAP = {
   wait_start: {
     i18n: 'public_status_wait_run',
   },
-  starting: {
-    i18n: 'public_status_starting',
-    in: ['preparing', 'scheduling', 'wait_run'],
-  },
+
   running: {
     i18n: 'public_status_running',
   },
   complete: {
     i18n: 'public_status_finished',
   },
-  stopping: {
-    i18n: 'public_status_stopping',
-  },
+
   stop: {
     i18n: 'public_status_stop',
   },
   error: {
     i18n: 'public_status_error',
     in: ['schedule_failed', 'error'],
+  },
+  deleted: {
+    i18n: 'public_status_deleted',
+  },
+  starting: {
+    i18n: 'public_status_starting',
+    in: ['preparing', 'scheduling', 'wait_run'],
+  },
+  stopping: {
+    i18n: 'public_status_stopping',
   },
   renewing: {
     i18n: 'public_status_renewing',
@@ -170,9 +175,6 @@ export const STATUS_MAP = {
   },
   delete_failed: {
     i18n: 'public_status_delete_failed',
-  },
-  deleted: {
-    i18n: 'public_status_deleted',
   },
 }
 

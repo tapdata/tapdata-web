@@ -91,18 +91,28 @@ export default {
       this.min = 0
       this.minNotZero = 0
 
-      const { x, value, name, markLine, yAxisMax } = this.data
+      const {
+        x,
+        value,
+        name,
+        markLine,
+        yAxisMax,
+        serieOptions = [],
+      } = this.data
       const { limit } = this
       const series = []
 
       if (Array.isArray(value?.[0])) {
         value.forEach((el, index) => {
           series.push(
-            this.getSeriesItem(
-              el || [],
-              index,
-              name?.[index],
-              markLine?.[index],
+            Object.assign(
+              this.getSeriesItem(
+                el || [],
+                index,
+                name?.[index],
+                markLine?.[index],
+              ),
+              serieOptions[index],
             ),
           )
         })
@@ -192,6 +202,9 @@ export default {
     getOptions() {
       const { canScale, max, minNotZero } = this
       const result = {
+        legend: {
+          show: false,
+        },
         tooltip: {
           borderRadius: 12,
           trigger: 'axis',
@@ -364,8 +377,11 @@ export default {
           show: false,
         },
         lineStyle: {
-          color: this.color[index],
+          // color: this.color[index],
           width: 1,
+        },
+        itemStyle: {
+          color: this.color[index],
         },
         areaStyle: {
           color: this.color[index],

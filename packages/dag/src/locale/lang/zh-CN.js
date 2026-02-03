@@ -966,6 +966,7 @@ export default {
   packages_dag_compare_missing_source: '字段未定义',
   packages_dag_compare_precision: '类型差异(一般)',
   packages_dag_compare_cannot_write: '字段只读',
+  packages_dag_compare_primary_key_inconsistency: '主键差异',
   packages_dag_compare_done_modify: '已{type}修改',
   packages_dag_compare_done_add: '已{type}添加',
   packages_dag_compare_done_delete: '已{type}删除',
@@ -1000,6 +1001,8 @@ export default {
   packages_dag_compare_result_detail_readonly: '{readonly} 个只读',
   packages_dag_compare_result_detail_missing: '{missing} 个缺失',
   packages_dag_compare_result_detail_different: '{different} 个类型差异',
+  packages_dag_compare_result_detail_primary_key_inconsistency:
+    '{primaryKeyInconsistency} 个主键差异',
   packages_dag_compare_result_detail_all: '全部差异',
   packages_dag_compare_result_auto_process: '自动处理差异',
   packages_dag_compare_result_display_field: '显示字段',
@@ -1023,6 +1026,7 @@ export default {
   packages_dag_qpSshizhi3_tip:
     '查询范围大于等于24小时小于30天，取每小时的数据点计算平均和最大的QPS值',
   packages_dag_task_resource_usage: '任务资源占用',
+  packages_dag_cache: '数据缓存',
   packages_dag_cache_expired: '缓存已过期，需要重建缓存',
   packages_dag_rebuild_cache: '重建缓存',
   packages_dag_rebuild_cache_tips: '自动重建过期的缓存数据',
@@ -1036,4 +1040,20 @@ export default {
   packages_dag_cache_no_data: '暂无缓存数据',
   packages_dag_batch_read_size_chart_title: '读取批次统计 (条/批)',
   packages_dag_batch_read_size: '每批读取条数',
+  packages_dag_autoIncrementalBatchSize: '自动调整增量读取批次',
+  packages_dag_autoIncrementalBatchSize_tip:
+    '开启后，增量同步会根据实时负载动态调整源端批次大小：日志突增时减少延迟，空闲时自动扩充以提升性能。',
+  packages_dag_enableSkipErrorTable: '跳过异常表',
+  packages_dag_enableSkipErrorTable_tip:
+    '开启后，全量阶段表写入时异常将其跳过处理， 待所有表全量同步完成后任务报错停止',
+  packages_dag_error_skipped: '已跳过',
+  packages_dag_error_table_record: '异常表记录',
+  packages_dag_skip_error_date: '跳过时间',
+  packages_dag_skip_error_no_data: '暂无异常表记录',
+  packages_dag_skip_error_recover_selected: '恢复选中',
+  packages_dag_skip_error_recover_all: '恢复全部',
+  packages_dag_only_show_skip: '仅显示已跳过',
+  packages_dag_SkipTableForMigrateSnapshot: '跳过异常表，完成全量后报错停止',
+  packages_dag_fileLog: '数据库日志',
+  packages_dag_fileLog_tip: '开启后，将在引擎后台输出数据库 JDBC 执行日志',
 }
