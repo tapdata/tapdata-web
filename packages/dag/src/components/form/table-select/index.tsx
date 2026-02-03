@@ -225,41 +225,21 @@ export const TableSelect = connect(
 
         const fetchMethod = async (filter, config) => {
           if (props.hasPartition) {
-            if (cacheTables.length) {
-              if (!filter.where?.value?.like)
-                return {
-                  items: cacheTables,
-                  total: cacheTables.length,
-                }
-
-              const search = filter.where?.value?.like.toLowerCase()
-              const filtered = cacheTables.filter((it) =>
-                it.value.toLowerCase().includes(search),
-              )
-              return {
-                items: filtered,
-                total: filtered.length,
-              }
-            } else {
-              const res = await getPagePartitionTables({
-                connectionId: props.connectionId,
-                limit: 0,
-                syncPartitionTableEnable: props.syncPartitionTableEnable,
-              })
-              cacheTables = res.items.map((it) => ({
+            const res = await getPagePartitionTables({
+              connectionId: props.connectionId,
+              limit: 0,
+              syncPartitionTableEnable: props.syncPartitionTableEnable,
+            })
+            return {
+              items: res.items.map((it) => ({
                 label:
                   it.tableName +
                   (it.tableComment ? `(${it.tableComment})` : ''),
                 value: it.tableName,
-              }))
-              return {
-                items: cacheTables,
-                total: cacheTables.length,
-              }
+              })),
+              total: cacheTables.length,
             }
           } else {
-            cacheTables = []
-
             return props.method(filter, config)
           }
         }
