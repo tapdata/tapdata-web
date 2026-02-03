@@ -25,6 +25,7 @@ import VTable from '@tap/component/src/base/v-table'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import Drawer from '@tap/component/src/Drawer.vue'
 import { IconButton } from '@tap/component/src/icon-button'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import i18n from '@tap/i18n'
 
 import { calcTimeUnit, calcUnit, isNum } from '@tap/shared'
@@ -46,6 +47,7 @@ export default {
     VCodeEditor,
     IconButton,
     LineageGraph,
+    OverflowTooltip,
   },
   props: {
     tag: {
@@ -126,6 +128,7 @@ export default {
       tableStatus: '',
       cdcDelayTime: '',
       lastDataChangeTime: '',
+      upstreamTableStatus: [],
       statusMap: {
         error: i18n.t('packages_business_table_status_error'), // 异常
         draft: i18n.t('packages_business_table_status_draft'), // 草稿
@@ -461,10 +464,32 @@ export default {
             ? calcTimeUnit(res.cdcDelayTime, 2, {
                 autoHideMs: true,
               })
-            : '-'
+            : ''
         this.lastDataChangeTime = res?.lastDataChangeTime
           ? dayjs(res?.lastDataChangeTime).format('YYYY-MM-DD HH:mm:ss')
           : '-'
+
+        this.upstreamTableStatus =
+          res?.upstreamTableStatus
+            ?.sort((a, b) => {
+              if (a.onDelayPath && !b.onDelayPath) {
+                return -1
+              } else if (!a.onDelayPath && b.onDelayPath) {
+                return 1
+              } else {
+                return b.cdcDelayTime - a.cdcDelayTime
+              }
+            })
+            ?.map((item) => {
+              item.cdcDelayTime =
+                isNum(item.cdcDelayTime) && item.cdcDelayTime >= 0
+                  ? calcTimeUnit(item.cdcDelayTime, 2, {
+                      autoHideMs: true,
+                    })
+                  : '-'
+
+              return item
+            }) || []
       })
     },
     getApisData() {
@@ -736,6 +761,15 @@ export default {
     handleCreateAPI() {
       this.$emit('createApi', this.connection, this.selected)
     },
+
+    handleOpenTask(item) {
+      this.openRoute({
+        name: item.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor',
+        params: {
+          id: item.taskId,
+        },
+      })
+    },
   },
 }
 </script>
@@ -816,12 +850,139 @@ export default {
                 lastDataChangeTime || '-'
               }}</span></span
             >
-            <span
-              ><span class="table-dec-label"
-                >{{ $t('packages_business_cdc_delay_time') }}: </span
-              ><span class="table-dec-txt text-nowrap">{{
-                cdcDelayTime || '-'
-              }}</span></span
+
+            <span class="inline-flex align-center gap-1">
+              <span class="table-dec-label"
+                >{{ $t('packages_business_cdc_delay_time') }}:
+              </span>
+              <el-popover
+                placement="bottom"
+                trigger="click"
+                popper-style="min-width: 400px;max-width: 480px;width: auto;"
+                :disabled="!upstreamTableStatus.length || !cdcDelayTime"
+              >
+                <template #reference>
+                  <span
+                    class="table-dec-txt text-nowrap inline-flex align-center gap-0.5"
+                    :class="{
+                      'color-primary cursor-pointer':
+                        cdcDelayTime && upstreamTableStatus.length,
+                    }"
+                  >
+                    <el-icon v-if="cdcDelayTime"><i-lucide-clock /></el-icon
+                    >{{ cdcDelayTime || '-' }}</span
+                  ></template
+                >
+                <div>
+                  <el-alert
+                    :closable="false"
+                    :title="$t('packages_ldp_task_delay_detail_logic')"
+                    type="info"
+                    show-icon
+                    class="align-items-start mb-3 logic-alert"
+                  >
+                    <template #title>
+                      <div>
+                        <div class="fw-sub fs-7 mb-1">
+                          {{ $t('packages_ldp_task_delay_detail_logic') }}
+                        </div>
+                        <ul
+                          class="ml-4 list-disc flex flex-column gap-0.5 text-xs lh-base"
+                        >
+                          <li class="list-disc">
+                            {{
+                              $t('packages_ldp_task_delay_detail_logic_tip1')
+                            }}
+                          </li>
+                          <li class="list-disc">
+                            {{
+                              $t('packages_ldp_task_delay_detail_logic_tip2')
+                            }}
+                          </li>
+                          <li class="list-disc color-warning">
+                            {{
+                              $t('packages_ldp_task_delay_detail_logic_tip3')
+                            }}
+                          </li>
+                        </ul>
+                      </div>
+                    </template>
+                  </el-alert>
+                  <!-- <div class="flex align-center gap-1">
+                    <div class="lh-base">
+                      <div class="fw-sub font-color-dark">
+                        {{ $t('packages_ldp_task_delay_detail') }}
+                      </div>
+                      <div class="font-color-sslight text-xs">
+                        {{ $t('packages_ldp_task_delay_detail_tip') }}
+                      </div>
+                    </div>
+                    <el-tooltip :hide-after="0" :teleported="false">
+                      <template #content>
+                        <div class="fw-sub fs-7 mb-1">
+                          {{ $t('packages_ldp_task_delay_detail_logic') }}
+                        </div>
+                        <ul
+                          class="ml-4 list-disc flex flex-column gap-0.5 text-xs"
+                        >
+                          <li class="list-disc">
+                            {{
+                              $t('packages_ldp_task_delay_detail_logic_tip1')
+                            }}
+                          </li>
+                          <li class="list-disc">
+                            {{
+                              $t('packages_ldp_task_delay_detail_logic_tip2')
+                            }}
+                          </li>
+                        </ul>
+                      </template>
+                      <div
+                        class="ml-auto flex align-center justify-center p-2 bg-gray-100 dark:bg-white/15 rounded-pill"
+                      >
+                        <el-icon :size="16">
+                          <i-lucide-info />
+                        </el-icon>
+                      </div>
+                    </el-tooltip>
+                  </div> -->
+                  <!-- <el-divider class="my-3" /> -->
+                  <div class="mx-n3">
+                    <el-scrollbar :max-height="280" class="px-3">
+                      <div class="flex flex-column gap-2">
+                        <div
+                          v-for="item in upstreamTableStatus"
+                          :key="item"
+                          class="flex align-center gap-2 hover:bg-fill-color-light rounded-lg p-2 cursor-pointer task-item border overflow-hidden"
+                          @click="handleOpenTask(item)"
+                        >
+                          <OverflowTooltip
+                            :hide-after="0"
+                            placement="left"
+                            class="text-truncate"
+                            :text="item.taskName"
+                          />
+                          <el-icon
+                            class="external-link-icon text-muted-foreground"
+                          >
+                            <i-lucide-external-link />
+                          </el-icon>
+                          <el-tag
+                            size="small"
+                            class="px-1 ml-auto"
+                            :type="item.onDelayPath ? 'warning' : 'info'"
+                          >
+                            <span class="flex align-center gap-0.5">
+                              <el-icon><i-lucide-clock /></el-icon>
+                              {{ item.cdcDelayTime }}
+                            </span>
+                          </el-tag>
+                        </div>
+                      </div>
+                    </el-scrollbar>
+                  </div>
+                </div>
+              </el-popover></span
             >
           </template>
         </div>
@@ -1481,6 +1642,21 @@ export default {
     display: grid;
     grid-template-columns: repeat(4, auto);
     grid-gap: 16px;
+  }
+}
+
+.task-item {
+  .external-link-icon {
+    opacity: 0;
+    transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  &:hover .external-link-icon {
+    opacity: 1;
+  }
+}
+.logic-alert {
+  :deep(.el-alert__icon) {
+    margin-top: 4px;
   }
 }
 </style>

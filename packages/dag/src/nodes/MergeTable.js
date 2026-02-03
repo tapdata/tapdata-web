@@ -345,7 +345,7 @@ export class MergeTable extends NodeType {
             'x-index': 6,
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: '数据缓存',
+              label: i18n.t('packages_dag_cache'),
             },
             properties: {
               cacheConfig: {

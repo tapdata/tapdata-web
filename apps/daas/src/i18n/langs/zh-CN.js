@@ -225,6 +225,7 @@ export default {
   application_true: '是',
   application_false: '否',
   application_create: '创建客户端',
+  application_client_id_placeholder: '可留空，系统将自动生成',
   application_edit: '编辑客户端',
   api_response_time: '响应时间',
   api_db_cost_time: '数据库耗时',

@@ -103,7 +103,7 @@ const getAPIServerToken = async (
 
 const reflshToken = () => {
   return getAPIServerToken((token: Record<string, any>) => {
-    templates.value = getTemplate(props.host + form.value.path, token)
+    templates.value = getTemplate({ urlList: props.urlList, token })
   })
 }
 

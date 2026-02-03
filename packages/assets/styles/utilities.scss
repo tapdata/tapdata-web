@@ -12735,7 +12735,7 @@
 }
 
 .text-muted-foreground {
-  color: rgb(113 113 122);
+  color: rgb(115 115 115);
 }
 
 .hover\:bg-light:hover {
@@ -13060,6 +13060,10 @@
   background-color: oklch(0.946 0.033 307.174);
   border: 1px solid oklch(0.902 0.063 306.703);
   color: oklch(0.496 0.265 301.924);
+}
+
+.hover\:bg-fill-color-light:hover {
+  background-color: var(--el-fill-color-light) !important;
 }
 
 // Grid

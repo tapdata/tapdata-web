@@ -1009,6 +1009,7 @@ export default {
   packages_dag_qpSshizhi3_tip:
     '查詢範圍大於等於24小時小於30天，取每小時的數據點計算平均和最大的QPS值',
   packages_dag_task_resource_usage: '任務資源占用',
+  packages_dag_cache: '數據緩存',
   packages_dag_cache_expired: '緩存已過期，需要重建緩存',
   packages_dag_rebuild_cache: '重建緩存',
   packages_dag_rebuild_cache_tips: '自動重建過期的緩存數據',

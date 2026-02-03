@@ -55,6 +55,9 @@ export default {
   public_is_not_null: '不為空',
   public_field_value: '字段值',
   public_cache: '緩存',
+  public_light: '淺色',
+  public_dark: '深色',
+  public_follow_system: '跟隨系統',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '無效',
@@ -159,6 +162,7 @@ export default {
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否刪除',
+  public_message_delete_confirm_with_name: '是否刪除：{val}？',
   public_message_save_ok: '保存成功',
   public_message_save_fail: '保存失敗',
   public_message_copy_success: '複製成功',

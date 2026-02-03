@@ -62,6 +62,7 @@ export async function fetchApiServerToken() {
   const result = await baseRequestClient.post('/oauth/token', data, {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
+      debug: 'true',
     },
   })
   return result?.data || {}
