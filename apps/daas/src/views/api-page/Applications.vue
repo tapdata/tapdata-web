@@ -343,7 +343,7 @@ export default {
           <ElInput v-model="createForm.clientName" />
         </ElFormItem>
         <ElFormItem :label="$t('application_header_id')" prop="clientId">
-          <ElInput v-model="createForm.clientId" size="mini" :placeholder="$t('application_client_id_placeholder')"></ElInput>
+          <ElInput v-model="createForm.clientId" :placeholder="$t('application_client_id_placeholder')"></ElInput>
         </ElFormItem>
         <ElFormItem
           :label="$t('application_header_grant_type')"
