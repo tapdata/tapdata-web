@@ -225,12 +225,13 @@ export const TableSelect = connect(
 
         const fetchMethod = async (filter, config) => {
           if (props.hasPartition) {
+            const like = filter.where?.value?.like
             const res = await getPagePartitionTables({
               connectionId: props.connectionId,
               skip: (filter.page - 1) * (filter.size || 20),
               limit: filter.size || 20,
               syncPartitionTableEnable: props.syncPartitionTableEnable,
-              keyword: filter.where?.value?.like,
+              regex: like ? `.*${like}.*` : like,
             })
             return {
               items: res.items.map((it: any) => ({
