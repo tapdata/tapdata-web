@@ -227,17 +227,19 @@ export const TableSelect = connect(
           if (props.hasPartition) {
             const res = await getPagePartitionTables({
               connectionId: props.connectionId,
-              limit: 0,
+              skip: (filter.page - 1) * (filter.size || 20),
+              limit: filter.size || 20,
               syncPartitionTableEnable: props.syncPartitionTableEnable,
+              keyword: filter.where?.value?.like,
             })
             return {
-              items: res.items.map((it) => ({
+              items: res.items.map((it: any) => ({
                 label:
                   it.tableName +
                   (it.tableComment ? `(${it.tableComment})` : ''),
                 value: it.tableName,
               })),
-              total: cacheTables.length,
+              total: res.total,
             }
           } else {
             return props.method(filter, config)
