@@ -12798,6 +12798,10 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.grid-cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
 .col-start-1 {
   grid-column-start: 1;
 }
