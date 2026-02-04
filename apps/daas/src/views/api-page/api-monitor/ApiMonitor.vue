@@ -83,7 +83,7 @@ const errorCount = computed(() => {
     value: serverData.value?.errorCount,
     errorRate: serverData.value?.totalErrorRate,
     queryFrom: serverData.value?.queryFrom,
-    queryEnd: serverData.value?.queryEnd
+    queryEnd: serverData.value?.queryEnd,
   }
 })
 
@@ -95,7 +95,7 @@ const responseTimeAvg = computed(() => {
     minDelay: serverData.value?.minDelay,
     maxDelay: serverData.value?.maxDelay,
     queryFrom: serverData.value?.queryFrom,
-    queryEnd: serverData.value?.queryEnd
+    queryEnd: serverData.value?.queryEnd,
   }
 })
 
@@ -296,7 +296,7 @@ const handleNavigateToAuditWithError = (row?: Record<string, any>) => {
 
   if (row.apiPath) {
     query.keyword = row.apiPath
-    query.options='-'
+    query.options = '-'
   }
 
   const href = router.resolve({
@@ -308,7 +308,7 @@ const handleNavigateToAuditWithError = (row?: Record<string, any>) => {
 
 // 跳转到审计页面 - 响应时间排序
 const handleNavigateToAuditWithResponseTime = (
-    row?: Record<string, any>,
+  row?: Record<string, any>,
   sortOrder: 'ASC' | 'DESC' = 'DESC',
 ) => {
   const query: any = {
@@ -320,7 +320,7 @@ const handleNavigateToAuditWithResponseTime = (
 
   if (row.apiPath) {
     query.keyword = row.apiPath
-    query.options='-'
+    query.options = '-'
   }
 
   const href = router.resolve({
@@ -366,7 +366,7 @@ onUnmounted(() => {
         </el-button>
       </div>
     </template>
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
+    <div class="grid gap-4 grid-cols-5">
       <div
         class="border rounded-xl p-3 top-card cursor-pointer"
         @click="handleSortApi('requestCount')"
@@ -412,7 +412,7 @@ onUnmounted(() => {
           <div v-else>--</div>
         </div>
       </div>
-      <div
+      <!-- <div
         class="border rounded-xl p-3 top-card cursor-pointer"
         @click="handleSortApi('errorCount')"
       >
@@ -430,7 +430,7 @@ onUnmounted(() => {
           </div>
           <div v-else>--</div>
         </div>
-      </div>
+      </div> -->
       <div
         class="border rounded-xl p-3 top-card cursor-pointer"
         @click="handleSortApi('responseTimeAvg')"
@@ -624,9 +624,7 @@ onUnmounted(() => {
               <span
                 v-if="row.maxDelay !== undefined"
                 class="is-external-link cursor-pointer flex align-center gap-1"
-                @click.stop="
-                  handleNavigateToAuditWithResponseTime(row, 'DESC')
-                "
+                @click.stop="handleNavigateToAuditWithResponseTime(row, 'DESC')"
               >
                 {{ row.maxDelay }}
                 <el-icon>
@@ -646,9 +644,7 @@ onUnmounted(() => {
               <span
                 v-if="row.minDelay !== undefined"
                 class="is-external-link cursor-pointer flex align-center gap-1"
-                @click.stop="
-                  handleNavigateToAuditWithResponseTime(row, 'ASC')
-                "
+                @click.stop="handleNavigateToAuditWithResponseTime(row, 'ASC')"
               >
                 {{ row.minDelay }}
                 <el-icon>
