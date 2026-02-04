@@ -202,7 +202,7 @@ export default {
       }
     },
     showCorrection() {
-      return this.inspect.canRecovery && this.canStart
+      return this.inspect.canRecovery && this.canStart && this.inspect.flowId && this.type !== 'jointField'
     },
     showDiffInspect() {
       return (
