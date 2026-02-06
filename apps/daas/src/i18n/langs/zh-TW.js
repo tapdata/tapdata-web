@@ -715,6 +715,9 @@ export default {
   license_copied_clipboard: '已復製到剪貼板',
   license_select_node: '請先選擇節點',
   license_renew_success: '更新成功, 頁面即將刷新',
+  license_engine_limit_exceeded:
+    'License 節點限制為 {limit}，當前已綁定 {bound} 個節點',
+  license_unbind_agents_tip: '請解綁部分節點後重試',
   // 自定义节点
   custom_node_name: '節點名稱',
   custom_node_name_placeholder: '請輸入節點名稱搜索',

@@ -5,6 +5,10 @@ import {
   getPipelineDetails,
   updateLicense,
 } from '@tap/api/src/core/licenses'
+import {
+  queryAllBindWorker,
+  unbindByProcessId,
+} from '@tap/api/src/core/workers'
 import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
@@ -36,6 +40,12 @@ export default {
       },
 
       order: 'last_updated DESC',
+
+      // Engine limit error state
+      engineLimitError: null,
+      boundAgents: [],
+      boundAgentsLoading: false,
+      unbindingAgentId: null,
     }
   },
   methods: {
@@ -129,7 +139,10 @@ export default {
         : this.$refs.table?.multipleSelection?.map((item) => item.sid)
       if (this.updateSids?.length) {
         this.license = ''
+        this.engineLimitError = null
+        this.boundAgents = []
         this.dialogVisible = true
+        this.boundAgentsLoading = false
       } else {
         this.$message.warning(this.$t('license_select_node'))
       }
@@ -150,9 +163,46 @@ export default {
               window.location.reload()
             }, 2000)
           })
+          .catch((error) => {
+            const { engineLimit, boundEngineCount } = error?.data || {}
+            if (engineLimit !== undefined && boundEngineCount !== undefined) {
+              this.engineLimitError = { engineLimit, boundEngineCount }
+              this.fetchBoundAgents()
+            }
+          })
           .finally(() => {
             this.dialogLoading = false
           })
+      }
+    },
+    async fetchBoundAgents() {
+      this.boundAgentsLoading = true
+      try {
+        const data = await queryAllBindWorker()
+        this.boundAgents = data || []
+      } catch {
+        this.boundAgents = []
+      }
+      this.boundAgentsLoading = false
+    },
+    async handleUnbindAgent(agent) {
+      const processId = agent.processId
+      if (!processId) return
+
+      this.unbindingAgentId = processId
+      try {
+        await unbindByProcessId(processId)
+        this.$message.success(this.$t('public_message_operation_success'))
+        // Refresh bound agents list
+        await this.fetchBoundAgents()
+        // Update error state
+        if (this.engineLimitError) {
+          this.engineLimitError.boundEngineCount = this.boundAgents.length
+        }
+      } catch {
+        this.$message.error(this.$t('public_message_operation_failed'))
+      } finally {
+        this.unbindingAgentId = null
       }
     },
     async openPipelineDetails() {
@@ -251,7 +301,7 @@ export default {
         :label="$t('license_update_time')"
         min-width="160"
       />
-      <ElTableColumn :label="$t('public_operation')" width="88">
+      <ElTableColumn :label="$t('public_operation')" width="100">
         <template #default="{ row }">
           <ElButton text type="primary" @click="updateNode(row)">{{
             $t('public_event_update')
@@ -269,6 +319,55 @@ export default {
         type="textarea"
         :autosize="{ minRows: 2 }"
       />
+
+      <!-- Engine limit error and agent list -->
+      <div v-if="engineLimitError" class="mt-4">
+        <el-alert type="warning" :closable="false" show-icon class="mb-3">
+          <template #title>
+            {{
+              $t('license_engine_limit_exceeded', {
+                limit: engineLimitError.engineLimit,
+                bound: engineLimitError.boundEngineCount,
+              })
+            }}
+          </template>
+        </el-alert>
+
+        <div class="text-sm font-color-light mb-2">
+          {{ $t('license_unbind_agents_tip') }}
+        </div>
+
+        <div
+          v-loading="boundAgentsLoading"
+          class="agent-list border rounded-xl overflow-hidden"
+        >
+          <div
+            v-for="agent in boundAgents"
+            :key="agent.processId"
+            class="agent-item flex align-center justify-between p-3 border-bottom"
+          >
+            <div class="agent-info flex align-center gap-2">
+              <el-icon class="font-color-light"><i-lucide-server /></el-icon>
+              <span>{{ agent.hostname || agent.processId }}</span>
+            </div>
+            <ElButton
+              type="danger"
+              text
+              size="small"
+              :loading="unbindingAgentId === agent.processId"
+              @click="handleUnbindAgent(agent)"
+            >
+              {{ $t('daas_unbind_license') }}
+            </ElButton>
+          </div>
+          <el-empty
+            v-if="!boundAgents.length && !boundAgentsLoading"
+            class="py-4"
+            :image-size="40"
+          />
+        </div>
+      </div>
+
       <template #footer>
         <div>
           <ElButton
@@ -347,5 +446,13 @@ export default {
   :deep(.table-page-topbar) {
     padding: 0 !important;
   }
+}
+
+.agent-list {
+  min-height: 48px;
+  --el-loading-spinner-size: 32px;
+}
+.agent-list .agent-item:last-child {
+  border-bottom: none !important;
 }
 </style>
