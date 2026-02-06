@@ -228,7 +228,8 @@ export default {
   application_show_menu: 'Show to the menu',
   application_true: 'Yes',
   application_false: 'No',
-  application_client_id_placeholder: 'Can be left empty, system will auto-generate',
+  application_client_id_placeholder:
+    'Can be left empty, system will auto-generate',
   //api 监控
   application_create: 'Create Client',
   application_edit: 'Edit client',
@@ -761,7 +762,7 @@ export default {
   license_normal: 'normal',
   license_expiring: 'Expiring soon',
   license_expired: 'Expired',
-  license_try_out: 'trial',
+  license_try_out: 'Trial',
   license_copied_clipboard: 'Copied to clipboard',
   license_select_node: 'Please select the node first',
   license_renew_success: 'Update succeeded, page will refresh',
