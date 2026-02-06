@@ -768,6 +768,8 @@ export default {
   license_engine_limit_exceeded:
     'License engine limit is {limit}, but {bound} engines are currently bound',
   license_unbind_agents_tip: 'Please unbind some agents and try again',
+  license_unbind_running_agent_confirm:
+    'The running engine will go offline after unbinding. Are you sure?',
   // 自定义节点
   custom_node_name: 'Node Name',
   custom_node_name_placeholder: 'Please enter the node name to search',

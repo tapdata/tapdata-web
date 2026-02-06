@@ -718,6 +718,7 @@ export default {
   license_engine_limit_exceeded:
     'License 節點限制為 {limit}，當前已綁定 {bound} 個節點',
   license_unbind_agents_tip: '請解綁部分節點後重試',
+  license_unbind_running_agent_confirm: '解綁後運行中的引擎將會下線，確定要解綁嗎？',
   // 自定义节点
   custom_node_name: '節點名稱',
   custom_node_name_placeholder: '請輸入節點名稱搜索',

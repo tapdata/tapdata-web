@@ -1,4 +1,5 @@
 <script>
+import { fetchClusterStates } from '@tap/api/src/core/cluster'
 import {
   fetchLicenses,
   getLicenseSid,
@@ -178,8 +179,40 @@ export default {
     async fetchBoundAgents() {
       this.boundAgentsLoading = true
       try {
-        const data = await queryAllBindWorker()
-        this.boundAgents = data || []
+        // Get bound agents
+        const bindData = await queryAllBindWorker()
+        const boundAgents = bindData || []
+
+        // Get cluster states to get engine status
+        if (boundAgents.length) {
+          const processIds = boundAgents.map((agent) => agent.processId)
+          const clusterResponse = await fetchClusterStates({
+            filter: JSON.stringify({
+              where: {
+                'systemInfo.process_id': { inq: processIds },
+              },
+            }),
+          })
+          const clusterData = clusterResponse?.items || []
+
+          // Create a map of processId to engine status
+          const statusMap = {}
+          for (const item of clusterData) {
+            const processId = item.systemInfo?.process_id
+            if (processId) {
+              // Check if engine is running
+              const isStopped = item.status !== 'running'
+              statusMap[processId] = isStopped ? 'stopped' : 'running'
+            }
+          }
+
+          // Merge status into bound agents
+          for (const agent of boundAgents) {
+            agent.engineStatus = statusMap[agent.processId] || 'stopped'
+          }
+        }
+
+        this.boundAgents = boundAgents
       } catch {
         this.boundAgents = []
       }
@@ -349,8 +382,39 @@ export default {
             <div class="agent-info flex align-center gap-2">
               <el-icon class="font-color-light"><i-lucide-server /></el-icon>
               <span>{{ agent.hostname || agent.processId }}</span>
+              <el-tag
+                v-if="agent.engineStatus === 'running'"
+                type="success"
+                size="small"
+              >
+                {{ $t('public_status_running') }}
+              </el-tag>
+              <el-tag v-else type="info" size="small">
+                {{ $t('public_status_stop') }}
+              </el-tag>
             </div>
+            <!-- Running agent needs confirmation -->
+            <ElPopconfirm
+              v-if="agent.engineStatus === 'running'"
+              :title="$t('license_unbind_running_agent_confirm')"
+              :confirm-button-text="$t('public_button_confirm')"
+              :cancel-button-text="$t('public_button_cancel')"
+              @confirm="handleUnbindAgent(agent)"
+            >
+              <template #reference>
+                <ElButton
+                  type="danger"
+                  text
+                  size="small"
+                  :loading="unbindingAgentId === agent.processId"
+                >
+                  {{ $t('daas_unbind_license') }}
+                </ElButton>
+              </template>
+            </ElPopconfirm>
+            <!-- Stopped agent can unbind directly -->
             <ElButton
+              v-else
               type="danger"
               text
               size="small"
