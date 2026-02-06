@@ -78,4 +78,13 @@ export default {
   packages_component_src_upgradefee_jichuban: 'Basic Plan',
   packages_component_src_upgradefee_dingyueshengji: 'Professional Plan',
   packages_component_data_already_exists: 'Data already exists',
+
+  // Sort dropdown
+  packages_component_sort_by: 'Sort By',
+  packages_component_sort_by_name: 'Name',
+  packages_component_sort_by_priority: 'Priority',
+  packages_component_sort_by_created_time: 'Created Time',
+  packages_component_sort_order: 'Sort Order',
+  packages_component_sort_order_asc: 'Ascending',
+  packages_component_sort_order_desc: 'Descending',
 }
