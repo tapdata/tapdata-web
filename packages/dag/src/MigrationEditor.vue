@@ -359,6 +359,12 @@ export default {
         }
       }
 
+      const validateMemoryHeap = await this.validateMemoryHeap()
+      if (!validateMemoryHeap) {
+        this.isSaving = false
+        return
+      }
+
       if (!this.dataflow.id) {
         return this.saveAsNewDataflow()
       }

@@ -371,6 +371,12 @@ export default {
           }
         }
 
+        const validateMemoryHeap = await this.validateMemoryHeap()
+        if (!validateMemoryHeap) {
+          this.isSaving = false
+          return
+        }
+
         !needStart && this.$message.success(this.$t('public_message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
