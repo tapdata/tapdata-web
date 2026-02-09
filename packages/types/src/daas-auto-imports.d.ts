@@ -22,6 +22,8 @@ declare global {
   const ElRadioButton: typeof import('element-plus/es').ElRadioButton
   const ElRadioGroup: typeof import('element-plus/es').ElRadioGroup
   const ElSwitch: typeof import('element-plus/es').ElSwitch
+  const IconLucideArrowDownAZ: typeof import('~icons/lucide/arrow-down-a-z').default
+  const IconLucideArrowUpZA: typeof import('~icons/lucide/arrow-up-z-a').default
   const IconLucideClock: typeof import('~icons/lucide/clock').default
   const IconLucideFileText: typeof import('~icons/lucide/file-text').default
   const IconLucideHash: typeof import('~icons/lucide/hash').default

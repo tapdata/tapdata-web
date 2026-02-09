@@ -720,6 +720,48 @@ export const routes = [
     ],
   },
 
+  /* ---------- API监控  ----------*/
+  {
+    path: '/api-monitor',
+    name: 'apiMonitor',
+    component: Layout,
+    meta: {
+      title: 'page_title_api_monitor',
+      code: 'v2_api_monitor',
+    },
+    redirect: {
+      name: 'apiMonitorList',
+    },
+    children: [
+      {
+        path: '',
+        name: 'apiMonitorList',
+        component: () => import('@/views/api-page/api-monitor/ApiMonitor.vue'),
+        meta: {
+          title: 'page_title_api_monitor',
+          code: 'v2_api_monitor',
+        },
+      },
+      {
+        path: 'api/:id',
+        name: 'apiMonitorDetail',
+        component: () => import('@/views/api-page/api-monitor/ApiDetail.vue'),
+        meta: {
+          title: 'page_title_api_monitor_detail',
+        },
+      },
+      {
+        path: 'server/:id',
+        name: 'apiMonitorServerDetail',
+        component: () =>
+          import('@/views/api-page/api-monitor/ServerDetail.vue'),
+        meta: {
+          title: 'page_title_api_monitor_server_detail',
+        },
+      },
+    ],
+  },
+
   {
     path: '/',
     name: 'layout',
@@ -782,16 +824,16 @@ export const routes = [
         },
       },
 
-      /* ---------- API监控  ----------*/
-      {
-        path: '/api-monitor',
-        name: 'apiMonitor',
-        component: () => import('@/views/api-page/api-monitor/ApiMonitor.vue'),
-        meta: {
-          title: 'page_title_api_monitor',
-          code: 'v2_api_monitor',
-        },
-      },
+      // /* ---------- API监控  ----------*/
+      // {
+      //   path: '/api-monitor',
+      //   name: 'apiMonitor',
+      //   component: () => import('@/views/api-page/api-monitor/ApiMonitor.vue'),
+      //   meta: {
+      //     title: 'page_title_api_monitor',
+      //     code: 'v2_api_monitor',
+      //   },
+      // },
       /* ---------- 集群管理  ----------*/
       {
         path: '/cluster',
