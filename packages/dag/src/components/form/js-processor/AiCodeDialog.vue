@@ -93,7 +93,11 @@ const handleGenerate = () => {
   generatedCode.value = ''
 
   abortController = generateAiCodeStream(
-    { prompt: userInput.value, fields: props.fields },
+    {
+      prompt: userInput.value,
+      fields: props.fields,
+      existingCode: props.currentCode,
+    },
     {
       onChunk: (content: string) => {
         streamingContent.value += content
@@ -239,8 +243,11 @@ defineExpose({
           </div>
           <!-- Code Content -->
           <div ref="codePreviewRef" class="code-block-content">
-            <Highlight language="javascript" :code="displayCode" />
-            <!-- <span v-if="loading" class="streaming-cursor">|</span> -->
+            <!-- Waiting indicator (before streaming starts) -->
+            <div v-if="loading && !streamingContent" class="waiting-indicator">
+              <span class="breathing-dot" />
+            </div>
+            <Highlight v-else language="javascript" :code="displayCode" />
           </div>
         </div>
       </div>
@@ -416,24 +423,31 @@ defineExpose({
         }
       }
 
-      .streaming-cursor {
-        position: absolute;
-        bottom: 16px;
-        animation: blink 1s infinite;
-        color: var(--el-color-primary);
-        font-weight: bold;
+      .waiting-indicator {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 16px;
+        min-height: 60px;
+
+        .breathing-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background-color: #000;
+          animation: breathing 1.2s ease-in-out infinite;
+        }
       }
     }
   }
 
-  @keyframes blink {
+  @keyframes breathing {
     0%,
-    50% {
-      opacity: 1;
-    }
-    51%,
     100% {
-      opacity: 0;
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.8);
     }
   }
 

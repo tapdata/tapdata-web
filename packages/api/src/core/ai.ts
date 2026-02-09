@@ -5,6 +5,7 @@ const AI_BASE_URL = 'http://localhost:3090/api/ai'
 export interface AiGenerateRequest {
   prompt: string
   fields?: any[]
+  existingCode?: string
 }
 
 export interface AiGenerateResponse {
