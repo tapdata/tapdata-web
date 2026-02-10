@@ -84,12 +84,12 @@ export default {
       )
     },
     handleUpdate() {
-      this.form.setValuesIn('fieldChangeRules', this.ruleForm.list)
       this.ruleForm.visible = false
       const result = [
         ...this.fieldChangeRules.filter((t) => t.scope === 'Field'),
         ...this.ruleForm.list,
       ]
+      this.form.setValuesIn('fieldChangeRules', result)
       this.$emit('update:fieldChangeRules', result)
       this.$emit('update:visible', this.ruleForm.visible)
     },

@@ -1,6 +1,6 @@
 import { FormItem, computed as reactiveComputed, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
-import { computed, defineComponent, ref } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { connect, mapProps } from '../../../../../form'
 import CompareResultDialog from './CompareResultDialog.vue'
 import SchemaFieldList from './List.vue'
@@ -14,17 +14,10 @@ export const fieldInference = connect(
       const form = formRef.value
       const nodeId = form.values.id
 
-      const batchRuleCounts = computed(() => {
+      const batchRuleCounts = reactiveComputed(() => {
         return (
           form.values.fieldChangeRules?.filter((t) => t.scope === 'Node')
             .length || 0
-        )
-      })
-
-      const showCompareResult = reactiveComputed(() => {
-        return (
-          form.values.existDataProcessMode !== 'dropTable' &&
-          !form.values.attrs.connectionTags?.includes('schema-free')
         )
       })
 
@@ -68,18 +61,6 @@ export const fieldInference = connect(
             )}
 
             <div class="flex-1"></div>
-
-            {/* {showCompareResult.value && (
-              <ElButton
-                type="primary"
-                text
-                tag="a"
-                onClick={openCompareResult}
-                disabled={props.disabled}
-              >
-                {i18n.t('packages_dag_view_compare_result')}
-              </ElButton>
-            )} */}
 
             <ElButton
               class="ml-auto"
