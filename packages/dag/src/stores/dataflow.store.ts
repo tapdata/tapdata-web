@@ -93,7 +93,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
   }
 
   function initialDag({ nodes, edges }) {
-    if (!nodes?.length) return
+    if (!nodes?.length) return { nodes, edges }
     const outputsMap = {}
     const inputsMap = {}
 

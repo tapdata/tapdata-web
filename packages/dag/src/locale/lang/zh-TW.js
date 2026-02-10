@@ -538,6 +538,8 @@ export default {
   packages_dag_monitor_node_popover_targetWriteTime_title: '平均每條寫入耗時',
   packages_dag_monitor_node_per_deal_need_time: '單條處理耗時',
   packages_dag_api_docs: 'API文檔',
+  packages_dag_ai_generate: 'AI 生成',
+  packages_dag_ai_code_dialog_title: 'AI 生成代碼',
   packages_dag_js_declare_index_queding: '確 定',
   packages_dag_js_declare_index_shilidaima: '示例代碼',
   packages_dag_js_declare_index_shiyongbangzhu: '使用幫助',

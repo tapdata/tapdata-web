@@ -31,7 +31,7 @@ export const JsEditor = connect(
       handleAddCompleter: Function,
       theme: {
         type: String,
-        default: 'chrome',
+        default: 'one-light',
       },
       showFullscreen: Boolean,
     },

@@ -643,6 +643,27 @@ export default {
   packages_dag_monitor_node_popover_targetWriteTime_title: 'Average write time',
   packages_dag_monitor_node_per_deal_need_time: 'Single processing time',
   packages_dag_api_docs: 'API Documentation',
+  packages_dag_ai_generate: 'AI Generate',
+  packages_dag_ai_code_dialog_title: 'AI Code Generator',
+  packages_dag_ai_code_dialog_subtitle:
+    'Describe the data processing logic you want to implement, and AI will generate code for you',
+  packages_dag_ai_code_dialog_placeholder:
+    'For example: Convert all field names to camelCase format...',
+  packages_dag_ai_code_dialog_quick_commands: 'Quick Commands',
+  packages_dag_ai_code_dialog_cmd_camel_case:
+    'Convert field names to camelCase',
+  packages_dag_ai_code_dialog_cmd_filter_empty: 'Filter out empty value fields',
+  packages_dag_ai_code_dialog_cmd_add_timestamp: 'Add timestamp field',
+  packages_dag_ai_code_dialog_cmd_round_numbers: 'Round numeric fields',
+  packages_dag_ai_code_dialog_cmd_merge_fields:
+    'Merge multiple fields into one',
+  packages_dag_ai_code_dialog_generate: 'Generate',
+  packages_dag_ai_code_dialog_cancel: 'Cancel',
+  packages_dag_ai_code_dialog_apply: 'Apply Code',
+  packages_dag_ai_code_dialog_generating: 'Generating...',
+  packages_dag_ai_code_dialog_preview: 'Generated Result',
+  packages_dag_ai_code_dialog_generate_success: 'Code generated successfully',
+  packages_dag_ai_code_dialog_generate_failed: 'Code generation failed, please try again later',
   packages_dag_js_declare_index_queding: 'OK',
   packages_dag_js_declare_index_shilidaima: 'Sample Code',
   packages_dag_js_declare_index_shiyongbangzhu: 'Use Help',
@@ -1206,4 +1227,5 @@ export default {
   packages_dag_fileLog_tip:
     'When enabled, database JDBC execution logs will be output in the engine background',
   packages_dag_search_processor: 'Search Processor',
+  packages_dag_canvas_add_node: 'Add Node',
 }

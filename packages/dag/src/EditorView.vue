@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { TextEditable } from '@tap/component/src/base/text-editable'
 import { provide, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import Canvas from './Canvas.vue'
@@ -39,7 +40,19 @@ watch([() => dag.value.nodes.length, () => dag.value.edges.length], () => {
 
 init()
 
+const onNameInputChange = (value: string) => {
+  dataflowStore.dataflow.name = value
+}
+
+// Control NodesPanel visibility
+const nodesPanelExpanded = ref(true)
+
+const toggleExpandNodes = () => {
+  nodesPanelExpanded.value = !nodesPanelExpanded.value
+}
+
 provide('dag', dag)
+provide('nodesPanelExpanded', nodesPanelExpanded)
 provide('buttonShowMap', buttonShowMap)
 provide('dataflow', dataflow)
 </script>
@@ -50,16 +63,29 @@ provide('dataflow', dataflow)
     class="w-100 h-100 position-relative overflow-hidden"
   >
     <div
-      class="task-detail lh-8 position-absolute top-3 start-3 z-10 bg-card rounded-xl flex p-2 align-center gap-2 shadow-canvas"
+      class="task-detail position-absolute top-3 start-3 z-10 bg-card rounded-xl flex p-2 align-center gap-2 shadow-canvas"
     >
       <el-button text>
         <template #icon>
           <i-lucide-chevron-left />
         </template>
       </el-button>
+      <el-divider direction="vertical" class="mx-0" />
       <div>
-        {{ dataflowStore.dataflow.name }}
+        <TextEditable
+          v-model:value="dataflowStore.dataflow.name"
+          class="overflow-hidden"
+          :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
+          :maxlength="200"
+          hidden-icon
+          @change="onNameInputChange"
+        />
       </div>
+      <el-button text @click="toggleExpandNodes">
+        <template #icon>
+          <VIcon>expand-list</VIcon>
+        </template>
+      </el-button>
     </div>
     <div class="w-100 h-0 position-absolute header z-10 flex align-center px-3">
       <div class="flex-1" />

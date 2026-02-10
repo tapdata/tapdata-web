@@ -1,7 +1,6 @@
 import { observe } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
 import { SchemaExpressionScopeSymbol } from '@formily/vue'
-import { fetchFunctions } from '@tap/api/src/core/function'
 import {
   getNodeSchema,
   getNodeSchemaPage,
@@ -15,16 +14,17 @@ import {
 } from '@tap/api/src/core/task'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
+import VIcon from '@tap/component/src/base/VIcon.vue'
 import resize from '@tap/component/src/directives/resize'
 
 import { FormItem, HighlightCode, JsEditor, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
-import { groupBy } from 'lodash-es'
 import { defineComponent, inject, onUnmounted, reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 import { JsDeclare } from '../js-declare'
+import AiCodeDialog from './AiCodeDialog.vue'
 import './style.scss'
 
 export const JsProcessor = observer(
@@ -37,8 +37,8 @@ export const JsProcessor = observer(
       const store = useStore()
       const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
       const SchemaExpressionScopeContext = inject(SchemaExpressionScopeSymbol)
-      const { id: taskId, syncType } =
-        SchemaExpressionScopeContext!.value.$settings
+      const task = SchemaExpressionScopeContext!.value.$settings
+      const { id: taskId, syncType } = task
       const formRef = useForm()
       const form = formRef.value
       const tableLoading = ref(false)
@@ -48,6 +48,7 @@ export const JsProcessor = observer(
       const showDoc = ref(false)
       const isMigrate = syncType === 'migrate'
       const showJsonArea = ref(false)
+      const aiDialogRef = ref(null)
       const docSrc = `${
         isDaas
           ? `${location.origin}/docs${i18n.locale === 'en' ? '/en' : ''}`
@@ -109,7 +110,7 @@ export const JsProcessor = observer(
       const queryLog = async () => {
         try {
           const logData = await queryMonitoringLogs({
-            taskId: store.state.dataflow.taskInfo.testTaskId,
+            taskId: task.testTaskId,
             type: 'testRun',
             order: 'asc',
             page: 1,
@@ -277,26 +278,14 @@ export const JsProcessor = observer(
         showDoc.value = !showDoc.value
       }
 
-      const functionGroup = ref({})
-      const loadFunction = async () => {
-        const data = await fetchFunctions({
-          limit: 1000,
-          where: {
-            type: 'system',
-            category: props.isStandard
-              ? 'standard'
-              : {
-                  $in: ['enhanced', 'standard'],
-                },
-          },
-        })
-        const group = groupBy(data.items, 'className')
-        const noClassFunction = group['']
-        delete group['']
-        functionGroup.value = group
+      const handleOpenAiDialog = () => {
+        aiDialogRef.value?.open()
       }
 
-      loadFunction()
+      const handleAiGenerate = (generatedCode: string) => {
+        // Replace the current code with the AI generated code
+        emit('change', generatedCode)
+      }
 
       const onTabChange = (current) => {
         if (current == '1') {
@@ -358,6 +347,7 @@ export const JsProcessor = observer(
       }
 
       let nodeFields = []
+      const fieldData = ref([])
       const loadFields = async () => {
         let fields = []
         if (!formRef.value.values.$inputs.length) return
@@ -380,16 +370,26 @@ export const JsProcessor = observer(
           fields = data?.[0]?.fields || []
         }
 
+        fieldData.value = fields
+          .filter((item) => !item.is_deleted)
+          .map((item) => {
+            return {
+              name: item.field_name,
+              type: item.data_type,
+              primaryKey: item.primaryKey,
+              nullable: item.is_nullable,
+              comment: item.comment,
+            }
+          })
+
         nodeFields =
-          fields
-            .filter((item) => !item.is_deleted)
-            .map((f) => {
-              return {
-                value: f.field_name,
-                score: 1000,
-                meta: f.data_type,
-              }
-            }) || []
+          fieldData.value.map((f) => {
+            return {
+              value: f.name,
+              score: 1000,
+              meta: f.type,
+            }
+          }) || []
       }
 
       // 加载模型字段
@@ -512,6 +512,18 @@ export const JsProcessor = observer(
               </ElTooltip>
             </div>
             <div class="flex align-center" style="--btn-space: 4px;">
+              <ElButton
+                text
+                tag="a"
+                onClick={handleOpenAiDialog}
+                type="primary"
+                disabled={props.disabled}
+              >
+                <el-icon>
+                  <i-lucide-sparkle />
+                </el-icon>
+                {i18n.t('packages_dag_ai_generate')}
+              </ElButton>
               <ElButton text tag="a" onClick={toggleDoc} type="primary">
                 {i18n.t('packages_dag_api_docs')}
               </ElButton>
@@ -531,6 +543,12 @@ export const JsProcessor = observer(
 
         return (
           <div class="js-processor font-color-light">
+            <AiCodeDialog
+              ref={aiDialogRef}
+              currentCode={props.value}
+              fields={fieldData.value}
+              onGenerate={handleAiGenerate}
+            />
             <ElDrawer
               append-to-body
               modal={false}

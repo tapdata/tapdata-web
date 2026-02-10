@@ -106,7 +106,7 @@ export class JavaScript extends NodeType {
                   options: { showPrintMargin: false, wrap: false },
                   includeBeforeAndAfter: true,
                   before: 'function process(record){',
-                  beforeRegexp: String.raw`^[^]*function\s+process\s*\(record\)\{`,
+                  beforeRegexp: String.raw`^[^]*function\s+process\s*\(record\)\s*\{`,
                   afterRegexp: '}[^}]*$',
                   after: '}',
                   param: 'tapTable',

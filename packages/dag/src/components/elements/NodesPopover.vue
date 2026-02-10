@@ -136,7 +136,7 @@ onBeforeUnmount(() => {
 })
 
 const handleAddNode = (node: any) => {
-  const { nextNodeId, prevNodeId } = props.params
+  const { nextNodeId, prevNodeId, flowPosition } = props.params || {}
   let connection = null
 
   if (nextNodeId && prevNodeId) {
@@ -208,10 +208,18 @@ const handleAddNode = (node: any) => {
       target: nextNodeId,
     }
   } else {
-    // 在画布上添加
+    // 在画布上添加（通过右键菜单）
+    const { flowPosition } = props.params || {}
+    if (flowPosition) {
+      node.attrs.position = [flowPosition.x, flowPosition.y]
+    }
+    // 没有连接关系
+    connection = null
   }
   dataflowStore.addNode(node)
-  dataflowStore.addConnection(connection)
+  if (connection) {
+    dataflowStore.addConnection(connection)
+  }
 }
 
 const onClickTable = async (item: any) => {
