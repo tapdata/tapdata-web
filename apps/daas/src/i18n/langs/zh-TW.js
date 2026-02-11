@@ -75,6 +75,11 @@ export default {
     '請輸入表名稱並以逗號分隔,例如：table_a,table_b',
   // app
   app_license_expire_warning: 'License剩餘 {0} 天到期',
+  engine_expire_warning: '節點數已超限，請在 {0} 天內處理，避免被強制下線',
+  license_engine_limit_title: '綁定引擎數量已達上限',
+  license_engine_limit_tip:
+    '確認更新后，系統將在 <strong>{0} 天后優先下線運行任務數較少的引擎，</strong>請提前手動處理需要解綁的節點。',
+  confirm_update: '確認更新',
   // Agent
   agent_check_error: 'Agent當前狀態異常無法創建連接，請檢查',
   // 控制台
@@ -718,7 +723,8 @@ export default {
   license_engine_limit_exceeded:
     'License 節點限制為 {limit}，當前已綁定 {bound} 個節點',
   license_unbind_agents_tip: '請解綁部分節點後重試',
-  license_unbind_running_agent_confirm: '解綁後運行中的引擎將會下線，確定要解綁嗎？',
+  license_unbind_running_agent_confirm:
+    '解綁後運行中的引擎將會下線，確定要解綁嗎？',
   // 自定义节点
   custom_node_name: '節點名稱',
   custom_node_name_placeholder: '請輸入節點名稱搜索',

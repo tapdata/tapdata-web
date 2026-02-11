@@ -151,30 +151,47 @@ export default {
     updateLicense() {
       this.dialogLoading = true
       if (this.updateSids?.length) {
-        updateLicense({
-          sid: this.updateSids,
-          license: this.license,
-        })
-          .then(() => {
-            this.$message.success(this.$t('license_renew_success'))
-            this.$refs.table.fetch()
-            this.dialogVisible = false
-
-            setTimeout(() => {
-              window.location.reload()
-            }, 2000)
-          })
-          .catch((error) => {
-            const { engineLimit, boundEngineCount } = error?.data || {}
-            if (engineLimit !== undefined && boundEngineCount !== undefined) {
-              this.engineLimitError = { engineLimit, boundEngineCount }
-              this.fetchBoundAgents()
-            }
-          })
-          .finally(() => {
-            this.dialogLoading = false
-          })
+        this.startUpdateLicense()
       }
+    },
+    startUpdateLicense(force) {
+      updateLicense({
+        sid: this.updateSids,
+        license: this.license,
+        force,
+      })
+        .then(() => {
+          this.$message.success(this.$t('license_renew_success'))
+          this.$refs.table.fetch()
+          this.dialogVisible = false
+
+          setTimeout(() => {
+            window.location.reload()
+          }, 2000)
+        })
+        .catch(async (error) => {
+          const { engineLimit, boundEngineCount } = error?.data || {}
+          if (engineLimit !== undefined && boundEngineCount !== undefined) {
+            const isConfirm = await this.$confirm(
+              this.$t('license_engine_limit_title'),
+              `<div>${this.$t('license_engine_limit_exceeded', {
+                limit: engineLimit,
+                bound: boundEngineCount,
+              })}</div>
+              <div>${this.$t('license_engine_limit_tip', [7])}</div>`,
+              {
+                dangerouslyUseHTMLString: true,
+                confirmButtonText: this.$t('confirm_update'),
+              },
+            )
+            if (isConfirm) {
+              this.startUpdateLicense(true)
+            }
+          }
+        })
+        .finally(() => {
+          this.dialogLoading = false
+        })
     },
     async fetchBoundAgents() {
       this.boundAgentsLoading = true
@@ -354,7 +371,7 @@ export default {
       />
 
       <!-- Engine limit error and agent list -->
-      <div v-if="engineLimitError" class="mt-4">
+      <!-- <div v-if="engineLimitError" class="mt-4">
         <el-alert type="warning" :closable="false" show-icon class="mb-3">
           <template #title>
             {{
@@ -393,7 +410,6 @@ export default {
                 {{ $t('public_status_stop') }}
               </el-tag>
             </div>
-            <!-- Running agent needs confirmation -->
             <ElPopconfirm
               v-if="agent.engineStatus === 'running'"
               :title="$t('license_unbind_running_agent_confirm')"
@@ -412,7 +428,6 @@ export default {
                 </ElButton>
               </template>
             </ElPopconfirm>
-            <!-- Stopped agent can unbind directly -->
             <ElButton
               v-else
               type="danger"
@@ -430,7 +445,7 @@ export default {
             :image-size="40"
           />
         </div>
-      </div>
+      </div> -->
 
       <template #footer>
         <div>

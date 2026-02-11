@@ -76,6 +76,12 @@ export default {
     'Please enter table names separated by commas, for example: table_a, table_b',
   // app
   app_license_expire_warning: 'License expires in {0} days remaining',
+  engine_expire_warning:
+    'Node limit exceeded. Please resolve within {0} days to avoid forced deactivation',
+  license_engine_limit_title: 'Engine binding limit reached',
+  license_engine_limit_tip:
+    'After confirmation, the system will <strong>offline engines with fewer running tasks after {0} days</strong>, please handle the unbinding of the nodes in advance.',
+  confirm_update: 'Confirm update',
   // Agent
   agent_check_error:
     "Agent's current state is abnormal and cannot create a connection, please check",
