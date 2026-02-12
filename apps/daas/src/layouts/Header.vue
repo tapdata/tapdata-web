@@ -281,24 +281,24 @@ defineExpose({
       </span>
     </transition>
     <el-alert
-      v-if="licenseExpireVisible"
+      v-if="engineExpireVisible"
       type="error"
       show-icon
       class="shadow-sm w-auto"
       :closable="false"
-      :title="$t('app_license_expire_warning', [licenseExpire])"
+      :title="$t('engine_expire_warning', [engineExpireDay])"
     >
       <template #icon>
         <WarningFilled />
       </template>
     </el-alert>
     <el-alert
-      v-else-if="engineExpireVisible"
+      v-else-if="licenseExpireVisible"
       type="error"
       show-icon
       class="shadow-sm w-auto"
       :closable="false"
-      :title="$t('engine_expire_warning', [engineExpireDay])"
+      :title="$t('app_license_expire_warning', [licenseExpire])"
     >
       <template #icon>
         <WarningFilled />
