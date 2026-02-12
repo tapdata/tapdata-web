@@ -75,6 +75,11 @@ export default {
     '请输入表名称并以逗号分隔,例如：table_a,table_b',
   // app
   app_license_expire_warning: 'License剩余 {0} 天到期',
+  engine_expire_warning: '节点数已超限，请在 {0} 天内处理，避免被强制下线',
+  license_engine_limit_title: '绑定引擎数量已达上限',
+  license_engine_limit_tip:
+    '确认更新后，系统将在 <strong>{0} 天后优先下线运行任务数较少的引擎，</strong>请提前手动处理需要解绑的节点。',
+  confirm_update: '确认更新',
   // Agent
   agent_check_error: 'Agent当前状态异常无法创建连接，请检查',
   // 控制台
@@ -718,6 +723,11 @@ export default {
   license_copied_clipboard: '已复制到剪贴板',
   license_select_node: '请先选择节点',
   license_renew_success: '更新成功，页面即将刷新',
+  license_engine_limit_exceeded:
+    'License 节点限制为 {limit}，当前已绑定 {bound} 个节点',
+  license_unbind_agents_tip: '请解绑部分节点后重试',
+  license_unbind_running_agent_confirm:
+    '解绑后运行中的引擎将会下线，确定要解绑吗？',
   // 自定义节点
   custom_node_name: '节点名称',
   custom_node_name_placeholder: '请输入节点名称搜索',

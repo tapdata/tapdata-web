@@ -16,7 +16,6 @@ import Cookie from '@tap/shared/src/cookie'
 
 import { getSettingByKey } from '@tap/shared/src/settings'
 import Time from '@tap/shared/src/time'
-import dayjs from 'dayjs'
 import { computed, inject, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -52,7 +51,8 @@ const dialogVisible = ref(false)
 const isShowCustomerService = ref(false)
 const licenseExpire = ref<string | number>('')
 const licenseExpireVisible = ref(false)
-const licenseExpireDate = ref('')
+const engineExpireVisible = ref(false)
+const engineExpireDay = ref(0)
 const IS_IFRAME = ref(sessionStorage.getItem('IS_IFRAME') === 'true')
 
 // Compute properties for UI visibility
@@ -197,22 +197,30 @@ const getLicense = async () => {
     stime = Time.now()
   }
 
-  getLicenseExpires().then((data: any) => {
-    const expires_on = data?.data?.expires_on
+  getLicenseExpires().then((data: any = {}) => {
+    const { expires_on, engine_exceed_status, engine_expires_on } = data
 
     if (!expires_on) {
       licenseExpireVisible.value = false
+      engineExpireVisible.value = false
       return
     }
 
-    if (Cookie.get('isAdmin') === '1') {
-      let endTime = Number(expires_on) - Number(stime)
-      endTime = Math.floor(endTime / 1000 / 60 / 60 / 24) //相差天数
-      const showDay = getSettingByKey('licenseNoticeDays') || 0
-      licenseExpireVisible.value = Number(showDay) > endTime
-      licenseExpire.value = endTime.toString()
+    if (Cookie.get('isAdmin') !== '1') return
+
+    let endTime = Number(expires_on) - Number(stime)
+    endTime = Math.floor(endTime / 1000 / 60 / 60 / 24) //相差天数
+    const showDay = getSettingByKey('licenseNoticeDays') || 0
+    licenseExpireVisible.value = Number(showDay) > endTime
+    licenseExpire.value = endTime.toString()
+
+    if (engine_exceed_status === 'exceeds') {
+      const days = Math.floor(
+        (Number(engine_expires_on) - Number(stime)) / 1000 / 60 / 60 / 24,
+      )
+      engineExpireVisible.value = days > 0
+      engineExpireDay.value = days
     }
-    licenseExpireDate.value = dayjs(expires_on).format('YYYY-MM-DD HH:mm:ss')
   })
 }
 
@@ -272,20 +280,32 @@ defineExpose({
         {{ appearance.envTagContent }}
       </span>
     </transition>
+    <el-alert
+      v-if="engineExpireVisible"
+      type="error"
+      show-icon
+      class="shadow-sm w-auto"
+      :closable="false"
+      :title="$t('engine_expire_warning', [engineExpireDay])"
+    >
+      <template #icon>
+        <WarningFilled />
+      </template>
+    </el-alert>
+    <el-alert
+      v-else-if="licenseExpireVisible"
+      type="error"
+      show-icon
+      class="shadow-sm w-auto"
+      :closable="false"
+      :title="$t('app_license_expire_warning', [licenseExpire])"
+    >
+      <template #icon>
+        <WarningFilled />
+      </template>
+    </el-alert>
 
     <div class="flex gap-3 align-center ml-auto">
-      <el-alert
-        v-if="licenseExpireVisible"
-        type="error"
-        show-icon
-        class="shadow-sm"
-        :closable="false"
-        :title="$t('app_license_expire_warning', [licenseExpire])"
-      >
-        <template #icon>
-          <WarningFilled />
-        </template>
-      </el-alert>
       <ElButton v-if="isCommunity" id="add-jira-issue-btn" type="primary"
         ><VIcon>bug-outlined</VIcon> New Issue
       </ElButton>

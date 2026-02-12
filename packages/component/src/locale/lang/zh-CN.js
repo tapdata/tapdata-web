@@ -67,4 +67,13 @@ export default {
   packages_component_src_selectlist_xiang: '项',
   packages_component_src_selectlist_yixuanze: '已选择',
   packages_component_data_already_exists: '数据已存在',
+
+  // Sort dropdown
+  packages_component_sort_by: '排序方式',
+  packages_component_sort_by_name: '名称',
+  packages_component_sort_by_priority: '优先级',
+  packages_component_sort_by_created_time: '创建时间',
+  packages_component_sort_order: '排序顺序',
+  packages_component_sort_order_asc: '升序',
+  packages_component_sort_order_desc: '降序',
 }
