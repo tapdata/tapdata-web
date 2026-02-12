@@ -76,6 +76,12 @@ export default {
     'Please enter table names separated by commas, for example: table_a, table_b',
   // app
   app_license_expire_warning: 'License expires in {0} days remaining',
+  engine_expire_warning:
+    'Node limit exceeded. Please resolve within {0} days to avoid forced deactivation',
+  license_engine_limit_title: 'Engine binding limit reached',
+  license_engine_limit_tip:
+    'After confirmation, the system will <strong>offline engines with fewer running tasks after {0} days</strong>, please handle the unbinding of the nodes in advance.',
+  confirm_update: 'Confirm update',
   // Agent
   agent_check_error:
     "Agent's current state is abnormal and cannot create a connection, please check",
@@ -228,7 +234,8 @@ export default {
   application_show_menu: 'Show to the menu',
   application_true: 'Yes',
   application_false: 'No',
-  application_client_id_placeholder: 'Can be left empty, system will auto-generate',
+  application_client_id_placeholder:
+    'Can be left empty, system will auto-generate',
   //api 监控
   application_create: 'Create Client',
   application_edit: 'Edit client',
@@ -761,10 +768,15 @@ export default {
   license_normal: 'normal',
   license_expiring: 'Expiring soon',
   license_expired: 'Expired',
-  license_try_out: 'trial',
+  license_try_out: 'Trial',
   license_copied_clipboard: 'Copied to clipboard',
   license_select_node: 'Please select the node first',
   license_renew_success: 'Update succeeded, page will refresh',
+  license_engine_limit_exceeded:
+    'License engine limit is {limit}, but {bound} engines are currently bound',
+  license_unbind_agents_tip: 'Please unbind some agents and try again',
+  license_unbind_running_agent_confirm:
+    'The running engine will go offline after unbinding. Are you sure?',
   // 自定义节点
   custom_node_name: 'Node Name',
   custom_node_name_placeholder: 'Please enter the node name to search',
