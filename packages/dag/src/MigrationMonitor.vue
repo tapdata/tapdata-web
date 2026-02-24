@@ -590,6 +590,8 @@ export default {
         !skip && (await this.$refs.skipError.checkError(this.dataflow))
       if (hasError) return
 
+      this.isSaving = true
+
       if (['edit', 'wait_start'].includes(this.dataflow.status)) {
         const validateDropTableEnabled = await this.validateDropTableEnabled()
         if (!validateDropTableEnabled) {
@@ -598,7 +600,12 @@ export default {
         }
       }
 
-      this.isSaving = true
+      const validateMemoryHeap = await this.validateMemoryHeap()
+      if (!validateMemoryHeap) {
+        this.isSaving = false
+        return
+      }
+
       try {
         this.wsAgentLive()
         await startTask(this.dataflow.id, {

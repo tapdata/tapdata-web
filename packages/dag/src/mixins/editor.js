@@ -4,6 +4,7 @@ import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
 import { fetchSharedCache } from '@tap/api/src/core/shared-cache'
 import {
   batchStartTasks,
+  checkTaskMemoryHeap,
   fetchMergeTaskCache,
   fetchTasks,
   forceStopTask,
@@ -2009,6 +2010,27 @@ export default {
         )
       }
       return true
+    },
+
+    async validateMemoryHeap() {
+      try {
+        const mongoNode = this.allNodes.find(
+          (node) => node.databaseType === 'MongoDB' && !node.$inputs.length,
+        )
+        if (!mongoNode) return true
+
+        const result = await checkTaskMemoryHeap(this.dataflow.id)
+        if (result?.isSafe) {
+          return true
+        }
+        return await this.$confirm(
+          i18n.t('packages_dag_memory_heap_risk_title'),
+          i18n.t('packages_dag_memory_heap_risk_message'),
+        )
+      } catch (error) {
+        console.error('checkTaskMemoryHeap error:', error)
+        return true
+      }
     },
 
     async eachValidate(...fns) {
