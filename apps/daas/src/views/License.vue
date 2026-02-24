@@ -154,7 +154,7 @@ export default {
         this.startUpdateLicense()
       }
     },
-    startUpdateLicense(force) {
+    startUpdateLicense(force = false) {
       updateLicense({
         sid: this.updateSids,
         license: this.license,
