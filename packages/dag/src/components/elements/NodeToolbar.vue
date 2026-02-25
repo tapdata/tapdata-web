@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { useDataflowStore } from '../../stores/dataflow.store'
+import { inject } from 'vue'
 
 const props = defineProps<{
   node: any
 }>()
 
-const dataflowStore = useDataflowStore()
+const onDeleteNode = inject<(node: any) => void>('onDeleteNode')
 
 const handleDelete = () => {
-  dataflowStore.deleteNode(props.node)
+  onDeleteNode?.(props.node)
 }
 </script>
 

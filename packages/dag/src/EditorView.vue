@@ -17,6 +17,9 @@ const {
   initNodeType,
   onCreateConnection,
   onDeleteConnection,
+  onDeleteNode,
+  onAddNode,
+  onMoveNodePosition,
   onClickConnectionAdd,
   onUpdateNodesPosition,
   onClickNode,
@@ -34,7 +37,7 @@ const init = async () => {
 
 watch([() => dag.value.nodes.length, () => dag.value.edges.length], () => {
   if (isInitialized.value) {
-    dataflowStore.patchDataflow()
+    dataflowStore.patchDataflowDebounce()
   }
 })
 
@@ -95,6 +98,9 @@ provide('dataflow', dataflow)
       @update:nodes:position="onUpdateNodesPosition"
       @create:connection="onCreateConnection"
       @delete:connection="onDeleteConnection"
+      @delete:node="onDeleteNode"
+      @add:node="onAddNode"
+      @move:node:position="onMoveNodePosition"
       @click:connection:add="onClickConnectionAdd"
       @click:node="onClickNode"
     />

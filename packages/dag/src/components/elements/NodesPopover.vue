@@ -3,10 +3,11 @@ import { getConnectionNoSchema } from '@tap/api/src/core/connections'
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { useI18n } from '@tap/i18n'
 import { useVueFlow } from '@vue-flow/core'
-import { onBeforeUnmount, ref, watch } from 'vue'
+import { inject, onBeforeUnmount, ref, watch } from 'vue'
 import { makeNode, makeProcessorNode } from '../../composables/useDnD'
 import { useFetchConnections } from '../../composables/useFetchConnections'
 import { useDataflowStore } from '../../stores/dataflow.store'
+import { useHistoryStore } from '../../stores/history.store'
 import NodeIcon from '../NodeIcon.vue'
 import type { PopoverInstance, ScrollbarInstance } from 'element-plus'
 
@@ -25,6 +26,18 @@ const { findNode, getOutgoers } = useVueFlow()
 const { t } = useI18n()
 
 const dataflowStore = useDataflowStore()
+const historyStore = useHistoryStore()
+
+// Inject tracking functions for history support
+const onAddNode = inject<(node: any) => void>('onAddNode')
+const onCreateConnection =
+  inject<(connection: any) => void>('onCreateConnection')
+const onDeleteConnection =
+  inject<(connection: any) => void>('onDeleteConnection')
+const onMoveNodePosition =
+  inject<(id: string, newPosition: [number, number]) => void>(
+    'onMoveNodePosition',
+  )
 
 const show = defineModel<boolean>()
 const popoverRef = ref<PopoverInstance | null>(null)
@@ -136,38 +149,57 @@ onBeforeUnmount(() => {
 })
 
 const handleAddNode = (node: any) => {
-  const { nextNodeId, prevNodeId, flowPosition } = props.params || {}
+  const { nextNodeId, prevNodeId } = props.params || {}
   let connection = null
+
+  // 开始批量记录 - 所有操作作为一个 BulkCommand
+  historyStore.startRecordingUndo()
 
   if (nextNodeId && prevNodeId) {
     // 在两个节点之间添加
     const afterNodes = dataflowStore.getAfterNodesInSameBranch(nextNodeId)
-    const prevNode = findNode(prevNodeId)!
     const nextNode = findNode(nextNodeId)!
     const offset = nextNode.dimensions.width + X_OFFSET
 
     node.attrs.position = [nextNode.position.x, nextNode.position.y]
 
-    afterNodes.forEach((node) => {
-      node.attrs.position[0] += offset
+    // 先收集所有节点的原始位置，避免循环中位置引用被修改
+    const positionsToMove = afterNodes.map((n) => ({
+      id: n.id,
+      oldPosition: [...n.attrs.position] as [number, number],
+      newPosition: [n.attrs.position[0] + offset, n.attrs.position[1]] as [
+        number,
+        number,
+      ],
+    }))
+
+    console.log('positionsToMove', JSON.stringify(positionsToMove, null, 2))
+
+    // 移动后续节点的位置（使用 tracking）
+    positionsToMove.forEach(({ id, newPosition }) => {
+      onMoveNodePosition?.(id, newPosition)
     })
 
-    dataflowStore.deleteConnection({
+    // 删除原有连线
+    onDeleteConnection?.({
       source: prevNodeId,
       target: nextNodeId,
     })
 
-    dataflowStore.addNode(node)
+    // 添加新节点
+    onAddNode?.(node)
 
-    dataflowStore.addConnection({
+    // 添加新连线
+    onCreateConnection?.({
       source: prevNodeId,
       target: node.id,
     })
-    dataflowStore.addConnection({
+    onCreateConnection?.({
       source: node.id,
       target: nextNodeId,
     })
 
+    historyStore.stopRecordingUndo()
     return
   } else if (prevNodeId && !nextNodeId) {
     // 在节点后面添加
@@ -182,8 +214,8 @@ const handleAddNode = (node: any) => {
           lastOutgoer.position.y + lastOutgoer.dimensions.height + Y_OFFSET,
         ]
       : [
-          canvasNode.position.x + canvasNode.dimensions.width + X_OFFSET,
-          canvasNode.position.y,
+          canvasNode!.position.x + canvasNode!.dimensions.width + X_OFFSET,
+          canvasNode!.position.y,
         ]
 
     node.attrs.position = position
@@ -195,12 +227,14 @@ const handleAddNode = (node: any) => {
     // 在节点前面添加
     const nextNode = findNode(nextNodeId)
     const afterNodes = dataflowStore.getAfterNodesInSameBranch(nextNodeId)
-    const offset = nextNode.dimensions.width + X_OFFSET
+    const offset = nextNode!.dimensions.width + X_OFFSET
 
-    node.attrs.position = [nextNode.position.x, nextNode.position.y]
+    node.attrs.position = [nextNode!.position.x, nextNode!.position.y]
 
-    afterNodes.forEach((node) => {
-      node.attrs.position[0] += offset
+    // 移动后续节点的位置（使用 tracking）
+    afterNodes.forEach((n) => {
+      const newX = n.attrs.position[0] + offset
+      onMoveNodePosition?.(n.id, [newX, n.attrs.position[1]])
     })
 
     connection = {
@@ -216,10 +250,13 @@ const handleAddNode = (node: any) => {
     // 没有连接关系
     connection = null
   }
-  dataflowStore.addNode(node)
+
+  onAddNode?.(node)
   if (connection) {
-    dataflowStore.addConnection(connection)
+    onCreateConnection?.(connection)
   }
+
+  historyStore.stopRecordingUndo()
 }
 
 const onClickTable = async (item: any) => {

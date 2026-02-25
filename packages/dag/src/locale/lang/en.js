@@ -1228,4 +1228,5 @@ export default {
     'When enabled, database JDBC execution logs will be output in the engine background',
   packages_dag_search_processor: 'Search Processor',
   packages_dag_canvas_add_node: 'Add Node',
+  packages_dag_canvas_fit_view: 'Fit to View',
 }

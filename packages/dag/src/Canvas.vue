@@ -5,6 +5,8 @@ import {
   computed,
   inject,
   nextTick,
+  onMounted,
+  onUnmounted,
   provide,
   ref,
   shallowRef,
@@ -18,8 +20,10 @@ import NodesPopover from './components/elements/NodesPopover.vue'
 import NodesPanel from './components/NodesPanel.vue'
 import RightPanel from './components/RightPanel.vue'
 import { useCanvasMapping } from './composables/useCanvasMapping'
+import { useHistory } from './composables/useHistory'
+import { useLayout } from './composables/useLayout'
+import { useDataflowStore } from './stores/dataflow.store'
 import { useUiStore } from './stores/ui.store'
-
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
 
@@ -27,24 +31,142 @@ const emit = defineEmits<{
   'update:nodes:position': [events: any[]]
   'create:connection': [connection: any]
   'delete:connection': [connection: any]
+  'delete:node': [node: any]
+  'add:node': [node: any]
+  'move:node:position': [id: string, newPosition: [number, number]]
   'click:connection:add': [connection: any]
 }>()
 
 const uiStore = useUiStore()
+const dataflowStore = useDataflowStore()
 const dag = inject('dag')
 const nodesPanelExpanded = inject<Ref<boolean>>('nodesPanelExpanded', ref(true))
+
+// Bottom bar dynamic positioning
+const NODES_PANEL_WIDTH = 260
+const RIGHT_PANEL_WIDTH = 600
+const PANEL_MARGIN = 12
+
+const { layout, fitViewWithOffset } = useLayout({
+  nodesPanelExpanded,
+  nodesPanelWidth: NODES_PANEL_WIDTH,
+})
+
+// History (Undo/Redo) controls
+const {
+  canUndo,
+  canRedo,
+  handleUndo,
+  handleRedo,
+  setupKeyboardShortcuts,
+  cleanupKeyboardShortcuts,
+} = useHistory()
+
+onMounted(() => {
+  setupKeyboardShortcuts()
+  // 注册 VueFlow 节点位置更新回调，用于 undo/redo 时同步 VueFlow 内部状态
+  dataflowStore.registerVueFlowUpdateCallback((id, position) => {
+    console.log(
+      'VueFlow updateNode callback',
+      id,
+      position,
+      'current zoom:',
+      viewport.value.zoom,
+    )
+    updateNode(id, { position })
+    console.log('VueFlow updateNode done, new zoom:', viewport.value.zoom)
+  })
+})
+
+onUnmounted(() => {
+  cleanupKeyboardShortcuts()
+  dataflowStore.unregisterVueFlowUpdateCallback()
+})
+
+const bottomBarStyle = computed(() => {
+  // const left = nodesPanelExpanded.value
+  //   ? `${NODES_PANEL_WIDTH + 20}px`
+  //   : `${PANEL_MARGIN}px`
+  const right = dataflowStore.selectedNode
+    ? `${RIGHT_PANEL_WIDTH + 20}px`
+    : `${PANEL_MARGIN}px`
+  return { left: 0, right }
+})
 const { nodes, edges } = useCanvasMapping(dag)
+console.log('nodes', nodes)
 const vueFlow = useVueFlow()
 const {
   viewport,
+  zoomTo,
+  updateNode,
   onEdgeMouseLeave,
   onEdgeMouseEnter,
-  onEdgeMouseMove,
   onNodeMouseEnter,
   onNodeMouseLeave,
   onPaneContextMenu,
   screenToFlowCoordinate,
 } = vueFlow
+
+// Zoom controls
+const ZOOM_STEP = 0.1
+const MIN_ZOOM = 0.1
+const MAX_ZOOM = 10
+const ZOOM_PRESETS = [0.25, 0.5, 0.75, 1, 2]
+
+const zoomPercentage = computed(() => Math.round(viewport.value.zoom * 100))
+const previousZoom = ref(1)
+const showZoomDropdown = ref(false)
+
+// Panning mode controls
+const isInPanningMode = ref(true)
+const selectionKeyCode = ref<boolean | null | string>('Shift')
+const panningMouseButton = ref<number[]>([0, 1])
+
+function togglePanningMode() {
+  if (isInPanningMode.value) {
+    selectionKeyCode.value = true
+    panningMouseButton.value = [1]
+    isInPanningMode.value = false
+  } else {
+    selectionKeyCode.value = 'Shift'
+    panningMouseButton.value = [0, 1]
+    isInPanningMode.value = true
+  }
+}
+
+function handleZoomOut() {
+  const currentZoom = viewport.value.zoom
+  const newZoom = Math.max(MIN_ZOOM, currentZoom - ZOOM_STEP)
+  zoomTo(newZoom, { duration: 200 })
+}
+
+function handleZoomIn() {
+  const currentZoom = viewport.value.zoom
+  const newZoom = Math.min(MAX_ZOOM, currentZoom + ZOOM_STEP)
+  zoomTo(newZoom, { duration: 200 })
+}
+
+function handleZoomReset() {
+  const currentZoom = viewport.value.zoom
+  if (Math.abs(currentZoom - 1) < 0.01) {
+    // Already at 100%, restore previous zoom
+    zoomTo(previousZoom.value, { duration: 200 })
+  } else {
+    // Save current zoom and reset to 100%
+    previousZoom.value = currentZoom
+    zoomTo(1, { duration: 200 })
+  }
+}
+
+function handleZoomPreset(preset: number) {
+  zoomTo(preset, { duration: 200 })
+  showZoomDropdown.value = false
+}
+
+function handleFitView() {
+  fitViewWithOffset({ duration: 200 })
+  showZoomDropdown.value = false
+}
 
 const nodesHoveredById = ref<Record<string, boolean>>({})
 const showPopover = ref(false)
@@ -142,8 +264,24 @@ function onConnect(connection: Connection) {
   connectionCreated.value = true
 }
 
-function onDeleteConnection(connection: Connection) {
+function onCreateConnection(connection: any) {
+  emit('create:connection', connection)
+}
+
+function onDeleteConnection(connection: any) {
   emit('delete:connection', connection)
+}
+
+function onDeleteNode(node: any) {
+  emit('delete:node', node)
+}
+
+function onAddNode(node: any) {
+  emit('add:node', node)
+}
+
+function onMoveNodePosition(id: string, newPosition: [number, number]) {
+  emit('move:node:position', id, newPosition)
 }
 
 function onClickConnectionAdd(connection: Connection) {
@@ -199,9 +337,30 @@ async function onAddNodeFromContextMenu() {
   }, 50)
 }
 
+function handleLayoutGraph() {
+  const layoutedNodes = layout(nodes.value, edges.value, 'LR')
+
+  // Update node positions in the store
+  const positionUpdates = layoutedNodes.map((node) => ({
+    id: node.id,
+    position: node.position,
+  }))
+
+  emit('update:nodes:position', positionUpdates)
+
+  nextTick(() => {
+    fitViewWithOffset({ duration: 200 })
+  })
+}
+
 provide('popoverTarget', popoverTarget)
 provide('showPopover', showPopover)
 provide('popoverTargetKey', popoverTargetKey)
+provide('onDeleteNode', onDeleteNode)
+provide('onAddNode', onAddNode)
+provide('onCreateConnection', onCreateConnection)
+provide('onDeleteConnection', onDeleteConnection)
+provide('onMoveNodePosition', onMoveNodePosition)
 </script>
 
 <template>
@@ -219,6 +378,101 @@ provide('popoverTargetKey', popoverTargetKey)
       :reference="popoverTarget"
       @after-leave="onHideNodesPopover"
     />
+
+    <!-- bottom bar -->
+    <div
+      class="bottom-bar position-absolute bottom-3 flex align-center justify-content-end z-10 gap-2"
+      :style="bottomBarStyle"
+    >
+      <div class="bg-card shadow-canvas p-1 rounded-xl" style="--btn-space: 0">
+        <el-button text :disabled="!canUndo" @click="handleUndo">
+          <template #icon>
+            <i-lucide-undo-2 />
+          </template>
+        </el-button>
+        <el-divider direction="vertical" class="mx-2" />
+        <el-button text :disabled="!canRedo" @click="handleRedo">
+          <template #icon>
+            <i-lucide-redo-2 />
+          </template>
+        </el-button>
+      </div>
+
+      <div
+        class="bg-card shadow-canvas p-1 rounded-xl flex align-items-stretch gap-0.5"
+        style="--btn-space: 0"
+      >
+        <el-button text @click="handleLayoutGraph">
+          <template #icon>
+            <VIcon>auto-layout</VIcon>
+          </template>
+        </el-button>
+        <el-button
+          text
+          :type="isInPanningMode ? 'primary' : undefined"
+          :class="{ 'is-active': isInPanningMode }"
+          @click="togglePanningMode"
+        >
+          <template #icon>
+            <i-mingcute-hand-line />
+          </template>
+        </el-button>
+        <el-divider class="mx-2 align-self-center" direction="vertical" />
+        <el-button text @click="handleZoomOut">
+          <template #icon>
+            <i-lucide-zoom-out />
+          </template>
+        </el-button>
+        <!-- 显示当前画布的缩放百分比，点击重置为 100%，再次点击再切换回去 -->
+        <el-button text class="zoom-percentage-btn" @click="handleZoomReset">
+          {{ zoomPercentage }}%
+        </el-button>
+        <el-popover
+          v-model:visible="showZoomDropdown"
+          :width="120"
+          trigger="click"
+          popper-class="zoom-dropdown-popover"
+          :show-arrow="false"
+          placement="top-end"
+          :popper-options="{
+            modifiers: [
+              {
+                name: 'offset',
+                options: {
+                  offset: [0, 8],
+                },
+              },
+            ],
+          }"
+        >
+          <template #reference>
+            <el-button class="px-0.5" text>
+              <i-mingcute-down-fill />
+            </el-button>
+          </template>
+          <div class="zoom-dropdown">
+            <div
+              v-for="preset in ZOOM_PRESETS"
+              :key="preset"
+              class="zoom-dropdown-item"
+              :class="{ 'is-active': Math.abs(viewport.zoom - preset) < 0.01 }"
+              @click="handleZoomPreset(preset)"
+            >
+              {{ Math.round(preset * 100) }}%
+            </div>
+            <div class="zoom-dropdown-divider" />
+            <div class="zoom-dropdown-item" @click="handleFitView">
+              {{ $t('packages_dag_canvas_fit_view') }}
+            </div>
+          </div>
+        </el-popover>
+        <el-button text @click="handleZoomIn">
+          <template #icon>
+            <i-lucide-zoom-in />
+          </template>
+        </el-button>
+      </div>
+    </div>
 
     <svg style="position: absolute; left: -1000px; top: 0">
       <defs>
@@ -275,6 +529,12 @@ provide('popoverTargetKey', popoverTargetKey)
       :connection-radius="30"
       :max-zoom="10"
       :delete-key-code="null"
+      :selection-key-code="selectionKeyCode"
+      :pan-on-scroll="!isInPanningMode"
+      :panning-mouse-button="panningMouseButton"
+      :pan-on-drag="isInPanningMode"
+      :apply-changes="false"
+      @nodes-initialized="fitViewWithOffset"
       @node-drag-stop="onNodeDragStop"
       @connect="onConnect"
       @node-click="onNodeClick"
@@ -306,6 +566,13 @@ provide('popoverTargetKey', popoverTargetKey)
 <style scoped lang="scss">
 .bg-dataflow-canvas {
   background-color: var(--color-dataflow-canvas-bg, #f2f4f7);
+}
+
+// Bottom bar transition
+.bottom-bar {
+  transition:
+    left 0.3s ease,
+    right 0.3s ease;
 }
 
 // Slide left transition for NodesPanel
@@ -372,5 +639,39 @@ provide('popoverTargetKey', popoverTargetKey)
   right: 0;
   bottom: 0;
   z-index: 2999;
+}
+
+.zoom-percentage-btn {
+  width: 48px;
+}
+
+// Zoom dropdown styles
+.zoom-dropdown-popover {
+  padding: 4px !important;
+  min-width: auto !important;
+}
+
+.zoom-dropdown {
+  .zoom-dropdown-item {
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.15s;
+
+    &:hover {
+      background-color: var(--el-fill-color-light, #f5f7fa);
+    }
+
+    &.is-active {
+      color: var(--el-color-primary);
+      font-weight: 500;
+    }
+  }
+
+  .zoom-dropdown-divider {
+    height: 1px;
+    background-color: var(--el-border-color-lighter, #ebeef5);
+    margin: 4px 0;
+  }
 }
 </style>

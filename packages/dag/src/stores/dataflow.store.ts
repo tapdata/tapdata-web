@@ -53,6 +53,21 @@ export const useDataflowStore = defineStore('dataflow', () => {
   const selectedNodeId = ref(null)
   const stateIsReadonly = ref(false)
 
+  // VueFlow 节点位置同步回调（由 Canvas.vue 注册）
+  let vueFlowUpdateNodePosition:
+    | ((id: string, position: { x: number; y: number }) => void)
+    | null = null
+
+  function registerVueFlowUpdateCallback(
+    callback: (id: string, position: { x: number; y: number }) => void,
+  ) {
+    vueFlowUpdateNodePosition = callback
+  }
+
+  function unregisterVueFlowUpdateCallback() {
+    vueFlowUpdateNodePosition = null
+  }
+
   function getResourceInsByNode(node) {
     return allResourceIns.value.find((ins) => ins.selector(node))
   }
@@ -275,8 +290,8 @@ export const useDataflowStore = defineStore('dataflow', () => {
   function deleteNode(node) {
     const nodeId = node.id
 
-    connectAdjacentNodes(node)
-    deleteConnectionsByNodeId(nodeId)
+    // connectAdjacentNodes(node)
+    // deleteConnectionsByNodeId(nodeId)
 
     if (node.$outputs?.length) {
       node.$outputs.forEach((id) => {
@@ -298,8 +313,53 @@ export const useDataflowStore = defineStore('dataflow', () => {
     if (~index) dag.value.nodes.splice(index, 1)
   }
 
-  function setNodePositionById(id: string, position: { x: number; y: number }) {
-    findNodeById(id).attrs.position = [position.x, position.y]
+  // 从 nodes 数组中移除节点，并清理 $inputs/$outputs 引用
+  // 不执行 connectAdjacentNodes 副作用
+  // 用于历史记录的撤销操作
+  function removeNodeById(id: string) {
+    const node = findNodeById(id)
+    if (!node) return
+
+    // 清理其他节点对该节点的引用
+    if (node.$outputs?.length) {
+      node.$outputs.forEach((outputId) => {
+        const outputNode = findNodeById(outputId)
+        if (outputNode?.$inputs) {
+          const i = outputNode.$inputs.indexOf(id)
+          if (~i) outputNode.$inputs.splice(i, 1)
+        }
+      })
+    }
+
+    if (node.$inputs?.length) {
+      node.$inputs.forEach((inputId) => {
+        const inputNode = findNodeById(inputId)
+        if (inputNode?.$outputs) {
+          const i = inputNode.$outputs.indexOf(id)
+          if (~i) inputNode.$outputs.splice(i, 1)
+        }
+      })
+    }
+
+    // 删除相关连线
+    deleteConnectionsByNodeId(id)
+
+    // 从数组中移除节点
+    const index = dag.value.nodes.findIndex((n) => n.id === id)
+    if (~index) dag.value.nodes.splice(index, 1)
+  }
+
+  function setNodePositionById(id: string, position: XYPosition) {
+    const node = findNodeById(id)
+    if (node) {
+      console.log('setNodePositionById', id, position)
+      node.attrs.position = position
+      // 同步更新 VueFlow 的内部状态
+      if (vueFlowUpdateNodePosition) {
+        console.log('calling vueFlowUpdateNodePosition callback')
+        vueFlowUpdateNodePosition(id, { x: position[0], y: position[1] })
+      }
+    }
   }
 
   function addConnection(connection) {
@@ -611,6 +671,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     dag,
     fetchDataflow,
     patchDataflow,
+    patchDataflowDebounce,
     processorNodeTypes,
     selectedNode,
     stateIsReadonly,
@@ -623,6 +684,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     loadCustomNode,
     getResourceInsByNode,
     setNodePositionById,
+    removeNodeById,
     addConnection,
     deleteConnection,
     initPdkProperties,
@@ -631,6 +693,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     pdkDoubleActiveMap,
     selectNode,
     nodeById,
+    getNodeById: nodeById,
     updateNodeProperties,
     getAfterNodesInSameBranch,
     isValidConnection,
@@ -640,5 +703,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     checkSourceMaxOutputs,
     checkAllowTargetOrSource,
     allowConnect,
+    registerVueFlowUpdateCallback,
+    unregisterVueFlowUpdateCallback,
   }
 })
