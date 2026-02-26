@@ -283,6 +283,11 @@ export function useCanvasOperation() {
 
     dataflowStore.deleteNode(node)
 
+    // 清空选中状态
+    if (dataflowStore.selectedNode?.id === node.id) {
+      dataflowStore.selectedNode = null
+    }
+
     // 3. 记录节点删除
     if (trackHistory) {
       historyStore.pushCommandToUndo(new RemoveNodeCommand(node, Date.now()))

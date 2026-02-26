@@ -1,8 +1,15 @@
 <script lang="ts" setup>
+import { provide } from 'vue'
+import { useFormScope } from '../composables/useFormScope'
 import { useDataflowStore } from '../stores/dataflow.store'
 import NodePanel from './NodePanel.vue'
+import SettingsPanel from './SettingsPanel.vue'
+
+const formScope = useFormScope()
 
 const dataflowStore = useDataflowStore()
+
+provide('formScope', formScope)
 </script>
 
 <template>
@@ -12,6 +19,11 @@ const dataflowStore = useDataflowStore()
       <NodePanel
         v-if="dataflowStore.selectedNode"
         :node="dataflowStore.selectedNode.data"
+      />
+
+      <SettingsPanel
+        v-if="dataflowStore.dataflow.id"
+        v-show="dataflowStore.showSettings"
       />
     </div>
   </div>

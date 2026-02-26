@@ -1,17 +1,30 @@
 <script setup lang="ts">
 import { computed, inject } from 'vue'
 import { useRoute } from 'vue-router'
+import { useDataflowStore } from '../stores/dataflow.store'
+
+defineEmits<{
+  showSettings: []
+  save: []
+  reset: []
+  detail: []
+  edit: []
+  forceStop: []
+  stop: []
+}>()
+
 const route = useRoute()
 const isViewer = computed(() => route.name === 'DataflowView')
 const dataflow = inject('dataflow')
 const buttonShowMap = inject('buttonShowMap')
 const stateIsReadonly = inject('stateIsReadonly')
 const isSaving = inject('isSaving')
+const dataflowStore = useDataflowStore()
 </script>
 
 <template>
   <div class="flex align-center gap-2" style="--btn-space: 0">
-    <ElButton class="btn-shadow" @click="$emit('showSettings')">
+    <ElButton class="btn-shadow" @click="dataflowStore.toggleShowSettings">
       <VIcon class="mr-1">cog-o</VIcon>{{ $t('public_button_setting') }}
     </ElButton>
     <ElButton

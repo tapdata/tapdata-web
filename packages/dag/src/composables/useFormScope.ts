@@ -1,5 +1,6 @@
 import { action } from '@formily/reactive'
 import { getAlarmChannels } from '@tap/api/src/core/alarm'
+import { findAccessNodeInfo } from '@tap/api/src/core/cluster'
 import {
   fetchConnections,
   getConnectionNoSchema,
@@ -17,7 +18,7 @@ import { commandProxy } from '@tap/api/src/core/proxy'
 import { getNodeTableInfo } from '@tap/api/src/core/task'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { FormTab } from '@tap/form/src/components/form-tab'
-import i18n from '@tap/i18n'
+import { useI18n } from '@tap/i18n'
 import { Cookie, isPlainObj } from '@tap/shared'
 import axios from 'axios'
 import { isEmpty, isEqual, merge } from 'lodash-es'
@@ -113,6 +114,7 @@ export function useFormScope() {
   const route = useRoute()
   const store = useStore()
   const dataflowStore = useDataflowStore()
+  const { t } = useI18n()
 
   const taskSaving = computed(() => store.state.dataflow.taskSaving)
   const editVersion = computed(() => store.state.dataflow.editVersion)
@@ -131,6 +133,40 @@ export function useFormScope() {
         resolve()
       }
     })
+  }
+
+  const loadAccessNode = async () => {
+    const data = await findAccessNodeInfo()
+    const mapNode = (item) => ({
+      value: item.processId,
+      label: `${item.agentName || item.hostName}（${
+        item.status === 'running'
+          ? t('public_status_running')
+          : t('public_agent_status_offline')
+      }）`,
+      disabled: item.status !== 'running',
+      accessNodeType: item.accessNodeType,
+    })
+    scope.$agents = data.map((item) => {
+      if (
+        item.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
+      ) {
+        return {
+          value: item.processId,
+          label: `${item.accessNodeName}（${t('public_status_running')}：${
+            item.accessNodes?.filter((ii) => ii.status === 'running').length ||
+            0
+          }）`,
+          accessNodeType: item.accessNodeType,
+          children: item.accessNodes?.map(mapNode) || [],
+        }
+      }
+      return mapNode(item)
+    })
+    scope.$agentMap = data.reduce(
+      (obj, item) => ((obj[item.processId] = item), obj),
+      {},
+    )
   }
 
   const findNodeById = (id: string) => {
@@ -241,7 +277,7 @@ export function useFormScope() {
     return store.commit('dataflow/clearNodeError', id)
   }
 
-  return {
+  const scope = {
     $index: null, // 数组索引，防止使用该值，在表单校验(validateBySchema)时出错
 
     $settings: dataflowStore.dataflow,
@@ -278,10 +314,7 @@ export function useFormScope() {
       while (parentId) {
         parent = findNodeById(parentId)
         if (!parent) {
-          console.error(
-            i18n.t('packages_dag_mixins_formscope_liuyipar'),
-            parentId,
-          )
+          console.error(t('packages_dag_mixins_formscope_liuyipar'), parentId)
         }
         parentId = parent?.$inputs?.[0]
       }
@@ -1036,7 +1069,7 @@ export function useFormScope() {
       }
 
       return !$values.updateConditionFields?.length && $values.tableName
-        ? i18n.t('packages_dag_mixins_formscope_gaiziduanshibi')
+        ? t('packages_dag_mixins_formscope_gaiziduanshibi')
         : ''
     },
 
@@ -1059,7 +1092,7 @@ export function useFormScope() {
           flag = true
         }
       }
-      return flag ? i18n.t('packages_dag_mixins_formscope_gaiziduanshibi') : ''
+      return flag ? t('packages_dag_mixins_formscope_gaiziduanshibi') : ''
     },
 
     validateTableNames: (value, rule, ctx) => {
@@ -1106,11 +1139,11 @@ export function useFormScope() {
       const channels = await getAlarmChannels()
       const MAP = {
         system: {
-          label: i18n.t('packages_dag_migration_alarmpanel_xitongtongzhi'),
+          label: t('packages_dag_migration_alarmpanel_xitongtongzhi'),
           value: 'SYSTEM',
         },
         email: {
-          label: i18n.t('packages_dag_migration_alarmpanel_youjiantongzhi'),
+          label: t('packages_dag_migration_alarmpanel_youjiantongzhi'),
           value: 'EMAIL',
         },
       }
@@ -1120,12 +1153,12 @@ export function useFormScope() {
         const isOpenid = window.__USER_INFO__?.openid
         Object.assign(MAP, {
           wechat: {
-            label: i18n.t('packages_business_notify_webchat_notification'),
+            label: t('packages_business_notify_webchat_notification'),
             value: 'WECHAT',
             disabled: !isOpenid,
           },
           sms: {
-            label: i18n.t('packages_business_notify_sms_notification'),
+            label: t('packages_business_notify_sms_notification'),
             value: 'SMS',
           },
         })
@@ -1186,7 +1219,7 @@ export function useFormScope() {
 
     getNodeTableOptions: async (nodeId) => {
       const { items = [] } = await getNodeTableInfo({
-        taskId: this.dataflow.id,
+        taskId: dataflowStore.dataflow.id,
         nodeId,
         page: 1,
         pageSize: 1000000,
@@ -1199,7 +1232,7 @@ export function useFormScope() {
     downloadForeignKeyConstraint: () => {
       let url = `${axios.defaults.baseURL}api/foreignKeyConstraint/load?taskId=${this.dataflow.id}`
 
-      if (this.isDaas) {
+      if (isDaas) {
         const accessToken = Cookie.get('access_token')
         url += `&access_token=${accessToken}`
       } else if (TAP_ACCESS_TOKEN) {
@@ -1209,4 +1242,13 @@ export function useFormScope() {
       window.open(url)
     },
   }
+
+  const load = async () => {
+    scope.$alarmChannels = await scope.loadAlarmChannels()
+    loadAccessNode()
+  }
+
+  load()
+
+  return scope
 }

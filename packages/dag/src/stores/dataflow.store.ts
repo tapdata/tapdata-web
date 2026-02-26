@@ -52,6 +52,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
   const selectedNode = ref(null)
   const selectedNodeId = ref(null)
   const stateIsReadonly = ref(false)
+  const showSettings = ref(false)
 
   // VueFlow 节点位置同步回调（由 Canvas.vue 注册）
   let vueFlowUpdateNodePosition:
@@ -447,8 +448,13 @@ export const useDataflowStore = defineStore('dataflow', () => {
   }
 
   function selectNode(node: any) {
-    selectedNodeId.value = node.id
     selectedNode.value = node
+    showSettings.value = false
+  }
+
+  function toggleShowSettings() {
+    showSettings.value = !showSettings.value
+    selectedNode.value = null
   }
 
   function nodeById(id: string) {
@@ -676,6 +682,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     selectedNode,
     stateIsReadonly,
     taskSaving,
+    showSettings,
 
     addNode,
     deleteNode,
@@ -692,6 +699,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     pdkSchemaFreeMap,
     pdkDoubleActiveMap,
     selectNode,
+    toggleShowSettings,
     nodeById,
     getNodeById: nodeById,
     updateNodeProperties,

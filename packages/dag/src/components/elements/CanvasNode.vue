@@ -36,8 +36,8 @@ const activeType = computed(() => store.getters['dataflow/activeType'])
 const ins = computed(() => props.data?.__Ctor || {})
 
 const wrapClass = computed(() => {
-  if (props.selected) return 'border-primary'
-  if (canBeConnectedNodeIds.value.includes(props.nodeId))
+  if (dataflowStore.selectedNode?.id === props.data.id) return 'border-primary'
+  if (canBeConnectedNodeIds.value.includes(props.data.id))
     return 'can-be-connected'
   return ''
 })

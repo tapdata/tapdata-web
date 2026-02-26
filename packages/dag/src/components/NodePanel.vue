@@ -13,16 +13,15 @@ import * as components from '@tap/form/src/components'
 import { createSchemaField } from '@tap/form/src/shared/create'
 import { deepEqual } from '@tap/shared'
 import { debounce } from 'lodash-es'
-import { nextTick, shallowRef, watch } from 'vue'
+import { inject, nextTick, shallowRef, watch } from 'vue'
 import * as _components from '../components/form'
-import { useFormScope } from '../composables/useFormScope'
 import { useDataflowStore } from '../stores/dataflow.store'
 import { getSchema } from '../util'
 import BaseNodeIcon from './BaseNodeIcon.vue'
 
 const dataflowStore = useDataflowStore()
 
-const scope = useFormScope()
+const scope = inject('formScope')
 
 const { Form } = components
 const { SchemaField } = createSchemaField({
@@ -138,13 +137,16 @@ const setSchema = async (nodeSchema) => {
 watch(
   () => props.node.id,
   (v) => {
-    console.log('node.id', props.node)
     setSchema(
       props.node.__Ctor.getSchema(dataflowStore.dataflow.syncType, false),
     )
   },
   { immediate: true },
 )
+
+function handleClose() {
+  dataflowStore.selectedNode = null
+}
 </script>
 
 <template>
@@ -175,7 +177,7 @@ watch(
         </span>
       </el-tag>
       <div class="flex-1" />
-      <el-button text>
+      <el-button text @click="handleClose">
         <template #icon>
           <i-lucide-x />
         </template>

@@ -87,9 +87,10 @@ const bottomBarStyle = computed(() => {
   // const left = nodesPanelExpanded.value
   //   ? `${NODES_PANEL_WIDTH + 20}px`
   //   : `${PANEL_MARGIN}px`
-  const right = dataflowStore.selectedNode
-    ? `${RIGHT_PANEL_WIDTH + 20}px`
-    : `${PANEL_MARGIN}px`
+  const right =
+    dataflowStore.selectedNode || dataflowStore.showSettings
+      ? `${RIGHT_PANEL_WIDTH + 20}px`
+      : `${PANEL_MARGIN}px`
   return { left: 0, right }
 })
 const { nodes, edges } = useCanvasMapping(dag)
@@ -566,13 +567,6 @@ provide('onMoveNodePosition', onMoveNodePosition)
 <style scoped lang="scss">
 .bg-dataflow-canvas {
   background-color: var(--color-dataflow-canvas-bg, #f2f4f7);
-}
-
-// Bottom bar transition
-.bottom-bar {
-  transition:
-    left 0.3s ease,
-    right 0.3s ease;
 }
 
 // Slide left transition for NodesPanel
