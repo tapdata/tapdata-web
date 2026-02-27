@@ -25,7 +25,7 @@ export default {
         code: '',
         start: '',
         end: '',
-        options: 'i'
+        options: 'i',
       },
       filterItems: [],
       order: 'createTime DESC',
@@ -94,7 +94,8 @@ export default {
     // 获取数据
     getData({ page }) {
       const { current, size } = page
-      const { method, code, start, end, clientId, keyword, options } = this.searchParams
+      const { method, code, start, end, clientId, keyword, options } =
+        this.searchParams
       const where = {}
       if (method) {
         where.method = method
@@ -112,7 +113,10 @@ export default {
         where.clientId = clientId
       }
       if (keyword && keyword.trim()) {
-        const filterObj = { like: escapeRegExp(keyword), options: options ? '-' : options }
+        const filterObj = {
+          like: escapeRegExp(keyword),
+          options: options ? '-' : options,
+        }
         where.or = [{ name: filterObj }, { id: filterObj }]
       }
 
@@ -247,7 +251,11 @@ export default {
           />
         </div>
       </template>
-      <el-table-column prop="name" :label="$t('apiaudit_req_path')" min-width="220">
+      <el-table-column
+        prop="name"
+        :label="$t('apiaudit_req_path')"
+        min-width="220"
+      >
         <template #default="{ row }">
           <div>{{ row.apiPath }}</div>
         </template>
@@ -290,12 +298,13 @@ export default {
         :show-overflow-tooltip="true"
       >
         <template #default="{ row }">
-          <el-text v-if="row.failed" type="success">
-            <el-icon><SuccessFilled /></el-icon>
-            <span class="ml-1">
-              {{ $t('apiaudit_success') }}
-            </span>
-          </el-text>
+          <span
+            v-if="!row.failed"
+            class="status-badge status-badge--success rounded-lg"
+          >
+            <span class="status-badge__dot" />
+            {{ row.code }} {{ $t('apiaudit_success') }}
+          </span>
           <el-tooltip
             v-else
             :disabled="!row.codeMsg"
@@ -303,12 +312,13 @@ export default {
             placement="top"
             :hide-after="0"
           >
-            <el-text type="danger">
-              <el-icon><CircleCloseFilled /></el-icon>
-              <span class="ml-1" :class="{ 'underline-dashed': row.codeMsg }">
-                {{ $t('public_status_failed') }}
-              </span>
-            </el-text>
+            <span
+              class="status-badge status-badge--danger rounded-lg"
+              :class="{ 'underline-dashed': row.codeMsg }"
+            >
+              <span class="status-badge__dot" />
+              {{ row.code }} {{ $t('public_status_failed') }}
+            </span>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -379,6 +389,29 @@ export default {
   }
   .status-block {
     color: var(--text-white);
+  }
+}
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  &__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  &--success {
+    color: var(--color-success);
+    .status-badge__dot {
+      background-color: var(--color-success);
+    }
+  }
+  &--danger {
+    color: var(--color-danger);
+    .status-badge__dot {
+      background-color: var(--color-danger);
+    }
   }
 }
 </style>
