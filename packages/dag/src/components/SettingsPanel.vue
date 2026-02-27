@@ -4,14 +4,20 @@ import {
   createForm,
   onFieldInputValueChange,
   onFieldValueChange,
+  onFormInputChange,
+  onFormValuesChange,
 } from '@formily/core'
-import { action } from '@formily/reactive'
+import { action, toJS } from '@formily/reactive'
 import { updateTaskAlarm } from '@tap/api/src/core/alarm'
 import {
   getPermissions,
   postPermissions,
 } from '@tap/api/src/core/data-permission'
-import { checkCloudTaskLimit, checkTaskName } from '@tap/api/src/core/task'
+import {
+  checkCloudTaskLimit,
+  checkTaskName,
+  updateTaskInfo,
+} from '@tap/api/src/core/task'
 import { getUserRoles } from '@tap/api/src/core/users'
 import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
 import { TextEditable } from '@tap/component/src/base/text-editable'
@@ -254,11 +260,13 @@ const formScope: FormScope = {
     )
   },
   handleQuicklySyncPoints: () => {
-    const { currentEventTimestamp } = settings.value
-    settings.value.syncPoints.forEach((point: any) => {
+    const currentEventTimestamp = form.values.currentEventTimestamp
+    const syncPoints = form.values.syncPoints
+    syncPoints?.forEach((point: any) => {
       point.pointType = 'localTZ'
       point.dateTime = currentEventTimestamp
     })
+    form.setValuesIn('syncPoints', [...syncPoints])
   },
 }
 
@@ -266,7 +274,7 @@ const formScope: FormScope = {
 const stateIsReadonly = computed(
   () => store.getters['dataflow/stateIsReadonly'],
 )
-const allNodes = computed(() => store.getters['dataflow/allNodes'])
+const allNodes = computed(() => dataflowStore.dag.nodes)
 
 const dataNodes = computed(() => {
   return allNodes.value.filter(
@@ -275,7 +283,7 @@ const dataNodes = computed(() => {
 })
 
 const showDoubleActive = computed(() => {
-  const map = store.state.dataflow.pdkDoubleActiveMap
+  const map = dataflowStore.pdkDoubleActiveMap
   return dataNodes.value.length
     ? dataNodes.value.every((node: any) => map[node.attrs.pdkHash])
     : false
@@ -338,25 +346,21 @@ const systemTimeZone = computed(() => {
 const form = createForm({
   disabled: stateIsReadonly.value,
   values,
+  effects: useFormEffects,
 })
 
 // Methods
 const lazySaveAlarmConfig = debounce(saveAlarmConfig, 100)
 const lazySavePermissionsConfig = debounce(savePermissionsConfig, 300)
 
-function updateSettings(path: string, value: any) {
-  const pathArr = path.split('.')
-  let current = settings.value
-
-  for (let i = 0; i < pathArr.length - 1; i++) {
-    const key = pathArr[i]
-    if (!(key in current)) {
-      current[key] = {}
-    }
-    current = current[key]
-  }
-
-  current[pathArr.at(-1)] = value
+// Form → Store 同步: 跟 NodePanel 一致的模式
+function syncFormToStore(formInstance: any) {
+  if (stateIsReadonly.value) return
+  const formValues = toJS(formInstance.values)
+  // 同步到 dataflowStore.dataflow，保持引用
+  Object.keys(formValues).forEach((key) => {
+    settings.value[key] = formValues[key]
+  })
 }
 
 function loadEmailReceivers() {
@@ -386,7 +390,16 @@ function loadEmailReceivers() {
   })
 }
 
-function useEffects() {
+function useFormEffects() {
+  // Form → Store 同步
+  onFormValuesChange((formInstance) => {
+    syncFormToStore(formInstance)
+  })
+  onFormInputChange((formInstance) => {
+    syncFormToStore(formInstance)
+  })
+
+  // 告警和权限的副作用
   onFieldInputValueChange(
     '*(alarmSettings.*.*,alarmRules.*.*,emailReceivers)',
     () => {
@@ -438,17 +451,13 @@ async function getRolePermissions() {
     dataId: form.values.id,
   }
   const data = await getPermissions(filter)
-  updateSettings(
+  form.setValuesIn(
     'permissions',
     data?.map((t: any) => ({
       checked: t.actions,
       roleId: t.typeId,
     })) || [],
   )
-}
-
-function syncFormWithSettings() {
-  form.setValues(settings.value)
 }
 
 // Watchers
@@ -466,18 +475,18 @@ watch(
   (arr) => {
     const size = arr.length
     if (size >= 1) {
-      let currentId = settings.value.accessNodeProcessId
+      let currentId = form.values.accessNodeProcessId
       currentId = currentId && arr.includes(currentId) ? currentId : arr[0]
 
-      updateSettings(
+      form.setValuesIn(
         'accessNodeType',
         scope.$agentMap[currentId]?.accessNodeType ||
           'MANUALLY_SPECIFIED_BY_THE_USER',
       )
-      updateSettings('accessNodeProcessId', currentId)
+      form.setValuesIn('accessNodeProcessId', currentId)
 
       if (
-        settings.value.accessNodeType ===
+        form.values.accessNodeType ===
         'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
       ) {
         const nodeIds = accessNodeProcessIdMap.value[currentId]
@@ -492,7 +501,7 @@ watch(
           return false
         })
 
-        updateSettings('priorityProcessId', priorityProcessId)
+        form.setValuesIn('priorityProcessId', priorityProcessId)
       }
     }
     if (!stateIsReadonly.value) {
@@ -514,36 +523,40 @@ watch(
   { deep: true, immediate: true },
 )
 
-watch(sourceNodes, () => {
-  const timeZone = systemTimeZone.value
-  const oldPoints = settings.value.syncPoints
-  const oldPointsMap = oldPoints?.length
-    ? oldPoints.reduce((map: Record<string, any>, point: any) => {
-        if (point.nodeId) map[point.nodeId] = point
-        return map
-      }, {})
-    : {}
-  const syncPoints = sourceNodes.value.map((item: any) => {
-    const old = oldPointsMap[item.nodeId]
-    const point = {
-      ...item,
-      timeZone,
-      pointType: 'current',
-      dateTime: '',
-      isStreamOffset: false,
-    }
-    if (old && !item.hiddenPointType) {
-      Object.assign(point, {
-        pointType: old.pointType,
-        dateTime: old.dateTime,
-        isStreamOffset: old.isStreamOffset,
-        streamOffsetString: old.streamOffsetString,
-      })
-    }
-    return point
-  })
-  updateSettings('syncPoints', syncPoints)
-})
+watch(
+  sourceNodes,
+  () => {
+    const timeZone = systemTimeZone.value
+    const oldPoints = form.values.syncPoints
+    const oldPointsMap = oldPoints?.length
+      ? oldPoints.reduce((map: Record<string, any>, point: any) => {
+          if (point.nodeId) map[point.nodeId] = point
+          return map
+        }, {})
+      : {}
+    const syncPoints = sourceNodes.value.map((item: any) => {
+      const old = oldPointsMap[item.nodeId]
+      const point = {
+        ...item,
+        timeZone,
+        pointType: 'current',
+        dateTime: '',
+        isStreamOffset: false,
+      }
+      if (old && !item.hiddenPointType) {
+        Object.assign(point, {
+          pointType: old.pointType,
+          dateTime: old.dateTime,
+          isStreamOffset: old.isStreamOffset,
+          streamOffsetString: old.streamOffsetString,
+        })
+      }
+      return point
+    })
+    form.setValuesIn('syncPoints', syncPoints)
+  },
+  { immediate: true },
+)
 
 watch(
   showDoubleActive,
@@ -553,16 +566,6 @@ watch(
     })
   },
   { immediate: true },
-)
-
-watch(
-  () => settings.value,
-  (newSettings) => {
-    if (JSON.stringify(form.values) !== JSON.stringify(newSettings)) {
-      syncFormWithSettings()
-    }
-  },
-  { deep: true },
 )
 
 // 监听源节点
@@ -593,7 +596,7 @@ onMounted(() => {
   nextTick(() => {
     loadEmailReceivers()
 
-    form.setEffects(useEffects)
+    // form.setEffects(useEffects)
 
     if (isDaas) {
       form.setFieldState('tab4', {
@@ -608,16 +611,6 @@ onMounted(() => {
 // Initialize
 form.setState({ disabled: stateIsReadonly.value })
 getRolePermissions()
-
-// Add form effects
-form.addEffects('settingsSync', () => {
-  onFieldValueChange('*', (field) => {
-    if (field.path && field.path.length > 0) {
-      const path = field.path.toString()
-      updateSettings(path, field.value)
-    }
-  })
-})
 
 // Schema
 const schema = {
@@ -2062,6 +2055,11 @@ const validate = () => {
   form.validate()
 }
 
+const onNameInputChange = inject('onNameInputChange')
+const onDescChange = () => {
+  updateTaskInfo(settings.value.id, settings.value.name, settings.value.desc)
+}
+
 defineExpose({
   validate,
 })
@@ -2086,6 +2084,7 @@ defineExpose({
         max-width="260"
         hidden-icon
         :maxlength="200"
+        @change="onNameInputChange"
       />
       <div class="flex-1" />
       <el-button text @click="handleClose">
@@ -2102,6 +2101,7 @@ defineExpose({
         type="textarea"
         :autosize="{ minRows: 1 }"
         size="small"
+        @change="onDescChange"
       />
     </div>
     <div v-if="form" class="flex-1 min-h-0">

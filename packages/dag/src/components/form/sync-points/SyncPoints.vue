@@ -1,50 +1,45 @@
-<script>
-import { observer } from '@formily/reactive-vue'
+<script setup lang="ts">
 import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
-import { VEmpty } from '@tap/component/src/base/v-empty'
+import { computed } from 'vue'
 import { RecycleScroller } from 'vue-virtual-scroller'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
-export default observer({
+defineOptions({
   name: 'SyncPoints',
-  props: {
-    value: Array,
-    disabled: Boolean,
-  },
-  data() {
-    return {
-      getPickerOptionsBeforeTime,
-    }
-  },
-  components: {
-    RecycleScroller,
-    VEmpty,
-  },
-  computed: {
-    items() {
-      return this.value?.filter((item) => !!item.nodeId) || []
-    },
-    supportStreamOffsetNode() {
-      return this.$store.getters['dataflow/allNodes']
-        .filter((node) => node.$outputs.length && !node.$inputs.length)
-        .reduce((map, item) => {
-          map[item.id] = item?.attrs.capabilities.some(
-            (item) => item.id === 'get_stream_offset_function',
-          )
-          return map
-        }, {})
-    },
-  },
-  methods: {
-    handleChangeType(type, item) {
-      if (type === 'streamOffset') {
-        item.isStreamOffset = true
-      } else {
-        item.isStreamOffset = false
-      }
-    },
-  },
 })
+
+const props = defineProps<{
+  value: any[]
+  disabled?: boolean
+}>()
+
+const dataflowStore = useDataflowStore()
+
+const items = computed(() => {
+  return props.value?.filter((item) => !!item.nodeId) || []
+})
+
+const supportStreamOffsetNode = computed(() => {
+  return dataflowStore.dag.nodes
+    .filter((node: any) => node.$outputs.length && !node.$inputs.length)
+    .reduce((map: Record<string, boolean>, item: any) => {
+      map[item.id] = item?.attrs.capabilities?.some(
+        (cap: any) => cap.id === 'get_stream_offset_function',
+      )
+      return map
+    }, {})
+})
+
+function handleChangeType(type: string, item: any) {
+  if (type === 'streamOffset') {
+    item.isStreamOffset = true
+  } else {
+    item.isStreamOffset = false
+  }
+}
+
+console.log('items', props.value, items, supportStreamOffsetNode)
 </script>
 
 <template>
@@ -57,7 +52,7 @@ export default observer({
       style="max-height: 300px"
       :buffer="64"
     >
-      <template #default="{ item, index, active }">
+      <template #default="{ item }">
         <span class="ellipsis"
           >{{ item.connectionName }}({{ item.nodeName }})</span
         >
@@ -104,7 +99,7 @@ export default observer({
         </div>
       </template>
     </RecycleScroller>
-    <VEmpty v-if="!value.length" small />
+    <ElEmpty v-if="!value.length" small />
   </div>
 </template>
 

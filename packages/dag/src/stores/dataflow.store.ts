@@ -44,6 +44,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
   })
   const allResourceIns = ref([])
   const processorNodeTypes = ref([])
+  const pdkCapabilitiesMap = shallowRef({})
   const pdkPropertiesMap = shallowRef({})
   const pdkSchemaFreeMap = shallowRef({})
   const pdkDoubleActiveMap = shallowRef({})
@@ -421,14 +422,16 @@ export const useDataflowStore = defineStore('dataflow', () => {
         tags: true,
         pdkHash: true,
         properties: true,
+        capabilities: true,
       },
     })
 
     const tagsMap = {}
     const doubleActiveMap = {}
     const propertiesMap = {}
+    const capabilitiesMap = {}
 
-    databaseItems.forEach(({ properties, pdkHash, tags }) => {
+    databaseItems.forEach(({ properties, pdkHash, tags, capabilities }) => {
       const nodeProperties = properties?.node
 
       if (nodeProperties) {
@@ -440,8 +443,15 @@ export const useDataflowStore = defineStore('dataflow', () => {
       if (tags?.includes('doubleActive')) {
         doubleActiveMap[pdkHash] = true
       }
+      if (capabilities?.length) {
+        capabilitiesMap[pdkHash] = capabilities.reduce((map, item) => {
+          map[item.id] = item
+          return map
+        }, {})
+      }
     })
 
+    pdkCapabilitiesMap.value = capabilitiesMap
     pdkPropertiesMap.value = propertiesMap
     pdkSchemaFreeMap.value = tagsMap
     pdkDoubleActiveMap.value = doubleActiveMap
@@ -672,6 +682,11 @@ export const useDataflowStore = defineStore('dataflow', () => {
     )
   }
 
+  function getCapabilitiesMap(node) {
+    const pdkHash = isString(node) ? node : node?.attrs?.pdkHash
+    return pdkCapabilitiesMap.value[pdkHash] || {}
+  }
+
   return {
     dataflow,
     dag,
@@ -695,6 +710,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     addConnection,
     deleteConnection,
     initPdkProperties,
+    pdkCapabilitiesMap,
     pdkPropertiesMap,
     pdkSchemaFreeMap,
     pdkDoubleActiveMap,
@@ -713,5 +729,6 @@ export const useDataflowStore = defineStore('dataflow', () => {
     allowConnect,
     registerVueFlowUpdateCallback,
     unregisterVueFlowUpdateCallback,
+    getCapabilitiesMap,
   }
 })

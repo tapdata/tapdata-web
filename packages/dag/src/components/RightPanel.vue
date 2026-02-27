@@ -1,15 +1,9 @@
 <script lang="ts" setup>
-import { provide } from 'vue'
-import { useFormScope } from '../composables/useFormScope'
 import { useDataflowStore } from '../stores/dataflow.store'
 import NodePanel from './NodePanel.vue'
 import SettingsPanel from './SettingsPanel.vue'
 
-const formScope = useFormScope()
-
 const dataflowStore = useDataflowStore()
-
-provide('formScope', formScope)
 </script>
 
 <template>

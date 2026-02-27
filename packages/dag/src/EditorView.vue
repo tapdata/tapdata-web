@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { renameTask } from '@tap/api/src/core/task'
-import { showErrorMessage } from '@tap/business/src/components/error-message'
 import { TextEditable } from '@tap/component/src/base/text-editable'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
@@ -11,6 +9,7 @@ import { useStore } from 'vuex'
 import Canvas from './Canvas.vue'
 import TaskOperations from './components/TaskOperations.vue'
 import { useCanvasOperation } from './composables/useCanvasOperation'
+
 import { useDataflowStore } from './stores/dataflow.store'
 
 const dataflowStore = useDataflowStore()
@@ -33,12 +32,13 @@ const {
   onClickConnectionAdd,
   onUpdateNodesPosition,
   onClickNode,
+  handleSave,
+  onNameInputChange,
+  formScope,
+  isSaving,
 } = useCanvasOperation()
 
 const isInitialized = ref(false)
-const nameHasUpdated = ref(false)
-const upgradeFeeVisibleTips = ref('')
-const upgradeFeeVisible = ref(false)
 
 const init = async () => {
   await initNodeType()
@@ -102,62 +102,6 @@ const handleShowUpgradeDialog = (err) => {
     })
 }
 
-const handleError = (error, msg = t('packages_dag_src_editor_chucuole')) => {
-  const code = error?.code
-  if (code === 'Task.ListWarnMessage') {
-    const names = []
-    if (error?.data) {
-      const keys = Object.keys(error.data)
-      keys.forEach((key) => {
-        const node = store.state.dataflow.NodeMap[key]
-        if (node) {
-          names.push(node.name)
-          store.commit('dataflow/setNodeErrorMsg', {
-            id: node.id,
-            msg: error.data[key][0].msg,
-          })
-        }
-      })
-      if (!names.length && keys.length && msg) {
-        // 兼容错误信息id不是节点id的情况
-        const msg = error.data[keys[0]][0]?.msg
-        if (msg) {
-          ElMessage.error(msg)
-          return
-        }
-      }
-    }
-  } else if (code === 'Task.OldVersion') {
-    Modal.confirm(t('packages_dag_task_old_version_confirm'), {
-      confirmButtonText: t('public_button_refresh'),
-    }).then((resFlag) => {
-      resFlag && location.reload()
-    })
-  } else if (
-    ['Task.ScheduleLimit', 'Task.ManuallyScheduleLimit'].includes(code)
-  ) {
-    handleShowUpgradeDialog(error)
-  } else {
-    showErrorMessage(error)
-  }
-}
-
-const onNameInputChange = (value: string) => {
-  const oldName = dataflowStore.dataflow.name
-  nameHasUpdated.value = true
-  dataflowStore.dataflow.name = value
-  renameTask(dataflowStore.dataflow.id, value).then(
-    () => {
-      ElMessage.success(t('packages_dag_message_task_rename_success'))
-      titleSet()
-    },
-    (error) => {
-      dataflowStore.dataflow.name = oldName
-      handleError(error)
-    },
-  )
-}
-
 // Control NodesPanel visibility
 const nodesPanelExpanded = ref(true)
 
@@ -195,6 +139,9 @@ provide('dag', dag)
 provide('nodesPanelExpanded', nodesPanelExpanded)
 provide('buttonShowMap', buttonShowMap)
 provide('dataflow', dataflow)
+provide('onNameInputChange', onNameInputChange)
+provide('formScope', formScope)
+provide('isSaving', isSaving)
 </script>
 
 <template>
@@ -210,7 +157,7 @@ provide('dataflow', dataflow)
           <i-lucide-chevron-left />
         </template>
       </el-button>
-      <!-- <el-divider direction="vertical" class="mx-0" /> -->
+      <el-divider direction="vertical" class="mx-0" />
       <div>
         <TextEditable
           v-model:value="dataflowStore.dataflow.name"
@@ -229,7 +176,7 @@ provide('dataflow', dataflow)
     </div>
     <div class="w-100 h-0 position-absolute header z-10 flex align-center px-3">
       <div class="flex-1" />
-      <TaskOperations @show-settings="toggleShowSettings" />
+      <TaskOperations @save="handleSave" />
     </div>
     <Canvas
       @update:nodes:position="onUpdateNodesPosition"
