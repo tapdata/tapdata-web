@@ -16,7 +16,7 @@ const dataflowStore = useDataflowStore()
       />
 
       <SettingsPanel
-        v-if="dataflowStore.dataflow.id"
+        v-if="dataflowStore.dataflowRef.id"
         v-show="dataflowStore.showSettings"
       />
     </div>

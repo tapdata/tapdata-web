@@ -169,9 +169,7 @@ export function useFormScope() {
     )
   }
 
-  const findNodeById = (id: string) => {
-    return store.state.dataflow.NodeMap[id]
-  }
+  const findNodeById = dataflowStore.findNodeById
 
   const findParentNodes = (id: string, ifMyself: boolean) => {
     const node = findNodeById(id)

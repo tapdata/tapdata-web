@@ -110,7 +110,7 @@ export const routes = [
   {
     path: '/dataflow/canvas/:id',
     name: 'DataflowCanvas',
-    component: DagEditorView,
+    component: DagEditor,
     meta: {
       title: 'page_title_data_develop',
       code: 'v2_data_flow_dag_edit',
@@ -119,7 +119,7 @@ export const routes = [
   {
     path: '/dataflow/editor',
     name: 'DataflowNew',
-    component: DagEditor,
+    component: DagEditorView,
     meta: {
       title: 'page_title_data_develop',
       code: 'v2_data_flow_dag_edit',
@@ -128,7 +128,7 @@ export const routes = [
   {
     path: '/dataflow/editor/:id',
     name: 'DataflowEditor',
-    component: DagEditor,
+    component: DagEditorView,
     meta: {
       title: 'page_title_data_develop',
       code: 'v2_data_flow_edit',

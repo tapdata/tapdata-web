@@ -1,16 +1,19 @@
 import {
-  createTask,
   fetchMergeTaskCache,
   getNodeTableInfo,
+  renameTask,
+  resetTask,
   saveAndStartTask,
   saveTask,
 } from '@tap/api/src/core/task'
+import { showErrorMessage } from '@tap/business/src/components/error-message'
 import { makeStatusAndDisabled } from '@tap/business/src/shared/task'
 import { Modal } from '@tap/component/src/modal'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 import { useI18n } from '@tap/i18n'
+import { setPageTitle } from '@tap/shared'
 import { isEmpty } from 'lodash-es'
-import { computed, reactive, ref } from 'vue'
+import { computed, getCurrentInstance, h, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { allResourceIns } from '../nodes/loader'
@@ -31,9 +34,13 @@ import {
 import { useFormScope } from './useFormScope'
 
 export function useCanvasOperation() {
+  const instance = getCurrentInstance()
+  const $ws = (instance?.proxy as any).$ws
   const dataflowStore = useDataflowStore()
   const historyStore = useHistoryStore()
   const formScope = useFormScope()
+
+  const consoleRef = ref()
 
   const buttonShowMap = reactive({
     View: true,
@@ -968,15 +975,12 @@ export function useCanvasOperation() {
   }
 
   // --- 准备保存数据 ---
-  const getDataflowDataToSave = (syncType = 'migrate') => {
-    const dag = dataflowStore.dag
-    const { editVersion, pageVersion } = dataflowStore.dataflow
+  const getDataflowDataToSave = () => {
     return {
       ...dataflowStore.dataflow,
-      dag,
-      editVersion,
-      pageVersion,
-      syncType,
+      dag: dataflowStore.dag,
+      editVersion: dataflowStore.editVersion,
+      pageVersion: dataflowStore.pageVersion,
     }
   }
 
@@ -1001,26 +1005,6 @@ export function useCanvasOperation() {
           dataflowStore.dataflow[key] = data[key]
         }
       })
-    }
-  }
-
-  // --- 另存为新任务 ---
-  const saveAsNewDataflow = async (syncType = 'sync') => {
-    const data = getDataflowDataToSave(syncType)
-    try {
-      const dataflow = await createTask(data)
-      reformDataflow(dataflow)
-      setEditVersion(dataflow.editVersion)
-      setTaskId(dataflow.id)
-      isSaving.value = false
-      router.push({
-        name: route.name as string,
-        params: { id: dataflow.id },
-      })
-      return true
-    } catch (error: any) {
-      isSaving.value = false
-      throw error
     }
   }
 
@@ -1106,6 +1090,10 @@ export function useCanvasOperation() {
     }
   }
 
+  const titleSet = () => {
+    setPageTitle(`${dataflowStore.dataflow.name} - ${t(route.meta.title)}`)
+  }
+
   const onNameInputChange = (value: string) => {
     const oldName = dataflowStore.dataflow.name
     nameHasUpdated.value = true
@@ -1135,11 +1123,8 @@ export function useCanvasOperation() {
       return false
     }
 
-    if (!dataflowStore.dataflow.id) {
-      return saveAsNewDataflow()
-    }
-
-    toggleConsole(true)
+    dataflowStore.showConsole = true
+    dataflowStore.consoleAutoLoadType = 'checkDag'
 
     const data = getDataflowDataToSave()
     let isOk = false
@@ -1157,10 +1142,104 @@ export function useCanvasOperation() {
     return isOk
   }
 
+  const getConfirmMessage = (operateStr: string) => {
+    const message = `${operateStr}_confirm_message`
+    const strArr = t(`packages_dag_dataFlow_${message}`).split('xxx')
+    const msg = h(
+      'p',
+      {
+        class: 'break-all',
+      },
+      [
+        strArr[0],
+        h(
+          'span',
+          {
+            class: 'color-primary',
+          },
+          dataflowStore.dataflow.name,
+        ),
+        strArr[1],
+      ],
+    )
+    return msg
+  }
+
+  const responseHandler = (data: any, msg: string) => {
+    const failList = data?.fail || []
+    if (failList.length) {
+      const msgMapping = {
+        5: t('packages_dag_dataFlow_multiError_notFound'),
+        6: t('packages_dag_dataFlow_multiError_statusError'),
+        7: t('packages_dag_dataFlow_multiError_otherError'),
+        8: t('packages_dag_dataFlow_multiError_statusError'),
+      }
+      const nameMapping = {}
+      // this.table.list.forEach((item) => {
+      //   nameMapping[item.id] = item.name
+      // })
+      ElMessage.warning({
+        dangerouslyUseHTMLString: true,
+        message: failList
+          .map((item) => {
+            return `<div style="line-height: 24px;"><span style="color: #409EFF">${
+              nameMapping[item.id]
+            }</span> : <span style="color: #F56C6C">${msgMapping[item.code]}</span></div>`
+          })
+          .join(''),
+      })
+    } else if (msg) {
+      ElMessage.success(msg)
+    }
+  }
+
+  const handleEditFlush = (result: any) => {
+    if (result.data) {
+      reformDataflow(result.data, true)
+      dataflowStore.transformLoading = !result.data.transformed
+    }
+  }
+
+  const initWS = () => {
+    $ws.off('editFlush', handleEditFlush)
+    $ws.on('editFlush', handleEditFlush)
+    $ws.send({
+      type: 'editFlush',
+      taskId: dataflowStore.dataflow.id,
+      data: {
+        opType: 'subscribe',
+      },
+    })
+  }
+
+  const handleReset = () => {
+    const msg = getConfirmMessage('initialize')
+    Modal.confirm(msg).then(async (resFlag) => {
+      if (!resFlag) {
+        return
+      }
+      try {
+        initWS()
+        dataflowStore.dataflow.disabledData.reset = true
+        dataflowStore.showConsole = true
+        dataflowStore.consoleAutoLoadType = 'reset'
+        const data = await resetTask(dataflowStore.dataflow.id)
+        responseHandler(data, t('public_message_operation_success'))
+      } catch (error) {
+        handleError(error, t('packages_dag_message_operation_error'))
+      }
+    })
+  }
+
   return {
     dataflow,
     dag,
     buttonShowMap,
+    historyStore,
+    formScope,
+    consoleRef,
+    isSaving,
+
     initNodeType,
     onUpdateNodesPosition,
     onMoveNodePosition,
@@ -1170,18 +1249,14 @@ export function useCanvasOperation() {
     onClickNode,
     onDeleteNode,
     onAddNode,
-    historyStore,
-    formScope,
-    // Validation & Save
-    isSaving,
     validate,
     handleSave,
-    saveAsNewDataflow,
     reformDataflow,
     getDataflowDataToSave,
     setEditVersion,
     toggleConsole,
     setMaterializedViewVisible,
     onNameInputChange,
+    handleReset,
   }
 }

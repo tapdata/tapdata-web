@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { isObservable } from '@formily/reactive'
 import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
 import { computed } from 'vue'
 import { RecycleScroller } from 'vue-virtual-scroller'
@@ -39,7 +40,7 @@ function handleChangeType(type: string, item: any) {
   }
 }
 
-console.log('items', props.value, items, supportStreamOffsetNode)
+console.log('items', props.value, items, isObservable(props.value))
 </script>
 
 <template>

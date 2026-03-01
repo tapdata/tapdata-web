@@ -1,6 +1,10 @@
+import { observable } from '@formily/reactive'
 import { fetchCustomNodes } from '@tap/api/src/core/custom-node'
+import { getDataActions } from '@tap/api/src/core/data-permission'
 import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
 import {
+  createTask,
+  fetchTasks,
   getTaskById,
   patchTask,
   type Dag,
@@ -8,18 +12,54 @@ import {
   type Node,
 } from '@tap/api/src/core/task'
 import { isCancel } from '@tap/api/src/Http'
+import { makeStatusAndDisabled } from '@tap/business/src/shared/task'
 import { Modal } from '@tap/component/src/modal'
+import {
+  computed as reactiveComputed,
+  watch as reactiveWatch,
+} from '@tap/form/src/shared/reactive'
 import { useI18n } from '@tap/i18n'
 import { isObject } from '@tap/shared'
 import { debounce, isString } from 'lodash-es'
 import { defineStore } from 'pinia'
-import { markRaw, ref, shallowRef } from 'vue'
+import { markRaw, reactive, ref, shallowRef } from 'vue'
 import { DEFAULT_SETTINGS } from '../constants'
 import { CustomProcessor } from '../nodes/extends/CustomProcessor'
+
+const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 
 const createEmptyDataflow = (): any => ({
   ...DEFAULT_SETTINGS,
 })
+
+async function makeTaskName(source: string) {
+  const taskNames = await fetchTasks({
+    limit: 9999,
+    fields: { name: 1 },
+    where: { name: { like: `^${source}\\d+$` } },
+  })
+
+  if (!taskNames?.items.length) {
+    return `${source}1`
+  }
+
+  // 提取所有已存在的数字
+  const existingNumbers = new Set()
+  taskNames.items.forEach((item) => {
+    const res = item.name.match(new RegExp(`^${source}(\\d+)$`))
+    if (res && res[1]) {
+      existingNumbers.add(Number.parseInt(res[1]))
+    }
+  })
+
+  // 找到第一个不存在的数字
+  let def = 1
+  while (existingNumbers.has(def)) {
+    def++
+  }
+
+  return `${source}${def}`
+}
 
 function hasCycle(
   source: string,
@@ -37,7 +77,7 @@ function hasCycle(
 
 export const useDataflowStore = defineStore('dataflow', () => {
   const { t } = useI18n()
-  const dataflow = ref<any>(createEmptyDataflow())
+  const dataflow = markRaw(observable(createEmptyDataflow()))
   const dag = ref<Dag>({
     nodes: [],
     edges: [],
@@ -54,6 +94,34 @@ export const useDataflowStore = defineStore('dataflow', () => {
   const selectedNodeId = ref(null)
   const stateIsReadonly = ref(false)
   const showSettings = ref(false)
+  const dataflowName = ref('')
+  const dataflowDesc = ref('')
+  const dataflowId = ref('')
+  const showConsole = ref(false)
+  const consoleAutoLoadType = ref('')
+  const transformLoading = ref(false)
+
+  const buttonShowMap = reactive({
+    View: true,
+    Edit: true,
+    Delete: true,
+    Reset: true,
+    Start: true,
+    Stop: true,
+  })
+
+  const dataflowRef = reactiveComputed(() => ({ ...dataflow }))
+
+  console.log('dataflow', dataflow)
+
+  reactiveWatch(
+    () => dataflow.name,
+    (v: string) => (dataflowName.value = v),
+  )
+  reactiveWatch(
+    () => dataflow.desc,
+    (v: string) => (dataflowDesc.value = v),
+  )
 
   // VueFlow 节点位置同步回调（由 Canvas.vue 注册）
   let vueFlowUpdateNodePosition:
@@ -76,7 +144,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
 
   function loadNodeHiddenSetting(node) {
     let flag = false
-    const { syncType } = dataflow.value
+    const { syncType } = dataflow
     const { type } = node
     // 心跳任务、共享缓存
     if (['connHeartbeat', 'shareCache'].includes(syncType)) {
@@ -93,7 +161,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
 
   function loadNodeHiddenTotalData(node = {}) {
     let flag = false
-    const { syncType } = dataflow.value
+    const { syncType } = dataflow
     if (['shareCache'].includes(syncType) && node.type === 'mem_cache') {
       flag = true
     }
@@ -155,9 +223,21 @@ export const useDataflowStore = defineStore('dataflow', () => {
     }
   }
 
-  function setDataflow(data) {
-    dataflow.value = {
-      ...data,
+  function setDataflow(data: any) {
+    Object.assign(dataflow, data)
+    makeStatusAndDisabled(dataflow)
+  }
+
+  async function getTaskPermissions() {
+    if (!isDaas) return
+    const id = dataflow.id
+    if (!id) return
+    const data = await getDataActions({
+      dataType: 'Task',
+      dataId: id,
+    })
+    for (const key of Object.keys(buttonShowMap)) {
+      buttonShowMap[key] = data.includes(key)
     }
   }
 
@@ -170,6 +250,22 @@ export const useDataflowStore = defineStore('dataflow', () => {
     dag.value.edges = edges
 
     setDataflow(dataflowData)
+    getTaskPermissions()
+  }
+
+  async function createDataflow(syncType = 'migrate') {
+    const name = await makeTaskName(`${t('public_task')} `)
+    dataflow.name = name
+    dataflow.syncType = syncType
+
+    const data = await createTask({
+      ...dataflow,
+      dag: dag.value,
+    })
+
+    delete data.dag
+
+    setDataflow(data)
   }
 
   const taskSaving = ref(false)
@@ -178,7 +274,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     try {
       const data = await patchTask(
         {
-          id: dataflow.value.id,
+          id: dataflow.id,
           editVersion: editVersion.value,
           pageVersion: pageVersion.value,
           dag: dag.value,
@@ -689,6 +785,8 @@ export const useDataflowStore = defineStore('dataflow', () => {
 
   return {
     dataflow,
+    dataflowName,
+    dataflowDesc,
     dag,
     fetchDataflow,
     patchDataflow,
@@ -698,6 +796,11 @@ export const useDataflowStore = defineStore('dataflow', () => {
     stateIsReadonly,
     taskSaving,
     showSettings,
+    dataflowRef,
+    showConsole,
+    consoleAutoLoadType,
+    transformLoading,
+    buttonShowMap,
 
     addNode,
     deleteNode,
@@ -718,6 +821,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     toggleShowSettings,
     nodeById,
     getNodeById: nodeById,
+    findNodeById,
     updateNodeProperties,
     getAfterNodesInSameBranch,
     isValidConnection,
@@ -730,5 +834,6 @@ export const useDataflowStore = defineStore('dataflow', () => {
     registerVueFlowUpdateCallback,
     unregisterVueFlowUpdateCallback,
     getCapabilitiesMap,
+    createDataflow,
   }
 })

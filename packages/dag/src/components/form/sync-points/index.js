@@ -1,3 +1,1 @@
-import SyncPoints from './SyncPoints.vue'
-
-export { SyncPoints }
+export { SyncPoints } from './SyncPoints'

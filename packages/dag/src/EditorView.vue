@@ -1,15 +1,16 @@
 <script setup lang="ts">
+import { deleteTask } from '@tap/api/src/core/task'
+import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import { TextEditable } from '@tap/component/src/base/text-editable'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
-import { setPageTitle } from '@tap/shared'
-import { getCurrentInstance, provide, ref, watch } from 'vue'
+import { provide, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import Canvas from './Canvas.vue'
+import ConsolePanel from './components/migration/ConsolePanel.vue'
 import TaskOperations from './components/TaskOperations.vue'
 import { useCanvasOperation } from './composables/useCanvasOperation'
-
 import { useDataflowStore } from './stores/dataflow.store'
 
 const dataflowStore = useDataflowStore()
@@ -33,6 +34,7 @@ const {
   onUpdateNodesPosition,
   onClickNode,
   handleSave,
+  handleReset,
   onNameInputChange,
   formScope,
   isSaving,
@@ -41,9 +43,31 @@ const {
 const isInitialized = ref(false)
 
 const init = async () => {
+  const taskId = route.params.id as string
   await initNodeType()
   await dataflowStore.initPdkProperties()
-  await dataflowStore.fetchDataflow(route.params.id as string)
+
+  if (taskId) {
+    await dataflowStore.fetchDataflow(taskId)
+  } else {
+    let syncType
+    let targetRoute
+
+    if (route.name === 'DataflowNew') {
+      syncType = 'sync'
+      targetRoute = 'DataflowEditor'
+    } else if (route.name === 'MigrateCreate') {
+      syncType = 'migrate'
+      targetRoute = 'MigrateEditor'
+    }
+    await dataflowStore.createDataflow(syncType)
+    router.push({
+      name: targetRoute,
+      params: {
+        id: dataflowStore.dataflow.id,
+      },
+    })
+  }
 
   isInitialized.value = true
 }
@@ -56,52 +80,6 @@ watch([() => dag.value.nodes.length, () => dag.value.edges.length], () => {
 
 init()
 
-const titleSet = () => {
-  setPageTitle(`${dataflowStore.dataflow.name} - ${t(route.meta.title)}`)
-}
-
-// 升级专业版
-const handleShowUpgradeFee = (msg) => {
-  upgradeFeeVisibleTips.value = msg
-  upgradeFeeVisible.value = true
-}
-
-// 升级规格
-const handleShowUpgradeCharges = (msg) => {
-  upgradeChargesVisibleTips.value = msg
-  upgradeChargesVisible.value = true
-}
-
-const handleShowUpgradeDialog = (err) => {
-  if (isDaas) return
-  const { proxy } = getCurrentInstance()
-  proxy.$axios
-    .get(
-      `api/tcm/agent?filter=${encodeURIComponent(
-        JSON.stringify({
-          size: 100,
-          page: 1,
-        }),
-      )}`,
-    )
-    .then(async (data) => {
-      const { items = [] } = data
-
-      if (items.some((t) => t.status === 'Stopped')) {
-        ElMessage.error(t('public_task_error_schedule_limit'))
-        return
-      }
-
-      items.length <= 1 &&
-      items.some(
-        (t) =>
-          t.orderInfo?.chargeProvider === 'FreeTier' || !t.orderInfo?.amount,
-      )
-        ? handleShowUpgradeFee(err.message)
-        : handleShowUpgradeCharges(err.message)
-    })
-}
-
 // Control NodesPanel visibility
 const nodesPanelExpanded = ref(true)
 
@@ -110,7 +88,7 @@ const toggleExpandNodes = () => {
 }
 
 const handlePageReturn = () => {
-  if (!dag.value.nodes.length && dataflow.value.id) {
+  if (!dataflowStore.dag.nodes.length && dataflowStore.dataflow.id) {
     Modal.confirm(
       t('packages_dag_page_return_confirm_title'),
       t('packages_dag_page_return_confirm_content'),
@@ -120,7 +98,7 @@ const handlePageReturn = () => {
       },
     ).then((res) => {
       if (res) {
-        deleteTask(dataflow.value.id)
+        deleteTask(dataflowStore.dataflow.id)
       }
       router.push({
         name: 'dataflowList',
@@ -160,7 +138,7 @@ provide('isSaving', isSaving)
       <el-divider direction="vertical" class="mx-0" />
       <div>
         <TextEditable
-          v-model:value="dataflowStore.dataflow.name"
+          v-model:value="dataflowStore.dataflowName"
           class="overflow-hidden"
           :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
           :maxlength="200"
@@ -168,6 +146,10 @@ provide('isSaving', isSaving)
           @change="onNameInputChange"
         />
       </div>
+      <TaskStatus
+        class="w-auto rounded-lg zoom-xs"
+        :task="dataflowStore.dataflowRef"
+      />
       <el-button text @click="toggleExpandNodes">
         <template #icon>
           <VIcon>expand-list</VIcon>
@@ -176,7 +158,7 @@ provide('isSaving', isSaving)
     </div>
     <div class="w-100 h-0 position-absolute header z-10 flex align-center px-3">
       <div class="flex-1" />
-      <TaskOperations @save="handleSave" />
+      <TaskOperations @save="handleSave" @reset="handleReset" />
     </div>
     <Canvas
       @update:nodes:position="onUpdateNodesPosition"
@@ -188,6 +170,7 @@ provide('isSaving', isSaving)
       @click:connection:add="onClickConnectionAdd"
       @click:node="onClickNode"
     />
+    <ConsolePanel ref="consoleRef" />
   </div>
 </template>
 
@@ -200,5 +183,10 @@ provide('isSaving', isSaving)
     rgba(0, 0, 0, 0) 0px 0px 0px 0px,
     rgba(0, 0, 0, 0) 0px 0px 0px 0px,
     rgba(16, 24, 40, 0.05) 0px 1px 2px 0px;
+}
+.task-detail {
+  :deep(.task-status-block) {
+    min-width: unset;
+  }
 }
 </style>

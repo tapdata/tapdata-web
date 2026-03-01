@@ -44,6 +44,8 @@ html.dark {
   --bg-block: var(--white5);
   --bg-node: #27272b;
 
+  --color-background-section: #18181b66;
+
   .layout-bg {
     background-color: #000;
   }

@@ -24,32 +24,43 @@ const dataflowStore = useDataflowStore()
 
 <template>
   <div class="flex align-center gap-2" style="--btn-space: 0">
-    <ElButton class="btn-shadow" @click="dataflowStore.toggleShowSettings">
-      <VIcon class="mr-1">cog-o</VIcon>{{ $t('public_button_setting') }}
+    <ElButton
+      class="btn-shadow"
+      :type="dataflowStore.showSettings ? 'primary' : undefined"
+      :plain="dataflowStore.showSettings"
+      @click="dataflowStore.toggleShowSettings"
+    >
+      <template #icon>
+        <i-lucide-settings />
+      </template>
+      {{ $t('public_button_setting') }}
     </ElButton>
     <ElButton
       v-if="!stateIsReadonly && buttonShowMap.Edit"
       :loading="isSaving"
-      :disabled="dataflow.disabledData && dataflow.disabledData.edit"
+      :disabled="dataflowStore.btnDisabled?.edit"
       class="btn-shadow"
       @click="$emit('save')"
     >
-      <!--保存-->
+      <template #icon>
+        <i-lucide-save />
+      </template>
       {{ $t('public_button_save') }}
     </ElButton>
 
     <ElButton
       v-if="
-        dataflow.disabledData &&
-        !dataflow.disabledData.reset &&
-        buttonShowMap.Reset
+        !dataflowStore.dataflowRef.btnDisabled?.reset &&
+        dataflowStore.buttonShowMap.Reset
       "
       class="btn-shadow"
       :class="{ 'btn--text': isViewer }"
       type="warning"
       @click="$emit('reset')"
     >
-      <VIcon v-if="isViewer">reset</VIcon>
+      <template #icon>
+        <i-lucide-rotate-ccw />
+      </template>
       {{ $t('public_button_reset') }}
     </ElButton>
     <template v-if="stateIsReadonly">
@@ -91,6 +102,9 @@ const dataflowStore = useDataflowStore()
       </ElButton>
     </template>
     <ElButton class="btn-shadow" type="primary">
+      <template #icon>
+        <i-lucide-play />
+      </template>
       {{ $t('public_button_start') }}
     </ElButton>
   </div>

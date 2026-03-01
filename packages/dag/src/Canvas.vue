@@ -17,6 +17,7 @@ import CanvasConnectionLine from './components/elements/CanvasConnectionLine.vue
 import CanvasEdge from './components/elements/CanvasEdge.vue'
 import Node from './components/elements/CanvasNode.vue'
 import NodesPopover from './components/elements/NodesPopover.vue'
+import ConsolePanel from './components/migration/ConsolePanel.vue'
 import NodesPanel from './components/NodesPanel.vue'
 import RightPanel from './components/RightPanel.vue'
 import { useCanvasMapping } from './composables/useCanvasMapping'
@@ -84,14 +85,14 @@ onUnmounted(() => {
 })
 
 const bottomBarStyle = computed(() => {
-  // const left = nodesPanelExpanded.value
-  //   ? `${NODES_PANEL_WIDTH + 20}px`
-  //   : `${PANEL_MARGIN}px`
+  const left = nodesPanelExpanded.value
+    ? `${NODES_PANEL_WIDTH + 20}px`
+    : `${PANEL_MARGIN}px`
   const right =
     dataflowStore.selectedNode || dataflowStore.showSettings
       ? `${RIGHT_PANEL_WIDTH + 20}px`
       : `${PANEL_MARGIN}px`
-  return { left: 0, right }
+  return { left, right }
 })
 const { nodes, edges } = useCanvasMapping(dag)
 console.log('nodes', nodes)
@@ -354,6 +355,13 @@ function handleLayoutGraph() {
   })
 }
 
+const hasInit = ref(false)
+function onInitialized() {
+  if (hasInit.value) return
+  fitViewWithOffset({ duration: 0, maxZoom: 1 })
+  hasInit.value = true
+}
+
 provide('popoverTarget', popoverTarget)
 provide('showPopover', showPopover)
 provide('popoverTargetKey', popoverTargetKey)
@@ -382,97 +390,106 @@ provide('onMoveNodePosition', onMoveNodePosition)
 
     <!-- bottom bar -->
     <div
-      class="bottom-bar position-absolute bottom-3 flex align-center justify-content-end z-10 gap-2"
+      class="bottom-bar position-absolute bottom-3 z-10 flex flex-column gap-2"
       :style="bottomBarStyle"
     >
-      <div class="bg-card shadow-canvas p-1 rounded-xl" style="--btn-space: 0">
-        <el-button text :disabled="!canUndo" @click="handleUndo">
-          <template #icon>
-            <i-lucide-undo-2 />
-          </template>
-        </el-button>
-        <el-divider direction="vertical" class="mx-2" />
-        <el-button text :disabled="!canRedo" @click="handleRedo">
-          <template #icon>
-            <i-lucide-redo-2 />
-          </template>
-        </el-button>
+      <div class="flex align-center justify-content-end gap-2">
+        <div
+          class="bg-card shadow-canvas p-1 rounded-xl"
+          style="--btn-space: 0"
+        >
+          <el-button text :disabled="!canUndo" @click="handleUndo">
+            <template #icon>
+              <i-lucide-undo-2 />
+            </template>
+          </el-button>
+          <el-divider direction="vertical" class="mx-2" />
+          <el-button text :disabled="!canRedo" @click="handleRedo">
+            <template #icon>
+              <i-lucide-redo-2 />
+            </template>
+          </el-button>
+        </div>
+
+        <div
+          class="bg-card shadow-canvas p-1 rounded-xl flex align-items-stretch gap-0.5"
+          style="--btn-space: 0"
+        >
+          <el-button text @click="handleLayoutGraph">
+            <template #icon>
+              <VIcon>auto-layout</VIcon>
+            </template>
+          </el-button>
+          <el-button
+            text
+            :type="isInPanningMode ? 'primary' : undefined"
+            :class="{ 'is-active': isInPanningMode }"
+            @click="togglePanningMode"
+          >
+            <template #icon>
+              <i-mingcute-hand-line />
+            </template>
+          </el-button>
+          <el-divider class="mx-2 align-self-center" direction="vertical" />
+          <el-button text @click="handleZoomOut">
+            <template #icon>
+              <i-lucide-zoom-out />
+            </template>
+          </el-button>
+          <!-- 显示当前画布的缩放百分比，点击重置为 100%，再次点击再切换回去 -->
+          <el-button text class="zoom-percentage-btn" @click="handleZoomReset">
+            {{ zoomPercentage }}%
+          </el-button>
+          <el-popover
+            v-model:visible="showZoomDropdown"
+            :width="120"
+            trigger="click"
+            popper-class="zoom-dropdown-popover"
+            :show-arrow="false"
+            placement="top-end"
+            :popper-options="{
+              modifiers: [
+                {
+                  name: 'offset',
+                  options: {
+                    offset: [0, 8],
+                  },
+                },
+              ],
+            }"
+          >
+            <template #reference>
+              <el-button class="px-0.5" text>
+                <i-mingcute-down-fill />
+              </el-button>
+            </template>
+            <div class="zoom-dropdown">
+              <div
+                v-for="preset in ZOOM_PRESETS"
+                :key="preset"
+                class="zoom-dropdown-item"
+                :class="{
+                  'is-active': Math.abs(viewport.zoom - preset) < 0.01,
+                }"
+                @click="handleZoomPreset(preset)"
+              >
+                {{ Math.round(preset * 100) }}%
+              </div>
+              <div class="zoom-dropdown-divider" />
+              <div class="zoom-dropdown-item" @click="handleFitView">
+                {{ $t('packages_dag_canvas_fit_view') }}
+              </div>
+            </div>
+          </el-popover>
+          <el-button text @click="handleZoomIn">
+            <template #icon>
+              <i-lucide-zoom-in />
+            </template>
+          </el-button>
+        </div>
       </div>
 
-      <div
-        class="bg-card shadow-canvas p-1 rounded-xl flex align-items-stretch gap-0.5"
-        style="--btn-space: 0"
-      >
-        <el-button text @click="handleLayoutGraph">
-          <template #icon>
-            <VIcon>auto-layout</VIcon>
-          </template>
-        </el-button>
-        <el-button
-          text
-          :type="isInPanningMode ? 'primary' : undefined"
-          :class="{ 'is-active': isInPanningMode }"
-          @click="togglePanningMode"
-        >
-          <template #icon>
-            <i-mingcute-hand-line />
-          </template>
-        </el-button>
-        <el-divider class="mx-2 align-self-center" direction="vertical" />
-        <el-button text @click="handleZoomOut">
-          <template #icon>
-            <i-lucide-zoom-out />
-          </template>
-        </el-button>
-        <!-- 显示当前画布的缩放百分比，点击重置为 100%，再次点击再切换回去 -->
-        <el-button text class="zoom-percentage-btn" @click="handleZoomReset">
-          {{ zoomPercentage }}%
-        </el-button>
-        <el-popover
-          v-model:visible="showZoomDropdown"
-          :width="120"
-          trigger="click"
-          popper-class="zoom-dropdown-popover"
-          :show-arrow="false"
-          placement="top-end"
-          :popper-options="{
-            modifiers: [
-              {
-                name: 'offset',
-                options: {
-                  offset: [0, 8],
-                },
-              },
-            ],
-          }"
-        >
-          <template #reference>
-            <el-button class="px-0.5" text>
-              <i-mingcute-down-fill />
-            </el-button>
-          </template>
-          <div class="zoom-dropdown">
-            <div
-              v-for="preset in ZOOM_PRESETS"
-              :key="preset"
-              class="zoom-dropdown-item"
-              :class="{ 'is-active': Math.abs(viewport.zoom - preset) < 0.01 }"
-              @click="handleZoomPreset(preset)"
-            >
-              {{ Math.round(preset * 100) }}%
-            </div>
-            <div class="zoom-dropdown-divider" />
-            <div class="zoom-dropdown-item" @click="handleFitView">
-              {{ $t('packages_dag_canvas_fit_view') }}
-            </div>
-          </div>
-        </el-popover>
-        <el-button text @click="handleZoomIn">
-          <template #icon>
-            <i-lucide-zoom-in />
-          </template>
-        </el-button>
-      </div>
+      <ConsolePanel />
     </div>
 
     <svg style="position: absolute; left: -1000px; top: 0">
@@ -535,7 +552,7 @@ provide('onMoveNodePosition', onMoveNodePosition)
       :panning-mouse-button="panningMouseButton"
       :pan-on-drag="isInPanningMode"
       :apply-changes="false"
-      @nodes-initialized="fitViewWithOffset"
+      @nodes-initialized="onInitialized"
       @node-drag-stop="onNodeDragStop"
       @connect="onConnect"
       @node-click="onNodeClick"

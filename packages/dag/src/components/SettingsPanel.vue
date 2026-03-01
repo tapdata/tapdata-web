@@ -4,10 +4,8 @@ import {
   createForm,
   onFieldInputValueChange,
   onFieldValueChange,
-  onFormInputChange,
-  onFormValuesChange,
 } from '@formily/core'
-import { action, toJS } from '@formily/reactive'
+import { action } from '@formily/reactive'
 import { updateTaskAlarm } from '@tap/api/src/core/alarm'
 import {
   getPermissions,
@@ -41,9 +39,8 @@ import * as _components from '../components/form'
 import { useDataflowStore } from '../stores/dataflow.store'
 
 const dataflowStore = useDataflowStore()
-const settings = computed(() => dataflowStore.dataflow)
 const scope = inject('formScope')
-
+console.log('dataflowStore', dataflowStore.dataflow)
 const { Form } = components
 const { SchemaField } = createSchemaField({
   components: {
@@ -135,8 +132,8 @@ const handleClose = () => {
 
 // State
 const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
-const values = settings.value
-const { id } = values
+// const values = settings.value
+// const { id } = values
 
 // Messages
 const repeatNameMessage = t('packages_dag_task_form_error_name_duplicate')
@@ -148,14 +145,14 @@ const checkCrontabExpressionFlagMessage = t(
 const handleCheckName = debounce((resolve: Function, value: string) => {
   checkTaskName({
     name: value,
-    id,
+    id: dataflowStore.dataflow.id,
   }).then((data) => {
     resolve(data)
   })
 }, 500)
 
 const handleCheckCrontabExpressionFlag = debounce((resolve: Function) => {
-  checkCloudTaskLimit(id).then((data) => {
+  checkCloudTaskLimit(dataflowStore.dataflow.id).then((data) => {
     resolve(data)
   })
 }, 500)
@@ -266,7 +263,7 @@ const formScope: FormScope = {
       point.pointType = 'localTZ'
       point.dateTime = currentEventTimestamp
     })
-    form.setValuesIn('syncPoints', [...syncPoints])
+    dataflowStore.dataflow.syncPoints = [...syncPoints]
   },
 }
 
@@ -311,7 +308,8 @@ const accessNodeProcessIdArr = computed(() =>
 
 const accessNodeProcessList = computed(() => {
   const agents = scope.$agents.filter(
-    (item: any) => item.accessNodeType === settings.value.accessNodeType,
+    (item: any) =>
+      item.accessNodeType === dataflowStore.dataflow.accessNodeType,
   )
   if (!accessNodeProcessIdArr.value.length) return agents
   return agents.filter(
@@ -345,7 +343,7 @@ const systemTimeZone = computed(() => {
 // Form
 const form = createForm({
   disabled: stateIsReadonly.value,
-  values,
+  values: dataflowStore.dataflow,
   effects: useFormEffects,
 })
 
@@ -353,20 +351,10 @@ const form = createForm({
 const lazySaveAlarmConfig = debounce(saveAlarmConfig, 100)
 const lazySavePermissionsConfig = debounce(savePermissionsConfig, 300)
 
-// Form → Store 同步: 跟 NodePanel 一致的模式
-function syncFormToStore(formInstance: any) {
-  if (stateIsReadonly.value) return
-  const formValues = toJS(formInstance.values)
-  // 同步到 dataflowStore.dataflow，保持引用
-  Object.keys(formValues).forEach((key) => {
-    settings.value[key] = formValues[key]
-  })
-}
-
 function loadEmailReceivers() {
   const str = getSettingByKey('email.receivers')
   const receivers = str ? str.split(',').filter(Boolean) : []
-  let value = settings.value.emailReceivers || []
+  let value = dataflowStore.dataflow.emailReceivers || []
   const size = value.length
 
   if (size) {
@@ -391,14 +379,6 @@ function loadEmailReceivers() {
 }
 
 function useFormEffects() {
-  // Form → Store 同步
-  onFormValuesChange((formInstance) => {
-    syncFormToStore(formInstance)
-  })
-  onFormInputChange((formInstance) => {
-    syncFormToStore(formInstance)
-  })
-
   // 告警和权限的副作用
   onFieldInputValueChange(
     '*(alarmSettings.*.*,alarmRules.*.*,emailReceivers)',
@@ -451,13 +431,11 @@ async function getRolePermissions() {
     dataId: form.values.id,
   }
   const data = await getPermissions(filter)
-  form.setValuesIn(
-    'permissions',
+  dataflowStore.dataflow.permissions =
     data?.map((t: any) => ({
       checked: t.actions,
       roleId: t.typeId,
-    })) || [],
-  )
+    })) || []
 }
 
 // Watchers
@@ -478,12 +456,10 @@ watch(
       let currentId = form.values.accessNodeProcessId
       currentId = currentId && arr.includes(currentId) ? currentId : arr[0]
 
-      form.setValuesIn(
-        'accessNodeType',
+      dataflowStore.dataflow.accessNodeType =
         scope.$agentMap[currentId]?.accessNodeType ||
-          'MANUALLY_SPECIFIED_BY_THE_USER',
-      )
-      form.setValuesIn('accessNodeProcessId', currentId)
+        'MANUALLY_SPECIFIED_BY_THE_USER'
+      dataflowStore.dataflow.accessNodeProcessId = currentId
 
       if (
         form.values.accessNodeType ===
@@ -501,7 +477,7 @@ watch(
           return false
         })
 
-        form.setValuesIn('priorityProcessId', priorityProcessId)
+        dataflowStore.dataflow.priorityProcessId = priorityProcessId
       }
     }
     if (!stateIsReadonly.value) {
@@ -553,7 +529,7 @@ watch(
       }
       return point
     })
-    form.setValuesIn('syncPoints', syncPoints)
+    dataflowStore.dataflow.syncPoints = syncPoints
   },
   { immediate: true },
 )
@@ -2056,8 +2032,9 @@ const validate = () => {
 }
 
 const onNameInputChange = inject('onNameInputChange')
-const onDescChange = () => {
-  updateTaskInfo(settings.value.id, settings.value.name, settings.value.desc)
+const onDescChange = (val: string) => {
+  dataflowStore.dataflow.desc = val
+  updateTaskInfo(dataflowStore.dataflow.id, dataflowStore.dataflow.name, val)
 }
 
 defineExpose({
@@ -2079,7 +2056,7 @@ defineExpose({
         /></el-icon>
       </div>
       <TextEditable
-        v-model:value="settings.name"
+        v-model:value="dataflowStore.dataflowName"
         :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
         max-width="260"
         hidden-icon
@@ -2095,7 +2072,7 @@ defineExpose({
     </div>
     <div class="p-2 pb-0">
       <el-input
-        v-model="settings.desc"
+        v-model="dataflowStore.dataflowDesc"
         class="desc-textarea"
         placeholder="添加描述..."
         type="textarea"
