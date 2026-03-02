@@ -1169,7 +1169,7 @@ export default {
     'Confirm clearing target table data?',
   packages_dag_memory_heap_risk_title: 'Memory Risk Warning',
   packages_dag_memory_heap_risk_message:
-    'Potential memory risk detected. This task may require more memory than available resources. Continue anyway?',
+    'Potential memory risk detected. This task may require more memory than available resources.It is recommended to reduce the source node’s full-load batch size before proceeding. Continue anyway?',
   packages_dag_qpSshizhi_tip: 'Query < 1h: avg QPS from 5s data points',
   packages_dag_qpSshizhi2_tip:
     '1h ≤ Query < 24h: avg & max QPS from 1m data points',

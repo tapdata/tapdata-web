@@ -1021,7 +1021,7 @@ export default {
     '您已选择清空目标表数据，是否确认继续？',
   packages_dag_memory_heap_risk_title: '内存风险提示',
   packages_dag_memory_heap_risk_message:
-    '检测到潜在的内存风险，当前任务可能需要比可用资源更多的内存。是否继续运行？',
+    '检测到潜在的内存风险，当前任务可能需要比可用资源更多的内存，建议适当降低源节点的「全量读取每批条数（Batch Size）」后再运行。是否继续运行？',
   packages_dag_qpSshizhi_tip:
     '查询范围小于1小时，取每五秒的数据点计算平均的QPS值',
   packages_dag_qpSshizhi2_tip:

@@ -1005,7 +1005,7 @@ export default {
     '您已選擇清空目標表數據，是否確認繼續？',
   packages_dag_memory_heap_risk_title: '記憶體風險提示',
   packages_dag_memory_heap_risk_message:
-    '檢測到潛在的記憶體風險，當前任務可能需要比可用資源更多的記憶體。是否繼續運行？',
+    '檢測到潛在的記憶體風險，當前任務可能需要比可用資源更多的記憶體，建議適當降低來源節點的「全量每批讀取條數（Batch Size）」後再執行。是否繼續運行？',
   packages_dag_qpSshizhi_tip:
     '查詢範圍小於1小時，取每五秒的數據點計算平均的QPS值',
   packages_dag_qpSshizhi2_tip:
