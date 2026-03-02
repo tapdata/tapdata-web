@@ -750,7 +750,7 @@ export default {
       :close-on-click-modal="false"
       width="820px"
     >
-      <div class="mb-6 px-4 py-2" style="background-color: #f4f4f5">
+      <div class="mb-6 px-4 py-2 rounded-lg bg-color-main">
         <span class="mr-3">{{
           $t('packages_form_field_inference_list_tuiyanchudelei')
         }}</span>
