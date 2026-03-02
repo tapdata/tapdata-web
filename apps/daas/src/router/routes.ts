@@ -5,6 +5,7 @@ import SettingLayout from '@/layouts/SettingLayout.vue'
 const FunctionForm = () => import('@/views/function/Form.vue')
 const DagEditor = () => import('@tap/dag/src/Editor.vue')
 const DagEditorView = () => import('@tap/dag/src/EditorView.vue')
+const DagMonitorView = () => import('@tap/dag/src/MonitorView.vue')
 const MigrationEditor = () => import('@tap/dag/src/MigrationEditor.vue')
 const MigrationMonitor = () => import('@tap/dag/src/MigrationMonitor.vue')
 const MigrationMonitorViewer = () =>
@@ -146,7 +147,7 @@ export const routes = [
   {
     path: '/dataflow/monitor/:id',
     name: 'TaskMonitor',
-    component: MigrationMonitor,
+    component: DagMonitorView,
     meta: {
       title: 'page_title_run_monitor',
       code: 'v2_data_flow_monitor',

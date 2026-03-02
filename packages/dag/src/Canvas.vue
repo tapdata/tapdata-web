@@ -10,6 +10,7 @@ import {
   provide,
   ref,
   shallowRef,
+  useTemplateRef,
   watch,
   type Ref,
 } from 'vue'
@@ -17,7 +18,6 @@ import CanvasConnectionLine from './components/elements/CanvasConnectionLine.vue
 import CanvasEdge from './components/elements/CanvasEdge.vue'
 import Node from './components/elements/CanvasNode.vue'
 import NodesPopover from './components/elements/NodesPopover.vue'
-import ConsolePanel from './components/migration/ConsolePanel.vue'
 import NodesPanel from './components/NodesPanel.vue'
 import RightPanel from './components/RightPanel.vue'
 import { useCanvasMapping } from './composables/useCanvasMapping'
@@ -44,13 +44,45 @@ const dag = inject('dag')
 const nodesPanelExpanded = inject<Ref<boolean>>('nodesPanelExpanded', ref(true))
 
 // Bottom bar dynamic positioning
-const NODES_PANEL_WIDTH = 260
 const RIGHT_PANEL_WIDTH = 600
 const PANEL_MARGIN = 12
 
+// Observe actual width of the left panel slot content
+const leftPanelRef = useTemplateRef<HTMLElement>('leftPanel')
+const leftPanelWidth = ref(0)
+
+// Use MutationObserver + ResizeObserver to track the first visible child's width
+let leftPanelResizeObserver: ResizeObserver | null = null
+
+function observeLeftPanel() {
+  if (!leftPanelRef.value) return
+  // Find the first element child that has actual dimensions (position: absolute elements)
+  const target =
+    (leftPanelRef.value.querySelector(
+      ':scope > *:not([style*="display: none"])',
+    ) as HTMLElement) || (leftPanelRef.value.firstElementChild as HTMLElement)
+  if (!target) {
+    leftPanelWidth.value = 0
+    return
+  }
+  leftPanelResizeObserver?.disconnect()
+  leftPanelResizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      leftPanelWidth.value =
+        entry.contentRect.width +
+        Number.parseFloat(getComputedStyle(entry.target).paddingLeft || '0') +
+        Number.parseFloat(getComputedStyle(entry.target).paddingRight || '0')
+    }
+  })
+  leftPanelResizeObserver.observe(target)
+}
+
+// Also observe DOM changes in the wrapper to handle slot content swaps
+let leftPanelMutationObserver: MutationObserver | null = null
+
 const { layout, fitViewWithOffset } = useLayout({
   nodesPanelExpanded,
-  nodesPanelWidth: NODES_PANEL_WIDTH,
+  nodesPanelWidth: leftPanelWidth,
 })
 
 // History (Undo/Redo) controls
@@ -64,6 +96,14 @@ const {
 } = useHistory()
 
 onMounted(() => {
+  // Start observing the left panel slot content width
+  observeLeftPanel()
+  // Re-observe when slot content changes (e.g. component swap via v-if)
+  if (leftPanelRef.value) {
+    leftPanelMutationObserver = new MutationObserver(() => observeLeftPanel())
+    leftPanelMutationObserver.observe(leftPanelRef.value, { childList: true })
+  }
+
   setupKeyboardShortcuts()
   // 注册 VueFlow 节点位置更新回调，用于 undo/redo 时同步 VueFlow 内部状态
   dataflowStore.registerVueFlowUpdateCallback((id, position) => {
@@ -82,12 +122,15 @@ onMounted(() => {
 onUnmounted(() => {
   cleanupKeyboardShortcuts()
   dataflowStore.unregisterVueFlowUpdateCallback()
+  leftPanelResizeObserver?.disconnect()
+  leftPanelMutationObserver?.disconnect()
 })
 
 const bottomBarStyle = computed(() => {
-  const left = nodesPanelExpanded.value
-    ? `${NODES_PANEL_WIDTH + 20}px`
-    : `${PANEL_MARGIN}px`
+  const left =
+    leftPanelWidth.value > 0
+      ? `${leftPanelWidth.value + 20}px`
+      : `${PANEL_MARGIN}px`
   const right =
     dataflowStore.selectedNode || dataflowStore.showSettings
       ? `${RIGHT_PANEL_WIDTH + 20}px`
@@ -374,9 +417,16 @@ provide('onMoveNodePosition', onMoveNodePosition)
 
 <template>
   <div id="node-canvas" class="position-relative w-100 h-100">
-    <Transition name="slide-left">
-      <NodesPanel v-if="nodesPanelExpanded" />
-    </Transition>
+    <div ref="leftPanel" class="left-panel-wrapper">
+      <slot name="left">
+        <Transition name="slide-left">
+          <NodesPanel
+            v-if="nodesPanelExpanded && !dataflowStore.stateIsReadonly"
+          />
+        </Transition>
+      </slot>
+    </div>
+
     <RightPanel />
     <NodesPopover
       ref="popoverRef"
@@ -489,7 +539,7 @@ provide('onMoveNodePosition', onMoveNodePosition)
         </div>
       </div>
 
-      <ConsolePanel />
+      <slot name="bottom" />
     </div>
 
     <svg style="position: absolute; left: -1000px; top: 0">
@@ -516,7 +566,7 @@ provide('onMoveNodePosition', onMoveNodePosition)
     </svg>
 
     <!-- Context Menu -->
-    <Teleport to="body">
+    <Teleport v-if="!dataflowStore.stateIsReadonly" to="body">
       <Transition name="fade">
         <div
           v-if="contextMenuVisible"
@@ -558,7 +608,9 @@ provide('onMoveNodePosition', onMoveNodePosition)
       @node-click="onNodeClick"
     >
       <template #node-canvas="nodeProps">
-        <Node v-bind="nodeProps" @show-nodes-popover="onShowNodesPopover" />
+        <slot name="node" v-bind="nodeProps">
+          <Node v-bind="nodeProps" @show-nodes-popover="onShowNodesPopover" />
+        </slot>
       </template>
       <template #edge-canvas="edge">
         <CanvasEdge

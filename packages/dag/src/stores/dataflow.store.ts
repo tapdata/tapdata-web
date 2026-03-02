@@ -783,7 +783,53 @@ export const useDataflowStore = defineStore('dataflow', () => {
     return pdkCapabilitiesMap.value[pdkHash] || {}
   }
 
+  /**
+   * 重置 store 到初始状态，用于路由切换时（如编辑页 → 监控页）
+   */
+  function $reset() {
+    // 重置 dataflow observable
+    // const keys = Object.keys(dataflow)
+    // for (const key of keys) {
+    //   delete dataflow[key]
+    // }
+    // Object.assign(dataflow, createEmptyDataflow())
+
+    // 重置所有 ref 状态
+    dag.value = { nodes: [], edges: [] }
+    allResourceIns.value = []
+    processorNodeTypes.value = []
+    pdkCapabilitiesMap.value = {}
+    pdkPropertiesMap.value = {}
+    pdkSchemaFreeMap.value = {}
+    pdkDoubleActiveMap.value = {}
+    editVersion.value = null
+    pageVersion.value = Date.now().toString()
+    selectedNode.value = null
+    selectedNodeId.value = null
+    stateIsReadonly.value = false
+    showSettings.value = false
+    // dataflowName.value = ''
+    // dataflowDesc.value = ''
+    dataflowId.value = ''
+    showConsole.value = false
+    consoleAutoLoadType.value = ''
+    transformLoading.value = false
+    taskSaving.value = false
+
+    // 重置 buttonShowMap
+    buttonShowMap.View = true
+    buttonShowMap.Edit = true
+    buttonShowMap.Delete = true
+    buttonShowMap.Reset = true
+    buttonShowMap.Start = true
+    buttonShowMap.Stop = true
+
+    // 清理 VueFlow 回调
+    unregisterVueFlowUpdateCallback()
+  }
+
   return {
+    $reset,
     dataflow,
     dataflowName,
     dataflowDesc,

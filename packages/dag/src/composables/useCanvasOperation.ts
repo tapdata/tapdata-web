@@ -1,4 +1,5 @@
 import {
+  batchStartTasks,
   fetchMergeTaskCache,
   getNodeTableInfo,
   renameTask,
@@ -9,11 +10,12 @@ import {
 import { showErrorMessage } from '@tap/business/src/components/error-message'
 import { makeStatusAndDisabled } from '@tap/business/src/shared/task'
 import { Modal } from '@tap/component/src/modal'
+import { computed as reactiveComputed } from '@tap/form/src/shared/reactive'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 import { useI18n } from '@tap/i18n'
 import { setPageTitle } from '@tap/shared'
 import { isEmpty } from 'lodash-es'
-import { computed, getCurrentInstance, h, reactive, ref } from 'vue'
+import { computed, getCurrentInstance, h, inject, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { allResourceIns } from '../nodes/loader'
@@ -39,8 +41,9 @@ export function useCanvasOperation() {
   const dataflowStore = useDataflowStore()
   const historyStore = useHistoryStore()
   const formScope = useFormScope()
-
-  const consoleRef = ref()
+  const buried = inject('buried')
+  const consoleRef = ref(null)
+  const skipErrorRef = ref(null)
 
   const buttonShowMap = reactive({
     View: true,
@@ -52,7 +55,6 @@ export function useCanvasOperation() {
   })
 
   const dag = computed(() => dataflowStore.dag)
-  const dataflow = computed(() => dataflowStore.dataflow)
   const { t } = useI18n()
   const store = useStore()
   const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
@@ -60,10 +62,17 @@ export function useCanvasOperation() {
   const upgradeFeeVisible = ref(false)
   const nameHasUpdated = ref(false)
 
-  // watch([() => dag.value.nodes.length, () => dag.value.edges.length], () => {
-  //   // 触发保存Task
-  //   console.log('触发保存Task', dag.value)
-  // })
+  const dataflow = reactiveComputed(() => ({ ...dataflowStore.dataflow }))
+
+  const editorRoute = computed(() => {
+    if (dataflowStore.dataflowRef.syncType === 'sync') return 'DataflowEditor'
+    else return 'MigrateEditor'
+  })
+
+  const monitorRoute = computed(() => {
+    if (dataflowStore.dataflowRef.syncType === 'sync') return 'TaskMonitor'
+    else return 'MigrationMonitor'
+  })
 
   const hasFeature = (feature: string) => {
     return !isDaas || store.getters['feature/hasFeature']?.(feature)
@@ -999,6 +1008,14 @@ export function useCanvasOperation() {
       data.autoIncrementalBatchSize
     dataflowStore.dataflow.attrs = data.attrs
 
+    console.log(
+      'dataflow.status',
+      data.status,
+      dataflowStore.dataflow.status,
+      dataflowStore.dataflowRef.status,
+      dataflowStore.dataflow,
+    )
+
     if (!fromWS) {
       Object.keys(data).forEach((key) => {
         if (!['dag'].includes(key)) {
@@ -1110,7 +1127,38 @@ export function useCanvasOperation() {
     )
   }
 
-  // --- 保存 ---
+  const beforeStartTask = () => {
+    const { over } = consoleRef.value?.getData() || {}
+    if (!over) {
+      setTimeout(beforeStartTask, 800)
+    } else {
+      startTask()
+    }
+  }
+
+  const startTask = () => {
+    const buriedCode =
+      dataflowStore.dataflow.syncType === 'sync'
+        ? 'taskStart'
+        : 'migrationStart'
+    batchStartTasks([dataflowStore.dataflow.id], {
+      silenceMessage: true,
+    })
+      .then(() => {
+        buried(buriedCode, { result: true })
+        router.push({
+          name: monitorRoute.value,
+          params: {
+            id: dataflowStore.dataflow.id,
+          },
+        })
+      })
+      .catch((error) => {
+        buried(buriedCode, { result: false })
+        handleError(error)
+      })
+  }
+
   const handleSave = async (needStart?: boolean) => {
     isSaving.value = true
 
@@ -1140,6 +1188,60 @@ export function useCanvasOperation() {
     }
     isSaving.value = false
     return isOk
+  }
+
+  const openDataCapture = () => {
+    window.open(
+      router.resolve({
+        name: 'DataCapture',
+        params: { id: dataflowStore.dataflow.id },
+      }).href,
+      `DataCapture-${dataflowStore.dataflow.id}`,
+    )
+  }
+
+  const handleStart = async (isDebug = false) => {
+    buried('taskStart')
+
+    // this.unWatchStatus?.()
+    // this.unWatchStatus = this.$watch('dataflow.status', (v) => {
+    //   if (
+    //     ['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)
+    //   ) {
+    //     this.$refs.console?.loadData()
+    //     if (v !== 'running') {
+    //       this.$refs.console?.stopAuto()
+    //     } else {
+    //       this.toggleConsole(false)
+    //       this.gotoViewer()
+    //     }
+    //     // this.unWatchStatus()
+    //   }
+    //   if (['MigrateViewer', 'DataflowViewer'].includes(this.$route.name)) {
+    //     if (['renewing'].includes(v)) {
+    //       this.handleConsoleAutoLoad()
+    //     } else {
+    //       this.toggleConsole(false)
+    //     }
+    //   }
+    // })
+
+    const hasError = await skipErrorRef.value!.checkError(dataflow)
+    if (hasError) return
+
+    const flag = await handleSave(true)
+
+    if (flag) {
+      dataflowStore.dataflow.btnDisabled.edit = true
+      dataflowStore.dataflow.btnDisabled.start = true
+      dataflowStore.dataflow.btnDisabled.stop = true
+      dataflowStore.dataflow.btnDisabled.reset = true
+      beforeStartTask()
+      isDebug && openDataCapture()
+      buried('taskStart', { result: true })
+    } else {
+      buried('taskStart', { result: false })
+    }
   }
 
   const getConfirmMessage = (operateStr: string) => {
@@ -1239,6 +1341,7 @@ export function useCanvasOperation() {
     formScope,
     consoleRef,
     isSaving,
+    skipErrorRef,
 
     initNodeType,
     onUpdateNodesPosition,
@@ -1258,5 +1361,8 @@ export function useCanvasOperation() {
     setMaterializedViewVisible,
     onNameInputChange,
     handleReset,
+    initWS,
+    handleStart,
+    startTask,
   }
 }

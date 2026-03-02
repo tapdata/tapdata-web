@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script>
 import { getExternalStorage } from '@tap/api/src/core/external-storage'
 import { getLogcollectorDetail } from '@tap/api/src/core/logcollector'
 import { findOneSharedCache } from '@tap/api/src/core/shared-cache'
@@ -6,659 +6,749 @@ import { EXTERNAL_STORAGE_TYPE_MAP } from '@tap/business/src/shared/const'
 import { IconButton } from '@tap/component/src/icon-button'
 import TimeSelect from '@tap/component/src/TimeSelect.vue'
 
-import { useI18n } from '@tap/i18n'
+import i18n from '@tap/i18n'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash-es'
-import { computed, onMounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
-import { useStore } from 'vuex'
-import { useDataflowStore } from '../../stores/dataflow.store'
+import { mapGetters } from 'vuex'
+import { $emit } from '../../../utils/gogocodeTransfer'
 import Frequency from './components/Frequency.vue'
 import InitialList from './components/InitialList.vue'
 import LineChart from './components/LineChart.vue'
 
-defineOptions({ name: 'LeftSider' })
-
-const emit = defineEmits<{
-  (e: 'load-data'): void
-  (e: 'verifyDetails'): void
-  (e: 'changeTimeSelect', val: any, isTime: any, source: any): void
-  (e: 'changeFrequency', val: any): void
-}>()
-
-const props = defineProps({
-  quota: Object,
-  verifyTotals: {
-    type: Object,
-    default: () => ({
-      diffRecords: 0,
-      diffTables: 0,
-      totals: 0,
-      ignore: 0,
-    }),
+export default {
+  name: 'LeftSider',
+  components: {
+    LineChart,
+    TimeSelect,
+    Frequency,
+    InitialList,
+    IconButton,
   },
-  timeFormat: String,
-  ifEnableConcurrentRead: Boolean,
-})
-
-const { t } = useI18n()
-const dataflowStore = useDataflowStore()
-const route = useRoute()
-const store = useStore()
-
-const timeSelectRef = ref()
-const dialogTimeSelectRef = ref()
-const initialListRef = ref()
-
-const lineChartDialog = ref(false)
-const initialListDialog = ref(false)
-const timeSelectLabel = ref('')
-const collectorData = ref<any>({ externalStorage: {} })
-const infoList = ref<any[]>([])
-const qpsChartsType = ref('count')
-const isUpdatingTimeSelect = ref(false)
-
-const cpuUsageOptions = {
-  tooltip: {
-    formatter: (params: any) => {
-      const [cpu, mem] = params
-      let result = dayjs(Number(cpu.axisValue)).format('YYYY-MM-DD HH:mm:ss')
-
-      result += `<div class="flex justify-content-between gap-4"><div>${cpu.marker}${cpu.seriesName}</div><div class="din-font">${Number(cpu.data.toFixed(2))}%</div></div>`
-      result += `<div class="flex justify-content-between gap-4"><div>${mem.marker}${mem.seriesName}</div><div class="din-font">${calcUnit(mem.data, 'byte')}</div></div>`
-
-      return result
-    },
-  },
-  yAxis: [
-    {
-      name: 'CPU',
-      max: 'dataMax',
-      nameTextStyle: { color: '#535F72' },
-      axisLine: { show: true, lineStyle: { color: '#E9E9E9' } },
-      splitLine: { show: false },
-      axisLabel: {
-        show: true,
-        color: '#535F72',
-        hideOverlap: true,
-        showMaxLabel: true,
-        formatter: (val: number) => `${Number(val.toFixed(2))}%`,
+  props: {
+    dataflow: Object,
+    quota: Object,
+    verifyTotals: {
+      type: Object,
+      default: () => {
+        return {
+          diffRecords: 0,
+          diffTables: 0,
+          totals: 0,
+          ignore: 0,
+        }
       },
     },
-    {
-      name: 'MEM',
-      max: 'dataMax',
-      nameTextStyle: { color: '#535F72' },
-      axisLine: { show: true, lineStyle: { color: '#E9E9E9' } },
-      splitLine: { show: false },
-      axisLabel: {
-        show: true,
-        color: '#535F72',
-        hideOverlap: true,
-        showMaxLabel: true,
-        formatter: (val: number) => calcUnit(val, 'byte'),
-      },
-    },
-  ],
-  series: [{ yAxisIndex: 0 }, { yAxisIndex: 1 }],
-}
-
-const qpsColors = [
-  '#5470c6',
-  '#91cc75',
-  '#fac858',
-  '#ee6666',
-  '#73c0de',
-  '#3ba272',
-  '#fc8452',
-  '#9a60b4',
-  '#ea7ccc',
-]
-const allNodes = computed(() => store.getters['dataflow/allNodes'])
-
-const qpsMap = computed(() => {
-  const data = props.quota?.samples?.lineChartData?.[0]
-  const { interval } = props.quota as any
-
-  if (!data) {
+    timeFormat: String,
+    ifEnableConcurrentRead: Boolean,
+  },
+  data() {
     return {
-      x: [],
-      name: [],
-      value: [[], []],
-      markLine: [{ data: [] }],
-    }
-  }
-  const { time = [] } = props.quota as any
-  const inputQps = data.inputQps?.map(Math.abs)
-  const outputQps = data.outputQps?.map(Math.abs)
-  const inputSizeQps = data.inputSizeQps?.map(Math.abs)
-  const outputSizeQps = data.outputSizeQps?.map(Math.abs)
-  const inputQps95th = data.inputQps95th
-  const inputQps99th = data.inputQps99th
-  const outputQps95th = data.outputQps95th
-  const outputQps99th = data.outputQps99th
-  const inputSizeQps95th = data.inputSizeQps95th
-  const inputSizeQps99th = data.inputSizeQps99th
-  const outputSizeQps95th = data.outputSizeQps95th
-  const outputSizeQps99th = data.outputSizeQps99th
-
-  // 计算距离增量时间点，最近的时间点
-  const milestone = dataflowStore.dataflow?.attrs?.milestone || {}
-  const snapshotDoneAt = milestone.SNAPSHOT?.end
-  let markLineTime = 0
-  time.forEach((el: number) => {
-    if (
-      Math.abs(el - snapshotDoneAt) < 2000 &&
-      Math.abs(el - snapshotDoneAt) < Math.abs(el - markLineTime)
-    ) {
-      markLineTime = el
-    }
-  })
-
-  let unit = '5s'
-
-  switch (interval) {
-    case 5000:
-      unit = '5s'
-      break
-    case 60000:
-      unit = 'm'
-      break
-    case 3600000:
-      unit = 'hr'
-      break
-    case 86400000:
-      unit = 'd'
-      break
-  }
-
-  const countNames = [
-    t('public_time_avg_input', { unit }),
-    t('public_time_avg_output', { unit }),
-  ]
-
-  const sizeNames = [
-    t('public_time_avg_input', { unit }),
-    t('public_time_avg_output', { unit }),
-  ]
-
-  const countValues = [inputQps, outputQps]
-  const countP95Values = [
-    inputQps95th,
-    outputQps95th,
-    inputQps99th,
-    outputQps99th,
-  ]
-  const sizeValues = [inputSizeQps, outputSizeQps]
-  const sizeP95Values = [
-    inputSizeQps95th,
-    outputSizeQps95th,
-    inputSizeQps99th,
-    outputSizeQps99th,
-  ]
-  const p95Names = [
-    t('public_time_avg_input_95th'),
-    t('public_time_avg_output_95th'),
-    t('public_time_avg_input_99th'),
-    t('public_time_avg_output_99th'),
-  ]
-
-  countP95Values.forEach((values, i) => {
-    if (values?.some((v) => v !== null)) {
-      countValues.push(values)
-      countNames.push(p95Names[i])
-    }
-  })
-  sizeP95Values.forEach((values, i) => {
-    if (values?.some((v) => v !== null)) {
-      sizeValues.push(values)
-      sizeNames.push(p95Names[i])
-    }
-  })
-
-  if (interval > 5000) {
-    countValues.push(
-      data.maxInputQps?.map(Math.abs),
-      data.maxOutputQps?.map(Math.abs),
-    )
-    sizeValues.push(
-      data.maxInputSizeQps?.map(Math.abs),
-      data.maxOutputSizeQps?.map(Math.abs),
-    )
-    const names = [
-      t('public_time_max_input', { unit }),
-      t('public_time_max_output', { unit }),
-    ]
-    countNames.push(...names)
-    sizeNames.push(...names)
-  }
-
-  const opt = {
-    x: time,
-    value: [],
-    zoomValue: 10,
-    serieOptions: Array.from({ length: 8 }).fill(
-      {
-        areaStyle: undefined,
+      lineChartDialog: false,
+      initialListDialog: false,
+      timeSelectLabel: '',
+      collectorData: {
+        externalStorage: {},
       },
-      2,
-    ),
-  }
+      infoList: [],
+      qpsChartsType: 'count',
+      cpuUsageOptions: {
+        tooltip: {
+          formatter: (params) => {
+            const [cpu, mem] = params
+            let result = dayjs(Number(cpu.axisValue)).format(
+              'YYYY-MM-DD HH:mm:ss',
+            )
 
-  if (dataflowStore.dataflow?.type === 'initial_sync+cdc') {
-    ;(opt as any).markLine = [
-      {
-        symbol: 'none',
-        data: [
+            result += `<div class="flex justify-content-between gap-4"><div>${cpu.marker}${cpu.seriesName}</div><div class="din-font">${Number(cpu.data.toFixed(2))}%</div></div>`
+            result += `<div class="flex justify-content-between gap-4"><div>${mem.marker}${mem.seriesName}</div><div class="din-font">${calcUnit(mem.data, 'byte')}</div></div>`
+
+            return result
+          },
+        },
+        yAxis: [
           {
-            xAxis: String(markLineTime),
-            lineStyle: { color: '#000' },
-            label: { show: false },
+            name: 'CPU',
+            max: 'dataMax',
+            nameTextStyle: {
+              color: '#535F72',
+            },
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: '#E9E9E9',
+              },
+            },
+            splitLine: {
+              show: false,
+            },
+            axisLabel: {
+              show: true,
+              color: '#535F72',
+              hideOverlap: true,
+              showMaxLabel: true,
+              formatter: (val) => {
+                return `${Number(val.toFixed(2))}%`
+              },
+            },
+          },
+          {
+            name: 'MEM',
+            max: 'dataMax',
+            nameTextStyle: {
+              color: '#535F72',
+            },
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: '#E9E9E9',
+              },
+            },
+            splitLine: {
+              show: false,
+            },
+            axisLabel: {
+              show: true,
+              color: '#535F72',
+              hideOverlap: true,
+              showMaxLabel: true,
+              formatter: (val) => {
+                return calcUnit(val, 'byte')
+              },
+            },
+          },
+        ],
+        series: [
+          {
+            yAxisIndex: 0,
+          },
+          {
+            yAxisIndex: 1,
           },
         ],
       },
-    ]
-  }
-
-  return {
-    count: Object.assign(cloneDeep(opt), {
-      value: countValues,
-      name: countNames,
-    }),
-    size: Object.assign(cloneDeep(opt), {
-      value: sizeValues,
-      name: sizeNames,
-    }),
-  }
-})
-
-// 处理耗时
-const delayData = computed(() => {
-  const data = props.quota?.samples?.lineChartData?.[0]
-  const { time = [] } = props.quota as any
-  if (!data) {
-    return { x: [], value: [] }
-  }
-  return { x: time, value: data.timeCostAvg }
-})
-
-// 增量延迟
-const replicateLagData = computed(() => {
-  const data = props.quota?.samples?.lineChartData?.[0]
-  const { time = [] } = props.quota as any
-  if (!data) {
-    return { x: [], value: [] }
-  }
-
-  const name = [t('public_event_incremental_delay')]
-  const { replicateLag = [], replicateLag95th, replicateLag99th } = data
-  const open = dataflowStore.dataflow?.alarmSettings?.find(
-    (t: any) => t.key === 'TASK_INCREMENT_DELAY',
-  )?.open
-  const delay = open
-    ? dataflowStore.dataflow?.alarmRules?.find(
-        (t: any) => t.key === 'TASK_INCREMENT_DELAY',
-      )?.ms || 0
-    : 60 * 1000
-  const max = Math.max(...replicateLag)
-  const value = [replicateLag]
-  if (replicateLag95th?.some((v: any) => v !== null)) {
-    value.push(replicateLag95th)
-    name.push(t('public_event_incremental_delay_95th'))
-  }
-  if (replicateLag99th?.some((v: any) => v !== null)) {
-    value.push(replicateLag99th)
-    name.push(t('public_event_incremental_delay_99th'))
-  }
-  return {
-    x: time,
-    name,
-    value,
-    yAxisMax: Math.max(delay, max),
-    serieOptions: Array.from({ length: 3 }).fill({ areaStyle: undefined }, 1),
-  }
-})
-
-const cpuUsageData = computed(() => {
-  const data = props.quota?.samples?.lineChartData?.[0]
-  const { time = [] } = props.quota as any
-  if (!data) {
-    return { x: [], value: [] }
-  }
-  const { cpuUsage = [], memoryUsage = [] } = data
-  return { x: time, name: ['CPU', 'MEM'], value: [cpuUsage, memoryUsage] }
-})
-
-// 全量信息
-const initialData = computed(() => {
-  const data = props.quota?.samples?.totalData?.[0] || ({} as any)
-  const {
-    snapshotRowTotal = 0,
-    snapshotInsertRowTotal = 0,
-    replicateLag,
-    lastFiveMinutesQps,
-  } = data
-  let time: number
-  if (!snapshotInsertRowTotal || !snapshotRowTotal || !lastFiveMinutesQps) {
-    time = 0
-  } else {
-    time =
-      ((snapshotRowTotal - snapshotInsertRowTotal) / lastFiveMinutesQps) * 1000
-  }
-  const milestone = dataflowStore.dataflow?.attrs?.milestone || {}
-  const snapshotStartAt = milestone.SNAPSHOT?.begin
-    ? dayjs(milestone.SNAPSHOT?.begin).format('YYYY-MM-DD HH:mm:ss')
-    : ''
-  const snapshotDoneAt = milestone.SNAPSHOT?.end
-    ? dayjs(milestone.SNAPSHOT?.end).format('YYYY-MM-DD HH:mm:ss')
-    : ''
-  return { snapshotStartAt, snapshotDoneAt, replicateLag, finishDuration: time }
-})
-
-const totalData = computed(() => {
-  let {
-    tableTotal = 0,
-    snapshotTableTotal = 0,
-    currentSnapshotTableInsertRowTotal = 0,
-    currentSnapshotTableRowTotal = 0,
-    snapshotDoneCost,
-    outputQpsMax = 0,
-    outputQpsAvg = 0,
-  } = props.quota?.samples?.totalData?.[0] || ({} as any)
-  if (currentSnapshotTableInsertRowTotal > currentSnapshotTableRowTotal) {
-    currentSnapshotTableRowTotal = currentSnapshotTableInsertRowTotal
-  }
-  return {
-    tableTotal,
-    snapshotTableTotal,
-    currentSnapshotTableInsertRowTotal,
-    currentSnapshotTableRowTotal,
-    snapshotDoneCost,
-    outputQpsMax: Math.ceil(outputQpsMax),
-    outputQpsAvg: Math.ceil(outputQpsAvg),
-  }
-})
-
-const totalDataPercentage = computed(() => {
-  if (initialData.value.snapshotDoneAt) return 100
-  const { tableTotal, snapshotTableTotal } = totalData.value
-  if (!snapshotTableTotal || !tableTotal) return 0
-  if (snapshotTableTotal > tableTotal) return 100
-  return (snapshotTableTotal / tableTotal) * 100
-})
-
-const currentTotalDataPercentage = computed(() => {
-  const { currentSnapshotTableInsertRowTotal, currentSnapshotTableRowTotal } =
-    totalData.value
-  if (!currentSnapshotTableRowTotal) return 0
-  if (currentSnapshotTableInsertRowTotal > currentSnapshotTableRowTotal) {
-    return 100
-  }
-  return (
-    (currentSnapshotTableInsertRowTotal / currentSnapshotTableRowTotal) * 100
-  )
-})
-
-// 任务事件统计（条）-任务累计
-const eventDataAll = computed(() => {
-  const data = props.quota?.samples?.barChartData?.[0]
-  return getInputOutput(data)
-})
-
-const heartbeatTime = computed(() => {
-  const { pingTime, status } = dataflowStore.dataflow as any
-  return status === 'running' && pingTime
-    ? dayjs(Time.now()).to(dayjs(pingTime))
-    : '-'
-})
-
-const isFileSource = computed(() => {
-  if (!allNodes.value?.length) return
-  const fileType = ['CSV', 'EXCEL', 'JSON', 'XML']
-  return allNodes.value.some((node: any) =>
-    fileType.includes(node.databaseType),
-  )
-})
-
-const hideTotalData = computed(() => {
-  return ['shareCache'].includes(dataflowStore.dataflow?.syncType)
-})
-
-const showToInitialList = computed(() => {
-  return !(
-    dataflowStore.dataflow?.syncType === 'sync' &&
-    !dataflowStore.dataflow?.shareCache
-  )
-})
-
-// 进入增量阶段
-const startingIncremental = computed(() => {
-  return (
-    dataflowStore.dataflow?.type !== 'initial_sync' &&
-    !!initialData.value.snapshotDoneAt
-  )
-})
-
-const timeOptions = computed(() => {
-  const options: any[] = [
-    {
-      label: t('packages_dag_components_timeselect_zuijinfenzhong'),
-      value: '5m',
-    },
-    {
-      label: t('packages_dag_components_timeselect_zuixinxiaoshi'),
-      value: '1h',
-    },
-    { label: t('public_time_last_day'), value: '1d' },
-    {
-      label: t('packages_dag_components_timeselect_renwuzuijinyi'),
-      value: 'lastStart',
-    },
-    {
-      label: t('packages_dag_components_timeselect_renwuquanzhouqi'),
-      value: 'full',
-    },
-  ]
-
-  if (startingIncremental.value) {
-    options.push({
-      label: t('packages_dag_components_timeselect_incremental_phase'),
-      value: 'incremental',
-    })
-  }
-
-  options.push({
-    label: t('public_time_custom_time'),
-    type: 'custom',
-    value: 'custom',
-  })
-
-  return options
-})
-// --- methods ---
-
-function getInputOutput(data: any) {
-  const result: any = {}
-  const inputArr = [
-    'inputInsertTotal',
-    'inputUpdateTotal',
-    'inputDeleteTotal',
-    'inputDdlTotal',
-    'inputOthersTotal',
-  ]
-  const outputArr = [
-    'outputInsertTotal',
-    'outputUpdateTotal',
-    'outputDeleteTotal',
-    'outputDdlTotal',
-    'outputOthersTotal',
-  ]
-  ;[...inputArr, ...outputArr].forEach((el) => {
-    result[el] = data?.[el] || 0
-  })
-  result.inputTotals = inputArr.reduce((total, key) => {
-    return total + result[key] || 0
-  }, 0)
-  result.outputTotals = outputArr.reduce((total, key) => {
-    return total + result[key] || 0
-  }, 0)
-  const limit = 1000000000
-  result.inputTotalsLabel =
-    result.inputTotals >= limit
-      ? calcUnit(result.inputTotals)
-      : result.inputTotals.toLocaleString()
-  result.outputTotalsLabel =
-    result.outputTotals >= limit
-      ? calcUnit(result.outputTotals)
-      : result.outputTotals.toLocaleString()
-  return result
-}
-
-function getCalcTimeUnit(...args: any[]) {
-  return typeof args[0] === 'number' ? calcTimeUnit(...args) : '-'
-}
-
-function getReplicateLag(val: any, placeholder?: string) {
-  return typeof val === 'number' && val >= 0
-    ? calcTimeUnit(val, 2, { autoHideMs: true })
-    : (placeholder ?? t('public_data_no_data'))
-}
-
-function formatTime(date: any, f = 'YYYY-MM-DD HH:mm:ss') {
-  return date ? dayjs(date).format(f) : '-'
-}
-
-function getCollectorData() {
-  getLogcollectorDetail(dataflowStore.dataflow?.id).then((data: any) => {
-    const { externalStorage = {} as any, logTime } = data
-    let uriInfo = externalStorage.uri
-    if (externalStorage.type === 'mongodb') {
-      const regResult =
-        /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/.exec(
-          externalStorage.uri,
-        )
-      const { username, host, database, query } = regResult!.groups!
-      uriInfo = `mongodb://${username}:***@${host}/${database}${query ? `/${query}` : ''}`
+      qpsColors: [
+        '#5470c6',
+        '#91cc75',
+        '#fac858',
+        '#ee6666',
+        '#73c0de',
+        '#3ba272',
+        '#fc8452',
+        '#9a60b4',
+        '#ea7ccc',
+      ],
     }
-    if (!externalStorage.name) {
-      infoList.value = [
+  },
+  computed: {
+    ...mapGetters('dataflow', ['allNodes']),
+
+    qpsMap() {
+      const data = this.quota.samples?.lineChartData?.[0]
+      const { interval } = this.quota
+
+      if (!data) {
+        return {
+          x: [],
+          name: [],
+          value: [[], []],
+          markLine: [
+            {
+              data: [],
+            },
+          ],
+        }
+      }
+      const { time = [] } = this.quota
+      const inputQps = data.inputQps?.map(Math.abs)
+      const outputQps = data.outputQps?.map(Math.abs)
+      const inputSizeQps = data.inputSizeQps?.map(Math.abs)
+      const outputSizeQps = data.outputSizeQps?.map(Math.abs)
+      const inputQps95th = data.inputQps95th
+      const inputQps99th = data.inputQps99th
+      const outputQps95th = data.outputQps95th
+      const outputQps99th = data.outputQps99th
+      const inputSizeQps95th = data.inputSizeQps95th
+      const inputSizeQps99th = data.inputSizeQps99th
+      const outputSizeQps95th = data.outputSizeQps95th
+      const outputSizeQps99th = data.outputSizeQps99th
+
+      // 计算距离增量时间点，最近的时间点
+      const milestone = this.dataflow.attrs?.milestone || {}
+      const snapshotDoneAt = milestone.SNAPSHOT?.end
+      let markLineTime = 0
+      time.forEach((el) => {
+        if (
+          Math.abs(el - snapshotDoneAt) < 2000 &&
+          Math.abs(el - snapshotDoneAt) < Math.abs(el - markLineTime)
+        ) {
+          markLineTime = el
+        }
+      })
+
+      let unit = '5s'
+
+      switch (interval) {
+        case 5000:
+          unit = '5s'
+          break
+        case 60000:
+          unit = 'm'
+          break
+        case 3600000:
+          unit = 'hr'
+          break
+        case 86400000:
+          unit = 'd'
+          break
+      }
+
+      const countNames = [
+        i18n.t('public_time_avg_input', { unit }),
+        i18n.t('public_time_avg_output', { unit }),
+      ]
+
+      const sizeNames = [
+        i18n.t('public_time_avg_input', { unit }),
+        i18n.t('public_time_avg_output', { unit }),
+      ]
+
+      const countValues = [inputQps, outputQps]
+      const countP95Values = [
+        inputQps95th,
+        outputQps95th,
+        inputQps99th,
+        outputQps99th,
+      ]
+      const sizeValues = [inputSizeQps, outputSizeQps]
+      const sizeP95Values = [
+        inputSizeQps95th,
+        outputSizeQps95th,
+        inputSizeQps99th,
+        outputSizeQps99th,
+      ]
+      const p95Names = [
+        i18n.t('public_time_avg_input_95th'),
+        i18n.t('public_time_avg_output_95th'),
+        i18n.t('public_time_avg_input_99th'),
+        i18n.t('public_time_avg_output_99th'),
+      ]
+
+      countP95Values.forEach((values, i) => {
+        if (values?.some((v) => v !== null)) {
+          countValues.push(values)
+          countNames.push(p95Names[i])
+        }
+      })
+      sizeP95Values.forEach((values, i) => {
+        if (values?.some((v) => v !== null)) {
+          sizeValues.push(values)
+          sizeNames.push(p95Names[i])
+        }
+      })
+
+      if (interval > 5000) {
+        countValues.push(
+          data.maxInputQps?.map(Math.abs),
+          data.maxOutputQps?.map(Math.abs),
+        )
+        sizeValues.push(
+          data.maxInputSizeQps?.map(Math.abs),
+          data.maxOutputSizeQps?.map(Math.abs),
+        )
+        const names = [
+          i18n.t('public_time_max_input', { unit }),
+          i18n.t('public_time_max_output', { unit }),
+        ]
+        countNames.push(...names)
+        sizeNames.push(...names)
+      }
+
+      const opt = {
+        x: time,
+        value: [],
+        zoomValue: 10,
+        serieOptions: Array.from({ length: 8 }).fill(
+          {
+            areaStyle: undefined,
+          },
+          2,
+        ),
+      }
+
+      if (this.dataflow.type === 'initial_sync+cdc') {
+        opt.markLine = [
+          {
+            symbol: 'none',
+            data: [
+              {
+                xAxis: String(markLineTime),
+                lineStyle: {
+                  color: '#000',
+                },
+                label: {
+                  show: false,
+                },
+              },
+            ],
+          },
+        ]
+      }
+
+      return {
+        count: Object.assign(cloneDeep(opt), {
+          value: countValues,
+          name: countNames,
+        }),
+        size: Object.assign(cloneDeep(opt), {
+          value: sizeValues,
+          name: sizeNames,
+        }),
+      }
+    },
+
+    // 处理耗时
+    delayData() {
+      const data = this.quota.samples?.lineChartData?.[0]
+      const { time = [] } = this.quota
+      if (!data) {
+        return {
+          x: [],
+          value: [],
+        }
+      }
+      return {
+        x: time,
+        value: data.timeCostAvg,
+      }
+    },
+    // 增量延迟
+    replicateLagData() {
+      const data = this.quota.samples?.lineChartData?.[0]
+      const { time = [] } = this.quota
+      if (!data) {
+        return {
+          x: [],
+          value: [],
+        }
+      }
+
+      const name = [i18n.t('public_event_incremental_delay')]
+      const { replicateLag = [], replicateLag95th, replicateLag99th } = data
+      const open = this.dataflow.alarmSettings?.find(
+        (t) => t.key === 'TASK_INCREMENT_DELAY',
+      )?.open
+      const delay = open
+        ? this.dataflow.alarmRules?.find(
+            (t) => t.key === 'TASK_INCREMENT_DELAY',
+          )?.ms || 0
+        : 60 * 1000
+      const max = Math.max(...replicateLag)
+      const value = [replicateLag]
+      if (replicateLag95th?.some((v) => v !== null)) {
+        value.push(replicateLag95th)
+        name.push(i18n.t('public_event_incremental_delay_95th'))
+      }
+      if (replicateLag99th?.some((v) => v !== null)) {
+        value.push(replicateLag99th)
+        name.push(i18n.t('public_event_incremental_delay_99th'))
+      }
+      return {
+        x: time,
+        name,
+        value,
+        yAxisMax: Math.max(delay, max),
+        serieOptions: Array.from({ length: 3 }).fill(
+          {
+            areaStyle: undefined,
+          },
+          1,
+        ),
+      }
+    },
+
+    cpuUsageData() {
+      const data = this.quota.samples?.lineChartData?.[0]
+      const { time = [] } = this.quota
+      if (!data) {
+        return {
+          x: [],
+          value: [],
+        }
+      }
+
+      const { cpuUsage = [], memoryUsage = [] } = data
+
+      return {
+        x: time,
+        name: ['CPU', 'MEM'],
+        value: [cpuUsage, memoryUsage],
+      }
+    },
+
+    // 全量信息
+    initialData() {
+      const data = this.quota.samples?.totalData?.[0] || {}
+      const {
+        snapshotRowTotal = 0,
+        snapshotInsertRowTotal = 0,
+        replicateLag,
+        lastFiveMinutesQps,
+      } = data
+      let time
+      if (!snapshotInsertRowTotal || !snapshotRowTotal || !lastFiveMinutesQps) {
+        time = 0
+      } else {
+        time =
+          ((snapshotRowTotal - snapshotInsertRowTotal) / lastFiveMinutesQps) *
+          1000
+      }
+      const milestone = this.dataflow.attrs?.milestone || {}
+      const snapshotStartAt = milestone.SNAPSHOT?.begin
+        ? dayjs(milestone.SNAPSHOT?.begin).format('YYYY-MM-DD HH:mm:ss')
+        : ''
+      const snapshotDoneAt = milestone.SNAPSHOT?.end
+        ? dayjs(milestone.SNAPSHOT?.end).format('YYYY-MM-DD HH:mm:ss')
+        : ''
+
+      return {
+        snapshotStartAt,
+        snapshotDoneAt,
+        replicateLag,
+        finishDuration: time,
+      }
+    },
+
+    totalData() {
+      let {
+        tableTotal = 0,
+        snapshotTableTotal = 0,
+        currentSnapshotTableInsertRowTotal = 0,
+        currentSnapshotTableRowTotal = 0,
+        snapshotDoneCost,
+        outputQpsMax = 0,
+        outputQpsAvg = 0,
+      } = this.quota.samples?.totalData?.[0] || {}
+      // 如果分子大于分母，将分母的值调整成跟分子一样
+      if (currentSnapshotTableInsertRowTotal > currentSnapshotTableRowTotal) {
+        currentSnapshotTableRowTotal = currentSnapshotTableInsertRowTotal
+      }
+      return {
+        tableTotal,
+        snapshotTableTotal,
+        currentSnapshotTableInsertRowTotal,
+        currentSnapshotTableRowTotal,
+        snapshotDoneCost,
+        outputQpsMax: Math.ceil(outputQpsMax),
+        outputQpsAvg: Math.ceil(outputQpsAvg),
+      }
+    },
+
+    totalDataPercentage() {
+      if (this.initialData.snapshotDoneAt) return 100
+      const { tableTotal, snapshotTableTotal } = this.totalData
+      if (!snapshotTableTotal || !tableTotal) return 0
+      if (snapshotTableTotal > tableTotal) return 100
+      return (snapshotTableTotal / tableTotal) * 100
+    },
+
+    currentTotalDataPercentage() {
+      const {
+        currentSnapshotTableInsertRowTotal,
+        currentSnapshotTableRowTotal,
+      } = this.totalData
+      if (!currentSnapshotTableRowTotal) return 0
+      if (currentSnapshotTableInsertRowTotal > currentSnapshotTableRowTotal) {
+        return 100
+      }
+      return (
+        (currentSnapshotTableInsertRowTotal / currentSnapshotTableRowTotal) *
+        100
+      )
+    },
+
+    initialList() {
+      return this.$refs?.initialList
+    },
+
+    // 任务事件统计（条）-任务累计
+    eventDataAll() {
+      const data = this.quota.samples?.barChartData?.[0]
+      return this.getInputOutput(data)
+    },
+
+    heartbeatTime() {
+      const { pingTime, status } = this.dataflow
+      return status === 'running' && pingTime
+        ? dayjs(Time.now()).to(dayjs(pingTime))
+        : '-'
+    },
+
+    isFileSource() {
+      const allNodes = this.$store.getters['dataflow/allNodes']
+      if (!allNodes.length) return
+      const fileType = ['CSV', 'EXCEL', 'JSON', 'XML']
+      return allNodes.some((node) => fileType.includes(node.databaseType))
+    },
+
+    hideTotalData() {
+      return ['shareCache'].includes(this.dataflow?.syncType)
+    },
+
+    showToInitialList() {
+      return !(this.dataflow.syncType === 'sync' && !this.dataflow.shareCache)
+    },
+
+    // 进入增量阶段
+    startingIncremental() {
+      return (
+        this.dataflow.type !== 'initial_sync' &&
+        !!this.initialData.snapshotDoneAt
+      )
+    },
+
+    timeOptions() {
+      const options = [
         {
-          label: t('packages_business_relation_details_rizhiwajueshi'),
-          value: formatTime(logTime),
+          label: i18n.t('packages_dag_components_timeselect_zuijinfenzhong'),
+          value: '5m',
+        },
+        {
+          label: i18n.t('packages_dag_components_timeselect_zuixinxiaoshi'),
+          value: '1h',
+        },
+        {
+          label: i18n.t('public_time_last_day'),
+          value: '1d',
+        },
+        {
+          label: i18n.t('packages_dag_components_timeselect_renwuzuijinyi'),
+          value: 'lastStart',
+        },
+        {
+          label: i18n.t('packages_dag_components_timeselect_renwuquanzhouqi'),
+          value: 'full',
         },
       ]
-      return
-    }
-    infoList.value = [
-      {
-        label: t('packages_business_relation_details_rizhiwajueshi'),
-        value: formatTime(logTime),
-      },
-      {
-        label: t('public_external_memory_name'),
-        value: externalStorage.name,
-      },
-      {
-        label: t('public_external_memory_type'),
-        value: EXTERNAL_STORAGE_TYPE_MAP[externalStorage.type],
-      },
-      {
-        label: t('public_external_memory_table'),
-        value: externalStorage.table,
-      },
-      {
-        label: t('public_external_memory_info'),
-        value: uriInfo,
-        block: true,
-        class: 'text-break',
-      },
-    ]
-  })
-}
 
-function getSharedCacheData(id: string) {
-  findOneSharedCache(id).then((data: any) => {
-    getExternalStorage(data.externalStorageId).then((ext: any = {}) => {
-      if (!ext.name) {
-        infoList.value = []
+      if (this.startingIncremental) {
+        options.push({
+          label: i18n.t('packages_dag_components_timeselect_incremental_phase'),
+          value: 'incremental',
+        })
+      }
+
+      options.push({
+        label: i18n.t('public_time_custom_time'),
+        type: 'custom',
+        value: 'custom',
+      })
+
+      return options
+    },
+  },
+  watch: {
+    'dataflow.syncType': function (v) {
+      v && this.getBasicInformation()
+    },
+  },
+  mounted() {
+    this.timeSelectLabel = this.$refs.timeSelect?.getPeriod()?.label
+  },
+  methods: {
+    changeTimeSelect(val, isTime, source) {
+      this.$emit('changeTimeSelect', val, isTime, source)
+      // this.timeSelectLabel = this.$refs.timeSelect?.getPeriod()?.label
+
+      this.isUpdatingTimeSelect = true
+      this.$refs.dialogTimeSelect?.setPeriod(val)
+
+      setTimeout(() => {
+        this.isUpdatingTimeSelect = false
+      }, 10)
+    },
+
+    changeFrequency(val) {
+      $emit(this, 'changeFrequency', val)
+    },
+
+    toFullscreen() {
+      this.lineChartDialog = true
+    },
+
+    toInitialList() {
+      this.initialListDialog = true
+    },
+
+    getInputOutput(data) {
+      const result = {}
+      const inputArr = [
+        'inputInsertTotal',
+        'inputUpdateTotal',
+        'inputDeleteTotal',
+        'inputDdlTotal',
+        'inputOthersTotal',
+      ]
+      const outputArr = [
+        'outputInsertTotal',
+        'outputUpdateTotal',
+        'outputDeleteTotal',
+        'outputDdlTotal',
+        'outputOthersTotal',
+      ]
+      ;[...inputArr, ...outputArr].forEach((el) => {
+        result[el] = data?.[el] || 0
+      })
+      result.inputTotals = inputArr.reduce((total, key) => {
+        return total + result[key] || 0
+      }, 0)
+      result.outputTotals = outputArr.reduce((total, key) => {
+        return total + result[key] || 0
+      }, 0)
+      const limit = 1000000000
+      result.inputTotalsLabel =
+        result.inputTotals >= limit
+          ? calcUnit(result.inputTotals)
+          : result.inputTotals.toLocaleString()
+
+      result.outputTotalsLabel =
+        result.outputTotals >= limit
+          ? calcUnit(result.outputTotals)
+          : result.outputTotals.toLocaleString()
+      return result
+    },
+
+    calcTimeUnit() {
+      return typeof arguments[0] === 'number' ? calcTimeUnit(...arguments) : '-'
+    },
+
+    getReplicateLag(val, placeholder) {
+      return typeof val === 'number' && val >= 0
+        ? calcTimeUnit(val, 2, {
+            autoHideMs: true,
+          })
+        : (placeholder ?? i18n.t('public_data_no_data'))
+    },
+
+    getCollectorData() {
+      getLogcollectorDetail(this.dataflow.id).then((data) => {
+        const { externalStorage = {}, logTime, name } = data
+        let uriInfo = externalStorage.uri
+        if (externalStorage.type === 'mongodb') {
+          const regResult =
+            /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/.exec(
+              externalStorage.uri,
+            )
+          const { username, host, database, query } = regResult.groups
+          uriInfo = `mongodb://${username}:***@${host}/${database}${query ? `/${query}` : ''}`
+        }
+        if (!externalStorage.name) {
+          this.infoList = [
+            {
+              label: this.$t(
+                'packages_business_relation_details_rizhiwajueshi',
+              ),
+              value: this.formatTime(logTime),
+            },
+          ]
+          return
+        }
+        this.infoList = [
+          {
+            label: this.$t('packages_business_relation_details_rizhiwajueshi'),
+            value: this.formatTime(logTime),
+          },
+          {
+            label: this.$t('public_external_memory_name'),
+            value: externalStorage.name,
+          },
+          {
+            label: this.$t('public_external_memory_type'),
+            value: EXTERNAL_STORAGE_TYPE_MAP[externalStorage.type],
+          },
+          {
+            label: this.$t('public_external_memory_table'),
+            value: externalStorage.table,
+          },
+          {
+            label: this.$t('public_external_memory_info'),
+            value: uriInfo,
+            block: true,
+            class: 'text-break',
+          },
+        ]
+      })
+    },
+
+    formatTime(date, f = 'YYYY-MM-DD HH:mm:ss') {
+      return date ? dayjs(date).format(f) : '-'
+    },
+
+    getSharedCacheData(id) {
+      findOneSharedCache(id).then((data) => {
+        getExternalStorage(data.externalStorageId).then((ext = {}) => {
+          if (!ext.name) {
+            this.infoList = []
+            return
+          }
+          this.infoList = [
+            // {
+            //   label: i18n.t('packages_dag_monitor_leftsider_huancunkaishishi'),
+            //   value: dayjs(data.createTime).format('YYYY-MM-DD HH:mm:ss')
+            // },
+            {
+              label: i18n.t('public_external_memory_name'),
+              value: ext.name,
+            },
+            {
+              label: i18n.t('public_external_memory_type'),
+              value: EXTERNAL_STORAGE_TYPE_MAP[ext.type],
+            },
+            {
+              label: i18n.t('public_external_memory_table'),
+              value: ext.table,
+            },
+            {
+              label: i18n.t('public_external_memory_info'),
+              value: ext.uri,
+            },
+          ]
+        })
+      })
+    },
+
+    async getBasicInformation() {
+      const map = {
+        SharedMiningMonitor: this.getCollectorData,
+        SharedCacheMonitor: this.getSharedCacheData,
+      }
+      map[this.$route.name]?.(this.dataflow.id)
+    },
+
+    onChangeDialogTimeSelect(val, isTime, source) {
+      if (this.isUpdatingTimeSelect) {
         return
       }
-      infoList.value = [
-        { label: t('public_external_memory_name'), value: ext.name },
-        {
-          label: t('public_external_memory_type'),
-          value: EXTERNAL_STORAGE_TYPE_MAP[ext.type],
-        },
-        { label: t('public_external_memory_table'), value: ext.table },
-        { label: t('public_external_memory_info'), value: ext.uri },
-      ]
-    })
-  })
-}
+      const selected = this.$refs.timeSelect?.setPeriod(val)
 
-async function getBasicInformation() {
-  const map: Record<string, Function> = {
-    SharedMiningMonitor: getCollectorData,
-    SharedCacheMonitor: getSharedCacheData,
-  }
-  map[route.name as string]?.(dataflowStore.dataflow?.id)
-}
-
-function changeTimeSelect(val: any, isTime: any, source: any) {
-  emit('changeTimeSelect', val, isTime, source)
-  isUpdatingTimeSelect.value = true
-  dialogTimeSelectRef.value?.setPeriod(val)
-  setTimeout(() => {
-    isUpdatingTimeSelect.value = false
-  }, 10)
-}
-
-function changeFrequency(val: any) {
-  emit('changeFrequency', val)
-}
-
-function toFullscreen() {
-  lineChartDialog.value = true
-}
-
-function toInitialList() {
-  initialListDialog.value = true
-}
-
-function onChangeDialogTimeSelect(val: any, isTime: any, source: any) {
-  if (isUpdatingTimeSelect.value) return
-  const selected = timeSelectRef.value?.setPeriod(val)
-  if (selected) {
-    emit('changeTimeSelect', val, isTime, source)
-  }
-}
-
-// --- watch & lifecycle ---
-
-watch(
-  () => dataflowStore.dataflow?.syncType,
-  (v) => {
-    v && getBasicInformation()
+      if (selected) {
+        this.$emit('changeTimeSelect', val, isTime, source)
+      }
+    },
   },
-)
-
-onMounted(() => {
-  timeSelectLabel.value = timeSelectRef.value?.getPeriod()?.label
-})
+  emits: ['load-data', 'verifyDetails', 'changeTimeSelect', 'changeFrequency'],
+}
 </script>
 
 <template>
-  <aside
-    class="layout-sidebar --left flex-shrink-0 nodes-panel position-absolute start-3 rounded-2xl bg-card shadow-canvas z-10 flex flex-column"
-  >
+  <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
     <div class="flex flex-column flex-1 min-h-0 overflow-y-auto">
       <div
         class="info-box flex justify-content-between align-items-center flex-wrap"
       >
         <TimeSelect
-          ref="timeSelectRef"
+          ref="timeSelect"
           :options="timeOptions"
           :range="$attrs.range"
           class="mb-1 w-100"
@@ -673,10 +763,7 @@ onMounted(() => {
           refresh</IconButton
         >
       </div>
-      <div
-        v-if="dataflowStore.dataflowRef.type !== 'cdc'"
-        class="info-box sync-info"
-      >
+      <div v-if="dataflow.type !== 'cdc'" class="info-box sync-info">
         <div class="flex justify-content-between mb-2">
           <span class="fw-sub fs-7 font-color-normal">{{
             $t('packages_dag_monitor_leftsider_tongbuxinxi')
@@ -689,7 +776,7 @@ onMounted(() => {
             <VIcon @click.stop="toInitialList">menu-left</VIcon>
           </ElTooltip>
         </div>
-        <template v-if="dataflowStore.dataflowRef.type !== 'cdc'">
+        <template v-if="dataflow.type !== 'cdc'">
           <div class="mb-2 flex justify-content-between">
             <span class="sync-info-item__title">{{
               $t('packages_dag_components_nodedetaildialog_quanliangkaishishi')
@@ -721,7 +808,7 @@ onMounted(() => {
               :content="`${initialData.finishDuration.toLocaleString()}ms`"
             >
               <span>{{
-                getCalcTimeUnit(initialData.finishDuration, 2, {
+                calcTimeUnit(initialData.finishDuration, 2, {
                   autoHideMs: true,
                 })
               }}</span>
@@ -757,7 +844,7 @@ onMounted(() => {
                       }}:</span
                     >
                     <span class="ml-2">{{
-                      getCalcTimeUnit(totalData.snapshotDoneCost)
+                      calcTimeUnit(totalData.snapshotDoneCost)
                     }}</span>
                   </div>
                   <div>
@@ -782,7 +869,7 @@ onMounted(() => {
           </div>
           <div
             v-if="
-              dataflowStore.dataflowRef.syncType === 'migrate' &&
+              dataflow.syncType === 'migrate' &&
               totalData.currentSnapshotTableRowTotal &&
               !ifEnableConcurrentRead
             "
@@ -801,7 +888,7 @@ onMounted(() => {
             }}</span>
           </div>
         </template>
-        <template v-if="dataflowStore.dataflowRef.type !== 'initial_sync'">
+        <template v-if="dataflow.type !== 'initial_sync'">
           <div
             v-if="initialData.snapshotDoneAt"
             class="mb-2 flex justify-content-between"
@@ -820,9 +907,9 @@ onMounted(() => {
       </div>
       <div
         v-if="
-          dataflowStore.dataflowRef.syncType === 'migrate' &&
-          dataflowStore.dataflowRef.isAutoInspect &&
-          dataflowStore.dataflowRef.canOpenInspect &&
+          dataflow.syncType === 'migrate' &&
+          dataflow.isAutoInspect &&
+          dataflow.canOpenInspect &&
           verifyTotals
         "
         class="info-box"
@@ -975,14 +1062,12 @@ onMounted(() => {
               </span>
             </ElTooltip>
             <ElTooltip
-              v-if="dataflowStore.dataflowRef.timeDifference > 0"
+              v-if="dataflow.timeDifference > 0"
               key="retrying"
               placement="top"
               :content="
                 $t('packages_dag_monitor_timeDifference', {
-                  val: getCalcTimeUnit(
-                    dataflowStore.dataflowRef.timeDifference,
-                  ),
+                  val: calcTimeUnit(dataflow.timeDifference),
                 })
               "
             >
@@ -1140,7 +1225,7 @@ onMounted(() => {
           }}</span>
           <el-divider class="mx-0" direction="vertical" />
           <TimeSelect
-            ref="dialogTimeSelectRef"
+            ref="dialogTimeSelect"
             :options="timeOptions"
             :range="$attrs.range"
             @change="onChangeDialogTimeSelect"
@@ -1228,7 +1313,7 @@ onMounted(() => {
     </ElDialog>
 
     <InitialList
-      ref="initialListRef"
+      ref="initialList"
       v-model:value="initialListDialog"
       :dataflow="dataflow"
     />
@@ -1236,11 +1321,6 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-.nodes-panel {
-  top: 68px;
-  bottom: 12px;
-  width: 356px;
-}
 :deep(.el-dialog) {
   .el-dialog__body {
     padding-top: 6px;

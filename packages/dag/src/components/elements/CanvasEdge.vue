@@ -5,12 +5,15 @@ import {
   useCanvasEdge,
   type CanvasEdgeProps,
 } from '../../composables/useCanvasEdge'
+import { useDataflowStore } from '../../stores/dataflow.store'
 
 defineOptions({
   inheritAttrs: false,
 })
 
 const props = defineProps<CanvasEdgeProps>()
+
+const dataflowStore = useDataflowStore()
 
 const emit = defineEmits<{
   'update:label:hovered': [hovered: boolean]
@@ -93,7 +96,7 @@ function onDelete() {
     :path="path[0]"
     marker-end="url(#marker-arrow)"
   />
-  <EdgeLabelRenderer>
+  <EdgeLabelRenderer v-if="!dataflowStore.stateIsReadonly">
     <div
       :style="{
         pointerEvents: 'all',
@@ -115,7 +118,7 @@ function onDelete() {
       </div>
     </div>
   </EdgeLabelRenderer>
-  <EdgeLabelRenderer>
+  <EdgeLabelRenderer v-if="!dataflowStore.stateIsReadonly">
     <div
       :style="{
         pointerEvents: 'all',

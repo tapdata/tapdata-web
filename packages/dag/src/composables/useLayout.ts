@@ -7,7 +7,7 @@ import {
   type Node,
 } from '@vue-flow/core'
 import dagre from 'dagre'
-import { ref, type Ref } from 'vue'
+import { ref, unref, type Ref } from 'vue'
 
 export type LayoutDirection = 'LR' | 'TB' | 'RL' | 'BT'
 
@@ -24,7 +24,7 @@ export interface FitViewWithOffsetOptions {
  */
 export function useLayout(options?: {
   nodesPanelExpanded?: Ref<boolean>
-  nodesPanelWidth?: number
+  nodesPanelWidth?: Ref<number> | number
   canvasSelector?: string
 }) {
   const { findNode, fitView, setViewport, getNodes } = useVueFlow()
@@ -100,7 +100,7 @@ export function useLayout(options?: {
     const containerHeight = container.clientHeight
 
     // Calculate offset for left panel
-    const leftOffset = nodesPanelExpanded?.value ? nodesPanelWidth : 0
+    const leftOffset = nodesPanelExpanded?.value ? unref(nodesPanelWidth) : 0
 
     // Get bounds of all nodes using VueFlow's internal GraphNodes
     const graphNodes = getNodes.value

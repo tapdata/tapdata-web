@@ -5,6 +5,7 @@ export const NODE_HEIGHT = 52
 export const DEFAULT_SETTINGS = {
   name: '', // 任务名称
   desc: '', // 任务描述
+  status: '', // 任务状态
   type: 'initial_sync+cdc', // 任务类型：全量+增量
   isAutoCreateIndex: true, // 自动创建索引
   isOpenAutoDDL: false, // 自动DDL

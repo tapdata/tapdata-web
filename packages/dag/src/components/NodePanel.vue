@@ -117,7 +117,7 @@ const setSchema = async (nodeSchema) => {
   await nextTick()
 
   form.value = createForm({
-    // disabled: this.stateIsReadonly,
+    disabled: dataflowStore.stateIsReadonly,
     values: props.node,
     effects: useEffects,
   })

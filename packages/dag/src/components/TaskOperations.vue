@@ -11,6 +11,7 @@ defineEmits<{
   edit: []
   forceStop: []
   stop: []
+  start: []
 }>()
 
 const route = useRoute()
@@ -24,6 +25,13 @@ const dataflowStore = useDataflowStore()
 
 <template>
   <div class="flex align-center gap-2" style="--btn-space: 0">
+    <el-button
+      v-show="dataflowStore.transformLoading"
+      class="btn-shadow"
+      loading
+      plain
+      >{{ $t('packages_dag_model_generation') }}</el-button
+    >
     <ElButton
       class="btn-shadow"
       :type="dataflowStore.showSettings ? 'primary' : undefined"
@@ -34,6 +42,18 @@ const dataflowStore = useDataflowStore()
         <i-lucide-settings />
       </template>
       {{ $t('public_button_setting') }}
+    </ElButton>
+    <ElButton
+      v-if="
+        dataflowStore.stateIsReadonly &&
+        dataflow.btnDisabled &&
+        !dataflow.btnDisabled.edit &&
+        buttonShowMap.Edit
+      "
+      @click="$emit('edit')"
+    >
+      <VIcon class="mr-1">edit-outline</VIcon>
+      {{ $t('public_button_edit') }}
     </ElButton>
     <ElButton
       v-if="!stateIsReadonly && buttonShowMap.Edit"
@@ -101,7 +121,7 @@ const dataflowStore = useDataflowStore()
         {{ $t('public_button_stop') }}
       </ElButton>
     </template>
-    <ElButton class="btn-shadow" type="primary">
+    <ElButton class="btn-shadow" type="primary" @click="$emit('start')">
       <template #icon>
         <i-lucide-play />
       </template>

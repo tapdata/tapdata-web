@@ -40,6 +40,7 @@ const isPopoverActive = computed(
     :is-valid-connection="dataflowStore.isValidConnection"
   >
     <div
+      v-if="!dataflowStore.stateIsReadonly"
       class="position-absolute handle-tooltip -top-1 left-1/2 rounded-lg border-[0.5px] border-components-panel-border bg-card p-1.5 shadow-lg group-hover/handle:block"
     >
       <div class="fs-8 font-color-sslight lh-4">
@@ -50,6 +51,7 @@ const isPopoverActive = computed(
       </div>
     </div>
     <div
+      v-if="!dataflowStore.stateIsReadonly"
       class="bg-primary rounded-pill align-center justify-center canvas-node-handle-icon position-absolute w-100 h-100 left-0 top-0 align-items-center justify-center color-white z-10"
       :class="{ 'force-visible': isPopoverActive }"
       @click.stop="

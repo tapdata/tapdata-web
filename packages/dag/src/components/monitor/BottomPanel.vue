@@ -151,7 +151,7 @@ export default {
 </script>
 
 <template>
-  <section class="bottom-panel border-top flex-column">
+  <section class="bottom-panel flex-column rounded-2xl shadow-canvas">
     <NodeLog
       v-if="onlyLog"
       v-bind="$attrs"

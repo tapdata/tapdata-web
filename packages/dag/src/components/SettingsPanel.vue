@@ -342,7 +342,7 @@ const systemTimeZone = computed(() => {
 
 // Form
 const form = createForm({
-  disabled: stateIsReadonly.value,
+  disabled: dataflowStore.stateIsReadonly,
   values: dataflowStore.dataflow,
   effects: useFormEffects,
 })
@@ -585,7 +585,7 @@ onMounted(() => {
 })
 
 // Initialize
-form.setState({ disabled: stateIsReadonly.value })
+form.setState({ disabled: dataflowStore.stateIsReadonly })
 getRolePermissions()
 
 // Schema

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { deleteTask } from '@tap/api/src/core/task'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
+import SkipError from '@tap/business/src/views/task/SkipError.vue'
 import { TextEditable } from '@tap/component/src/base/text-editable'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
-import { provide, ref, watch } from 'vue'
+import { onBeforeUnmount, provide, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import Canvas from './Canvas.vue'
@@ -24,6 +25,10 @@ const {
   dag,
   dataflow,
   buttonShowMap,
+  formScope,
+  isSaving,
+  consoleRef,
+  skipErrorRef,
   initNodeType,
   onCreateConnection,
   onDeleteConnection,
@@ -35,14 +40,16 @@ const {
   onClickNode,
   handleSave,
   handleReset,
+  handleStart,
   onNameInputChange,
-  formScope,
-  isSaving,
+  initWS,
+  startTask,
 } = useCanvasOperation()
 
 const isInitialized = ref(false)
 
 const init = async () => {
+  // dataflowStore.$reset()
   const taskId = route.params.id as string
   await initNodeType()
   await dataflowStore.initPdkProperties()
@@ -69,6 +76,7 @@ const init = async () => {
     })
   }
 
+  initWS()
   isInitialized.value = true
 }
 
@@ -77,6 +85,37 @@ watch([() => dag.value.nodes.length, () => dag.value.edges.length], () => {
     dataflowStore.patchDataflowDebounce()
   }
 })
+
+watch(
+  () => dataflowStore.dataflowRef.status,
+  (v) => {
+    if (dataflowStore.dataflow.btnDisabled?.edit) {
+      dataflowStore.stateIsReadonly = true
+    } else {
+      dataflowStore.stateIsReadonly = false
+    }
+
+    if (v === 'starting' || v === 'running') {
+      const routeName =
+        dataflowStore.dataflow.syncType === 'sync'
+          ? 'TaskMonitor'
+          : 'MigrationMonitor'
+      router.push({
+        name: routeName,
+        params: {
+          id: dataflowStore.dataflow.id,
+        },
+      })
+    }
+
+    // if (
+    //   ['DataflowViewer'].includes(this.$route.name) &&
+    //   ['renewing'].includes(v)
+    // ) {
+    //   this.handleConsoleAutoLoad()
+    // }
+  },
+)
 
 init()
 
@@ -112,6 +151,10 @@ const handlePageReturn = () => {
     window.name = null
   }
 }
+
+onBeforeUnmount(() => {
+  // dataflowStore.$reset()
+})
 
 provide('dag', dag)
 provide('nodesPanelExpanded', nodesPanelExpanded)
@@ -158,7 +201,11 @@ provide('isSaving', isSaving)
     </div>
     <div class="w-100 h-0 position-absolute header z-10 flex align-center px-3">
       <div class="flex-1" />
-      <TaskOperations @save="handleSave" @reset="handleReset" />
+      <TaskOperations
+        @save="handleSave"
+        @reset="handleReset"
+        @start="handleStart"
+      />
     </div>
     <Canvas
       @update:nodes:position="onUpdateNodesPosition"
@@ -169,8 +216,13 @@ provide('isSaving', isSaving)
       @move:node:position="onMoveNodePosition"
       @click:connection:add="onClickConnectionAdd"
       @click:node="onClickNode"
-    />
-    <ConsolePanel ref="consoleRef" />
+    >
+      <template #bottom>
+        <ConsolePanel ref="consoleRef" />
+      </template>
+    </Canvas>
+
+    <SkipError ref="skipErrorRef" @skip="startTask" />
   </div>
 </template>
 
