@@ -25,12 +25,14 @@ export interface FitViewWithOffsetOptions {
 export function useLayout(options?: {
   nodesPanelExpanded?: Ref<boolean>
   nodesPanelWidth?: Ref<number> | number
+  bottomPanelHeight?: Ref<number> | number
   canvasSelector?: string
 }) {
   const { findNode, fitView, setViewport, getNodes } = useVueFlow()
 
   const nodesPanelExpanded = options?.nodesPanelExpanded
   const nodesPanelWidth = options?.nodesPanelWidth ?? 260
+  const bottomPanelHeight = options?.bottomPanelHeight ?? 0
   const canvasSelector = options?.canvasSelector ?? '#node-canvas'
 
   const graph = ref(new dagre.graphlib.Graph())
@@ -99,8 +101,9 @@ export function useLayout(options?: {
     const containerWidth = container.clientWidth
     const containerHeight = container.clientHeight
 
-    // Calculate offset for left panel
+    // Calculate offsets for panels
     const leftOffset = nodesPanelExpanded?.value ? unref(nodesPanelWidth) : 0
+    const bottomOffset = unref(bottomPanelHeight)
 
     // Get bounds of all nodes using VueFlow's internal GraphNodes
     const graphNodes = getNodes.value
@@ -110,15 +113,16 @@ export function useLayout(options?: {
     }
 
     // Calculate viewport for the adjusted container area
-    // Subtract left panel width from available width
+    // Subtract left panel width from available width, bottom panel height from available height
     const availableWidth = containerWidth - leftOffset
+    const availableHeight = containerHeight - bottomOffset
 
     // Use VueFlow's utility functions
     const bounds = getRectOfNodes(graphNodes)
     const newViewport = getTransformForBounds(
       bounds,
       availableWidth,
-      containerHeight,
+      availableHeight,
       minZoom,
       maxZoom,
       padding,

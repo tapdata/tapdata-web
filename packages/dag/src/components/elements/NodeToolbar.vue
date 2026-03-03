@@ -6,6 +6,7 @@ const props = defineProps<{
 }>()
 
 const onDeleteNode = inject<(node: any) => void>('onDeleteNode')
+const handlePreview = inject<(node: any) => void>('handlePreview')
 
 const handleDelete = () => {
   onDeleteNode?.(props.node)
@@ -14,8 +15,11 @@ const handleDelete = () => {
 
 <template>
   <div class="position-absolute top-0 end-0 node-toolbar pb-1">
-    <div class="node-toolbar-actions rounded-lg p-0.5" style="--btn-space: 0">
-      <el-button text size="xs">
+    <div
+      class="node-toolbar-actions rounded-lg p-0.5 cursor-pointer"
+      style="--btn-space: 1px"
+    >
+      <el-button text size="xs" @click.stop="handlePreview?.(node.id)">
         <template #icon>
           <i-lucide-play />
         </template>

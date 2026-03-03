@@ -5,7 +5,7 @@ import SkipError from '@tap/business/src/views/task/SkipError.vue'
 import { TextEditable } from '@tap/component/src/base/text-editable'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
-import { onBeforeUnmount, provide, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, provide, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import Canvas from './Canvas.vue'
@@ -20,6 +20,7 @@ const route = useRoute()
 const { t } = useI18n()
 const store = useStore()
 const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+const canvasRef = ref<any>(null)
 
 const {
   dag,
@@ -44,18 +45,26 @@ const {
   onNameInputChange,
   initWS,
   startTask,
+  previewData,
+  previewLoading,
+  handlePreview,
 } = useCanvasOperation()
 
 const isInitialized = ref(false)
 
 const init = async () => {
-  // dataflowStore.$reset()
+  dataflowStore.$reset()
   const taskId = route.params.id as string
   await initNodeType()
   await dataflowStore.initPdkProperties()
 
   if (taskId) {
     await dataflowStore.fetchDataflow(taskId)
+    nextTick(() => {
+      setTimeout(() => {
+        canvasRef.value.fitViewWithOffset({ duration: 0, maxZoom: 1 })
+      }, 0)
+    })
   } else {
     let syncType
     let targetRoute
@@ -87,9 +96,9 @@ watch([() => dag.value.nodes.length, () => dag.value.edges.length], () => {
 })
 
 watch(
-  () => dataflowStore.dataflowRef.status,
+  () => dataflow.value.status,
   (v) => {
-    if (dataflowStore.dataflow.btnDisabled?.edit) {
+    if (dataflow.value.btnDisabled?.edit) {
       dataflowStore.stateIsReadonly = true
     } else {
       dataflowStore.stateIsReadonly = false
@@ -97,13 +106,11 @@ watch(
 
     if (v === 'starting' || v === 'running') {
       const routeName =
-        dataflowStore.dataflow.syncType === 'sync'
-          ? 'TaskMonitor'
-          : 'MigrationMonitor'
+        dataflow.value.syncType === 'sync' ? 'TaskMonitor' : 'MigrationMonitor'
       router.push({
         name: routeName,
         params: {
-          id: dataflowStore.dataflow.id,
+          id: dataflow.value.id,
         },
       })
     }
@@ -127,7 +134,7 @@ const toggleExpandNodes = () => {
 }
 
 const handlePageReturn = () => {
-  if (!dataflowStore.dag.nodes.length && dataflowStore.dataflow.id) {
+  if (!dataflowStore.dag.nodes.length && dataflow.value.id) {
     Modal.confirm(
       t('packages_dag_page_return_confirm_title'),
       t('packages_dag_page_return_confirm_content'),
@@ -137,7 +144,7 @@ const handlePageReturn = () => {
       },
     ).then((res) => {
       if (res) {
-        deleteTask(dataflowStore.dataflow.id)
+        deleteTask(dataflow.value.id)
       }
       router.push({
         name: 'dataflowList',
@@ -153,7 +160,7 @@ const handlePageReturn = () => {
 }
 
 onBeforeUnmount(() => {
-  // dataflowStore.$reset()
+  dataflowStore.$reset()
 })
 
 provide('dag', dag)
@@ -163,6 +170,9 @@ provide('dataflow', dataflow)
 provide('onNameInputChange', onNameInputChange)
 provide('formScope', formScope)
 provide('isSaving', isSaving)
+provide('previewData', previewData)
+provide('previewLoading', previewLoading)
+provide('handlePreview', handlePreview)
 </script>
 
 <template>
@@ -189,13 +199,21 @@ provide('isSaving', isSaving)
           @change="onNameInputChange"
         />
       </div>
-      <TaskStatus
-        class="w-auto rounded-lg zoom-xs"
-        :task="dataflowStore.dataflowRef"
-      />
-      <el-button text @click="toggleExpandNodes">
+      <TaskStatus class="w-auto rounded-lg zoom-xs" :task="dataflow" />
+      <el-button
+        text
+        :type="nodesPanelExpanded ? 'primary' : undefined"
+        :bg="nodesPanelExpanded"
+        @click="toggleExpandNodes"
+      >
         <template #icon>
-          <VIcon>expand-list</VIcon>
+          <VIcon
+            style="transition: none"
+            :style="{
+              transform: `scaleX(${!nodesPanelExpanded ? -1 : 1})`,
+            }"
+            >expand-list</VIcon
+          >
         </template>
       </el-button>
     </div>
@@ -208,6 +226,8 @@ provide('isSaving', isSaving)
       />
     </div>
     <Canvas
+      ref="canvasRef"
+      @preview="handlePreview"
       @update:nodes:position="onUpdateNodesPosition"
       @create:connection="onCreateConnection"
       @delete:connection="onDeleteConnection"

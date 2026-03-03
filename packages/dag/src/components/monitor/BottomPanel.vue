@@ -1,163 +1,158 @@
-<script>
+<script setup lang="ts">
 import { taskConsoleRelations } from '@tap/api/src/core/task'
-
 import NodeLog from '@tap/business/src/components/logs/NodeLog'
 import MilestoneList from '@tap/business/src/components/milestone/List'
 import RelationList from '@tap/business/src/views/task/relation/List.vue'
-import focusSelect from '@tap/component/src/directives/focusSelect'
-import resize from '@tap/component/src/directives/resize'
-import { mapActions, mapGetters, mapMutations } from 'vuex'
-
+import vResize from '@tap/component/src/directives/resize'
+import { computed, nextTick, onMounted, ref, useAttrs, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
+import { useDataflowStore } from '../../stores/dataflow.store'
 import Alert from './components/Alert'
 import Record from './components/Record'
 import SkipErrorTable from './components/SkipErrorTable.vue'
 import TaskInspect from './components/TaskInspect.vue'
 import '@tap/component/src/directives/resize/index.scss'
 
-export default {
+defineOptions({
   name: 'ConfigPanel',
-  components: {
-    Record,
-    Alert,
-    RelationList,
-    NodeLog,
-    MilestoneList,
-    TaskInspect,
-    SkipErrorTable,
-  },
-  directives: {
-    resize,
-    focusSelect,
-  },
-  props: {
-    onlyLog: {
-      type: Boolean,
-      default: false,
-    },
-    hideLog: Boolean,
-  },
-  data() {
-    return {
-      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
-      isCommunity: import.meta.env.VUE_APP_MODE === 'community',
-      currentTab: 'milestone',
-      name: this.activeNode?.name,
-      relationCount: 0,
-      nodeId: '',
-    }
-  },
-  computed: {
-    ...mapGetters('dataflow', [
-      'activeType',
-      'activeNode',
-      'nodeById',
-      'stateIsReadonly',
-    ]),
+  // directives: { resize, focusSelect },
+})
 
-    showAlert() {
-      return !['SharedCacheMonitor'].includes(this.$route.name)
-    },
+const props = defineProps<{
+  onlyLog?: boolean
+  hideLog?: boolean
+}>()
+
+const emit = defineEmits<{
+  action: [any]
+  'load-data': []
+  showBottomPanel: []
+  'open-inspect': []
+}>()
+
+const dataflowStore = useDataflowStore()
+const store = useStore()
+const route = useRoute()
+const attrs = useAttrs() as any
+
+const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+const isCommunity = import.meta.env.VUE_APP_MODE === 'community'
+
+const currentTab = ref('milestone')
+const relationCount = ref(0)
+const nodeId = ref('')
+const logRef = ref<any>(null)
+
+// Vuex getters
+const activeType = computed(() => store.getters['dataflow/activeType'])
+const activeNode = computed(() => store.getters['dataflow/activeNode'])
+const nodeById = computed(() => store.getters['dataflow/nodeById'])
+const stateIsReadonly = computed(
+  () => store.getters['dataflow/stateIsReadonly'],
+)
+
+const name = ref(activeNode.value?.name)
+
+const showAlert = computed(() => {
+  return !['SharedCacheMonitor'].includes(route.name as string)
+})
+
+watch(
+  () => activeNode.value?.name,
+  (v) => {
+    name.value = v
   },
-  watch: {
-    'activeNode.name': function (v) {
-      this.name = v
-    },
-  },
-  mounted() {
-    if (['MigrationMonitorViewer'].includes(this.$route.name)) {
-      this.currentTab = 'log'
-      const { start, end } = this.$route.query
-      this.changeTab(this.currentTab, {
-        start: start * 1,
-        end: end * 1,
-      })
-    }
-    this.getRelationData()
-  },
-  methods: {
-    ...mapMutations('dataflow', [
-      'updateNodeProperties',
-      'setNodeError',
-      'clearNodeError',
-      'setActiveType',
-    ]),
-    ...mapActions('dataflow', ['updateDag']),
+)
 
-    handleChangeName(name) {
-      if (name) {
-        this.updateNodeProperties({
-          id: this.activeNode.id,
-          properties: {
-            name,
-          },
-        })
-        this.updateDag({ vm: this })
-      } else {
-        this.name = this.activeNode.name
-      }
-    },
+onMounted(() => {
+  if (['MigrationMonitorViewer'].includes(route.name as string)) {
+    currentTab.value = 'log'
+    const { start, end } = route.query
+    changeTab(currentTab.value, {
+      start: Number(start),
+      end: Number(end),
+    })
+  }
+  getRelationData()
+})
 
-    async validateForm() {
-      await this.$refs.formPanel?.validate()
-    },
+// Vuex mutations / actions
+const updateNodeProperties = (payload: any) =>
+  store.commit('dataflow/updateNodeProperties', payload)
+const updateDag = (payload: any) =>
+  store.dispatch('dataflow/updateDag', payload)
 
-    getLogRef() {
-      return this.$refs.log
-    },
-    changeAlertTab(tab) {
-      this.currentTab = tab
-    },
-
-    changeTab(tab, data) {
-      this.currentTab = tab
-      this.$nextTick(() => {
-        if (tab === 'log') {
-          data.nodeId && this.getLogRef()?.changeItem(data.nodeId)
-          const t = new Date(data.start).getTime()
-          const len = 10 * 1000
-          const start = t - len
-          const end = data.end ? data.end + len : t + len
-          data.start &&
-            this.getLogRef()?.$refs.timeSelect.changeTime([start, end])
-        }
-      })
-    },
-
-    getRelationData() {
-      const { id, syncType } = this.$attrs.dataflow || {}
-      const { taskRecordId } = this.$route.query || {}
-      const filter = {
-        taskId: this.$route.params.id || id,
-        taskRecordId,
-      }
-      if (['logCollector'].includes(syncType)) {
-        filter.type = 'task_by_collector'
-      } else if (['sync'].includes(syncType)) {
-        // filter.type = 'task_by_collector'
-      }
-      taskConsoleRelations(filter).then((data) => {
-        this.relationCount = data?.length || 0
-      })
-    },
-  },
-  emits: [
-    'action',
-    'load-data',
-    'showBottomPanel',
-    'load-data',
-    'showBottomPanel',
-  ],
+function handleChangeName(newName: string) {
+  if (newName) {
+    updateNodeProperties({
+      id: activeNode.value.id,
+      properties: { name: newName },
+    })
+    updateDag({ vm: null })
+  } else {
+    name.value = activeNode.value.name
+  }
 }
+
+function getLogRef() {
+  return logRef.value
+}
+
+function changeAlertTab(tab: string) {
+  currentTab.value = tab
+}
+
+function changeTab(tab: string, data: any) {
+  currentTab.value = tab
+  nextTick(() => {
+    if (tab === 'log') {
+      data.nodeId && getLogRef()?.changeItem(data.nodeId)
+      const t = new Date(data.start).getTime()
+      const len = 10 * 1000
+      const start = t - len
+      const end = data.end ? data.end + len : t + len
+      data.start && getLogRef()?.$refs.timeSelect.changeTime([start, end])
+    }
+  })
+}
+
+function getRelationData() {
+  const { id, syncType } = attrs.dataflow || {}
+  const { taskRecordId } = route.query || {}
+  const filter: any = {
+    taskId: (route.params.id as string) || id,
+    taskRecordId,
+  }
+  if (['logCollector'].includes(syncType)) {
+    filter.type = 'task_by_collector'
+  }
+  taskConsoleRelations(filter).then((data: any) => {
+    relationCount.value = data?.length || 0
+  })
+}
+
+defineExpose({
+  changeTab,
+  changeAlertTab,
+  getLogRef,
+  handleChangeName,
+})
 </script>
 
 <template>
-  <section class="bottom-panel flex-column rounded-2xl shadow-canvas">
+  <section
+    v-resize.top="{
+      minHeight: 328,
+    }"
+    class="bottom-panel flex-column rounded-2xl shadow-canvas overflow-hidden"
+  >
     <NodeLog
       v-if="onlyLog"
       v-bind="$attrs"
-      ref="log"
+      ref="logRef"
       :current-tab="currentTab"
-      @action="$emit('action', arguments[0])"
+      @action="emit('action', $event)"
     />
     <div v-else class="panel-header flex h-100">
       <ElTabs
@@ -189,10 +184,10 @@ export default {
           <NodeLog
             v-if="currentTab === 'log'"
             v-bind="$attrs"
-            ref="log"
+            ref="logRef"
             v-model:node-id="nodeId"
             :current-tab="currentTab"
-            @action="$emit('action', arguments[0])"
+            @action="emit('action', $event)"
           />
         </ElTabPane>
         <ElTabPane name="record">
@@ -218,7 +213,7 @@ export default {
             v-bind="$attrs"
             :current-tab="currentTab"
             @change-tab="changeTab"
-            @load-data="$emit('load-data')"
+            @load-data="emit('load-data')"
           />
         </ElTabPane>
         <ElTabPane v-if="relationCount" name="relation">
@@ -232,7 +227,7 @@ export default {
             :current-tab="currentTab"
             :type="$attrs.dataflow.syncType"
             @change-tab="changeTab"
-            @load-data="$emit('load-data')"
+            @load-data="emit('load-data')"
           />
         </ElTabPane>
         <ElTabPane v-if="isDaas && !isCommunity" name="inspect">
@@ -246,7 +241,7 @@ export default {
             v-bind="$attrs"
             style="min-width: 1000px"
             :current-tab="currentTab"
-            @open-inspect="$emit('open-inspect')"
+            @open-inspect="emit('open-inspect')"
           />
         </ElTabPane>
         <SkipErrorTable
@@ -262,9 +257,13 @@ export default {
         />
       </ElTabs>
 
-      <el-button text class="close-icon" @click="$emit('showBottomPanel')">
+      <el-button
+        text
+        class="close-icon"
+        @click="dataflowStore.showBottom = false"
+      >
         <template #icon>
-          <VIcon size="16">close</VIcon>
+          <i-lucide-x />
         </template>
       </el-button>
     </div>

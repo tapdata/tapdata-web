@@ -56,9 +56,9 @@ const dataflowStore = useDataflowStore()
       {{ $t('public_button_edit') }}
     </ElButton>
     <ElButton
-      v-if="!stateIsReadonly && buttonShowMap.Edit"
+      v-if="!dataflowStore.stateIsReadonly && buttonShowMap.Edit"
       :loading="isSaving"
-      :disabled="dataflowStore.btnDisabled?.edit"
+      :disabled="dataflow.btnDisabled?.edit"
       class="btn-shadow"
       @click="$emit('save')"
     >
@@ -69,10 +69,7 @@ const dataflowStore = useDataflowStore()
     </ElButton>
 
     <ElButton
-      v-if="
-        !dataflowStore.dataflowRef.btnDisabled?.reset &&
-        dataflowStore.buttonShowMap.Reset
-      "
+      v-if="!dataflow.btnDisabled?.reset && dataflowStore.buttonShowMap.Reset"
       class="btn-shadow"
       :class="{ 'btn--text': isViewer }"
       type="warning"
@@ -126,6 +123,22 @@ const dataflowStore = useDataflowStore()
         <i-lucide-play />
       </template>
       {{ $t('public_button_start') }}
+    </ElButton>
+
+    <ElButton
+      v-if="dataflow.status === 'stopping' && buttonShowMap.Stop"
+      :disabled="dataflow.buttonDisabled && dataflow.btnDisabled.forceStop"
+      type="danger"
+      @click="$emit('forceStop')"
+    >
+      {{ $t('public_button_force_stop') }}
+    </ElButton>
+    <ElButton
+      v-else-if="!dataflow.btnDisabled?.stop && buttonShowMap.Stop"
+      type="danger"
+      @click="$emit('stop')"
+    >
+      {{ $t('public_button_stop') }}
     </ElButton>
   </div>
 </template>

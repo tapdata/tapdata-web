@@ -11,7 +11,7 @@ import { calcTimeUnit, calcUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash-es'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, inject, onMounted, ref, watch, type Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { useDataflowStore } from '../../stores/dataflow.store'
@@ -43,6 +43,8 @@ const props = defineProps({
   ifEnableConcurrentRead: Boolean,
 })
 
+const dataflow = inject<Ref<any>>('dataflow')
+
 const { t } = useI18n()
 const dataflowStore = useDataflowStore()
 const route = useRoute()
@@ -66,7 +68,7 @@ const cpuUsageOptions = {
       const [cpu, mem] = params
       let result = dayjs(Number(cpu.axisValue)).format('YYYY-MM-DD HH:mm:ss')
 
-      result += `<div class="flex justify-content-between gap-4"><div>${cpu.marker}${cpu.seriesName}</div><div class="din-font">${Number(cpu.data.toFixed(2))}%</div></div>`
+      result += `<div class="flex justify-content-between gap-4"><div>${cpu.marker}${cpu.seriesName}</div><div class="din-font">${Number(cpu.data?.toFixed(2))}%</div></div>`
       result += `<div class="flex justify-content-between gap-4"><div>${mem.marker}${mem.seriesName}</div><div class="din-font">${calcUnit(mem.data, 'byte')}</div></div>`
 
       return result
@@ -673,10 +675,7 @@ onMounted(() => {
           refresh</IconButton
         >
       </div>
-      <div
-        v-if="dataflowStore.dataflowRef.type !== 'cdc'"
-        class="info-box sync-info"
-      >
+      <div v-if="dataflow.type !== 'cdc'" class="info-box sync-info">
         <div class="flex justify-content-between mb-2">
           <span class="fw-sub fs-7 font-color-normal">{{
             $t('packages_dag_monitor_leftsider_tongbuxinxi')
@@ -689,7 +688,7 @@ onMounted(() => {
             <VIcon @click.stop="toInitialList">menu-left</VIcon>
           </ElTooltip>
         </div>
-        <template v-if="dataflowStore.dataflowRef.type !== 'cdc'">
+        <template v-if="dataflow.type !== 'cdc'">
           <div class="mb-2 flex justify-content-between">
             <span class="sync-info-item__title">{{
               $t('packages_dag_components_nodedetaildialog_quanliangkaishishi')
@@ -782,7 +781,7 @@ onMounted(() => {
           </div>
           <div
             v-if="
-              dataflowStore.dataflowRef.syncType === 'migrate' &&
+              dataflow.syncType === 'migrate' &&
               totalData.currentSnapshotTableRowTotal &&
               !ifEnableConcurrentRead
             "
@@ -801,7 +800,7 @@ onMounted(() => {
             }}</span>
           </div>
         </template>
-        <template v-if="dataflowStore.dataflowRef.type !== 'initial_sync'">
+        <template v-if="dataflow.type !== 'initial_sync'">
           <div
             v-if="initialData.snapshotDoneAt"
             class="mb-2 flex justify-content-between"
@@ -820,9 +819,9 @@ onMounted(() => {
       </div>
       <div
         v-if="
-          dataflowStore.dataflowRef.syncType === 'migrate' &&
-          dataflowStore.dataflowRef.isAutoInspect &&
-          dataflowStore.dataflowRef.canOpenInspect &&
+          dataflow.syncType === 'migrate' &&
+          dataflow.isAutoInspect &&
+          dataflow.canOpenInspect &&
           verifyTotals
         "
         class="info-box"
@@ -975,14 +974,12 @@ onMounted(() => {
               </span>
             </ElTooltip>
             <ElTooltip
-              v-if="dataflowStore.dataflowRef.timeDifference > 0"
+              v-if="dataflow.timeDifference > 0"
               key="retrying"
               placement="top"
               :content="
                 $t('packages_dag_monitor_timeDifference', {
-                  val: getCalcTimeUnit(
-                    dataflowStore.dataflowRef.timeDifference,
-                  ),
+                  val: getCalcTimeUnit(dataflow.timeDifference),
                 })
               "
             >

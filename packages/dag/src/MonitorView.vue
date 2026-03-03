@@ -8,7 +8,7 @@ import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import Time from '@tap/shared/src/time'
 import { debounce } from 'lodash-es'
-import { computed, provide, ref } from 'vue'
+import { computed, nextTick, onUnmounted, provide, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import Canvas from './Canvas.vue'
@@ -41,6 +41,7 @@ const timeFormat = ref('HH:mm:ss')
 const nodeDetailDialog = ref(false)
 const noNeedRefresh = ref(false)
 const showBottomPanel = ref(true)
+const canvasRef = ref<any>(null)
 
 const {
   dataflow,
@@ -62,6 +63,7 @@ const {
   handleSave,
   handleReset,
   handleStart,
+  handleEdit,
   onNameInputChange,
   initWS,
   startTask,
@@ -78,7 +80,7 @@ const firstStartTime = computed(() => {
 })
 
 const lastStopTime = computed(() => {
-  const stopTime = dataflowStore.dataflowRef.stopTime
+  const stopTime = dataflow.value?.stopTime
   return stopTime ? new Date(stopTime).getTime() : null
 })
 
@@ -86,7 +88,7 @@ const isEnterTimer = computed(() => {
   return (
     quotaTimeType.value !== 'custom' &&
     !nodeDetailDialog.value &&
-    ['running', 'stopping'].includes(dataflowStore.dataflowRef?.status)
+    ['running', 'stopping'].includes(dataflow.value?.status)
   )
 })
 
@@ -102,7 +104,7 @@ const timeSelectRange = computed(() => {
 })
 
 const ifEnableConcurrentRead = computed(() => {
-  if (dataflowStore.dataflowRef.syncType !== 'migrate') return false
+  if (dataflow.value.syncType !== 'migrate') return false
   const sourceNode = dataflowStore.dag.nodes.find(
     (node: any) => !node.$inputs.length && node.type === 'database',
   )
@@ -527,10 +529,18 @@ const initMonitor = debounce(() => {
   startLoadData()
 }, 200)
 
+watch(
+  () => dataflowStore.stateIsReadonly,
+  (v) => {
+    console.trace('stateIsReadonly', v)
+  },
+)
+
 const init = async () => {
   console.log('dataflowStore.dataflow.id', dataflowStore.dataflow.id)
-  dataflowStore.$reset()
+  // dataflowStore.$reset()
   dataflowStore.stateIsReadonly = true
+  dataflowStore.showBottom = true
   const taskId = route.params.id as string
   await initNodeType()
   await dataflowStore.initPdkProperties()
@@ -541,6 +551,12 @@ const init = async () => {
   initMonitor()
   initWS()
   isInitialized.value = true
+
+  nextTick(() => {
+    setTimeout(() => {
+      canvasRef.value.fitViewWithOffset({ duration: 0, maxZoom: 1 })
+    }, 0)
+  })
 }
 
 init()
@@ -570,6 +586,10 @@ const handlePageReturn = () => {
     window.name = null
   }
 }
+
+onUnmounted(() => {
+  dataflowStore.$reset()
+})
 
 provide('dag', dag)
 provide('buttonShowMap', buttonShowMap)
@@ -611,9 +631,11 @@ provide('isSaving', isSaving)
         @save="handleSave"
         @reset="handleReset"
         @start="handleStart"
+        @edit="handleEdit"
       />
     </div>
     <Canvas
+      ref="canvasRef"
       @update:nodes:position="onUpdateNodesPosition"
       @create:connection="onCreateConnection"
       @delete:connection="onDeleteConnection"
@@ -626,8 +648,8 @@ provide('isSaving', isSaving)
       <template #node="scope">
         <Node
           v-bind="scope"
-          :task-type="dataflowStore.dataflowRef.type"
-          :sync-type="dataflowStore.dataflowRef.syncType"
+          :task-type="dataflow.type"
+          :sync-type="dataflow.syncType"
           :sample="dagData ? dagData[scope.data.id] : {}"
           :quota="quota"
           :alarm="alarmData ? alarmData.nodes[scope.data.id] : undefined"
@@ -647,12 +669,16 @@ provide('isSaving', isSaving)
         />
       </template>
       <template #bottom>
+        <div
+          v-if="!dataflowStore.showBottom"
+          class="position-absolute bg-card rounded-lg font-color-light p-1.5 shadow-canvas text-xs translate-middle-x start-50 top-1 cursor-pointer"
+          @click="dataflowStore.showBottom = true"
+        >
+          {{ $t('packages_dag_monitor_bottompanel_renwujindu') }}
+        </div>
         <BottomPanel
-          v-if="dataflowStore.dataflow.status && showBottomPanel"
+          v-if="dataflow.status && dataflowStore.showBottom"
           ref="bottomPanel"
-          v-resize.top="{
-            minHeight: 328,
-          }"
           :dataflow="dataflow"
           :alarm-data="alarmData"
           :log-totals="logTotals"

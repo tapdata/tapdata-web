@@ -80,9 +80,27 @@ function observeLeftPanel() {
 // Also observe DOM changes in the wrapper to handle slot content swaps
 let leftPanelMutationObserver: MutationObserver | null = null
 
+// Observe actual height of the bottom bar (toolbar + BottomPanel)
+const bottomBarRef = useTemplateRef<HTMLElement>('bottomBar')
+const bottomBarHeight = ref(0)
+let bottomBarResizeObserver: ResizeObserver | null = null
+console.log('bottomBarHeight', bottomBarHeight)
+
+function observeBottomBar() {
+  if (!bottomBarRef.value) return
+  bottomBarResizeObserver?.disconnect()
+  bottomBarResizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      bottomBarHeight.value = entry.target.getBoundingClientRect().height
+    }
+  })
+  bottomBarResizeObserver.observe(bottomBarRef.value)
+}
+
 const { layout, fitViewWithOffset } = useLayout({
   nodesPanelExpanded,
   nodesPanelWidth: leftPanelWidth,
+  bottomPanelHeight: bottomBarHeight,
 })
 
 // History (Undo/Redo) controls
@@ -104,6 +122,9 @@ onMounted(() => {
     leftPanelMutationObserver.observe(leftPanelRef.value, { childList: true })
   }
 
+  // Start observing the bottom bar height
+  observeBottomBar()
+
   setupKeyboardShortcuts()
   // 注册 VueFlow 节点位置更新回调，用于 undo/redo 时同步 VueFlow 内部状态
   dataflowStore.registerVueFlowUpdateCallback((id, position) => {
@@ -124,6 +145,7 @@ onUnmounted(() => {
   dataflowStore.unregisterVueFlowUpdateCallback()
   leftPanelResizeObserver?.disconnect()
   leftPanelMutationObserver?.disconnect()
+  bottomBarResizeObserver?.disconnect()
 })
 
 const bottomBarStyle = computed(() => {
@@ -394,16 +416,17 @@ function handleLayoutGraph() {
   emit('update:nodes:position', positionUpdates)
 
   nextTick(() => {
-    fitViewWithOffset({ duration: 200 })
+    fitViewWithOffset({ duration: 200, maxZoom: 1 })
   })
 }
 
-const hasInit = ref(false)
-function onInitialized() {
-  if (hasInit.value) return
-  fitViewWithOffset({ duration: 0, maxZoom: 1 })
-  hasInit.value = true
-}
+// const hasInit = ref(false)
+// function onInitialized() {
+//   if (hasInit.value) return
+//   console.log('fitViewWithOffset', bottomBarHeight.value)
+//   fitViewWithOffset({ duration: 0, maxZoom: 1 })
+//   hasInit.value = true
+// }
 
 provide('popoverTarget', popoverTarget)
 provide('showPopover', showPopover)
@@ -413,11 +436,15 @@ provide('onAddNode', onAddNode)
 provide('onCreateConnection', onCreateConnection)
 provide('onDeleteConnection', onDeleteConnection)
 provide('onMoveNodePosition', onMoveNodePosition)
+
+defineExpose({
+  fitViewWithOffset,
+})
 </script>
 
 <template>
   <div id="node-canvas" class="position-relative w-100 h-100">
-    <div ref="leftPanel" class="left-panel-wrapper">
+    <div ref="leftPanel" class="left-panel-wrapper z-20">
       <slot name="left">
         <Transition name="slide-left">
           <NodesPanel
@@ -440,11 +467,13 @@ provide('onMoveNodePosition', onMoveNodePosition)
 
     <!-- bottom bar -->
     <div
+      ref="bottomBar"
       class="bottom-bar position-absolute bottom-3 z-10 flex flex-column gap-2"
       :style="bottomBarStyle"
     >
       <div class="flex align-center justify-content-end gap-2">
         <div
+          v-if="!dataflowStore.stateIsReadonly"
           class="bg-card shadow-canvas p-1 rounded-xl"
           style="--btn-space: 0"
         >
@@ -602,7 +631,6 @@ provide('onMoveNodePosition', onMoveNodePosition)
       :panning-mouse-button="panningMouseButton"
       :pan-on-drag="isInPanningMode"
       :apply-changes="false"
-      @nodes-initialized="onInitialized"
       @node-drag-stop="onNodeDragStop"
       @connect="onConnect"
       @node-click="onNodeClick"

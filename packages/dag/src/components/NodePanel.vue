@@ -136,9 +136,12 @@ const setSchema = async (nodeSchema) => {
 
 watch(
   () => props.node.id,
-  (v) => {
+  () => {
     setSchema(
-      props.node.__Ctor.getSchema(dataflowStore.dataflow.syncType, false),
+      props.node.__Ctor.getSchema(
+        dataflowStore.dataflow.syncType,
+        dataflowStore.stateIsReadonly,
+      ),
     )
   },
   { immediate: true },

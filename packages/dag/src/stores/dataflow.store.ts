@@ -14,10 +14,7 @@ import {
 import { isCancel } from '@tap/api/src/Http'
 import { makeStatusAndDisabled } from '@tap/business/src/shared/task'
 import { Modal } from '@tap/component/src/modal'
-import {
-  computed as reactiveComputed,
-  watch as reactiveWatch,
-} from '@tap/form/src/shared/reactive'
+import { watch as reactiveWatch } from '@tap/form/src/shared/reactive'
 import { useI18n } from '@tap/i18n'
 import { isObject } from '@tap/shared'
 import { debounce, isString } from 'lodash-es'
@@ -98,6 +95,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
   const dataflowDesc = ref('')
   const dataflowId = ref('')
   const showConsole = ref(false)
+  const showBottom = ref(false)
   const consoleAutoLoadType = ref('')
   const transformLoading = ref(false)
 
@@ -109,8 +107,6 @@ export const useDataflowStore = defineStore('dataflow', () => {
     Start: true,
     Stop: true,
   })
-
-  const dataflowRef = reactiveComputed(() => ({ ...dataflow }))
 
   console.log('dataflow', dataflow)
 
@@ -558,6 +554,10 @@ export const useDataflowStore = defineStore('dataflow', () => {
     showSettings.value = false
   }
 
+  function selectNodeById(nodeId) {
+    selectNode(findNodeById(nodeId))
+  }
+
   function toggleShowSettings() {
     showSettings.value = !showSettings.value
     selectedNode.value = null
@@ -784,39 +784,28 @@ export const useDataflowStore = defineStore('dataflow', () => {
   }
 
   /**
-   * 重置 store 到初始状态，用于路由切换时（如编辑页 → 监控页）
+   * 重置 UI 状态，不动 dataflow 本体
+   * dataflow 的数据由 fetchDataflow / setDataflow 负责覆盖
    */
   function $reset() {
-    // 重置 dataflow observable
-    // const keys = Object.keys(dataflow)
-    // for (const key of keys) {
-    //   delete dataflow[key]
-    // }
-    // Object.assign(dataflow, createEmptyDataflow())
-
-    // 重置所有 ref 状态
-    dag.value = { nodes: [], edges: [] }
-    allResourceIns.value = []
-    processorNodeTypes.value = []
-    pdkCapabilitiesMap.value = {}
-    pdkPropertiesMap.value = {}
-    pdkSchemaFreeMap.value = {}
-    pdkDoubleActiveMap.value = {}
-    editVersion.value = null
-    pageVersion.value = Date.now().toString()
+    // UI / 交互状态归零
     selectedNode.value = null
     selectedNodeId.value = null
     stateIsReadonly.value = false
     showSettings.value = false
-    // dataflowName.value = ''
-    // dataflowDesc.value = ''
-    dataflowId.value = ''
     showConsole.value = false
     consoleAutoLoadType.value = ''
     transformLoading.value = false
     taskSaving.value = false
 
-    // 重置 buttonShowMap
+    // DAG 结构
+    dag.value = { nodes: [], edges: [] }
+
+    // 版本信息
+    editVersion.value = null
+    pageVersion.value = Date.now().toString()
+
+    // 权限
     buttonShowMap.View = true
     buttonShowMap.Edit = true
     buttonShowMap.Delete = true
@@ -842,11 +831,11 @@ export const useDataflowStore = defineStore('dataflow', () => {
     stateIsReadonly,
     taskSaving,
     showSettings,
-    dataflowRef,
     showConsole,
     consoleAutoLoadType,
     transformLoading,
     buttonShowMap,
+    showBottom,
 
     addNode,
     deleteNode,
@@ -881,5 +870,6 @@ export const useDataflowStore = defineStore('dataflow', () => {
     unregisterVueFlowUpdateCallback,
     getCapabilitiesMap,
     createDataflow,
+    selectNodeById,
   }
 })

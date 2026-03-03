@@ -1,3 +1,4 @@
+import { callProxy } from '@tap/api/src/core/proxy'
 import {
   batchStartTasks,
   fetchMergeTaskCache,
@@ -15,7 +16,15 @@ import { validateBySchema } from '@tap/form/src/shared/validate'
 import { useI18n } from '@tap/i18n'
 import { setPageTitle } from '@tap/shared'
 import { isEmpty } from 'lodash-es'
-import { computed, getCurrentInstance, h, inject, reactive, ref } from 'vue'
+import {
+  computed,
+  getCurrentInstance,
+  inject,
+  nextTick,
+  reactive,
+  ref,
+  shallowRef,
+} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { allResourceIns } from '../nodes/loader'
@@ -65,12 +74,12 @@ export function useCanvasOperation() {
   const dataflow = reactiveComputed(() => ({ ...dataflowStore.dataflow }))
 
   const editorRoute = computed(() => {
-    if (dataflowStore.dataflowRef.syncType === 'sync') return 'DataflowEditor'
+    if (dataflow.value.syncType === 'sync') return 'DataflowEditor'
     else return 'MigrateEditor'
   })
 
   const monitorRoute = computed(() => {
-    if (dataflowStore.dataflowRef.syncType === 'sync') return 'TaskMonitor'
+    if (dataflow.value.syncType === 'sync') return 'TaskMonitor'
     else return 'MigrationMonitor'
   })
 
@@ -262,7 +271,7 @@ export function useCanvasOperation() {
   }
 
   const onClickNode = (node: any) => {
-    dataflowStore.selectNode(node)
+    dataflowStore.selectNode(node.data)
   }
 
   const deleteConnectionsByNodeId = (
@@ -346,6 +355,7 @@ export function useCanvasOperation() {
   const router = useRouter()
   const route = useRoute()
   const isSaving = ref(false)
+  const isReset = ref(false)
   let mergeTableCacheValidated = false
   const eachMap: Record<string, boolean> = {}
 
@@ -1008,14 +1018,6 @@ export function useCanvasOperation() {
       data.autoIncrementalBatchSize
     dataflowStore.dataflow.attrs = data.attrs
 
-    console.log(
-      'dataflow.status',
-      data.status,
-      dataflowStore.dataflow.status,
-      dataflowStore.dataflowRef.status,
-      dataflowStore.dataflow,
-    )
-
     if (!fromWS) {
       Object.keys(data).forEach((key) => {
         if (!['dag'].includes(key)) {
@@ -1202,7 +1204,6 @@ export function useCanvasOperation() {
 
   const handleStart = async (isDebug = false) => {
     buried('taskStart')
-
     // this.unWatchStatus?.()
     // this.unWatchStatus = this.$watch('dataflow.status', (v) => {
     //   if (
@@ -1226,20 +1227,43 @@ export function useCanvasOperation() {
     //   }
     // })
 
-    const hasError = await skipErrorRef.value!.checkError(dataflow)
-    if (hasError) return
+    isSaving.value = true
 
-    const flag = await handleSave(true)
+    try {
+      const hasError = await skipErrorRef.value!.checkError(dataflow)
+      if (hasError) return
 
-    if (flag) {
-      dataflowStore.dataflow.btnDisabled.edit = true
-      dataflowStore.dataflow.btnDisabled.start = true
-      dataflowStore.dataflow.btnDisabled.stop = true
-      dataflowStore.dataflow.btnDisabled.reset = true
-      beforeStartTask()
-      isDebug && openDataCapture()
-      buried('taskStart', { result: true })
-    } else {
+      if (dataflowStore.stateIsReadonly) {
+        wsAgentLive()
+        await startTask(dataflow.value.id, {
+          silenceMessage: true,
+        })
+
+        ElMessage.success(t('public_message_operation_success'))
+        isSaving.value = false
+        isReset.value = false
+        dataflowStore.showBottom = true
+        isDebug && openDataCapture()
+
+        return
+      }
+
+      const flag = await handleSave(true)
+
+      if (flag) {
+        dataflowStore.dataflow.btnDisabled.edit = true
+        dataflowStore.dataflow.btnDisabled.start = true
+        dataflowStore.dataflow.btnDisabled.stop = true
+        dataflowStore.dataflow.btnDisabled.reset = true
+        beforeStartTask()
+        isDebug && openDataCapture()
+        buried('taskStart', { result: true })
+      } else {
+        buried('taskStart', { result: false })
+      }
+    } catch (error) {
+      handleError(error)
+      isSaving.value = false
       buried('taskStart', { result: false })
     }
   }
@@ -1314,6 +1338,16 @@ export function useCanvasOperation() {
     })
   }
 
+  const wsAgentLive = () => {
+    $ws.send({
+      type: 'editFlush',
+      taskId: dataflow.value.id,
+      data: {
+        opType: 'subscribe',
+      },
+    })
+  }
+
   const handleReset = () => {
     const msg = getConfirmMessage('initialize')
     Modal.confirm(msg).then(async (resFlag) => {
@@ -1331,6 +1365,63 @@ export function useCanvasOperation() {
         handleError(error, t('packages_dag_message_operation_error'))
       }
     })
+  }
+
+  const handleEdit = () => {
+    switch (dataflow.value.syncType) {
+      case 'migrate':
+        router.push({
+          name: 'MigrateEditor',
+          params: { id: dataflow.value.id },
+        })
+        break
+      case 'sync':
+        router.push({
+          name: 'DataflowEditor',
+          params: { id: dataflow.value.id },
+        })
+        break
+      case 'logCollector':
+        vm.$refs.sharedMiningEditor.open(dataflow.value.id)
+        break
+      case 'shareCache':
+        vm.$refs.sharedCacheEditor.open(dataflow.value.id)
+        break
+    }
+  }
+
+  const previewData = shallowRef(null)
+  const previewLoading = ref(false)
+  const handlePreview = async (nodeId) => {
+    previewLoading.value = true
+    dataflowStore.selectNodeById(nodeId)
+
+    nextTick(() => {
+      formScope?.formTab?.setActiveKey('previewTab')
+    })
+
+    const data = await callProxy({
+      className: 'TaskPreviewService',
+      method: 'preview',
+      args: [
+        JSON.stringify({
+          id: dataflow.value.id,
+          dag: {
+            edges: dataflowStore.dag.edges,
+            nodes: dataflowStore.dag.nodes,
+          },
+        }),
+        [],
+        1,
+      ],
+    }).finally(() => (previewLoading.value = false))
+
+    if (data.code !== 200) {
+      ElMessage.error(data.message || 'Internal error')
+      return
+    }
+
+    previewData.value = data.nodeResult
   }
 
   return {
@@ -1364,5 +1455,9 @@ export function useCanvasOperation() {
     initWS,
     handleStart,
     startTask,
+    handleEdit,
+    previewData,
+    previewLoading,
+    handlePreview,
   }
 }
