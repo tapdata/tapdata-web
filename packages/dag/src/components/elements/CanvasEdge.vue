@@ -33,12 +33,21 @@ const connection = computed<Connection>(() => ({
   targetHandle: props.targetHandleId,
 }))
 
+const isDisabled = computed(() => {
+  const sourceNode = dataflowStore.findNodeById(props.source)
+  const targetNode = dataflowStore.findNodeById(props.target)
+  return !!(sourceNode?.attrs?.disabled || targetNode?.attrs?.disabled)
+})
+
 const stroke = computed(() => {
+  if (isDisabled.value) return 'var(--color-canvas-link-line-normal)'
   if (props.selected || props.connectedNodeIsHovering)
     return 'var(--color-canvas-link-line-active)'
   return 'var(--color-canvas-link-line-normal)'
 })
-const renderActions = computed(() => props.selected || delayedHovered.value)
+const renderActions = computed(
+  () => !isDisabled.value && (props.selected || delayedHovered.value),
+)
 const isPopoverActive = computed(() => popoverTargetKey.value === props.id)
 
 const delayedHovered = ref(props.hovered)
@@ -92,6 +101,8 @@ function onDelete() {
     :style="{
       stroke,
       strokeWidth: 2,
+      opacity: isDisabled ? 0.8 : 1,
+      strokeDasharray: isDisabled ? '6 4' : undefined,
     }"
     :path="path[0]"
     marker-end="url(#marker-arrow)"

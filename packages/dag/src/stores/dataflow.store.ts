@@ -22,6 +22,7 @@ import { defineStore } from 'pinia'
 import { markRaw, reactive, ref, shallowRef } from 'vue'
 import { DEFAULT_SETTINGS } from '../constants'
 import { CustomProcessor } from '../nodes/extends/CustomProcessor'
+import { allResourceIns as resourceIns } from '../nodes/loader'
 
 const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 
@@ -79,7 +80,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     nodes: [],
     edges: [],
   })
-  const allResourceIns = ref([])
+  const allResourceIns = ref([...resourceIns])
   const processorNodeTypes = ref([])
   const pdkCapabilitiesMap = shallowRef({})
   const pdkPropertiesMap = shallowRef({})
@@ -98,6 +99,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
   const showBottom = ref(false)
   const consoleAutoLoadType = ref('')
   const transformLoading = ref(false)
+  const schemaRefreshing = ref(false)
 
   const buttonShowMap = reactive({
     View: true,
@@ -783,11 +785,21 @@ export const useDataflowStore = defineStore('dataflow', () => {
     return pdkCapabilitiesMap.value[pdkHash] || {}
   }
 
+  function resetDataflow() {
+    // 重置 dataflow observable
+    const keys = Object.keys(dataflow)
+    for (const key of keys) {
+      delete dataflow[key]
+    }
+    Object.assign(dataflow, createEmptyDataflow())
+  }
+
   /**
    * 重置 UI 状态，不动 dataflow 本体
    * dataflow 的数据由 fetchDataflow / setDataflow 负责覆盖
    */
   function $reset() {
+    resetDataflow()
     // UI / 交互状态归零
     selectedNode.value = null
     selectedNodeId.value = null
@@ -834,6 +846,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     showConsole,
     consoleAutoLoadType,
     transformLoading,
+    schemaRefreshing,
     buttonShowMap,
     showBottom,
 

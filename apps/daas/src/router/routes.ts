@@ -157,7 +157,7 @@ export const routes = [
   {
     path: '/migrate/editor',
     name: 'MigrateCreate',
-    component: MigrationEditor,
+    component: DagEditorView,
     meta: {
       title: 'page_title_data_copy',
       code: 'v2_data_replication_dag_edit',
@@ -166,7 +166,7 @@ export const routes = [
   {
     path: '/migrate/editor/:id',
     name: 'MigrateEditor',
-    component: MigrationEditor,
+    component: DagEditorView,
     meta: {
       title: 'page_title_data_copy',
       code: 'v2_data_replication_dag_edit',
@@ -184,7 +184,7 @@ export const routes = [
   {
     path: '/migrate/monitor/:id',
     name: 'MigrationMonitor',
-    component: MigrationMonitor,
+    component: DagMonitorView,
     meta: {
       title: 'page_title_run_monitor',
       code: 'v2_data_replication_monitor',

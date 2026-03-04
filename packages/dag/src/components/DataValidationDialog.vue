@@ -8,10 +8,10 @@ import {
 import { useI18n } from '@tap/i18n'
 
 import { reactive, ref } from 'vue'
-import { useStore } from 'vuex'
+import { useDataflowStore } from '../stores/dataflow.store'
 import type { ElDialog } from 'element-plus'
 
-const store = useStore()
+const dataflowStore = useDataflowStore()
 const { t } = useI18n()
 
 interface Props {
@@ -158,7 +158,7 @@ function validateAllowSave() {
 
   const sourceNodes = []
   const targetNodes = []
-  store.getters['dataflow/allNodes'].forEach((node) => {
+  dataflowStore.dag.nodes.forEach((node) => {
     if (node.type === 'table' || node.type === 'database') {
       if (!node.$inputs.length) {
         sourceNodes.push(node)

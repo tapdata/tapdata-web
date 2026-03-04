@@ -3,7 +3,7 @@ import { getConnectionNoSchema } from '@tap/api/src/core/connections'
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { useI18n } from '@tap/i18n'
 import { useVueFlow } from '@vue-flow/core'
-import { inject, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, inject, onBeforeUnmount, ref, watch } from 'vue'
 import { makeNode, makeProcessorNode } from '../../composables/useDnD'
 import { useFetchConnections } from '../../composables/useFetchConnections'
 import { useDataflowStore } from '../../stores/dataflow.store'
@@ -91,7 +91,29 @@ const handleFetchConnections = () => {
 
 handleFetchConnections()
 
+// 根据添加位置决定哪些 tab 被禁用
+const disabledTabs = computed(() => {
+  const { nextNodeId, prevNodeId } = props.params || {}
+  const disabled = new Set<number>()
+
+  if (nextNodeId && prevNodeId) {
+    // 连线之间 - 只能选处理节点
+    disabled.add(0) // source
+    disabled.add(2) // target
+  } else if (prevNodeId && !nextNodeId) {
+    // 右侧加节点 - 源 tab 禁用
+    disabled.add(0)
+  } else if (!prevNodeId && nextNodeId) {
+    // 左侧加节点 - 目标 tab 禁用
+    disabled.add(2)
+  }
+
+  return disabled
+})
+
 const setActiveTab = (index: number) => {
+  if (disabledTabs.value.has(index)) return
+
   activeTab.value = index
 
   if (index !== 1) {
@@ -259,13 +281,29 @@ const handleAddNode = (node: any) => {
   historyStore.stopRecordingUndo()
 }
 
+const onClickConnection = (item: any) => {
+  if (dataflowStore.dataflow.syncType === 'sync') {
+    handleSelectConnection(item)
+  } else {
+    const node = makeNode(item!)
+    node.attrs.isSource = activeTab.value === 0
+    node.attrs.isTarget = activeTab.value === 2
+    handleAddNode(node)
+
+    show.value = false
+  }
+}
+
 const onClickTable = async (item: any) => {
   let connection = currentConnection.value
   if (!connection) {
     connection = await getConnectionNoSchema(item.sourceId)
   }
 
-  handleAddNode(makeNode(connection!, item.name))
+  const node = makeNode(connection!, item.name)
+  node.attrs.isSource = activeTab.value === 0
+  node.attrs.isTarget = activeTab.value === 2
+  handleAddNode(node)
 
   show.value = false
 }
@@ -299,6 +337,7 @@ const onClickProcessor = (item: any) => {
             class="position-relative px-4 flex align-center tab-bar-list-item"
             :class="{
               'tab-bar-list-item--active': index === activeTab,
+              'tab-bar-list-item--disabled': disabledTabs.has(index),
               'hover-radius-left': activeTab + 1 === index,
               'hover-radius-right': activeTab - 1 === index,
             }"
@@ -381,7 +420,7 @@ const onClickProcessor = (item: any) => {
                 v-for="item in connections"
                 :key="item.id"
                 class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg user-select-none"
-                @click="handleSelectConnection(item)"
+                @click="onClickConnection(item)"
               >
                 <NodeIcon
                   class="flex-shrink-0"
@@ -533,7 +572,12 @@ const onClickProcessor = (item: any) => {
       border-color 0.1s ease-in,
       width 0.2s ease-in;
 
-    &:not(.tab-bar-list-item--active):hover {
+    &--disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    &:not(.tab-bar-list-item--active):not(.tab-bar-list-item--disabled):hover {
       background-color: rgba(31, 35, 41, 0.05);
       color: var(--text-normal);
 

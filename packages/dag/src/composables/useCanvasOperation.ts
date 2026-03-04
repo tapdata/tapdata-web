@@ -1,12 +1,15 @@
 import { callProxy } from '@tap/api/src/core/proxy'
 import {
   batchStartTasks,
+  deleteTask,
   fetchMergeTaskCache,
+  forceStopTask,
   getNodeTableInfo,
   renameTask,
   resetTask,
   saveAndStartTask,
   saveTask,
+  stopTask,
 } from '@tap/api/src/core/task'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
 import { makeStatusAndDisabled } from '@tap/business/src/shared/task'
@@ -19,6 +22,7 @@ import { isEmpty } from 'lodash-es'
 import {
   computed,
   getCurrentInstance,
+  h,
   inject,
   nextTick,
   reactive,
@@ -27,7 +31,6 @@ import {
 } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import { allResourceIns } from '../nodes/loader'
 import { useDataflowStore } from '../stores/dataflow.store'
 import {
   AddConnectionCommand,
@@ -53,6 +56,7 @@ export function useCanvasOperation() {
   const buried = inject('buried')
   const consoleRef = ref(null)
   const skipErrorRef = ref(null)
+  const taskOperationsRef = ref(null)
 
   const buttonShowMap = reactive({
     View: true,
@@ -87,74 +91,118 @@ export function useCanvasOperation() {
     return !isDaas || store.getters['feature/hasFeature']?.(feature)
   }
 
-  const initNodeType = async () => {
-    let nodes = [
-      {
-        name: t('packages_dag_src_editor_zhuconghebing'),
-        type: 'merge_table_processor',
-        hidden: !hasFeature('masterSlaveMergeProcessor'),
-      },
-      {
-        name: t('packages_dag_src_editor_zhuijiahebing'),
-        type: 'union_processor',
-        hidden: !hasFeature('appendMergeProcessor'),
-      },
-      {
-        name: t('packages_dag_src_migrationeditor_jSchuli_standard'),
-        type: 'standard_js_processor',
-      },
-      {
-        name: t('packages_dag_src_migrationeditor_jSchuli'),
-        type: 'js_processor',
-        beta: true,
-        hidden: !hasFeature('enhanceJsProcessor'),
-      },
-      {
-        name: t('packages_dag_src_editor_row_filter'),
-        type: 'row_filter_processor',
-        hidden: !hasFeature('rowFilterProcessor'),
-      },
-      {
-        name: t('packages_dag_src_editor_ziduanjisuan'),
-        type: 'field_calc_processor',
-      },
-      {
-        name: t('packages_dag_src_editor_leixingxiugai'),
-        type: 'field_mod_type_processor',
-      },
-      {
-        name: t('packages_dag_src_editor_ziduangaiming'),
-        type: 'field_rename_processor',
-      },
-      {
-        name: t('packages_dag_src_editor_zengshanziduan'),
-        type: 'field_add_del_processor',
-      },
-      {
-        name: t('packages_dag_date_processor'),
-        type: 'date_processor',
-      },
-      {
-        name: t('packages_dag_src_editor_leixingguolu'),
-        type: 'field_mod_type_filter_processor',
-      },
-      {
-        name: 'Unwind',
-        type: 'unwind_processor',
-        hidden: !hasFeature('unwindProcessor'),
-      },
-      {
-        name: t('packages_dag_time_field_injection'),
-        type: 'add_date_field_processor',
-        hidden: !hasFeature('appendDatetimeFieldProcessor'),
-      },
-      {
-        name: t('packages_dag_src_editor_huawei_drs_kafka_convertor'),
-        type: 'huawei_drs_kafka_convertor',
-      },
-    ]
+  const syncProcessor = [
+    {
+      name: t('packages_dag_src_editor_zhuconghebing'),
+      type: 'merge_table_processor',
+      hidden: !hasFeature('masterSlaveMergeProcessor'),
+    },
+    {
+      name: t('packages_dag_src_editor_zhuijiahebing'),
+      type: 'union_processor',
+      hidden: !hasFeature('appendMergeProcessor'),
+    },
+    {
+      name: t('packages_dag_src_migrationeditor_jSchuli_standard'),
+      type: 'standard_js_processor',
+    },
+    {
+      name: t('packages_dag_src_migrationeditor_jSchuli'),
+      type: 'js_processor',
+      beta: true,
+      hidden: !hasFeature('enhanceJsProcessor'),
+    },
+    {
+      name: t('packages_dag_src_editor_row_filter'),
+      type: 'row_filter_processor',
+      hidden: !hasFeature('rowFilterProcessor'),
+    },
+    {
+      name: t('packages_dag_src_editor_ziduanjisuan'),
+      type: 'field_calc_processor',
+    },
+    {
+      name: t('packages_dag_src_editor_leixingxiugai'),
+      type: 'field_mod_type_processor',
+    },
+    {
+      name: t('packages_dag_src_editor_ziduangaiming'),
+      type: 'field_rename_processor',
+    },
+    {
+      name: t('packages_dag_src_editor_zengshanziduan'),
+      type: 'field_add_del_processor',
+    },
+    {
+      name: t('packages_dag_date_processor'),
+      type: 'date_processor',
+    },
+    {
+      name: t('packages_dag_src_editor_leixingguolu'),
+      type: 'field_mod_type_filter_processor',
+    },
+    {
+      name: 'Unwind',
+      type: 'unwind_processor',
+      hidden: !hasFeature('unwindProcessor'),
+    },
+    {
+      name: t('packages_dag_time_field_injection'),
+      type: 'add_date_field_processor',
+      hidden: !hasFeature('appendDatetimeFieldProcessor'),
+    },
+    {
+      name: t('packages_dag_src_editor_huawei_drs_kafka_convertor'),
+      type: 'huawei_drs_kafka_convertor',
+    },
+  ]
+  const migrateProcessor = [
+    {
+      name: t('packages_dag_migrate_union'),
+      type: 'migrate_union_processor',
+      hidden: !hasFeature('multipleTableMergeProcessor'),
+    },
+    {
+      name: t('packages_dag_src_migrationeditor_biaobianji'),
+      type: 'table_rename_processor',
+    },
+    {
+      name: t('packages_dag_src_migrationeditor_ziduanbianji'),
+      type: 'migrate_field_rename_processor',
+    },
+    {
+      name: t('packages_dag_src_migrationeditor_jSchuli_standard'),
+      type: 'standard_migrate_js_processor',
+    },
+    {
+      name: t('packages_dag_src_migrationeditor_jSchuli'),
+      type: 'migrate_js_processor',
+      beta: true,
+      hidden: !hasFeature('enhanceJsProcessor'),
+    },
+    {
+      name: t('packages_dag_date_processor'),
+      type: 'migrate_date_processor',
+    },
+    {
+      name: t('packages_dag_src_editor_leixingguolu'),
+      type: 'migrate_field_mod_type_filter_processor',
+    },
+    {
+      name: t('packages_dag_time_field_injection'),
+      type: 'migrate_add_date_field_processor',
+      hidden: !hasFeature('appendDatetimeFieldProcessor'),
+    } /* ,
+    {
+      name: t('packages_dag_src_editor_huawei_drs_kafka_convertor'),
+      type: 'migrate_huawei_drs_kafka_convertor'
+    } */,
+  ]
+
+  const initNodeType = async (syncType: string) => {
+    let nodes = syncType === 'sync' ? syncProcessor : migrateProcessor
     //仅企业版有的节点
-    if (isDaas) {
+    if (isDaas && syncType === 'sync') {
       const isDaasNode = [
         {
           name: t('packages_dag_src_editor_join'),
@@ -164,9 +212,9 @@ export function useCanvasOperation() {
       nodes = [...isDaasNode, ...nodes]
     }
     dataflowStore.addProcessorNode(nodes.filter((item) => !item.hidden))
-    dataflowStore.addResourceIns(allResourceIns)
+    // dataflowStore.addResourceIns(allResourceIns)
 
-    if (hasFeature('customProcessor')) {
+    if (syncType === 'sync' && hasFeature('customProcessor')) {
       await dataflowStore.loadCustomNode()
     }
   }
@@ -1008,7 +1056,7 @@ export function useCanvasOperation() {
     makeStatusAndDisabled(data)
     if (data.status === 'edit') data.btnDisabled.start = false
     dataflowStore.dataflow.status = data.status
-    dataflowStore.dataflow.disabledData = data.btnDisabled
+    dataflowStore.dataflow.btnDisabled = data.btnDisabled
     dataflowStore.dataflow.taskRecordId = data.taskRecordId
     dataflowStore.dataflow.stopTime = data.stopTime
     dataflowStore.dataflow.startTime = data.startTime
@@ -1173,6 +1221,14 @@ export function useCanvasOperation() {
       return false
     }
 
+    // 验证数据校验是否支持开启
+    const result = await taskOperationsRef.value.validateDataValidation()
+
+    if (!result) {
+      isSaving.value = false
+      return
+    }
+
     dataflowStore.showConsole = true
     dataflowStore.consoleAutoLoadType = 'checkDag'
 
@@ -1268,6 +1324,34 @@ export function useCanvasOperation() {
     }
   }
 
+  const handleStop = () => {
+    const message = getConfirmMessage('stop')
+
+    Modal.confirm(message).then(async (resFlag) => {
+      if (!resFlag) {
+        return
+      }
+      initWS()
+      dataflowStore.dataflow.btnDisabled.stop = true
+      await stopTask(dataflow.value.id).catch((error) => {
+        handleError(error, t('packages_dag_message_operation_error'))
+      })
+      ElMessage.success(t('public_message_operation_success'))
+    })
+  }
+
+  const handleForceStop = () => {
+    const msg = getConfirmMessage('force_stop')
+    Modal.confirm(msg).then(async (resFlag) => {
+      if (!resFlag) {
+        return
+      }
+      initWS()
+      dataflowStore.dataflow.btnDisabled.stop = true
+      await forceStopTask(dataflow.value.id)
+    })
+  }
+
   const getConfirmMessage = (operateStr: string) => {
     const message = `${operateStr}_confirm_message`
     const strArr = t(`packages_dag_dataFlow_${message}`).split('xxx')
@@ -1356,8 +1440,9 @@ export function useCanvasOperation() {
       }
       try {
         initWS()
-        dataflowStore.dataflow.disabledData.reset = true
+        dataflowStore.dataflow.btnDisabled.reset = true
         dataflowStore.showConsole = true
+        dataflowStore.showBottom = false
         dataflowStore.consoleAutoLoadType = 'reset'
         const data = await resetTask(dataflowStore.dataflow.id)
         responseHandler(data, t('public_message_operation_success'))
@@ -1424,6 +1509,35 @@ export function useCanvasOperation() {
     previewData.value = data.nodeResult
   }
 
+  const handlePageReturn = () => {
+    const listRoute =
+      dataflow.value.syncType === 'sync' ? 'dataflowList' : 'migrateList'
+
+    if (!dataflowStore.dag.nodes.length && dataflow.value.id) {
+      Modal.confirm(
+        t('packages_dag_page_return_confirm_title'),
+        t('packages_dag_page_return_confirm_content'),
+        {
+          confirmButtonText: t('packages_dag_page_return_confirm_ok_text'),
+          cancelButtonText: t('packages_dag_page_return_confirm_cancel_text'),
+        },
+      ).then((res) => {
+        if (res) {
+          deleteTask(dataflow.value.id)
+        }
+        router.push({
+          name: listRoute,
+        })
+        window.name = null
+      })
+    } else {
+      router.push({
+        name: listRoute,
+      })
+      window.name = null
+    }
+  }
+
   return {
     dataflow,
     dag,
@@ -1433,6 +1547,9 @@ export function useCanvasOperation() {
     consoleRef,
     isSaving,
     skipErrorRef,
+    taskOperationsRef,
+    previewData,
+    previewLoading,
 
     initNodeType,
     onUpdateNodesPosition,
@@ -1456,8 +1573,9 @@ export function useCanvasOperation() {
     handleStart,
     startTask,
     handleEdit,
-    previewData,
-    previewLoading,
     handlePreview,
+    handleStop,
+    handleForceStop,
+    handlePageReturn,
   }
 }

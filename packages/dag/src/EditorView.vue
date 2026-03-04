@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { deleteTask } from '@tap/api/src/core/task'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import SkipError from '@tap/business/src/views/task/SkipError.vue'
 import { TextEditable } from '@tap/component/src/base/text-editable'
-import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import { nextTick, onBeforeUnmount, provide, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -30,6 +28,7 @@ const {
   isSaving,
   consoleRef,
   skipErrorRef,
+  taskOperationsRef,
   initNodeType,
   onCreateConnection,
   onDeleteConnection,
@@ -48,6 +47,9 @@ const {
   previewData,
   previewLoading,
   handlePreview,
+  handleStop,
+  handleForceStop,
+  handlePageReturn,
 } = useCanvasOperation()
 
 const isInitialized = ref(false)
@@ -55,11 +57,11 @@ const isInitialized = ref(false)
 const init = async () => {
   dataflowStore.$reset()
   const taskId = route.params.id as string
-  await initNodeType()
   await dataflowStore.initPdkProperties()
 
   if (taskId) {
     await dataflowStore.fetchDataflow(taskId)
+    await initNodeType(dataflowStore.dataflow.syncType)
     nextTick(() => {
       setTimeout(() => {
         canvasRef.value.fitViewWithOffset({ duration: 0, maxZoom: 1 })
@@ -76,6 +78,7 @@ const init = async () => {
       syncType = 'migrate'
       targetRoute = 'MigrateEditor'
     }
+    await initNodeType(syncType!)
     await dataflowStore.createDataflow(syncType)
     router.push({
       name: targetRoute,
@@ -98,11 +101,11 @@ watch([() => dag.value.nodes.length, () => dag.value.edges.length], () => {
 watch(
   () => dataflow.value.status,
   (v) => {
-    if (dataflow.value.btnDisabled?.edit) {
-      dataflowStore.stateIsReadonly = true
-    } else {
-      dataflowStore.stateIsReadonly = false
-    }
+    // if (dataflow.value.btnDisabled?.edit) {
+    //   dataflowStore.stateIsReadonly = true
+    // } else {
+    //   dataflowStore.stateIsReadonly = false
+    // }
 
     if (v === 'starting' || v === 'running') {
       const routeName =
@@ -131,32 +134,6 @@ const nodesPanelExpanded = ref(true)
 
 const toggleExpandNodes = () => {
   nodesPanelExpanded.value = !nodesPanelExpanded.value
-}
-
-const handlePageReturn = () => {
-  if (!dataflowStore.dag.nodes.length && dataflow.value.id) {
-    Modal.confirm(
-      t('packages_dag_page_return_confirm_title'),
-      t('packages_dag_page_return_confirm_content'),
-      {
-        confirmButtonText: t('packages_dag_page_return_confirm_ok_text'),
-        cancelButtonText: t('packages_dag_page_return_confirm_cancel_text'),
-      },
-    ).then((res) => {
-      if (res) {
-        deleteTask(dataflow.value.id)
-      }
-      router.push({
-        name: 'dataflowList',
-      })
-      window.name = null
-    })
-  } else {
-    router.push({
-      name: 'dataflowList',
-    })
-    window.name = null
-  }
 }
 
 onBeforeUnmount(() => {
@@ -220,9 +197,15 @@ provide('handlePreview', handlePreview)
     <div class="w-100 h-0 position-absolute header z-10 flex align-center px-3">
       <div class="flex-1" />
       <TaskOperations
+        v-if="dataflow.id"
+        ref="taskOperationsRef"
         @save="handleSave"
         @reset="handleReset"
         @start="handleStart"
+        @stop="handleStop"
+        @force-stop="handleForceStop"
+        @locate-node="(id) => canvasRef?.locateNode(id)"
+        @debug-start="handleStart(true)"
       />
     </div>
     <Canvas

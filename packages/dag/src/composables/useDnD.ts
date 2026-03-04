@@ -1,7 +1,6 @@
 import { uuid } from '@tap/shared'
 import { useVueFlow } from '@vue-flow/core'
 import { ref } from 'vue'
-import { useDataflowStore } from '../stores/dataflow.store'
 import { useUiStore } from '../stores/ui.store'
 
 export const makeNode = (
@@ -25,7 +24,8 @@ export const makeNode = (
   return {
     id: uuid(),
     name: tableName || connection.name,
-    type: 'table',
+    type: tableName === undefined ? 'database' : 'table',
+    migrateTableSelectType: tableName === undefined ? 'custom' : undefined,
     databaseType: connection.database_type,
     connectionId: connection.id,
     tableName,
@@ -43,19 +43,14 @@ export const makeProcessorNode = (item: any) => {
   }
 }
 
-export function useDnD(emit) {
+export function useDnD({ emit, onAddNode }) {
   const uiStore = useUiStore()
-  const dataflowStore = useDataflowStore()
   const dragNode = ref(null)
   const dragStarting = ref(false)
-  const { screenToFlowCoordinate, getNodes } = useVueFlow()
+  const { screenToFlowCoordinate } = useVueFlow()
 
-  const onDragStart = (connection, tableName = '') => {
-    const node = makeNode(
-      connection,
-      tableName,
-      dataflowStore.getResourceInsByNode,
-    )
+  const onDragStart = (connection, tableName) => {
+    const node = makeNode(connection, tableName)
     dragNode.value = node
     dragStarting.value = true
   }
@@ -215,7 +210,7 @@ export function useDnD(emit) {
     })
     emit('drop-node', dragNode.value, position, rect)
     dragNode.value.attrs.position = [newPos.x, newPos.y]
-    dataflowStore.addNode(dragNode.value)
+    onAddNode(dragNode.value)
   }
 
   const onDragStop = () => {

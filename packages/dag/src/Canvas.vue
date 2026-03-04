@@ -343,6 +343,71 @@ function onDeleteNode(node: any) {
   emit('delete:node', node)
 }
 
+/**
+ * 禁用/启用节点及其同链路上的关联节点
+ */
+function handleDisableNode(node: any, value = true) {
+  node.disabled = value
+  node.attrs.disabled = value
+
+  const parents = findChainParents(node.id)
+  const children = findChainChildren(node.id)
+  const relatedNodes = parents.concat(children)
+
+  relatedNodes.forEach((n) => {
+    n.attrs.disabled = value
+  })
+
+  dataflowStore.patchDataflowDebounce()
+}
+
+/**
+ * 查找单链路上的父节点（maxInputs === 1 且 $outputs.length <= 1）
+ */
+function findChainParents(id: string, excludeId?: string): any[] {
+  const node = dataflowStore.findNodeById(id)
+  const nodes: any[] = []
+  const parentIds = node?.$inputs || []
+
+  for (const parentId of parentIds) {
+    if (parentId === excludeId) continue
+    const parent = dataflowStore.findNodeById(parentId)
+    if (
+      !parent ||
+      parent.__Ctor?.maxInputs !== 1 ||
+      parent.$outputs?.length > 1
+    )
+      continue
+    nodes.push(parent)
+    if (parent.$inputs?.length) {
+      nodes.push(...findChainParents(parentId))
+    }
+  }
+  return nodes
+}
+
+/**
+ * 查找单链路上的子节点
+ */
+function findChainChildren(id: string): any[] {
+  const node = dataflowStore.findNodeById(id)
+  const nodes: any[] = []
+  const ids = node?.$outputs || []
+
+  ids.forEach((childId: string) => {
+    const child = dataflowStore.findNodeById(childId)
+    if (!child) return
+    if (child.type === 'join_processor') {
+      nodes.push(...findChainParents(child.id, node.id))
+    } else if (child.__Ctor?.maxInputs !== 1) return
+    nodes.push(child)
+    if (child.$outputs?.length) {
+      nodes.push(...findChainChildren(childId))
+    }
+  })
+  return nodes
+}
+
 function onAddNode(node: any) {
   emit('add:node', node)
 }
@@ -436,9 +501,22 @@ provide('onAddNode', onAddNode)
 provide('onCreateConnection', onCreateConnection)
 provide('onDeleteConnection', onDeleteConnection)
 provide('onMoveNodePosition', onMoveNodePosition)
+provide('handleDisableNode', handleDisableNode)
+
+function locateNode(nodeId: string) {
+  const node = vueFlow.findNode(nodeId)
+  if (!node) return
+  vueFlow.fitView({
+    nodes: [nodeId],
+    duration: 300,
+    maxZoom: 1,
+    padding: 0.5,
+  })
+}
 
 defineExpose({
   fitViewWithOffset,
+  locateNode,
 })
 </script>
 
@@ -447,9 +525,7 @@ defineExpose({
     <div ref="leftPanel" class="left-panel-wrapper z-20">
       <slot name="left">
         <Transition name="slide-left">
-          <NodesPanel
-            v-if="nodesPanelExpanded && !dataflowStore.stateIsReadonly"
-          />
+          <NodesPanel v-if="nodesPanelExpanded" />
         </Transition>
       </slot>
     </div>
@@ -696,7 +772,7 @@ defineExpose({
   z-index: 3000;
   min-width: 160px;
   background: #fff;
-  border-radius: 8px;
+  border-radius: 10px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   padding: 4px;
   user-select: none;
@@ -707,7 +783,7 @@ defineExpose({
     gap: 8px;
     padding: 8px 12px;
     cursor: pointer;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 14px;
     color: #333;
     transition: background-color 0.15s;

@@ -13,7 +13,6 @@ import {
   useForm,
 } from '@tap/form'
 import i18n from '@tap/i18n'
-import { configProviderContextKey } from 'element-plus'
 import { debounce } from 'lodash-es'
 import { computed, defineComponent, inject, reactive, ref } from 'vue'
 import { useStore } from 'vuex'
@@ -31,8 +30,7 @@ export const TableRenamePreview = defineComponent({
   setup(props, { emit }) {
     const store = useStore()
     const SchemaExpressionScopeContext = inject(SchemaExpressionScopeSymbol)
-    const taskId =
-      SchemaExpressionScopeContext.value.$taskId || store.state.dataflow.taskId
+    const taskId = SchemaExpressionScopeContext.value.$settings.id
     const itemSize = 38
     const formRef = useForm()
     const form = formRef.value
@@ -357,14 +355,9 @@ export const TableRename = connect(
     defineComponent({
       props: ['findParentNodes', 'value', 'listStyle', 'disabled', 'taskId'],
       setup(props, { emit }) {
-        const configProvider = inject(configProviderContextKey)
-        console.log('config', configProvider)
         const store = useStore()
-
         const SchemaExpressionScopeContext = inject(SchemaExpressionScopeSymbol)
-        const taskId =
-          SchemaExpressionScopeContext.value.$taskId ||
-          store.state.dataflow.taskId
+        const taskId = SchemaExpressionScopeContext.value.$settings.id
         const itemSize = 38
         const formRef = useForm()
         const form = formRef.value

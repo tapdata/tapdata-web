@@ -324,7 +324,7 @@ export function downloadTaskAnalyze(taskId: string, params: any) {
   })
 }
 
-export function refreshTaskSchema(taskId: string, params: any) {
+export function refreshTaskSchema(taskId: string, params?: any) {
   return requestClient.put(`${BASE_URL}/${taskId}/re-schemas`, null, {
     params,
   })

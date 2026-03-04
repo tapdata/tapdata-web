@@ -7,9 +7,15 @@ const props = defineProps<{
 
 const onDeleteNode = inject<(node: any) => void>('onDeleteNode')
 const handlePreview = inject<(node: any) => void>('handlePreview')
+const handleDisableNode =
+  inject<(node: any, value?: boolean) => void>('handleDisableNode')
 
 const handleDelete = () => {
   onDeleteNode?.(props.node)
+}
+
+const handleToggleDisable = () => {
+  handleDisableNode?.(props.node, !props.node.disabled)
 }
 </script>
 
@@ -24,9 +30,10 @@ const handleDelete = () => {
           <i-lucide-play />
         </template>
       </el-button>
-      <el-button text size="xs">
+      <el-button text size="xs" @click.stop="handleToggleDisable">
         <template #icon>
-          <i-lucide-power />
+          <i-lucide-power-off v-if="node.disabled" />
+          <i-lucide-power v-else />
         </template>
       </el-button>
       <el-button text size="xs" @click="handleDelete">

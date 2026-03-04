@@ -17,6 +17,12 @@ import NodeIcon from './NodeIcon.vue'
 const emit = defineEmits(['move-node', 'drop-node'])
 
 const dataflowStore = useDataflowStore()
+
+const pageSize = 20
+
+const dataflow = inject<(node: any) => void>('dataflow')
+const onAddNode = inject<(node: any) => void>('onAddNode')
+
 const {
   dragNode,
   dragStarting,
@@ -25,11 +31,8 @@ const {
   onDragMove,
   onDragStop,
   onDrop,
-} = useDnD(emit)
+} = useDnD({ emit, onAddNode })
 
-const pageSize = 20
-
-const onAddNode = inject<(node: any) => void>('onAddNode')
 const showConnectionSearch = ref(false)
 const connectionSearchRef = ref<InstanceType<
   typeof import('element-plus').ElInput
@@ -296,6 +299,10 @@ const handleAddTable = async () => {
   }
 }
 
+const onConnectionDragStart = (item) => {
+  onDragStart(item, dataflow.value.syncType === 'sync' ? '' : undefined)
+}
+
 const onTableDragStart = (item) => {
   onDragStart(currentConnection.value, item.name)
 }
@@ -353,7 +360,7 @@ const onTableDragStart = (item) => {
               item,
               container: '[data-id=\'flow-container\']',
               getDragDom,
-              onStart: onDragStart,
+              onStart: onConnectionDragStart,
               onMove: onDragMove,
               onDrop,
               onStop: onDragStop,
@@ -381,97 +388,100 @@ const onTableDragStart = (item) => {
         </div>
       </el-scrollbar>
     </div>
-    <el-divider class="m-0" />
-    <div class="flex-1 min-h-0 flex flex-column">
-      <div class="flex align-center p-3 pb-1" style="--btn-space: 0">
-        <el-icon class="mr-2"><i-lucide-table /></el-icon>
-        <span
-          class="flex-1 user-select-none text-truncate flex align-center fw-sub"
-        >
-          {{ $t('packages_dag_dag_table') }}
-        </span>
-        <el-button
-          :type="showTableSearch ? 'primary' : undefined"
-          :bg="showTableSearch"
-          text
-          size="small"
-          @click.stop="toggleTableSearch"
-        >
-          <template #icon>
-            <i-lucide-search />
-          </template>
-        </el-button>
-
-        <ElTooltip
-          :content="$t('packages_dag_dag_create_table_as_node')"
-          placement="top"
-          :enterable="false"
-          :hide-after="0"
-        >
+    <template v-if="dataflow.syncType === 'sync'">
+      <el-divider class="m-0" />
+      <div class="flex-1 min-h-0 flex flex-column">
+        <div class="flex align-center p-3 pb-1" style="--btn-space: 0">
+          <el-icon class="mr-2"><i-lucide-table /></el-icon>
+          <span
+            class="flex-1 user-select-none text-truncate flex align-center fw-sub"
+          >
+            {{ $t('packages_dag_dag_table') }}
+          </span>
           <el-button
+            :type="showTableSearch ? 'primary' : undefined"
+            :bg="showTableSearch"
             text
             size="small"
-            @mousedown.stop
-            @click.stop="handleAddTable"
+            @click.stop="toggleTableSearch"
           >
             <template #icon>
-              <VIcon size="20">add-outline</VIcon>
+              <i-lucide-search />
             </template>
           </el-button>
-        </ElTooltip>
-      </div>
-      <div v-if="showTableSearch" class="px-3 py-1">
-        <el-input
-          ref="tableSearchRef"
-          v-model="tableState.query"
-          clearable
-          :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
-          @input="debouncedFetchTables"
-          @clear="runFetchTables()"
-        >
-          <template #prefix>
-            <i-lucide-search class="font-color-light" />
-          </template>
-        </el-input>
-      </div>
-      <el-scrollbar
-        class="flex-1 min-h-0"
-        :distance="10"
-        @end-reached="runFetchMoreTables"
-      >
-        <div class="p-1">
-          <div
-            v-for="item in tables"
-            :key="item.id"
-            v-drag="{
-              item,
-              container: '[data-id=\'flow-container\']',
-              getDragDom,
-              onStart: onTableDragStart,
-              onMove: onDragMove,
-              onDrop,
-              onStop: onDragStop,
-            }"
-            class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg grabbable user-select-none"
+
+          <ElTooltip
+            :content="$t('packages_dag_dag_create_table_as_node')"
+            placement="top"
+            :enterable="false"
+            :hide-after="0"
           >
-            <el-icon :size="16"><i-lucide-table /></el-icon>
-            <OverflowTooltip
-              class="text-truncate"
-              :text="item.name"
-              placement="right"
-              :show-after="400"
+            <el-button
+              text
+              size="small"
+              @mousedown.stop
+              @click.stop="handleAddTable"
             >
-              <span>
-                <span>{{ item.name }}</span>
-                <span v-if="item.comment" class="font-color-sslight">{{
-                  `(${item.comment})`
-                }}</span>
-              </span>
-            </OverflowTooltip>
-          </div>
+              <template #icon>
+                <VIcon size="20">add-outline</VIcon>
+              </template>
+            </el-button>
+          </ElTooltip>
         </div>
-      </el-scrollbar>
-    </div>
+        <div v-if="showTableSearch" class="px-3 py-1">
+          <el-input
+            ref="tableSearchRef"
+            v-model="tableState.query"
+            clearable
+            :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
+            @input="debouncedFetchTables"
+            @clear="runFetchTables()"
+          >
+            <template #prefix>
+              <i-lucide-search class="font-color-light" />
+            </template>
+          </el-input>
+        </div>
+        <el-scrollbar
+          class="flex-1 min-h-0"
+          :distance="10"
+          @end-reached="runFetchMoreTables"
+        >
+          <div class="p-1">
+            <div
+              v-for="item in tables"
+              :key="item.id"
+              v-drag="{
+                item,
+                container: '[data-id=\'flow-container\']',
+                getDragDom,
+                onStart: onTableDragStart,
+                onMove: onDragMove,
+                onDrop,
+                onStop: onDragStop,
+              }"
+              class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg grabbable user-select-none"
+            >
+              <el-icon :size="16"><i-lucide-table /></el-icon>
+              <OverflowTooltip
+                class="text-truncate"
+                :text="item.name"
+                placement="right"
+                :show-after="400"
+              >
+                <span>
+                  <span>{{ item.name }}</span>
+                  <span v-if="item.comment" class="font-color-sslight">{{
+                    `(${item.comment})`
+                  }}</span>
+                </span>
+              </OverflowTooltip>
+            </div>
+          </div>
+        </el-scrollbar>
+      </div>
+    </template>
+
     <el-divider class="m-0" />
     <div class="processor-container min-h-0 flex flex-column">
       <div class="flex align-center p-3">

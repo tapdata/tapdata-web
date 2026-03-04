@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { batchMeasurements } from '@tap/api/src/core/measurement'
-import { deleteTask, getTaskRecords, startTask } from '@tap/api/src/core/task'
+import { getTaskRecords, startTask } from '@tap/api/src/core/task'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import SkipError from '@tap/business/src/views/task/SkipError.vue'
 import { TextEditable } from '@tap/component/src/base/text-editable'
-import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import Time from '@tap/shared/src/time'
 import { debounce } from 'lodash-es'
@@ -67,6 +66,9 @@ const {
   onNameInputChange,
   initWS,
   startTask,
+  handleStop,
+  handleForceStop,
+  handlePageReturn,
 } = useCanvasOperation()
 
 const isInitialized = ref(false)
@@ -542,11 +544,11 @@ const init = async () => {
   dataflowStore.stateIsReadonly = true
   dataflowStore.showBottom = true
   const taskId = route.params.id as string
-  await initNodeType()
   await dataflowStore.initPdkProperties()
 
   if (taskId) {
     await dataflowStore.fetchDataflow(taskId)
+    await initNodeType(dataflowStore.dataflow.syncType)
   }
   initMonitor()
   initWS()
@@ -560,32 +562,6 @@ const init = async () => {
 }
 
 init()
-
-const handlePageReturn = () => {
-  if (!dataflowStore.dag.nodes.length && dataflowStore.dataflow.id) {
-    Modal.confirm(
-      t('packages_dag_page_return_confirm_title'),
-      t('packages_dag_page_return_confirm_content'),
-      {
-        confirmButtonText: t('packages_dag_page_return_confirm_ok_text'),
-        cancelButtonText: t('packages_dag_page_return_confirm_cancel_text'),
-      },
-    ).then((res) => {
-      if (res) {
-        deleteTask(dataflowStore.dataflow.id)
-      }
-      router.push({
-        name: 'dataflowList',
-      })
-      window.name = null
-    })
-  } else {
-    router.push({
-      name: 'dataflowList',
-    })
-    window.name = null
-  }
-}
 
 onUnmounted(() => {
   dataflowStore.$reset()
@@ -632,6 +608,10 @@ provide('isSaving', isSaving)
         @reset="handleReset"
         @start="handleStart"
         @edit="handleEdit"
+        @stop="handleStop"
+        @force-stop="handleForceStop"
+        @locate-node="(id) => canvasRef?.locateNode(id)"
+        @debug-start="handleStart(true)"
       />
     </div>
     <Canvas
@@ -690,7 +670,7 @@ provide('isSaving', isSaving)
           @action="handleBottomPanelAction"
           @start="handleStart(false, false)"
         />
-        <ConsolePanel ref="consoleRef" />
+        <ConsolePanel v-if="!dataflowStore.showBottom" ref="consoleRef" />
       </template>
     </Canvas>
 

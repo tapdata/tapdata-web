@@ -199,9 +199,8 @@ $iconSize: 24px;
   }
 
   &.node--disabled {
-    color: #c9cdd4;
-    background-color: #f1f2f4;
-    border-color: #c9cdd4;
+    color: var(--el-text-color-placeholder);
+    background-color: #ffffff88;
 
     .df-node-icon,
     .df-node-text {

@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { computed, inject } from 'vue'
+import { refreshTaskSchema } from '@tap/api/src/core/task'
+import { computed, inject, ref, type Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useDataflowStore } from '../stores/dataflow.store'
+import DataCaptureDebug from './DataCaptureDebug.vue'
+import DataValidationDialog from './DataValidationDialog.vue'
 
-defineEmits<{
+const emit = defineEmits<{
   showSettings: []
   save: []
   reset: []
@@ -12,15 +15,58 @@ defineEmits<{
   forceStop: []
   stop: []
   start: []
+  'locate-node': [nodeId: string]
 }>()
 
 const route = useRoute()
 const isViewer = computed(() => route.name === 'DataflowView')
-const dataflow = inject('dataflow')
+const dataflow = inject<Ref<any>>('dataflow')!
 const buttonShowMap = inject('buttonShowMap')
 const stateIsReadonly = inject('stateIsReadonly')
 const isSaving = inject('isSaving')
 const dataflowStore = useDataflowStore()
+const openValidation = ref(false)
+const dataValidationDialog = ref()
+const openDebug = ref(false)
+
+// Node search
+const showSearchPopover = ref(false)
+const nodeSearchInput = ref('')
+
+const nodeList = computed(() => {
+  const allNodes = dataflowStore.dag.nodes || []
+  if (nodeSearchInput.value) {
+    const txt = nodeSearchInput.value.toLocaleLowerCase()
+    return allNodes.filter((node: any) =>
+      node.name?.toLocaleLowerCase().includes(txt),
+    )
+  }
+  return allNodes
+})
+
+function handleClickNode(node: any) {
+  showSearchPopover.value = false
+  dataflowStore.selectNodeById(node.id)
+  emit('locate-node', node.id)
+}
+
+const validateDataValidation = () => {
+  return dataValidationDialog.value.validate()
+}
+
+const handleRefreshSchema = () => {
+  if (dataflowStore.schemaRefreshing) return
+
+  dataflowStore.schemaRefreshing = true
+
+  refreshTaskSchema(dataflow.value.id).finally(() => {
+    dataflowStore.schemaRefreshing = false
+  })
+}
+
+defineExpose({
+  validateDataValidation,
+})
 </script>
 
 <template>
@@ -32,6 +78,92 @@ const dataflowStore = useDataflowStore()
       plain
       >{{ $t('packages_dag_model_generation') }}</el-button
     >
+    <div
+      class="btn-shadow bg-card p-0.5 rounded-lg flex align-center gap-2 icon-btn-bar cursor-pointer"
+      style="border: var(--el-border)"
+    >
+      <el-popover
+        v-model:visible="showSearchPopover"
+        width="auto"
+        placement="bottom"
+        trigger="click"
+        popper-class="rounded-xl p-1"
+        @after-leave="nodeSearchInput = ''"
+      >
+        <template #reference>
+          <el-button text>
+            <template #icon>
+              <i-lucide-search />
+            </template>
+          </el-button>
+        </template>
+        <div class="p-1">
+          <el-input
+            v-model="nodeSearchInput"
+            :placeholder="$t('packages_dag_search_node')"
+            clearable
+            autofocus
+          />
+        </div>
+
+        <el-scrollbar max-height="240px" class="mt-1">
+          <div
+            v-for="(node, i) in nodeList"
+            :key="i"
+            class="choose-item ellipsis px-4 py-2 rounded-lg cursor-pointer"
+            style="line-height: 20px"
+            @click="handleClickNode(node)"
+          >
+            {{ node.name }}
+          </div>
+          <div
+            v-if="!nodeList.length"
+            class="text-center py-4 font-color-light"
+          >
+            {{ $t('public_data_no_data') }}
+          </div>
+        </el-scrollbar>
+      </el-popover>
+      <el-tooltip
+        v-if="!dataflowStore.stateIsReadonly"
+        :enterable="false"
+        :hide-after="0"
+        :content="$t('packages_dag_refresh_schema')"
+      >
+        <el-button
+          text
+          :loading="dataflowStore.schemaRefreshing"
+          @click="handleRefreshSchema"
+        >
+          <template #icon>
+            <VIcon>refresh</VIcon>
+          </template>
+        </el-button>
+      </el-tooltip>
+      <el-tooltip
+        :enterable="false"
+        :hide-after="0"
+        :content="$t('public_data_capture')"
+      >
+        <el-button text @click="openDebug = true">
+          <template #icon>
+            <VIcon>bug-outlined</VIcon>
+          </template>
+        </el-button>
+      </el-tooltip>
+      <el-tooltip
+        :enterable="false"
+        :hide-after="0"
+        :content="$t('public_data_validation')"
+      >
+        <el-button text @click="openValidation = true">
+          <template #icon>
+            <VIcon>data-scan</VIcon>
+          </template>
+        </el-button>
+      </el-tooltip>
+    </div>
+
     <ElButton
       class="btn-shadow"
       :type="dataflowStore.showSettings ? 'primary' : undefined"
@@ -93,7 +225,7 @@ const dataflowStore = useDataflowStore()
       <ElButton
         v-if="$route.name !== 'MigrateEditor' && buttonShowMap.Edit"
         class="btn--text btn-shadow"
-        :disabled="dataflow.disabledData && dataflow.disabledData.edit"
+        :disabled="dataflow.btnDisabled && dataflow.btnDisabled.edit"
         @click="$emit('edit')"
       >
         <VIcon class="mr-1">edit-outline</VIcon>{{ $t('public_button_edit') }}
@@ -102,7 +234,7 @@ const dataflowStore = useDataflowStore()
       <ElButton
         v-if="dataflow.status === 'stopping' && buttonShowMap.Stop"
         class="btn--text btn-shadow"
-        :disabled="dataflow.disabledData && dataflow.disabledData.forceStop"
+        :disabled="dataflow.btnDisabled && dataflow.btnDisabled.forceStop"
         @click="$emit('forceStop')"
       >
         <VIcon>stop</VIcon>
@@ -111,14 +243,19 @@ const dataflowStore = useDataflowStore()
       <ElButton
         v-else-if="buttonShowMap.Stop"
         class="btn--text btn-shadow"
-        :disabled="dataflow.disabledData && dataflow.disabledData.stop"
+        :disabled="dataflow.btnDisabled?.stop"
         @click="$emit('stop')"
       >
         <VIcon>stop</VIcon>
         {{ $t('public_button_stop') }}
       </ElButton>
     </template>
-    <ElButton class="btn-shadow" type="primary" @click="$emit('start')">
+    <ElButton
+      v-if="!dataflow.btnDisabled?.start"
+      class="btn-shadow"
+      type="primary"
+      @click="$emit('start')"
+    >
       <template #icon>
         <i-lucide-play />
       </template>
@@ -140,5 +277,30 @@ const dataflowStore = useDataflowStore()
     >
       {{ $t('public_button_stop') }}
     </ElButton>
+
+    <DataValidationDialog
+      ref="dataValidationDialog"
+      v-model="openValidation"
+      :task-id="dataflow.id"
+      :sync-type="dataflow.syncType"
+    />
+
+    <DataCaptureDebug
+      :task-id="dataflow.id"
+      :visible="openDebug"
+      @update:visible="openDebug = $event"
+      @start="$emit('debugStart')"
+    />
   </div>
 </template>
+
+<style scoped lang="scss">
+.choose-item:hover {
+  background-color: var(--el-fill-color-light);
+}
+.icon-btn-bar {
+  :deep(.el-button.is-text) {
+    padding: 3px !important;
+  }
+}
+</style>

@@ -66,10 +66,22 @@ const nodeErrorMsg = computed(() => {
 })
 
 const canBeSource = computed(() => {
+  if (props.data.attrs.isSource === false) return false
+  if (
+    ['table', 'database'].includes(props.data.type) &&
+    props.data.$inputs.length
+  )
+    return false
   return dataflowStore.checkAsSource(props.data)
 })
 
 const canBeTarget = computed(() => {
+  if (props.data.attrs.isTarget === false) return false
+  if (
+    ['table', 'database'].includes(props.data.type) &&
+    props.data.$outputs.length
+  )
+    return false
   return dataflowStore.checkAsTarget(props.data)
 })
 </script>
@@ -120,6 +132,12 @@ const canBeTarget = computed(() => {
           class="canvas-node-handle z-1"
         />
         <NodeToolbar :node="props.data" />
+        <div
+          v-if="props.data.attrs.desc"
+          class="text-preline text-break px-3 pb-2 pt-1 text-xs font-color-light"
+        >
+          {{ props.data.attrs.desc }}
+        </div>
       </template>
     </BaseNode>
     <slot />
