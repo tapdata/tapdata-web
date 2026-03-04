@@ -3,7 +3,6 @@ import {
   exportGroupInfoBatch,
   exportGroupInfoBatchGit,
   fetchGroupInfoList,
-  fetchLastestGitTag,
   type GroupInfoDto,
   type ResourceItem,
 } from '@tap/api/core/group-info'
@@ -35,9 +34,9 @@ const searchKeyword = ref('') // 搜索关键词
 // 导出状态
 const exporting = ref(false)
 const groupTransferType = ref<'FILE' | 'GIT'>('FILE') // 导出类型
-const gitTag = ref('') // Git tag
-const latestGitTag = ref('') // 最新的 Git tag
-const loadingGitTag = ref(false) // 加载 Git tag 状态
+const gitBranchName = ref('') // 分支名
+const gitPrTitle = ref('') // PR 标题
+const gitPrDescription = ref('') // PR 描述
 
 // Git 配置弹窗
 const gitConfigDialogVisible = ref(false)
@@ -88,8 +87,8 @@ const needGitConfig = computed(() => {
   return groupTransferType.value === 'GIT' && !hasGitConfig.value
 })
 
-// 是否需要显示 Tag 输入框
-const needGitTag = computed(() => {
+// 是否需要显示 Git 字段输入框
+const needGitFields = computed(() => {
   return groupTransferType.value === 'GIT' && hasGitConfig.value
 })
 
@@ -166,15 +165,24 @@ const treeData = computed(() => {
   return result
 })
 
+// 生成默认分支名
+const generateBranchName = () => {
+  const now = new Date()
+  const pad = (n: number) => String(n).padStart(2, '0')
+  const timestamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}${pad(now.getHours())}${pad(now.getMinutes())}`
+  return `feat_${timestamp}`
+}
+
 // 监听弹窗打开
 watch(visible, async (val) => {
   if (val) {
     await loadGroups()
 
-    // 重置导出类型和 tag
+    // 重置导出类型和字段
     groupTransferType.value = 'FILE'
-    gitTag.value = ''
-    latestGitTag.value = ''
+    gitBranchName.value = generateBranchName()
+    gitPrTitle.value = ''
+    gitPrDescription.value = ''
 
     // 如果有初始项目 ID，自动选中
     if (props.initialGroupId) {
@@ -201,63 +209,21 @@ const handleRerunChange = (treeNode: any, value: string | number | boolean) => {
 }
 
 // 处理项目选择（单选）
-const handleSelectGroup = async (groupId: string) => {
+const handleSelectGroup = (groupId: string) => {
   if (!selectedGroupIds.value.includes(groupId)) {
     selectedGroupIds.value = [groupId]
     currentGroupId.value = groupId
-
-    // 如果是 GIT 导出模式，自动加载最新 tag
-    if (groupTransferType.value === 'GIT' && hasGitConfig.value) {
-      await loadLatestGitTag()
-    }
-  } /*  else {
-    selectedGroupIds.value = [groupId]
-    currentGroupId.value = groupId
-  } */
+  }
 }
 
 // 处理导出类型切换
-const handleTransferTypeChange = async (
-  type: string | number | boolean | undefined,
+const handleTransferTypeChange = (
+  _type: string | number | boolean | undefined,
 ) => {
-  if (type === 'GIT' && hasGitConfig.value) {
-    // 如果切换到 GIT 且有配置，加载最新的 tag
-    await loadLatestGitTag()
+  // 切换到 GIT 时重新生成分支名
+  if (_type === 'GIT') {
+    gitBranchName.value = generateBranchName()
   }
-}
-
-// 获取最新的 Git tag
-const loadLatestGitTag = async () => {
-  if (!currentGroupId.value) return
-
-  loadingGitTag.value = true
-  try {
-    const result = await fetchLastestGitTag(currentGroupId.value)
-    latestGitTag.value = result || ''
-  } catch (error) {
-    console.error('获取最新 Git tag 失败:', error)
-    latestGitTag.value = ''
-  } finally {
-    loadingGitTag.value = false
-  }
-}
-
-// 计算下一个版本号
-const getNextVersion = (version: string): string => {
-  if (!version) return 'v1.0.1'
-
-  // 匹配版本号格式 v1.0.0 或 1.0.0
-  const match = version.match(/^v?(\d+)\.(\d+)\.(\d+)/)
-  if (!match) return 'v1.0.1'
-
-  const [, major, minor, patch] = match
-  const nextPatch = Number.parseInt(patch || '0') + 1
-  return `v${major}.${minor}.${nextPatch}`
-}
-
-// 快速填入下一个版本号
-const fillNextVersion = () => {
-  gitTag.value = getNextVersion(latestGitTag.value)
 }
 
 // 打开 Git 配置弹窗
@@ -271,10 +237,6 @@ const handleOpenGitConfig = () => {
 const handleGitConfigSaved = async () => {
   // 重新加载分组列表以获取最新的 Git 配置
   await loadGroups()
-  // 如果有 Git 配置，加载最新的 tag
-  if (hasGitConfig.value) {
-    await loadLatestGitTag()
-  }
 }
 
 // 导出分组
@@ -327,7 +289,9 @@ const handleExport = async () => {
         groupIds: selectedGroupIds.value,
         groupTransferType: groupTransferType.value,
         groupResetTask: rerunData,
-        gitTag: gitTag.value,
+        gitBranchName: gitBranchName.value,
+        gitPrTitle: gitPrTitle.value,
+        gitPrDescription: gitPrDescription.value,
       })
     }
 
@@ -516,30 +480,40 @@ const handleCreateProject = () => {
               </el-alert>
             </div>
 
-            <!-- Git Tag 输入 -->
-            <div v-if="needGitTag" class="mt-2">
-              <div class="mb-1 flex align-center gap-2">
-                <el-icon>
-                  <i-lucide-tag />
-                </el-icon>
-                <span class="fs-7 fw-sub">Git Tag</span>
-                <span v-if="latestGitTag" class="fs-7 font-color-light">
-                  {{ $t('data_import_export_latest_tag') }}: {{ latestGitTag }}
-                </span>
+            <!-- Git 分支名 / PR 标题 / PR 描述 -->
+            <template v-if="needGitFields">
+              <div class="mt-2">
+                <div class="mb-1">
+                  <span class="fs-7 fw-sub">分支名</span>
+                </div>
+                <el-input
+                  v-model="gitBranchName"
+                  placeholder="请输入分支名"
+                  clearable
+                />
               </div>
-              <el-input
-                v-model="gitTag"
-                :placeholder="$t('data_import_export_enter_git_tag')"
-                clearable
-              >
-                <template v-if="latestGitTag" #append>
-                  <el-button class="font-color-dark" @click="fillNextVersion">
-                    {{ $t('data_import_export_quick_fill') }}
-                    {{ getNextVersion(latestGitTag) }}
-                  </el-button>
-                </template>
-              </el-input>
-            </div>
+              <div class="mt-2">
+                <div class="mb-1">
+                  <span class="fs-7 fw-sub">PR 标题</span>
+                </div>
+                <el-input
+                  v-model="gitPrTitle"
+                  placeholder="请输入 PR 标题"
+                  clearable
+                />
+              </div>
+              <div class="mt-2">
+                <div class="mb-1">
+                  <span class="fs-7 fw-sub">PR 描述</span>
+                </div>
+                <el-input
+                  v-model="gitPrDescription"
+                  type="textarea"
+                  :rows="3"
+                  placeholder="请输入 PR 描述"
+                />
+              </div>
+            </template>
           </div>
 
           <div class="p-2 min-h-0">

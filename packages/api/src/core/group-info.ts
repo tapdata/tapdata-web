@@ -129,7 +129,9 @@ export interface ExportGroupInfoBatchParams {
   groupResetTask: {
     [groupId: string]: string[]
   }
-  gitTag?: string
+  gitBranchName?: string
+  gitPrTitle?: string
+  gitPrDescription?: string
 }
 
 /**
