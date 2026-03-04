@@ -151,6 +151,11 @@ export default {
     '请输入表名称并以逗号分隔,例如：table_a,table_b',
   // app
   app_license_expire_warning: 'License剩余 {0} 天到期',
+  engine_expire_warning: '节点数已超限，请在 {0} 天内处理，避免被强制下线',
+  license_engine_limit_title: '绑定引擎数量已达上限',
+  license_engine_limit_tip:
+    '确认更新后，系统将在 <strong>{0} 天后优先下线运行任务数较少的引擎，</strong>请提前手动处理需要解绑的节点。',
+  confirm_update: '确认更新',
   // Agent
   agent_check_error: 'Agent当前状态异常无法创建连接，请检查',
   // 控制台
@@ -301,7 +306,10 @@ export default {
   application_true: '是',
   application_false: '否',
   application_create: '创建客户端',
+  application_client_id_placeholder: '可留空，系统将自动生成',
   application_edit: '编辑客户端',
+  api_response_time: '响应时间',
+  api_db_cost_time: '数据库耗时',
   //api 监控
   api_monitor_total_totalCount: 'API总数',
   api_monitor_total_warningApiCount: 'API访问总数',
@@ -365,6 +373,7 @@ export default {
   dataExplorer_base_path: '基础路径',
   // 服务审计
   apiaudit_name: 'API名称',
+  apiaudit_req_path: '访问路径',
   apiaudit_access_type: '访问类型',
   apiaudit_visitor: '客户端名称',
   apiaudit_ip: '访问人员IP',
@@ -790,6 +799,11 @@ export default {
   license_copied_clipboard: '已复制到剪贴板',
   license_select_node: '请先选择节点',
   license_renew_success: '更新成功，页面即将刷新',
+  license_engine_limit_exceeded:
+    'License 节点限制为 {limit}，当前已绑定 {bound} 个节点',
+  license_unbind_agents_tip: '请解绑部分节点后重试',
+  license_unbind_running_agent_confirm:
+    '解绑后运行中的引擎将会下线，确定要解绑吗？',
   // 自定义节点
   custom_node_name: '节点名称',
   custom_node_name_placeholder: '请输入节点名称搜索',
@@ -2146,6 +2160,75 @@ export default {
   api_monitor_server_recent_1_month: '最近1个月',
   api_monitor_memory: '内存',
   api_monitor_server_ping_warning: '服务器响应已 {val} 未更新',
+
+  // API 监控 - 新增
+  api_monitor_tab_server: 'Server 总览',
+  api_monitor_tab_api: 'API 总览',
+  api_monitor_total_request_count: '总请求数',
+  api_monitor_total_error_count: '总错误数',
+  api_monitor_total_error_rate: '总错误率',
+  api_monitor_avg_response_time: '平均响应时间',
+  api_monitor_max_response_time: '最大',
+  api_monitor_min_response_time: '最小',
+  api_monitor_p95_response_time: 'P95',
+  api_monitor_p99_response_time: 'P99',
+  api_monitor_unhealthy_api_count: '异常请求API',
+  api_monitor_unhealthy_server_count: '不健康的 Server',
+  api_monitor_server_list: 'Server List',
+  api_monitor_api_list: 'API List',
+  api_monitor_api_path: 'API 路径',
+  api_monitor_total_calls: '总调用数',
+  api_monitor_avg_latency: '平均耗时',
+  api_monitor_p95_latency: 'P95 延迟',
+  api_monitor_p99_latency: 'P99 延迟',
+  api_monitor_error_rate: '错误率',
+  api_monitor_request_count: '请求数',
+  api_monitor_error_count: '错误数',
+  api_monitor_throughput: '吞吐量',
+  api_monitor_refresh: '刷新',
+
+  // 时间范围选择器
+  api_monitor_time_range_5m: '最近5分钟',
+  api_monitor_time_range_15m: '最近15分钟',
+  api_monitor_time_range_1h: '最近1小时',
+  api_monitor_time_range_6h: '最近6小时',
+  api_monitor_time_range_12h: '最近12小时',
+  api_monitor_time_range_24h: '最近24小时',
+  api_monitor_time_range_7d: '最近7天',
+  api_monitor_time_range_14d: '最近14天',
+  api_monitor_time_range_30d: '最近30天',
+  api_monitor_time_range_custom: '自定义时间',
+  api_monitor_time_range_placeholder: '选择时间范围',
+  api_monitor_time_range_start: '开始时间',
+  api_monitor_time_range_end: '结束时间',
+  api_monitor_time_range_to: '至',
+  api_monitor_time_range_max_30_days: '自定义时间范围不能超过30天',
+
+  // API 详情页
+  api_monitor_api_detail_title: 'API 详情',
+  api_monitor_server_distribution: '各 Server 表现分布',
+  api_monitor_server_name: 'Server 名称',
+  api_monitor_throughput_latency_trend: '吞吐量与延迟趋势',
+  api_monitor_latency_ms: '延迟 (ms)',
+  api_monitor_response_time_trend: 'API 响应时间趋势',
+  api_monitor_db_cost_trend: '数据库耗时趋势',
+
+  // Server 详情页
+  api_monitor_server_detail: 'Server 详情',
+  api_monitor_cpu_usage: 'CPU 使用率',
+  api_monitor_memory_usage: '内存使用率',
+  api_monitor_cpu_usage_trend: 'CPU 使用率 (%)',
+  api_monitor_memory_usage_trend: '内存使用率 (%)',
+  api_monitor_request_error_trend: '请求数 & 错误率趋势',
+  api_monitor_latency_trend: '延迟趋势 (Avg/P95/P99)',
+  api_monitor_top_api_list: 'Top API 列表',
+  api_monitor_worker_diagnosis: 'Worker 资源诊断',
+  api_monitor_cpu_distribution: 'CPU 分布：最小值 {min}% ~ 最大值 {max}%',
+  api_monitor_worker_name: 'Worker 名称',
+  api_monitor_worker_cpu_usage: 'Worker CPU 使用率',
+  api_monitor_worker_memory_usage: 'Worker 内存使用率',
+  api_monitor_no_worker_data: '暂无 Worker 数据',
+
   cluster_operation_success: '操作指令已发送，请稍后刷新查看结果',
   cluster_launcher_offline: '启动器已离线',
   cluster_delete_confirm: '确定删除该服务吗？',

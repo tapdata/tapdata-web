@@ -193,26 +193,25 @@ export default {
     async filterFields() {
       this.fieldsLoading = true
       const item = this.navList[this.position]
-      let fields = item?.fields
+      let fields = await this.getCurrentTableFields(item, this.fieldChangeRules)
+      const { fields: newFields } = mapFieldsData(item)
+      newFields.forEach((t) => {
+        delete t.dataType
+      })
+      fields = newFields
+      item.fields = fields
       const findPossibleDataTypes = item?.findPossibleDataTypes || {}
       if (this.searchField) {
         fields = item.fields.filter((t) =>
           t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()),
         )
       }
-      fields = await this.getCurrentTableFields(item, this.fieldChangeRules)
       this.selected = Object.assign({}, item, { fields, findPossibleDataTypes })
       this.updateList = this.updateConditionFieldMap[this.selected.name] || []
       this.fieldsLoading = false
 
-      const { fields: newFields } = mapFieldsData(this.selected)
-
-      newFields.forEach((t) => {
-        delete t.dataType
-      })
-
-      this.fieldOptions = newFields
-      this.selected.fields = newFields
+      this.fieldOptions = fields
+      this.selected.fields = fields
     },
 
     handleSelect(index = 0) {
@@ -443,6 +442,7 @@ export default {
         </div>
         <div
           class="flex-fill flex flex-column bg-card mt-4 rounded-xl overflow-hidden"
+          style="border: 1px solid #f2f4f7"
         >
           <div class="flex align-items-center p-2 font-color-dark">
             <ElInput

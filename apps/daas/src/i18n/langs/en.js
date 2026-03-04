@@ -156,6 +156,12 @@ export default {
     'Please enter table names separated by commas, for example: table_a, table_b',
   // app
   app_license_expire_warning: 'License expires in {0} days remaining',
+  engine_expire_warning:
+    'Node limit exceeded. Please resolve within {0} days to avoid forced deactivation',
+  license_engine_limit_title: 'Engine binding limit reached',
+  license_engine_limit_tip:
+    'After confirmation, the system will <strong>offline engines with fewer running tasks after {0} days</strong>, please handle the unbinding of the nodes in advance.',
+  confirm_update: 'Confirm update',
   // Agent
   agent_check_error:
     "Agent's current state is abnormal and cannot create a connection, please check",
@@ -308,8 +314,13 @@ export default {
   application_show_menu: 'Show to the menu',
   application_true: 'Yes',
   application_false: 'No',
+  application_client_id_placeholder:
+    'Can be left empty, system will auto-generate',
+  //api 监控
   application_create: 'Create Client',
   application_edit: 'Edit client',
+  api_response_time: 'Response time',
+  api_db_cost_time: 'DB cost time',
   api_monitor_total_totalCount: 'Total number of APIs',
   api_monitor_total_warningApiCount: 'Total API Access',
   api_monitor_total_warningVisitCount: 'Total API Access Warning',
@@ -376,6 +387,7 @@ export default {
   dataExplorer_base_path: 'Base path',
   // server audit 服务审计
   apiaudit_name: 'API name',
+  apiaudit_req_path: 'Access Path',
   apiaudit_access_type: 'Access Type',
   apiaudit_visitor: 'Client Name',
   apiaudit_ip: 'Visitor IP',
@@ -836,10 +848,15 @@ export default {
   license_normal: 'normal',
   license_expiring: 'Expiring soon',
   license_expired: 'Expired',
-  license_try_out: 'trial',
+  license_try_out: 'Trial',
   license_copied_clipboard: 'Copied to clipboard',
   license_select_node: 'Please select the node first',
   license_renew_success: 'Update succeeded, page will refresh',
+  license_engine_limit_exceeded:
+    'License engine limit is {limit}, but {bound} engines are currently bound',
+  license_unbind_agents_tip: 'Please unbind some agents and try again',
+  license_unbind_running_agent_confirm:
+    'The running engine will go offline after unbinding. Are you sure?',
   // 自定义节点
   custom_node_name: 'Node Name',
   custom_node_name_placeholder: 'Please enter the node name to search',
@@ -2263,6 +2280,75 @@ export default {
   api_monitor_memory: 'MEM',
   api_monitor_server_ping_warning:
     'Server response has not been updated for {val}',
+
+  // API Monitor - New
+  api_monitor_tab_server: 'Server Overview',
+  api_monitor_tab_api: 'API Overview',
+  api_monitor_total_request_count: 'Total Requests',
+  api_monitor_total_error_count: 'Total Errors',
+  api_monitor_total_error_rate: 'Total Error Rate',
+  api_monitor_avg_response_time: 'Avg Response Time',
+  api_monitor_max_response_time: 'Max',
+  api_monitor_min_response_time: 'Min',
+  api_monitor_p95_response_time: '95th',
+  api_monitor_p99_response_time: '99th',
+  api_monitor_unhealthy_api_count: 'Error Request APIs',
+  api_monitor_unhealthy_server_count: 'Unhealthy Servers',
+  api_monitor_server_list: 'Server List',
+  api_monitor_api_list: 'API List',
+  api_monitor_api_path: 'API Path',
+  api_monitor_total_calls: 'Total Calls',
+  api_monitor_avg_latency: 'Avg Latency',
+  api_monitor_p95_latency: 'P95 Latency',
+  api_monitor_p99_latency: 'P99 Latency',
+  api_monitor_error_rate: 'Error Rate',
+  api_monitor_request_count: 'Request Count',
+  api_monitor_error_count: 'Error Count',
+  api_monitor_throughput: 'Throughput',
+  api_monitor_refresh: 'Refresh',
+
+  // Time Range Selector
+  api_monitor_time_range_5m: 'Last 5 Minutes',
+  api_monitor_time_range_15m: 'Last 15 Minutes',
+  api_monitor_time_range_1h: 'Last 1 Hour',
+  api_monitor_time_range_6h: 'Last 6 Hours',
+  api_monitor_time_range_12h: 'Last 12 Hours',
+  api_monitor_time_range_24h: 'Last 24 Hours',
+  api_monitor_time_range_7d: 'Last 7 Days',
+  api_monitor_time_range_14d: 'Last 14 Days',
+  api_monitor_time_range_30d: 'Last 30 Days',
+  api_monitor_time_range_custom: 'Custom Time',
+  api_monitor_time_range_placeholder: 'Select Time Range',
+  api_monitor_time_range_start: 'Start Time',
+  api_monitor_time_range_end: 'End Time',
+  api_monitor_time_range_to: 'to',
+  api_monitor_time_range_max_30_days: 'Custom time range cannot exceed 30 days',
+
+  // API Detail Page
+  api_monitor_api_detail_title: 'API Details',
+  api_monitor_server_distribution: 'Server Performance Distribution',
+  api_monitor_server_name: 'Server Name',
+  api_monitor_throughput_latency_trend: 'Throughput & Latency Trend',
+  api_monitor_latency_ms: 'Latency (ms)',
+  api_monitor_response_time_trend: 'Response Time Trend',
+  api_monitor_db_cost_trend: 'Database Cost Trend',
+
+  // Server Detail Page
+  api_monitor_server_detail: 'Server Details',
+  api_monitor_cpu_usage: 'CPU Usage',
+  api_monitor_memory_usage: 'Memory',
+  api_monitor_cpu_usage_trend: 'CPU Usage (%)',
+  api_monitor_memory_usage_trend: 'Memory Usage (%)',
+  api_monitor_request_error_trend: 'Request & Error Rate Trend',
+  api_monitor_latency_trend: 'Latency Trend (Avg/P95/P99)',
+  api_monitor_top_api_list: 'Top API List',
+  api_monitor_worker_diagnosis: 'Worker Resource Diagnosis',
+  api_monitor_cpu_distribution: 'CPU Distribution: Min {min}% ~ Max {max}%',
+  api_monitor_worker_name: 'Worker Name',
+  api_monitor_worker_cpu_usage: 'Worker CPU Usage',
+  api_monitor_worker_memory_usage: 'Worker Memory Usage',
+  api_monitor_no_worker_data: 'No Worker Data',
+
   cluster_operation_success:
     'Operation instruction has been sent, please refresh later to view the result',
   cluster_launcher_offline: 'Launcher is offline',

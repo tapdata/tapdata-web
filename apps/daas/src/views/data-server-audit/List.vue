@@ -1,10 +1,6 @@
 <script>
 import { CircleCloseFilled, SuccessFilled } from '@element-plus/icons-vue'
-import {
-  fetchAllMethods,
-  fetchAllResponseCodes,
-  fetchApiCalls,
-} from '@tap/api/src/core/api-calls'
+import { fetchAllMethods, fetchApiCalls } from '@tap/api/src/core/api-calls'
 import { fetchApiClients } from '@tap/api/src/core/api-client'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
@@ -29,6 +25,7 @@ export default {
         code: '',
         start: '',
         end: '',
+        options: 'i',
       },
       filterItems: [],
       order: 'createTime DESC',
@@ -44,6 +41,7 @@ export default {
         DELETE: '#DB5050',
         GET: '#09819C',
       },
+      defaultSort: { prop: 'createTime', order: 'descending' },
     }
   },
   computed: {
@@ -52,15 +50,40 @@ export default {
     },
   },
   watch: {
-    '$route.query': function () {
+    '$route.query': function (newQuery) {
+      this.initFromQuery(newQuery)
       this.table.fetch(1)
     },
     'searchParams.createTime': function () {},
   },
   created() {
     this.getFilterItems()
+    this.initFromQuery(this.$route.query)
   },
   methods: {
+    // 从 route.query 初始化参数
+    initFromQuery(query) {
+      if (query.keyword) {
+        this.searchParams.keyword = query.keyword
+      }
+      if (query.code) {
+        this.searchParams.code = query.code
+      }
+      if (query.start) {
+        this.searchParams.start = Number(query.start)
+      }
+      if (query.end) {
+        this.searchParams.end = Number(query.end)
+      }
+      if (query.sortBy && query.sortOrder) {
+        this.order = `${query.sortBy} ${query.sortOrder}`
+        this.defaultSort = {
+          prop: query.sortBy,
+          order: query.sortOrder === 'ASC' ? 'ascending' : 'descending',
+        }
+      }
+    },
+
     toDetails(item) {
       this.$router.push({
         name: 'dataServerAuditDetails',
@@ -71,7 +94,8 @@ export default {
     // 获取数据
     getData({ page }) {
       const { current, size } = page
-      const { method, code, start, end, clientId, keyword } = this.searchParams
+      const { method, code, start, end, clientId, keyword, options } =
+        this.searchParams
       const where = {}
       if (method) {
         where.method = method
@@ -89,7 +113,10 @@ export default {
         where.clientId = clientId
       }
       if (keyword && keyword.trim()) {
-        const filterObj = { like: escapeRegExp(keyword), options: 'i' }
+        const filterObj = {
+          like: escapeRegExp(keyword),
+          options: options ? '-' : options,
+        }
         where.or = [{ name: filterObj }, { id: filterObj }]
       }
 
@@ -107,10 +134,26 @@ export default {
               item.createTimeFmt = item.createTime
                 ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
                 : '-'
+              item.reqTimeFmt = item.reqTime
+                ? dayjs(item.reqTime).format('YYYY-MM-DD HH:mm:ss')
+                : '-'
               return item
             }) || [],
         }
       })
+    },
+    formatDuring(mss) {
+      let time = ''
+      const minutes = Number.parseInt((mss % (1000 * 60 * 60)) / (1000 * 60))
+      const seconds = (mss % (1000 * 60)) / 1000
+      if (minutes > 1) {
+        time = `${minutes.toFixed(2)}min`
+      } else if (minutes < 1 && seconds > 1) {
+        time = `${seconds.toFixed(2)}s`
+      } else if (minutes < 1 && seconds < 1 && mss > 0) {
+        time = `${mss}ms`
+      }
+      return time
     },
 
     // 表格排序
@@ -140,19 +183,16 @@ export default {
           label: this.$t('apiaudit_visit_result'),
           key: 'code',
           type: 'select-inner',
-          items: async () => {
-            let data = await fetchAllResponseCodes()
-            data = data || []
-            return data.map((item) => {
-              return {
-                label:
-                  item == 200
-                    ? this.$t('apiaudit_success')
-                    : this.$t('public_status_failed'),
-                value: item,
-              }
-            })
-          },
+          items: [
+            {
+              label: this.$t('apiaudit_success'),
+              value: '200',
+            },
+            {
+              label: this.$t('public_status_failed'),
+              value: '500',
+            },
+          ],
           selectedWidth: '200px',
         },
         {
@@ -198,6 +238,7 @@ export default {
       ref="table"
       row-key="id"
       class="apiaudit-list"
+      :default-sort="defaultSort"
       :remote-method="getData"
       @sort-change="handleSortTable"
     >
@@ -210,14 +251,13 @@ export default {
           />
         </div>
       </template>
-      <el-table-column prop="name" :label="$t('apiaudit_name')" width="220">
+      <el-table-column
+        prop="name"
+        :label="$t('apiaudit_req_path')"
+        min-width="220"
+      >
         <template #default="{ row }">
-          <div>{{ row.name }}</div>
-          <el-tag class="is-code" size="small" type="info" disable-transitions>
-            <span class="text-caption">
-              {{ row.apiId }}
-            </span>
-          </el-tag>
+          <div>{{ row.apiPath }}</div>
         </template>
       </el-table-column>
       <el-table-column
@@ -243,44 +283,76 @@ export default {
       <el-table-column
         :label="$t('apiaudit_interview_time')"
         :show-overflow-tooltip="true"
-        prop="createTime"
+        prop="reqTime"
         width="170"
-        sortable="createTime"
+        sortable="reqTime"
       >
         <template #default="{ row }">
-          {{ row.createTimeFmt }}
+          {{ row.reqTimeFmt }}
         </template>
       </el-table-column>
       <el-table-column
-        prop="code"
-        width="100"
+        prop="failed"
+        width="110"
         :label="$t('apiaudit_visit_result')"
         :show-overflow-tooltip="true"
       >
         <template #default="{ row }">
-          <el-text v-if="String(row.code) === '200'" type="success">
-            <el-icon><SuccessFilled /></el-icon>
-            <span class="ml-1">
-              {{ $t('apiaudit_success') }}
+          <span
+            v-if="!row.failed"
+            class="status-badge status-badge--success rounded-lg"
+          >
+            <span class="status-badge__dot" />
+            {{ row.code }} {{ $t('apiaudit_success') }}
+          </span>
+          <el-tooltip
+            v-else
+            :disabled="!row.codeMsg"
+            :content="row.codeMsg"
+            placement="top"
+            :hide-after="0"
+          >
+            <span
+              class="status-badge status-badge--danger rounded-lg"
+              :class="{ 'underline-dashed': row.codeMsg }"
+            >
+              <span class="status-badge__dot" />
+              {{ row.code }} {{ $t('public_status_failed') }}
             </span>
-          </el-text>
-          <el-text v-else type="danger">
-            <el-icon><CircleCloseFilled /></el-icon>
-            <span class="ml-1">
-              {{ $t('public_status_failed') }}
-            </span>
-          </el-text>
+          </el-tooltip>
         </template>
       </el-table-column>
       <el-table-column
+        prop="latency"
+        width="170"
+        sortable="latency"
+        :label="$t('api_response_time')"
+        :show-overflow-tooltip="true"
+      >
+        <template #default="{ row }">
+          {{ row.latency ? formatDuring(row.latency) : '-' }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="dbCost"
+        width="170"
+        sortable="dbCost"
+        :label="$t('api_db_cost_time')"
+        :show-overflow-tooltip="true"
+      >
+        <template #default="{ row }">
+          {{ row.dbCost ? formatDuring(row.dbCost) : '-' }}
+        </template>
+      </el-table-column>
+      <!-- <el-table-column
         prop="codeMsg"
         :label="$t('apiaudit_reason_fail')"
         :show-overflow-tooltip="true"
       >
         <template #default="{ row }">
-          {{ row.code == 200 ? '-' : row.codeMsg }}
+          {{ row.code === 200 ? '-' : row.codeMsg }}
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         :label="$t('public_operation')"
         width="100"
@@ -317,6 +389,29 @@ export default {
   }
   .status-block {
     color: var(--text-white);
+  }
+}
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  &__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  &--success {
+    color: var(--color-success);
+    .status-badge__dot {
+      background-color: var(--color-success);
+    }
+  }
+  &--danger {
+    color: var(--color-danger);
+    .status-badge__dot {
+      background-color: var(--color-danger);
+    }
   }
 }
 </style>

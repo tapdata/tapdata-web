@@ -562,10 +562,10 @@
 }
 
 .border-light {
-  border-color:var(--el-border-color-light) !important;
+  border-color: var(--el-border-color-light) !important;
 }
 .border-lighter {
-  border-color:var(--el-border-color-lighter) !important;
+  border-color: var(--el-border-color-lighter) !important;
 }
 
 .border-dark {
@@ -2687,6 +2687,10 @@
 
 .fw-bolder {
   font-weight: bolder !important;
+}
+
+.font-semibold {
+  font-weight: 600 !important;
 }
 
 .lh-1 {
@@ -12275,6 +12279,14 @@
   align-items: center !important;
 }
 
+.items-center {
+  align-items: center !important;
+}
+
+.justify-between {
+  justify-content: space-between !important;
+}
+
 .grabbable {
   cursor: grab;
 }
@@ -12367,7 +12379,6 @@
 .font-color-light {
   color: var(--text-light);
 }
-
 
 .font-color-normal {
   color: var(--text-normal);
@@ -12728,7 +12739,7 @@
 }
 
 .text-muted-foreground {
-  color: rgb(113 113 122);
+  color: rgb(115 115 115);
 }
 
 .hover\:bg-light:hover {
@@ -12743,18 +12754,17 @@
   word-break: break-all;
 }
 
-
 .fixed {
   position: fixed;
-} 
+}
 
 .absolute {
   position: absolute;
 }
 
 .inset-0 {
- inset: 0; 
-} 
+  inset: 0;
+}
 
 .-z-10 {
   z-index: -10;
@@ -12792,6 +12802,10 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.grid-cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
 .col-start-1 {
   grid-column-start: 1;
 }
@@ -12799,7 +12813,6 @@
 .col-start-2 {
   grid-column-start: 2;
 }
-
 
 .list-item-hover:hover:not(.bg-white):not(.is-active) {
   background-color: var(--fill-hover) !important;
@@ -12823,7 +12836,7 @@
 }
 
 .zoom-xs {
-  zoom: .8333333333333334;
+  zoom: 0.8333333333333334;
 }
 
 .border-dashed {
@@ -12888,7 +12901,8 @@
   background-color: var(--color-green-600);
 }
 
-.bg-green-950, .dark\:bg-green-950:where(.dark, .dark *) {
+.bg-green-950,
+.dark\:bg-green-950:where(.dark, .dark *) {
   background-color: var(--color-green-950);
 }
 
@@ -12900,7 +12914,8 @@
   background-color: var(--color-blue-600);
 }
 
-.bg-blue-950, .dark\:bg-blue-950:where(.dark, .dark *) {
+.bg-blue-950,
+.dark\:bg-blue-950:where(.dark, .dark *) {
   background-color: var(--color-blue-950);
 }
 
@@ -12912,23 +12927,24 @@
   background-color: var(--color-orange-600);
 }
 
-.bg-orange-950, .dark\:bg-orange-950:where(.dark, .dark *) {
+.bg-orange-950,
+.dark\:bg-orange-950:where(.dark, .dark *) {
   background-color: var(--color-orange-950);
 }
 
-.border-green-200{
+.border-green-200 {
   border-color: var(--color-green-200) !important;
 }
 
-.border-green-800{
+.border-green-800 {
   border-color: var(--color-green-800) !important;
 }
 
-.border-blue-200{
+.border-blue-200 {
   border-color: var(--color-blue-200) !important;
 }
 
-.border-blue-800{
+.border-blue-800 {
   border-color: var(--color-blue-800) !important;
 }
 
@@ -12936,7 +12952,7 @@
   border-color: var(--color-orange-200) !important;
 }
 
-.border-orange-800{
+.border-orange-800 {
   border-color: var(--color-orange-800) !important;
 }
 
@@ -12962,7 +12978,7 @@
 
 .text-blue-300 {
   color: var(--color-blue-300);
-} 
+}
 
 .text-blue-800 {
   color: var(--color-blue-800);
@@ -13052,4 +13068,45 @@
   background-color: oklch(0.946 0.033 307.174);
   border: 1px solid oklch(0.902 0.063 306.703);
   color: oklch(0.496 0.265 301.924);
+}
+
+.hover\:bg-fill-color-light:hover {
+  background-color: var(--el-fill-color-light) !important;
+}
+
+// Grid
+.sm\:grid-cols-2 {
+  @media (width >= 40rem) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.lg\:grid-cols-4 {
+  @media (width >= 64rem) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.xl\:grid-cols-6 {
+  @media (width >= 80rem) {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+.xl\:grid-cols-7 {
+  @media (width >= 80rem) {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+}
+
+
+.underline-dashed {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: currentColor;
+  &:hover {
+    text-decoration-style: solid;
+  }
 }

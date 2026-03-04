@@ -179,7 +179,6 @@ export default {
 
       if (this.end === 100) {
         const isEmptyData = options.series.every((t) => !t.data.length)
-        console.log('options.series', options.series)
         this.extend = Object.assign(
           {},
           {

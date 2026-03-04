@@ -319,6 +319,7 @@ export default {
     '任务中含有不支持增量的节点，请将任务类型修改为全量',
   packages_dag_mixins_editor_buzhichiduotiao:
     '不支持多条链路，请重新编辑任务链路',
+  packages_dag_not_support_multi_target: '当前不支持写入多个目标节点',
   packages_dag_mixins_editor_renwulianlubu: '任务链路不完整',
   packages_dag_mixins_editor_renwushezhiyi: '任务设置异常',
   packages_dag_mixins_editor_suoshuage: '所属agent节点冲突',
@@ -1018,6 +1019,9 @@ export default {
   public_api_alarmDate: '告警时间',
   packages_dag_drop_table_enabled_confirm:
     '您已选择清空目标表数据，是否确认继续？',
+  packages_dag_memory_heap_risk_title: '内存风险提示',
+  packages_dag_memory_heap_risk_message:
+    '检测到潜在的内存风险，当前任务可能需要比可用资源更多的内存，建议适当降低源节点的「全量读取每批条数（Batch Size）」后再运行。是否继续运行？',
   packages_dag_qpSshizhi_tip:
     '查询范围小于1小时，取每五秒的数据点计算平均的QPS值',
   packages_dag_qpSshizhi2_tip:

@@ -317,6 +317,7 @@ export default {
     '任務中含有不支持增量的節點，請將任務類型修改為全量',
   packages_dag_mixins_editor_buzhichiduotiao:
     '不支持多條鏈路，請重新編輯任務鏈路',
+  packages_dag_not_support_multi_target: '當前不支持寫入到多個目標節點',
   packages_dag_mixins_editor_renwulianlubu: '任務鏈路不完整',
   packages_dag_mixins_editor_renwushezhiyi: '任務設置異常',
   packages_dag_mixins_editor_suoshuage: '所屬agent節點衝突',
@@ -1002,6 +1003,9 @@ export default {
   public_api_alarmDate: '告警時間',
   packages_dag_drop_table_enabled_confirm:
     '您已選擇清空目標表數據，是否確認繼續？',
+  packages_dag_memory_heap_risk_title: '記憶體風險提示',
+  packages_dag_memory_heap_risk_message:
+    '檢測到潛在的記憶體風險，當前任務可能需要比可用資源更多的記憶體，建議適當降低來源節點的「全量每批讀取條數（Batch Size）」後再執行。是否繼續運行？',
   packages_dag_qpSshizhi_tip:
     '查詢範圍小於1小時，取每五秒的數據點計算平均的QPS值',
   packages_dag_qpSshizhi2_tip:

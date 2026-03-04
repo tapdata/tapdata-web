@@ -19,12 +19,15 @@ export const FieldSelect = defineComponent({
     modelValue: String,
     loading: Boolean,
   },
+  inheritAttrs: false,
   setup: (props, { attrs, slots }) => {
     const labelRef = ref<HTMLElement>()
     const showTooltip = ref(false)
     const isTextOverflow = ref(false)
     const tooltipContent = ref('')
     const selectRef = ref<SelectV2Instance>()
+    const tooltipRef = ref()
+    const isMouseInTooltip = ref(false)
 
     const checkTextOverflow = (element: HTMLElement, text: string) => {
       if (!element || !text) return false
@@ -165,10 +168,61 @@ export const FieldSelect = defineComponent({
       }
     }
 
+    const onMouseLeave = () => {
+      // 延迟检查，给鼠标移动到 tooltip 的时间
+      setTimeout(() => {
+        // 如果鼠标不在 tooltip 内，则隐藏
+        if (!isMouseInTooltip.value) {
+          showTooltip.value = false
+        }
+      }, 100)
+    }
+
+    const setupTooltipListeners = () => {
+      if (!tooltipRef.value?.contentRef) return
+
+      const contentEl = tooltipRef.value.popperRef.contentRef as HTMLElement
+
+      const handleMouseEnter = () => {
+        isMouseInTooltip.value = true
+      }
+
+      const handleMouseLeave = () => {
+        isMouseInTooltip.value = false
+        showTooltip.value = false
+      }
+
+      contentEl.addEventListener('mouseenter', handleMouseEnter)
+      contentEl.addEventListener('mouseleave', handleMouseLeave)
+
+      // 返回清理函数
+      return () => {
+        contentEl.removeEventListener('mouseenter', handleMouseEnter)
+        contentEl.removeEventListener('mouseleave', handleMouseLeave)
+      }
+    }
+
+    let cleanupTooltipListeners: (() => void) | undefined
+
+    // 监听 tooltip 显示状态，当显示时设置事件监听器
+    watch(showTooltip, (visible) => {
+      if (visible) {
+        // 等待 tooltip 渲染完成后再设置监听器
+        nextTick(() => {
+          cleanupTooltipListeners = setupTooltipListeners()
+        })
+      } else {
+        // tooltip 隐藏时清理监听器
+        cleanupTooltipListeners?.()
+        cleanupTooltipListeners = undefined
+      }
+    })
+
     let unwatch: any
 
     onBeforeMount(() => {
       unwatch?.()
+      cleanupTooltipListeners?.()
     })
 
     onMounted(() => {
@@ -219,6 +273,7 @@ export const FieldSelect = defineComponent({
 
       return props.enableTooltip ? (
         <ElTooltip
+          ref={tooltipRef}
           visible={showTooltip.value}
           placement="top"
           content={tooltipContent.value}
@@ -238,9 +293,7 @@ export const FieldSelect = defineComponent({
             dataSource={fieldOptions.value}
             loading={props.loading}
             onMouseenter={onMouseEnter}
-            onMouseleave={() => {
-              showTooltip.value = false
-            }}
+            onMouseleave={onMouseLeave}
           >
             {{
               ...children,

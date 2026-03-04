@@ -368,6 +368,8 @@ export default {
     'The task contains nodes that do not support CDC, change the task type to full',
   packages_dag_mixins_editor_buzhichiduotiao:
     'Multiple links are not supported, please re-edit the task link',
+  packages_dag_not_support_multi_target:
+    'Writing to multiple target nodes is not currently supported',
   packages_dag_mixins_editor_renwulianlubu: 'The task link is incomplete',
   packages_dag_mixins_editor_renwushezhiyi: 'The task setting is abnormal',
   packages_dag_mixins_editor_suoshuage:
@@ -1165,6 +1167,9 @@ export default {
   public_api_alarmDate: 'Alarm Date',
   packages_dag_drop_table_enabled_confirm:
     'Confirm clearing target table data?',
+  packages_dag_memory_heap_risk_title: 'Memory Risk Warning',
+  packages_dag_memory_heap_risk_message:
+    'Potential memory risk detected. This task may require more memory than available resources.It is recommended to reduce the source node’s full-load batch size before proceeding. Continue anyway?',
   packages_dag_qpSshizhi_tip: 'Query < 1h: avg QPS from 5s data points',
   packages_dag_qpSshizhi2_tip:
     '1h ≤ Query < 24h: avg & max QPS from 1m data points',
