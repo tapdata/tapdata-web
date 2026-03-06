@@ -27,6 +27,8 @@ declare global {
   const IconLucideClock: typeof import('~icons/lucide/clock').default
   const IconLucideFileText: typeof import('~icons/lucide/file-text').default
   const IconLucideHash: typeof import('~icons/lucide/hash').default
+  const IconLucideSettings2: typeof import('~icons/lucide/settings2').default
+  const IconLucideTrash2: typeof import('~icons/lucide/trash2').default
   const IconLucideTriangleAlert: typeof import('~icons/lucide/triangle-alert').default
   const IconMingcuteCheckCircleFill: typeof import('~icons/mingcute/check-circle-fill').default
   const IconMingcuteCloseCircleFill: typeof import('~icons/mingcute/close-circle-fill').default
