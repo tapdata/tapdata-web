@@ -1,21 +1,16 @@
 import { getNodeSchemaPage } from '@tap/api/src/core/metadata-instances'
 import { computed as reactiveComputed } from '@tap/form'
 import { useI18n } from '@tap/i18n'
-import { computed, defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref, type PropType } from 'vue'
+import type { Form } from '@formily/core'
 import './style.scss'
-
-interface TableConfig {
-  tableName: string
-  syncMode: string
-  primaryKey: string
-  batchSize: number
-  filterEnabled: boolean
-  fieldMappingEnabled: boolean
-}
 
 export const TableLevelConfigDialog = defineComponent({
   props: {
-    form: Object,
+    form: {
+      type: Object as PropType<Form>,
+      required: true,
+    },
     nodeId: {
       type: String,
     },
@@ -25,7 +20,8 @@ export const TableLevelConfigDialog = defineComponent({
     const selectedTable = ref('')
     const searchKeyword = ref('')
     const addTableValue = ref('')
-    const tableNames = ref<string[]>([])
+    const tableNames = ref<{ name: string }[]>([])
+    const loading = ref(false)
 
     const configuredTables = reactiveComputed(() => {
       const tableConfig = props.form.values.tableConfig || {}
@@ -39,8 +35,12 @@ export const TableLevelConfigDialog = defineComponent({
         page: 1,
         pageSize: 99999999,
       }
+      loading.value = true
       const result = await getNodeSchemaPage(params)
-      tableNames.value = result.items.map((item: any) => item.original_name)
+      tableNames.value = result.items.map((item: any) => ({
+        name: item.original_name,
+      }))
+      loading.value = false
     }
 
     const configuredCount = computed(() => configuredTables.value.length)
@@ -54,7 +54,7 @@ export const TableLevelConfigDialog = defineComponent({
 
     const availableTables = computed(() => {
       const configured = new Set(configuredTables.value)
-      return tableNames.value.filter((name) => !configured.has(name))
+      return tableNames.value.filter((t) => !configured.has(t.name))
     })
 
     const addTable = (tableName: string) => {
@@ -71,7 +71,7 @@ export const TableLevelConfigDialog = defineComponent({
       props.form.clearFormGraph(`${basePath}.*`)
       props.form.deleteValuesIn(basePath)
       if (selectedTable.value === tableName) {
-        selectedTable.value = configuredTables.value[0]
+        selectedTable.value = configuredTables.value[0] ?? ''
       }
     }
 
@@ -87,7 +87,7 @@ export const TableLevelConfigDialog = defineComponent({
         onOpen={handleOpen}
       >
         {{
-          header: ({ titleClass }) => (
+          header: ({ titleClass }: { titleClass: string }) => (
             <div class="pt-5 px-6 flex align-center gap-2">
               <div class={titleClass}>
                 {t('packages_dag_pdk_node_config_table_level')}
@@ -103,19 +103,18 @@ export const TableLevelConfigDialog = defineComponent({
             <div class="table-level-config-dialog__body border-top">
               {/* Left Panel */}
               <div class="table-level-config-dialog__left">
-                <ElSelect
+                <ElSelectV2
                   modelValue={addTableValue.value}
                   onUpdate:modelValue={(val: string) => {
                     addTable(val)
                   }}
                   placeholder={`+ ${t('packages_dag_pdk_node_config_add_table')}`}
                   class="w-100 mb-3 add-table-select"
+                  loading={loading.value}
                   filterable
-                >
-                  {availableTables.value.map((name) => (
-                    <ElOption key={name} label={name} value={name} />
-                  ))}
-                </ElSelect>
+                  options={availableTables.value}
+                  props={{ label: 'name', value: 'name' }}
+                />
 
                 {configuredCount.value > 0 ? (
                   <>

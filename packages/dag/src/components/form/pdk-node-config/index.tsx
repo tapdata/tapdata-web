@@ -4,12 +4,13 @@ import {
   RecursionField,
   useFieldSchema,
   useForm,
+  type Schema,
 } from '@tap/form'
 import { useI18n } from '@tap/i18n'
 import { computed, defineComponent, ref } from 'vue'
 import { TableLevelConfigDialog } from './TableLevelConfigDialog'
 
-function buildPerTableSchema(originalSchema: Schema): ISchema {
+function buildPerTableSchema(originalSchema: Schema) {
   const filteredProperties = originalSchema.reduceProperties(
     (acc, fieldSchema, key) => {
       if (fieldSchema['x-perTable'] === true) {
@@ -39,28 +40,23 @@ export const PdkNodeConfig = observer(
       const schemaRef = useFieldSchema()
       const formRef = useForm()
       const nodeId = formRef.value.values.id
-
       const formSchema = buildPerTableSchema(
-        schemaRef.value.properties.nodeConfig,
+        schemaRef.value.properties!.nodeConfig as Schema,
       )
-
-      console.log('schemaRef', schemaRef.value)
-
       const showTableConfigBtn = computed(() => {
         const schema = schemaRef.value.toJSON()
-        const scope = schema.properties.nodeConfig['x-tableConfigScope']
+        const properties = schema.properties as Record<string, any> | undefined
+        const scope = properties?.nodeConfig?.['x-tableConfigScope']
         if (!scope) return false
         return (
           (scope.includes('source') && !formRef.value.values.$inputs.length) ||
           (scope.includes('target') && formRef.value.values.$inputs.length)
         )
       })
-
       const tableCount = reactiveComputed(() => {
         const tableConfig = formRef.value.values.tableConfig || {}
         return Object.keys(tableConfig).length
       })
-
       const { t } = useI18n()
       const activeNames = ref(['pdk'])
       const dialogVisible = ref(false)
@@ -80,7 +76,7 @@ export const PdkNodeConfig = observer(
           <ElCollapseItem name="pdk">
             {{
               title: () => (
-                <div class="flex align-items-center flex-1 pr-4">
+                <div class="flex align-items-center flex-1">
                   <span>{t('packages_dag_config_datasource')}</span>
                   <div class="flex-grow-1"></div>
                   {showTableConfigBtn.value && (
@@ -115,7 +111,7 @@ export const PdkNodeConfig = observer(
             form={formRef.value}
           >
             {{
-              default: (tableName) => (
+              default: (tableName: string) => (
                 <RecursionField
                   onlyRenderProperties={true}
                   name={`tableConfig.${tableName}`}
