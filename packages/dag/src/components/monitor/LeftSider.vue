@@ -530,7 +530,7 @@ function formatTime(date: any, f = 'YYYY-MM-DD HH:mm:ss') {
 }
 
 function getCollectorData() {
-  getLogcollectorDetail(dataflowStore.dataflow?.id).then((data: any) => {
+  getLogcollectorDetail(dataflow.value?.id).then((data: any) => {
     const { externalStorage = {} as any, logTime } = data
     let uriInfo = externalStorage.uri
     if (externalStorage.type === 'mongodb') {
@@ -602,7 +602,7 @@ async function getBasicInformation() {
     SharedMiningMonitor: getCollectorData,
     SharedCacheMonitor: getSharedCacheData,
   }
-  map[route.name as string]?.(dataflowStore.dataflow?.id)
+  map[route.name as string]?.(dataflow.value?.id)
 }
 
 function changeTimeSelect(val: any, isTime: any, source: any) {
