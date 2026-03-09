@@ -77,7 +77,7 @@ const quotaTimeType = ref('5m')
 const quotaTime = ref([])
 
 const firstStartTime = computed(() => {
-  const { startTime } = dataflowStore.dataflow || {}
+  const startTime = dataflow.value.startTime
   return startTime ? new Date(startTime).getTime() : null
 })
 
@@ -642,6 +642,7 @@ provide('isSaving', isSaving)
           :time-format="timeFormat"
           :range="timeSelectRange"
           :if-enable-concurrent-read="ifEnableConcurrentRead"
+          class="z-20"
           @load-data="initMonitor"
           @change-time-select="handleChangeTimeSelect"
           @change-frequency="handleChangeFrequency"

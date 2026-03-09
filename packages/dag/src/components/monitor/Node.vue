@@ -582,21 +582,21 @@ const onDragStop = (...args: any[]) => {
     height: 28px;
   }
 
-  .statistic-list {
+  :deep(.statistic-list) {
     grid-template-columns: repeat(2, minmax(130px, 1fr));
     gap: 4px;
   }
 
-  .statistic {
+  :deep(.statistic) {
     display: inline-block;
     color: var(--text-sslight);
 
-    &-title {
+    .statistic-title {
       font-size: 12px;
       line-height: 1rem;
     }
 
-    &-value {
+    .statistic-value {
       display: inline-block;
       vertical-align: middle;
       color: var(--text-dark);

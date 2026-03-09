@@ -147,7 +147,7 @@ const qpsMap = computed(() => {
   const outputSizeQps99th = data.outputSizeQps99th
 
   // 计算距离增量时间点，最近的时间点
-  const milestone = dataflowStore.dataflow?.attrs?.milestone || {}
+  const milestone = dataflow.value?.attrs?.milestone || {}
   const snapshotDoneAt = milestone.SNAPSHOT?.end
   let markLineTime = 0
   time.forEach((el: number) => {
@@ -249,7 +249,7 @@ const qpsMap = computed(() => {
     ),
   }
 
-  if (dataflowStore.dataflow?.type === 'initial_sync+cdc') {
+  if (dataflow.value?.type === 'initial_sync+cdc') {
     ;(opt as any).markLine = [
       {
         symbol: 'none',
@@ -296,11 +296,11 @@ const replicateLagData = computed(() => {
 
   const name = [t('public_event_incremental_delay')]
   const { replicateLag = [], replicateLag95th, replicateLag99th } = data
-  const open = dataflowStore.dataflow?.alarmSettings?.find(
+  const open = dataflow.value?.alarmSettings?.find(
     (t: any) => t.key === 'TASK_INCREMENT_DELAY',
   )?.open
   const delay = open
-    ? dataflowStore.dataflow?.alarmRules?.find(
+    ? dataflow.value?.alarmRules?.find(
         (t: any) => t.key === 'TASK_INCREMENT_DELAY',
       )?.ms || 0
     : 60 * 1000
@@ -349,7 +349,7 @@ const initialData = computed(() => {
     time =
       ((snapshotRowTotal - snapshotInsertRowTotal) / lastFiveMinutesQps) * 1000
   }
-  const milestone = dataflowStore.dataflow?.attrs?.milestone || {}
+  const milestone = dataflow.value?.attrs?.milestone || {}
   const snapshotStartAt = milestone.SNAPSHOT?.begin
     ? dayjs(milestone.SNAPSHOT?.begin).format('YYYY-MM-DD HH:mm:ss')
     : ''
@@ -410,7 +410,7 @@ const eventDataAll = computed(() => {
 })
 
 const heartbeatTime = computed(() => {
-  const { pingTime, status } = dataflowStore.dataflow as any
+  const { pingTime, status } = dataflow.value
   return status === 'running' && pingTime
     ? dayjs(Time.now()).to(dayjs(pingTime))
     : '-'
@@ -425,20 +425,17 @@ const isFileSource = computed(() => {
 })
 
 const hideTotalData = computed(() => {
-  return ['shareCache'].includes(dataflowStore.dataflow?.syncType)
+  return ['shareCache'].includes(dataflow.value?.syncType)
 })
 
 const showToInitialList = computed(() => {
-  return !(
-    dataflowStore.dataflow?.syncType === 'sync' &&
-    !dataflowStore.dataflow?.shareCache
-  )
+  return !(dataflow.value?.syncType === 'sync' && !dataflow.value?.shareCache)
 })
 
 // 进入增量阶段
 const startingIncremental = computed(() => {
   return (
-    dataflowStore.dataflow?.type !== 'initial_sync' &&
+    dataflow.value?.type !== 'initial_sync' &&
     !!initialData.value.snapshotDoneAt
   )
 })
@@ -640,7 +637,7 @@ function onChangeDialogTimeSelect(val: any, isTime: any, source: any) {
 // --- watch & lifecycle ---
 
 watch(
-  () => dataflowStore.dataflow?.syncType,
+  () => dataflow.value.syncType,
   (v) => {
     v && getBasicInformation()
   },
@@ -653,7 +650,7 @@ onMounted(() => {
 
 <template>
   <aside
-    class="layout-sidebar --left flex-shrink-0 nodes-panel position-absolute start-3 rounded-2xl bg-card shadow-canvas z-10 flex flex-column"
+    class="layout-sidebar --left flex-shrink-0 nodes-panel position-absolute start-3 rounded-2xl bg-card shadow-canvas z-10 flex flex-column font-color-light"
   >
     <div class="flex flex-column flex-1 min-h-0 overflow-y-auto">
       <div

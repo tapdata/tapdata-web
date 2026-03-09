@@ -1281,8 +1281,11 @@ export function useCanvasOperation() {
     isSaving.value = true
 
     try {
-      const hasError = await skipErrorRef.value!.checkError(dataflow)
-      if (hasError) return
+      const hasError = await skipErrorRef.value!.checkError(dataflow.value)
+      if (hasError) {
+        isSaving.value = false
+        return
+      }
 
       if (dataflowStore.stateIsReadonly) {
         wsAgentLive()
