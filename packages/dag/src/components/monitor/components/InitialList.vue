@@ -165,7 +165,7 @@ export default {
     width="50%"
     class="min-w-800"
     :close-on-click-modal="false"
-    :modal-append-to-body="false"
+    append-to-body
     @close="$emit('update:value', false)"
   >
     <template #header="{ titleClass }">

@@ -14,7 +14,6 @@ import { cloneDeep } from 'lodash-es'
 import { computed, inject, onMounted, ref, watch, type Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
-import { useDataflowStore } from '../../stores/dataflow.store'
 import Frequency from './components/Frequency.vue'
 import InitialList from './components/InitialList.vue'
 import LineChart from './components/LineChart.vue'
@@ -46,18 +45,15 @@ const props = defineProps({
 const dataflow = inject<Ref<any>>('dataflow')
 
 const { t } = useI18n()
-const dataflowStore = useDataflowStore()
 const route = useRoute()
 const store = useStore()
 
 const timeSelectRef = ref()
 const dialogTimeSelectRef = ref()
-const initialListRef = ref()
 
 const lineChartDialog = ref(false)
 const initialListDialog = ref(false)
 const timeSelectLabel = ref('')
-const collectorData = ref<any>({ externalStorage: {} })
 const infoList = ref<any[]>([])
 const qpsChartsType = ref('count')
 const isUpdatingTimeSelect = ref(false)
@@ -68,7 +64,7 @@ const cpuUsageOptions = {
       const [cpu, mem] = params
       let result = dayjs(Number(cpu.axisValue)).format('YYYY-MM-DD HH:mm:ss')
 
-      result += `<div class="flex justify-content-between gap-4"><div>${cpu.marker}${cpu.seriesName}</div><div class="din-font">${Number(cpu.data?.toFixed(2))}%</div></div>`
+      result += `<div class="flex justify-content-between gap-4"><div>${cpu.marker}${cpu.seriesName}</div><div class="din-font">${cpu.data === null ? '-' : Number(cpu.data?.toFixed(2))}%</div></div>`
       result += `<div class="flex justify-content-between gap-4"><div>${mem.marker}${mem.seriesName}</div><div class="din-font">${calcUnit(mem.data, 'byte')}</div></div>`
 
       return result
@@ -652,7 +648,7 @@ onMounted(() => {
   <aside
     class="layout-sidebar --left flex-shrink-0 nodes-panel position-absolute start-3 rounded-2xl bg-card shadow-canvas z-10 flex flex-column font-color-light"
   >
-    <div class="flex flex-column flex-1 min-h-0 overflow-y-auto">
+    <div class="flex flex-column flex-1 min-h-0 overflow-y-auto py-2">
       <div
         class="info-box flex justify-content-between align-items-center flex-wrap"
       >
@@ -682,7 +678,12 @@ onMounted(() => {
             transition="tooltip-fade-in"
             :content="$t('packages_dag_monitor_leftsider_liebiao')"
           >
-            <VIcon @click.stop="toInitialList">menu-left</VIcon>
+            <ElButton text @click.stop="toInitialList">
+              <template #icon>
+                <i-lucide-list />
+              </template>
+            </ElButton>
+            <!-- <VIcon @click.stop="toInitialList">menu-left</VIcon> -->
           </ElTooltip>
         </div>
         <template v-if="dataflow.type !== 'cdc'">
@@ -906,7 +907,11 @@ onMounted(() => {
             transition="tooltip-fade-in"
             :content="$t('packages_dag_button_zoom_in')"
           >
-            <VIcon @click.stop="toFullscreen">enlarge</VIcon>
+            <ElButton text @click.stop="toFullscreen">
+              <template #icon>
+                <VIcon size="16">enlarge</VIcon>
+              </template>
+            </ElButton>
           </ElTooltip>
         </div>
         <div class="line-chart__box mb-2">
@@ -1125,7 +1130,7 @@ onMounted(() => {
       v-model="lineChartDialog"
       width="774px"
       :close-on-click-modal="false"
-      :modal-append-to-body="false"
+      append-to-body
     >
       <template #header="{ titleClass }">
         <div class="flex align-center gap-3">

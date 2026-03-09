@@ -206,6 +206,7 @@ export default {
           show: false,
         },
         tooltip: {
+          appendToBody: true,
           borderRadius: 12,
           trigger: 'axis',
           backgroundColor: 'rgba(54, 66, 82, 0.9)',

@@ -502,10 +502,9 @@ const onDragStop = (...args: any[]) => {
                   <renderStatistic />
                 </div>
                 <ElButton
-                  size="large"
-                  class="ml-2"
+                  class="ml-1"
                   text
-                  @click.stop="emit('open-detail')"
+                  @click.stop="emit('open-detail', data)"
                 >
                   <template #icon>
                     <i-lucide-list />

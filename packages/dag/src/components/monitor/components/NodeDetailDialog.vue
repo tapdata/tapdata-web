@@ -1,700 +1,560 @@
-<script>
+<script setup lang="ts">
 import { batchMeasurements } from '@tap/api/src/core/measurement'
-import SharedMiningTable from '@tap/business/src/views/shared-mining/Table'
 import { IconButton } from '@tap/component/src/icon-button'
-
 import TimeSelect from '@tap/component/src/TimeSelect.vue'
-import i18n from '@tap/i18n'
+import { useI18n } from '@tap/i18n'
 import { calcTimeUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 import dayjs from 'dayjs'
-
 import { cloneDeep } from 'lodash-es'
-import { mapGetters } from 'vuex'
-import NodeIcon from '../../NodeIcon'
+import { computed, nextTick, ref, watch } from 'vue'
+import { useDataflowStore } from '../../../stores/dataflow.store'
+import NodeIcon from '../../NodeIcon.vue'
 import { getTimeGranularity, TIME_FORMAT_MAP } from '../util'
-import EventChart from './EventChart'
-import Frequency from './Frequency'
-import LineChart from './LineChart'
+import EventChart from './EventChart.vue'
+import Frequency from './Frequency.vue'
+import LineChart from './LineChart.vue'
 
-export default {
-  name: 'NodeDetailDialog',
-  components: {
-    NodeIcon,
-    EventChart,
-    LineChart,
-    TimeSelect,
-    Frequency,
-    SharedMiningTable,
-    IconButton,
-  },
-  props: {
-    value: {
-      type: Boolean,
-      default: false,
-    },
+const props = defineProps<{
+  value: boolean
+  nodeId: string
+  dataflow: any
+  getTimeRange: (...args: any[]) => any
+  ifEnableConcurrentRead?: boolean
+}>()
 
-    nodeId: {
-      type: String,
-      required: true,
-    },
+const emit = defineEmits<{
+  'update:value': [value: boolean]
+  'load-data': []
+}>()
 
-    dataflow: Object,
+const { t } = useI18n()
+const dataflowStore = useDataflowStore()
+const allNodes = computed(() => dataflowStore.dag.nodes || [])
 
-    getTimeRange: Function,
+// data
+const period = ref('')
+const visible = ref(false)
+const selected = ref('')
+const quota = ref<any>({})
+const timeFormat = ref('HH:mm:ss')
+const quotaTime = ref<number[]>([])
+const quotaTimeType = ref('5m')
+const loading = ref(false)
+const refreshRate = ref(5000)
+const currentNodeId = ref('')
+const qpsChartsType = ref('count')
+let timer: ReturnType<typeof setInterval> | null = null
 
-    ifEnableConcurrentRead: Boolean,
-  },
-  data() {
+// template refs
+const qpsLineChart = ref<any>(null)
+const delayLineChart = ref<any>(null)
+const sharedMiningTable = ref<any>(null)
+const nodeSelect = ref<any>(null)
+
+// computed
+const nodeItems = computed(() =>
+  allNodes.value
+    .filter((t: any) => !['mem_cache'].includes(t.type))
+    .map((t: any) => ({
+      node: t,
+      label: t.name,
+      value: t.id,
+    })),
+)
+
+const isLogCollector = computed(() =>
+  ['logCollector'].includes(props.dataflow.syncType),
+)
+
+const eventDataAll = computed(() => {
+  const data = quota.value.samples?.totalData?.[0]
+  return getInputOutput(data)
+})
+
+const eventDataPeriod = computed(() => {
+  const data = quota.value.samples?.barChartData?.[0]
+  return getInputOutput(data)
+})
+
+const qpsMap = computed(() => {
+  const data = quota.value.samples?.lineChartData?.[0]
+  if (!data) {
     return {
-      period: '',
-      visible: false,
-      selected: '',
-      quota: {},
-      timeFormat: 'HH:mm:ss',
-      quotaTime: [],
-      quotaTimeType: '5m',
-      loading: false,
-      refreshRate: 5000,
-      currentNodeId: '',
-      qpsChartsType: 'count',
+      count: { x: [], name: [], value: [[], []], markLine: [{ data: [] }] },
+      size: { x: [], name: [], value: [[], []], markLine: [{ data: [] }] },
+    }
+  }
+  const { time = [] } = quota.value
+  const inputQps = data.inputQps?.map((t: number) => Math.abs(t))
+  const outputQps = data.outputQps?.map((t: number) => Math.abs(t))
+  const inputSizeQps = data.inputSizeQps?.map((t: number) => Math.abs(t))
+  const outputSizeQps = data.outputSizeQps?.map((t: number) => Math.abs(t))
+
+  const milestone = props.dataflow.attrs?.milestone || {}
+  const snapshotDoneAt = milestone.SNAPSHOT?.end
+  let markLineTime = 0
+  time.forEach((el: number) => {
+    if (
+      Math.abs(el - snapshotDoneAt) < 2000 &&
+      Math.abs(el - snapshotDoneAt) < Math.abs(el - markLineTime)
+    ) {
+      markLineTime = el
+    }
+  })
+
+  const opt: any = {
+    x: time,
+    name: [t('public_time_input'), t('public_time_output')],
+    value: [],
+    zoomValue: 10,
+  }
+
+  if (props.dataflow.type === 'initial_sync+cdc') {
+    opt.markLine = [
+      {
+        symbol: 'none',
+        data: [
+          {
+            xAxis: String(markLineTime),
+            lineStyle: { color: '#000' },
+            label: { show: false },
+          },
+        ],
+      },
+    ]
+  }
+
+  return {
+    count: Object.assign(cloneDeep(opt), { value: [inputQps, outputQps] }),
+    size: Object.assign(cloneDeep(opt), {
+      value: [inputSizeQps, outputSizeQps],
+    }),
+  }
+})
+
+const node = computed(
+  () => allNodes.value.find((t: any) => selected.value === t.id) || ({} as any),
+)
+
+const isSource = computed(() => {
+  const { type, $inputs } = node.value
+  return (
+    (type === 'database' || type === 'table' || type === 'logCollector') &&
+    !$inputs?.length
+  )
+})
+
+const isTarget = computed(() => {
+  const { type, $outputs } = node.value
+  return (type === 'database' || type === 'table') && !$outputs?.length
+})
+
+const delayLineTitle = computed(() => {
+  let result = t('packages_dag_components_nodedetaildialog_chulihaoshi')
+  if (isSource.value) {
+    result = t('packages_dag_components_nodedetaildialog_duquchulihao')
+  } else if (isTarget.value) {
+    result = t('packages_dag_components_nodedetaildialog_chulixieruhao')
+  }
+  return result
+})
+
+const delayData = computed(() => {
+  const data = quota.value.samples?.lineChartData?.[0]
+  if (!data) {
+    return { x: [], value: [] }
+  }
+  const { time = [] } = quota.value
+  const {
+    timeCostAvg = [],
+    snapshotSourceReadTimeCostAvg = [],
+    incrementalSourceReadTimeCostAvg = [],
+    targetWriteTimeCostAvg = [],
+  } = data
+  const result: any = {
+    x: time,
+    name: [t('packages_dag_components_nodedetaildialog_chulihaoshi')],
+    value: [timeCostAvg],
+  }
+  if (isSource.value) {
+    result.name = [
+      t('packages_dag_components_nodedetaildialog_chulihaoshi'),
+      t('packages_dag_components_nodedetaildialog_pingjunduquhao'),
+      t('packages_dag_components_nodedetaildialog_zengliangduquyan'),
+    ]
+    result.value = [
+      timeCostAvg,
+      snapshotSourceReadTimeCostAvg,
+      incrementalSourceReadTimeCostAvg,
+    ]
+  } else if (isTarget.value) {
+    result.name = [
+      t('packages_dag_components_nodedetaildialog_chulihaoshi'),
+      t('packages_dag_components_nodedetaildialog_xieruhaoshi'),
+    ]
+    result.value = [timeCostAvg, targetWriteTimeCostAvg]
+  }
+  return result
+})
+
+const batchReadData = computed(() => {
+  const data = quota.value.samples?.batchReadData?.[0]
+  if (!data) {
+    return { x: [], value: [], markLine: [{ data: [] }] }
+  }
+  const { time = [] } = quota.value
+  const result: any = {
+    x: time,
+    name: [t('packages_dag_batch_read_size')],
+    value: data.batchReadSize,
+  }
+  const milestone = props.dataflow.attrs?.milestone || {}
+  const snapshotDoneAt = milestone.SNAPSHOT?.end
+  let markLineTime = 0
+  time.forEach((el: number) => {
+    if (
+      Math.abs(el - snapshotDoneAt) < 2000 &&
+      Math.abs(el - snapshotDoneAt) < Math.abs(el - markLineTime)
+    ) {
+      markLineTime = el
+    }
+  })
+  if (props.dataflow.type === 'initial_sync+cdc') {
+    result.markLine = [
+      {
+        symbol: 'none',
+        data: [
+          {
+            xAxis: String(markLineTime),
+            lineStyle: { color: '#000' },
+            label: { show: false },
+          },
+        ],
+      },
+    ]
+  }
+  return result
+})
+
+const sourceData = computed(() => {
+  const data = quota.value.samples?.totalData?.[0]
+  if (!data) return {}
+  const { tcpPing, connectPing, currentEventTimestamp } = data
+  return { tcpPing, connectPing, currentEventTimestamp }
+})
+
+const targetData = computed(() => {
+  const data = quota.value.samples?.totalData?.[0]
+  if (!data) return {}
+  const { tcpPing, connectPing, currentEventTimestamp } = data
+  return { tcpPing, connectPing, currentEventTimestamp }
+})
+
+const initialData = computed(() => {
+  const data = quota.value.samples?.totalData?.[0] || {}
+  const {
+    snapshotRowTotal = 0,
+    snapshotInsertRowTotal = 0,
+    snapshotDoneAt,
+    snapshotStartAt,
+    replicateLag,
+    lastFiveMinutesQps,
+  } = data
+  let time: number
+  if (!snapshotInsertRowTotal || !snapshotRowTotal || !lastFiveMinutesQps) {
+    time = 0
+  } else {
+    time =
+      ((snapshotRowTotal - snapshotInsertRowTotal) / lastFiveMinutesQps) * 1000
+  }
+  return {
+    snapshotDoneAt: snapshotDoneAt
+      ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS')
+      : '',
+    snapshotStartAt: snapshotStartAt
+      ? dayjs(snapshotStartAt).format('YYYY-MM-DD HH:mm:ss.SSS')
+      : '',
+    replicateLag,
+    finishDuration: time,
+  }
+})
+
+const totalData = computed(() => {
+  let {
+    snapshotTableTotal = 0,
+    tableTotal = 0,
+    snapshotInsertRowTotal = 0,
+    snapshotRowTotal = 0,
+    currentSnapshotTableInsertRowTotal = 0,
+    currentSnapshotTableRowTotal = 0,
+  } = quota.value.samples?.totalData?.[0] || {}
+  if (currentSnapshotTableInsertRowTotal > currentSnapshotTableRowTotal) {
+    currentSnapshotTableRowTotal = currentSnapshotTableInsertRowTotal
+  }
+  return {
+    snapshotTableTotal,
+    tableTotal,
+    snapshotInsertRowTotal,
+    snapshotRowTotal,
+    currentSnapshotTableInsertRowTotal,
+    currentSnapshotTableRowTotal,
+  }
+})
+
+const totalDataPercentage = computed(() => {
+  const { snapshotTableTotal, tableTotal } = totalData.value
+  return snapshotTableTotal && tableTotal
+    ? (snapshotTableTotal / tableTotal) * 100
+    : 0
+})
+
+const currentTotalDataPercentage = computed(() => {
+  const { currentSnapshotTableInsertRowTotal, currentSnapshotTableRowTotal } =
+    totalData.value
+  return currentSnapshotTableRowTotal
+    ? (currentSnapshotTableInsertRowTotal / currentSnapshotTableRowTotal) * 100
+    : 0
+})
+
+const chartBoxWidth100 = computed(() => !isSource.value && !isTarget.value)
+
+// watch
+watch(
+  () => props.value,
+  (v) => {
+    visible.value = !!v
+    if (v) {
+      init()
+    } else {
+      timer && clearInterval(timer)
+      selected.value = ''
     }
   },
-  computed: {
-    ...mapGetters('dataflow', ['allNodes']),
+)
 
-    nodeItems() {
-      return (
-        this.allNodes
-          .filter((t) => !['mem_cache'].includes(t.type))
-          .map((t) => {
-            return {
-              node: t,
-              label: t.name,
-              value: t.id,
-            }
-          }) || []
-      )
-    },
+// methods
+function init() {
+  if (!selected.value) {
+    selected.value = props.nodeId
+  }
+  currentNodeId.value = selected.value
+  setPeriod()
+  timer && clearInterval(timer)
+  timer = setInterval(() => {
+    quotaTimeType.value !== 'custom' &&
+      props.dataflow?.status === 'running' &&
+      loadQuotaData()
+  }, refreshRate.value)
+  loadQuotaData(true)
+  nextTick(() => {
+    qpsLineChart.value?.reset?.()
+    delayLineChart.value?.reset?.()
+    delayLineChart.value?.clear?.()
+    isLogCollector.value && sharedMiningTable.value?.fetch?.()
+  })
+}
 
-    isLogCollector() {
-      return ['logCollector'].includes(this.dataflow.syncType)
-    },
+function setPeriod() {
+  if (quotaTimeType.value === 'custom') {
+    period.value = quotaTime.value.join()
+  } else {
+    period.value = quotaTimeType.value
+  }
+}
 
-    // 任务事件统计（条）-任务累计
-    eventDataAll() {
-      const data = this.quota.samples?.totalData?.[0]
-      return this.getInputOutput(data)
-    },
-
-    // 任务事件统计（条）-所选周期累计
-    eventDataPeriod() {
-      const data = this.quota.samples?.barChartData?.[0]
-      return this.getInputOutput(data)
-    },
-
-    qpsMap() {
-      const data = this.quota.samples?.lineChartData?.[0]
-      if (!data) {
-        return {
-          x: [],
-          name: [],
-          value: [[], []],
-          markLine: [
-            {
-              data: [],
-            },
-          ],
-        }
-      }
-      const { time = [] } = this.quota
-      const inputQps = data.inputQps?.map((t) => Math.abs(t))
-      const outputQps = data.outputQps?.map((t) => Math.abs(t))
-      const inputSizeQps = data.inputSizeQps?.map((t) => Math.abs(t))
-      const outputSizeQps = data.outputSizeQps?.map((t) => Math.abs(t))
-      // 计算距离增量时间点，最近的时间点
-      const milestone = this.dataflow.attrs?.milestone || {}
-      const snapshotDoneAt = milestone.SNAPSHOT?.end
-      let markLineTime = 0
-      time.forEach((el) => {
-        if (
-          Math.abs(el - snapshotDoneAt) < 2000 &&
-          Math.abs(el - snapshotDoneAt) < Math.abs(el - markLineTime)
-        ) {
-          markLineTime = el
-        }
-      })
-
-      const opt = {
-        x: time,
-        name: [i18n.t('public_time_input'), i18n.t('public_time_output')],
-        // value: [inputQps, outputQps],
-        value: [],
-        zoomValue: 10,
-      }
-
-      if (this.dataflow.type === 'initial_sync+cdc') {
-        opt.markLine = [
-          {
-            symbol: 'none',
-            data: [
-              {
-                xAxis: String(markLineTime),
-                lineStyle: {
-                  color: '#000',
-                },
-                label: {
-                  show: false,
-                },
-              },
-            ],
-          },
-        ]
-      }
-
-      return {
-        count: Object.assign(cloneDeep(opt), {
-          value: [inputQps, outputQps],
-        }),
-        size: Object.assign(cloneDeep(opt), {
-          value: [inputSizeQps, outputSizeQps],
-        }),
-      }
-    },
-
-    delayLineTitle() {
-      const { isSource, isTarget } = this
-      let result = i18n.t(
-        'packages_dag_components_nodedetaildialog_chulihaoshi',
-      )
-      if (isSource) {
-        result = i18n.t('packages_dag_components_nodedetaildialog_duquchulihao')
-      } else if (isTarget) {
-        result = i18n.t(
-          'packages_dag_components_nodedetaildialog_chulixieruhao',
-        )
-      }
-      return result
-    },
-
-    delayLineInfo() {
-      const { isSource, isTarget } = this
-      let result = i18n.t(
-        'packages_dag_components_nodedetaildialog_chulihaoshi',
-      )
-      if (isSource) {
-        result = i18n.t('packages_dag_components_nodedetaildialog_duquchulihao')
-      } else if (isTarget) {
-        result = i18n.t(
-          'packages_dag_components_nodedetaildialog_chulixieruhao',
-        )
-      }
-      return result
-    },
-
-    // 增量延迟
-    delayData() {
-      const data = this.quota.samples?.lineChartData?.[0]
-      if (!data) {
-        return {
-          x: [],
-          value: [],
-        }
-      }
-      const { time = [] } = this.quota
-      const { isSource, isTarget } = this
-      const {
-        timeCostAvg = [],
-        snapshotSourceReadTimeCostAvg = [],
-        incrementalSourceReadTimeCostAvg = [],
-        targetWriteTimeCostAvg = [],
-      } = data
-      const result = {
-        x: time,
-        name: [i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi')],
-        value: [timeCostAvg],
-      }
-      if (isSource) {
-        result.name = [
-          i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi'),
-          i18n.t('packages_dag_components_nodedetaildialog_pingjunduquhao'),
-          i18n.t('packages_dag_components_nodedetaildialog_zengliangduquyan'),
-        ]
-        result.value = [
-          timeCostAvg,
-          snapshotSourceReadTimeCostAvg,
-          incrementalSourceReadTimeCostAvg,
-        ]
-      } else if (isTarget) {
-        result.name = [
-          i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi'),
-          i18n.t('packages_dag_components_nodedetaildialog_xieruhaoshi'),
-        ]
-        result.value = [timeCostAvg, targetWriteTimeCostAvg]
-      }
-
-      return result
-    },
-
-    batchReadData() {
-      const data = this.quota.samples?.batchReadData?.[0]
-      if (!data) {
-        return {
-          x: [],
-          value: [],
-          markLine: [
-            {
-              data: [],
-            },
-          ],
-        }
-      }
-      const { time = [] } = this.quota
-      const result = {
-        x: time,
-        name: [i18n.t('packages_dag_batch_read_size')],
-        value: data.batchReadSize,
-      }
-      // 计算距离增量时间点，最近的时间点
-      const milestone = this.dataflow.attrs?.milestone || {}
-      const snapshotDoneAt = milestone.SNAPSHOT?.end
-      let markLineTime = 0
-      time.forEach((el) => {
-        if (
-          Math.abs(el - snapshotDoneAt) < 2000 &&
-          Math.abs(el - snapshotDoneAt) < Math.abs(el - markLineTime)
-        ) {
-          markLineTime = el
-        }
-      })
-
-      if (this.dataflow.type === 'initial_sync+cdc') {
-        result.markLine = [
-          {
-            symbol: 'none',
-            data: [
-              {
-                xAxis: String(markLineTime),
-                lineStyle: {
-                  color: '#000',
-                },
-                label: {
-                  show: false,
-                },
-              },
-            ],
-          },
-        ]
-      }
-
-      return result
-    },
-
-    // 源节点-同步状态
-    sourceData() {
-      const data = this.quota.samples?.totalData?.[0]
-      if (!data) {
-        return {}
-      }
-      const { tcpPing, connectPing, currentEventTimestamp } = data
-      return {
-        tcpPing,
-        connectPing,
-        currentEventTimestamp,
-      }
-    },
-
-    // 目标节点-连接状态
-    targetData() {
-      const data = this.quota.samples?.totalData?.[0]
-      if (!data) {
-        return {}
-      }
-      const { tcpPing, connectPing, currentEventTimestamp } = data
-      return {
-        tcpPing,
-        connectPing,
-        currentEventTimestamp,
-      }
-    },
-
-    node() {
-      return this.allNodes.find((t) => this.selected === t.id) || {}
-    },
-
-    nodeConnectionId() {
-      return this.node.connectionIds?.[0]
-    },
-
-    isSource() {
-      const { type, $inputs } = this.node
-      return (
-        (type === 'database' || type === 'table' || type === 'logCollector') &&
-        !$inputs.length
-      )
-    },
-
-    isTarget() {
-      const { type, $outputs } = this.node
-      return (type === 'database' || type === 'table') && !$outputs.length
-    },
-
-    initialData() {
-      const data = this.quota.samples?.totalData?.[0] || {}
-      const {
-        snapshotRowTotal = 0,
-        snapshotInsertRowTotal = 0,
-        snapshotDoneAt,
-        snapshotStartAt,
-        replicateLag,
-        lastFiveMinutesQps,
-      } = data
-      let time
-      if (!snapshotInsertRowTotal || !snapshotRowTotal || !lastFiveMinutesQps) {
-        time = 0
-      } else {
-        time =
-          ((snapshotRowTotal - snapshotInsertRowTotal) / lastFiveMinutesQps) *
-          1000
-      }
-      return {
-        snapshotDoneAt: snapshotDoneAt
-          ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS')
-          : '',
-        snapshotStartAt: snapshotStartAt
-          ? dayjs(snapshotStartAt).format('YYYY-MM-DD HH:mm:ss.SSS')
-          : '',
-        replicateLag,
-        finishDuration: time,
-      }
-    },
-
-    totalData() {
-      let {
-        snapshotTableTotal = 0,
-        tableTotal = 0,
-        snapshotInsertRowTotal = 0,
-        snapshotRowTotal = 0,
-        currentSnapshotTableInsertRowTotal = 0,
-        currentSnapshotTableRowTotal = 0,
-      } = this.quota.samples?.totalData?.[0] || {}
-      // 如果分子大于分母，将分母的值调整成跟分子一样
-      if (currentSnapshotTableInsertRowTotal > currentSnapshotTableRowTotal) {
-        currentSnapshotTableRowTotal = currentSnapshotTableInsertRowTotal
-      }
-      return {
-        snapshotTableTotal,
-        tableTotal,
-        snapshotInsertRowTotal,
-        snapshotRowTotal,
-        currentSnapshotTableInsertRowTotal,
-        currentSnapshotTableRowTotal,
-      }
-    },
-
-    totalDataPercentage() {
-      const { snapshotTableTotal, tableTotal } = this.totalData
-      return snapshotTableTotal && tableTotal
-        ? (snapshotTableTotal / tableTotal) * 100
-        : 0
-    },
-
-    currentTotalDataPercentage() {
-      const {
-        currentSnapshotTableInsertRowTotal,
-        currentSnapshotTableRowTotal,
-      } = this.totalData
-      return currentSnapshotTableRowTotal
-        ? (currentSnapshotTableInsertRowTotal / currentSnapshotTableRowTotal) *
-            100
-        : 0
-    },
-
-    chartBoxWidth100() {
-      const { isSource, isTarget } = this
-      return !isSource && !isTarget
-    },
-  },
-  watch: {
-    value(v) {
-      this.visible = !!v
-      if (v) {
-        this.init()
-      } else {
-        this.timer && clearInterval(this.timer)
-        this.selected = ''
-      }
-    },
-  },
-  methods: {
-    init() {
-      if (!this.selected) {
-        this.selected = this.nodeId
-      }
-      this.currentNodeId = this.selected //当前nodeId
-      this.setPeriod()
-      this.timer && clearInterval(this.timer)
-      this.timer = setInterval(() => {
-        this.quotaTimeType !== 'custom' &&
-          this.dataflow?.status === 'running' &&
-          this.loadQuotaData()
-      }, this.refreshRate)
-      this.loadQuotaData(true)
-      this.$nextTick(() => {
-        this.$refs.qpsLineChart?.reset?.()
-        this.$refs.delayLineChart?.reset?.()
-        this.$refs.delayLineChart?.clear?.()
-        this.isLogCollector && this.$refs.sharedMiningTable?.fetch?.()
-      })
-    },
-
-    setPeriod() {
-      if (this.quotaTimeType === 'custom') {
-        this.period = this.quotaTime.join()
-      } else {
-        this.period = this.quotaTimeType
-      }
-    },
-
-    getFilter(type) {
-      const { id: taskId, taskRecordId } = this.dataflow || {}
-      const nodeId = this.selected
-      const [startAt, endAt] =
-        this.quotaTimeType === 'custome'
-          ? this.quotaTime
-          : this.getTimeRange(this.quotaTimeType)
-      const params = {
-        startAt,
-        endAt,
-        samples: {},
-      }
-      const samples = {
-        // 任务事件统计（条）- 任务累计 + 全量信息 + 增量信息
-        totalData: {
-          tags: {
-            type: 'node',
-            taskId,
-            taskRecordId,
-            nodeId,
-          },
-          endAt: Time.now(), // 停止时间 || 当前时间
-          fields: [
-            'insertTotal',
-            'updateTotal',
-            'deleteTotal',
-            'ddlTotal',
-            'othersTotal',
-            'tcpPing',
-            'connectPing',
-            'currentEventTimestamp',
-            'inputInsertTotal',
-            'inputUpdateTotal',
-            'inputDeleteTotal',
-            'inputDdlTotal',
-            'inputOthersTotal',
-            'outputInsertTotal',
-            'outputUpdateTotal',
-            'outputDeleteTotal',
-            'outputDdlTotal',
-            'outputOthersTotal',
-            'tableTotal',
-            'snapshotTableTotal',
-            'snapshotRowTotal',
-            'snapshotInsertRowTotal',
-            'currentSnapshotTableRowTotal',
-            'currentSnapshotTableInsertRowTotal',
-            'replicateLag',
-            'snapshotStartAt',
-            'snapshotDoneAt',
-            'outputQps',
-          ],
-          //
-          type: 'instant', // 瞬时值
-        },
-        // 任务事件统计（条）-所选周期累计
-        barChartData: {
-          tags: {
-            type: 'node',
-            taskId,
-            taskRecordId,
-            nodeId,
-          },
-          fields: [
-            'insertTotal',
-            'updateTotal',
-            'deleteTotal',
-            'ddlTotal',
-            'othersTotal',
-            'inputInsertTotal',
-            'inputUpdateTotal',
-            'inputDeleteTotal',
-            'inputDdlTotal',
-            'inputOthersTotal',
-            'outputInsertTotal',
-            'outputUpdateTotal',
-            'outputDeleteTotal',
-            'outputDdlTotal',
-            'outputOthersTotal',
-          ],
-          type: 'difference',
-        },
-        // qps + 增量延迟
-        lineChartData: {
-          tags: {
-            type: 'node',
-            taskId,
-            taskRecordId,
-            nodeId,
-          },
-          fields: [
-            'qps',
-            'inputQps',
-            'outputQps',
-            'timeCostAvg',
-            'snapshotSourceReadTimeCostAvg',
-            'incrementalSourceReadTimeCostAvg',
-            'targetWriteTimeCostAvg',
-            'inputSizeQps',
-            'outputSizeQps',
-            'qpsType',
-          ],
-          type: 'continuous', // 连续数据
-        },
-        batchReadData: {
-          tags: {
-            type: 'node',
-            taskId,
-            taskRecordId,
-            nodeId,
-          },
-          fields: ['batchReadSize', 'intervalMs'],
-          type: 'continuous', // 连续数据
-        },
-      }
-      params.samples.data = samples[type]
-      return params
-    },
-
-    loadQuotaData(showLoading = false) {
-      if (showLoading) {
-        this.loading = true
-      }
-      const startStamp = Time.now()
-      const params = {
-        totalData: {
-          uri: '/api/measurement/query/v2',
-          param: this.getFilter('totalData'),
-        },
-        barChartData: {
-          uri: '/api/measurement/query/v2',
-          param: this.getFilter('barChartData'),
-        },
-        lineChartData: {
-          uri: '/api/measurement/query/v2',
-          param: this.getFilter('lineChartData'),
-        },
-        batchReadData: {
-          uri: '/api/measurement/query/v2',
-          param: this.getFilter('batchReadData'),
-        },
-      }
-      batchMeasurements(params)
-        .then((data) => {
-          const quota = {
-            samples: {},
-            time: [],
-            interval: 5000,
-          }
-          const arr = [
-            'totalData',
-            'barChartData',
-            'lineChartData',
-            'batchReadData',
-          ]
-          arr.forEach((el) => {
-            const item = data[el]
-            if (item.code === 'ok') {
-              quota.samples[el] = item.data?.samples?.data
-              if (item.data?.interval) {
-                quota.interval = item.data.interval
-              }
-              if (item.data?.time) {
-                quota.time = item.data.time
-              }
-            }
-          })
-
-          this.quota = quota
-          const granularity = getTimeGranularity(this.quota.interval)
-          this.timeFormat = TIME_FORMAT_MAP[granularity]
-        })
-        .finally(() => {
-          this.loading &&
-            setTimeout(
-              () => {
-                this.loading = false
-              },
-              Time.now() - startStamp < 1000 ? 1000 : 0,
-            )
-        })
-    },
-
-    formatTime(date, type = 'YYYY-MM-DD HH:mm:ss') {
-      return date ? dayjs(date).format(type) : '-'
-    },
-
-    getInputOutput(data = {}) {
-      const keyArr = [
+function getFilter(type: string) {
+  const { id: taskId, taskRecordId } = props.dataflow || {}
+  const nodeId = selected.value
+  const [startAt, endAt] =
+    quotaTimeType.value === 'custome'
+      ? quotaTime.value
+      : props.getTimeRange(quotaTimeType.value)
+  const params: any = { startAt, endAt, samples: {} }
+  const samples: any = {
+    totalData: {
+      tags: { type: 'node', taskId, taskRecordId, nodeId },
+      endAt: Time.now(),
+      fields: [
         'insertTotal',
         'updateTotal',
         'deleteTotal',
         'ddlTotal',
         'othersTotal',
+        'tcpPing',
+        'connectPing',
+        'currentEventTimestamp',
+        'inputInsertTotal',
+        'inputUpdateTotal',
+        'inputDeleteTotal',
+        'inputDdlTotal',
+        'inputOthersTotal',
+        'outputInsertTotal',
+        'outputUpdateTotal',
+        'outputDeleteTotal',
+        'outputDdlTotal',
+        'outputOthersTotal',
+        'tableTotal',
+        'snapshotTableTotal',
+        'snapshotRowTotal',
+        'snapshotInsertRowTotal',
+        'currentSnapshotTableRowTotal',
+        'currentSnapshotTableInsertRowTotal',
+        'replicateLag',
+        'snapshotStartAt',
+        'snapshotDoneAt',
+        'outputQps',
+      ],
+      type: 'instant',
+    },
+    barChartData: {
+      tags: { type: 'node', taskId, taskRecordId, nodeId },
+      fields: [
+        'insertTotal',
+        'updateTotal',
+        'deleteTotal',
+        'ddlTotal',
+        'othersTotal',
+        'inputInsertTotal',
+        'inputUpdateTotal',
+        'inputDeleteTotal',
+        'inputDdlTotal',
+        'inputOthersTotal',
+        'outputInsertTotal',
+        'outputUpdateTotal',
+        'outputDeleteTotal',
+        'outputDdlTotal',
+        'outputOthersTotal',
+      ],
+      type: 'difference',
+    },
+    lineChartData: {
+      tags: { type: 'node', taskId, taskRecordId, nodeId },
+      fields: [
+        'qps',
+        'inputQps',
+        'outputQps',
+        'timeCostAvg',
+        'snapshotSourceReadTimeCostAvg',
+        'incrementalSourceReadTimeCostAvg',
+        'targetWriteTimeCostAvg',
+        'inputSizeQps',
+        'outputSizeQps',
+        'qpsType',
+      ],
+      type: 'continuous',
+    },
+    batchReadData: {
+      tags: { type: 'node', taskId, taskRecordId, nodeId },
+      fields: ['batchReadSize', 'intervalMs'],
+      type: 'continuous',
+    },
+  }
+  params.samples.data = samples[type]
+  return params
+}
+
+function loadQuotaData(showLoading = false) {
+  if (showLoading) {
+    loading.value = true
+  }
+  const startStamp = Time.now()
+  const params = {
+    totalData: {
+      uri: '/api/measurement/query/v2',
+      param: getFilter('totalData'),
+    },
+    barChartData: {
+      uri: '/api/measurement/query/v2',
+      param: getFilter('barChartData'),
+    },
+    lineChartData: {
+      uri: '/api/measurement/query/v2',
+      param: getFilter('lineChartData'),
+    },
+    batchReadData: {
+      uri: '/api/measurement/query/v2',
+      param: getFilter('batchReadData'),
+    },
+  }
+  batchMeasurements(params)
+    .then((data: any) => {
+      const q: any = { samples: {}, time: [], interval: 5000 }
+      const arr = [
+        'totalData',
+        'barChartData',
+        'lineChartData',
+        'batchReadData',
       ]
-      const result = {
-        input: {},
-        output: {},
-      }
-      const newData = {}
-      for (const key in data) {
-        newData[key.toLowerCase()] = data[key] || 0
-      }
-      keyArr.forEach((el) => {
-        for (const key in result) {
-          result[key][el] =
-            newData[key + el.toLowerCase()] || newData[el.toLowerCase()] || 0
+      arr.forEach((el) => {
+        const item = data[el]
+        if (item.code === 'ok') {
+          q.samples[el] = item.data?.samples?.data
+          if (item.data?.interval) q.interval = item.data.interval
+          if (item.data?.time) q.time = item.data.time
         }
       })
-      return result
-    },
+      quota.value = q
+      const granularity = getTimeGranularity(quota.value.interval)
+      timeFormat.value = TIME_FORMAT_MAP[granularity]
+    })
+    .finally(() => {
+      loading.value &&
+        setTimeout(
+          () => {
+            loading.value = false
+          },
+          Time.now() - startStamp < 1000 ? 1000 : 0,
+        )
+    })
+}
 
-    changeTimeSelect(val, isTime, source) {
-      this.quotaTimeType = source?.type ?? val
-      this.quotaTime = isTime
-        ? val?.split(',')?.map((t) => Number(t))
-        : this.getTimeRange(val)
-      this.init()
-    },
+function formatTime(date: any, type = 'YYYY-MM-DD HH:mm:ss') {
+  return date ? dayjs(date).format(type) : '-'
+}
 
-    changeFrequency(val) {
-      this.refreshRate = val
-      this.init()
-    },
+function getInputOutput(data: any = {}) {
+  const keyArr = [
+    'insertTotal',
+    'updateTotal',
+    'deleteTotal',
+    'ddlTotal',
+    'othersTotal',
+  ]
+  const result: any = { input: {}, output: {} }
+  const newData: any = {}
+  for (const key in data) {
+    newData[key.toLowerCase()] = data[key] || 0
+  }
+  keyArr.forEach((el) => {
+    for (const key in result) {
+      result[key][el] =
+        newData[key + el.toLowerCase()] || newData[el.toLowerCase()] || 0
+    }
+  })
+  return result
+}
 
-    handleSelect() {
-      this.$refs.nodeSelect?.focus()
-    },
+function changeTimeSelect(val: any, isTime: boolean, source: any) {
+  quotaTimeType.value = source?.type ?? val
+  quotaTime.value = isTime
+    ? val?.split(',')?.map((t: string) => Number(t))
+    : props.getTimeRange(val)
+  init()
+}
 
-    calcTimeUnit() {
-      return typeof val === 'number' ? calcTimeUnit(...arguments) : '-'
-    },
+function changeFrequency(val: number) {
+  refreshRate.value = val
+  init()
+}
 
-    onClose() {
-      this.$emit('update:value', false)
-      this.$emit('load-data')
-    },
-  },
-  emits: ['update:value', 'load-data', 'load-data'],
+function handleSelect() {
+  nodeSelect.value?.focus()
+}
+
+function onClose() {
+  emit('update:value', false)
+  emit('load-data')
 }
 </script>
 

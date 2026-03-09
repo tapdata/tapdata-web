@@ -13,6 +13,7 @@ import { useStore } from 'vuex'
 import Canvas from './Canvas.vue'
 import ConsolePanel from './components/migration/ConsolePanel.vue'
 import BottomPanel from './components/monitor/BottomPanel.vue'
+import NodeDetailDialog from './components/monitor/components/NodeDetailDialog.vue'
 import LeftSider from './components/monitor/LeftSider.vue'
 import Node from './components/monitor/Node.vue'
 import { getTimeGranularity, TIME_FORMAT_MAP } from './components/monitor/util'
@@ -38,6 +39,7 @@ const isReset = ref(false)
 const taskRecord = ref({ total: 0, items: [] as any[] })
 const timeFormat = ref('HH:mm:ss')
 const nodeDetailDialog = ref(false)
+const nodeDetailDialogId = ref('')
 const noNeedRefresh = ref(false)
 const showBottomPanel = ref(true)
 const canvasRef = ref<any>(null)
@@ -540,8 +542,13 @@ watch(
   },
 )
 
+function handleOpenDetail(node: any) {
+  if (['mem_cache'].includes(node.type)) return
+  nodeDetailDialogId.value = node.id
+  nodeDetailDialog.value = true
+}
+
 const init = async () => {
-  console.log('dataflowStore.dataflow.id', dataflowStore.dataflow.id)
   // dataflowStore.$reset()
   dataflowStore.stateIsReadonly = true
   dataflowStore.showBottom = true
@@ -636,6 +643,7 @@ provide('isSaving', isSaving)
           :sample="dagData ? dagData[scope.data.id] : {}"
           :quota="quota"
           :alarm="alarmData ? alarmData.nodes[scope.data.id] : undefined"
+          @open-detail="handleOpenDetail"
         />
       </template>
       <template #left>
@@ -679,6 +687,18 @@ provide('isSaving', isSaving)
     </Canvas>
 
     <SkipError ref="skipErrorRef" @skip="startTask" />
+    <NodeDetailDialog
+      v-model:value="nodeDetailDialog"
+      :dataflow="dataflow"
+      :node-id="nodeDetailDialogId"
+      :time-format="timeFormat"
+      :range="[firstStartTime, lastStopTime || Time.now()]"
+      :quota-time="quotaTime"
+      :quota-time-type="quotaTimeType"
+      :get-time-range="getTimeRange"
+      :if-enable-concurrent-read="ifEnableConcurrentRead"
+      @load-data="init"
+    />
   </div>
 </template>
 
