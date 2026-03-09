@@ -48,6 +48,7 @@ const {
   buttonShowMap,
   formScope,
   isSaving,
+  taskOperationsRef,
   consoleRef,
   skipErrorRef,
   initNodeType,
@@ -69,6 +70,7 @@ const {
   handleStop,
   handleForceStop,
   handlePageReturn,
+  handleOpenInspect,
 } = useCanvasOperation()
 
 const isInitialized = ref(false)
@@ -604,6 +606,7 @@ provide('isSaving', isSaving)
     <div class="w-100 h-0 position-absolute header z-10 flex align-center px-3">
       <div class="flex-1" />
       <TaskOperations
+        ref="taskOperationsRef"
         @save="handleSave"
         @reset="handleReset"
         @start="handleStart"

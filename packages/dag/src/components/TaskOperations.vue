@@ -64,8 +64,13 @@ const handleRefreshSchema = () => {
   })
 }
 
+const handleOpenValidation = () => {
+  openValidation.value = true
+}
+
 defineExpose({
   validateDataValidation,
+  handleOpenValidation,
 })
 </script>
 

@@ -1536,6 +1536,10 @@ export function useCanvasOperation() {
     }
   }
 
+  const handleOpenInspect = () => {
+    taskOperationsRef.value.handleOpenValidation()
+  }
+
   return {
     dataflow,
     dag,
@@ -1574,5 +1578,6 @@ export function useCanvasOperation() {
     handleStop,
     handleForceStop,
     handlePageReturn,
+    handleOpenInspect,
   }
 }
