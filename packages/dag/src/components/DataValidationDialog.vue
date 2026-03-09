@@ -146,11 +146,6 @@ function handleCheckChange() {
   }
 }
 
-const hasCapability = (node, capabilityId) =>
-  node?.attrs?.capabilities?.some(
-    (capability) => capability.id === capabilityId,
-  )
-
 function validateAllowSave() {
   if (!validationEnabled.value) {
     return true
@@ -178,11 +173,11 @@ function validateAllowSave() {
   const [sourceNode] = sourceNodes
   const [targetNode] = targetNodes
 
-  const sourceNodeHasCapability = hasCapability(
+  const sourceNodeHasCapability = dataflowStore.hasCapability(
     sourceNode,
     'query_by_advance_filter_function',
   )
-  const targetNodeHasCapability = hasCapability(
+  const targetNodeHasCapability = dataflowStore.hasCapability(
     targetNode,
     'query_by_advance_filter_function',
   )

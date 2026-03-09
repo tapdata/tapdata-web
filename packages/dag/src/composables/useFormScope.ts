@@ -109,18 +109,16 @@ function addDeclaredCompleter(editor, tools, params1) {
   })
 }
 
-export function useFormScope() {
+export function useFormScope({ canvasRef }) {
   const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
   const route = useRoute()
   const store = useStore()
   const dataflowStore = useDataflowStore()
   const { t } = useI18n()
 
-  const taskSaving = computed(() => store.state.dataflow.taskSaving)
-  const editVersion = computed(() => store.state.dataflow.editVersion)
-  const stateIsReadonly = computed(
-    () => store.getters['dataflow/stateIsReadonly'],
-  )
+  const taskSaving = computed(() => dataflowStore.taskSaving)
+  const editVersion = computed(() => dataflowStore.editVersion)
+  const stateIsReadonly = computed(() => dataflowStore.stateIsReadonly)
 
   const afterTaskSaved = () => {
     return new Promise((resolve) => {
@@ -884,8 +882,7 @@ export function useFormScope() {
     },
 
     getPdkProperties: (node) => {
-      const { pdkHash } = node.attrs
-      return store.state.dataflow.pdkPropertiesMap[pdkHash]
+      return dataflowStore.getCapabilitiesMap(node)
     },
 
     addDeclaredCompleterForMigrate: (editor, tools) => {
@@ -1173,13 +1170,8 @@ export function useFormScope() {
       return options
     },
 
-    centerNode: (nodeId) => {
-      this.$refs.paperScroller.centerNode(
-        this.$store.state.dataflow.NodeMap[nodeId],
-      )
-      setTimeout(() => {
-        this.nodeSelectedById(nodeId, false, true)
-      }, 300)
+    centerNode: (nodeId: string) => {
+      canvasRef.value.locateNode(nodeId)
     },
 
     /**

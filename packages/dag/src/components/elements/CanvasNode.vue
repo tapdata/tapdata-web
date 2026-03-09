@@ -21,33 +21,20 @@ const props = defineProps<CanvasNodeProps>()
 const store = useStore()
 const dataflowStore = useDataflowStore()
 
-// Vuex state
-const canBeConnectedNodeIds = computed(
-  () => store.state.dataflow.canBeConnectedNodeIds,
-)
-
 // Vuex getters
-const isNodeActive = computed(() => store.getters['dataflow/isNodeActive'])
-const isNodeSelected = computed(() => store.getters['dataflow/isNodeSelected'])
 const hasNodeError = computed(() => store.getters['dataflow/hasNodeError'])
-const activeType = computed(() => store.getters['dataflow/activeType'])
 
 // computed
 const ins = computed(() => props.data?.__Ctor || {})
 
 const wrapClass = computed(() => {
   if (dataflowStore.selectedNode?.id === props.data.id) return 'border-primary'
-  if (canBeConnectedNodeIds.value.includes(props.data.id))
-    return 'can-be-connected'
   return ''
 })
 
 const nodeClass = computed(() => {
   const list: string[] = []
 
-  if (isNodeActive.value(props.nodeId) && activeType.value === 'node')
-    list.push('active')
-  if (isNodeSelected.value(props.nodeId)) list.push('selected')
   if (props.data.attrs.disabled) list.push('node--disabled')
   if (props.data.disabled) list.push('node--disabled__main')
 

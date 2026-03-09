@@ -79,7 +79,7 @@ defineExpose({
       >{{ $t('packages_dag_model_generation') }}</el-button
     >
     <div
-      class="btn-shadow bg-card p-0.5 rounded-lg flex align-center gap-2 icon-btn-bar cursor-pointer"
+      class="btn-shadow bg-card p-0.5 rounded-lg flex align-center gap-1.5 icon-btn-bar cursor-pointer"
       style="border: var(--el-border)"
     >
       <el-popover
@@ -300,7 +300,8 @@ defineExpose({
 }
 .icon-btn-bar {
   :deep(.el-button.is-text) {
-    padding: 3px !important;
+    // padding: 3px !important;
+    font-size: 18px !important;
   }
 }
 </style>

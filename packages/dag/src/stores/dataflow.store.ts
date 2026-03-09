@@ -560,8 +560,8 @@ export const useDataflowStore = defineStore('dataflow', () => {
     selectNode(findNodeById(nodeId))
   }
 
-  function toggleShowSettings() {
-    showSettings.value = !showSettings.value
+  function toggleShowSettings(flag = !showSettings.value) {
+    showSettings.value = flag
     selectedNode.value = null
   }
 
@@ -785,6 +785,15 @@ export const useDataflowStore = defineStore('dataflow', () => {
     return pdkCapabilitiesMap.value[pdkHash] || {}
   }
 
+  function hasCapability(node, capabilityId) {
+    return Boolean(getCapability(node, capabilityId))
+  }
+
+  function getCapability(node, capabilityId) {
+    const pdkHash = isString(node) ? node : node?.attrs?.pdkHash
+    return pdkCapabilitiesMap.value[pdkHash]?.[capabilityId]
+  }
+
   function resetDataflow() {
     // 重置 dataflow observable
     const keys = Object.keys(dataflow)
@@ -849,6 +858,8 @@ export const useDataflowStore = defineStore('dataflow', () => {
     schemaRefreshing,
     buttonShowMap,
     showBottom,
+    editVersion,
+    pageVersion,
 
     addNode,
     deleteNode,
@@ -884,5 +895,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     getCapabilitiesMap,
     createDataflow,
     selectNodeById,
+    hasCapability,
+    getCapability,
   }
 })

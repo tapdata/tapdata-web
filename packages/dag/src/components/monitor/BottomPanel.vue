@@ -4,9 +4,8 @@ import NodeLog from '@tap/business/src/components/logs/NodeLog'
 import MilestoneList from '@tap/business/src/components/milestone/List'
 import RelationList from '@tap/business/src/views/task/relation/List.vue'
 import vResize from '@tap/component/src/directives/resize'
-import { computed, nextTick, onMounted, ref, useAttrs, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, useAttrs } from 'vue'
 import { useRoute } from 'vue-router'
-import { useStore } from 'vuex'
 import { useDataflowStore } from '../../stores/dataflow.store'
 import Alert from './components/Alert'
 import Record from './components/Record'
@@ -32,7 +31,6 @@ const emit = defineEmits<{
 }>()
 
 const dataflowStore = useDataflowStore()
-const store = useStore()
 const route = useRoute()
 const attrs = useAttrs() as any
 
@@ -44,26 +42,9 @@ const relationCount = ref(0)
 const nodeId = ref('')
 const logRef = ref<any>(null)
 
-// Vuex getters
-const activeType = computed(() => store.getters['dataflow/activeType'])
-const activeNode = computed(() => store.getters['dataflow/activeNode'])
-const nodeById = computed(() => store.getters['dataflow/nodeById'])
-const stateIsReadonly = computed(
-  () => store.getters['dataflow/stateIsReadonly'],
-)
-
-const name = ref(activeNode.value?.name)
-
 const showAlert = computed(() => {
   return !['SharedCacheMonitor'].includes(route.name as string)
 })
-
-watch(
-  () => activeNode.value?.name,
-  (v) => {
-    name.value = v
-  },
-)
 
 onMounted(() => {
   if (['MigrationMonitorViewer'].includes(route.name as string)) {
@@ -76,24 +57,6 @@ onMounted(() => {
   }
   getRelationData()
 })
-
-// Vuex mutations / actions
-const updateNodeProperties = (payload: any) =>
-  store.commit('dataflow/updateNodeProperties', payload)
-const updateDag = (payload: any) =>
-  store.dispatch('dataflow/updateDag', payload)
-
-function handleChangeName(newName: string) {
-  if (newName) {
-    updateNodeProperties({
-      id: activeNode.value.id,
-      properties: { name: newName },
-    })
-    updateDag({ vm: null })
-  } else {
-    name.value = activeNode.value.name
-  }
-}
 
 function getLogRef() {
   return logRef.value
@@ -136,7 +99,6 @@ defineExpose({
   changeTab,
   changeAlertTab,
   getLogRef,
-  handleChangeName,
 })
 </script>
 

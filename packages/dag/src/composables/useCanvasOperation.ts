@@ -52,11 +52,14 @@ export function useCanvasOperation() {
   const $ws = (instance?.proxy as any).$ws
   const dataflowStore = useDataflowStore()
   const historyStore = useHistoryStore()
-  const formScope = useFormScope()
   const buried = inject('buried')
   const consoleRef = ref(null)
   const skipErrorRef = ref(null)
   const taskOperationsRef = ref(null)
+  const canvasRef = ref(null)
+  const formScope = useFormScope({
+    canvasRef,
+  })
 
   const buttonShowMap = reactive({
     View: true,
@@ -417,14 +420,6 @@ export function useCanvasOperation() {
     store.commit('dataflow/setNodeErrorMsg', payload)
   const clearNodeError = (id: string) =>
     store.commit('dataflow/clearNodeError', id)
-  const setActiveType = (type: string | null) =>
-    store.commit('dataflow/setActiveType', type)
-  const setActiveNode = (id: string) =>
-    store.commit('dataflow/setActiveNode', id)
-  const setEditVersion = (v: any) => store.commit('dataflow/setEditVersion', v)
-  const setTaskId = (id: string) => store.commit('dataflow/setTaskId', id)
-  const toggleConsole = (flag?: boolean) =>
-    store.commit('dataflow/toggleConsole', flag)
   const setMaterializedViewVisible = (v: boolean) =>
     store.commit('dataflow/setMaterializedViewVisible', v)
 
@@ -668,8 +663,8 @@ export function useCanvasOperation() {
     try {
       await configPanelRef?.validateSetting?.()
     } catch (error) {
-      console.log(t('packages_dag_mixins_editor_renwushezhiyi'), error)
-      setActiveType('settings')
+      console.error(t('packages_dag_mixins_editor_renwushezhiyi'), error)
+      dataflowStore.toggleShowSettings(true)
       return t('packages_dag_mixins_editor_renwushezhiyi')
     }
   }
@@ -698,7 +693,7 @@ export function useCanvasOperation() {
         }
       })
       if (hasNoStreamReadFunction) {
-        setActiveType('settings')
+        dataflowStore.toggleShowSettings(true)
         return t('packages_dag_mixins_editor_task_not_support_cdc')
       }
     }
@@ -933,7 +928,7 @@ export function useCanvasOperation() {
             id: (node as any).id,
             msg: t('packages_dag_cache_expired'),
           })
-          setActiveNode((node as any).id)
+          dataflowStore.selectNode(node)
           mergeTableCacheValidated = true
           return t('packages_dag_cache_expired')
         }
@@ -1239,7 +1234,7 @@ export function useCanvasOperation() {
       const result = await (needStart ? saveAndStartTask : saveTask)(data)
       reformDataflow(result)
       if (!needStart) ElMessage.success(t('public_message_save_ok'))
-      setEditVersion(result.editVersion)
+      dataflowStore.editVersion = result.editVersion
       isOk = true
     } catch (error: any) {
       handleError?.(error)
@@ -1550,6 +1545,7 @@ export function useCanvasOperation() {
     taskOperationsRef,
     previewData,
     previewLoading,
+    canvasRef,
 
     initNodeType,
     onUpdateNodesPosition,
@@ -1564,8 +1560,6 @@ export function useCanvasOperation() {
     handleSave,
     reformDataflow,
     getDataflowDataToSave,
-    setEditVersion,
-    toggleConsole,
     setMaterializedViewVisible,
     onNameInputChange,
     handleReset,

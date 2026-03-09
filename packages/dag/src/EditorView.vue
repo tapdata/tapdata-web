@@ -18,7 +18,6 @@ const route = useRoute()
 const { t } = useI18n()
 const store = useStore()
 const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
-const canvasRef = ref<any>(null)
 
 const {
   dag,
@@ -26,6 +25,7 @@ const {
   buttonShowMap,
   formScope,
   isSaving,
+  canvasRef,
   consoleRef,
   skipErrorRef,
   taskOperationsRef,

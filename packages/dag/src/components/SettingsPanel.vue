@@ -40,7 +40,6 @@ import { useDataflowStore } from '../stores/dataflow.store'
 
 const dataflowStore = useDataflowStore()
 const scope = inject('formScope')
-console.log('dataflowStore', dataflowStore.dataflow)
 const { Form } = components
 const { SchemaField } = createSchemaField({
   components: {
@@ -244,7 +243,7 @@ const formScope: FormScope = {
     const map: Record<string, string> = {}
 
     for (const id of accessNodeProcessIdMap.value[field.value]) {
-      const node = store.state.dataflow.NodeMap[id]
+      const node = dataflowStore.findNodeById(id)
       map[node.connectionId] = node.attrs.connectionName
     }
 
@@ -268,9 +267,7 @@ const formScope: FormScope = {
 }
 
 // Computed
-const stateIsReadonly = computed(
-  () => store.getters['dataflow/stateIsReadonly'],
-)
+const stateIsReadonly = computed(() => dataflowStore.stateIsReadonly)
 const allNodes = computed(() => dataflowStore.dag.nodes)
 
 const dataNodes = computed(() => {
@@ -553,7 +550,7 @@ watch(
       ({ nodeId }: any) => {
         const node = scope.findNodeById(nodeId)
 
-        return store.getters['dataflow/hasCapability']?.(
+        return dataflowStore.hasCapability(
           node,
           'stream_read_one_by_one_function',
         )
