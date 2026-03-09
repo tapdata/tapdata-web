@@ -64,6 +64,10 @@ $formNamespace: formily-element-plus;
   }
 }
 
+.#{$formNamespace}-form-collapse.advanced-collapse:has(~ .advanced-collapse) {
+  padding-bottom: 1px;
+}
+
 .#{$formNamespace}-space-horizontal {
   > .#{$formNamespace}-space-item > .#{$formNamespace}-form-item-layout-horizontal > .#{$formNamespace}-form-item-label {
     * {
