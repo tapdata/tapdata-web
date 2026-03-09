@@ -24,7 +24,7 @@ export const TableLevelConfigDialog = defineComponent({
     const loading = ref(false)
 
     const configuredTables = reactiveComputed(() => {
-      const tableConfig = props.form.values.tableConfig || {}
+      const tableConfig = props.form.values.tableNodeConfig || {}
       return Object.keys(tableConfig)
     })
 
@@ -59,13 +59,13 @@ export const TableLevelConfigDialog = defineComponent({
 
     const addTable = (tableName: string) => {
       if (!tableName) return
-      props.form.setValuesIn(`tableConfig.${tableName}`, {})
+      props.form.setValuesIn(`tableNodeConfig.${tableName}`, {})
       selectedTable.value = tableName
       addTableValue.value = ''
     }
 
     const delTable = (tableName: string) => {
-      const basePath = `tableConfig.${tableName}`
+      const basePath = `tableNodeConfig.${tableName}`
       // 清除字段图状态，否则再次添加时 schema default 不会重新生效
       props.form.clearFormGraph(basePath)
       props.form.clearFormGraph(`${basePath}.*`)

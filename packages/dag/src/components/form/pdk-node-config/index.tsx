@@ -54,7 +54,7 @@ export const PdkNodeConfig = observer(
         )
       })
       const tableCount = reactiveComputed(() => {
-        const tableConfig = formRef.value.values.tableConfig || {}
+        const tableConfig = formRef.value.values.tableNodeConfig || {}
         return Object.keys(tableConfig).length
       })
       const { t } = useI18n()
@@ -114,7 +114,7 @@ export const PdkNodeConfig = observer(
               default: (tableName: string) => (
                 <RecursionField
                   onlyRenderProperties={true}
-                  name={`tableConfig.${tableName}`}
+                  name={`tableNodeConfig.${tableName}`}
                   schema={formSchema}
                 ></RecursionField>
               ),
