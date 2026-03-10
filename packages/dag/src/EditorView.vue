@@ -35,7 +35,6 @@ const {
   onDeleteNode,
   onAddNode,
   onMoveNodePosition,
-  onClickConnectionAdd,
   onUpdateNodesPosition,
   onClickNode,
   handleSave,
@@ -217,7 +216,6 @@ provide('handlePreview', handlePreview)
       @delete:node="onDeleteNode"
       @add:node="onAddNode"
       @move:node:position="onMoveNodePosition"
-      @click:connection:add="onClickConnectionAdd"
       @click:node="onClickNode"
     >
       <template #bottom>

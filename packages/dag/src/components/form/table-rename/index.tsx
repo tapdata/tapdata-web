@@ -15,7 +15,6 @@ import {
 import i18n from '@tap/i18n'
 import { debounce } from 'lodash-es'
 import { computed, defineComponent, inject, reactive, ref } from 'vue'
-import { useStore } from 'vuex'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 import { getTableRenameByConfig, ifTableNameConfigEmpty } from '../../../util'
 import List from './List.vue'
@@ -28,7 +27,6 @@ import './style.scss'
 export const TableRenamePreview = defineComponent({
   props: ['findParentNodes', 'value', 'listStyle', 'disabled', 'taskId'],
   setup(props, { emit }) {
-    const store = useStore()
     const SchemaExpressionScopeContext = inject(SchemaExpressionScopeSymbol)
     const taskId = SchemaExpressionScopeContext.value.$settings.id
     const itemSize = 38
@@ -68,7 +66,6 @@ export const TableRenamePreview = defineComponent({
       prefix: form.values.prefix || '', // 前缀
       suffix: form.values.suffix || '', // 后缀
       transferCase: form.values.transferCase || '', // toUpperCase ｜ toLowerCase
-      transformLoading: store.state.dataflow.transformLoading,
     })
 
     const globalNameMap = computed(() => {
@@ -355,7 +352,6 @@ export const TableRename = connect(
     defineComponent({
       props: ['findParentNodes', 'value', 'listStyle', 'disabled', 'taskId'],
       setup(props, { emit }) {
-        const store = useStore()
         const SchemaExpressionScopeContext = inject(SchemaExpressionScopeSymbol)
         const taskId = SchemaExpressionScopeContext.value.$settings.id
         const itemSize = 38
@@ -395,7 +391,6 @@ export const TableRename = connect(
           prefix: form.values.prefix || '', // 前缀
           suffix: form.values.suffix || '', // 后缀
           transferCase: form.values.transferCase || '', // toUpperCase ｜ toLowerCase
-          transformLoading: store.state.dataflow.transformLoading,
         })
 
         const globalNameMap = computed(() => {

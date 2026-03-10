@@ -1,4 +1,5 @@
 import { callProxy } from '@tap/api/src/core/proxy'
+import { fetchSharedCache } from '@tap/api/src/core/shared-cache'
 import {
   batchStartTasks,
   deleteTask,
@@ -52,11 +53,22 @@ export function useCanvasOperation() {
   const $ws = (instance?.proxy as any).$ws
   const dataflowStore = useDataflowStore()
   const historyStore = useHistoryStore()
-  const buried = inject('buried')
-  const consoleRef = ref(null)
-  const skipErrorRef = ref(null)
-  const taskOperationsRef = ref(null)
-  const canvasRef = ref(null)
+  const buried = inject('buried') as (...args: any[]) => void
+  const consoleRef = ref<any>(null)
+  const skipErrorRef = ref<any>(null)
+  const taskOperationsRef = ref<any>(null)
+  const canvasRef = ref<any>(null)
+  const sharedMiningEditorRef = ref<any>(null)
+  const sharedCacheDetailsRef = ref<any>(null)
+  const sharedCacheEditorRef = ref<any>(null)
+  const sharedCacheMap = shallowRef<Record<
+    string,
+    {
+      id: string
+      name: string
+      status: string
+    }
+  > | null>(null)
   const formScope = useFormScope({
     canvasRef,
   })
@@ -76,19 +88,26 @@ export function useCanvasOperation() {
   const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
   const upgradeFeeVisibleTips = ref('')
   const upgradeFeeVisible = ref(false)
+  const upgradeChargesVisibleTips = ref('')
+  const upgradeChargesVisible = ref(false)
   const nameHasUpdated = ref(false)
 
   const dataflow = reactiveComputed(() => ({ ...dataflowStore.dataflow }))
-
-  const editorRoute = computed(() => {
-    if (dataflow.value.syncType === 'sync') return 'DataflowEditor'
-    else return 'MigrateEditor'
-  })
 
   const monitorRoute = computed(() => {
     if (dataflow.value.syncType === 'sync') return 'TaskMonitor'
     else return 'MigrationMonitor'
   })
+
+  const syncTypeMap: Record<string, string> = {
+    initial_sync: t('public_task_type_initial_sync'),
+    cdc: t('public_task_type_cdc'),
+    'initial_sync+cdc': t('public_task_type_initial_sync_and_cdc'),
+  }
+
+  const syncTypeLabel = computed(
+    () => syncTypeMap[dataflow.value.type] || dataflow.value.type,
+  )
 
   const hasFeature = (feature: string) => {
     return !isDaas || store.getters['feature/hasFeature']?.(feature)
@@ -252,7 +271,7 @@ export function useCanvasOperation() {
 
   function updateNodePosition(
     id: string,
-    position: CanvasNode['position'],
+    position: { x: number; y: number },
     { trackHistory = true } = {},
   ) {
     const node = dataflowStore.getNodeById(id)
@@ -260,8 +279,8 @@ export function useCanvasOperation() {
       return
     }
 
-    const oldPosition: XYPosition = [...node.attrs.position]
-    const newPosition: XYPosition = [position.x, position.y]
+    const oldPosition: [number, number] = [...node.attrs.position]
+    const newPosition: [number, number] = [position.x, position.y]
 
     dataflowStore.setNodePositionById(id, newPosition)
 
@@ -283,7 +302,7 @@ export function useCanvasOperation() {
       return
     }
 
-    const oldPosition: XYPosition = [...node.attrs.position]
+    const oldPosition: [number, number] = [...node.attrs.position]
     dataflowStore.setNodePositionById(id, newPosition)
 
     if (trackHistory) {
@@ -317,10 +336,6 @@ export function useCanvasOperation() {
     }
   }
 
-  const onClickConnectionAdd = (_connection: ConnectionEvent) => {
-    // dataflowStore.addConnection(connection)
-  }
-
   const onClickNode = (node: any) => {
     dataflowStore.selectNode(node.data)
   }
@@ -351,7 +366,8 @@ export function useCanvasOperation() {
   }
 
   const connectAdjacentNodes = (id: string, { trackHistory = true } = {}) => {
-    const node = dataflowStore.getNodeById(id)
+    const node = dataflowStore.getNodeById(id) as any
+    if (!node) return
 
     const { $inputs = [], $outputs = [] } = node
 
@@ -382,7 +398,7 @@ export function useCanvasOperation() {
     dataflowStore.deleteNode(node)
 
     // 清空选中状态
-    if (dataflowStore.selectedNode?.id === node.id) {
+    if ((dataflowStore.selectedNode as any)?.id === node.id) {
       dataflowStore.selectedNode = null
     }
 
@@ -456,7 +472,7 @@ export function useCanvasOperation() {
       const child = findNodeById(childId)
       if (!child) return
       if (child.type === 'join_processor') {
-        nodes.push(...findParentNodes(child.id, node.id))
+        nodes.push(...findParentNodes(child.id, node!.id))
       } else if (child.__Ctor.maxInputs !== 1) return
       nodes.push(child)
       if (child.$outputs?.length) {
@@ -488,7 +504,7 @@ export function useCanvasOperation() {
     if (node.$outputs.length > 0) {
       node.$outputs.forEach((id: string) => {
         if (eachMap[id]) return
-        const output = findNodeById(id)
+        const output = findNodeById(id)!
         if (output.$inputs.length > 1) {
           eachInputsByFilter(output, node.id)
         }
@@ -501,7 +517,7 @@ export function useCanvasOperation() {
     eachMap[node.id] = true
     node.$inputs.forEach((id: string) => {
       if (id !== filterId && !eachMap[id]) {
-        const input = findNodeById(id)
+        const input = findNodeById(id)!
         eachInputs(input)
         if (input.$outputs.length > 1) {
           eachOutputsByFilter(input, node.id)
@@ -514,7 +530,7 @@ export function useCanvasOperation() {
     eachMap[node.id] = true
     node.$outputs.forEach((id: string) => {
       if (id !== filterId && !eachMap[id]) {
-        const output = findNodeById(id)
+        const output = findNodeById(id)!
         eachOutputs(output)
         if (output.$inputs.length > 1) {
           eachInputsByFilter(output, node.id)
@@ -528,7 +544,7 @@ export function useCanvasOperation() {
     if (node.$inputs.length > 0) {
       node.$inputs.forEach((id: string) => {
         if (eachMap[id]) return
-        const input = findNodeById(id)
+        const input = findNodeById(id)!
         if (input.$outputs.length > 1) {
           eachOutputsByFilter(input, node.id)
         }
@@ -543,9 +559,9 @@ export function useCanvasOperation() {
       const schema = getSchema(
         node.__Ctor.formSchema,
         node,
-        store.state.dataflow.pdkPropertiesMap,
+        dataflowStore.pdkPropertiesMap,
       )
-      await validateBySchema(schema, node, formScope)
+      await validateBySchema(schema, node, formScope, undefined)
       clearNodeError(node.id)
     } catch (error: any) {
       console.error(t('packages_dag_mixins_editor_jiedianjiaoyancuo'), error)
@@ -558,7 +574,7 @@ export function useCanvasOperation() {
   }
 
   const validateAllNodes = async (nodes: any[]) => {
-    await Promise.all(nodes.map((node) => validateNode(node, formScope)))
+    await Promise.all(nodes.map((node) => validateNode(node)))
   }
 
   // --- DAG 结构校验 ---
@@ -606,6 +622,7 @@ export function useCanvasOperation() {
         someErrorMsg = t('packages_dag_not_support_multi_target')
         return true
       }
+      return false
     })
     return someErrorMsg
   }
@@ -630,7 +647,7 @@ export function useCanvasOperation() {
         someErrorMsg = t('packages_dag_mixins_editor_suoshuage')
       } else {
         let isError = false
-        const agent = formScope?.$agentMap?.[chooseId]
+        const agent = (formScope as any)?.$agentMap?.[chooseId]
         nodes.forEach((node: any) => {
           if (
             node.attrs.accessNodeProcessId &&
@@ -651,7 +668,7 @@ export function useCanvasOperation() {
     } else if (accessNodeProcessIdArr.length === 1) {
       const agentId = accessNodeProcessIdArr[0] as string
       dataflowStore.dataflow.accessNodeType =
-        formScope?.$agentMap?.[agentId]?.accessNodeType ||
+        (formScope as any)?.$agentMap?.[agentId]?.accessNodeType ||
         'MANUALLY_SPECIFIED_BY_THE_USER'
       dataflowStore.dataflow.accessNodeProcessId = agentId
     }
@@ -761,6 +778,7 @@ export function useCanvasOperation() {
         error = t('packages_dag_validate_customsql_target_fail')
         return true
       }
+      return false
     })
     return error
   }
@@ -966,25 +984,25 @@ export function useCanvasOperation() {
       const dmlPolicy: Record<string, string> = {}
 
       if (insertPolicy?.alternatives?.length) {
-        dmlPolicy.insertPolicy = insertOptions[0]
+        dmlPolicy.insertPolicy = insertOptions[0]!
         const alternatives = insertPolicy.alternatives.filter((key: string) =>
           insertOptions.includes(key),
         )
-        if (alternatives.length === 1) dmlPolicy.insertPolicy = alternatives[0]
+        if (alternatives.length === 1) dmlPolicy.insertPolicy = alternatives[0]!
       }
       if (updatePolicy?.alternatives?.length) {
-        dmlPolicy.updatePolicy = updateOptions[0]
+        dmlPolicy.updatePolicy = updateOptions[0]!
         const alternatives = updatePolicy.alternatives.filter((key: string) =>
           updateOptions.includes(key),
         )
-        if (alternatives.length === 1) dmlPolicy.updatePolicy = alternatives[0]
+        if (alternatives.length === 1) dmlPolicy.updatePolicy = alternatives[0]!
       }
       if (deletePolicy?.alternatives?.length) {
-        dmlPolicy.deletePolicy = deleteOptions[0]
+        dmlPolicy.deletePolicy = deleteOptions[0]!
         const alternatives = deletePolicy.alternatives.filter((key: string) =>
           deleteOptions.includes(key),
         )
-        if (alternatives.length === 1) dmlPolicy.deletePolicy = alternatives[0]
+        if (alternatives.length === 1) dmlPolicy.deletePolicy = alternatives[0]!
       }
 
       ;(target as any).dmlPolicy = dmlPolicy
@@ -1071,21 +1089,21 @@ export function useCanvasOperation() {
   }
 
   // 升级专业版
-  const handleShowUpgradeFee = (msg) => {
+  const handleShowUpgradeFee = (msg: any) => {
     upgradeFeeVisibleTips.value = msg
     upgradeFeeVisible.value = true
   }
 
   // 升级规格
-  const handleShowUpgradeCharges = (msg) => {
+  const handleShowUpgradeCharges = (msg: any) => {
     upgradeChargesVisibleTips.value = msg
     upgradeChargesVisible.value = true
   }
 
-  const handleShowUpgradeDialog = (err) => {
+  const handleShowUpgradeDialog = (err: any) => {
     if (isDaas) return
-    const { proxy } = getCurrentInstance()
-    proxy.$axios
+    const { proxy } = getCurrentInstance()!
+    ;(proxy as any).$axios
       .get(
         `api/tcm/agent?filter=${encodeURIComponent(
           JSON.stringify({
@@ -1094,17 +1112,17 @@ export function useCanvasOperation() {
           }),
         )}`,
       )
-      .then(async (data) => {
+      .then((data: any) => {
         const { items = [] } = data
 
-        if (items.some((t) => t.status === 'Stopped')) {
+        if (items.some((t: any) => t.status === 'Stopped')) {
           ElMessage.error(t('public_task_error_schedule_limit'))
           return
         }
 
         items.length <= 1 &&
         items.some(
-          (t) =>
+          (t: any) =>
             t.orderInfo?.chargeProvider === 'FreeTier' || !t.orderInfo?.amount,
         )
           ? handleShowUpgradeFee(err.message)
@@ -1112,14 +1130,17 @@ export function useCanvasOperation() {
       })
   }
 
-  const handleError = (error, msg = t('packages_dag_src_editor_chucuole')) => {
+  const handleError = (
+    error: any,
+    msg = t('packages_dag_src_editor_chucuole'),
+  ) => {
     const code = error?.code
     if (code === 'Task.ListWarnMessage') {
       const names = []
       if (error?.data) {
         const keys = Object.keys(error.data)
         keys.forEach((key) => {
-          const node = store.state.dataflow.NodeMap[key]
+          const node = dataflowStore.findNodeById(key)
           if (node) {
             names.push(node.name)
             store.commit('dataflow/setNodeErrorMsg', {
@@ -1130,7 +1151,7 @@ export function useCanvasOperation() {
         })
         if (!names.length && keys.length && msg) {
           // 兼容错误信息id不是节点id的情况
-          const msg = error.data[keys[0]][0]?.msg
+          const msg = error.data[keys[0]!][0]?.msg
           if (msg) {
             ElMessage.error(msg)
             return
@@ -1289,7 +1310,7 @@ export function useCanvasOperation() {
 
       if (dataflowStore.stateIsReadonly) {
         wsAgentLive()
-        await startTask(dataflow.value.id, {
+        await (startTask as any)(dataflow.value.id, {
           silenceMessage: true,
         })
 
@@ -1376,20 +1397,20 @@ export function useCanvasOperation() {
   const responseHandler = (data: any, msg: string) => {
     const failList = data?.fail || []
     if (failList.length) {
-      const msgMapping = {
+      const msgMapping: Record<string, string> = {
         5: t('packages_dag_dataFlow_multiError_notFound'),
         6: t('packages_dag_dataFlow_multiError_statusError'),
         7: t('packages_dag_dataFlow_multiError_otherError'),
         8: t('packages_dag_dataFlow_multiError_statusError'),
       }
-      const nameMapping = {}
+      const nameMapping: Record<string, string> = {}
       // this.table.list.forEach((item) => {
       //   nameMapping[item.id] = item.name
       // })
       ElMessage.warning({
         dangerouslyUseHTMLString: true,
         message: failList
-          .map((item) => {
+          .map((item: any) => {
             return `<div style="line-height: 24px;"><span style="color: #409EFF">${
               nameMapping[item.id]
             }</span> : <span style="color: #F56C6C">${msgMapping[item.code]}</span></div>`
@@ -1405,6 +1426,14 @@ export function useCanvasOperation() {
     if (result.data) {
       reformDataflow(result.data, true)
       dataflowStore.transformLoading = !result.data.transformed
+
+      if (!sharedCacheMap.value || !Object.keys(sharedCacheMap.value).length) {
+        // 在重置后的任务监控页面启动,首次 initShareCache 获取不到数据
+        initShareCache()
+      } else {
+        const { usedShareCache = {} } = dataflow.value?.attrs || {}
+        setNodeShareCache(usedShareCache)
+      }
     }
   }
 
@@ -1465,17 +1494,17 @@ export function useCanvasOperation() {
         })
         break
       case 'logCollector':
-        vm.$refs.sharedMiningEditor.open(dataflow.value.id)
+        sharedMiningEditorRef.value?.open(dataflow.value.id)
         break
       case 'shareCache':
-        vm.$refs.sharedCacheEditor.open(dataflow.value.id)
+        sharedCacheEditorRef.value?.open(dataflow.value.id)
         break
     }
   }
 
   const previewData = shallowRef(null)
   const previewLoading = ref(false)
-  const handlePreview = async (nodeId) => {
+  const handlePreview = async (nodeId: string) => {
     previewLoading.value = true
     dataflowStore.selectNodeById(nodeId)
 
@@ -1507,9 +1536,16 @@ export function useCanvasOperation() {
     previewData.value = data.nodeResult
   }
 
+  const listRouteMap: any = {
+    sync: 'dataflowList',
+    migrate: 'migrateList',
+    logCollector: 'sharedMining',
+    shareCache: 'sharedCache',
+    connHeartbeat: 'heartbeatTable',
+  }
+
   const handlePageReturn = () => {
-    const listRoute =
-      dataflow.value.syncType === 'sync' ? 'dataflowList' : 'migrateList'
+    const listRoute = listRouteMap[dataflow.value.syncType]
 
     if (!dataflowStore.dag.nodes.length && dataflow.value.id) {
       Modal.confirm(
@@ -1526,18 +1562,73 @@ export function useCanvasOperation() {
         router.push({
           name: listRoute,
         })
-        window.name = null
+        window.name = ''
       })
     } else {
       router.push({
         name: listRoute,
       })
-      window.name = null
+      window.name = ''
     }
   }
 
   const handleOpenInspect = () => {
     taskOperationsRef.value.handleOpenValidation()
+  }
+
+  function handleOpenSharedCache(row: any = {}) {
+    sharedCacheDetailsRef.value?.getData(row.id)
+  }
+
+  async function initShareCache() {
+    const { usedShareCache = {} } = dataflow.value?.attrs || {}
+    if (Object.keys(usedShareCache).length) {
+      await loadSharedCache(usedShareCache)
+      setNodeShareCache(usedShareCache)
+    }
+  }
+
+  async function loadSharedCache(usedShareCache: any) {
+    const sharedCacheRes = await fetchSharedCache({
+      where: {
+        name: {
+          $in: Object.keys(usedShareCache),
+        },
+      },
+    })
+    sharedCacheMap.value =
+      sharedCacheRes.items?.reduce(
+        (
+          pre: Record<string, { id: string; name: string; status: string }>,
+          task: any,
+        ) => {
+          const { id, name, status } = makeStatusAndDisabled(task)
+          pre[name] = { id, name, status }
+          return pre
+        },
+        {},
+      ) ?? null
+  }
+
+  function setNodeShareCache(usedShareCache: Record<string, string[]>) {
+    allNodes.value.forEach((node: any) => {
+      const sharedCache: { name: string; id: string; status: string }[] = []
+
+      for (const key of Object.keys(usedShareCache)) {
+        if (usedShareCache[key]?.includes(node.id)) {
+          const item = sharedCacheMap.value?.[key]
+          if (item?.id) {
+            sharedCache.push({
+              name: key,
+              id: item.id,
+              status: item.status,
+            })
+          }
+        }
+      }
+
+      node.attrs.sharedCache = sharedCache
+    })
   }
 
   return {
@@ -1553,13 +1644,16 @@ export function useCanvasOperation() {
     previewData,
     previewLoading,
     canvasRef,
+    syncTypeLabel,
+    sharedMiningEditorRef,
+    sharedCacheDetailsRef,
+    sharedCacheEditorRef,
 
     initNodeType,
     onUpdateNodesPosition,
     onMoveNodePosition,
     onCreateConnection,
     onDeleteConnection,
-    onClickConnectionAdd,
     onClickNode,
     onDeleteNode,
     onAddNode,
@@ -1579,5 +1673,7 @@ export function useCanvasOperation() {
     handleForceStop,
     handlePageReturn,
     handleOpenInspect,
+    handleOpenSharedCache,
+    initShareCache,
   }
 }

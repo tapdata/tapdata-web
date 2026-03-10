@@ -4,7 +4,7 @@ import { refreshTaskSchema } from '@tap/api/src/core/task'
 import { FormItem, useField, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { computed, defineComponent, ref } from 'vue'
-import { useStore } from 'vuex'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 
 export const SchemaFormItem = connect(
   observer(
@@ -14,25 +14,27 @@ export const SchemaFormItem = connect(
         type: String, // connection | table
       },
       setup(props, { attrs, slots }) {
-        const store = useStore()
-        const { taskId, activeNodeId } = store.state?.dataflow || {}
+        const dataflowStore = useDataflowStore()
+        const taskId = dataflowStore.dataflow.taskId
+        const activeNodeId = dataflowStore.selectedNode?.id
+
         const formRef = useForm()
         const form = formRef.value
         const field = useField()
         const loading = ref(false)
         const isLoading = computed(() => {
-          return loading.value || store.state?.dataflow?.transformLoading
+          return loading.value || dataflowStore?.transformLoading
         })
 
         const loadSchema = async () => {
           loading.value = true
-          store.commit('dataflow/setSchemaRefreshing', true)
+          dataflowStore.schemaRefreshing = true
           await refreshTaskSchema(taskId, {
             nodeIds: activeNodeId,
             keys: props.type === 'table' ? form.values.tableName : undefined,
           }).finally(() => {
             loading.value = false
-            store.commit('dataflow/setSchemaRefreshing', false)
+            dataflowStore.schemaRefreshing = false
           })
         }
 

@@ -1,6 +1,5 @@
 <script setup lang="tsx">
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
-import { IconButton } from '@tap/component/src/icon-button'
 import { useI18n } from '@tap/i18n'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
 import dayjs from 'dayjs'
@@ -56,7 +55,7 @@ const emit = defineEmits<{
   'node-selected': [any]
   delete: [any]
   'show-node-popover': [any]
-  'open-detail': []
+  'open-detail': [any]
   'open-shared-cache': [any]
   'refresh-shared-cache': []
 }>()
@@ -405,13 +404,14 @@ const ifDragStart = ref(false)
 const ins = computed(() => props.data?.__Ctor || {})
 
 const alarmLevel = computed(() => {
-  if (!props.alarm) return
+  if (!props.alarm) return ''
   const level = props.alarm.level
   if (['EMERGENCY', 'CRITICAL'].includes(level)) {
     return 'error'
   } else if (['WARNING', 'NORMAL'].includes(level)) {
     return 'warn'
   }
+  return ''
 })
 
 const alarmCls = computed(() =>
@@ -450,17 +450,6 @@ onMounted(() => {
     { immediate: true },
   )
 })
-
-const onDragStart = (...args: any[]) => {
-  ifDragStart.value = true
-  emit('drag-start', ...args)
-}
-
-const onDragStop = (...args: any[]) => {
-  ifDragStart.value = false
-  ;(popoverRef.value as any)?.updatePopper?.()
-  emit('drag-stop', ...args)
-}
 </script>
 
 <template>
@@ -520,34 +509,36 @@ const onDragStop = (...args: any[]) => {
 
               <div
                 v-if="sharedCache.length"
-                class="fw-bold my-2 flex align-center"
+                class="mt-2 mb-1 flex align-center"
               >
-                {{ t('packages_dag_monitor_node_zhengzaishiyongdehuancun') }}
-                <IconButton
-                  class="ml-0.5"
-                  sm
-                  click-and-rotate
+                <span class="text-xs font-color-light"
+                  >{{ t('packages_dag_monitor_node_zhengzaishiyongdehuancun') }}
+                </span>
+                <el-button
+                  size="small"
+                  text
+                  class="ml-0.5 p-0.5"
                   @click="emit('refresh-shared-cache')"
                 >
-                  refresh
-                </IconButton>
+                  <template #icon>
+                    <el-icon :size="14"><i-lucide-rotate-cw /></el-icon>
+                  </template>
+                </el-button>
               </div>
-              <ul
-                v-if="sharedCache.length"
-                class="shared-cache-list rounded-4 p-2"
-              >
+              <ul v-if="sharedCache.length" class="flex flex-column gap-0.5">
                 <li
                   v-for="item in sharedCache"
                   :key="item.id"
-                  class="flex justify-content-between align-items-center pb-1"
+                  class="flex justify-content-between align-items-center px-1.5 py-1 rounded-lg bg-block text-xs"
                 >
                   <ElLink
                     type="primary"
-                    @click="emit('open-shared-cache', item)"
+                    class="text-xs"
+                    @click.stop="emit('open-shared-cache', item)"
                   >
                     {{ item.name }}
                   </ElLink>
-                  <TaskStatus :task="item" />
+                  <TaskStatus class="zoom-xs" :task="item" />
                 </li>
               </ul>
             </div>
@@ -665,7 +656,7 @@ const onDragStop = (...args: any[]) => {
 }
 
 .shared-cache-list {
-  background-color: #f5f8fe;
+  background-color: var(--bg-block);
 }
 </style>
 
@@ -799,6 +790,10 @@ const onDragStop = (...args: any[]) => {
 
   &:hover :deep(.node-toolbar) {
     display: flex;
+  }
+
+  .task-status-block {
+    min-width: unset;
   }
 }
 </style>

@@ -86,6 +86,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
   const pdkPropertiesMap = shallowRef({})
   const pdkSchemaFreeMap = shallowRef({})
   const pdkDoubleActiveMap = shallowRef({})
+  const pdkId2Hash = shallowRef({})
   const editVersion = ref(null)
   const pageVersion = ref(Date.now().toString())
   const selectedNode = ref(null)
@@ -213,6 +214,14 @@ export const useDataflowStore = defineStore('dataflow', () => {
         setting: loadNodeHiddenSetting(node),
         totalData: loadNodeHiddenTotalData(node),
       }
+
+      if (
+        dataflow.syncType === 'shareCache' &&
+        node.databaseType &&
+        !node.attrs.pdkHash
+      ) {
+        node.attrs.pdkHash = pdkId2Hash.value[node.databaseType]
+      }
     })
 
     return {
@@ -239,16 +248,23 @@ export const useDataflowStore = defineStore('dataflow', () => {
     }
   }
 
-  async function fetchDataflow(id: string) {
-    const response = await getTaskById(id)
+  async function fetchDataflow(id: string, taskRecordId?: string) {
+    const response = await getTaskById(id, {
+      taskRecordId,
+    })
     const { dag: dagData, ...dataflowData } = response
+
+    dataflowData.syncType = dataflowData.shareCache
+      ? 'shareCache'
+      : dataflowData.syncType
+
+    setDataflow(dataflowData)
+    getTaskPermissions()
+
     const { nodes, edges } = initialDag(dagData)
 
     dag.value.nodes = nodes
     dag.value.edges = edges
-
-    setDataflow(dataflowData)
-    getTaskPermissions()
   }
 
   async function createDataflow(syncType = 'migrate') {
@@ -524,31 +540,37 @@ export const useDataflowStore = defineStore('dataflow', () => {
     const doubleActiveMap = {}
     const propertiesMap = {}
     const capabilitiesMap = {}
+    const pdkIdMap = {}
 
-    databaseItems.forEach(({ properties, pdkHash, tags, capabilities }) => {
-      const nodeProperties = properties?.node
+    databaseItems.forEach(
+      ({ properties, pdkHash, pdkId, tags, capabilities }) => {
+        pdkIdMap[pdkId] = pdkHash
 
-      if (nodeProperties) {
-        propertiesMap[pdkHash] = nodeProperties
-      }
-      if (tags?.includes('schema-free')) {
-        tagsMap[pdkHash] = true
-      }
-      if (tags?.includes('doubleActive')) {
-        doubleActiveMap[pdkHash] = true
-      }
-      if (capabilities?.length) {
-        capabilitiesMap[pdkHash] = capabilities.reduce((map, item) => {
-          map[item.id] = item
-          return map
-        }, {})
-      }
-    })
+        const nodeProperties = properties?.node
+
+        if (nodeProperties) {
+          propertiesMap[pdkHash] = nodeProperties
+        }
+        if (tags?.includes('schema-free')) {
+          tagsMap[pdkHash] = true
+        }
+        if (tags?.includes('doubleActive')) {
+          doubleActiveMap[pdkHash] = true
+        }
+        if (capabilities?.length) {
+          capabilitiesMap[pdkHash] = capabilities.reduce((map, item) => {
+            map[item.id] = item
+            return map
+          }, {})
+        }
+      },
+    )
 
     pdkCapabilitiesMap.value = capabilitiesMap
     pdkPropertiesMap.value = propertiesMap
     pdkSchemaFreeMap.value = tagsMap
     pdkDoubleActiveMap.value = doubleActiveMap
+    pdkId2Hash.value = pdkIdMap
   }
 
   function selectNode(node: any) {

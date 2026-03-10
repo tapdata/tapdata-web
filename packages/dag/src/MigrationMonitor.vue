@@ -1114,10 +1114,6 @@ function getTaskStatus(type: string) {
   return (TASK_STATUS_MAP as any)[type] || ''
 }
 
-function handleOpenSharedCache(row: any = {}) {
-  vm.$refs.sharedCacheDetails?.getData(row.id)
-}
-
 function upgradeFeeGoPage() {
   const routeUrl = router.resolve({
     name: 'createAgent',

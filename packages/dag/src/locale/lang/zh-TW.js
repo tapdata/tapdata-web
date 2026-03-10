@@ -522,7 +522,7 @@ export default {
     '【DEBUG】轮询加载任务详情，当前状态：[{val1}], 返回状态：[{val2}]',
   packages_dag_mixins_editor_debug4: '【DEBUG】开始轮询加载任务，间隔3s',
   packages_dag_mixins_editor_debug5: '【DEBUG】ws返回，任务状态：[{val1}]',
-  packages_dag_monitor_topheader_zuijinyiciqi: '最近一次啟動時間：',
+  packages_dag_monitor_topheader_zuijinyiciqi: '上次啟動時間：',
   packages_dag_components_nodedetaildialog_quanliangyiwancheng: '全量已完成',
   packages_dag_components_node_quanliangwanchenghaixu: '全量完成還需',
   packages_dag_components_node_xieruhaoshi: '寫入耗時：',

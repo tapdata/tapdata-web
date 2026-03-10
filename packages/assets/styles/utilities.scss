@@ -2946,6 +2946,10 @@
   background-color: oklch(0.97 0 0);
 }
 
+.bg-block {
+  background-color: var(--bg-block);
+}
+
 .user-select-all {
   -webkit-user-select: all !important;
   -moz-user-select: all !important;

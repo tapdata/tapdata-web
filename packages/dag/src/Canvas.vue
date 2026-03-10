@@ -38,6 +38,10 @@ const emit = defineEmits<{
   'click:connection:add': [connection: any]
 }>()
 
+const props = defineProps<{
+  hideLeft?: boolean
+}>()
+
 const uiStore = useUiStore()
 const dataflowStore = useDataflowStore()
 const dag = inject('dag')
@@ -115,11 +119,13 @@ const {
 
 onMounted(() => {
   // Start observing the left panel slot content width
-  observeLeftPanel()
-  // Re-observe when slot content changes (e.g. component swap via v-if)
-  if (leftPanelRef.value) {
-    leftPanelMutationObserver = new MutationObserver(() => observeLeftPanel())
-    leftPanelMutationObserver.observe(leftPanelRef.value, { childList: true })
+  if (!props.hideLeft) {
+    observeLeftPanel()
+    // Re-observe when slot content changes (e.g. component swap via v-if)
+    if (leftPanelRef.value) {
+      leftPanelMutationObserver = new MutationObserver(() => observeLeftPanel())
+      leftPanelMutationObserver.observe(leftPanelRef.value, { childList: true })
+    }
   }
 
   // Start observing the bottom bar height
@@ -416,11 +422,8 @@ function onMoveNodePosition(id: string, newPosition: [number, number]) {
   emit('move:node:position', id, newPosition)
 }
 
-function onClickConnectionAdd(connection: Connection) {
-  emit('click:connection:add', connection)
-}
-
 function onNodeClick({ event, node }) {
+  if (node.data?.hiddenMap?.setting) return
   emit('click:node', node)
 }
 
@@ -517,12 +520,13 @@ function locateNode(nodeId: string) {
 defineExpose({
   fitViewWithOffset,
   locateNode,
+  handleLayoutGraph,
 })
 </script>
 
 <template>
   <div id="node-canvas" class="position-relative w-100 h-100">
-    <div ref="leftPanel" class="left-panel-wrapper z-20">
+    <div v-if="!hideLeft" ref="leftPanel" class="left-panel-wrapper z-20">
       <slot name="left">
         <Transition name="slide-left">
           <NodesPanel v-if="nodesPanelExpanded" />
@@ -724,7 +728,6 @@ defineExpose({
             nodesHoveredById[edge.source] || nodesHoveredById[edge.target]
           "
           @update:label:hovered="onUpdateEdgeLabelHovered(edge.id, $event)"
-          @add="onClickConnectionAdd"
           @delete="onDeleteConnection"
           @show-nodes-popover="onShowNodesPopover"
         />

@@ -272,6 +272,11 @@ const qpsMap = computed(() => {
   }
 })
 
+const lastStartDateLabel = computed(() => {
+  const d = dataflow.value.lastStartDate
+  return d ? dayjs(d).format('YYYY-MM-DD HH:mm:ss') : '-'
+})
+
 // 处理耗时
 const delayData = computed(() => {
   const data = props.quota?.samples?.lineChartData?.[0]
@@ -425,7 +430,10 @@ const hideTotalData = computed(() => {
 })
 
 const showToInitialList = computed(() => {
-  return !(dataflow.value?.syncType === 'sync' && !dataflow.value?.shareCache)
+  return (
+    (dataflow.value?.syncType !== 'sync' || dataflow.value?.shareCache) &&
+    dataflow.value.type !== 'cdc'
+  )
 })
 
 // 进入增量阶段
@@ -668,7 +676,10 @@ onMounted(() => {
           refresh</IconButton
         >
       </div>
-      <div v-if="dataflow.type !== 'cdc'" class="info-box sync-info">
+      <div
+        v-if="dataflow.syncType === 'sync' || dataflow.syncType === 'migrate'"
+        class="info-box sync-info"
+      >
         <div class="flex justify-content-between mb-2">
           <span class="fw-sub fs-7 font-color-normal">{{
             $t('packages_dag_monitor_leftsider_tongbuxinxi')
@@ -685,6 +696,12 @@ onMounted(() => {
             </ElButton>
             <!-- <VIcon @click.stop="toInitialList">menu-left</VIcon> -->
           </ElTooltip>
+        </div>
+        <div class="mb-2 flex justify-content-between">
+          <span class="sync-info-item__title">{{
+            $t('packages_dag_monitor_topheader_zuijinyiciqi')
+          }}</span>
+          <span>{{ lastStartDateLabel || '-' }}</span>
         </div>
         <template v-if="dataflow.type !== 'cdc'">
           <div class="mb-2 flex justify-content-between">
@@ -882,6 +899,14 @@ onMounted(() => {
             $t('packages_dag_monitor_leftsider_jibenxinxi')
           }}</span>
         </div>
+        <div class="mb-2 flex justify-content-between">
+          <span class="sync-info-item__title">{{
+            $t('packages_dag_monitor_topheader_zuijinyiciqi')
+          }}</span>
+          <span class="font-color-dark text-break pl-3">{{
+            lastStartDateLabel || '-'
+          }}</span>
+        </div>
         <div
           v-for="(item, index) in infoList"
           :key="index"
@@ -891,7 +916,7 @@ onMounted(() => {
             item.class,
           ]"
         >
-          <div class="font-color-light text-nowrap">{{ item.label }}:</div>
+          <div class="font-color-light text-nowrap">{{ item.label }}</div>
           <div class="font-color-dark text-break pl-3">
             {{ item.value || '-' }}
           </div>

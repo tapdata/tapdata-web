@@ -10,12 +10,11 @@ import { IconButton } from '@tap/component/src/icon-button'
 import { FieldSelect } from '@tap/form/src/components/field-select'
 import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import i18n from '@tap/i18n'
-import { Time } from '@tap/shared'
 import { merge, unionBy } from 'lodash-es'
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useStore } from 'vuex'
-import { sourceEndpoint, targetEndpoint } from '../../style'
+import { useDataflowStore } from '../../stores/dataflow.store'
+import { targetEndpoint } from '../../style'
 import { TableSelect } from '../form'
 import NodeIcon from '../NodeIcon.vue'
 
@@ -34,7 +33,6 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  jsPlumbIns: Object,
   getInputs: Function,
   getOutputs: Function,
   isMainTable: Boolean,
@@ -63,7 +61,7 @@ const emit = defineEmits([
 ])
 
 // Store and route
-const store = useStore()
+const dataflowStore = useDataflowStore()
 const route = useRoute()
 
 // Refs
@@ -76,11 +74,7 @@ const targetPoint = ref(null)
 const currentCommand = ref('')
 
 // Store getters and actions
-const nodeById = (id) => store.getters['dataflow/nodeById'](id)
-const isActionActive = (action) =>
-  store.getters['dataflow/isActionActive'](action)
-const isNodeSelected = (nodeId) =>
-  store.getters['dataflow/isNodeSelected'](nodeId)
+const nodeById = (id: string) => dataflowStore.nodeById(id)
 
 // State
 let fieldType = 'Flatten'
@@ -191,8 +185,8 @@ const treeData = computed(() => {
   return createTree(schema)
 })
 
-const transformLoading = computed(() => store.state.dataflow.transformLoading)
-const taskSaving = computed(() => store.state.dataflow.taskSaving)
+const transformLoading = computed(() => dataflowStore.transformLoading)
+const taskSaving = computed(() => dataflowStore.taskSaving)
 
 const sourceNodes = computed(() => {
   return findParentNodes(props.node.id, true)
@@ -288,68 +282,66 @@ function __init() {
     ...targetEndpoint,
   }
 
-  props.jsPlumbIns.makeTarget(`n_${id}`, targetParams)
+  // props.jsPlumbIns.draggable(document.querySelector(`#n_${nodeId}`), {
+  //   handle: '.node-title, .node-title *',
+  //   start: (params) => {
+  //     onMouseDownAt.value = Time.now()
+  //     if (params.e && !isNodeSelected(props.nodeId)) {
+  //       props.jsPlumbIns.clearDragSelection()
+  //       store.commit('dataflow/resetSelectedNodes')
+  //     }
 
-  props.jsPlumbIns.draggable(document.querySelector(`#n_${nodeId}`), {
-    handle: '.node-title, .node-title *',
-    start: (params) => {
-      onMouseDownAt.value = Time.now()
-      if (params.e && !isNodeSelected(props.nodeId)) {
-        props.jsPlumbIns.clearDragSelection()
-        store.commit('dataflow/resetSelectedNodes')
-      }
+  //     store.commit('dataflow/addActiveAction', 'dragActive')
 
-      store.commit('dataflow/addActiveAction', 'dragActive')
+  //     emit('dragStart', params)
+  //     return true
+  //   },
+  //   drag: (params) => {
+  //     params.id = nodeId
+  //     isDrag.value = true
+  //     emit('dragMove', params)
+  //   },
+  //   stop: () => {
+  //     isNotMove.value = false
 
-      emit('dragStart', params)
-      return true
-    },
-    drag: (params) => {
-      params.id = nodeId
-      isDrag.value = true
-      emit('dragMove', params)
-    },
-    stop: () => {
-      isNotMove.value = false
+  //     if (isActionActive('dragActive')) {
+  //       props.position[0] = Number.parseFloat(
+  //         document.getElementById(`n_${nodeId}`).style.left,
+  //       )
+  //       props.position[1] = Number.parseFloat(
+  //         document.getElementById(`n_${nodeId}`).style.top,
+  //       )
+  //     }
 
-      if (isActionActive('dragActive')) {
-        props.position[0] = Number.parseFloat(
-          document.getElementById(`n_${nodeId}`).style.left,
-        )
-        props.position[1] = Number.parseFloat(
-          document.getElementById(`n_${nodeId}`).style.top,
-        )
-      }
+  //     onMouseDownAt.value = undefined
+  //     emit('dragStop', isNotMove.value, [], [])
+  //   },
+  // })
 
-      onMouseDownAt.value = undefined
-      emit('dragStop', isNotMove.value, [], [])
-    },
-  })
+  // targetPoint.value = props.jsPlumbIns.addEndpoint(
+  //   document.querySelector(`#n_${nodeId}`),
+  //   targetParams,
+  //   {
+  //     uuid: `${id}_target`,
+  //   },
+  // )
 
-  targetPoint.value = props.jsPlumbIns.addEndpoint(
-    document.querySelector(`#n_${nodeId}`),
-    targetParams,
-    {
-      uuid: `${id}_target`,
-    },
-  )
-
-  props.jsPlumbIns.addEndpoint(
-    document.querySelector(`#n_${nodeId}`),
-    {
-      ...sourceEndpoint,
-      enabled: false,
-      connectorStyle: {
-        strokeWidth: 1,
-        stroke: '#9f9f9f',
-        outlineStroke: 'transparent',
-        outlineWidth: 20,
-      },
-    },
-    {
-      uuid: `${id}_source`,
-    },
-  )
+  // props.jsPlumbIns.addEndpoint(
+  //   document.querySelector(`#n_${nodeId}`),
+  //   {
+  //     ...sourceEndpoint,
+  //     enabled: false,
+  //     connectorStyle: {
+  //       strokeWidth: 1,
+  //       stroke: '#9f9f9f',
+  //       outlineStroke: 'transparent',
+  //       outlineWidth: 20,
+  //     },
+  //   },
+  //   {
+  //     uuid: `${id}_source`,
+  //   },
+  // )
 }
 
 async function loadDatabases(filter) {
@@ -697,7 +689,7 @@ function onConnectionSelect(connection) {
 
 async function onChangeConnection() {
   dagNode.value.tableName = ''
-  await store.dispatch('dataflow/updateDag', { vm: this, isNow: true })
+  await dataflowStore.patchDataflow()
 }
 
 async function onChangeTable(table) {
@@ -740,7 +732,7 @@ function onNodeExpandAndCollapse() {
 
     const elapsedTime = timestamp - animationStartTime
 
-    props.jsPlumbIns.revalidate(`n_${props.node.id}`)
+    // props.jsPlumbIns.revalidate(`n_${props.node.id}`)
 
     if (elapsedTime < 350) {
       animationId = requestAnimationFrame(revalidate)

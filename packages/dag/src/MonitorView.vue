@@ -2,6 +2,9 @@
 import { batchMeasurements } from '@tap/api/src/core/measurement'
 import { getTaskRecords, startTask } from '@tap/api/src/core/task'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
+import SharedCacheDetails from '@tap/business/src/views/shared-cache/Details.vue'
+import SharedCacheEditor from '@tap/business/src/views/shared-cache/Editor.vue'
+import SharedMiningEditor from '@tap/business/src/views/shared-mining/Editor.vue'
 import SkipError from '@tap/business/src/views/task/SkipError.vue'
 import { TextEditable } from '@tap/component/src/base/text-editable'
 import { useI18n } from '@tap/i18n'
@@ -50,16 +53,20 @@ const {
   buttonShowMap,
   formScope,
   isSaving,
+  syncTypeLabel,
   taskOperationsRef,
   consoleRef,
   skipErrorRef,
+  sharedMiningEditorRef,
+  sharedCacheDetailsRef,
+  sharedCacheEditorRef,
+
   initNodeType,
   onCreateConnection,
   onDeleteConnection,
   onDeleteNode,
   onAddNode,
   onMoveNodePosition,
-  onClickConnectionAdd,
   onUpdateNodesPosition,
   onClickNode,
   handleSave,
@@ -73,6 +80,8 @@ const {
   handleForceStop,
   handlePageReturn,
   handleOpenInspect,
+  handleOpenSharedCache,
+  initShareCache,
 } = useCanvasOperation()
 
 const isInitialized = ref(false)
@@ -115,6 +124,23 @@ const ifEnableConcurrentRead = computed(() => {
     (node: any) => !node.$inputs.length && node.type === 'database',
   )
   return sourceNode?.enableConcurrentRead
+})
+
+function formatPercent(val: number | undefined) {
+  if (typeof val !== 'number') return ''
+  return `${(val * 100).toLocaleString('zh-CN', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}%`
+}
+
+const agentData = computed(() => {
+  const data = (quota.value as any).samples?.agentData?.[0] || {}
+  return {
+    cpuUsage: formatPercent(data.cpuUsage),
+    memoryRate: formatPercent(data.memoryRate),
+    gcRate: formatPercent(data.gcRate),
+  }
 })
 
 function handleChangeTimeSelect(val: any, isTime: boolean, source?: any) {
@@ -565,7 +591,7 @@ const init = async () => {
 
   nextTick(() => {
     setTimeout(() => {
-      canvasRef.value.fitViewWithOffset({ duration: 0, maxZoom: 1 })
+      canvasRef.value.handleLayoutGraph()
     }, 0)
   })
 }
@@ -609,8 +635,34 @@ provide('isSaving', isSaving)
         />
       </div>
       <TaskStatus class="w-auto rounded-lg zoom-xs" :task="dataflow" />
+      <el-divider class="mx-1" direction="vertical" />
+      <span class="font-color-light text-xs">{{ syncTypeLabel }}</span>
     </div>
     <div class="w-100 h-0 position-absolute header z-10 flex align-center px-3">
+      <!-- 浮动信息栏 -->
+      <div
+        class="monitor-info-bar shadow-canvas flex align-center gap-1 position-absolute h-8"
+      >
+        <el-icon><i-lucide-server /></el-icon>
+        <span class="monitor-info-bar__agent">{{ dataflow.agentName }}</span>
+        <el-divider class="mx-1" direction="vertical" />
+        <span class="monitor-info-bar__metrics font-color-light">
+          CPU
+          <span class="fw-bold font-color-dark">{{ agentData.cpuUsage }}</span>
+          <span class="ml-3"
+            >MEM
+            <span class="fw-bold font-color-dark">{{
+              agentData.memoryRate
+            }}</span></span
+          >
+          <span class="ml-3"
+            >GC
+            <span class="fw-bold font-color-dark">{{
+              agentData.gcRate
+            }}</span></span
+          >
+        </span>
+      </div>
       <div class="flex-1" />
       <TaskOperations
         ref="taskOperationsRef"
@@ -624,6 +676,7 @@ provide('isSaving', isSaving)
         @debug-start="handleStart(true)"
       />
     </div>
+
     <Canvas
       ref="canvasRef"
       @update:nodes:position="onUpdateNodesPosition"
@@ -632,7 +685,6 @@ provide('isSaving', isSaving)
       @delete:node="onDeleteNode"
       @add:node="onAddNode"
       @move:node:position="onMoveNodePosition"
-      @click:connection:add="onClickConnectionAdd"
       @click:node="onClickNode"
     >
       <template #node="scope">
@@ -644,6 +696,8 @@ provide('isSaving', isSaving)
           :quota="quota"
           :alarm="alarmData ? alarmData.nodes[scope.data.id] : undefined"
           @open-detail="handleOpenDetail"
+          @open-shared-cache="handleOpenSharedCache"
+          @refresh-shared-cache="initShareCache"
         />
       </template>
       <template #left>
@@ -699,6 +753,17 @@ provide('isSaving', isSaving)
       :if-enable-concurrent-read="ifEnableConcurrentRead"
       @load-data="init"
     />
+
+    <SharedMiningEditor
+      v-if="dataflow.syncType === 'logCollector'"
+      ref="sharedMiningEditorRef"
+    />
+    <SharedCacheEditor
+      v-if="dataflow.syncType === 'shareCache'"
+      ref="sharedCacheEditorRef"
+    />
+
+    <SharedCacheDetails ref="sharedCacheDetailsRef" width="380px" />
   </div>
 </template>
 
@@ -715,6 +780,27 @@ provide('isSaving', isSaving)
 .task-detail {
   :deep(.task-status-block) {
     min-width: unset;
+  }
+}
+
+.monitor-info-bar {
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  background-color: var(--el-bg-color);
+  padding: 6px 16px;
+  border-radius: 10px;
+
+  font-size: 13px;
+  white-space: nowrap;
+  color: var(--el-text-color-regular);
+
+  &__agent {
+    color: var(--el-text-color-primary);
+  }
+
+  &__metrics .fw-bold {
+    color: var(--el-text-color-primary);
   }
 }
 </style>

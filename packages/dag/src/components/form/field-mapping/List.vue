@@ -1,317 +1,306 @@
-<script>
+<script setup lang="ts">
 import { resetTable, saveTable } from '@tap/api/src/core/metadata-instances'
 import { getNodeTableInfo } from '@tap/api/src/core/task'
 import { getPDKDataTypeMapping } from '@tap/api/src/core/type-mapping'
-import refresh from '@tap/assets/icons/svg/refresh.svg'
-import rollback from '@tap/assets/icons/svg/rollback.svg'
 import fieldMapping_table_error from '@tap/assets/images/fieldMapping_table_error.png'
-import fieldMapping_table from '@tap/assets/images/fieldMapping_table.png'
 import noData from '@tap/assets/images/noData.png'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
+import { useI18n } from '@tap/i18n'
 import { delayTrigger } from '@tap/shared'
-import { mapState } from 'vuex'
+import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 
-export default {
-  name: 'List',
-  components: {
-    OverflowTooltip,
-  },
-  props: ['isMetaData', 'readOnly', 'updateList'],
-  data() {
-    return {
-      searchTable: '',
-      searchField: '',
-      dataFlow: '',
-      navData: [],
-      target: [],
-      editFields: [],
-      viewTableData: [],
-      loadingTable: true,
-      loadingNav: true,
-      page: {
-        size: 10,
-        current: 1,
-        total: 0,
-        count: 1,
-      },
-      currentOperationType: '',
-      editValueType: {
-        sourceFieldType: '',
-        defaultValue: '',
-      },
-      titleType: {
-        sourceFieldType: this.$t(
-          'packages_form_dag_dialog_field_mapping_tittle_data_type',
-        ),
-        defaultValue: this.$t(
-          'packages_form_dag_dialog_field_mapping_tittle_value',
-        ),
-      },
-      position: 0,
-      selectRow: '',
-      currentOperationData: '',
-      typeMapping: [],
-      dialogVisible: false,
-      rollback,
-      fieldMapping_table_error,
-      fieldMapping_table,
-      refresh,
-      noData,
-    }
-  },
-  mounted() {
-    this.dataFlow = this.getDataFlow()
-    this.dataFlow.id = this.dataFlow.taskId
-    this.dataFlow.nodeId = this.dataFlow.activeNodeId
-    this.getMetadataTransformer() //不需要推演 直接拿推演结果
-  },
-  computed: {
-    ...mapState('dataflow', ['transformLoading']),
-  },
-  watch: {
-    updateList() {
-      this.getMetadataTransformer()
-    },
-    // 推演加载完成后，主动请求最新模型
-    transformLoading(v) {
-      if (!v) {
-        this.getMetadataTransformer()
+defineOptions({ name: 'List' })
+
+const props = defineProps<{
+  isMetaData?: boolean
+  readOnly?: boolean
+  updateList?: boolean
+}>()
+
+const emit = defineEmits<{
+  'update-visible': []
+}>()
+
+const { t } = useI18n()
+const dataflowStore = useDataflowStore()
+const transformLoading = computed(() => dataflowStore.transformLoading)
+
+// data
+const searchTable = ref('')
+const searchField = ref('')
+const dataFlow = ref<any>('')
+const navData = ref<any[]>([])
+const target = ref<any[]>([])
+const editFields = ref<any[]>([])
+const viewTableData = ref<any[]>([])
+const loadingTable = ref(true)
+const loadingNav = ref(true)
+const page = reactive({ size: 10, current: 1, total: 0, count: 1 })
+const currentOperationType = ref('')
+const editValueType = reactive<Record<string, string>>({
+  sourceFieldType: '',
+  defaultValue: '',
+})
+const titleType: Record<string, string> = {
+  sourceFieldType: t('packages_form_dag_dialog_field_mapping_tittle_data_type'),
+  defaultValue: t('packages_form_dag_dialog_field_mapping_tittle_value'),
+}
+const position = ref<number | string>(0)
+const selectRow = ref<any>('')
+const currentOperationData = ref<any>('')
+const typeMapping = ref<any[]>([])
+const dialogVisible = ref(false)
+const fieldCount = ref(0)
+const editDataValue = ref('')
+const currentTypeRules = ref<any>('')
+
+// methods
+function getDataFlow() {
+  return {
+    dag: dataflowStore.dag,
+    editVersion: dataflowStore.editVersion,
+    taskId: dataflowStore.dataflow.id,
+    activeNodeId: dataflowStore.selectedNode?.id,
+  }
+}
+
+async function select(item: any, index: number) {
+  if (!props.readOnly && editFields.value.length > 0) {
+    await save()
+  }
+  position.value = ''
+  searchField.value = ''
+  fieldCount.value = 0
+  editFields.value = []
+  selectRow.value = item
+  target.value = selectRow.value?.fieldsMapping
+  viewTableData.value = target.value
+  fieldCount.value = item.sourceFieldCount - item.userDeletedNum || 0
+  position.value = index
+}
+
+function getMetadataTransformer(value?: any, type?: string) {
+  if (type === 'search') {
+    page.current = 1
+  }
+  const { size, current } = page
+  const id = dataFlow.value?.id || dataFlow.value?.taskId
+  const where: any = {
+    taskId: id,
+    nodeId: dataFlow.value.nodeId,
+    page: current,
+    pageSize: size,
+  }
+  if (value && current !== value) {
+    where.searchTable = value
+  } else {
+    where.searchTable = searchTable.value
+  }
+  loadingNav.value = true
+  loadingTable.value = true
+  getNodeTableInfo(where)
+    .then((res: any) => {
+      const { total, items } = res
+      page.total = total
+      page.count = Math.ceil(total / 10) === 0 ? 1 : Math.ceil(total / 10)
+      navData.value = items || []
+      selectRow.value = navData.value?.[position.value as number] || {}
+      target.value = selectRow.value?.fieldsMapping
+      viewTableData.value = target.value
+      fieldCount.value =
+        selectRow.value.sourceFieldCount - selectRow.value.userDeletedNum || 0
+      if (!props.readOnly) {
+        getTypeMapping()
       }
-    },
-  },
-  methods: {
-    getDataFlow() {
-      const dag = this.$store.getters['dataflow/dag']
-      const editVersion = this.$store.state.dataflow.editVersion
-      const dataflow = this.$store.state.dataflow
-      return {
-        dag,
-        editVersion,
-        ...dataflow,
-      }
-    },
-    async select(item, index) {
-      if (!this.readOnly && this.editFields?.length > 0) {
-        //先保存
-        await this.save()
-      }
-      this.position = '' //再次点击清空去一个样式
-      this.searchField = ''
-      this.fieldCount = 0
-      this.editFields = []
-      this.selectRow = item
-      this.target = this.selectRow?.fieldsMapping
-      this.viewTableData = this.target
-      this.fieldCount = item.sourceFieldCount - item.userDeletedNum || 0
-      this.position = index
-    },
-    getMetadataTransformer(value, type) {
-      if (type === 'search') {
-        this.page.current = 1
-      }
-      const { size, current } = this.page
-      const id = this.dataFlow?.id || this.dataFlow?.taskId
-      const where = {
-        taskId: id,
-        nodeId: this.dataFlow.nodeId,
-        //todo 返回是否为sinkNodeId
-        page: current,
-        pageSize: size,
-      }
-      if (value && current !== value) {
-        where.searchTable = value
+    })
+    .finally(() => {
+      loadingNav.value = false
+      loadingTable.value = false
+    })
+}
+
+function search() {
+  nextTick(() => {
+    delayTrigger(() => {
+      if (searchField.value.trim()) {
+        searchField.value = searchField.value.trim().toString()
+        viewTableData.value = target.value.filter((v: any) => {
+          const str = `${v.sourceFieldName}${v.targetFieldName}`.toLowerCase()
+          return str.includes(searchField.value.toLowerCase())
+        })
       } else {
-        where.searchTable = this.searchTable
+        viewTableData.value = target.value
       }
-      this.loadingNav = true
-      this.loadingTable = true
-      getNodeTableInfo(where)
-        .then((res) => {
-          const { total, items } = res
-          this.page.total = total
-          this.page.count =
-            Math.ceil(total / 10) === 0 ? 1 : Math.ceil(total / 10)
-          this.navData = items || []
-          //请求左侧table数据
-          this.selectRow = this.navData?.[this.position] || {}
-          this.target = this.selectRow?.fieldsMapping
-          this.viewTableData = this.target
-          this.fieldCount =
-            this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
-          if (!this.readOnly) {
-            this.getTypeMapping(this.selectRow)
-          }
-        })
-        .finally(() => {
-          this.loadingNav = false
-          this.loadingTable = false
-        })
-    },
-    search() {
-      this.$nextTick(() => {
-        delayTrigger(() => {
-          if (this.searchField.trim()) {
-            this.searchField = this.searchField.trim().toString() //去空格
-            this.viewTableData = this.target.filter((v) => {
-              const str =
-                `${v.sourceFieldName}${v.targetFieldName}`.toLowerCase()
-              return str.includes(this.searchField.toLowerCase())
-            })
-          } else {
-            this.viewTableData = this.target
-          }
-        }, 100)
-      })
-    },
-    rest() {
-      this.searchField = ''
-      this.searchTable = ''
-      this.position = 0
-      this.getMetadataTransformer()
-    },
-    handleClose() {
-      this.dialogVisible = false
-      this.currentOperationData = ''
-      this.editDataValue = ''
-    },
-    //table字段操作区域
-    /*字段操作统一弹窗
-     * 操作:修改字段名、修改字段长度、修改字段精度、修改字段类型*/
-    edit(row, type) {
-      this.dialogVisible = true
-      this.editValueType[type] = row[type]
-      this.currentOperationType = type
-      this.currentOperationData = row
-      //初始化
-      this.initDataType(row.sourceFieldType)
-    },
-    editSave() {
-      //触发target更新
-      const id = this.currentOperationData.sourceFieldName
-      const key =
-        this.currentOperationType === 'sourceFieldType'
-          ? 'sourceFieldType'
-          : 'defaultValue'
-      const value = this.editValueType[this.currentOperationType]
-      this.updateTargetView(id, key, value)
-      this.updateTarget(this.currentOperationData, key)
-      this.handleClose()
-    },
-    //重置
-    updateMetaData() {
-      const id = this.dataFlow?.id || this.dataFlow?.taskId
-      const data = {
-        taskId: id,
-        nodeId: this.dataFlow?.nodeId,
-      }
-      this.searchField = ''
-      resetTable(data).then(() => {
-        this.getMetadataTransformer() //更新整个数据
-      })
-    },
-    updateTargetView(id, key, value) {
-      this.viewTableData.forEach((field) => {
-        if (field.sourceFieldName === id) {
-          field[key] = value
+    }, 100)
+  })
+}
+
+function rest() {
+  searchField.value = ''
+  searchTable.value = ''
+  position.value = 0
+  getMetadataTransformer()
+}
+
+function handleClose() {
+  dialogVisible.value = false
+  currentOperationData.value = ''
+  editDataValue.value = ''
+}
+
+function edit(row: any, type: string) {
+  dialogVisible.value = true
+  editValueType[type] = row[type]
+  currentOperationType.value = type
+  currentOperationData.value = row
+  initDataType(row.sourceFieldType)
+}
+
+function editSave() {
+  const id = currentOperationData.value.sourceFieldName
+  const key =
+    currentOperationType.value === 'sourceFieldType'
+      ? 'sourceFieldType'
+      : 'defaultValue'
+  const value = editValueType[currentOperationType.value]
+  updateTargetView(id, key, value)
+  updateTarget(currentOperationData.value, key)
+  handleClose()
+}
+
+function updateMetaData() {
+  const id = dataFlow.value?.id || dataFlow.value?.taskId
+  const data = { taskId: id, nodeId: dataFlow.value?.nodeId }
+  searchField.value = ''
+  resetTable(data).then(() => {
+    getMetadataTransformer()
+  })
+}
+
+function updateTargetView(id: string, key: string, value: any) {
+  viewTableData.value.forEach((field: any) => {
+    if (field.sourceFieldName === id) {
+      field[key] = value
+    }
+  })
+}
+
+function updateTarget(row: any, type: string) {
+  if (editFields.value.length === 0) {
+    editFields.value.push({
+      fieldName: row.sourceFieldName,
+      fieldType:
+        type === 'sourceFieldType'
+          ? editValueType[currentOperationType.value]
+          : row.sourceFieldType,
+      defaultValue:
+        type === 'defaultValue'
+          ? editValueType[currentOperationType.value]
+          : editDataValue.value,
+    })
+  } else {
+    for (let i = 0; i < editFields.value.length; i++) {
+      if (editFields.value[i].fieldName === row.sourceFieldName) {
+        if (type === 'defaultValue') {
+          editFields.value[i].defaultValue =
+            editValueType[currentOperationType.value] || ''
+        } else {
+          editFields.value[i].fieldType =
+            editValueType[currentOperationType.value] || ''
         }
-      })
-    },
-    updateTarget(row, type) {
-      if (this.editFields?.length === 0) {
-        const field = {
+      } else {
+        editFields.value.push({
           fieldName: row.sourceFieldName,
           fieldType:
             type === 'sourceFieldType'
-              ? this.editValueType[this.currentOperationType]
+              ? editValueType[currentOperationType.value]
               : row.sourceFieldType,
           defaultValue:
             type === 'defaultValue'
-              ? this.editValueType[this.currentOperationType]
-              : this.editDataValue,
-        }
-        this.editFields.push(field)
-      } else {
-        for (let i = 0; i < this.editFields.length; i++) {
-          if (this.editFields[i].fieldName === row.sourceFieldName) {
-            if (type === 'defaultValue') {
-              this.editFields[i].defaultValue =
-                this.editValueType[this.currentOperationType] || ''
-            } else {
-              this.editFields[i].fieldType =
-                this.editValueType[this.currentOperationType] || ''
-            }
-          } else {
-            const field = {
-              fieldName: row.sourceFieldName,
-              fieldType:
-                type === 'sourceFieldType'
-                  ? this.editValueType[this.currentOperationType]
-                  : row.sourceFieldType,
-              defaultValue:
-                type === 'defaultValue'
-                  ? this.editValueType[this.currentOperationType]
-                  : this.editDataValue,
-            }
-            this.editFields.push(field)
-          }
-        }
+              ? editValueType[currentOperationType.value]
+              : editDataValue.value,
+        })
       }
-    },
-    save(val) {
-      const id = this.dataFlow?.id || this.dataFlow?.taskId
-      const data = {
-        taskId: id,
-        nodeId: this.dataFlow?.nodeId,
-        tableName: this.selectRow?.sourceObjectName,
-        fields: this.editFields || [],
-      }
-      saveTable(data).then(() => {
-        if (val) {
-          this.closeDialog()
-          this.$emit('updateVisible')
-        }
-      })
-    },
-    closeDialog() {
-      this.searchField = ''
-      this.searchTable = ''
-    },
-    /*更新target 数据*/
-    //获取typeMapping
-    getTypeMapping() {
-      getPDKDataTypeMapping('Mysql').then((res) => {
-        const targetObj = JSON.parse(res || '{}')
-        for (const key in targetObj) {
-          this.typeMapping.push({
-            dbType: key,
-            rules: targetObj[key],
-          })
-        }
-      })
-    },
-    initDataType(val) {
-      const target = this.typeMapping.filter((type) => type.dbType === val)
-      if (target?.length > 0) {
-        this.currentTypeRules = target[0]?.rules || []
-      } else this.currentTypeRules = '' //清除上一个字段范围
-    },
-    querySearchPdkType(queryString, cb) {
-      const result = this.typeMapping.map((t) => {
-        return {
-          value: t.dbType,
-        }
-      })
-      cb(result)
-    },
-    getPdkEditValueType() {
-      const findOne = this.typeMapping.find(
-        (t) => t.dbType === this.editValueType[this.currentOperationType],
-      )
-      return findOne?.rules || ''
-    },
-  },
-  emits: ['update-visible'],
+    }
+  }
 }
+
+function save(val?: any) {
+  const id = dataFlow.value?.id || dataFlow.value?.taskId
+  const data = {
+    taskId: id,
+    nodeId: dataFlow.value?.nodeId,
+    tableName: selectRow.value?.sourceObjectName,
+    fields: editFields.value || [],
+  }
+  saveTable(data).then(() => {
+    if (val) {
+      closeDialog()
+      emit('update-visible')
+    }
+  })
+}
+
+function closeDialog() {
+  searchField.value = ''
+  searchTable.value = ''
+}
+
+function getTypeMapping() {
+  getPDKDataTypeMapping('Mysql').then((res: any) => {
+    const targetObj = JSON.parse(res || '{}')
+    for (const key in targetObj) {
+      typeMapping.value.push({ dbType: key, rules: targetObj[key] })
+    }
+  })
+}
+
+function initDataType(val: string) {
+  const found = typeMapping.value.filter((type: any) => type.dbType === val)
+  if (found?.length > 0) {
+    currentTypeRules.value = found[0]?.rules || []
+  } else {
+    currentTypeRules.value = ''
+  }
+}
+
+function querySearchPdkType(
+  _queryString: string,
+  cb: (results: any[]) => void,
+) {
+  const result = typeMapping.value.map((t: any) => ({ value: t.dbType }))
+  cb(result)
+}
+
+function getPdkEditValueType() {
+  const findOne = typeMapping.value.find(
+    (t: any) => t.dbType === editValueType[currentOperationType.value],
+  )
+  return findOne?.rules || ''
+}
+
+// watch
+watch(
+  () => props.updateList,
+  () => {
+    getMetadataTransformer()
+  },
+)
+
+watch(transformLoading, (v) => {
+  if (!v) {
+    getMetadataTransformer()
+  }
+})
+
+// lifecycle
+onMounted(() => {
+  dataFlow.value = getDataFlow()
+  dataFlow.value.id = dataFlow.value.taskId
+  dataFlow.value.nodeId = dataFlow.value.activeNodeId
+  getMetadataTransformer()
+})
 </script>
 
 <template>

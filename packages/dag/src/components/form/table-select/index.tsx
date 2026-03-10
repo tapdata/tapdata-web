@@ -8,7 +8,6 @@ import { refreshTaskSchema } from '@tap/api/src/core/task'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import { InfiniteSelect } from '@tap/form/src/components/infinite-select'
 import i18n from '@tap/i18n'
-
 import {
   computed,
   defineComponent,
@@ -17,7 +16,8 @@ import {
   ref,
   watch,
 } from 'vue'
-import { useStore } from 'vuex'
+
+import { useDataflowStore } from '../../../stores/dataflow.store'
 import './style.scss'
 
 const useTableExist = (props, selectRef, connectionId) => {
@@ -149,8 +149,9 @@ export const TableSelect = connect(
       ],
       setup(props, { attrs }) {
         const select = ref(null)
-        const store = useStore()
-        const { taskId, activeNodeId } = store.state.dataflow
+        const dataflowStore = useDataflowStore()
+        const taskId = dataflowStore.dataflow.id
+        const activeNodeId = dataflowStore.selectedNode?.id
         const params = computed(() => {
           return {
             reloadTime: props.reloadTime,
@@ -188,7 +189,7 @@ export const TableSelect = connect(
         }
 
         const unWatch = watch(
-          () => store.state.dataflow.schemaRefreshing,
+          () => dataflowStore.schemaRefreshing,
           (v) => {
             if (!v) {
               loadSelectData()

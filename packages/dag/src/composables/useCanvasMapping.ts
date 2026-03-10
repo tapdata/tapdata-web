@@ -11,6 +11,7 @@ export function useCanvasMapping(dag) {
           x: node.attrs.position[0],
           y: node.attrs.position[1],
         },
+        selectable: !node.hiddenMap?.setting,
         data: node,
       }
     })

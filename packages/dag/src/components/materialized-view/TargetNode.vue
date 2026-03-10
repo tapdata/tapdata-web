@@ -7,11 +7,9 @@ import {
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared/const'
 import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import i18n from '@tap/i18n'
-import { Time } from '@tap/shared'
 import { merge } from 'lodash-es'
 import { computed, onMounted, ref, watch } from 'vue'
-import { useStore } from 'vuex'
-import { NODE_PREFIX } from '../../constants'
+import { useDataflowStore } from '../../stores/dataflow.store'
 import { targetEndpoint } from '../../style'
 import { TableSelect } from '../form/table-select'
 import NodeIcon from '../NodeIcon.vue'
@@ -57,7 +55,7 @@ const emit = defineEmits<{
   (e: 'loadSchema'): void
 }>()
 
-const store = useStore()
+const dataflowStore = useDataflowStore()
 const isDrag = ref(false)
 const isNotMove = ref(false)
 const onMouseDownAt = ref<number>()
@@ -103,8 +101,8 @@ const treeEmptyText = computed(() => {
   return i18n.t('public_data_no_data')
 })
 
-const transformLoading = computed(() => store.state.dataflow.transformLoading)
-const taskSaving = computed(() => store.state.dataflow.taskSaving)
+const transformLoading = computed(() => dataflowStore.transformLoading)
+const taskSaving = computed(() => dataflowStore.taskSaving)
 
 onMounted(() => {
   if (props.node.id) {
@@ -120,106 +118,104 @@ function init() {
     ...targetEndpoint,
   }
 
-  props.jsPlumbIns.makeTarget(`n_${id}`, targetParams)
+  // props.jsPlumbIns.makeTarget(`n_${id}`, targetParams)
 
-  props.jsPlumbIns.draggable(document.querySelector(`#n_${id}`), {
-    handle: '.node-title, .node-title *',
-    start: (params: any) => {
-      onMouseDownAt.value = Time.now()
-      if (params.e && !isNodeSelected(props.node.id)) {
-        props.jsPlumbIns.clearDragSelection()
-        store.commit('dataflow/resetSelectedNodes')
-      }
+  // props.jsPlumbIns.draggable(document.querySelector(`#n_${id}`), {
+  //   handle: '.node-title, .node-title *',
+  //   start: (params: any) => {
+  //     onMouseDownAt.value = Time.now()
+  //     if (params.e && !isNodeSelected(props.node.id)) {
+  //       props.jsPlumbIns.clearDragSelection()
+  //       store.commit('dataflow/resetSelectedNodes')
+  //     }
 
-      store.commit('dataflow/addActiveAction', 'dragActive')
+  //     store.commit('dataflow/addActiveAction', 'dragActive')
 
-      emit('dragStart', params)
-      return true
-    },
-    drag: (params: any) => {
-      params.id = nodeId
-      isDrag.value = true
-      emit('dragMove', params)
-    },
-    stop: () => {
-      isNotMove.value = false
-      const { position } = props.data.attrs
-      const newProperties: any[] = []
-      const oldProperties: any[] = []
+  //     emit('dragStart', params)
+  //     return true
+  //   },
+  //   drag: (params: any) => {
+  //     params.id = nodeId
+  //     isDrag.value = true
+  //     emit('dragMove', params)
+  //   },
+  //   stop: () => {
+  //     isNotMove.value = false
+  //     const { position } = props.data.attrs
+  //     const newProperties: any[] = []
+  //     const oldProperties: any[] = []
 
-      if (store.getters['dataflow/isActionActive']('dragActive')) {
-        const moveNodes = [...store.getters['dataflow/getSelectedNodes']]
+  //     if (store.getters['dataflow/isActionActive']('dragActive')) {
+  //       const moveNodes = [...store.getters['dataflow/getSelectedNodes']]
 
-        if (!isNodeSelected(props.node.id)) {
-          moveNodes.push(props.data)
-        }
+  //       if (!isNodeSelected(props.node.id)) {
+  //         moveNodes.push(props.data)
+  //       }
 
-        const element = document.querySelector(
-          `#n_${props.node.id}`,
-        ) as HTMLElement
-        const x = Number.parseFloat(element.style.left)
-        const y = Number.parseFloat(element.style.top)
+  //       const element = document.querySelector(
+  //         `#n_${props.node.id}`,
+  //       ) as HTMLElement
+  //       const x = Number.parseFloat(element.style.left)
+  //       const y = Number.parseFloat(element.style.top)
 
-        const distance = Math.hypot(x - position[0], y - position[1])
+  //       const distance = Math.hypot(x - position[0], y - position[1])
 
-        if (x === position[0] && y === position[1]) {
-          isNotMove.value = true
-          store.commit('dataflow/removeActiveAction', 'dragActive')
-        }
+  //       if (x === position[0] && y === position[1]) {
+  //         isNotMove.value = true
+  //         store.commit('dataflow/removeActiveAction', 'dragActive')
+  //       }
 
-        if (distance < 4 || Time.now() - (onMouseDownAt.value || 0) < 10) {
-          store.commit('dataflow/removeActiveAction', 'dragActive')
-        }
+  //       if (distance < 4 || Time.now() - (onMouseDownAt.value || 0) < 10) {
+  //         store.commit('dataflow/removeActiveAction', 'dragActive')
+  //       }
 
-        moveNodes.forEach((node) => {
-          const nodeElement = NODE_PREFIX + node.id
-          const element = document.querySelector(
-            `#${nodeElement}`,
-          ) as HTMLElement
-          if (!element) {
-            return
-          }
+  //       moveNodes.forEach((node) => {
+  //         const nodeElement = NODE_PREFIX + node.id
+  //         const element = document.querySelector(
+  //           `#${nodeElement}`,
+  //         ) as HTMLElement
+  //         if (!element) {
+  //           return
+  //         }
 
-          const newNodePosition = [
-            Number.parseFloat(element.style.left),
-            Number.parseFloat(element.style.top),
-          ]
+  //         const newNodePosition = [
+  //           Number.parseFloat(element.style.left),
+  //           Number.parseFloat(element.style.top),
+  //         ]
 
-          const updateInformation = {
-            id: node.id,
-            properties: {
-              attrs: { position: newNodePosition },
-            },
-          }
+  //         const updateInformation = {
+  //           id: node.id,
+  //           properties: {
+  //             attrs: { position: newNodePosition },
+  //           },
+  //         }
 
-          oldProperties.push({
-            id: node.id,
-            properties: {
-              attrs: { position },
-            },
-          })
-          newProperties.push(updateInformation)
-        })
-      }
+  //         oldProperties.push({
+  //           id: node.id,
+  //           properties: {
+  //             attrs: { position },
+  //           },
+  //         })
+  //         newProperties.push(updateInformation)
+  //       })
+  //     }
 
-      onMouseDownAt.value = undefined
-      emit('dragStop', isNotMove.value, oldProperties, newProperties)
-    },
-  })
+  //     onMouseDownAt.value = undefined
+  //     emit('dragStop', isNotMove.value, oldProperties, newProperties)
+  //   },
+  // })
 
-  props.jsPlumbIns.addEndpoint(
-    document.querySelector(`#n_${id}`),
-    targetParams,
-    {
-      uuid: `${id}_target`,
-    },
-  )
+  // props.jsPlumbIns.addEndpoint(
+  //   document.querySelector(`#n_${id}`),
+  //   targetParams,
+  //   {
+  //     uuid: `${id}_target`,
+  //   },
+  // )
 }
 
 function isNodeSelected(nodeId: string) {
-  return store.getters['dataflow/getSelectedNodes'].some(
-    (node: any) => node.id === nodeId,
-  )
+  return dataflowStore.getSelectedNodes.some((node: any) => node.id === nodeId)
 }
 
 interface DatabaseItem {
@@ -475,7 +471,7 @@ function onConnectionSelect(connection: any) {
     db_version: connection.db_version,
   }
 
-  store.commit('dataflow/updateNodeProperties', {
+  dataflowStore.updateNodeProperties({
     id: props.node.id,
     properties: {
       attrs: nodeAttrs,
@@ -485,11 +481,11 @@ function onConnectionSelect(connection: any) {
 
 async function onChangeConnection() {
   props.node.tableName = ''
-  await store.dispatch('dataflow/updateDag', { isNow: true })
+  await dataflowStore.patchDataflow()
 }
 
 async function onChangeTable() {
-  await store.dispatch('dataflow/updateDag', { isNow: true })
+  await dataflowStore.patchDataflow()
   setTimeout(async () => {
     await waitTaskSaved()
     await waitTaskTransform()

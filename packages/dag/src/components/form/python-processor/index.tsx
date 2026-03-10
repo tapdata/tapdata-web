@@ -19,8 +19,8 @@ import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
 import { groupBy } from 'lodash-es'
 import { defineComponent, onUnmounted, reactive, ref } from 'vue'
-import { useStore } from 'vuex'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 import { PythonDeclare } from '../python-declare'
 import './style.scss'
 
@@ -31,8 +31,8 @@ export const PythonProcessor = observer(
       resize,
     },
     setup(props, { emit, attrs }) {
-      const store = useStore()
-      const { id: taskId, syncType } = store.state.dataflow.taskInfo
+      const dataflowStore = useDataflowStore()
+      const { id: taskId, syncType } = dataflowStore.dataflow
       const formRef = useForm()
       const form = formRef.value
       const tableLoading = ref(false)
@@ -97,7 +97,7 @@ export const PythonProcessor = observer(
 
       const queryLog = async () => {
         const logData = await queryMonitoringLogs({
-          taskId: store.state.dataflow.taskInfo.testTaskId,
+          taskId: dataflowStore.dataflow.testTaskId,
           type: 'testRun',
           order: 'asc',
           page: 1,
