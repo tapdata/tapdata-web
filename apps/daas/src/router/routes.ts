@@ -8,7 +8,6 @@ const DagEditorView = () => import('@tap/dag/src/EditorView.vue')
 const DagMonitorView = () => import('@tap/dag/src/MonitorView.vue')
 const TaskRecordView = () => import('@tap/dag/src/RecordView.vue')
 const MigrationEditor = () => import('@tap/dag/src/MigrationEditor.vue')
-const MigrationMonitor = () => import('@tap/dag/src/MigrationMonitor.vue')
 const DataCapture = () => import('@tap/dag/src/data-capture/DataCapture.vue')
 const CustomNodeList = () =>
   import('@tap/business/src/views/custom-node/List.vue')
@@ -220,7 +219,7 @@ export const routes = [
   {
     path: '/heartbeat/monitor/:id',
     name: 'HeartbeatMonitor',
-    component: MigrationMonitor,
+    component: DagMonitorView,
     meta: {
       title: 'page_title_run_monitor',
       code: 'v2_data_replication_monitor',
