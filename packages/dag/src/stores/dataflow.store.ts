@@ -101,6 +101,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
   const consoleAutoLoadType = ref('')
   const transformLoading = ref(false)
   const schemaRefreshing = ref(false)
+  const materializedViewVisible = ref(false)
 
   const buttonShowMap = reactive({
     View: true,
@@ -607,7 +608,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     const syncRecursive = (target, source, path = '') => {
       const pathPrefix = path ? `${path}.` : ''
 
-      if (!stateIsReadonly.value) {
+      if (updateInformation.overwrite) {
         for (const key in target) {
           if (
             !source.hasOwnProperty(key) &&
@@ -840,6 +841,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     consoleAutoLoadType.value = ''
     transformLoading.value = false
     taskSaving.value = false
+    materializedViewVisible.value = false
 
     // DAG 结构
     dag.value = { nodes: [], edges: [] }
@@ -878,6 +880,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     consoleAutoLoadType,
     transformLoading,
     schemaRefreshing,
+    materializedViewVisible,
     buttonShowMap,
     showBottom,
     editVersion,

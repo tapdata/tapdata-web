@@ -72,6 +72,7 @@ const updateNodeProps = (form: any) => {
   })
   dataflowStore.updateNodeProperties({
     id: form.values.id,
+    overwrite: !dataflowStore.stateIsReadonly,
     properties: formValues,
   })
 }
@@ -150,6 +151,10 @@ watch(
 function handleClose() {
   dataflowStore.selectedNode = null
 }
+
+function setMaterializedViewVisible(visible: boolean) {
+  dataflowStore.materializedViewVisible = visible
+}
 </script>
 
 <template>
@@ -180,6 +185,22 @@ function handleClose() {
         </span>
       </el-tag>
       <div class="flex-1" />
+      <template
+        v-if="
+          !dataflowStore.stateIsReadonly &&
+          dataflowStore.selectedNode &&
+          dataflowStore.selectedNode.type === 'merge_table_processor'
+        "
+      >
+        <ElButton
+          class="--with-icon flex align-center px-2 py-0 gap-1"
+          @click="setMaterializedViewVisible(true)"
+        >
+          <VIcon size="30" class="mr-1">beta</VIcon>
+          {{ $t('packages_dag_materialized_view') }}</ElButton
+        >
+        <el-divider direction="vertical" />
+      </template>
       <el-button text @click="handleClose">
         <template #icon>
           <i-lucide-x />

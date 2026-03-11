@@ -436,8 +436,9 @@ export function useCanvasOperation() {
     store.commit('dataflow/setNodeErrorMsg', payload)
   const clearNodeError = (id: string) =>
     store.commit('dataflow/clearNodeError', id)
-  const setMaterializedViewVisible = (v: boolean) =>
-    store.commit('dataflow/setMaterializedViewVisible', v)
+  const setMaterializedViewVisible = (v: boolean) => {
+    dataflowStore.materializedViewVisible = v
+  }
 
   const findNodeById = dataflowStore.getNodeById
 

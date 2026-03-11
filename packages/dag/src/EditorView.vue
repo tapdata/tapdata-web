@@ -1,23 +1,39 @@
 <script setup lang="ts">
+import { getConnectionNoSchema } from '@tap/api/src/core/connections'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import SkipError from '@tap/business/src/views/task/SkipError.vue'
 import { TextEditable } from '@tap/component/src/base/text-editable'
 import { useI18n } from '@tap/i18n'
-import { nextTick, onBeforeUnmount, provide, ref, watch } from 'vue'
+import { uuid } from '@tap/shared'
+import { useVueFlow } from '@vue-flow/core'
+import {
+  nextTick,
+  onBeforeUnmount,
+  provide,
+  ref,
+  useTemplateRef,
+  watch,
+} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import Canvas from './Canvas.vue'
+import MaterializedView from './components/materialized-view/MaterializedView.vue'
 import ConsolePanel from './components/migration/ConsolePanel.vue'
 import TaskOperations from './components/TaskOperations.vue'
 import { useCanvasOperation } from './composables/useCanvasOperation'
 import { useDataflowStore } from './stores/dataflow.store'
+import { useHistoryStore } from './stores/history.store'
 
 const dataflowStore = useDataflowStore()
+const historyStore = useHistoryStore()
+const { findNode, getOutgoers } = useVueFlow()
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 const store = useStore()
 const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+
+const materializedViewRef = useTemplateRef('materializedView')
 
 const {
   dag,
@@ -49,6 +65,7 @@ const {
   handleStop,
   handleForceStop,
   handlePageReturn,
+  setMaterializedViewVisible,
 } = useCanvasOperation()
 
 const isInitialized = ref(false)
@@ -89,6 +106,9 @@ const init = async () => {
 
   initWS()
   isInitialized.value = true
+
+  // Check route query for auto-opening materialized view
+  checkMaterializedView()
 }
 
 watch([() => dag.value.nodes.length, () => dag.value.edges.length], () => {
@@ -138,6 +158,270 @@ const toggleExpandNodes = () => {
 onBeforeUnmount(() => {
   dataflowStore.$reset()
 })
+
+// ======== Materialized View ========
+const X_OFFSET = 100
+const Y_OFFSET = 40
+
+function createNodeData(nodeType: any) {
+  return {
+    id: uuid(),
+    attrs: { position: [0, 0] },
+    ...nodeType,
+  }
+}
+
+/**
+ * 添加源节点到主 DAG（在 merge_table_processor 前面添加）
+ * 位置计算逻辑与 NodesPopover.handleAddNode 保持一致
+ */
+function onAddMaterializedViewNode(parentNode: any, mvProps: any) {
+  const activeNode = dataflowStore.selectedNode as any
+  if (!activeNode) return
+
+  const nextNodeId = activeNode.id
+
+  const newNode = createNodeData({
+    name: '',
+    type: 'table',
+    databaseType: '',
+    connectionId: '',
+    tableName: '',
+    attrs: { hasCreated: false, position: [0, 0] },
+  })
+
+  // 计算位置：在 merge_table_processor 前面添加
+  const canvasNextNode = findNode(nextNodeId)
+  if (canvasNextNode) {
+    const existingInputs = activeNode.$inputs || []
+    if (existingInputs.length > 0) {
+      // 已有上游节点，放在最后一个上游节点下方
+      const lastInputNode = findNode(existingInputs.at(-1))
+      if (lastInputNode) {
+        newNode.attrs.position = [
+          lastInputNode.position.x,
+          lastInputNode.position.y +
+            (lastInputNode.dimensions?.height || 200) +
+            Y_OFFSET,
+        ]
+      } else {
+        newNode.attrs.position = [
+          canvasNextNode.position.x -
+            (canvasNextNode.dimensions?.width || 260) -
+            X_OFFSET,
+          canvasNextNode.position.y,
+        ]
+      }
+    } else {
+      // 没有上游节点，放在 merge_table_processor 左边
+      newNode.attrs.position = [
+        canvasNextNode.position.x -
+          (canvasNextNode.dimensions?.width || 260) -
+          X_OFFSET,
+        canvasNextNode.position.y,
+      ]
+    }
+  }
+
+  // 使用带历史记录的操作
+  historyStore.startRecordingUndo()
+  onAddNode(newNode)
+  onCreateConnection({ source: newNode.id, target: nextNodeId })
+  historyStore.stopRecordingUndo()
+
+  const viewNode = {
+    ...mvProps,
+    id: newNode.id,
+    parentId: parentNode.id,
+    tableName: newNode.name,
+    tableNode: newNode,
+    children: [],
+  }
+
+  parentNode.children.push(viewNode)
+  materializedViewRef.value?.addNode(viewNode)
+}
+
+/**
+ * 添加目标节点到主 DAG（在 merge_table_processor 后面添加）
+ * 位置计算逻辑与 NodesPopover.handleAddNode 保持一致
+ */
+function onAddMaterializedViewTargetNode() {
+  const activeNode = dataflowStore.selectedNode as any
+  if (!activeNode) return
+
+  const prevNodeId = activeNode.id
+
+  const newNode = createNodeData({
+    name: `Node ${dag.value.nodes.length + 1}`,
+    type: 'table',
+    databaseType: '',
+    connectionId: '',
+    tableName: '',
+    attrs: {
+      capabilities: [{ id: 'master_slave_merge' }],
+      hasCreated: false,
+      position: [0, 0],
+    },
+  })
+
+  // 计算位置：在 merge_table_processor 后面添加
+  const canvasPrevNode = findNode(prevNodeId)
+  if (canvasPrevNode) {
+    const outgoers = getOutgoers(prevNodeId).sort(
+      (a, b) => a.position.y - b.position.y,
+    )
+    const lastOutgoer = outgoers.at(-1)
+    newNode.attrs.position = lastOutgoer
+      ? [
+          lastOutgoer.position.x,
+          lastOutgoer.position.y +
+            (lastOutgoer.dimensions?.height || 200) +
+            Y_OFFSET,
+        ]
+      : [
+          canvasPrevNode.position.x +
+            (canvasPrevNode.dimensions?.width || 260) +
+            X_OFFSET,
+          canvasPrevNode.position.y,
+        ]
+  }
+
+  // 使用带历史记录的操作
+  historyStore.startRecordingUndo()
+  onAddNode(newNode)
+  onCreateConnection({ source: prevNodeId, target: newNode.id })
+  historyStore.stopRecordingUndo()
+
+  nextTick(() => {
+    materializedViewRef.value?.addTargetNode(newNode)
+  })
+}
+
+function onDeleteMaterializedViewNode(nodeId: string) {
+  const node = dataflowStore.findNodeById(nodeId)
+  if (node) {
+    onDeleteNode(node)
+  }
+}
+
+async function checkMaterializedView() {
+  const { query } = route
+  const { by, connectionId, tableName } = query as Record<string, string>
+
+  if (by !== 'materialized-view' && by !== 'transformation-materialized') return
+
+  await router.replace({
+    params: { id: route.params.id },
+    query: {
+      ...query,
+      by: undefined,
+      connectionId: undefined,
+      tableName: undefined,
+    },
+  })
+
+  let connection: any
+  if (connectionId) {
+    connection = await getConnectionNoSchema(connectionId)
+  }
+
+  // 节点宽度估算值，用于计算初始位置
+  const NODE_WIDTH = 260
+
+  if (by === 'transformation-materialized') {
+    const mergeTableNode = createNodeData({
+      name: t('packages_dag_src_editor_zhuconghebing'),
+      type: 'merge_table_processor',
+      attrs: { position: [300, 300] },
+    })
+
+    historyStore.startRecordingUndo()
+    onAddNode(mergeTableNode)
+
+    if (connection) {
+      const targetNode = createNodeData({
+        name: tableName || connection.name,
+        type: 'table',
+        databaseType: connection.database_type,
+        connectionId: connection.id,
+        tableName,
+        attrs: {
+          connectionName: connection.name,
+          connectionType: connection.connection_type,
+          hasCreated: false,
+          position: [300 + NODE_WIDTH + X_OFFSET, 300],
+        },
+      })
+      onAddNode(targetNode)
+      onCreateConnection({
+        source: mergeTableNode.id,
+        target: targetNode.id,
+      })
+    }
+
+    historyStore.stopRecordingUndo()
+    return
+  }
+
+  // Add source node
+  const sourceNode = createNodeData({
+    name: 'SourceNode',
+    type: 'table',
+    databaseType: '',
+    connectionId: '',
+    tableName: '',
+    attrs: { hasCreated: false, position: [100, 300] },
+  })
+
+  // Add merge_table_processor node
+  const mergeTableNode = createNodeData({
+    name: t('packages_dag_src_editor_zhuconghebing'),
+    type: 'merge_table_processor',
+    attrs: { position: [100 + NODE_WIDTH + X_OFFSET, 300] },
+  })
+
+  historyStore.startRecordingUndo()
+  onAddNode(sourceNode)
+  onAddNode(mergeTableNode)
+  onCreateConnection({
+    source: sourceNode.id,
+    target: mergeTableNode.id,
+  })
+
+  // Add target node
+  if (connection) {
+    const targetNode = createNodeData({
+      name: tableName || connection.name,
+      type: 'table',
+      databaseType: connection.database_type,
+      connectionId: connection.id,
+      tableName,
+      attrs: {
+        connectionName: connection.name,
+        connectionType: connection.connection_type,
+        hasCreated: false,
+        position: [100 + (NODE_WIDTH + X_OFFSET) * 2, 300],
+      },
+    })
+    onAddNode(targetNode)
+    onCreateConnection({
+      source: mergeTableNode.id,
+      target: targetNode.id,
+    })
+  }
+
+  historyStore.stopRecordingUndo()
+
+  await nextTick()
+
+  // Select merge table node and open materialized view
+  dataflowStore.selectNode(mergeTableNode)
+
+  setTimeout(() => {
+    setMaterializedViewVisible(true)
+  }, 120)
+}
 
 provide('dag', dag)
 provide('nodesPanelExpanded', nodesPanelExpanded)
@@ -224,6 +508,20 @@ provide('handlePreview', handlePreview)
     </Canvas>
 
     <SkipError ref="skipErrorRef" @skip="startTask" />
+
+    <MaterializedView
+      ref="materializedView"
+      :visible="dataflowStore.materializedViewVisible"
+      :disabled="dataflowStore.stateIsReadonly"
+      :is-saving="isSaving"
+      :dataflow="dataflow"
+      :button-show-map="buttonShowMap"
+      @update:visible="setMaterializedViewVisible"
+      @add-node="onAddMaterializedViewNode"
+      @add-target-node="onAddMaterializedViewTargetNode"
+      @delete-node="onDeleteMaterializedViewNode"
+      @start="handleStart"
+    />
   </div>
 </template>
 
