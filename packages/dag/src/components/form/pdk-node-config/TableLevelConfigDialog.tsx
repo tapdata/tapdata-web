@@ -1,6 +1,7 @@
 import { getNodeSchemaPage } from '@tap/api/src/core/metadata-instances'
 import { computed as reactiveComputed } from '@tap/form'
 import { useI18n } from '@tap/i18n'
+import { cloneDeep } from 'lodash-es'
 import { computed, defineComponent, ref, type PropType } from 'vue'
 import type { Form } from '@formily/core'
 import './style.scss'
@@ -59,7 +60,10 @@ export const TableLevelConfigDialog = defineComponent({
 
     const addTable = (tableName: string) => {
       if (!tableName) return
-      props.form.setValuesIn(`tableNodeConfig.${tableName}`, {})
+      props.form.setValuesIn(
+        `tableNodeConfig.${tableName}`,
+        cloneDeep(props.form.values.nodeConfig),
+      )
       selectedTable.value = tableName
       addTableValue.value = ''
     }
