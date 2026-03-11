@@ -17,6 +17,7 @@ import {
 import { commandProxy } from '@tap/api/src/core/proxy'
 import { getNodeTableInfo } from '@tap/api/src/core/task'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
+import { mapFieldsData } from '@tap/form/src/components/field-select'
 import { FormTab } from '@tap/form/src/components/form-tab'
 import { useI18n } from '@tap/i18n'
 import { Cookie, isPlainObj } from '@tap/shared'
@@ -237,6 +238,37 @@ export function useFormScope({ canvasRef }) {
       return fields
     } catch (error) {
       console.error('nodeSchema', error)
+      return []
+    }
+  }
+
+  /**
+   * 根据 nodeId 和 tableFilter 查询字段选项列表
+   * @param nodeId
+   * @param tableFilter
+   * @returns {Promise<Array>}
+   */
+  const loadNodeTableFields = async (nodeId: string, tableFilter: string) => {
+    if (!nodeId) return []
+    try {
+      await afterTaskSaved()
+      const data = await getNodeSchemaPage({
+        nodeId,
+        tableFilter,
+        fields: [
+          'original_name',
+          'fields',
+          'qualified_name',
+          'name',
+          'indices',
+        ],
+        page: 1,
+        pageSize: 1,
+      })
+      const { fields } = mapFieldsData(data?.items?.[0])
+      return fields
+    } catch (error) {
+      console.error('loadNodeFieldOptionsByPage error', error)
       return []
     }
   }
@@ -558,6 +590,8 @@ export function useFormScope({ canvasRef }) {
      * @returns {Promise<{}|*>}
      */
     loadNodeFieldOptions,
+
+    loadNodeTableFields,
 
     loadDateFieldOptions,
 
