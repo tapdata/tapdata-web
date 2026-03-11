@@ -2,6 +2,7 @@
 import {
   BaseEdge,
   getBezierPath,
+  Position,
   type ConnectionLineProps,
 } from '@vue-flow/core'
 import { computed } from 'vue'
@@ -18,10 +19,10 @@ const path = computed(() =>
   getBezierPath({
     ...props,
     sourceX: props.sourceX - 8,
+    targetPosition: Position.Left,
     curvature,
   }),
 )
-console.log('path', path)
 </script>
 
 <template>
