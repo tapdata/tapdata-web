@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { Background } from '@vue-flow/background'
-import { useVueFlow, VueFlow } from '@vue-flow/core'
+import {
+  useVueFlow,
+  VueFlow,
+  type Connection,
+  type ConnectStartEvent,
+  type GraphNode,
+  type NodeChange,
+} from '@vue-flow/core'
 import {
   computed,
   inject,
@@ -16,7 +23,9 @@ import {
 } from 'vue'
 import CanvasConnectionLine from './components/elements/CanvasConnectionLine.vue'
 import CanvasEdge from './components/elements/CanvasEdge.vue'
+
 import Node from './components/elements/CanvasNode.vue'
+import HelperLines from './components/elements/HelperLines.vue'
 import NodesPopover from './components/elements/NodesPopover.vue'
 import NodesPanel from './components/NodesPanel.vue'
 import RightPanel from './components/RightPanel.vue'
@@ -25,6 +34,7 @@ import { useHistory } from './composables/useHistory'
 import { useLayout } from './composables/useLayout'
 import { useDataflowStore } from './stores/dataflow.store'
 import { useUiStore } from './stores/ui.store'
+import { getHelperLines } from './utils/helperLines'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
 
@@ -88,7 +98,6 @@ let leftPanelMutationObserver: MutationObserver | null = null
 const bottomBarRef = useTemplateRef<HTMLElement>('bottomBar')
 const bottomBarHeight = ref(0)
 let bottomBarResizeObserver: ResizeObserver | null = null
-console.log('bottomBarHeight', bottomBarHeight)
 
 function observeBottomBar() {
   if (!bottomBarRef.value) return
@@ -106,6 +115,39 @@ const { layout, fitViewWithOffset } = useLayout({
   nodesPanelWidth: leftPanelWidth,
   bottomPanelHeight: bottomBarHeight,
 })
+
+const helperLineHorizontal = ref<number | undefined>(undefined)
+const helperLineVertical = ref<number | undefined>(undefined)
+
+function updateHelperLines(changes: NodeChange[], nodes: GraphNode[]) {
+  helperLineHorizontal.value = undefined
+  helperLineVertical.value = undefined
+
+  if (
+    changes.length === 1 &&
+    changes[0].type === 'position' &&
+    changes[0].dragging &&
+    changes[0].position
+  ) {
+    const helperLines = getHelperLines(changes[0], nodes)
+
+    // if we have a helper line, we snap the node to the helper line position
+    // this is being done by manipulating the node position inside the change object
+    changes[0].position.x = helperLines.snapPosition.x ?? changes[0].position.x
+    changes[0].position.y = helperLines.snapPosition.y ?? changes[0].position.y
+
+    // if helper lines are returned, we set them so that they can be displayed
+    helperLineHorizontal.value = helperLines.horizontal
+    helperLineVertical.value = helperLines.vertical
+  }
+
+  return changes
+}
+
+function onNodesChange(changes: NodeChange[]) {
+  if (dataflowStore.stateIsReadonly) return
+  updateHelperLines(changes, getNodes.value)
+}
 
 // History (Undo/Redo) controls
 const {
@@ -178,6 +220,7 @@ const {
   onNodeMouseLeave,
   onPaneContextMenu,
   screenToFlowCoordinate,
+  getNodes,
 } = vueFlow
 
 // Zoom controls
@@ -714,6 +757,7 @@ defineExpose({
       @node-drag-stop="onNodeDragStop"
       @connect="onConnect"
       @node-click="onNodeClick"
+      @nodes-change="onNodesChange"
     >
       <template #node-canvas="nodeProps">
         <slot name="node" v-bind="nodeProps">
@@ -736,6 +780,11 @@ defineExpose({
         <CanvasConnectionLine v-bind="connectionLineProps" />
       </template>
       <Background class="bg-dataflow-canvas" />
+
+      <HelperLines
+        :horizontal="helperLineHorizontal"
+        :vertical="helperLineVertical"
+      />
     </VueFlow>
   </div>
 </template>

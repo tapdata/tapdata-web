@@ -15,7 +15,7 @@ export const SchemaFormItem = connect(
       },
       setup(props, { attrs, slots }) {
         const dataflowStore = useDataflowStore()
-        const taskId = dataflowStore.dataflow.taskId
+        const taskId = dataflowStore.dataflow.id
         const activeNodeId = dataflowStore.selectedNode?.id
 
         const formRef = useForm()

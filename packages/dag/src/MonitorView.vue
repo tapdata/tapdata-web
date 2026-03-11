@@ -1,18 +1,16 @@
 <script setup lang="ts">
 import { batchMeasurements } from '@tap/api/src/core/measurement'
-import { getTaskRecords, startTask } from '@tap/api/src/core/task'
+import { getTaskById, getTaskRecords } from '@tap/api/src/core/task'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import SharedCacheDetails from '@tap/business/src/views/shared-cache/Details.vue'
 import SharedCacheEditor from '@tap/business/src/views/shared-cache/Editor.vue'
 import SharedMiningEditor from '@tap/business/src/views/shared-mining/Editor.vue'
 import SkipError from '@tap/business/src/views/task/SkipError.vue'
 import { TextEditable } from '@tap/component/src/base/text-editable'
-import { useI18n } from '@tap/i18n'
 import Time from '@tap/shared/src/time'
 import { debounce } from 'lodash-es'
 import { computed, nextTick, onUnmounted, provide, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useStore } from 'vuex'
 import Canvas from './Canvas.vue'
 import ConsolePanel from './components/migration/ConsolePanel.vue'
 import BottomPanel from './components/monitor/BottomPanel.vue'
@@ -27,9 +25,6 @@ import { useDataflowStore } from './stores/dataflow.store'
 const dataflowStore = useDataflowStore()
 const router = useRouter()
 const route = useRoute()
-const { t } = useI18n()
-const store = useStore()
-const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 
 const dagData = ref<any>(null)
 const verifyTotals = ref<any>(null)
@@ -44,7 +39,6 @@ const timeFormat = ref('HH:mm:ss')
 const nodeDetailDialog = ref(false)
 const nodeDetailDialogId = ref('')
 const noNeedRefresh = ref(false)
-const showBottomPanel = ref(true)
 const canvasRef = ref<any>(null)
 
 const {
@@ -82,6 +76,7 @@ const {
   handleOpenInspect,
   handleOpenSharedCache,
   initShareCache,
+  reformDataflow,
 } = useCanvasOperation()
 
 const isInitialized = ref(false)
@@ -475,7 +470,6 @@ function polling() {
 }
 
 const loadData = () => {
-  console.log('dataflow.value.id', dataflow.value.id)
   if (!dataflowStore.dataflow?.id) {
     return
   }
@@ -574,8 +568,25 @@ function handleOpenDetail(node: any) {
   nodeDetailDialog.value = true
 }
 
+let pollingTimer: ReturnType<typeof setTimeout> | null = null
+
+async function pollTaskDetail() {
+  const taskId = route.params.id as string
+  if (!taskId) return
+
+  try {
+    const task = await getTaskById(taskId)
+    if (task) {
+      reformDataflow(task)
+    }
+  } catch (error) {
+    console.error('pollTaskDetail error', error)
+  }
+
+  pollingTimer = setTimeout(pollTaskDetail, 10000)
+}
+
 const init = async () => {
-  // dataflowStore.$reset()
   dataflowStore.stateIsReadonly = true
   dataflowStore.showBottom = true
   const taskId = route.params.id as string
@@ -587,6 +598,7 @@ const init = async () => {
   }
   initMonitor()
   initWS()
+  pollingTimer = setTimeout(pollTaskDetail, 10000)
   isInitialized.value = true
 
   nextTick(() => {
@@ -599,6 +611,10 @@ const init = async () => {
 init()
 
 onUnmounted(() => {
+  if (pollingTimer) {
+    clearTimeout(pollingTimer)
+    pollingTimer = null
+  }
   dataflowStore.$reset()
 })
 

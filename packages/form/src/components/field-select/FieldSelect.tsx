@@ -320,7 +320,7 @@ export const FieldSelect = defineComponent({
   },
 })
 
-export const mapFieldsData = (data: any) => {
+export const mapFieldsData = (data: any = {}) => {
   let {
     constraints = [],
     indices = [],

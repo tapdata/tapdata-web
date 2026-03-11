@@ -1080,11 +1080,11 @@ export function useCanvasOperation() {
       data.autoIncrementalBatchSize
     dataflowStore.dataflow.attrs = data.attrs
 
+    delete data.dag
+
     if (!fromWS) {
       Object.keys(data).forEach((key) => {
-        if (!['dag'].includes(key)) {
-          dataflowStore.dataflow[key] = data[key]
-        }
+        dataflowStore.dataflow[key] = data[key]
       })
     }
   }
@@ -1676,5 +1676,6 @@ export function useCanvasOperation() {
     handleOpenInspect,
     handleOpenSharedCache,
     initShareCache,
+    reformDataflow,
   }
 }
