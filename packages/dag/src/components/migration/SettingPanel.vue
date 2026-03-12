@@ -309,6 +309,9 @@ const sourceNodes = computed(() => {
     }))
 })
 
+// 缓存所有历史 syncPoint 设置，防止断线重连后丢失
+const syncPointsCache: Record<string, any> = {}
+
 const systemTimeZone = computed(() => {
   const timeZone = new Date().getTimezoneOffset() / 60
   let systemTimeZone = ''
@@ -502,15 +505,17 @@ watch(
 
 watch(sourceNodes, () => {
   const timeZone = systemTimeZone.value
-  const oldPoints = props.settings.syncPoints
-  const oldPointsMap = oldPoints?.length
-    ? oldPoints.reduce((map: Record<string, any>, point: any) => {
-        if (point.nodeId) map[point.nodeId] = point
-        return map
-      }, {})
-    : {}
+
+  if (props.settings.syncPoints?.length) {
+    props.settings.syncPoints.forEach((point: any) => {
+      if (point.nodeId) {
+        syncPointsCache[point.nodeId] = point
+      }
+    })
+  }
+
   const syncPoints = sourceNodes.value.map((item: any) => {
-    const old = oldPointsMap[item.nodeId]
+    const old = syncPointsCache[item.nodeId]
     const point = {
       ...item,
       timeZone,
