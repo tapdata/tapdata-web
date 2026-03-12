@@ -189,6 +189,8 @@ export default {
   public_message_send_success: 'Send Successfully',
   public_message_download_ok: 'Download Successfully',
   public_message_publish_successful: 'Publish Successful',
+  public_message_export_ok: 'Export Successfully',
+  public_message_export_fail: 'Export Failed',
   // drop-down list
   public_select_placeholder: 'Please Select',
   public_select_option_all: 'Select All',
@@ -269,6 +271,7 @@ export default {
   public_connection_schema_status_tip:
     'The connection can only be created normally once the Schema has been loaded.',
   public_connection_table_structure_update_time: 'Schema Load Time',
+  public_connection_button_import: 'Import Connection',
   public_connection_button_create: 'Create Connection',
   public_connection_button_copy: 'Copy Connection',
   public_connection_button_test: 'Test',
@@ -638,4 +641,5 @@ export default {
   public_table_regex_example_1: 'Matches tables starting with user_',
   public_table_regex_example_2: 'Matches tables ending with _temp',
   public_table_regex_example_3: 'Matches tables containing test or demo',
+  public_data_no_result: 'No Data Found',
 }

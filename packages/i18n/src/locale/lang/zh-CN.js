@@ -189,6 +189,8 @@ export default {
   public_message_send_success: '发送成功',
   public_message_download_ok: '下载成功',
   public_message_publish_successful: '发布成功',
+  public_message_export_ok: '导出成功',
+  public_message_export_fail: '导出失败',
   // 下拉列表
   public_select_placeholder: '请选择',
   public_select_option_all: '全部',
@@ -269,6 +271,7 @@ export default {
   public_connection_schema_status: 'Schema状态',
   public_connection_schema_status_tip: 'Schema加载完成的连接才可以正常创建任务',
   public_connection_table_structure_update_time: '表结构更新时间',
+  public_connection_button_import: '导入连接',
   public_connection_button_create: '创建连接',
   public_connection_button_copy: '复制连接',
   public_connection_button_test: '连接测试',
@@ -629,4 +632,5 @@ export default {
   public_table_regex_example_1: '匹配以 user_ 开头的表',
   public_table_regex_example_2: '匹配以 _temp 结尾的表',
   public_table_regex_example_3: '匹配包含 test 或 demo 的表',
+  public_data_no_result: '未找到数据',
 }

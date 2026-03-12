@@ -884,6 +884,23 @@ export const routes = [
           // code: 'v2_data-encryption',
         },
       },
+      {
+        path: 'project-management',
+        name: 'projectManagement',
+        component: () =>
+          import('@/views/data-import-export/ProjectManagement.vue'),
+        meta: {
+          title: 'page_title_project_management',
+        },
+      },
+      {
+        path: 'data-import-export',
+        name: 'dataImportExport',
+        component: () => import('@/views/data-import-export/List.vue'),
+        meta: {
+          title: 'page_title_data_import_export',
+        },
+      },
     ],
   },
 
