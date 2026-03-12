@@ -1661,14 +1661,7 @@ export default {
           <div class="connection-from-title p-4">
             <div class="flex align-center gap-2">
               <slot name="title-prefix">
-                <el-button
-                  text
-                  @click="
-                    $router.push({
-                      name: 'connectionsList',
-                    })
-                  "
-                >
+                <el-button text @click="$router.back()">
                   <template #icon>
                     <VIcon>left</VIcon>
                   </template>

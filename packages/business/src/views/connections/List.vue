@@ -657,6 +657,12 @@ const handleChangeDatabaseType = (value: string) => {
   })
 }
 
+Object.keys(searchParams.value).forEach((key) => {
+  if (key in route.query) {
+    searchParams.value[key] = route.query[key] as string
+  }
+})
+
 // Lifecycle hooks
 onMounted(async () => {
   await fetchDatabaseTypeOptions()
@@ -669,12 +675,6 @@ onMounted(async () => {
   if (action === 'create') {
     checkTestConnectionAvailable()
   }
-
-  Object.keys(searchParams.value).forEach((key) => {
-    if (key in route.query) {
-      searchParams.value[key as keyof SearchParams] = route.query[key] as string
-    }
-  })
 
   timeout = setInterval(() => {
     table.value?.fetch(null, 0, true)

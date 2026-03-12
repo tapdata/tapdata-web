@@ -401,16 +401,14 @@ export function fetchSkipErrorTable(
   )
 }
 
-// # 恢复错误表同步接口：{{[PUT] /api/task/{taskId}/skip-error-table-recover}} 参数：
-// {noformat}@Operation(summary = "恢复错误表同步")
-// @PutMapping("/{taskId}/skip-error-table-recovering")
-// public ResponseMessage<Boolean> pageByTaskId(HttpServletRequest request
-//     , @PathVariable(name = "taskId") String taskId
-//     , @RequestParam(name = "sourceTable", required = false) String sourceTable
-// ){noformat}
-
 export function recoverSkipErrorTable(taskId: string, sourceTable: string) {
   return requestClient.put(
     `${BASE_URL}/${taskId}/skip-error-table-recovering?sourceTables=${sourceTable}`,
   )
+}
+
+export function checkTaskMemoryHeap(taskId: string) {
+  return requestClient.get<{
+    isSafe: boolean
+  }>(`${BASE_URL}/checkTaskMemoryHeap/${taskId}`)
 }

@@ -695,6 +695,11 @@ export default {
   packages_dag_config_data_read: '數據讀取配置',
   packages_dag_config_breakpoint_resume: '斷點續傳配置',
   packages_dag_config_datasource: '數據源專屬配置',
+  packages_dag_add_table_from_top: '點擊上方添加表',
+  packages_dag_select_table_from_left: '從左側選擇表',
+  packages_dag_pdk_node_config_table_level: '表級配置',
+  packages_dag_pdk_node_config_add_table: '添加表',
+  packages_dag_pdk_node_config_search_configured: '搜索已添加的表',
   packages_dag_config_data_write: '數據寫入配置',
   packages_dag_config_incremental_mode: '增量模式配置',
   packages_dag_config_data_filter: '數據過濾配置',
@@ -1004,6 +1009,9 @@ export default {
   packages_dag_drop_table_enabled_confirm:
     '您已選擇清空目標表數據，是否確認繼續？',
   packages_dag_compareIgnoreCase: '忽略大小写',
+  packages_dag_memory_heap_risk_title: '記憶體風險提示',
+  packages_dag_memory_heap_risk_message:
+    '檢測到潛在的記憶體風險，當前任務可能需要比可用資源更多的記憶體，建議適當降低來源節點的「全量每批讀取條數（Batch Size）」後再執行。是否繼續運行？',
   packages_dag_qpSshizhi_tip:
     '查詢範圍小於1小時，取每五秒的數據點計算平均的QPS值',
   packages_dag_qpSshizhi2_tip:

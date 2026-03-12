@@ -1375,6 +1375,7 @@ export default {
               {{ $t('packages_business_task_list_button_monitor') }}
             </ElButton>
             <ElButton
+              v-if="havePermission(row, 'Reset')"
               key="reset"
               text
               type="primary"

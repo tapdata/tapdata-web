@@ -829,6 +829,11 @@ export default {
   packages_dag_config_data_read: 'Data Read',
   packages_dag_config_breakpoint_resume: 'Resume from Breakpoint',
   packages_dag_config_datasource: 'Data Source',
+  packages_dag_add_table_from_top: 'Click top to add table',
+  packages_dag_select_table_from_left: 'Select table from left',
+  packages_dag_pdk_node_config_table_level: 'Table Level Config',
+  packages_dag_pdk_node_config_add_table: 'Add Table',
+  packages_dag_pdk_node_config_search_configured: 'Search for added tables',
   packages_dag_config_data_write: 'Data Write',
   packages_dag_config_incremental_mode: 'Incremental Mode',
   packages_dag_config_data_filter: 'Data Filter',
@@ -1168,6 +1173,9 @@ export default {
   packages_dag_drop_table_enabled_confirm:
     'Confirm clearing target table data?',
   packages_dag_compareIgnoreCase: 'Ignore Case',
+  packages_dag_memory_heap_risk_title: 'Memory Risk Warning',
+  packages_dag_memory_heap_risk_message:
+    'Potential memory risk detected. This task may require more memory than available resources.It is recommended to reduce the source node’s full-load batch size before proceeding. Continue anyway?',
   packages_dag_qpSshizhi_tip: 'Query < 1h: avg QPS from 5s data points',
   packages_dag_qpSshizhi2_tip:
     '1h ≤ Query < 24h: avg & max QPS from 1m data points',
