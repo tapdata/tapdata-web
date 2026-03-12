@@ -1,0 +1,81 @@
+.table-level-config-dialog {
+  &__count {
+    flex-shrink: 0;
+    padding: 2px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--el-text-color-regular);
+    background-color: var(--el-fill-color-light);
+  }
+
+  &__body {
+    display: flex;
+    min-height: 460px;
+    max-height: 70vh;
+  }
+
+  &__left {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    flex-shrink: 0;
+    padding: 16px;
+    border-right: 1px solid var(--el-border-color-lighter);
+  }
+
+  &__right {
+    flex: 1;
+    padding: 12px 24px;
+    overflow-y: auto;
+  }
+
+  &__table-list {
+    flex: 1;
+    min-height: 0;
+  }
+
+  &__table-item {
+    padding: 4px 8px 4px 12px;
+    border-radius: 8px;
+    line-height: 24px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--el-text-color-regular);
+    transition: background-color 0.2s;
+
+    .del-btn {
+      display: none;
+    }
+
+    &:hover {
+      background-color: var(--el-fill-color-light);
+      .del-btn {
+        display: inline-flex;
+      }
+    }
+
+    &.active {
+      background-color: var(--el-fill-color);
+      font-weight: 500;
+    }
+
+    
+  }
+
+  .el-input-number {
+    width: 100%;
+
+    .el-input__inner {
+      text-align: left;
+    }
+  }
+
+  .add-table-select {
+    .el-select__wrapper:not(.is-focused) {
+      .el-select__placeholder {
+        color: var(--el-input-text-color);
+      }
+    }
+  }
+}
+

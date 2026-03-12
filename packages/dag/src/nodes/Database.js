@@ -983,26 +983,6 @@ export class Database extends NodeType {
                       },
                     },
                   },
-                  tab6: {
-                    type: 'void',
-                    'x-component': 'FormCollapse.Item',
-                    'x-component-props': {
-                      title: i18n.t('packages_dag_config_datasource'),
-                    },
-                    'x-reactions': {
-                      fulfill: {
-                        schema: {
-                          'x-component-props.className':
-                            '{{$hasPdkConfig($values.attrs.pdkHash) && $self.query("nodeConfig.*").map(field => field.visible).includes(true) ? "":"none"}}',
-                        },
-                      },
-                    },
-                    properties: {
-                      nodeConfig: {
-                        type: 'object',
-                      },
-                    },
-                  },
                 },
               },
               targetCollapse: {
@@ -1364,25 +1344,22 @@ export class Database extends NodeType {
                       },
                     },
                   },
-                  tab3: {
-                    type: 'void',
-                    'x-component': 'FormCollapse.Item',
-                    'x-component-props': {
-                      title: i18n.t('packages_dag_config_datasource'),
+                },
+              },
+              pdkCollapse: {
+                type: 'void',
+                'x-component': 'PdkNodeConfig',
+                'x-reactions': {
+                  fulfill: {
+                    state: {
+                      visible:
+                        '{{!["CSV","EXCEL","JSON","XML"].includes($values.databaseType) && $hasPdkConfig($values.attrs.pdkHash)}}',
                     },
-                    'x-reactions': {
-                      fulfill: {
-                        schema: {
-                          'x-component-props.className':
-                            '{{$hasPdkConfig($values.attrs.pdkHash) && $self.query("nodeConfig.*").map(field => field.visible).includes(true) ? "":"none"}}',
-                        },
-                      },
-                    },
-                    properties: {
-                      nodeConfig: {
-                        type: 'object',
-                      },
-                    },
+                  },
+                },
+                properties: {
+                  nodeConfig: {
+                    type: 'object',
                   },
                 },
               },
