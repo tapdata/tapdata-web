@@ -4,12 +4,14 @@ import {
   checkConnectionTask,
   copyConnection,
   deleteConnection,
+  exportConnections,
   fetchConnections,
   getConnectionDatabaseTypes,
   updateConnectionById,
 } from '@tap/api/src/core/connections'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import FilterBar from '@tap/component/src/filter-bar/Main.vue'
+import { ImportOutlined } from '@tap/component/src/icon'
 import { Modal } from '@tap/component/src/modal'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
@@ -32,6 +34,7 @@ import PageContainer from '../../components/PageContainer.vue'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create.vue'
 import SchemaProgress from '../../components/SchemaProgress.vue'
 import TablePage from '../../components/TablePage.vue'
+import UploadDialog from '../../components/UploadDialog.vue'
 import { useHas } from '../../composables'
 import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '../../shared'
 import Preview from './Preview.vue'
@@ -657,6 +660,16 @@ const handleChangeDatabaseType = (value: string) => {
   })
 }
 
+const handleExport = () => {
+  const ids = multipleSelection.value.map((t) => t.id)
+  exportConnections(ids)
+}
+
+const uploadRef = ref()
+const handleImport = () => {
+  uploadRef.value.show()
+}
+
 Object.keys(searchParams.value).forEach((key) => {
   if (key in route.query) {
     searchParams.value[key] = route.query[key] as string
@@ -693,6 +706,10 @@ onUnmounted(() => {
 <template>
   <PageContainer>
     <template #actions>
+      <ElButton @click="handleImport">
+        <el-icon><ImportOutlined /></el-icon>
+        <span> {{ $t('packages_business_button_bulk_import') }}</span>
+      </ElButton>
       <ElButton
         v-if="buttonShowMap.create"
         id="connection-list-create"
@@ -780,6 +797,10 @@ onUnmounted(() => {
           @click="$refs.table.showClassify(handleSelectTag())"
         >
           <span> {{ $t('public_button_bulk_tag') }}</span>
+        </ElButton>
+        <ElButton @click="handleExport">
+          <el-icon><i-lucide-download /></el-icon>
+          <span> {{ $t('public_button_export') }}</span>
         </ElButton>
       </template>
       <ElTableColumn
@@ -1020,6 +1041,12 @@ onUnmounted(() => {
     />
     <UsedTaskDialog v-model="connectionTaskDialog" :data="connectionTaskData" />
     <PermissionseSettingsCreate ref="permissionseSettingsCreate" />
+    <UploadDialog
+      ref="uploadRef"
+      type="database"
+      :show-tag="false"
+      @success="table.fetch(1)"
+    />
   </PageContainer>
 </template>
 

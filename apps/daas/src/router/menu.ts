@@ -81,6 +81,8 @@ export const MENU = [
       },
       { name: 'HeartbeatTableList', code: '', parent: 'heartbeatTable' },
       { name: 'dataEncryption' },
+      { name: 'projectManagement' },
+      { name: 'dataImportExport' },
     ],
   },
   {

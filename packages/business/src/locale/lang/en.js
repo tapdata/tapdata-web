@@ -1733,13 +1733,13 @@ export default {
   packages_business_import_cancel_import: 'Cancel Import',
   packages_business_import_reuse_existing: 'Reuse Existing',
   packages_business_import_as_copy_tip:
-    'If a task or data source with the same name exists, import a new copy with the _import suffix.',
+    'If a task or connection with the same name exists, import a new copy with the _import suffix.',
   packages_business_import_replace_tip:
-    'If a task or data source with the same name exists, overwrite the existing one.',
+    'If a task or connection with the same name exists, overwrite the existing one.',
   packages_business_import_cancel_import_tip:
-    'If a task or data source with the same name exists, cancel the import.',
+    'If a task or connection with the same name exists, cancel the import.',
   packages_business_import_reuse_existing_tip:
-    'If a task name conflict, replace the task; if a data source name conflict, reuse the existing data source in the system.',
+    'If a task name conflict, replace the task; if a connection name conflict, reuse the existing connection in the system.',
   public_connector_beta_tip:
     'Currently in testing. We are continuously optimizing the experience.',
   public_connector_alpha_tip:
