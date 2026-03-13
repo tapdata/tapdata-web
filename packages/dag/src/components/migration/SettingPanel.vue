@@ -299,7 +299,12 @@ const accessNodeProcessList = computed(() => {
 
 const sourceNodes = computed(() => {
   return allNodes.value
-    .filter((node: any) => node.$outputs.length && !node.$inputs.length)
+    .filter(
+      (node: any) =>
+        (node.type === 'table' || node.type === 'database') &&
+        node.$outputs.length &&
+        !node.$inputs.length,
+    )
     .map((node: any) => ({
       nodeId: node.id,
       nodeName: node.name,
