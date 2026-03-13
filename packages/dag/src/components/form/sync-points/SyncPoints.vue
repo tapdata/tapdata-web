@@ -3,6 +3,7 @@ import { observer } from '@formily/reactive-vue'
 import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import { RecycleScroller } from 'vue-virtual-scroller'
+import { mapGetters } from 'vuex'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 export default observer({
@@ -21,18 +22,9 @@ export default observer({
     VEmpty,
   },
   computed: {
+    ...mapGetters('dataflow', ['hasCapability', 'nodeById']),
     items() {
       return this.value?.filter((item) => !!item.nodeId) || []
-    },
-    supportStreamOffsetNode() {
-      return this.$store.getters['dataflow/allNodes']
-        .filter((node) => node.$outputs.length && !node.$inputs.length)
-        .reduce((map, item) => {
-          map[item.id] = item?.attrs.capabilities.some(
-            (item) => item.id === 'get_stream_offset_function',
-          )
-          return map
-        }, {})
     },
   },
   methods: {
@@ -42,6 +34,12 @@ export default observer({
       } else {
         item.isStreamOffset = false
       }
+    },
+    checkStreamOffset(nodeId) {
+      return this.hasCapability(
+        this.nodeById(nodeId),
+        'get_stream_offset_function',
+      )
     },
   },
 })
@@ -73,7 +71,7 @@ export default observer({
             />
             <ElOption :label="$t('public_time_current')" value="current" />
             <ElOption
-              v-if="supportStreamOffsetNode[item.nodeId]"
+              v-if="checkStreamOffset(item.nodeId)"
               :label="$t('packages_dag_stream_offset')"
               value="streamOffset"
             />
@@ -81,7 +79,7 @@ export default observer({
 
           <ElInput
             v-if="
-              supportStreamOffsetNode[item.nodeId] &&
+              checkStreamOffset(item.nodeId) &&
               item.pointType === 'streamOffset'
             "
             v-model="item.streamOffsetString"
