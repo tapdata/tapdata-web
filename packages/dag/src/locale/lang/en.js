@@ -1200,4 +1200,8 @@ export default {
   packages_dag_only_show_skip: 'Only Show Skipped',
   packages_dag_SkipTableForMigrateSnapshot:
     'Skip failed tables, then stop after full sync',
+  packages_dag_fileLog: 'Database Log',
+  packages_dag_fileLog_tip:
+    'When enabled, database JDBC execution logs will be output in the engine background',
+  packages_dag_batch_edit: 'Batch Edit',
 }
