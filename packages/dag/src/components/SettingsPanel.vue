@@ -316,7 +316,12 @@ const accessNodeProcessList = computed(() => {
 
 const sourceNodes = computed(() => {
   return allNodes.value
-    .filter((node: any) => node.$outputs.length && !node.$inputs.length)
+    .filter(
+      (node: any) =>
+        (node.type === 'table' || node.type === 'database') &&
+        node.$outputs.length &&
+        !node.$inputs.length,
+    )
     .map((node: any) => ({
       nodeId: node.id,
       nodeName: node.name,
@@ -496,19 +501,23 @@ watch(
   { deep: true, immediate: true },
 )
 
+const syncPointsCache: Record<string, any> = {}
+
 watch(
   sourceNodes,
   () => {
     const timeZone = systemTimeZone.value
-    const oldPoints = form.values.syncPoints
-    const oldPointsMap = oldPoints?.length
-      ? oldPoints.reduce((map: Record<string, any>, point: any) => {
-          if (point.nodeId) map[point.nodeId] = point
-          return map
-        }, {})
-      : {}
+
+    if (dataflowStore.dataflow.syncPoints?.length) {
+      dataflowStore.dataflow.syncPoints.forEach((point: any) => {
+        if (point.nodeId) {
+          syncPointsCache[point.nodeId] = point
+        }
+      })
+    }
+
     const syncPoints = sourceNodes.value.map((item: any) => {
-      const old = oldPointsMap[item.nodeId]
+      const old = syncPointsCache[item.nodeId]
       const point = {
         ...item,
         timeZone,
@@ -526,6 +535,7 @@ watch(
       }
       return point
     })
+
     dataflowStore.dataflow.syncPoints = syncPoints
   },
   { immediate: true },
@@ -937,7 +947,7 @@ const schema = {
                             ),
                           },
                           'x-component': 'SyncPoints',
-                          'x-decorator': 'FormItem',
+                          // 'x-decorator': 'FormItem',
                           'x-reactions': {
                             dependencies: ['type'],
                             fulfill: {

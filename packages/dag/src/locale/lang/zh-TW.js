@@ -1053,4 +1053,5 @@ export default {
   packages_dag_search_processor: '搜索處理節點',
   packages_dag_canvas_add_node: '添加節點',
   packages_dag_canvas_fit_view: '適應畫布',
+  packages_dag_batch_edit: '批量修改',
 }

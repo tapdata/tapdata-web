@@ -1086,4 +1086,5 @@ export default {
   packages_dag_search_processor: '搜索处理节点',
   packages_dag_canvas_add_node: '添加节点',
   packages_dag_canvas_fit_view: '适应画布',
+  packages_dag_batch_edit: '批量修改',
 }

@@ -1237,4 +1237,5 @@ export default {
   packages_dag_search_processor: 'Search Processor',
   packages_dag_canvas_add_node: 'Add Node',
   packages_dag_canvas_fit_view: 'Fit to View',
+  packages_dag_batch_edit: 'Batch Edit',
 }
