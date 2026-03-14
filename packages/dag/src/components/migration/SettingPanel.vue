@@ -961,13 +961,7 @@ const schema = {
                               streamOffsetString: '',
                             },
                           ],
-                          'x-decorator-props': {
-                            tooltip: t(
-                              'packages_dag_task_setting_syncPoint_tip',
-                            ),
-                          },
                           'x-component': 'SyncPoints',
-                          'x-decorator': 'FormItem',
                           'x-reactions': {
                             dependencies: ['type'],
                             fulfill: {
