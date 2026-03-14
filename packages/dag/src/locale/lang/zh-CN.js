@@ -1064,4 +1064,5 @@ export default {
   packages_dag_SkipTableForMigrateSnapshot: '跳过异常表，完成全量后报错停止',
   packages_dag_fileLog: '数据库日志',
   packages_dag_fileLog_tip: '开启后，将在引擎后台输出数据库 JDBC 执行日志',
+  packages_dag_batch_edit: '批量修改',
 }
