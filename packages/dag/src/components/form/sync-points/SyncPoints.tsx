@@ -123,7 +123,7 @@ export const SyncPoints = observer(
       // ---- 渲染 ----
       const renderLabel = () => (
         <div class="inline-flex align-center">
-          <span class="mr-2">{t('packages_dag_task_setting_sync_point')}</span>
+          <span>{t('packages_dag_task_setting_sync_point')}</span>
           {!props.disabled && items.value.length > 1 && (
             <el-button
               text
