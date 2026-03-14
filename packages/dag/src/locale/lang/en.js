@@ -1205,4 +1205,5 @@ export default {
   packages_dag_fileLog: 'Database Log',
   packages_dag_fileLog_tip:
     'When enabled, database JDBC execution logs will be output in the engine background',
+  packages_dag_batch_edit: 'Batch Edit',
 }
