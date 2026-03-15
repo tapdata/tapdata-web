@@ -15,6 +15,8 @@ import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
 import { FormTab } from '../../../../form'
 import { action } from '@formily/reactive'
 
+const syncPointsCache = {}
+
 export default observer({
   name: 'SettingPanel',
   inject: ['lockedFeature', 'openLocked'],
@@ -507,7 +509,6 @@ export default observer({
                                   feedbackLayout: 'none'
                                 },
                                 'x-component': 'SyncPoints',
-                                'x-decorator': 'FormItem',
                                 'x-reactions': {
                                   dependencies: ['type'],
                                   fulfill: {
@@ -662,7 +663,7 @@ export default observer({
                                 'x-decorator-props': {
                                   tooltip: i18n.t('packages_dag_doubleActive_tip')
                                 },
-                                'x-component': 'Switch',
+                                'x-component': 'Switch'
                               },
                               accessNodeType: {
                                 type: 'string',
@@ -1271,7 +1272,9 @@ export default observer({
 
     sourceNodes() {
       return this.allNodes
-        .filter(node => node.$outputs.length && !node.$inputs.length)
+        .filter(
+          node => (node.type === 'table' || node.type === 'database') && node.$outputs.length && !node.$inputs.length
+        )
         .map(node => ({
           nodeId: node.id,
           nodeName: node.name,
@@ -1349,16 +1352,17 @@ export default observer({
     },
 
     sourceNodes(v) {
+      if (this.settings.syncPoints) {
+        this.settings.syncPoints.forEach(point => {
+          if (point.nodeId) {
+            syncPointsCache[point.nodeId] = point
+          }
+        })
+      }
+
       const timeZone = this.systemTimeZone
-      const oldPoints = this.settings.syncPoints
-      const oldPointsMap = oldPoints?.length
-        ? oldPoints.reduce((map, point) => {
-            if (point.nodeId) map[point.nodeId] = point
-            return map
-          }, {})
-        : {}
       const syncPoints = this.sourceNodes.map(item => {
-        const old = oldPointsMap[item.nodeId]
+        const old = syncPointsCache[item.nodeId]
         const point = {
           ...item,
           timeZone,

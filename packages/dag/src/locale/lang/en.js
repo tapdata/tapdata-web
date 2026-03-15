@@ -834,4 +834,5 @@ export default {
   packages_dag_merge_table_js_node_error: 'Merge table node cannot have JS node after it',
   packages_dag_merge_table_table_not_allow_target: 'Merge table does not support writing to {val}',
   packages_dag_syncForeignKeyEnable: 'Sync Foreign Key',
+  packages_dag_batch_edit: 'Batch Edit'
 }
