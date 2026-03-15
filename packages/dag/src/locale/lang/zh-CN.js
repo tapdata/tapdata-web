@@ -778,4 +778,5 @@ export default {
   packages_dag_merge_table_js_node_error: '主从合并节点后不允许存在 JS 节点',
   packages_dag_merge_table_table_not_allow_target: '主从合并后不支持将 {val} 作为写入目标',
   packages_dag_syncForeignKeyEnable: '同步外键',
+  packages_dag_batch_edit: '批量修改'
 }
