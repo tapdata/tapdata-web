@@ -49,6 +49,7 @@ const {
   onCreateConnection,
   onDeleteConnection,
   onDeleteNode,
+  onDeleteNodes,
   onAddNode,
   onMoveNodePosition,
   onUpdateNodesPosition,
@@ -498,6 +499,7 @@ provide('handlePreview', handlePreview)
       @create:connection="onCreateConnection"
       @delete:connection="onDeleteConnection"
       @delete:node="onDeleteNode"
+      @delete:nodes="onDeleteNodes"
       @add:node="onAddNode"
       @move:node:position="onMoveNodePosition"
       @click:node="onClickNode"

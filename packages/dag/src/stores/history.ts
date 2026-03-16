@@ -55,12 +55,16 @@ export class BulkCommand extends Undoable {
 
   async revert(store: DataflowStore): Promise<void> {
     // Revert commands in reverse order
+    // 同步调用所有 revert，让 Vue 在同一个微任务内批量处理响应式更新，
+    // 避免 await 导致中间状态刷新（如只恢复部分节点时 VueFlow 视图不同步）
+    const results: Promise<void>[] = []
     for (let i = this.commands.length - 1; i >= 0; i--) {
       const command = this.commands[i]
       if (command) {
-        await command.revert(store)
+        results.push(command.revert(store))
       }
     }
+    await Promise.all(results)
   }
 
   getTimestamp(): number {

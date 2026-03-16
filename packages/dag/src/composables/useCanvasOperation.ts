@@ -411,6 +411,14 @@ export function useCanvasOperation() {
     }
   }
 
+  const onDeleteNodes = (nodes: any[]) => {
+    historyStore.startRecordingUndo()
+    nodes.forEach((node) => {
+      onDeleteNode(node, { trackHistory: true, trackBulk: false })
+    })
+    historyStore.stopRecordingUndo()
+  }
+
   const onAddNode = (node: any, { trackHistory = true } = {}) => {
     dataflowStore.addNode(node)
     if (trackHistory) {
@@ -1657,6 +1665,7 @@ export function useCanvasOperation() {
     onDeleteConnection,
     onClickNode,
     onDeleteNode,
+    onDeleteNodes,
     onAddNode,
     validate,
     handleSave,
@@ -1676,6 +1685,5 @@ export function useCanvasOperation() {
     handleOpenInspect,
     handleOpenSharedCache,
     initShareCache,
-    reformDataflow,
   }
 }

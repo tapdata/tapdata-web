@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Background } from '@vue-flow/background'
 import {
+  SelectionMode,
   useVueFlow,
   VueFlow,
   type Connection,
@@ -43,6 +44,7 @@ const emit = defineEmits<{
   'create:connection': [connection: any]
   'delete:connection': [connection: any]
   'delete:node': [node: any]
+  'delete:nodes': [nodes: any[]]
   'add:node': [node: any]
   'move:node:position': [id: string, newPosition: [number, number]]
   'click:connection:add': [connection: any]
@@ -174,6 +176,7 @@ onMounted(() => {
   observeBottomBar()
 
   setupKeyboardShortcuts()
+  window.addEventListener('keydown', handleDeleteKeydown)
   // 注册 VueFlow 节点位置更新回调，用于 undo/redo 时同步 VueFlow 内部状态
   dataflowStore.registerVueFlowUpdateCallback((id, position) => {
     console.log(
@@ -190,6 +193,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   cleanupKeyboardShortcuts()
+  window.removeEventListener('keydown', handleDeleteKeydown)
   dataflowStore.unregisterVueFlowUpdateCallback()
   leftPanelResizeObserver?.disconnect()
   leftPanelMutationObserver?.disconnect()
@@ -208,7 +212,6 @@ const bottomBarStyle = computed(() => {
   return { left, right }
 })
 const { nodes, edges } = useCanvasMapping(dag)
-console.log('nodes', nodes)
 const vueFlow = useVueFlow()
 const {
   viewport,
@@ -221,6 +224,7 @@ const {
   onPaneContextMenu,
   screenToFlowCoordinate,
   getNodes,
+  getSelectedNodes,
 } = vueFlow
 
 // Zoom controls
@@ -390,6 +394,36 @@ function onDeleteConnection(connection: any) {
 
 function onDeleteNode(node: any) {
   emit('delete:node', node)
+}
+
+// Delete key handler: delete selected nodes
+function handleDeleteKeydown(event: KeyboardEvent) {
+  if (event.key !== 'Delete' && event.key !== 'Backspace') return
+  if (dataflowStore.stateIsReadonly) return
+
+  // 忽略在输入框、文本域等可编辑元素中的按键
+  const target = event.target as HTMLElement
+  if (
+    target.tagName === 'INPUT' ||
+    target.tagName === 'TEXTAREA' ||
+    target.isContentEditable
+  )
+    return
+
+  // 优先使用 VueFlow 框选的节点，否则使用 store 中单击选中的节点
+  const vueFlowSelected = getSelectedNodes.value
+  const nodesToDelete = vueFlowSelected
+    .map((graphNode) => graphNode.data)
+    .filter(Boolean)
+
+  if (nodesToDelete.length > 1) {
+    // 多节点批量删除，作为一个整体记录到 undo 历史
+    emit('delete:nodes', nodesToDelete)
+  } else if (nodesToDelete.length === 1) {
+    onDeleteNode(nodesToDelete[0])
+  } else if (dataflowStore.selectedNode) {
+    onDeleteNode(dataflowStore.selectedNode)
+  }
 }
 
 /**
@@ -750,6 +784,7 @@ defineExpose({
       :max-zoom="10"
       :delete-key-code="null"
       :selection-key-code="selectionKeyCode"
+      :selection-mode="SelectionMode.Partial"
       :pan-on-scroll="!isInPanningMode"
       :panning-mouse-button="panningMouseButton"
       :pan-on-drag="isInPanningMode"
