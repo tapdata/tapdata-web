@@ -67,7 +67,7 @@ const openTaskPopover = (ev: MouseEvent) => {
       class="nodrag nopan"
     >
       <div
-        class="table-lineage-connection-label flex overflow-hidden rounded-lg bg-white dark:bg-overlay border"
+        class="table-lineage-connection-label flex overflow-hidden rounded-lg bg-light dark:bg-overlay zoom-xs"
       >
         <div
           class="min-w-0 p-1 label-content clickable"
@@ -78,7 +78,7 @@ const openTaskPopover = (ev: MouseEvent) => {
             <OverflowTooltip
               :text="tasks[0].name"
               append-to="#table-lineage-graph"
-              class="min-w-0"
+              class="min-w-0 text-xs font-color-light"
             />
             <!-- <span
               class="overflow-hidden clickable ellipsis px-1 rounded-4"
@@ -97,7 +97,7 @@ const openTaskPopover = (ev: MouseEvent) => {
             append-to="#table-lineage-graph"
           >
             <div
-              class="inline-flex align-center gap-1 rounded-4 px-1 py-0.5"
+              class="inline-flex align-center gap-1 rounded-4 px-1 py-0.5 zoom-xs"
               style="background-color: var(--bg-code)"
             >
               <el-icon class="font-color-sslight" size="12"
