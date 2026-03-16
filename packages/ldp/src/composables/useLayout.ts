@@ -22,7 +22,7 @@ export function useLayout() {
     dagreGraph.setDefaultEdgeLabel(() => ({}))
 
     const isHorizontal = direction === 'LR'
-    dagreGraph.setGraph({ nodesep: 220, ranksep: 220, rankdir: direction })
+    dagreGraph.setGraph({ nodesep: 60, ranksep: 160, rankdir: direction })
 
     previousDirection.value = direction
 

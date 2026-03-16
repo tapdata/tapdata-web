@@ -426,7 +426,7 @@ provide('taskReplicateLagMap', taskReplicateLagMap)
       v-model:nodes="nodes"
       v-model:edges="edges"
       v-loading="loading"
-      class="border rounded-xl bg-white dark:bg-overlay"
+      class="border rounded-xl bg-white dark:bg-overlay text-xs"
       @nodes-initialized="handleLayoutGraph"
       @node-double-click="onNodeDoubleClick"
     >
