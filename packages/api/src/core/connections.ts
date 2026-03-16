@@ -1,3 +1,4 @@
+import Cookie from '@tap/shared/src/cookie'
 import { requestClient, type Filter } from '../request'
 
 const BASE_URL = '/api/Connections'
@@ -111,4 +112,17 @@ export function updateConnectionById(id: string, params: any) {
 export function findOneConnection(params: any) {
   params = params || {}
   return requestClient.get(`${BASE_URL}/findOne`, { params })
+}
+
+export function exportConnections(ids: string[]) {
+  const href = `${BASE_URL}/batch/load?connectionId=${ids.join('&connectionId=')}&access_token=${Cookie.get('access_token')}`
+  window.open(href)
+}
+
+export function uploadConnections(data: any) {
+  return requestClient.post(`${BASE_URL}/batch/import`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
 }

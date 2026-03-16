@@ -299,7 +299,12 @@ const accessNodeProcessList = computed(() => {
 
 const sourceNodes = computed(() => {
   return allNodes.value
-    .filter((node: any) => node.$outputs.length && !node.$inputs.length)
+    .filter(
+      (node: any) =>
+        (node.type === 'table' || node.type === 'database') &&
+        node.$outputs.length &&
+        !node.$inputs.length,
+    )
     .map((node: any) => ({
       nodeId: node.id,
       nodeName: node.name,
@@ -308,6 +313,9 @@ const sourceNodes = computed(() => {
       connectionName: node.attrs.connectionName,
     }))
 })
+
+// 缓存所有历史 syncPoint 设置，防止断线重连后丢失
+const syncPointsCache: Record<string, any> = {}
 
 const systemTimeZone = computed(() => {
   const timeZone = new Date().getTimezoneOffset() / 60
@@ -502,15 +510,17 @@ watch(
 
 watch(sourceNodes, () => {
   const timeZone = systemTimeZone.value
-  const oldPoints = props.settings.syncPoints
-  const oldPointsMap = oldPoints?.length
-    ? oldPoints.reduce((map: Record<string, any>, point: any) => {
-        if (point.nodeId) map[point.nodeId] = point
-        return map
-      }, {})
-    : {}
+
+  if (props.settings.syncPoints?.length) {
+    props.settings.syncPoints.forEach((point: any) => {
+      if (point.nodeId) {
+        syncPointsCache[point.nodeId] = point
+      }
+    })
+  }
+
   const syncPoints = sourceNodes.value.map((item: any) => {
-    const old = oldPointsMap[item.nodeId]
+    const old = syncPointsCache[item.nodeId]
     const point = {
       ...item,
       timeZone,
@@ -952,13 +962,7 @@ const schema = {
                               streamOffsetString: '',
                             },
                           ],
-                          'x-decorator-props': {
-                            tooltip: t(
-                              'packages_dag_task_setting_syncPoint_tip',
-                            ),
-                          },
                           'x-component': 'SyncPoints',
-                          'x-decorator': 'FormItem',
                           'x-reactions': {
                             dependencies: ['type'],
                             fulfill: {

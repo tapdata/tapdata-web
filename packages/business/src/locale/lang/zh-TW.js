@@ -1531,13 +1531,13 @@ export default {
   packages_business_import_cancel_import: '取消導入',
   packages_business_import_reuse_existing: '复用現有連接導入',
   packages_business_import_as_copy_tip:
-    '若任務名或數據源名衝突，會在名稱後加 _import 後綴導入為新副本。',
+    '若任務名或連接名衝突，會在名稱後加 _import 後綴導入為新副本。',
   packages_business_import_replace_tip:
-    '若任務名或數據源名衝突，將覆蓋系統中已有的任務或數據源。',
+    '若任務名或連接名衝突，將覆蓋系統中已有的任務或連接。',
   packages_business_import_cancel_import_tip:
-    '若任務名或數據源名衝突，則終止導入操作，不導入任何內容。',
+    '若任務名或連接名衝突，則終止導入操作，不導入任何內容。',
   packages_business_import_reuse_existing_tip:
-    '若任務名衝突則替換任務，數據源名衝突則重用系統中已有數據源。',
+    '若任務名衝突則替換任務，連接名衝突則重用系統中已有連接。',
   public_connector_beta_tip: '正在測試階段，我們正在不斷優化體驗',
   public_connector_alpha_tip: '正在持續開發中，部分功能可能還在完善',
 }

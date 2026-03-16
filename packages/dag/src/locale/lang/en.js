@@ -663,7 +663,8 @@ export default {
   packages_dag_ai_code_dialog_generating: 'Generating...',
   packages_dag_ai_code_dialog_preview: 'Generated Result',
   packages_dag_ai_code_dialog_generate_success: 'Code generated successfully',
-  packages_dag_ai_code_dialog_generate_failed: 'Code generation failed, please try again later',
+  packages_dag_ai_code_dialog_generate_failed:
+    'Code generation failed, please try again later',
   packages_dag_js_declare_index_queding: 'OK',
   packages_dag_js_declare_index_shilidaima: 'Sample Code',
   packages_dag_js_declare_index_shiyongbangzhu: 'Use Help',
