@@ -27,7 +27,7 @@ export default observer(
         default: false
       }
     },
-    setup(props, { root }) {
+    setup(props) {
       const items = computed(() => {
         return props.value?.filter((item: any) => !!item.nodeId) || []
       })
@@ -74,8 +74,8 @@ export default observer(
               disabled={disabled || hiddenPointType}
               class="flex-1"
             >
-              <ElOption label={root.$t('public_time_user_specified_time')} value="localTZ" />
-              <ElOption label={root.$t('public_time_current')} value="current" />
+              <ElOption label={i18n.t('public_time_user_specified_time')} value="localTZ" />
+              <ElOption label={i18n.t('public_time_current')} value="current" />
             </ElSelect>
 
             {config.pointType === 'localTZ' && (
@@ -101,8 +101,7 @@ export default observer(
           <span>{i18n.t('packages_dag_task_setting_sync_point')}</span>
           {!props.disabled && items.value.length > 1 && (
             <ElButton
-              text
-              type="primary"
+              type="text"
               tag="a"
               onClick={openBatchDialog}
               class="position-absolute end-0 translate-middle-y top-50"
