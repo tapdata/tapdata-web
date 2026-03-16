@@ -81,13 +81,13 @@ function handleTargetClick() {
     class="border rounded-2xl bg-white dark:bg-overlay shadow-sm table-node"
     :class="{ active }"
   >
-    <div class="p-2">
+    <div class="p-1.5">
       <template v-if="data.type === 'apiserverLineage'">
         <div class="flex align-center gap-2">
           <div
-            class="p-1 bg-gray-100 dark:bg-white/15 rounded-lg flex align-center justify-center table-item-icon mt-0.5"
+            class="p-1 bg-gray-100 dark:bg-white/15 rounded-lg flex align-center justify-center table-item-icon"
           >
-            <el-icon size="18" class="font-color-sslight"
+            <el-icon size="16" class="font-color-sslight"
               ><i-lucide-link-2
             /></el-icon>
           </div>
@@ -107,11 +107,11 @@ function handleTargetClick() {
         </div>
       </template>
       <template v-else>
-        <div class="flex align-items-start gap-2">
+        <div class="flex align-items-center gap-1.5">
           <div
-            class="p-1 bg-gray-100 dark:bg-white/15 rounded-lg flex align-center justify-center table-item-icon mt-0.5"
+            class="p-1 bg-gray-100 dark:bg-white/15 rounded-lg flex align-center justify-center table-item-icon"
           >
-            <el-icon size="18" class="font-color-light"
+            <el-icon size="16" class="font-color-light"
               ><i-lucide-table
             /></el-icon>
           </div>
