@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { isOutsideSelected } from '@tap/shared/src/dom'
 import { Background } from '@vue-flow/background'
 import {
   SelectionMode,
@@ -32,6 +33,7 @@ import NodesPanel from './components/NodesPanel.vue'
 import RightPanel from './components/RightPanel.vue'
 import { useCanvasMapping } from './composables/useCanvasMapping'
 import { useHistory } from './composables/useHistory'
+import { useKeybindings, type KeyMap } from './composables/useKeybindings'
 import { useLayout } from './composables/useLayout'
 import { useDataflowStore } from './stores/dataflow.store'
 import { useUiStore } from './stores/ui.store'
@@ -45,14 +47,21 @@ const emit = defineEmits<{
   'delete:connection': [connection: any]
   'delete:node': [node: any]
   'delete:nodes': [nodes: any[]]
+  'copy:nodes': [nodes: any[]]
   'add:node': [node: any]
   'move:node:position': [id: string, newPosition: [number, number]]
   'click:connection:add': [connection: any]
 }>()
 
-const props = defineProps<{
-  hideLeft?: boolean
-}>()
+const props = withDefaults(
+  defineProps<{
+    hideLeft?: boolean
+    keyBindings?: boolean
+  }>(),
+  {
+    keyBindings: true,
+  },
+)
 
 const uiStore = useUiStore()
 const dataflowStore = useDataflowStore()
@@ -151,6 +160,21 @@ function onNodesChange(changes: NodeChange[]) {
   updateHelperLines(changes, getNodes.value)
 }
 
+function emitWithSelectedNodes(emitFn: (node: any[]) => void) {
+  return () => {
+    // 优先使用 VueFlow 框选的节点，否则使用 store 中单击选中的节点
+    const vueFlowSelected = getSelectedNodes.value
+    const nodesToDelete = vueFlowSelected
+      .map((graphNode) => graphNode.data)
+      .filter(Boolean)
+
+    if (nodesToDelete.length) {
+      // 多节点批量删除，作为一个整体记录到 undo 历史
+      emitFn(nodesToDelete)
+    } else if (dataflowStore.selectedNode) emitFn([dataflowStore.selectedNode])
+  }
+}
+
 // History (Undo/Redo) controls
 const {
   canUndo,
@@ -160,6 +184,37 @@ const {
   setupKeyboardShortcuts,
   cleanupKeyboardShortcuts,
 } = useHistory()
+const disableKeyBindings = computed(() => !props.keyBindings)
+const keyMap = computed(() => {
+  const readOnlyKeymap: KeyMap = {
+    ctrl_c: {
+      disabled: () => isOutsideSelected(viewportRef.value),
+      run: emitWithSelectedNodes((nodes) => emit('copy:nodes', nodes)),
+    },
+    ctrl_a: () => {
+      nodesSelectionActive.value = true
+      addSelectedNodes(graphNodes.value)
+    },
+    'shift_+|+|=|shift_Equal|Equal': () => handleZoomIn(),
+    'shift+_|-|_|shift_Minus|Minus': () => handleZoomOut(),
+    0: () => handleZoomReset(),
+    1: () => handleFitView(),
+  }
+
+  if (dataflowStore.stateIsReadonly) return readOnlyKeymap
+
+  const fullKeymap: KeyMap = {
+    ...readOnlyKeymap,
+    // ctrl_x: emitWithSelectedNodes((ids) => emit('cut:nodes', ids)),
+    'delete|backspace': emitWithSelectedNodes((nodes) =>
+      emit('delete:nodes', nodes),
+    ),
+    ctrl_d: emitWithSelectedNodes((ids) => emit('duplicate:nodes', ids)),
+  }
+  return fullKeymap
+})
+
+useKeybindings(keyMap, { disabled: disableKeyBindings })
 
 onMounted(() => {
   // Start observing the left panel slot content width
@@ -176,24 +231,14 @@ onMounted(() => {
   observeBottomBar()
 
   setupKeyboardShortcuts()
-  window.addEventListener('keydown', handleDeleteKeydown)
   // 注册 VueFlow 节点位置更新回调，用于 undo/redo 时同步 VueFlow 内部状态
   dataflowStore.registerVueFlowUpdateCallback((id, position) => {
-    console.log(
-      'VueFlow updateNode callback',
-      id,
-      position,
-      'current zoom:',
-      viewport.value.zoom,
-    )
     updateNode(id, { position })
-    console.log('VueFlow updateNode done, new zoom:', viewport.value.zoom)
   })
 })
 
 onUnmounted(() => {
   cleanupKeyboardShortcuts()
-  window.removeEventListener('keydown', handleDeleteKeydown)
   dataflowStore.unregisterVueFlowUpdateCallback()
   leftPanelResizeObserver?.disconnect()
   leftPanelMutationObserver?.disconnect()
@@ -214,7 +259,10 @@ const bottomBarStyle = computed(() => {
 const { nodes, edges } = useCanvasMapping(dag)
 const vueFlow = useVueFlow()
 const {
+  viewportRef,
   viewport,
+  nodes: graphNodes,
+  nodesSelectionActive,
   zoomTo,
   updateNode,
   onEdgeMouseLeave,
@@ -223,6 +271,8 @@ const {
   onNodeMouseLeave,
   onPaneContextMenu,
   screenToFlowCoordinate,
+  addSelectedNodes,
+  removeSelectedNodes,
   getNodes,
   getSelectedNodes,
 } = vueFlow
@@ -396,36 +446,6 @@ function onDeleteNode(node: any) {
   emit('delete:node', node)
 }
 
-// Delete key handler: delete selected nodes
-function handleDeleteKeydown(event: KeyboardEvent) {
-  if (event.key !== 'Delete' && event.key !== 'Backspace') return
-  if (dataflowStore.stateIsReadonly) return
-
-  // 忽略在输入框、文本域等可编辑元素中的按键
-  const target = event.target as HTMLElement
-  if (
-    target.tagName === 'INPUT' ||
-    target.tagName === 'TEXTAREA' ||
-    target.isContentEditable
-  )
-    return
-
-  // 优先使用 VueFlow 框选的节点，否则使用 store 中单击选中的节点
-  const vueFlowSelected = getSelectedNodes.value
-  const nodesToDelete = vueFlowSelected
-    .map((graphNode) => graphNode.data)
-    .filter(Boolean)
-
-  if (nodesToDelete.length > 1) {
-    // 多节点批量删除，作为一个整体记录到 undo 历史
-    emit('delete:nodes', nodesToDelete)
-  } else if (nodesToDelete.length === 1) {
-    onDeleteNode(nodesToDelete[0])
-  } else if (dataflowStore.selectedNode) {
-    onDeleteNode(dataflowStore.selectedNode)
-  }
-}
-
 /**
  * 禁用/启用节点及其同链路上的关联节点
  */
@@ -501,7 +521,21 @@ function onMoveNodePosition(id: string, newPosition: [number, number]) {
 
 function onNodeClick({ event, node }) {
   if (node.data?.hiddenMap?.setting) return
+  // 记录最后点击位置（flow 坐标），用于粘贴节点定位
+  if (node.position) {
+    dataflowStore.lastClickPosition = [node.position.x, node.position.y]
+  }
   emit('click:node', node)
+}
+
+function onPaneClick(event: MouseEvent) {
+  const pos = screenToFlowCoordinate({ x: event.clientX, y: event.clientY })
+  dataflowStore.lastClickPosition = [pos.x, pos.y]
+}
+
+function onSelectionEnd(event: MouseEvent) {
+  const pos = screenToFlowCoordinate({ x: event.clientX, y: event.clientY })
+  dataflowStore.lastClickPosition = [pos.x, pos.y]
 }
 
 async function onShowNodesPopover(data, target, key) {
@@ -594,9 +628,37 @@ function locateNode(nodeId: string) {
   })
 }
 
+/**
+ * 确保指定节点在视野内（不改变缩放，仅在节点不可见时平移）
+ */
+function ensureNodesVisible(nodeIds: string[]) {
+  if (!nodeIds.length) return
+  const existingIds = nodeIds.filter((id) => vueFlow.findNode(id))
+  if (!existingIds.length) return
+  vueFlow.fitView({
+    nodes: existingIds,
+    duration: 200,
+    maxZoom: viewport.value.zoom, // 不放大，保持当前缩放
+    padding: 0.2,
+  })
+}
+
+/**
+ * 选中指定节点（先清除已有选中）
+ */
+function selectNodes(nodeIds: string[]) {
+  if (!nodeIds.length) return
+  removeSelectedNodes(getNodes.value)
+  addSelectedNodes(
+    nodeIds.map((id) => vueFlow.findNode(id)).filter(Boolean) as GraphNode[],
+  )
+}
+
 defineExpose({
   fitViewWithOffset,
   locateNode,
+  ensureNodesVisible,
+  selectNodes,
   handleLayoutGraph,
 })
 </script>
@@ -792,6 +854,8 @@ defineExpose({
       @node-drag-stop="onNodeDragStop"
       @connect="onConnect"
       @node-click="onNodeClick"
+      @pane-click="onPaneClick"
+      @selection-end="onSelectionEnd"
       @nodes-change="onNodesChange"
     >
       <template #node-canvas="nodeProps">

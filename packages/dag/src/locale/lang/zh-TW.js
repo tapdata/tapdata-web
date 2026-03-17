@@ -1054,4 +1054,5 @@ export default {
   packages_dag_canvas_add_node: '添加節點',
   packages_dag_canvas_fit_view: '適應畫布',
   packages_dag_batch_edit: '批量修改',
+  packages_dag_src_editor_copy_success: '已複製到剪貼板',
 }

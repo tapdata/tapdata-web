@@ -21,6 +21,7 @@ import MaterializedView from './components/materialized-view/MaterializedView.vu
 import ConsolePanel from './components/migration/ConsolePanel.vue'
 import TaskOperations from './components/TaskOperations.vue'
 import { useCanvasOperation } from './composables/useCanvasOperation'
+import { useClipboard } from './composables/useClipboard'
 import { useDataflowStore } from './stores/dataflow.store'
 import { useHistoryStore } from './stores/history.store'
 
@@ -67,7 +68,11 @@ const {
   handleForceStop,
   handlePageReturn,
   setMaterializedViewVisible,
+  onCopyNodes,
+  onPasteNodes,
 } = useCanvasOperation()
+
+const clipboard = useClipboard({ onPaste: onClipboardPaste })
 
 const isInitialized = ref(false)
 
@@ -110,6 +115,26 @@ const init = async () => {
 
   // Check route query for auto-opening materialized view
   checkMaterializedView()
+}
+
+const copyNodes = async (nodes: any[]) => {
+  await clipboard.copy(onCopyNodes(nodes))
+
+  ElMessage.success(t('packages_dag_src_editor_copy_success'))
+}
+
+function onClipboardPaste(plainTextData: string) {
+  const newIds = onPasteNodes(plainTextData)
+  if (!newIds.length) return
+
+  setTimeout(() => {
+    // 确保粘贴的节点在视野内
+    canvasRef.value?.ensureNodesVisible(newIds)
+    // 多节点（框选复制的）重新选中并显示框选矩形
+    if (newIds.length > 1) {
+      canvasRef.value?.selectNodes(newIds)
+    }
+  }, 10)
 }
 
 watch([() => dag.value.nodes.length, () => dag.value.edges.length], () => {
@@ -500,6 +525,7 @@ provide('handlePreview', handlePreview)
       @delete:connection="onDeleteConnection"
       @delete:node="onDeleteNode"
       @delete:nodes="onDeleteNodes"
+      @copy:nodes="copyNodes"
       @add:node="onAddNode"
       @move:node:position="onMoveNodePosition"
       @click:node="onClickNode"

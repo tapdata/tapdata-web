@@ -18,8 +18,8 @@ import { Modal } from '@tap/component/src/modal'
 import { computed as reactiveComputed } from '@tap/form/src/shared/reactive'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 import { useI18n } from '@tap/i18n'
-import { setPageTitle } from '@tap/shared'
-import { isEmpty } from 'lodash-es'
+import { setPageTitle, uuid } from '@tap/shared'
+import { cloneDeep, isEmpty } from 'lodash-es'
 import {
   computed,
   getCurrentInstance,
@@ -424,6 +424,164 @@ export function useCanvasOperation() {
     if (trackHistory) {
       historyStore.pushCommandToUndo(new AddNodeCommand(node, Date.now()))
     }
+  }
+
+  // ========== Copy / Paste ==========
+  const CLIPBOARD_FLAG = '__tapdata_dag_clipboard__'
+
+  const onCopyNodes = (nodes: any[]) => {
+    const nodeIds = new Set(nodes.map((n) => n.id))
+    // 只保留选中节点之间的连线
+    const edges = dag.value.edges.filter(
+      (e: any) => nodeIds.has(e.source) && nodeIds.has(e.target),
+    )
+    const payload = {
+      flag: CLIPBOARD_FLAG,
+      nodes: cloneDeep(nodes),
+      edges: cloneDeep(edges),
+    }
+    return JSON.stringify(payload)
+  }
+
+  /**
+   * 计算粘贴节点组的包围盒尺寸
+   */
+  const getNodesGroupSize = (
+    nodes: any[],
+  ): { width: number; height: number } => {
+    const NODE_WIDTH = 220
+    const NODE_HEIGHT = 76
+    let minX = Infinity
+    let minY = Infinity
+    let maxX = -Infinity
+    let maxY = -Infinity
+    for (const node of nodes) {
+      const [x, y] = node.attrs?.position ?? [0, 0]
+      minX = Math.min(minX, x)
+      minY = Math.min(minY, y)
+      maxX = Math.max(maxX, x + NODE_WIDTH)
+      maxY = Math.max(maxY, y + NODE_HEIGHT)
+    }
+    return { width: maxX - minX, height: maxY - minY }
+  }
+
+  /**
+   * 借鉴 n8n：在 lastClickPosition 附近找到一个不与现有节点重叠的位置。
+   * 返回粘贴节点组左上角应放置的坐标。
+   */
+  const getNewNodePosition = (
+    existingNodes: any[],
+    clickPos: [number, number],
+    groupSize: { width: number; height: number } = { width: 0, height: 0 },
+  ): [number, number] => {
+    const NODE_WIDTH = 220
+    const NODE_HEIGHT = 76
+    const GRID_SIZE = 40
+
+    let [targetX, targetY] = clickPos
+    // 将目标位置对齐到网格
+    targetX = Math.round(targetX / GRID_SIZE) * GRID_SIZE
+    targetY = Math.round(targetY / GRID_SIZE) * GRID_SIZE
+
+    const hasCollision = (x: number, y: number): boolean => {
+      const right = x + Math.max(groupSize.width, NODE_WIDTH)
+      const bottom = y + Math.max(groupSize.height, NODE_HEIGHT)
+      return existingNodes.some((n) => {
+        const [nx, ny] = n.attrs?.position ?? [0, 0]
+        return (
+          x < nx + NODE_WIDTH &&
+          right > nx &&
+          y < ny + NODE_HEIGHT &&
+          bottom > ny
+        )
+      })
+    }
+
+    // 向右下方逐步偏移，直到找到不重叠的位置
+    let attempts = 0
+    while (hasCollision(targetX, targetY) && attempts < 50) {
+      targetX += GRID_SIZE
+      targetY += GRID_SIZE
+      attempts++
+    }
+
+    return [targetX, targetY]
+  }
+
+  /**
+   * 粘贴节点，返回新节点的 ID 列表（用于后续选中和视野定位）
+   */
+  const onPasteNodes = (plainText: string): string[] => {
+    let data: any
+    try {
+      data = JSON.parse(plainText)
+    } catch {
+      return [] // 非合法 JSON，忽略
+    }
+    if (data?.flag !== CLIPBOARD_FLAG || !Array.isArray(data.nodes)) return []
+
+    const nodes: any[] = cloneDeep(data.nodes)
+    const edges: any[] = cloneDeep(data.edges || [])
+    if (!nodes.length) return []
+
+    // 计算原始节点组的包围盒左上角
+    let origMinX = Infinity
+    let origMinY = Infinity
+    for (const node of nodes) {
+      const [x, y] = node.attrs?.position ?? [0, 0]
+      origMinX = Math.min(origMinX, x)
+      origMinY = Math.min(origMinY, y)
+    }
+
+    // 计算目标位置：lastClickPosition 附近无重叠的位置
+    const groupSize =
+      nodes.length > 1 ? getNodesGroupSize(nodes) : { width: 0, height: 0 }
+    const [newX, newY] = getNewNodePosition(
+      dag.value.nodes,
+      dataflowStore.lastClickPosition,
+      groupSize,
+    )
+
+    // 计算偏移量：原始左上角 → 目标位置
+    const offsetX = newX - origMinX
+    const offsetY = newY - origMinY
+
+    // 旧 ID → 新 ID 映射
+    const idMap: Record<string, string> = {}
+    nodes.forEach((node) => {
+      const newId = uuid()
+      idMap[node.id] = newId
+      node.id = newId
+      // 按统一偏移量移动位置
+      if (node.attrs?.position) {
+        node.attrs.position = [
+          node.attrs.position[0] + offsetX,
+          node.attrs.position[1] + offsetY,
+        ]
+      }
+      // 清除运行时引用，addNode 时会重建
+      node.$inputs = []
+      node.$outputs = []
+      delete node.__Ctor
+    })
+
+    // 重新映射连线
+    edges.forEach((edge) => {
+      edge.source = idMap[edge.source]
+      edge.target = idMap[edge.target]
+    })
+
+    // 批量添加，作为一个 bulk undo
+    historyStore.startRecordingUndo()
+    nodes.forEach((node) => {
+      onAddNode(node, { trackHistory: true })
+    })
+    edges.forEach((edge) => {
+      onCreateConnection(edge, { trackHistory: true })
+    })
+    historyStore.stopRecordingUndo()
+
+    return nodes.map((n) => n.id)
   }
 
   // ========== Validation & Save ==========
@@ -1667,6 +1825,8 @@ export function useCanvasOperation() {
     onDeleteNode,
     onDeleteNodes,
     onAddNode,
+    onCopyNodes,
+    onPasteNodes,
     validate,
     handleSave,
     reformDataflow,

@@ -1239,4 +1239,5 @@ export default {
   packages_dag_canvas_add_node: 'Add Node',
   packages_dag_canvas_fit_view: 'Fit to View',
   packages_dag_batch_edit: 'Batch Edit',
+  packages_dag_src_editor_copy_success: 'Copied to clipboard',
 }

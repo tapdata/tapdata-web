@@ -91,6 +91,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
   const pageVersion = ref(Date.now().toString())
   const selectedNode = ref(null)
   const selectedNodeId = ref(null)
+  const lastClickPosition = ref<[number, number]>([0, 0])
   const stateIsReadonly = ref(false)
   const showSettings = ref(false)
   const dataflowName = ref('')
@@ -873,6 +874,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     patchDataflowDebounce,
     processorNodeTypes,
     selectedNode,
+    lastClickPosition,
     stateIsReadonly,
     taskSaving,
     showSettings,
