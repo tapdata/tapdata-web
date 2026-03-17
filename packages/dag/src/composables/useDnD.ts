@@ -15,10 +15,8 @@ export const makeNode = (
     priorityProcessId: connection.priorityProcessId,
     pdkType: connection.pdkType,
     pdkHash: connection.pdkHash,
-    capabilities: connection.capabilities || [],
     db_version: connection.db_version,
     hasCreated: false,
-    connectionTags: connection.definitionTags,
   }
 
   return {

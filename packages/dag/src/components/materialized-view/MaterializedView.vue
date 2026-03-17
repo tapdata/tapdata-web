@@ -105,8 +105,6 @@ const flowNodes = computed(() => {
   return result
 })
 
-console.log('flowNodes', flowNodes)
-
 const flowEdges = computed(() => {
   const result = []
   for (const sourceId in outputsMap) {
@@ -203,7 +201,6 @@ function watchMergeProperties() {
   unwatchMergeProperties = watch(
     () => activeNode.value?.mergeProperties,
     () => {
-      console.log('watchMergeProperties')
       updateDag()
     },
     { deep: true },

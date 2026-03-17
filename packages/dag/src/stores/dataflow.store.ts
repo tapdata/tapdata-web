@@ -573,6 +573,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     pdkSchemaFreeMap.value = tagsMap
     pdkDoubleActiveMap.value = doubleActiveMap
     pdkId2Hash.value = pdkIdMap
+    console.log('tagsMap', tagsMap)
   }
 
   function selectNode(node: any) {
@@ -813,9 +814,26 @@ export const useDataflowStore = defineStore('dataflow', () => {
     return Boolean(getCapability(node, capabilityId))
   }
 
+  // 判断是否支持多个能力
+  function hasCapabilities(node: any, capabilityIds: string[]) {
+    const pdkHash = isString(node) ? node : node?.attrs?.pdkHash
+    const pdkCapabilities = pdkCapabilitiesMap.value[pdkHash]
+    return capabilityIds.every((id: string) => pdkCapabilities?.[id])
+  }
+
   function getCapability(node, capabilityId) {
     const pdkHash = isString(node) ? node : node?.attrs?.pdkHash
     return pdkCapabilitiesMap.value[pdkHash]?.[capabilityId]
+  }
+
+  function getCapabilitiesByType(node: any, type: number) {
+    const pdkCapabilities = getCapabilitiesMap(node)
+    return Object.values(pdkCapabilities).filter((item) => item.type === type)
+  }
+
+  function isSchemaFree(node: any) {
+    const pdkHash = isString(node) ? node : node?.attrs?.pdkHash
+    return pdkSchemaFreeMap.value[pdkHash]
   }
 
   function resetDataflow() {
@@ -923,6 +941,9 @@ export const useDataflowStore = defineStore('dataflow', () => {
     createDataflow,
     selectNodeById,
     hasCapability,
+    hasCapabilities,
     getCapability,
+    getCapabilitiesByType,
+    isSchemaFree,
   }
 })

@@ -28,7 +28,8 @@ const hasNodeError = computed(() => store.getters['dataflow/hasNodeError'])
 const ins = computed(() => props.data?.__Ctor || {})
 
 const wrapClass = computed(() => {
-  if (dataflowStore.selectedNode?.id === props.data.id) return 'border-primary'
+  if (dataflowStore.selectedNode?.id === props.data.id || props.selected)
+    return 'border-primary'
   return ''
 })
 

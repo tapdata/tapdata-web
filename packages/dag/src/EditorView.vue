@@ -538,6 +538,7 @@ provide('handlePreview', handlePreview)
     <SkipError ref="skipErrorRef" @skip="startTask" />
 
     <MaterializedView
+      v-if="dataflow.syncType === 'sync'"
       ref="materializedView"
       :visible="dataflowStore.materializedViewVisible"
       :disabled="dataflowStore.stateIsReadonly"

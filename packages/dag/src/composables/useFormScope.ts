@@ -22,11 +22,12 @@ import { FormTab } from '@tap/form/src/components/form-tab'
 import { useI18n } from '@tap/i18n'
 import { Cookie, isPlainObj } from '@tap/shared'
 import axios from 'axios'
-import { isEmpty, isEqual, merge } from 'lodash-es'
+import { isEmpty, merge } from 'lodash-es'
 import { computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { useDataflowStore } from '../stores/dataflow.store'
+import type { Field } from '@formily/core'
 
 function addDeclaredCompleter(editor, tools, params1) {
   const tapType = [
@@ -786,21 +787,22 @@ export function useFormScope({ canvasRef }) {
       }
     },
 
-    useDmlPolicy: (field) => {
-      const capabilities = field.query('attrs.capabilities').get('value')
-      let insertPolicy
-      let updatePolicy
-      let deletePolicy
-
-      if (capabilities) {
-        insertPolicy = capabilities.find(({ id }) => id === 'dml_insert_policy')
-        updatePolicy = capabilities.find(({ id }) => id === 'dml_update_policy')
-        deletePolicy = capabilities.find(({ id }) => id === 'dml_delete_policy')
-      }
-
-      const insertField = field.query('dmlPolicy.insertPolicy').take()
-      const updateField = field.query('dmlPolicy.updatePolicy').take()
-      const deleteField = field.query('dmlPolicy.deletePolicy').take()
+    useDmlPolicy: (field: Field) => {
+      const insertPolicy = dataflowStore.getCapability(
+        field.form.values,
+        'dml_insert_policy',
+      )
+      const updatePolicy = dataflowStore.getCapability(
+        field.form.values,
+        'dml_update_policy',
+      )
+      const deletePolicy = dataflowStore.getCapability(
+        field.form.values,
+        'dml_delete_policy',
+      )
+      const insertField = field.query('dmlPolicy.insertPolicy').take() as Field
+      const updateField = field.query('dmlPolicy.updatePolicy').take() as Field
+      const deleteField = field.query('dmlPolicy.deletePolicy').take() as Field
       // 查找上游是否包含Unwind节点
       const unwindNode = findParentNodeByType(
         field.form.values,
@@ -808,7 +810,7 @@ export function useFormScope({ canvasRef }) {
       )
       const originNodeData = findNodeById(field.form.values.id)
 
-      const func = (policy, policyField) => {
+      const func = (policy: any, policyField: Field) => {
         if (!policy || !policy.alternatives?.length) {
           setTimeout(() => {
             policyField.setState({ display: 'none' })
@@ -840,7 +842,7 @@ export function useFormScope({ canvasRef }) {
             if (alternatives.includes('just_insert')) {
               policyField.setValue('just_insert')
               // 设置源数据，保证未访问过节点配置时，保存任务时校验unwind节点和目标的dmlPolicy.insertPolicy是否等于just_insert的判断通过
-              originNodeData.dmlPolicy = {
+              originNodeData!.dmlPolicy = {
                 ...policyField.form.values.dmlPolicy,
               }
             }
@@ -857,7 +859,7 @@ export function useFormScope({ canvasRef }) {
         !updateField?.visible &&
         !deleteField?.visible
       ) {
-        deleteField?.parent.setDisplay('hidden')
+        field.setDisplay('hidden')
       }
     },
 
@@ -880,11 +882,9 @@ export function useFormScope({ canvasRef }) {
       const priorityProcessId =
         form.getValuesIn('attrs.priorityProcessId') || ''
       const connectionName = form.getValuesIn('attrs.connectionName')
-      const capabilities = form.getValuesIn('attrs.capabilities')
       const pdkType = form.getValuesIn('attrs.pdkType')
       const pdkHash = form.getValuesIn('attrs.pdkHash')
       const db_version = form.getValuesIn('attrs.db_version')
-      const connectionTags = form.getValuesIn('attrs.connectionTags')
 
       pdkType !== connection.pdkType &&
         form.setValuesIn('attrs.pdkType', connection.pdkType)
@@ -908,11 +908,6 @@ export function useFormScope({ canvasRef }) {
         form.setValuesIn('attrs.connectionName', connection.name)
       db_version !== connection.db_version &&
         form.setValuesIn('attrs.db_version', connection.db_version)
-      !isEqual(capabilities, connection.capabilities) &&
-        form.setValuesIn('attrs.capabilities', connection.capabilities)
-
-      !isEqual(connectionTags, connection.definitionTags) &&
-        form.setValuesIn('attrs.connectionTags', connection.definitionTags)
     },
 
     getPdkProperties: (node) => {
@@ -1265,6 +1260,14 @@ export function useFormScope({ canvasRef }) {
 
       window.open(url)
     },
+
+    hasCapability: dataflowStore.hasCapability,
+
+    hasCapabilities: dataflowStore.hasCapabilities,
+
+    getCapabilitiesByType: dataflowStore.getCapabilitiesByType,
+
+    isSchemaFree: dataflowStore.isSchemaFree,
   }
 
   const load = async () => {

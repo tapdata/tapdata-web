@@ -155,6 +155,11 @@ function handleClose() {
 function setMaterializedViewVisible(visible: boolean) {
   dataflowStore.materializedViewVisible = visible
 }
+
+function onDescChange() {
+  form.value.setValuesIn('attrs.desc', props.node.attrs.desc)
+  dataflowStore.patchDataflowDebounce()
+}
 </script>
 
 <template>
@@ -215,6 +220,7 @@ function setMaterializedViewVisible(visible: boolean) {
         type="textarea"
         :autosize="{ minRows: 1 }"
         size="small"
+        @change="onDescChange"
       />
     </div>
     <div v-if="form" class="flex-1 min-h-0">
