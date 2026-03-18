@@ -29,6 +29,7 @@ import {
   reactive,
   ref,
   shallowRef,
+  watch,
 } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -93,6 +94,18 @@ export function useCanvasOperation() {
   const nameHasUpdated = ref(false)
 
   const dataflow = reactiveComputed(() => ({ ...dataflowStore.dataflow }))
+
+  const dataflowName = ref(dataflow.value.name)
+  const dataflowDesc = ref(dataflow.value.desc)
+
+  watch(
+    () => dataflow.value.name,
+    (v: string) => (dataflowName.value = v),
+  )
+  watch(
+    () => dataflow.value.desc,
+    (v: string) => (dataflowDesc.value = v),
+  )
 
   const monitorRoute = computed(() => {
     if (dataflow.value.syncType === 'sync') return 'TaskMonitor'
@@ -1800,6 +1813,8 @@ export function useCanvasOperation() {
 
   return {
     dataflow,
+    dataflowName,
+    dataflowDesc,
     dag,
     buttonShowMap,
     historyStore,

@@ -24,7 +24,8 @@ const {
   formScope,
   isSaving,
   syncTypeLabel,
-
+  dataflowName,
+  dataflowDesc,
   initNodeType,
   onCreateConnection,
   onDeleteConnection,
@@ -71,6 +72,8 @@ onUnmounted(() => {
 provide('dag', dag)
 provide('buttonShowMap', buttonShowMap)
 provide('dataflow', dataflow)
+provide('dataflowName', dataflowName)
+provide('dataflowDesc', dataflowDesc)
 provide('onNameInputChange', onNameInputChange)
 provide('formScope', formScope)
 provide('isSaving', isSaving)
@@ -92,7 +95,7 @@ provide('isSaving', isSaving)
       <el-divider direction="vertical" class="mx-0" />
       <div>
         <TextEditable
-          v-model:value="dataflowStore.dataflowName"
+          v-model:value="dataflowName"
           class="overflow-hidden"
           :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
           :maxlength="200"

@@ -32,6 +32,7 @@ import {
   nextTick,
   onMounted,
   watch,
+  type Ref,
 } from 'vue'
 import { useStore } from 'vuex'
 import { FormTab } from '../../../form'
@@ -40,6 +41,8 @@ import { useDataflowStore } from '../stores/dataflow.store'
 
 const dataflowStore = useDataflowStore()
 const scope = inject('formScope')
+const dataflowName = inject('dataflowName')
+const dataflowDesc = inject<Ref<string>>('dataflowDesc')
 const { Form } = components
 const { SchemaField } = createSchemaField({
   components: {
@@ -2063,7 +2066,7 @@ defineExpose({
         /></el-icon>
       </div>
       <TextEditable
-        v-model:value="dataflowStore.dataflowName"
+        v-model:value="dataflowName"
         :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
         max-width="260"
         hidden-icon
@@ -2079,7 +2082,7 @@ defineExpose({
     </div>
     <div class="p-2 pb-0">
       <el-input
-        v-model="dataflowStore.dataflowDesc"
+        v-model="dataflowDesc"
         class="desc-textarea"
         placeholder="添加描述..."
         type="textarea"

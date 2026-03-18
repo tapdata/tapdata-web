@@ -156,6 +156,11 @@ function setMaterializedViewVisible(visible: boolean) {
   dataflowStore.materializedViewVisible = visible
 }
 
+function onNameChange() {
+  form.value.setValuesIn('name', props.node.name)
+  dataflowStore.patchDataflowDebounce()
+}
+
 function onDescChange() {
   form.value.setValuesIn('attrs.desc', props.node.attrs.desc)
   dataflowStore.patchDataflowDebounce()
@@ -172,10 +177,12 @@ function onDescChange() {
       <BaseNodeIcon :node="node" :size="28" class="mr-1" />
       <TextEditable
         v-model:value="node.name"
+        :readonly="dataflowStore.stateIsReadonly"
         :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
         max-width="260"
         hidden-icon
         :maxlength="200"
+        @change="onNameChange"
       />
       <el-tag
         v-if="node.type === 'table' || node.type === 'database'"
@@ -215,6 +222,7 @@ function onDescChange() {
     <div class="p-2 pb-0">
       <el-input
         v-model="node.attrs.desc"
+        :readonly="dataflowStore.stateIsReadonly"
         class="desc-textarea"
         placeholder="添加描述..."
         type="textarea"

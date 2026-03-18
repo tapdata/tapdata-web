@@ -40,6 +40,8 @@ const materializedViewRef = useTemplateRef('materializedView')
 const {
   dag,
   dataflow,
+  dataflowName,
+  dataflowDesc,
   buttonShowMap,
   formScope,
   isSaving,
@@ -454,6 +456,8 @@ provide('dag', dag)
 provide('nodesPanelExpanded', nodesPanelExpanded)
 provide('buttonShowMap', buttonShowMap)
 provide('dataflow', dataflow)
+provide('dataflowName', dataflowName)
+provide('dataflowDesc', dataflowDesc)
 provide('onNameInputChange', onNameInputChange)
 provide('formScope', formScope)
 provide('isSaving', isSaving)
@@ -478,7 +482,7 @@ provide('handlePreview', handlePreview)
       <el-divider direction="vertical" class="mx-0" />
       <div>
         <TextEditable
-          v-model:value="dataflowStore.dataflowName"
+          v-model:value="dataflowName"
           class="overflow-hidden"
           :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
           :maxlength="200"

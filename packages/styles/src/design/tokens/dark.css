@@ -69,6 +69,8 @@ html.dark {
   .layout-bg-bl {
     display: none;
   }
+
+  --color-components-kbd-bg-gray: #ffffff08;
 }
 html.dark {
   color-scheme: dark;
