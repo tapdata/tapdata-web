@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { importGroupInfoBatch, type ImportMode } from '@tap/api/core/group-info'
 import { FileAddColorful, FileDocxColorful } from '@tap/component/src/icon'
+import { t } from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
 import { ElMessage } from 'element-plus'
 import { ref } from 'vue'
@@ -31,7 +32,7 @@ const onClosed = () => {
 // 提交上传
 const submitUpload = async () => {
   if (importForm.value.fileList?.length === 0) {
-    ElMessage.error('请选择要上传的文件')
+    ElMessage.error(t('data_import_export_select_file'))
     return
   }
 
@@ -40,12 +41,12 @@ const submitUpload = async () => {
   try {
     const file = importForm.value.fileList[0].raw
     await importGroupInfoBatch(file, importForm.value.importMode)
-    ElMessage.success('导入成功')
+    ElMessage.success(t('data_import_export_import_success'))
     emit('success')
     visible.value = false
   } catch (error) {
     console.error('导入失败:', error)
-    ElMessage.error('导入失败')
+    ElMessage.error(t('data_import_export_import_failed'))
   } finally {
     uploading.value = false
   }

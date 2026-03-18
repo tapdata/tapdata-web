@@ -141,6 +141,18 @@ export default {
   data_import_export_quick_fill: 'Quick Fill',
   data_import_export_git_operation_records: 'Git Operation Records',
   data_import_export_stack_trace: 'Stack Trace',
+  data_import_export_load_group_failed: 'Failed to load group list',
+  data_import_export_select_at_least_one: 'Please select at least one group',
+  data_import_export_git_info_required: 'Please configure Git info first',
+  data_import_export_branch_name: 'Branch Name',
+  data_import_export_branch_name_placeholder: 'Please enter branch name',
+  data_import_export_pr_title: 'PR Title',
+  data_import_export_pr_title_placeholder: 'Please enter PR title',
+  data_import_export_pr_description: 'PR Description',
+  data_import_export_pr_description_placeholder: 'Please enter PR description',
+  data_import_export_select_file: 'Please select a file to upload',
+  data_import_export_import_success: 'Import successful',
+  data_import_export_import_failed: 'Import failed',
 
   // -- 多表选择器
   component_table_selector_candidate_label: 'To be selected',
