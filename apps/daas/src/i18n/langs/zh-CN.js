@@ -137,6 +137,18 @@ export default {
   data_import_export_quick_fill: '快速填入',
   data_import_export_git_operation_records: 'Git 操作记录',
   data_import_export_stack_trace: '堆栈信息',
+  data_import_export_load_group_failed: '加载分组列表失败',
+  data_import_export_select_at_least_one: '请至少选择一个分组',
+  data_import_export_git_info_required: '请先配置 Git 信息',
+  data_import_export_branch_name: '分支名',
+  data_import_export_branch_name_placeholder: '请输入分支名',
+  data_import_export_pr_title: 'PR 标题',
+  data_import_export_pr_title_placeholder: '请输入 PR 标题',
+  data_import_export_pr_description: 'PR 描述',
+  data_import_export_pr_description_placeholder: '请输入 PR 描述',
+  data_import_export_select_file: '请选择要上传的文件',
+  data_import_export_import_success: '导入成功',
+  data_import_export_import_failed: '导入失败',
 
   // -- 多表选择器
   component_table_selector_candidate_label: '待复制表',
