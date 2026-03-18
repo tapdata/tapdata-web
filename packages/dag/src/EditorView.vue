@@ -78,7 +78,6 @@ const {
 const clipboard = useClipboard({ onPaste: onClipboardPaste })
 
 const isInitialized = ref(false)
-
 const init = async () => {
   dataflowStore.$reset()
   const taskId = route.params.id as string
@@ -87,11 +86,11 @@ const init = async () => {
   if (taskId) {
     await dataflowStore.fetchDataflow(taskId)
     await initNodeType(dataflowStore.dataflow.syncType)
-    nextTick(() => {
-      setTimeout(() => {
-        canvasRef.value.fitViewWithOffset({ duration: 0, maxZoom: 1 })
-      }, 0)
-    })
+    // nextTick(() => {
+    //   setTimeout(() => {
+    //     canvasRef.value.fitViewWithOffset({ duration: 0, maxZoom: 1 })
+    //   }, 0)
+    // })
   } else {
     let syncType
     let targetRoute
@@ -115,7 +114,7 @@ const init = async () => {
 
   initWS()
   isInitialized.value = true
-
+  dataflowStore.taskLoading = false
   // Check route query for auto-opening materialized view
   checkMaterializedView()
 }
@@ -464,6 +463,7 @@ provide('isSaving', isSaving)
 provide('previewData', previewData)
 provide('previewLoading', previewLoading)
 provide('handlePreview', handlePreview)
+provide('isInitialized', isInitialized)
 </script>
 
 <template>

@@ -67,6 +67,7 @@ const props = withDefaults(
 const uiStore = useUiStore()
 const dataflowStore = useDataflowStore()
 const { controlKeyText } = useDeviceSupport()
+const isInitialized = inject<Ref<boolean>>('isInitialized')!
 const dag = inject('dag')
 const nodesPanelExpanded = inject<Ref<boolean>>('nodesPanelExpanded', ref(true))
 
@@ -351,6 +352,58 @@ const popoverTarget = ref<HTMLElement | null>(null)
 const popoverTargetKey = ref<string | null>(null)
 const addNodeParams = shallowRef<any>(null)
 
+// Empty state detection
+const isCanvasEmpty = computed(
+  () =>
+    !nodes.value.length &&
+    !dataflowStore.stateIsReadonly &&
+    !dataflowStore.taskLoading &&
+    !showPopover.value,
+)
+
+// Virtual element anchored at canvas center (stable position, won't drift)
+const virtualCanvasCenterTarget = computed(() => {
+  const container = viewportRef.value
+  const rect = container?.getBoundingClientRect()
+  const x = rect ? rect.left + rect.width / 2 : window.innerWidth / 2
+  // Place at ~20% from top so the popover has room to expand downward
+  const y = rect ? rect.top + rect.height * 0.2 : window.innerHeight * 0.2
+  return {
+    getBoundingClientRect: () => ({
+      width: 0,
+      height: 0,
+      top: y,
+      left: x,
+      right: x,
+      bottom: y,
+      x,
+      y,
+      toJSON() {
+        return this
+      },
+    }),
+  } as HTMLElement
+})
+
+async function onAddNodeFromEmptyState() {
+  // Calculate canvas center in flow coordinates for node placement
+  const container = viewportRef.value
+  const rect = container?.getBoundingClientRect()
+  const centerX = rect ? rect.left + rect.width / 2 : window.innerWidth / 2
+  const centerY = rect ? rect.top + rect.height / 2 : window.innerHeight / 2
+  const flowPosition = screenToFlowCoordinate({ x: centerX, y: centerY })
+
+  addNodeParams.value = { flowPosition }
+  showPopover.value = false
+  await nextTick()
+  popoverTarget.value = virtualCanvasCenterTarget.value
+  popoverTargetKey.value = 'empty_state'
+  await nextTick()
+  setTimeout(() => {
+    showPopover.value = true
+  }, 50)
+}
+
 // Context menu state
 const contextMenuVisible = ref(false)
 const contextMenuPosition = ref({ x: 0, y: 0 })
@@ -377,6 +430,9 @@ const virtualContextMenuTarget = computed(() => {
 })
 
 const popoverPlacement = computed(() => {
+  if (popoverTargetKey.value === 'empty_state') {
+    return 'bottom'
+  }
   if (popoverTargetKey.value?.endsWith('_target')) {
     return 'left'
   }
@@ -601,7 +657,7 @@ function handleLayoutGraph() {
   emit('update:nodes:position', positionUpdates)
 
   nextTick(() => {
-    fitViewWithOffset({ duration: 200, maxZoom: 1 })
+    fitViewWithOffset({ duration: 0, maxZoom: 1 })
   })
 }
 
@@ -660,6 +716,19 @@ function selectNodes(nodeIds: string[]) {
   )
 }
 
+function onNodesInitialized() {
+  if (isInitialized.value) return
+  nextTick(() => {
+    setTimeout(() => {
+      if (dataflowStore.stateIsReadonly) {
+        handleLayoutGraph()
+      } else {
+        fitViewWithOffset({ duration: 0, maxZoom: 1 })
+      }
+    }, 0)
+  })
+}
+
 defineExpose({
   fitViewWithOffset,
   locateNode,
@@ -680,6 +749,31 @@ defineExpose({
     </div>
 
     <RightPanel />
+
+    <!-- Empty state overlay -->
+    <Transition name="empty-state">
+      <div v-if="isCanvasEmpty" class="canvas-empty-state">
+        <div class="canvas-empty-state__icon">
+          <el-icon :size="28" color="var(--el-color-primary)">
+            <i-lucide-plus />
+          </el-icon>
+        </div>
+        <h3 class="canvas-empty-state__title">
+          {{ $t('packages_dag_canvas_empty_title') }}
+        </h3>
+        <p class="canvas-empty-state__desc">
+          {{ $t('packages_dag_canvas_empty_desc') }}
+        </p>
+        <el-button type="primary" @click="onAddNodeFromEmptyState">
+          <el-icon class="mr-1"><i-lucide-plus /></el-icon>
+          {{ $t('packages_dag_canvas_add_node') }}
+        </el-button>
+        <p class="canvas-empty-state__hint">
+          {{ $t('packages_dag_canvas_empty_hint') }}
+        </p>
+      </div>
+    </Transition>
+
     <NodesPopover
       ref="popoverRef"
       v-model="showPopover"
@@ -925,6 +1019,7 @@ defineExpose({
       @pane-click="onPaneClick"
       @selection-end="onSelectionEnd"
       @nodes-change="onNodesChange"
+      @nodes-initialized="onNodesInitialized"
     >
       <template #node-canvas="nodeProps">
         <slot name="node" v-bind="nodeProps">
@@ -970,6 +1065,75 @@ defineExpose({
 .slide-left-enter-from,
 .slide-left-leave-to {
   transform: translateX(-100%);
+}
+
+// Empty state
+.canvas-empty-state {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+
+  &__icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: var(--primary-hover-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+
+  &__title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--el-text-color-primary, #303133);
+    margin: 0 0 8px;
+  }
+
+  &__desc {
+    font-size: 14px;
+    color: var(--el-text-color-secondary, #909399);
+    margin: 0 0 20px;
+  }
+
+  &__hint {
+    font-size: 13px;
+    color: var(--el-text-color-placeholder, #a8abb2);
+    margin: 12px 0 0;
+  }
+}
+
+// Empty state transition (fade + zoom)
+.empty-state-enter-active {
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.empty-state-leave-active {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.empty-state-enter-from {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.empty-state-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
 }
 
 // Fade transition for context menu

@@ -1237,6 +1237,10 @@ export default {
     'When enabled, database JDBC execution logs will be output in the engine background',
   packages_dag_search_processor: 'Search Processor',
   packages_dag_canvas_add_node: 'Add Node',
+  packages_dag_canvas_empty_title: 'Start Building Your Data Flow',
+  packages_dag_canvas_empty_desc:
+    'Add your first node to start creating a data processing pipeline',
+  packages_dag_canvas_empty_hint: 'Or right-click on the canvas to quickly add',
   packages_dag_canvas_fit_view: 'Fit to View',
   packages_dag_batch_edit: 'Batch Edit',
   packages_dag_auto_layout: 'Auto Layout',

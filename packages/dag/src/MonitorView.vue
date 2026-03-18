@@ -9,7 +9,7 @@ import SkipError from '@tap/business/src/views/task/SkipError.vue'
 import { TextEditable } from '@tap/component/src/base/text-editable'
 import Time from '@tap/shared/src/time'
 import { debounce } from 'lodash-es'
-import { computed, nextTick, onUnmounted, provide, ref, watch } from 'vue'
+import { computed, onUnmounted, provide, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Canvas from './Canvas.vue'
 import ConsolePanel from './components/migration/ConsolePanel.vue'
@@ -604,11 +604,11 @@ const init = async () => {
   pollingTimer = setTimeout(pollTaskDetail, 10000)
   isInitialized.value = true
 
-  nextTick(() => {
-    setTimeout(() => {
-      canvasRef.value.handleLayoutGraph()
-    }, 0)
-  })
+  // nextTick(() => {
+  //   setTimeout(() => {
+  //     canvasRef.value.handleLayoutGraph()
+  //   }, 0)
+  // })
 }
 
 init()
@@ -629,6 +629,7 @@ provide('dataflowDesc', dataflowDesc)
 provide('onNameInputChange', onNameInputChange)
 provide('formScope', formScope)
 provide('isSaving', isSaving)
+provide('isInitialized', isInitialized)
 </script>
 
 <template>

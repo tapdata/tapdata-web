@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import { TextEditable } from '@tap/component/src/base/text-editable'
-import { nextTick, onUnmounted, provide, ref } from 'vue'
+import { onUnmounted, provide, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import Canvas from './Canvas.vue'
 import BottomPanel from './components/monitor/BottomPanel.vue'
@@ -55,12 +55,6 @@ const init = async () => {
     await initNodeType(dataflowStore.dataflow.syncType)
   }
   isInitialized.value = true
-
-  nextTick(() => {
-    setTimeout(() => {
-      canvasRef.value.fitViewWithOffset({ duration: 0, maxZoom: 1 })
-    }, 0)
-  })
 }
 
 init()
@@ -77,6 +71,7 @@ provide('dataflowDesc', dataflowDesc)
 provide('onNameInputChange', onNameInputChange)
 provide('formScope', formScope)
 provide('isSaving', isSaving)
+provide('isInitialized', isInitialized)
 </script>
 
 <template>

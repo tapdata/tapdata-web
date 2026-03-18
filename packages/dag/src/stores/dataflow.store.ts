@@ -101,6 +101,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
   const showBottom = ref(false)
   const consoleAutoLoadType = ref('')
   const transformLoading = ref(false)
+  const taskLoading = ref(true)
   const schemaRefreshing = ref(false)
   const materializedViewVisible = ref(false)
 
@@ -251,22 +252,27 @@ export const useDataflowStore = defineStore('dataflow', () => {
   }
 
   async function fetchDataflow(id: string, taskRecordId?: string) {
-    const response = await getTaskById(id, {
-      taskRecordId,
-    })
-    const { dag: dagData, ...dataflowData } = response
+    taskLoading.value = true
+    try {
+      const response = await getTaskById(id, {
+        taskRecordId,
+      })
+      const { dag: dagData, ...dataflowData } = response
 
-    dataflowData.syncType = dataflowData.shareCache
-      ? 'shareCache'
-      : dataflowData.syncType
+      dataflowData.syncType = dataflowData.shareCache
+        ? 'shareCache'
+        : dataflowData.syncType
 
-    setDataflow(dataflowData)
-    getTaskPermissions()
+      setDataflow(dataflowData)
+      getTaskPermissions()
 
-    const { nodes, edges } = initialDag(dagData)
+      const { nodes, edges } = initialDag(dagData)
 
-    dag.value.nodes = nodes
-    dag.value.edges = edges
+      dag.value.nodes = nodes
+      dag.value.edges = edges
+    } finally {
+      taskLoading.value = false
+    }
   }
 
   async function createDataflow(syncType = 'migrate') {
@@ -859,6 +865,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     showConsole.value = false
     consoleAutoLoadType.value = ''
     transformLoading.value = false
+    taskLoading.value = true
     taskSaving.value = false
     materializedViewVisible.value = false
 
@@ -899,6 +906,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     showConsole,
     consoleAutoLoadType,
     transformLoading,
+    taskLoading,
     schemaRefreshing,
     materializedViewVisible,
     buttonShowMap,
