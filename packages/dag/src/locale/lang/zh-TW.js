@@ -1054,5 +1054,11 @@ export default {
   packages_dag_canvas_add_node: '添加節點',
   packages_dag_canvas_fit_view: '適應畫布',
   packages_dag_batch_edit: '批量修改',
+  packages_dag_auto_layout: '自動佈局',
+  packages_dag_panning_mode: '拖拽模式',
+  packages_dag_zoom_in: '放大',
+  packages_dag_zoom_out: '縮小',
+  packages_dag_undo: '撤銷',
+  packages_dag_redo: '重做',
   packages_dag_src_editor_copy_success: '已複製到剪貼板',
 }

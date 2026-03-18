@@ -6,6 +6,7 @@ import { TextEditable } from '@tap/component/src/base/text-editable'
 import { useI18n } from '@tap/i18n'
 import { uuid } from '@tap/shared'
 import { useVueFlow } from '@vue-flow/core'
+import { useLocalStorage } from '@vueuse/core'
 import {
   nextTick,
   onBeforeUnmount,
@@ -175,7 +176,7 @@ watch(
 init()
 
 // Control NodesPanel visibility
-const nodesPanelExpanded = ref(true)
+const nodesPanelExpanded = useLocalStorage('dag-nodes-panel-expanded', true)
 
 const toggleExpandNodes = () => {
   nodesPanelExpanded.value = !nodesPanelExpanded.value

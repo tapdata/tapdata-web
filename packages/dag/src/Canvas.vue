@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useDeviceSupport } from '@tap/shared/src/composables/useDeviceSupport'
 import { isOutsideSelected } from '@tap/shared/src/dom'
 import { Background } from '@vue-flow/background'
 import {
@@ -65,6 +66,7 @@ const props = withDefaults(
 
 const uiStore = useUiStore()
 const dataflowStore = useDataflowStore()
+const { controlKeyText } = useDeviceSupport()
 const dag = inject('dag')
 const nodesPanelExpanded = inject<Ref<boolean>>('nodesPanelExpanded', ref(true))
 
@@ -198,7 +200,9 @@ const keyMap = computed(() => {
     'shift_+|+|=|shift_Equal|Equal': () => handleZoomIn(),
     'shift+_|-|_|shift_Minus|Minus': () => handleZoomOut(),
     0: () => handleZoomReset(),
-    1: () => handleFitView(),
+    ctrl_1: () => handleFitView(),
+    hift_1:  () => handleZoomPreset(1),
+    hift_5:  () => handleZoomPreset(0.5),
   }
 
   if (dataflowStore.stateIsReadonly) return readOnlyKeymap
@@ -286,6 +290,10 @@ const ZOOM_PRESETS = [0.25, 0.5, 0.75, 1, 2]
 const zoomPercentage = computed(() => Math.round(viewport.value.zoom * 100))
 const previousZoom = ref(1)
 const showZoomDropdown = ref(false)
+
+// Zoom preset shortcut hints
+const presetShortcuts: Record<number, string> = { 1: '⇧ 1', 0.5: '⇧ 5' }
+const fitViewShortcut = computed(() => `${controlKeyText.value} 1`)
 
 // Panning mode controls
 const isInPanningMode = ref(true)
@@ -696,51 +704,75 @@ defineExpose({
           class="bg-card shadow-canvas p-1 rounded-xl"
           style="--btn-space: 0"
         >
-          <el-button text :disabled="!canUndo" @click="handleUndo">
-            <template #icon>
-              <i-lucide-undo-2 />
-            </template>
-          </el-button>
+          <el-tooltip
+            :content="`${$t('packages_dag_undo')} (${controlKeyText}Z)`"
+            :show-after="350"
+            placement="top"
+          >
+            <el-button text :disabled="!canUndo" @click="handleUndo">
+              <template #icon>
+                <i-lucide-undo-2 />
+              </template>
+            </el-button>
+          </el-tooltip>
           <el-divider direction="vertical" class="mx-2" />
-          <el-button text :disabled="!canRedo" @click="handleRedo">
-            <template #icon>
-              <i-lucide-redo-2 />
-            </template>
-          </el-button>
+          <el-tooltip
+            :content="`${$t('packages_dag_redo')} (${controlKeyText}⇧Z)`"
+            :show-after="350"
+            placement="top"
+          >
+            <el-button text :disabled="!canRedo" @click="handleRedo">
+              <template #icon><i-lucide-redo-2 /></template>
+            </el-button>
+          </el-tooltip>
         </div>
 
         <div
           class="bg-card shadow-canvas p-1 rounded-xl flex align-items-stretch gap-0.5"
           style="--btn-space: 0"
         >
-          <el-button text @click="handleLayoutGraph">
-            <template #icon>
-              <VIcon>auto-layout</VIcon>
-            </template>
-          </el-button>
-          <el-button
-            text
-            :type="isInPanningMode ? 'primary' : undefined"
-            :class="{ 'is-active': isInPanningMode }"
-            @click="togglePanningMode"
+          <el-tooltip
+            :content="$t('packages_dag_auto_layout')"
+            :show-after="350"
+            placement="top"
+            ><el-button text @click="handleLayoutGraph"
+              ><template #icon><VIcon>auto-layout</VIcon></template></el-button
+            ></el-tooltip
           >
-            <template #icon>
-              <i-mingcute-hand-line />
-            </template>
-          </el-button>
+          <el-tooltip
+            :content="$t('packages_dag_panning_mode')"
+            :show-after="350"
+            placement="top"
+            ><el-button
+              text
+              :type="isInPanningMode ? 'primary' : undefined"
+              :class="{ 'is-active': isInPanningMode }"
+              @click="togglePanningMode"
+              ><template #icon><i-mingcute-hand-line /></template></el-button
+          ></el-tooltip>
           <el-divider class="mx-2 align-self-center" direction="vertical" />
-          <el-button text @click="handleZoomOut">
-            <template #icon>
-              <i-lucide-zoom-out />
-            </template>
-          </el-button>
-          <!-- 显示当前画布的缩放百分比，点击重置为 100%，再次点击再切换回去 -->
-          <el-button text class="zoom-percentage-btn" @click="handleZoomReset">
-            {{ zoomPercentage }}%
-          </el-button>
+          <el-tooltip
+            :content="`${$t('packages_dag_zoom_out')} (${controlKeyText} -)`"
+            :show-after="350"
+            placement="top"
+          >
+            <el-button text @click="handleZoomOut">
+              <template #icon>
+                <i-lucide-zoom-out />
+              </template>
+            </el-button>
+          </el-tooltip>
+          <el-tooltip content="100% (0)" :show-after="350" placement="top">
+            <el-button
+              text
+              class="zoom-percentage-btn"
+              @click="handleZoomReset"
+            >
+              {{ zoomPercentage }}%
+            </el-button>
+          </el-tooltip>
           <el-popover
             v-model:visible="showZoomDropdown"
-            :width="120"
             trigger="click"
             popper-class="zoom-dropdown-popover"
             :show-arrow="false"
@@ -772,18 +804,32 @@ defineExpose({
                 @click="handleZoomPreset(preset)"
               >
                 {{ Math.round(preset * 100) }}%
+                <span
+                  v-if="presetShortcuts[preset]"
+                  class="zoom-dropdown-shortcut"
+                  >{{ presetShortcuts[preset] }}</span
+                >
               </div>
               <div class="zoom-dropdown-divider" />
               <div class="zoom-dropdown-item" @click="handleFitView">
                 {{ $t('packages_dag_canvas_fit_view') }}
+                <span class="zoom-dropdown-shortcut">{{
+                  fitViewShortcut
+                }}</span>
               </div>
             </div>
           </el-popover>
-          <el-button text @click="handleZoomIn">
-            <template #icon>
-              <i-lucide-zoom-in />
-            </template>
-          </el-button>
+          <el-tooltip
+            :content="`${$t('packages_dag_zoom_in')} (${controlKeyText} +)`"
+            :show-after="350"
+            placement="top"
+          >
+            <el-button text @click="handleZoomIn">
+              <template #icon>
+                <i-lucide-zoom-in />
+              </template>
+            </el-button>
+          </el-tooltip>
         </div>
       </div>
 
@@ -971,6 +1017,10 @@ defineExpose({
 
 .zoom-dropdown {
   .zoom-dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
     padding: 6px 12px;
     cursor: pointer;
     border-radius: 8px;
@@ -984,6 +1034,12 @@ defineExpose({
       color: var(--el-color-primary);
       font-weight: 500;
     }
+  }
+
+  .zoom-dropdown-shortcut {
+    color: var(--el-text-color-secondary);
+    font-size: 12px;
+    white-space: nowrap;
   }
 
   .zoom-dropdown-divider {

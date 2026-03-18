@@ -1239,5 +1239,11 @@ export default {
   packages_dag_canvas_add_node: 'Add Node',
   packages_dag_canvas_fit_view: 'Fit to View',
   packages_dag_batch_edit: 'Batch Edit',
+  packages_dag_auto_layout: 'Auto Layout',
+  packages_dag_panning_mode: 'Panning Mode',
+  packages_dag_zoom_in: 'Zoom In',
+  packages_dag_zoom_out: 'Zoom Out',
+  packages_dag_undo: 'Undo',
+  packages_dag_redo: 'Redo',
   packages_dag_src_editor_copy_success: 'Copied to clipboard',
 }
