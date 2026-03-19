@@ -512,7 +512,7 @@ export const JsProcessor = observer(
               </ElTooltip>
             </div>
             <div class="flex align-center" style="--btn-space: 4px;">
-              <ElButton
+              {/* <ElButton
                 text
                 tag="a"
                 onClick={handleOpenAiDialog}
@@ -523,7 +523,7 @@ export const JsProcessor = observer(
                   <i-lucide-sparkle />
                 </el-icon>
                 {i18n.t('packages_dag_ai_generate')}
-              </ElButton>
+              </ElButton> */}
               <ElButton text tag="a" onClick={toggleDoc} type="primary">
                 {i18n.t('packages_dag_api_docs')}
               </ElButton>
@@ -551,7 +551,7 @@ export const JsProcessor = observer(
             />
             <ElDrawer
               append-to-body
-              modal={false}
+              modal-class="bg-transparent"
               title={i18n.t('packages_dag_api_docs')}
               size={680}
               v-model={showDoc.value}

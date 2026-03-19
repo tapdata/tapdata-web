@@ -142,7 +142,7 @@ function onDelete() {
     >
       <div
         v-if="renderActions"
-        class="bg-primary rounded-pill flex align-center justify-center w-4 h-4 align-items-center justify-center color-white z-10 hover:scale-150 transition-all cursor-pointer"
+        class="bg-color-danger rounded-pill flex align-center justify-center w-4 h-4 align-items-center justify-center color-white z-10 hover:scale-150 transition-all cursor-pointer"
         @click="onDelete"
       >
         <el-icon size="10" class="">

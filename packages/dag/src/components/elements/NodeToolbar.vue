@@ -23,7 +23,7 @@ const handleToggleDisable = () => {
   <div class="position-absolute top-0 end-0 node-toolbar pb-1">
     <div
       class="node-toolbar-actions rounded-lg p-0.5 cursor-pointer"
-      style="--btn-space: 1px"
+      style="--btn-space: 2px"
     >
       <el-button text size="xs" @click.stop="handlePreview?.(node.id)">
         <template #icon>
@@ -36,9 +36,9 @@ const handleToggleDisable = () => {
           <i-lucide-power v-else />
         </template>
       </el-button>
-      <el-button text size="xs" @click="handleDelete">
+      <el-button text type="danger" size="xs" @click="handleDelete">
         <template #icon>
-          <i-lucide-trash />
+          <i-lucide-trash-2 />
         </template>
       </el-button>
     </div>
@@ -51,6 +51,9 @@ const handleToggleDisable = () => {
   transform: translateY(-100%);
   .node-toolbar-actions {
     background-color: var(--el-bg-color);
+    .el-button {
+      font-size: 14px !important;
+    }
   }
 }
 </style>

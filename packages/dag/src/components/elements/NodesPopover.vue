@@ -65,6 +65,9 @@ defineExpose({
   update() {
     popoverRef.value?.popperRef?.popperInstanceRef?.update()
   },
+  setActiveTab(index: number) {
+    activeTab.value = index
+  },
 })
 
 const {

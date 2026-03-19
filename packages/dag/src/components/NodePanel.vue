@@ -13,7 +13,7 @@ import * as components from '@tap/form/src/components'
 import { createSchemaField } from '@tap/form/src/shared/create'
 import { deepEqual } from '@tap/shared'
 import { debounce } from 'lodash-es'
-import { inject, nextTick, shallowRef, watch } from 'vue'
+import { inject, nextTick, onUnmounted, shallowRef, watch } from 'vue'
 import * as _components from '../components/form'
 import { useDataflowStore } from '../stores/dataflow.store'
 import { getSchema } from '../util'
@@ -112,7 +112,7 @@ const useEffects = () => {
   )
 }
 
-const setSchema = async (nodeSchema) => {
+const setSchema = async (nodeSchema: any) => {
   form.value?.onUnmount()
   schema.value = null
   await nextTick()
@@ -135,6 +135,9 @@ const setSchema = async (nodeSchema) => {
   )
 }
 
+let watchInputs: any
+let watchOutputs: any
+
 watch(
   () => props.node.id,
   () => {
@@ -144,9 +147,33 @@ watch(
         dataflowStore.stateIsReadonly,
       ),
     )
+
+    watchInputs = watch(
+      () => props.node.$inputs,
+      (inputs) => {
+        form.value.setValuesIn('$inputs', inputs)
+      },
+      {
+        deep: true,
+      },
+    )
+    watchOutputs = watch(
+      () => props.node.$outputs,
+      (outputs) => {
+        form.value.setValuesIn('$outputs', outputs)
+      },
+      {
+        deep: true,
+      },
+    )
   },
   { immediate: true },
 )
+
+onUnmounted(() => {
+  watchInputs?.()
+  watchOutputs?.()
+})
 
 function handleClose() {
   dataflowStore.selectedNode = null

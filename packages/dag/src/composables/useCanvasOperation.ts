@@ -526,11 +526,11 @@ export function useCanvasOperation() {
   ): [number, number] => {
     const NODE_WIDTH = 220
     const NODE_HEIGHT = 76
-    const GRID_SIZE = 40
+    const GRID_SIZE = 16
 
     let [targetX, targetY] = clickPos
     // 将目标位置对齐到网格
-    targetX = Math.round(targetX / GRID_SIZE) * GRID_SIZE
+    // targetX = Math.round(targetX / GRID_SIZE) * GRID_SIZE
     targetY = Math.round(targetY / GRID_SIZE) * GRID_SIZE
 
     const hasCollision = (x: number, y: number): boolean => {
@@ -550,7 +550,7 @@ export function useCanvasOperation() {
     // 向右下方逐步偏移，直到找到不重叠的位置
     let attempts = 0
     while (hasCollision(targetX, targetY) && attempts < 50) {
-      targetX += GRID_SIZE
+      // targetX += GRID_SIZE
       targetY += GRID_SIZE
       attempts++
     }

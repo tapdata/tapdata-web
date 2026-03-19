@@ -67,7 +67,6 @@ const props = withDefaults(
 const uiStore = useUiStore()
 const dataflowStore = useDataflowStore()
 const { controlKeyText } = useDeviceSupport()
-const isInitialized = inject<Ref<boolean>>('isInitialized')!
 const dag = inject('dag')
 const nodesPanelExpanded = inject<Ref<boolean>>('nodesPanelExpanded', ref(true))
 
@@ -404,8 +403,7 @@ async function onAddNodeFromEmptyState() {
   }, 50)
 }
 
-// Context menu state
-const contextMenuVisible = ref(false)
+// Context menu position for right-click popover
 const contextMenuPosition = ref({ x: 0, y: 0 })
 
 // Create virtual element for context menu position
@@ -593,6 +591,7 @@ function onNodeClick({ event, node }) {
 function onPaneClick(event: MouseEvent) {
   const pos = screenToFlowCoordinate({ x: event.clientX, y: event.clientY })
   dataflowStore.lastClickPosition = [pos.x, pos.y]
+  dataflowStore.selectNode(null)
 }
 
 function onSelectionEnd(event: MouseEvent) {
@@ -617,33 +616,31 @@ function onHideNodesPopover() {
   popoverTargetKey.value = null
 }
 
-// Context menu handlers - use VueFlow's onPaneContextMenu hook
+// Right-click directly shows NodesPopover with activeTab = 0
 onPaneContextMenu((event) => {
   event.preventDefault()
   contextMenuPosition.value = { x: event.clientX, y: event.clientY }
-  contextMenuVisible.value = true
-})
-
-async function onAddNodeFromContextMenu() {
-  contextMenuVisible.value = false
-  // Convert screen coordinates to flow coordinates
   const flowPosition = screenToFlowCoordinate({
-    x: contextMenuPosition.value.x,
-    y: contextMenuPosition.value.y,
+    x: event.clientX,
+    y: event.clientY,
   })
   // Use the virtual element as the popover target
   addNodeParams.value = {
     flowPosition, // Pass the converted flow coordinates
   }
-  showPopover.value = false
-  await nextTick()
+
   popoverTarget.value = virtualContextMenuTarget.value
   popoverTargetKey.value = 'context_menu'
-  await nextTick()
-  setTimeout(() => {
-    showPopover.value = true
-  }, 50)
-}
+  popoverRef.value?.setActiveTab(0)
+
+  showPopover.value = true
+  // setTimeout(() => {
+  //   showPopover.value = true
+  //   nextTick(() => {
+  //     popoverRef.value?.setActiveTab(0)
+  //   })
+  // }, 50)
+})
 
 function handleLayoutGraph() {
   const layoutedNodes = layout(nodes.value, edges.value, 'LR')
@@ -716,8 +713,11 @@ function selectNodes(nodeIds: string[]) {
   )
 }
 
+let isInitialized = false
+
 function onNodesInitialized() {
-  if (isInitialized.value) return
+  if (isInitialized) return
+  isInitialized = true
   nextTick(() => {
     setTimeout(() => {
       if (dataflowStore.stateIsReadonly) {
@@ -975,31 +975,6 @@ defineExpose({
       </defs>
     </svg>
 
-    <!-- Context Menu -->
-    <Teleport v-if="!dataflowStore.stateIsReadonly" to="body">
-      <Transition name="fade">
-        <div
-          v-if="contextMenuVisible"
-          class="canvas-context-menu"
-          :style="{
-            left: `${contextMenuPosition.x}px`,
-            top: `${contextMenuPosition.y}px`,
-          }"
-        >
-          <div class="context-menu-item" @click="onAddNodeFromContextMenu">
-            <el-icon><i-lucide-plus /></el-icon>
-            <span>{{ $t('packages_dag_canvas_add_node') }}</span>
-          </div>
-        </div>
-      </Transition>
-      <div
-        v-if="contextMenuVisible"
-        class="context-menu-overlay"
-        @click="contextMenuVisible = false"
-        @contextmenu.prevent="contextMenuVisible = false"
-      />
-    </Teleport>
-
     <VueFlow
       data-id="flow-container"
       :nodes="nodes"
@@ -1150,46 +1125,6 @@ defineExpose({
 
 <style lang="scss">
 // Context menu styles (unscoped for Teleport)
-.canvas-context-menu {
-  position: fixed;
-  z-index: 3000;
-  min-width: 160px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  padding: 4px;
-  user-select: none;
-
-  .context-menu-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    cursor: pointer;
-    border-radius: 8px;
-    font-size: 14px;
-    color: #333;
-    transition: background-color 0.15s;
-
-    &:hover {
-      background-color: var(--el-fill-color-light, #f5f7fa);
-    }
-
-    .el-icon {
-      font-size: 16px;
-      color: #666;
-    }
-  }
-}
-
-.context-menu-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 2999;
-}
 
 .zoom-percentage-btn {
   width: 48px;

@@ -114,8 +114,6 @@ export const useDataflowStore = defineStore('dataflow', () => {
     Stop: true,
   })
 
-  console.log('dataflow', dataflow)
-
   reactiveWatch(
     () => dataflow.name,
     (v: string) => (dataflowName.value = v),
@@ -472,11 +470,9 @@ export const useDataflowStore = defineStore('dataflow', () => {
   function setNodePositionById(id: string, position: XYPosition) {
     const node = findNodeById(id)
     if (node) {
-      console.log('setNodePositionById', id, position)
       node.attrs.position = position
       // 同步更新 VueFlow 的内部状态
       if (vueFlowUpdateNodePosition) {
-        console.log('calling vueFlowUpdateNodePosition callback')
         vueFlowUpdateNodePosition(id, { x: position[0], y: position[1] })
       }
     }
@@ -579,7 +575,6 @@ export const useDataflowStore = defineStore('dataflow', () => {
     pdkSchemaFreeMap.value = tagsMap
     pdkDoubleActiveMap.value = doubleActiveMap
     pdkId2Hash.value = pdkIdMap
-    console.log('tagsMap', tagsMap)
   }
 
   function selectNode(node: any) {
