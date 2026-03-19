@@ -486,6 +486,7 @@ provide('isInitialized', isInitialized)
           class="overflow-hidden"
           :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
           :maxlength="200"
+          :max-width="320"
           hidden-icon
           @change="onNameInputChange"
         />

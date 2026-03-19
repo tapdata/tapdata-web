@@ -395,6 +395,13 @@ const onClickProcessor = (item: any) => {
           </div>
         </div>
         <div class="p-2">
+          <div
+            v-if="currentConnection && activeTab === 2"
+            class="mb-2 flex h-8 align-center gap-2 px-3 connection-item rounded-lg user-select-none border border-dashed font-color-light"
+            @click="onClickTable({ name: '' })"
+          >
+            <el-icon><i-lucide-plus /></el-icon><span>创建新表</span>
+          </div>
           <el-input
             v-model="tableState.query"
             :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"

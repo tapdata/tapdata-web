@@ -652,13 +652,14 @@ provide('isInitialized', isInitialized)
           class="overflow-hidden"
           :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
           :maxlength="200"
+          :max-width="320"
           hidden-icon
           @change="onNameInputChange"
         />
       </div>
       <TaskStatus class="w-auto rounded-lg zoom-xs" :task="dataflow" />
       <el-divider class="mx-1" direction="vertical" />
-      <span class="font-color-light text-xs">{{ syncTypeLabel }}</span>
+      <span class="font-color-light text-xs mr-1">{{ syncTypeLabel }}</span>
     </div>
     <div class="w-100 h-0 position-absolute header z-10 flex align-center px-3">
       <!-- 浮动信息栏 -->
