@@ -16,7 +16,10 @@ import { showErrorMessage } from '@tap/business/src/components/error-message'
 import { makeStatusAndDisabled } from '@tap/business/src/shared/task'
 import { Modal } from '@tap/component/src/modal'
 import { computed as reactiveComputed } from '@tap/form/src/shared/reactive'
-import { validateBySchema } from '@tap/form/src/shared/validate'
+import {
+  getInitialValuesInBySchema,
+  validateBySchema,
+} from '@tap/form/src/shared/validate'
 import { useI18n } from '@tap/i18n'
 import { setPageTitle, uuid } from '@tap/shared'
 import { cloneDeep, isEmpty } from 'lodash-es'
@@ -433,6 +436,40 @@ export function useCanvasOperation() {
   }
 
   const onAddNode = (node: any, { trackHistory = true } = {}) => {
+    if (
+      (node.type === 'table' || node.type === 'database') &&
+      node.attrs?.pdkHash
+    ) {
+      const pdkProperties = dataflowStore.pdkPropertiesMap[node.attrs?.pdkHash]
+      const nodeConfig = node.nodeConfig || {}
+      if (pdkProperties) {
+        const formValues = getInitialValuesInBySchema(
+          {
+            properties: {
+              attrs: {
+                type: 'object',
+                default: node.attrs,
+              },
+              $inputs: {
+                default: [],
+                type: 'array',
+              },
+              $outputs: {
+                default: [],
+                type: 'array',
+              },
+              nodeConfig: {
+                type: 'object',
+                ...pdkProperties,
+              },
+            },
+          },
+          {},
+        )
+        Object.assign(nodeConfig, formValues.nodeConfig)
+        node.nodeConfig = nodeConfig
+      }
+    }
     dataflowStore.addNode(node)
     if (trackHistory) {
       historyStore.pushCommandToUndo(new AddNodeCommand(node, Date.now()))

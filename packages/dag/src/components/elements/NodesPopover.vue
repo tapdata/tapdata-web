@@ -195,8 +195,6 @@ const handleAddNode = (node: any) => {
       ],
     }))
 
-    console.log('positionsToMove', JSON.stringify(positionsToMove, null, 2))
-
     // 移动后续节点的位置（使用 tracking）
     positionsToMove.forEach(({ id, newPosition }) => {
       onMoveNodePosition?.(id, newPosition)
