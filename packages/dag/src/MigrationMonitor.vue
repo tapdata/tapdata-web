@@ -30,7 +30,6 @@ import {
   watch,
 } from 'vue'
 import { useRouter } from 'vue-router'
-import { $off, $on } from '../utils/gogocodeTransfer'
 
 import { MoveNodeCommand } from './command'
 import ConfigPanel from './components/migration/ConfigPanel'
@@ -238,7 +237,7 @@ onBeforeUnmount(() => {
   vm.resetState()
   vm.$ws.off('editFlush', vm.handleEditFlush)
   timer.value && clearInterval(timer.value)
-  $off(vm, 'loop-task')
+  // $off(vm, 'loop-task')
 })
 
 const init = debounce(function () {
@@ -306,16 +305,16 @@ async function openDataflow(id: any) {
 }
 
 function bindLoopTaskEvent() {
-  $off(vm, 'loop-task')
-  $on(vm, 'loop-task', () => {
-    if (!vm.sharedCacheMap || !Object.keys(vm.sharedCacheMap).length) {
-      // 在重置后的任务监控页面启动,首次 initShareCache 获取不到数据
-      vm.initShareCache()
-    } else {
-      const { usedShareCache = {} } = dataflow?.attrs || {}
-      vm.setNodeShareCache(usedShareCache)
-    }
-  })
+  // $off(vm, 'loop-task')
+  // $on(vm, 'loop-task', () => {
+  //   if (!vm.sharedCacheMap || !Object.keys(vm.sharedCacheMap).length) {
+  //     // 在重置后的任务监控页面启动,首次 initShareCache 获取不到数据
+  //     vm.initShareCache()
+  //   } else {
+  //     const { usedShareCache = {} } = dataflow?.attrs || {}
+  //     vm.setNodeShareCache(usedShareCache)
+  //   }
+  // })
 }
 
 function gotoViewer() {}

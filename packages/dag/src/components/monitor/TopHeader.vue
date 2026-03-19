@@ -9,7 +9,6 @@ import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 import { mapGetters, mapMutations, mapState } from 'vuex'
-import { $emit } from '../../../utils/gogocodeTransfer'
 import DataCaptureDebug from '../DataCaptureDebug.vue'
 import DataValidationDialog from '../DataValidationDialog.vue'
 
@@ -148,7 +147,7 @@ export default {
       if (!this.name) {
         this.name = this.dataflowName
       } else {
-        $emit(this, 'change-name', this.name)
+        this.$emit('change-name', this.name)
       }
     },
 

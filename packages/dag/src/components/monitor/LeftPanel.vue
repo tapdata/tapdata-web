@@ -12,7 +12,6 @@ import Time from '@tap/shared/src/time'
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash-es'
 import { mapGetters } from 'vuex'
-import { $emit } from '../../../utils/gogocodeTransfer'
 import Frequency from './components/Frequency.vue'
 import InitialList from './components/InitialList.vue'
 import LineChart from './components/LineChart.vue'
@@ -570,7 +569,7 @@ export default {
     },
 
     changeFrequency(val) {
-      $emit(this, 'changeFrequency', val)
+      this.$emit('changeFrequency', val)
     },
 
     toFullscreen() {
