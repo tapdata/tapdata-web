@@ -3,7 +3,7 @@ import { getConnectionNoSchema } from '@tap/api/src/core/connections'
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { useI18n } from '@tap/i18n'
 import { useVueFlow } from '@vue-flow/core'
-import { computed, inject, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, inject, onBeforeUnmount, ref, watch, type Ref } from 'vue'
 import { makeNode, makeProcessorNode } from '../../composables/useDnD'
 import { useFetchConnections } from '../../composables/useFetchConnections'
 import { useDataflowStore } from '../../stores/dataflow.store'
@@ -21,7 +21,7 @@ const Y_OFFSET = 40
 
 const props = defineProps<Props>()
 
-const { findNode, getOutgoers } = useVueFlow()
+const { findNode, getOutgoers, getIncomers } = useVueFlow()
 
 const { t } = useI18n()
 
@@ -29,6 +29,7 @@ const dataflowStore = useDataflowStore()
 const historyStore = useHistoryStore()
 
 // Inject tracking functions for history support
+const dataflow = inject<Ref<any>>('dataflow')!
 const onAddNode = inject<(node: any) => void>('onAddNode')
 const onCreateConnection =
   inject<(connection: any) => void>('onCreateConnection')
@@ -43,8 +44,16 @@ const show = defineModel<boolean>()
 const popoverRef = ref<PopoverInstance | null>(null)
 const activeTab = ref(0)
 const previousTab = ref(0) // 记录上一个 tab
-const search = ref('')
+const processorQuery = ref('')
 const connectionScroller = ref<ScrollbarInstance>()
+
+const filteredProcessorNodeTypes = computed(() => {
+  const query = processorQuery.value.trim().toLowerCase()
+  if (!query) return dataflowStore.processorNodeTypes
+  return dataflowStore.processorNodeTypes.filter((item: any) =>
+    item.name?.toLowerCase().includes(query),
+  )
+})
 
 const items = [
   {
@@ -61,18 +70,10 @@ const items = [
   },
 ]
 
-defineExpose({
-  update() {
-    popoverRef.value?.popperRef?.popperInstanceRef?.update()
-  },
-  setActiveTab(index: number) {
-    activeTab.value = index
-  },
-})
-
 const {
   runFetchConnections,
   runFetchMoreConnections,
+  connectionQuery,
   connections,
   handleSelectConnection,
   handleUnselectConnection,
@@ -83,6 +84,8 @@ const {
   runFetchTables,
   runFetchMoreTables,
 } = useFetchConnections()
+
+const isCopyTask = computed(() => dataflow.value.syncType !== 'sync')
 
 const handleFetchConnections = () => {
   runFetchConnections({
@@ -252,13 +255,27 @@ const handleAddNode = (node: any) => {
     const afterNodes = dataflowStore.getAfterNodesInSameBranch(nextNodeId)
     const offset = nextNode!.dimensions.width + X_OFFSET
 
-    node.attrs.position = [nextNode!.position.x, nextNode!.position.y]
+    // 检查上游是否已有连线的节点，如果有则放在最下面的上游节点下方
+    const incomers = getIncomers(nextNodeId).sort(
+      (a, b) => a.position.y - b.position.y,
+    )
+    const lastIncomer = incomers.at(-1)
+    const position = lastIncomer
+      ? [
+          lastIncomer.position.x,
+          lastIncomer.position.y + lastIncomer.dimensions.height + Y_OFFSET,
+        ]
+      : [nextNode!.position.x, nextNode!.position.y]
 
-    // 移动后续节点的位置（使用 tracking）
-    afterNodes.forEach((n) => {
-      const newX = n.attrs.position[0] + offset
-      onMoveNodePosition?.(n.id, [newX, n.attrs.position[1]])
-    })
+    node.attrs.position = position
+
+    // 仅在没有上游节点时才需要移动后续节点（原位置被新节点占用）
+    if (!lastIncomer) {
+      afterNodes.forEach((n) => {
+        const newX = n.attrs.position[0] + offset
+        onMoveNodePosition?.(n.id, [newX, n.attrs.position[1]])
+      })
+    }
 
     connection = {
       source: node.id,
@@ -314,6 +331,13 @@ const onClickProcessor = (item: any) => {
 
   show.value = false
 }
+
+defineExpose({
+  update() {
+    popoverRef.value?.popperRef?.popperInstanceRef?.update()
+  },
+  setActiveTab,
+})
 </script>
 
 <template>
@@ -404,6 +428,18 @@ const onClickProcessor = (item: any) => {
             <el-icon><i-lucide-plus /></el-icon><span>创建新表</span>
           </div>
           <el-input
+            v-if="isCopyTask"
+            v-model="connectionQuery"
+            :placeholder="$t('packages_dag_search_connection')"
+            clearable
+            @input="handleFetchConnections"
+          >
+            <template #prefix>
+              <el-icon><i-lucide-search /></el-icon>
+            </template>
+          </el-input>
+          <el-input
+            v-else
             v-model="tableState.query"
             :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
             clearable
@@ -525,6 +561,7 @@ const onClickProcessor = (item: any) => {
       <div v-else>
         <div class="p-2">
           <el-input
+            v-model="processorQuery"
             :placeholder="$t('packages_dag_search_processor')"
             clearable
           >
@@ -537,7 +574,7 @@ const onClickProcessor = (item: any) => {
           <el-scrollbar class="flex-1 min-h-0" :max-height="480">
             <div class="p-1">
               <div
-                v-for="(item, ni) in dataflowStore.processorNodeTypes"
+                v-for="(item, ni) in filteredProcessorNodeTypes"
                 :key="ni"
                 class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg grabbable user-select-none"
                 @click="onClickProcessor(item)"
