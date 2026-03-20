@@ -9,6 +9,7 @@ import {
   updateApiModule,
   updateApiModulePermissions,
   updateApiModuleTags,
+  updateParamEncryption,
 } from '@tap/api/src/core/modules'
 import { fetchRoles } from '@tap/api/src/core/roles'
 import { DownBoldOutlined } from '@tap/component'
@@ -397,7 +398,7 @@ const save = async (type?: boolean) => {
       acl,
     } = form.value
 
-    if (apiType === "customerQuery" && fullCustomQuery) {
+    if (apiType === 'customerQuery' && fullCustomQuery) {
       const validation = mqlEditor.value?.validateJSON(customWhere)
       if (!validation.isValid) {
         ElMessage.error(
@@ -936,12 +937,11 @@ const resolveTriggerEl = (e: MouseEvent) => {
 }
 
 const handleOpenParamEncryption = async (e: MouseEvent, paramIndex: number) => {
-  if (props.readonly) return
-
   const triggerEl = resolveTriggerEl(e)
   if (!triggerEl) return
 
   if (!paramEncryptionPopoverVisible.value) {
+    beforeParamEncryptionState.value = cloneDeep(getParamEncryptionState())
     setCurrentParamEncryption(triggerEl, paramIndex)
     await openParamEncryptionPopover()
     return
@@ -955,9 +955,139 @@ const handleOpenParamEncryption = async (e: MouseEvent, paramIndex: number) => {
   paramEncryptionPopoverVisible.value = false
   await nextTick()
   setTimeout(() => {
+    beforeParamEncryptionState.value = cloneDeep(getParamEncryptionState())
     setCurrentParamEncryption(triggerEl, paramIndex)
     paramEncryptionPopoverVisible.value = true
   }, 50)
+}
+
+const getParamEncryptionState = () => {
+  return (form.value?.params || []).map((p: any) => {
+    return {
+      name: p?.name,
+      textEncryptionRuleIds: (p?.textEncryptionRuleIds || []).slice(),
+    }
+  })
+}
+
+const getCurrentPathsPayload = () => {
+  const {
+    apiType,
+    acl,
+    method,
+    fullCustomQuery,
+    customWhere,
+    path,
+    sort,
+    where,
+    params,
+    fields,
+  } = form.value || {}
+
+  const normalizedParams =
+    params
+      ?.filter((t: any) => t.name)
+      .map((t: any) => {
+        return {
+          name: t.name,
+          type: Array.isArray(t.type) ? t.type.join(': ') : t.type,
+          defaultvalue: t.defaultvalue,
+          description: t.description,
+          required: t.required,
+          textEncryptionRuleIds: t.textEncryptionRuleIds,
+        }
+      }) || []
+
+  const normalizedSort = sort?.filter((t: any) => t.fieldName) || []
+  const normalizedWhere =
+    where?.filter((t: any) => t.fieldName && t.parameter) || []
+  const normalizedFields =
+    fieldsTreeRef.value?.getCheckedFields(true) || fields || []
+
+  return [
+    {
+      name: apiType === 'customerQuery' ? 'customerQuery' : 'findPage',
+      result: 'Page<Document>',
+      type: apiType === 'customerQuery' ? 'customerQuery' : 'preset',
+      acl,
+      method,
+      params: normalizedParams,
+      where: normalizedWhere,
+      sort: normalizedSort,
+      fields: normalizedFields,
+      path,
+      fullCustomQuery,
+      customWhere,
+    },
+  ]
+}
+
+const shouldAutoUpdateParamEncryption = () => {
+  return !isEdit.value && !!form.value?.id
+}
+
+const beforeParamEncryptionState = ref<ReturnType<
+  typeof getParamEncryptionState
+> | null>(null)
+
+let paramEncryptionSyncTimer: ReturnType<typeof setTimeout> | null = null
+let paramEncryptionSyncInFlight = false
+let paramEncryptionSyncQueuedState: ReturnType<
+  typeof getParamEncryptionState
+> | null = null
+const lastSyncedParamEncryptionState = ref<ReturnType<
+  typeof getParamEncryptionState
+> | null>(null)
+
+const syncParamEncryption = async (
+  nextState: ReturnType<typeof getParamEncryptionState>,
+) => {
+  if (!shouldAutoUpdateParamEncryption()) return
+
+  if (paramEncryptionSyncInFlight) {
+    paramEncryptionSyncQueuedState = cloneDeep(nextState)
+    return
+  }
+
+  paramEncryptionSyncInFlight = true
+  try {
+    await updateParamEncryption({
+      apiId: form.value.id,
+      paths: getCurrentPathsPayload(),
+    })
+    lastSyncedParamEncryptionState.value = cloneDeep(nextState)
+  } catch {
+    ElMessage.error(t('public_operation_fail'))
+  } finally {
+    paramEncryptionSyncInFlight = false
+    if (
+      paramEncryptionSyncQueuedState &&
+      !isEqual(
+        lastSyncedParamEncryptionState.value,
+        paramEncryptionSyncQueuedState,
+      )
+    ) {
+      const queued = paramEncryptionSyncQueuedState
+      paramEncryptionSyncQueuedState = null
+      await syncParamEncryption(queued)
+    } else {
+      paramEncryptionSyncQueuedState = null
+    }
+  }
+}
+
+const scheduleSyncParamEncryption = () => {
+  if (!shouldAutoUpdateParamEncryption()) return
+
+  if (paramEncryptionPopoverVisible.value) {
+    return
+  }
+
+  if (paramEncryptionSyncTimer) clearTimeout(paramEncryptionSyncTimer)
+  paramEncryptionSyncTimer = setTimeout(() => {
+    paramEncryptionSyncTimer = null
+    syncParamEncryption(getParamEncryptionState())
+  }, 150)
 }
 
 const handleRemoveParamEncryption = (
@@ -974,6 +1104,7 @@ const handleRemoveParamEncryption = (
       param.textEncryptionRuleIds || []
     ).slice()
   }
+  scheduleSyncParamEncryption()
 }
 
 const handleSelectParamEncryption = (encryptionId: string) => {
@@ -995,6 +1126,27 @@ const handleSelectParamEncryption = (encryptionId: string) => {
   form.value.params[currentParamIndex.value].textEncryptionRuleIds =
     currentParamEncryptionIds.value
 }
+
+watch(
+  paramEncryptionPopoverVisible,
+  (v) => {
+    if (v) return
+
+    if (!shouldAutoUpdateParamEncryption()) {
+      beforeParamEncryptionState.value = null
+      return
+    }
+
+    const currentState = getParamEncryptionState()
+    const beforeState = beforeParamEncryptionState.value
+    beforeParamEncryptionState.value = null
+
+    if (beforeState && !isEqual(beforeState, currentState)) {
+      scheduleSyncParamEncryption()
+    }
+  },
+  { flush: 'post' },
+)
 
 provide('encryptionsMap', encryptionsMap)
 provide('encryptions', encryptions)
@@ -1530,7 +1682,7 @@ provide('form', form)
           >
             <template #default="{ row, $index }">
               <el-button
-                v-if="editable(row, form) && !readonly"
+                v-if="editable(row, form, true)"
                 text
                 class="encryption-btn min-w-0"
                 @click.stop="(e) => handleOpenParamEncryption(e, $index)"
