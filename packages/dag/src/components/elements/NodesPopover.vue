@@ -8,6 +8,7 @@ import { makeNode, makeProcessorNode } from '../../composables/useDnD'
 import { useFetchConnections } from '../../composables/useFetchConnections'
 import { useDataflowStore } from '../../stores/dataflow.store'
 import { useHistoryStore } from '../../stores/history.store'
+import ConnectionType from '../ConnectionType.vue'
 import NodeIcon from '../NodeIcon.vue'
 import type { PopoverInstance, ScrollbarInstance } from 'element-plus'
 
@@ -304,8 +305,8 @@ const onClickConnection = (item: any) => {
     handleSelectConnection(item)
   } else {
     const node = makeNode(item!)
-    node.attrs.isSource = activeTab.value === 0
-    node.attrs.isTarget = activeTab.value === 2
+    // node.attrs.isSource = activeTab.value === 0
+    // node.attrs.isTarget = activeTab.value === 2
     handleAddNode(node)
 
     show.value = false
@@ -319,8 +320,8 @@ const onClickTable = async (item: any) => {
   }
 
   const node = makeNode(connection!, item.name)
-  node.attrs.isSource = activeTab.value === 0
-  node.attrs.isTarget = activeTab.value === 2
+  // node.attrs.isSource = activeTab.value === 0
+  // node.attrs.isTarget = activeTab.value === 2
   handleAddNode(node)
 
   show.value = false
@@ -478,7 +479,10 @@ defineExpose({
                   :text="item.name"
                   :show-after="400"
                 />
-                <!-- <ConnectionType class="ml-auto" :type="item.connection_type" /> -->
+                <ConnectionType
+                  v-if="item.connection_type === 'source_and_target'"
+                  :type="item.connection_type"
+                />
               </div>
             </div>
           </el-scrollbar>
