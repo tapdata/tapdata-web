@@ -6,7 +6,7 @@ import { TextEditable } from '@tap/component/src/base/text-editable'
 import { useI18n } from '@tap/i18n'
 import { uuid } from '@tap/shared'
 import { useVueFlow } from '@vue-flow/core'
-import { useLocalStorage } from '@vueuse/core'
+import { useLocalStorage, useResizeObserver } from '@vueuse/core'
 import {
   nextTick,
   onBeforeUnmount,
@@ -175,9 +175,42 @@ init()
 
 // Control NodesPanel visibility
 const nodesPanelExpanded = useLocalStorage('dag-nodes-panel-expanded', true)
+const hideNodesPanelTipShown = useLocalStorage(
+  'dag-hide-nodes-panel-tip-shown',
+  false,
+)
+const showHideNodesPanelTip = ref(false)
+const hideNodesPanelTipRef = useTemplateRef<any>('hideNodesPanelTipRef')
+const taskDetailRef = useTemplateRef<HTMLElement>('taskDetailRef')
+
+// 延迟显示 tooltip，等待布局稳定后再出现
+if (!hideNodesPanelTipShown.value && nodesPanelExpanded.value) {
+  setTimeout(() => {
+    showHideNodesPanelTip.value = true
+  }, 1000)
+}
+
+// 仅在 tooltip 显示时监听父容器尺寸变化，保持 tooltip 跟随按钮位置
+let stopResizeObserver: (() => void) | null = null
+
+watch(showHideNodesPanelTip, (visible) => {
+  if (visible) {
+    const { stop } = useResizeObserver(taskDetailRef, () => {
+      hideNodesPanelTipRef.value?.updatePopper?.()
+    })
+    stopResizeObserver = stop
+  } else {
+    stopResizeObserver?.()
+    stopResizeObserver = null
+  }
+})
 
 const toggleExpandNodes = () => {
   nodesPanelExpanded.value = !nodesPanelExpanded.value
+  if (showHideNodesPanelTip.value) {
+    showHideNodesPanelTip.value = false
+    hideNodesPanelTipShown.value = true
+  }
 }
 
 onBeforeUnmount(() => {
@@ -469,6 +502,7 @@ provide('isInitialized', isInitialized)
     class="w-100 h-100 position-relative overflow-hidden"
   >
     <div
+      ref="taskDetailRef"
       class="task-detail position-absolute top-3 start-3 z-10 bg-card rounded-xl flex p-2 align-center gap-2 shadow-canvas"
     >
       <el-button text @click="handlePageReturn">
@@ -489,22 +523,29 @@ provide('isInitialized', isInitialized)
         />
       </div>
       <TaskStatus class="w-auto rounded-lg zoom-xs" :task="dataflow" />
-      <el-button
-        text
-        :type="nodesPanelExpanded ? 'primary' : undefined"
-        :bg="nodesPanelExpanded"
-        @click="toggleExpandNodes"
+      <el-tooltip
+        ref="hideNodesPanelTipRef"
+        :visible="showHideNodesPanelTip"
+        :content="$t('packages_dag_hide_nodes_panel_tip')"
+        placement="right"
       >
-        <template #icon>
-          <VIcon
-            style="transition: none"
-            :style="{
-              transform: `scaleX(${!nodesPanelExpanded ? -1 : 1})`,
-            }"
-            >expand-list</VIcon
-          >
-        </template>
-      </el-button>
+        <el-button
+          text
+          :type="nodesPanelExpanded ? 'primary' : undefined"
+          :bg="nodesPanelExpanded"
+          @click="toggleExpandNodes"
+        >
+          <template #icon>
+            <VIcon
+              style="transition: none"
+              :style="{
+                transform: `scaleX(${!nodesPanelExpanded ? -1 : 1})`,
+              }"
+              >expand-list</VIcon
+            >
+          </template>
+        </el-button>
+      </el-tooltip>
     </div>
     <div class="w-100 h-0 position-absolute header z-10 flex align-center px-3">
       <div class="flex-1" />

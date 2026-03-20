@@ -1250,4 +1250,6 @@ export default {
   packages_dag_undo: 'Undo',
   packages_dag_redo: 'Redo',
   packages_dag_src_editor_copy_success: 'Copied to clipboard',
+  packages_dag_hide_nodes_panel_tip:
+    'Collapse panel. Right-click on the canvas to quickly add nodes.',
 }

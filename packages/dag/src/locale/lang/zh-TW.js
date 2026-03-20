@@ -1064,4 +1064,5 @@ export default {
   packages_dag_undo: '撤銷',
   packages_dag_redo: '重做',
   packages_dag_src_editor_copy_success: '已複製到剪貼板',
+  packages_dag_hide_nodes_panel_tip: '收起面板，可在畫布上右鍵快速添加節點',
 }
