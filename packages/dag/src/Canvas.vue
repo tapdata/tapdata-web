@@ -588,6 +588,10 @@ function onNodeClick({ event, node }) {
   emit('click:node', node)
 }
 
+function clearTextSelection() {
+  window.getSelection()?.removeAllRanges()
+}
+
 function onPaneClick(event: MouseEvent) {
   const pos = screenToFlowCoordinate({ x: event.clientX, y: event.clientY })
   dataflowStore.lastClickPosition = [pos.x, pos.y]
@@ -988,6 +992,7 @@ defineExpose({
       :panning-mouse-button="panningMouseButton"
       :pan-on-drag="isInPanningMode"
       :apply-changes="false"
+      @mousedown="clearTextSelection"
       @node-drag-stop="onNodeDragStop"
       @connect="onConnect"
       @node-click="onNodeClick"
