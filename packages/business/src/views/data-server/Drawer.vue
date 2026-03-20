@@ -397,7 +397,7 @@ const save = async (type?: boolean) => {
       acl,
     } = form.value
 
-    if (fullCustomQuery) {
+    if (apiType === "customerQuery" && fullCustomQuery) {
       const validation = mqlEditor.value?.validateJSON(customWhere)
       if (!validation.isValid) {
         ElMessage.error(
