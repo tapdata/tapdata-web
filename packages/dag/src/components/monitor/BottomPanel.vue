@@ -239,7 +239,7 @@ $headerHeight: 40px;
 
 .bottom-panel {
   position: relative;
-  height: 328px;
+  height: 56vh;
   //min-height: 328px;
   //height: 100%;
   overflow: visible;

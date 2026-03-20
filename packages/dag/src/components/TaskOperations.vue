@@ -269,7 +269,7 @@ defineExpose({
 
     <ElButton
       v-if="dataflow.status === 'stopping' && buttonShowMap.Stop"
-      :disabled="dataflow.buttonDisabled && dataflow.btnDisabled.forceStop"
+      :disabled="dataflow.btnDisabled && dataflow.btnDisabled.forceStop"
       type="danger"
       @click="$emit('forceStop')"
     >

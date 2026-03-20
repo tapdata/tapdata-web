@@ -41,6 +41,7 @@ import { useDataflowStore } from '../stores/dataflow.store'
 
 const dataflowStore = useDataflowStore()
 const scope = inject('formScope')
+const dataflow = inject<Ref<any>>('dataflow')
 const dataflowName = inject('dataflowName')
 const dataflowDesc = inject<Ref<string>>('dataflowDesc')
 const { Form } = components
@@ -308,8 +309,7 @@ const accessNodeProcessIdArr = computed(() =>
 
 const accessNodeProcessList = computed(() => {
   const agents = scope.$agents.filter(
-    (item: any) =>
-      item.accessNodeType === dataflowStore.dataflow.accessNodeType,
+    (item: any) => item.accessNodeType === dataflow.value.accessNodeType,
   )
   if (!accessNodeProcessIdArr.value.length) return agents
   return agents.filter(
@@ -1257,7 +1257,8 @@ const schema = {
                                           let children = []
 
                                           if ($deps[1] && $deps[2]) {
-                                            children = $deps[1].find(item => item.accessNodeType === $deps[0] && item.value === $deps[2]).children || []
+                                            const item = $deps[1].find(item => item.accessNodeType === $deps[0] && item.value === $deps[2])
+                                            children = (item && item.children) || []
                                           }
 
                                           $self.dataSource = [

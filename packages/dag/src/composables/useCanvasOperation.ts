@@ -112,6 +112,10 @@ export function useCanvasOperation() {
     (v: string) => (dataflowDesc.value = v),
   )
 
+  const isSyncTask = computed(() => {
+    return ['DataflowNew', 'DataflowEditor'].includes(route.name)
+  })
+
   const monitorRoute = computed(() => {
     if (dataflow.value.syncType === 'sync') return 'TaskMonitor'
     else return 'MigrationMonitor'
@@ -1141,9 +1145,7 @@ export function useCanvasOperation() {
       const targetNode = nextNodes.find(
         (n: any) =>
           n.type === 'table' &&
-          !n.attrs?.capabilities?.find(
-            ({ id }: any) => id === 'master_slave_merge',
-          ),
+          !dataflowStore.hasCapability(n, 'master_slave_merge'),
       )
       if (targetNode) {
         return t('packages_dag_merge_table_table_not_allow_target', {
@@ -1688,11 +1690,11 @@ export function useCanvasOperation() {
       try {
         initWS()
         dataflowStore.dataflow.btnDisabled.reset = true
+        const data = await resetTask(dataflowStore.dataflow.id)
+        responseHandler(data, t('public_message_operation_success'))
         dataflowStore.showConsole = true
         dataflowStore.showBottom = false
         dataflowStore.consoleAutoLoadType = 'reset'
-        const data = await resetTask(dataflowStore.dataflow.id)
-        responseHandler(data, t('public_message_operation_success'))
       } catch (error) {
         handleError(error, t('packages_dag_message_operation_error'))
       }
@@ -1875,6 +1877,7 @@ export function useCanvasOperation() {
     sharedMiningEditorRef,
     sharedCacheDetailsRef,
     sharedCacheEditorRef,
+    isSyncTask,
 
     initNodeType,
     onUpdateNodesPosition,

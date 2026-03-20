@@ -29,13 +29,13 @@ export const useHistoryStore = defineStore('history', () => {
         )
         if (!alreadyIn) {
           currentBulkAction.value.commands.push(undoable)
-          console.log('pushCommandToUndo (bulk)', undoable)
+          console.debug('pushCommandToUndo (bulk)', undoable)
         } else {
-          console.log('pushCommandToUndo SKIPPED (duplicate)', undoable)
+          console.debug('pushCommandToUndo SKIPPED (duplicate)', undoable)
         }
       } else {
         undoStack.value.push(undoable)
-        console.log('pushCommandToUndo', undoable)
+        console.debug('pushCommandToUndo', undoable)
       }
       checkUndoStackLimit()
       if (clearRedo) {

@@ -23,6 +23,7 @@ const dataflowStore = useDataflowStore()
 const pageSize = 20
 
 const dataflow = inject<any>('dataflow')
+const isSyncTask = inject<any>('isSyncTask')
 const onAddNode = inject<(node: any) => void>('onAddNode')
 const onCreateConnection =
   inject<(connection: any) => void>('onCreateConnection')
@@ -76,7 +77,7 @@ const getDragDom = async () => {
 }
 
 const handleSelectConnection = (item: any) => {
-  if (dataflow.value.syncType !== 'sync') return
+  if (!isSyncTask.value) return
   currentConnectionId.value = item.id
   currentConnection.value = item
   runFetchTables()
