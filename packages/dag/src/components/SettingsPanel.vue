@@ -307,14 +307,6 @@ const accessNodeProcessIdArr = computed(() =>
   Object.keys(accessNodeProcessIdMap.value),
 )
 
-watch(
-  () => scope.$agents,
-  () => {
-    console.log('watch.scope.$agents', [...scope.$agents])
-  },
-  { deep: true, immediate: true },
-)
-
 const accessNodeProcessList = computed(() => {
   const agents = scope.$agents.filter(
     (item: any) => item.accessNodeType === dataflow.value.accessNodeType,

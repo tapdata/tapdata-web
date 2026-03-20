@@ -179,6 +179,7 @@ watch(
       dataflowStore.consoleAutoLoadType = ''
     }
   },
+  { immediate: true },
 )
 
 onBeforeUnmount(() => {

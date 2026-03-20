@@ -658,7 +658,14 @@ function handleLayoutGraph() {
   emit('update:nodes:position', positionUpdates)
 
   nextTick(() => {
-    fitViewWithOffset({ duration: 0, maxZoom: 1 })
+    fitViewWithOffset({
+      duration: 0,
+      maxZoom: 1,
+      padding: {
+        top: '48px',
+        bottom: 0,
+      },
+    })
   })
 }
 

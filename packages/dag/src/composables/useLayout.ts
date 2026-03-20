@@ -4,6 +4,7 @@ import {
   Position,
   useVueFlow,
   type Edge,
+  type FitViewParams,
   type Node,
 } from '@vue-flow/core'
 import dagre from 'dagre'
@@ -52,7 +53,11 @@ export function useLayout(options?: {
     dagreGraph.setDefaultEdgeLabel(() => ({}))
 
     const isHorizontal = direction === 'LR' || direction === 'RL'
-    dagreGraph.setGraph({ nodesep: 48, ranksep: 120, rankdir: direction })
+    dagreGraph.setGraph({
+      nodesep: 48,
+      ranksep: 120,
+      rankdir: direction,
+    })
 
     previousDirection.value = direction
 
@@ -88,7 +93,7 @@ export function useLayout(options?: {
   /**
    * Fit view with panel offset - avoids left NodesPanel overlap
    */
-  function fitViewWithOffset(opts: FitViewWithOffsetOptions = {}) {
+  function fitViewWithOffset(opts: FitViewParams = {}) {
     const { duration = 200, minZoom = 0.1, maxZoom = 10, padding = 0.1 } = opts
 
     // Get canvas container dimensions
@@ -103,7 +108,7 @@ export function useLayout(options?: {
 
     // Calculate offsets for panels
     const leftOffset = nodesPanelExpanded?.value ? unref(nodesPanelWidth) : 0
-    const bottomOffset = unref(bottomPanelHeight)
+    const bottomOffset = unref(bottomPanelHeight) - 44 // 减去 bar 的高度
 
     // Get bounds of all nodes using VueFlow's internal GraphNodes
     const graphNodes = getNodes.value

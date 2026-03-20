@@ -621,7 +621,6 @@ function addNode(node) {
 }
 
 async function addTargetNode(node) {
-  console.log('addTargetNode', node)
   const mergeProperties = activeNode.value?.mergeProperties
   inputsMap[node.id] = []
   const inputs = inputsMap[node.id]

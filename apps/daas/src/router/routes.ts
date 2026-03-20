@@ -107,15 +107,6 @@ export const routes = [
     component: NodeEditor,
   },
   {
-    path: '/dataflow/canvas/:id',
-    name: 'DataflowCanvas',
-    component: DagEditor,
-    meta: {
-      title: 'page_title_data_develop',
-      code: 'v2_data_flow_dag_edit',
-    },
-  },
-  {
     path: '/dataflow/editor',
     name: 'DataflowNew',
     component: DagEditorView,

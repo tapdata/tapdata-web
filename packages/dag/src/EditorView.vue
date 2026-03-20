@@ -42,6 +42,7 @@ const {
   buttonShowMap,
   formScope,
   isSaving,
+  isSyncTask,
   canvasRef,
   consoleRef,
   skipErrorRef,
@@ -494,6 +495,7 @@ provide('previewData', previewData)
 provide('previewLoading', previewLoading)
 provide('handlePreview', handlePreview)
 provide('isInitialized', isInitialized)
+provide('isSyncTask', isSyncTask)
 </script>
 
 <template>
@@ -575,7 +577,7 @@ provide('isInitialized', isInitialized)
       @click:node="onClickNode"
     >
       <template #bottom>
-        <ConsolePanel ref="consoleRef" />
+        <ConsolePanel v-if="dataflowStore.showConsole" ref="consoleRef" />
       </template>
     </Canvas>
 
