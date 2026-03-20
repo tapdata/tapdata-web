@@ -8,8 +8,9 @@ import { useVueFlow } from '@vue-flow/core'
 import { debounce, escapeRegExp } from 'lodash-es'
 import { computed, inject, nextTick, reactive, ref, shallowRef } from 'vue'
 import { useCreateTable } from '../composables/useCreateTable'
-import { makeNode, useDnD } from '../composables/useDnD'
+import { makeNode, makeProcessorNode, useDnD } from '../composables/useDnD'
 import { useDataflowStore } from '../stores/dataflow.store'
+import { useHistoryStore } from '../stores/history.store'
 import BaseNode from './BaseNode.vue'
 import ConnectionType from './ConnectionType.vue'
 import NodeIcon from './NodeIcon.vue'
@@ -21,8 +22,10 @@ const dataflowStore = useDataflowStore()
 
 const pageSize = 20
 
-const dataflow = inject<(node: any) => void>('dataflow')
+const dataflow = inject<any>('dataflow')
 const onAddNode = inject<(node: any) => void>('onAddNode')
+const onCreateConnection =
+  inject<(connection: any) => void>('onCreateConnection')
 
 const {
   dragNode,
@@ -72,7 +75,8 @@ const getDragDom = async () => {
   return document.querySelector('#dragNode')
 }
 
-const handleSelectConnection = (item) => {
+const handleSelectConnection = (item: any) => {
+  if (dataflow.value.syncType !== 'sync') return
   currentConnectionId.value = item.id
   currentConnection.value = item
   runFetchTables()
@@ -243,9 +247,13 @@ runFetchConnections().then(() => {
 })
 
 useI18n()
-const { findNode } = useVueFlow()
+const { findNode, getOutgoers, screenToFlowCoordinate, viewportRef } =
+  useVueFlow()
+
+const historyStore = useHistoryStore()
 
 const X_OFFSET = 100
+const Y_OFFSET = 40
 
 const { promptCreateTable } = useCreateTable()
 
@@ -287,6 +295,161 @@ const handleAddTable = async () => {
 
     onAddNode?.(node)
   }
+}
+
+/**
+ * 获取画布视口中心的 flow 坐标
+ */
+const getViewportCenterPosition = (): [number, number] => {
+  const rect = viewportRef.value?.getBoundingClientRect()
+  const centerX = rect ? rect.left + rect.width / 2 : window.innerWidth / 2
+  const centerY = rect ? rect.top + rect.height / 2 : window.innerHeight / 2
+  const pos = screenToFlowCoordinate({ x: centerX, y: centerY })
+  return [pos.x, pos.y]
+}
+
+/**
+ * 在给定位置附近找到一个不与现有节点重叠的位置
+ */
+const NODE_WIDTH = 220
+const NODE_HEIGHT = 76
+
+const findNonOverlappingPosition = (
+  startPos: [number, number],
+): [number, number] => {
+  const nodes = dataflowStore.dag.nodes
+  let [x, y] = startPos
+
+  const hasCollision = (px: number, py: number) =>
+    nodes.some((n) => {
+      const [nx, ny] = n.attrs?.position ?? [0, 0]
+      return (
+        px < nx + NODE_WIDTH &&
+        px + NODE_WIDTH > nx &&
+        py < ny + NODE_HEIGHT &&
+        py + NODE_HEIGHT > ny
+      )
+    })
+
+  let attempts = 0
+  while (hasCollision(x, y) && attempts < 50) {
+    y += Y_OFFSET
+    attempts++
+  }
+  return [x, y]
+}
+
+/**
+ * 判断 source 节点能否连接到 target 节点
+ */
+const canConnect = (sourceNode: any, targetNode: any): boolean => {
+  // 先给新节点设置 __Ctor（连线校验需要）
+  if (!targetNode.__Ctor) {
+    const ins = dataflowStore.getResourceInsByNode(targetNode)
+    if (ins) {
+      Object.defineProperty(targetNode, '__Ctor', {
+        value: ins,
+        enumerable: false,
+      })
+    }
+  }
+  if (!sourceNode.__Ctor || !targetNode.__Ctor) return false
+
+  return (
+    dataflowStore.checkAsSource(sourceNode) &&
+    dataflowStore.checkSourceMaxOutputs(sourceNode) &&
+    dataflowStore.checkAsTarget(targetNode) &&
+    dataflowStore.checkAllowTargetOrSource(sourceNode, targetNode)
+  )
+}
+
+/**
+ * 计算放在最右侧节点右边的位置
+ */
+const getRightmostPosition = (): [number, number] => {
+  const allNodes = dataflowStore.dag.nodes
+  let maxX = -Infinity
+  let maxY = 0
+  let maxNodeWidth = 0
+
+  for (const n of allNodes) {
+    const cn = findNode(n.id)
+    const x = n.attrs?.position?.[0] ?? 0
+    if (x > maxX) {
+      maxX = x
+      maxY = n.attrs?.position?.[1] ?? 0
+      maxNodeWidth = cn?.dimensions?.width ?? NODE_WIDTH
+    }
+  }
+
+  return [maxX + maxNodeWidth + X_OFFSET, maxY]
+}
+
+/**
+ * 双击添加节点到画布，自动连线
+ */
+const handleDblClickAddNode = (node: any) => {
+  if (dataflowStore.stateIsReadonly) return
+
+  historyStore.startRecordingUndo()
+
+  const allNodes = dataflowStore.dag.nodes
+
+  if (!allNodes.length) {
+    // 画布为空，放到视口中心
+    node.attrs.position = getViewportCenterPosition()
+    onAddNode?.(node)
+  } else {
+    // 找到一个没有输出的节点作为上游
+    const source = allNodes.find((n) => !n.$outputs || n.$outputs.length === 0)
+
+    if (source && canConnect(source, node)) {
+      // 能连线：放在 source 节点右侧，自动连线
+      const canvasNode = findNode(source.id)
+      const outgoers = getOutgoers(source.id).sort(
+        (a, b) => a.position.y - b.position.y,
+      )
+      const lastOutgoer = outgoers.at(-1)
+      const position = lastOutgoer
+        ? [
+            lastOutgoer.position.x,
+            lastOutgoer.position.y + lastOutgoer.dimensions.height + Y_OFFSET,
+          ]
+        : [
+            canvasNode!.position.x + canvasNode!.dimensions.width + X_OFFSET,
+            canvasNode!.position.y,
+          ]
+
+      node.attrs.position = findNonOverlappingPosition(
+        position as [number, number],
+      )
+      onAddNode?.(node)
+      onCreateConnection?.({ source: source.id, target: node.id })
+    } else {
+      // 不能连线或没有可用上游：放到最右侧节点右边
+      node.attrs.position = findNonOverlappingPosition(getRightmostPosition())
+      onAddNode?.(node)
+    }
+  }
+
+  historyStore.stopRecordingUndo()
+}
+
+const handleDblClickConnection = (item: any) => {
+  const node = makeNode(
+    item,
+    dataflow.value.syncType === 'sync' ? '' : undefined,
+  )
+  handleDblClickAddNode(node)
+}
+
+const handleDblClickTable = (item: any) => {
+  const node = makeNode(currentConnection.value!, item.name)
+  handleDblClickAddNode(node)
+}
+
+const handleDblClickProcessor = (item: any) => {
+  handleDblClickAddNode(makeProcessorNode(item))
 }
 
 const onConnectionDragStart = (item) => {
@@ -360,6 +523,7 @@ const onTableDragStart = (item) => {
               'is-active': currentConnectionId === item.id,
             }"
             @click="handleSelectConnection(item)"
+            @dblclick="handleDblClickConnection(item)"
           >
             <NodeIcon
               class="flex-shrink-0"
@@ -451,6 +615,7 @@ const onTableDragStart = (item) => {
                 onStop: onDragStop,
               }"
               class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg grabbable user-select-none"
+              @dblclick="handleDblClickTable(item)"
             >
               <el-icon :size="16"><i-lucide-table /></el-icon>
               <OverflowTooltip
@@ -496,6 +661,7 @@ const onTableDragStart = (item) => {
               onStop: onDragStop,
             }"
             class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg grabbable user-select-none"
+            @dblclick="handleDblClickProcessor(item)"
           >
             <NodeIcon
               :size="20"

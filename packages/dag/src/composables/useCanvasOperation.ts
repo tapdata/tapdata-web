@@ -29,6 +29,7 @@ import {
   h,
   inject,
   nextTick,
+  onBeforeUnmount,
   reactive,
   ref,
   shallowRef,
@@ -95,6 +96,7 @@ export function useCanvasOperation() {
   const upgradeChargesVisibleTips = ref('')
   const upgradeChargesVisible = ref(false)
   const nameHasUpdated = ref(false)
+  const destory = ref(false)
 
   const dataflow = reactiveComputed(() => ({ ...dataflowStore.dataflow }))
 
@@ -1641,6 +1643,7 @@ export function useCanvasOperation() {
 
   const handleEditFlush = (result: any) => {
     if (result.data) {
+      if (result.data.id !== dataflow.value.id) return
       reformDataflow(result.data, true)
       dataflowStore.transformLoading = !result.data.transformed
 
@@ -1847,6 +1850,11 @@ export function useCanvasOperation() {
       node.attrs.sharedCache = sharedCache
     })
   }
+
+  onBeforeUnmount(() => {
+    destory.value = true
+    $ws.off('editFlush', handleEditFlush)
+  })
 
   return {
     dataflow,

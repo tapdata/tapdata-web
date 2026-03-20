@@ -864,6 +864,8 @@ export const useDataflowStore = defineStore('dataflow', () => {
     taskSaving.value = false
     materializedViewVisible.value = false
 
+    processorNodeTypes.value = []
+
     // DAG 结构
     dag.value = { nodes: [], edges: [] }
 
