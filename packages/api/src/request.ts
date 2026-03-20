@@ -35,9 +35,11 @@ export interface CountFetchResult {
 
 export interface Filter {
   where?: Record<string, any>
-  order?: string
+  order?: string | string[]
   limit?: number
   skip?: number
+  page?: number
+  size?: number
   pageNo?: number
   pageSize?: number
   fields?: any

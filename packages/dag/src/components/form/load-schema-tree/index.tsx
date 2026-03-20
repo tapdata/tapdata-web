@@ -10,15 +10,14 @@ import { useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 
 import { defineComponent, onMounted, onUnmounted, ref, watch } from 'vue'
-
-import { useStore } from 'vuex'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 import './style.scss'
 
 export const loadSchemaTree = observer(
   defineComponent({
     props: ['findParentNode', 'value', 'tableNameField'],
     setup(props) {
-      const store = useStore()
+      const dataflowStore = useDataflowStore()
       const formRef = useForm()
       const form = formRef.value
       const loading = ref(false)
@@ -32,14 +31,14 @@ export const loadSchemaTree = observer(
       const formIsChange = ref(false)
 
       watch(
-        () => store.state.dataflow.editVersion,
+        () => dataflowStore.editVersion,
         () => {
           formIsChange.value = true
         },
       )
 
       async function getTask() {
-        const taskId = store.state.dataflow?.taskId
+        const taskId = dataflowStore.dataflow?.taskId
         const { parent_task_sign } = this.$route.query || {}
         return await getTaskById(taskId, {}, { parent_task_sign })
       }
@@ -121,7 +120,7 @@ export const loadSchemaTree = observer(
                           form.setValuesIn(tableNameField || 'tableName', table)
                           isTransformed.value = false
                           const unwatchSaving = watch(
-                            () => store.state.dataflow.taskSaving,
+                            () => dataflowStore.taskSaving,
                             (v) => {
                               if (!v) {
                                 getSchemaData(true)

@@ -41,6 +41,10 @@ html.dark {
   --bg-light: #121212;
   --bg-normal: var(--N100);
   --bg-disable: var(--N100);
+  --bg-block: var(--white5);
+  --bg-node: #27272b;
+
+  --color-background-section: #18181b66;
 
   .layout-bg {
     background-color: #000;
@@ -65,6 +69,8 @@ html.dark {
   .layout-bg-bl {
     display: none;
   }
+
+  --color-components-kbd-bg-gray: #ffffff08;
 }
 html.dark {
   color-scheme: dark;

@@ -4,7 +4,7 @@ import {
   getTaskInspectHistories,
 } from '@tap/api/src/core/task-inspect'
 import { VEmpty } from '@tap/component/src/base/v-empty'
-import i18n from '@tap/i18n'
+import { useI18n } from '@tap/i18n'
 import dayjs from 'dayjs'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import InspectDetailDialog from './InspectDetailDialog.vue'
@@ -55,6 +55,7 @@ interface ApiResponse {
   items: TaskInspectHistory[]
 }
 
+const { t } = useI18n()
 const loading = ref(false)
 const detailDialogVisible = ref(false)
 const currentInspectId = ref('')
@@ -65,11 +66,11 @@ let timeout: number | undefined
 
 const makeStatus = (status: string) => {
   const statusMap: Record<string, string> = {
-    RUNNING: i18n.t('public_status_running'),
-    STOPPED: i18n.t('public_status_stop'),
-    DONE: i18n.t('public_status_finished'),
-    ERROR: i18n.t('public_status_error'),
-    PING_TIMEOUT: i18n.t('public_status_ping_timeout'),
+    RUNNING: t('public_status_running'),
+    STOPPED: t('public_status_stop'),
+    DONE: t('public_status_finished'),
+    ERROR: t('public_status_error'),
+    PING_TIMEOUT: t('public_status_ping_timeout'),
   }
 
   const typeMap: Record<string, string> = {
@@ -275,7 +276,7 @@ onBeforeUnmount(() => {
             $t('packages_dag_inspect_start_config_desc')
           }}</span>
           <ElButton @click="emit('openInspect')">
-            <VIcon>data-scan</VIcon>
+            <VIcon class="mr-1">data-scan</VIcon>
             {{ $t('packages_dag_inspect_start_config') }}
           </ElButton>
         </div>

@@ -65,7 +65,7 @@ export async function fetchApiServerToken() {
       debug: 'true',
     },
   })
-  return result?.data || {}
+  return result?.data?.access_token || ''
 }
 
 export function fetchApisByClient(clientId: string) {

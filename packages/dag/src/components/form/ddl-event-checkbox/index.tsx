@@ -1,8 +1,9 @@
 import { observer } from '@formily/reactive-vue'
-import { useField, useForm } from '@tap/form'
+import { useForm } from '@tap/form'
 
 import i18n from '@tap/i18n'
 import { defineComponent, ref } from 'vue'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 
 const EVENT_MAP = {
   alter_field_name_event: i18n.t(
@@ -44,17 +45,19 @@ export const DdlEventCheckbox = observer(
   defineComponent({
     props: ['value', 'disabled', 'formValues'],
     setup(props, { emit }) {
+      const dataflowStore = useDataflowStore()
       const formRef = useForm()
       const form = formRef.value
       const events = ref([])
       const selected = ref([])
       const values = props.formValues || form.values
-      const capabilities = values.attrs.capabilities || []
       const unselected = ref(props.value || [])
 
-      events.value = capabilities
-        .filter((item) => item.type === 10)
+      events.value = dataflowStore
+        .getCapabilitiesByType(values, 10)
+        .filter((item) => item.id !== 'clear_table_event')
         .map((item) => item.id)
+
       selected.value = unselected.value.length
         ? events.value.filter((name) => !unselected.value.includes(name))
         : [...events.value]
@@ -100,8 +103,8 @@ export const DdlEventList = defineComponent({
     'formValues',
   ],
   setup(props) {
+    const dataflowStore = useDataflowStore()
     const formRef = useForm()
-    const fieldRef = useField()
     const form = formRef.value
     const list = ref([])
     const values = props.formValues ?? form.values
@@ -114,15 +117,13 @@ export const DdlEventList = defineComponent({
           parent.ddlConfiguration === 'SYNCHRONIZATION',
       )
 
-    const parentEnable = ref(!!parents.length)
-
     if (parents.length) {
-      const functions = values.attrs.capabilities
-        .filter((item) => item.type === 11)
+      const functions = dataflowStore
+        .getCapabilitiesByType(values, 11)
         .map((item) => item.id)
       parents.forEach((parent) => {
         const disabledEvents = parent.disabledEvents || []
-        const events = parent.attrs.capabilities
+        const events = Object.values(dataflowStore.getCapabilitiesMap(parent))
           .filter((item) => {
             if (item.type !== 10 || disabledEvents.includes(item.id)) return
             const functionName = item.id.replace(/_event$/, '_function')

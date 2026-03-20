@@ -59,7 +59,11 @@ export function toThousandsUnit(val) {
 }
 
 // datepicker配置，有效时间为 当前时间~以前
-export function getPickerOptionsBeforeTime(val = Time.now(), nowTimestamp, cb) {
+export function getPickerOptionsBeforeTime(
+  val = Time.now(),
+  nowTimestamp: number,
+  cb?: () => void,
+) {
   const now = nowTimestamp || Time.now()
   const formatMap = {
     date: 'YYYY-MM-DD',

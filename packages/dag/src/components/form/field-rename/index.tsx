@@ -3,8 +3,8 @@ import { IconButton } from '@tap/component/src/icon-button'
 import { FormItem, useField, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { computed, defineComponent, ref } from 'vue'
-import { useStore } from 'vuex'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 import { convertSchemaToTreeData } from './util'
 import './index.scss'
 
@@ -12,7 +12,7 @@ export const FieldRename = observer(
   defineComponent({
     props: ['loading', 'disabled', 'getFields', 'value'],
     setup(props) {
-      const store = useStore()
+      const dataflowStore = useDataflowStore()
       const formRef = useForm()
       const fieldRef = useField()
       const fieldModel = fieldRef.value
@@ -45,7 +45,7 @@ export const FieldRename = observer(
         })
       }
       const transformLoading = computed(() => {
-        return store.state.dataflow.transformLoading
+        return dataflowStore.transformLoading
       })
       const searchFiledName = ref('')
       const capitalized = ref('') // 字段名处理

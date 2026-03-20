@@ -13,7 +13,7 @@ import {
 import i18n from '@tap/i18n'
 import { defineComponent, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useStore } from 'vuex'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 import NodeIcon from '../../NodeIcon'
 import './style.scss'
 
@@ -26,7 +26,7 @@ export const MergeTableTree = observer(
       loadFieldsMethod: Function,
     },
     setup(props, { emit }) {
-      const store = useStore()
+      const dataflowStore = useDataflowStore()
       const route = useRoute()
       const tree = ref(null)
       const formRef = useForm()
@@ -310,7 +310,7 @@ export const MergeTableTree = observer(
           )
           // 等待自动保存接口响应后查询
           const unwatch = watch(
-            () => store.state.dataflow.editVersion,
+            () => dataflowStore.editVersion,
             () => {
               unwatch()
               loadTargetField(selfId, selfPath)

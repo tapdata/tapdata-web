@@ -1,4 +1,4 @@
-<script lang="jsx">
+<script lang="tsx">
 export default {
   name: 'OverflowTooltip',
   // inheritAttrs: false,
