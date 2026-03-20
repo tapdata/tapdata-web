@@ -1265,7 +1265,8 @@ const schema = {
                                           let children = []
 
                                           if ($deps[1] && $deps[2]) {
-                                            children = $deps[1].find(item => item.accessNodeType === $deps[0] && item.value === $deps[2]).children || []
+                                            const item = $deps[1].find(item => item.accessNodeType === $deps[0] && item.value === $deps[2])
+                                            children = (item && item.children) || []
                                           }
 
                                           $self.dataSource = [
