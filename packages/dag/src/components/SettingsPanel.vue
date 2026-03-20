@@ -41,6 +41,7 @@ import { useDataflowStore } from '../stores/dataflow.store'
 
 const dataflowStore = useDataflowStore()
 const scope = inject('formScope')
+const dataflow = inject<Ref<any>>('dataflow')
 const dataflowName = inject('dataflowName')
 const dataflowDesc = inject<Ref<string>>('dataflowDesc')
 const { Form } = components
@@ -306,10 +307,17 @@ const accessNodeProcessIdArr = computed(() =>
   Object.keys(accessNodeProcessIdMap.value),
 )
 
+watch(
+  () => scope.$agents,
+  () => {
+    console.log('watch.scope.$agents', [...scope.$agents])
+  },
+  { deep: true, immediate: true },
+)
+
 const accessNodeProcessList = computed(() => {
   const agents = scope.$agents.filter(
-    (item: any) =>
-      item.accessNodeType === dataflowStore.dataflow.accessNodeType,
+    (item: any) => item.accessNodeType === dataflow.value.accessNodeType,
   )
   if (!accessNodeProcessIdArr.value.length) return agents
   return agents.filter(

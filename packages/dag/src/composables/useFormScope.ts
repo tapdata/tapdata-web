@@ -23,7 +23,7 @@ import { useI18n } from '@tap/i18n'
 import { Cookie, isPlainObj } from '@tap/shared'
 import axios from 'axios'
 import { isEmpty, merge } from 'lodash-es'
-import { computed, watch } from 'vue'
+import { computed, reactive, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { useDataflowStore } from '../stores/dataflow.store'
@@ -306,7 +306,7 @@ export function useFormScope({ canvasRef }) {
     return store.commit('dataflow/clearNodeError', id)
   }
 
-  const scope = {
+  const scope = reactive({
     $index: null, // 数组索引，防止使用该值，在表单校验(validateBySchema)时出错
 
     $settings: dataflowStore.dataflow,
@@ -1268,7 +1268,7 @@ export function useFormScope({ canvasRef }) {
     getCapabilitiesByType: dataflowStore.getCapabilitiesByType,
 
     isSchemaFree: dataflowStore.isSchemaFree,
-  }
+  })
 
   const load = async () => {
     scope.$alarmChannels = await scope.loadAlarmChannels()
