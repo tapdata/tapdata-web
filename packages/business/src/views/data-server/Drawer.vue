@@ -79,6 +79,7 @@ const emit = defineEmits([
   'save',
   'update',
   'update:selectedFields',
+  'close',
 ])
 
 const apiApplication = inject<Ref<any>>('apiApplication', ref(null))
@@ -736,6 +737,11 @@ const getAllFields = async () => {
 }
 
 const handleBeforeClose = async (done: () => void) => {
+  const doneAndEmitClose = () => {
+    done()
+    emit('close')
+  }
+
   if (isEdit.value) {
     const formValue = {
       ...form.value,
@@ -751,13 +757,13 @@ const handleBeforeClose = async (done: () => void) => {
     if (hasChanges) {
       const isConfirm = await Modal.confirm(t('public_current_is_editing'))
 
-      isConfirm && done()
+      isConfirm && doneAndEmitClose()
     } else {
-      done()
+      doneAndEmitClose()
       isEdit.value = false
     }
   } else {
-    done()
+    doneAndEmitClose()
   }
 }
 
