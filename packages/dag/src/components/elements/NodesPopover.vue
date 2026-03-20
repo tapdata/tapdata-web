@@ -4,6 +4,7 @@ import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { useI18n } from '@tap/i18n'
 import { useVueFlow } from '@vue-flow/core'
 import { computed, inject, onBeforeUnmount, ref, watch, type Ref } from 'vue'
+import { useCreateTable } from '../../composables/useCreateTable'
 import { makeNode, makeProcessorNode } from '../../composables/useDnD'
 import { useFetchConnections } from '../../composables/useFetchConnections'
 import { useDataflowStore } from '../../stores/dataflow.store'
@@ -88,6 +89,15 @@ const {
 
 const isCopyTask = computed(() => dataflow.value.syncType !== 'sync')
 
+const showCreateTable = computed(() => {
+  const conn = currentConnection.value as any
+  return conn && conn.connection_type?.includes('source_and_target')
+})
+
+const showConnectionList = computed(
+  () => !currentConnectionId.value && !tableState.query,
+)
+
 const handleFetchConnections = () => {
   runFetchConnections({
     connection_type: {
@@ -162,7 +172,7 @@ watch(show, (newValue) => {
       setActiveTab(0)
     } else if (prevNodeId && !nextNodeId) {
       // 节点右侧触发 - 激活 processor tab
-      setActiveTab(1)
+      setActiveTab(2)
     } else if (nextNodeId && prevNodeId) {
       // 连线上触发 - 激活 processor tab
       setActiveTab(1)
@@ -305,12 +315,20 @@ const onClickConnection = (item: any) => {
     handleSelectConnection(item)
   } else {
     const node = makeNode(item!)
-    // node.attrs.isSource = activeTab.value === 0
-    // node.attrs.isTarget = activeTab.value === 2
     handleAddNode(node)
 
     show.value = false
   }
+}
+
+const { promptCreateTable } = useCreateTable()
+
+const handleAddTable = async () => {
+  if (!currentConnection.value) return
+  show.value = false
+  const tableName = await promptCreateTable()
+  if (!tableName) return
+  onClickTable({ name: tableName })
 }
 
 const onClickTable = async (item: any) => {
@@ -320,8 +338,6 @@ const onClickTable = async (item: any) => {
   }
 
   const node = makeNode(connection!, item.name)
-  // node.attrs.isSource = activeTab.value === 0
-  // node.attrs.isTarget = activeTab.value === 2
   handleAddNode(node)
 
   show.value = false
@@ -422,11 +438,12 @@ defineExpose({
         </div>
         <div class="p-2">
           <div
-            v-if="currentConnection && activeTab === 2"
+            v-if="showCreateTable"
             class="mb-2 flex h-8 align-center gap-2 px-3 connection-item rounded-lg user-select-none border border-dashed font-color-light"
-            @click="onClickTable({ name: '' })"
+            @click="handleAddTable"
           >
-            <el-icon><i-lucide-plus /></el-icon><span>创建新表</span>
+            <el-icon><i-lucide-plus /></el-icon
+            ><span>{{ t('packages_dag_dialog_createTable') }}</span>
           </div>
           <el-input
             v-if="isCopyTask"
@@ -453,7 +470,7 @@ defineExpose({
         </div>
         <div class="border-top nodes-popover-content">
           <el-scrollbar
-            v-if="!currentConnectionId && !tableState.query"
+            v-if="showConnectionList"
             ref="connectionScroller"
             :max-height="480"
             :distance="10"

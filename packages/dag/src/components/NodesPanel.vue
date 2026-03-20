@@ -5,14 +5,15 @@ import { mouseDrag as vDrag } from '@tap/component/src/directives/mousedrag'
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { useI18n } from '@tap/i18n'
 import { useVueFlow } from '@vue-flow/core'
-import { ElMessageBox, type ScrollbarDirection } from 'element-plus'
 import { debounce, escapeRegExp } from 'lodash-es'
 import { computed, inject, nextTick, reactive, ref, shallowRef } from 'vue'
+import { useCreateTable } from '../composables/useCreateTable'
 import { makeNode, useDnD } from '../composables/useDnD'
 import { useDataflowStore } from '../stores/dataflow.store'
 import BaseNode from './BaseNode.vue'
 import ConnectionType from './ConnectionType.vue'
 import NodeIcon from './NodeIcon.vue'
+import type { ScrollbarDirection } from 'element-plus'
 
 const emit = defineEmits(['move-node', 'drop-node'])
 
@@ -241,61 +242,50 @@ runFetchConnections().then(() => {
   }
 })
 
-const { t } = useI18n()
+useI18n()
 const { findNode } = useVueFlow()
 
 const X_OFFSET = 100
 
+const { promptCreateTable } = useCreateTable()
+
 const handleAddTable = async () => {
   if (!currentConnection.value) return
-  try {
-    const { value } = await ElMessageBox.prompt(
-      '',
-      t('packages_dag_dialog_createTable'),
-      {
-        inputPlaceholder: t('packages_dag_dialog_placeholderTable'),
-        inputValidator: (val) => !!val?.trim(),
-        confirmButtonText: t('public_button_confirm'),
-        cancelButtonText: t('public_button_cancel'),
-      },
-    )
-    if (value?.trim()) {
-      const node = makeNode(currentConnection.value, value.trim())
+  const tableName = await promptCreateTable()
+  if (tableName) {
+    const node = makeNode(currentConnection.value, tableName)
 
-      // 找到第一个源节点（type=table 且没有输入）
-      const firstSource = dataflowStore.dag.nodes.find(
-        (n) => n.type === 'table' && (!n.$inputs || n.$inputs.length === 0),
+    // 找到第一个源节点（type=table 且没有输入）
+    const firstSource = dataflowStore.dag.nodes.find(
+      (n) => n.type === 'table' && (!n.$inputs || n.$inputs.length === 0),
+    )
+
+    if (firstSource) {
+      // 获取该分支上所有后续节点（包括源节点自身）
+      const branchNodes = dataflowStore.getAfterNodesInSameBranch(
+        firstSource.id,
       )
 
-      if (firstSource) {
-        // 获取该分支上所有后续节点（包括源节点自身）
-        const branchNodes = dataflowStore.getAfterNodesInSameBranch(
-          firstSource.id,
-        )
+      // 找到最右边的节点位置
+      let maxX = -Infinity
+      let maxY = 0
+      let maxNodeWidth = 0
 
-        // 找到最右边的节点位置
-        let maxX = -Infinity
-        let maxY = 0
-        let maxNodeWidth = 0
-
-        for (const n of branchNodes) {
-          const canvasNode = findNode(n.id)
-          const x = n.attrs?.position?.[0] ?? 0
-          if (x > maxX) {
-            maxX = x
-            maxY = n.attrs?.position?.[1] ?? 0
-            maxNodeWidth = canvasNode?.dimensions?.width ?? 200
-          }
+      for (const n of branchNodes) {
+        const canvasNode = findNode(n.id)
+        const x = n.attrs?.position?.[0] ?? 0
+        if (x > maxX) {
+          maxX = x
+          maxY = n.attrs?.position?.[1] ?? 0
+          maxNodeWidth = canvasNode?.dimensions?.width ?? 200
         }
-
-        // 新节点放在最右边节点的右侧
-        node.attrs.position = [maxX + maxNodeWidth + X_OFFSET, maxY]
       }
 
-      onAddNode?.(node)
+      // 新节点放在最右边节点的右侧
+      node.attrs.position = [maxX + maxNodeWidth + X_OFFSET, maxY]
     }
-  } catch {
-    // cancelled
+
+    onAddNode?.(node)
   }
 }
 

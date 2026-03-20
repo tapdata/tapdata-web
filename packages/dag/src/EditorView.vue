@@ -16,7 +16,6 @@ import {
   watch,
 } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useStore } from 'vuex'
 import Canvas from './Canvas.vue'
 import MaterializedView from './components/materialized-view/MaterializedView.vue'
 import ConsolePanel from './components/migration/ConsolePanel.vue'
@@ -32,8 +31,6 @@ const { findNode, getOutgoers } = useVueFlow()
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
-const store = useStore()
-const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 
 const materializedViewRef = useTemplateRef('materializedView')
 

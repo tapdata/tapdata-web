@@ -5,7 +5,7 @@ import { useUiStore } from '../stores/ui.store'
 
 export const makeNode = (
   connection: Record<string, any>,
-  tableName: string,
+  tableName?: string,
 ) => {
   const nodeConfig = {}
   const attrs = {
