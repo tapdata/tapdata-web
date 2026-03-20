@@ -333,7 +333,7 @@ const removeServer = async (row: any) => {
   )
   if (flag) {
     await deleteApiModule(row.id)
-    table.value?.fetch()
+    fetch()
   }
 }
 
@@ -349,7 +349,7 @@ const changeStatus = async (row: any) => {
       status: row.status === 'active' ? 'pending' : 'active',
       tableName: row.tableName,
     })
-    table.value?.fetch()
+    fetch()
   }
 }
 
@@ -380,8 +380,9 @@ const showDrawer = (item?: any, copy?: boolean) => {
   }
 }
 
-const fetch = (...args: any[]) => {
-  table.value?.fetch(...args)
+const fetch = (pageNum?: number) => {
+  const currentPage = (table.value as any)?.page?.current as number | undefined
+  ;(table.value as any)?.fetch?.(pageNum ?? currentPage ?? 1)
 }
 
 const handleExport = () => {
@@ -438,9 +439,9 @@ const handleAppSelect = (app?: any) => {
 }
 
 const findParentNodeByClassName = (el: HTMLElement, cls: string) => {
-  let parent = el
+  let parent: HTMLElement | null = el
   while (parent && !parent.classList.contains(cls)) {
-    parent = parent.parentNode
+    parent = parent.parentElement
   }
   return parent
 }
@@ -464,7 +465,8 @@ const handleDragOver = (event: DragEvent) => {
 const handleDragLeave = (event: DragEvent) => {
   event.preventDefault()
 
-  if (!event.currentTarget?.contains?.(event.relatedTarget)) {
+  const currentTarget = event.currentTarget as HTMLElement | null
+  if (currentTarget && !currentTarget.contains(event.relatedTarget as Node | null)) {
     const dropNode = findParentNodeByClassName(
       event.currentTarget as HTMLElement,
       'list-item-hover',
@@ -483,7 +485,7 @@ const handleDrop = async (event: DragEvent, app: any) => {
   if (!draggingObjects?.length || !dropNode) return
   dropNode?.classList.remove('is-active')
 
-  const ids = draggingObjects.map((item) => item.id)
+  const ids = (draggingObjects as any[]).map((item) => item.id)
 
   if (ids.length) {
     await batchUpdateApiModuleTags({
@@ -849,6 +851,7 @@ defineExpose({
       :host="apiServerHost"
       @save="fetch(1)"
       @update="fetch()"
+      @close="fetch()"
       @visible="emit('drawerVisible', $event)"
     />
     <!-- 导入 -->
