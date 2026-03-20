@@ -1,6 +1,43 @@
 .materialized-view-node {
   width: 300px;
 
+  .mv-node-handle {
+    width: 1rem;
+    height: 1rem;
+    transition: all cubic-bezier(0.4, 0, 0.2, 1) 0.15s;
+    background-color: transparent;
+    pointer-events: all;
+    border: none;
+    cursor: pointer;
+    transform: none;
+    top: 1rem;
+    border-radius: 0;
+
+    &.mv-node-handle-left {
+      left: -9px;
+    }
+    &.mv-node-handle-right {
+      right: -9px;
+    }
+    &:hover {
+      transform: scale(1.25);
+    }
+    &::after {
+      content: '';
+      position: absolute;
+      width: 0.125rem;
+      height: 0.5rem;
+      top: 0.25rem;
+      background-color: var(--el-color-primary);
+    }
+    &.mv-node-handle-left::after {
+      left: 0.375rem;
+    }
+    &.mv-node-handle-right::after {
+      right: 0.375rem;
+    }
+  }
+
   &.active:before {
     content: '';
     position: absolute;

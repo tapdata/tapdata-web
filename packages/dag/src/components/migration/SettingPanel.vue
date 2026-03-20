@@ -539,6 +539,7 @@ watch(sourceNodes, () => {
     return point
   })
   updateSettings('syncPoints', syncPoints)
+  console.log('syncPoints', syncPoints, props.settings)
 })
 
 watch(

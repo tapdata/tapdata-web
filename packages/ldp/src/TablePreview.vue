@@ -1212,7 +1212,7 @@ export default {
                           v-model="scope.row.businessDesc"
                           @input="
                             handleChangeBusinessDesc(
-                              arguments[0],
+                              $event,
                               scope.row.id,
                               scope.row.name,
                             )

@@ -12,6 +12,7 @@ import Cookie from '@tap/shared/src/cookie'
 import { setSettings } from '@tap/shared/src/settings'
 import Time from '@tap/shared/src/time'
 import { ElLoading } from 'element-plus'
+import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 import App from '@/App.vue'
 import { installOEM } from '@/oem'
@@ -19,7 +20,6 @@ import { installAllPlugins } from '@/plugins'
 import { initRequestClient } from '@/plugins/axios'
 import { configUser, getUrlSearch } from '@/utils/util'
 import store from '@/vuex' // 引入全局数据控制
-
 import { installDirectives } from './directives'
 import i18n from './i18n'
 import router from './router'
@@ -92,6 +92,8 @@ const init = () => {
 
   const app = createApp(App)
 
+  const pinia = createPinia()
+
   installAllPlugins(app)
   installDirectives(app)
   installElement(app)
@@ -108,6 +110,7 @@ const init = () => {
   app.config.globalProperties.routerAppend = (path, pathToAppend) => {
     return path + (path.endsWith('/') ? '' : '/') + pathToAppend
   }
+  app.use(pinia)
   app.use(i18n)
   app.use(store)
   app.use(router)

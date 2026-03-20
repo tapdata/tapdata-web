@@ -138,7 +138,7 @@ export class Table extends NodeType {
                   fulfill: {
                     state: {
                       visible:
-                        '{{!$form.disabled && !$deps[1].length && $deps[2].length > 0 && $deps[1].length === 0 && $deps[0] !== "dropTable" && !!$values.attrs.connectionTags && !$values.attrs.connectionTags.includes("schema-free")}}',
+                        '{{!$form.disabled && !$deps[1].length && $deps[2].length > 0 && $deps[1].length === 0 && $deps[0] !== "dropTable" && !isSchemaFree($values)}}',
                     },
                   },
                 },
@@ -212,16 +212,15 @@ export class Table extends NodeType {
                           connectionId: '{{$values.connectionId}}',
                           itemType: 'string',
                           itemQuery: 'value',
-                          hasPartition: `{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}`,
+                          hasPartition: `{{hasCapability($values, "source_support_partition")}}`,
                           syncPartitionTableEnable:
                             '{{$values.syncSourcePartitionTableEnable}}',
                         },
                         'x-reactions': [
                           {
-                            target: 'name',
                             effects: ['onFieldInputValueChange'],
                             fulfill: {
-                              run: `{{ $self.value && !$values.attrs.hasNameEdited && ($target.value = $self.value) }}`,
+                              run: `{{ $self.value && !$values.attrs.hasNameEdited && ($values.name = $self.value) }}`,
                             },
                           },
                           {
@@ -277,7 +276,7 @@ export class Table extends NodeType {
                       fulfill: {
                         state: {
                           visible:
-                            '{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}',
+                            '{{hasCapability($values, "source_support_partition")}}',
                         },
                       },
                     },
@@ -455,7 +454,7 @@ export class Table extends NodeType {
                         },
                         schema: {
                           // 根据capabilities列表如果不存在{"id" : "clear_table_function"}属性，表示不支持“运行前删除已存在数据”，⚠️👇表达式依赖enum的顺序
-                          'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`,
+                          'x-component-props.options': `{{options=[$self.dataSource[0]],hasCapability($values, "drop_table_function") && options.push($self.dataSource[1]),hasCapability($values, "clear_table_function") && options.push($self.dataSource[2]),options}}`,
                         },
                       },
                     },
@@ -742,7 +741,7 @@ export class Table extends NodeType {
                             },
                           },
                           {
-                            when: `{{!$values.attrs.capabilities.filter(item => item.type === 10).length}}`,
+                            when: `{{!getCapabilitiesByType($values, 10).length}}`,
                             fulfill: {
                               state: {
                                 disabled: true,
@@ -799,7 +798,7 @@ export class Table extends NodeType {
                     'x-reactions': {
                       fulfill: {
                         state: {
-                          visible: `{{$settings.type !== "initial_sync" && $values.attrs.capabilities.some(item => item.id === 'query_by_advance_filter_function')}}`,
+                          visible: `{{$settings.type !== "initial_sync" && hasCapability($values, 'query_by_advance_filter_function')}}`,
                         },
                       },
                     },
@@ -831,7 +830,7 @@ export class Table extends NodeType {
                           {
                             fulfill: {
                               state: {
-                                display: `{{$settings.type !== "initial_sync" && $values.attrs.capabilities.some(item => item.id === 'query_by_advance_filter_function') ? "visible":"hidden"}}`,
+                                display: `{{$settings.type !== "initial_sync" && hasCapability($values, 'query_by_advance_filter_function') ? "visible":"hidden"}}`,
                               },
                             },
                           },
@@ -947,7 +946,7 @@ export class Table extends NodeType {
                           {
                             fulfill: {
                               state: {
-                                visible: `{{$settings.type !== "cdc" && $values.attrs.capabilities.some(item => item.id === "execute_command_function")}}`,
+                                visible: `{{$settings.type !== "cdc" && hasCapability($values, "execute_command_function")}}`,
                               },
                             },
                           },
@@ -1433,7 +1432,7 @@ export class Table extends NodeType {
                       fulfill: {
                         state: {
                           display:
-                            '{{hasFeature("resume") && $values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? "visible":"hidden"}}',
+                            '{{hasFeature("resume") && hasCapability($values, "get_read_partitions_function") && ($settings.type !== "cdc") ? "visible":"hidden"}}',
                         },
                       },
                     },
@@ -1461,7 +1460,7 @@ export class Table extends NodeType {
                                 fulfill: {
                                   state: {
                                     value:
-                                      '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? $values.readPartitionOptions.enable:false}}',
+                                      '{{hasCapability($values, "get_read_partitions_function") && ($settings.type !== "cdc") ? $values.readPartitionOptions.enable:false}}',
                                   },
                                 },
                               },
@@ -1509,12 +1508,12 @@ export class Table extends NodeType {
                             'x-reactions': {
                               dependencies: ['.enable'],
                               fulfill: {
-                                run: `{{ $values.splitTyp !== 10 && $values.attrs.capabilities.some(t => t.id === 'count_by_partition_filter_function') && $self.setValue(1) }}`,
+                                run: `{{ $values.splitTyp !== 10 && hasCapability($values, "count_by_partition_filter_function") && $self.setValue(1) }}`,
                                 state: {
                                   display: '{{$deps[0] ? "visible" :"hidden"}}',
                                 },
                                 schema: {
-                                  'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.some(item => item.id ==='count_by_partition_filter_function') && options.push($self.dataSource[1]),options}}`,
+                                  'x-component-props.options': `{{options=[$self.dataSource[0]],hasCapability($values, "count_by_partition_filter_function") && options.push($self.dataSource[1]),options}}`,
                                 },
                               },
                             },
@@ -1764,6 +1763,7 @@ export class Table extends NodeType {
                           colon: false,
                           feedbackLayout: 'none',
                         },
+                        'x-reactions': '{{useDmlPolicy}}',
                         properties: {
                           insertPolicy: {
                             type: 'string',
@@ -1912,7 +1912,7 @@ export class Table extends NodeType {
                           {
                             fulfill: {
                               state: {
-                                display: `{{$values.attrs.capabilities.filter(item => ["transaction_begin_function", "transaction_commit_function", "transaction_rollback_function"].includes(item.id)).length === 3 ? 'visible' : 'hidden'}}`,
+                                display: `{{hasCapabilities($values,["transaction_begin_function", "transaction_commit_function", "transaction_rollback_function"]) ? 'visible' : 'hidden'}}`,
                               },
                             },
                           },
@@ -1935,7 +1935,7 @@ export class Table extends NodeType {
                           fulfill: {
                             state: {
                               visible:
-                                '{{hasFeature("syncIndex") && $settings.type !== "cdc" && $values.attrs.capabilities.filter(item => ["get_table_info_function", "create_index_function", "query_indexes_function"].includes(item.id)).length === 3}}',
+                                '{{hasFeature("syncIndex") && $settings.type !== "cdc" && hasCapabilities($values, ["get_table_info_function", "create_index_function", "query_indexes_function"])}}',
                               description: `{{$self.value ? '${i18n.t('packages_dag_syncIndex_desc')}' : ''}}`,
                             },
                           },
@@ -1953,7 +1953,7 @@ export class Table extends NodeType {
                           fulfill: {
                             state: {
                               visible:
-                                '{{hasFeature("syncPartitionTable") && $values.attrs.capabilities.some(item => item.id==="target_support_partition")}}',
+                                '{{hasFeature("syncPartitionTable") && hasCapability($values, "target_support_partition")}}',
                             },
                           },
                         },
@@ -1971,7 +1971,7 @@ export class Table extends NodeType {
                           fulfill: {
                             state: {
                               visible:
-                                '{{$values.attrs.capabilities.some(item => item.id==="create_constraint_function")}}',
+                                '{{hasCapability($values, "create_constraint_function")}}',
                             },
                           },
                         },
@@ -2242,12 +2242,6 @@ export class Table extends NodeType {
       'attrs.connectionName': {
         type: 'string',
         'x-display': 'hidden',
-      },
-
-      'attrs.capabilities': {
-        type: 'array',
-        'x-display': 'hidden',
-        'x-reactions': '{{useDmlPolicy}}',
       },
     },
   }

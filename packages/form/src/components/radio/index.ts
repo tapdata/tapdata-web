@@ -44,8 +44,8 @@ const RadioGroupOption = defineComponent({
                       OptionType,
                       {
                         ...option,
-                        value: undefined,
-                        label: option.value,
+                        // value: undefined,
+                        // label: option.value,
                       },
                       {
                         default: () => [

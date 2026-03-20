@@ -7,18 +7,18 @@ import { dayjs } from '@tap/business/src/shared/dayjs'
 import { useForm } from '@tap/form'
 import { useI18n } from '@tap/i18n'
 import { computed, defineComponent, ref, watch } from 'vue'
-import { useStore } from 'vuex'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 import CompareResultDialog from '../field-inference/CompareResultDialog.vue'
 
 const CompareSchema = defineComponent({
   setup() {
-    const store = useStore()
+    const store = useDataflowStore()
     const { t } = useI18n()
 
     const formRef = useForm()
     const form = formRef.value
     const nodeId = form.values.id
-    const taskId = store.state.dataflow.taskId
+    const taskId = store.dataflow.id
     const dialogOpen = ref(false)
     const compareResultStatistics = ref<CompareResultStatistics | null>(null)
     const singleTable = form.values.type === 'table'
@@ -29,7 +29,7 @@ const CompareSchema = defineComponent({
       : []
 
     const taskSaving = computed(() => {
-      return store.state.dataflow.taskSaving
+      return store.dataflow.taskSaving
     })
 
     const fetchCompareResultStatistics = async () => {

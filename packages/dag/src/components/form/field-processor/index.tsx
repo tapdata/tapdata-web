@@ -17,7 +17,7 @@ import i18n from '@tap/i18n'
 import { debounce } from 'lodash-es'
 import { computed, defineComponent, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useStore } from 'vuex'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 import './style.scss'
 
 const InnerInput = {
@@ -85,7 +85,7 @@ export const FieldRenameProcessorPreview = defineComponent({
   props: ['value', 'nodeId', 'disabled'],
   setup(props, { emit }) {
     const tableRef = ref(null)
-    const store = useStore()
+    const dataflowStore = useDataflowStore()
     const route = useRoute()
     const formRef = useForm()
     const form = formRef.value
@@ -123,7 +123,6 @@ export const FieldRenameProcessorPreview = defineComponent({
         total: 0,
         count: 1,
       },
-      transformLoading: store.state.dataflow.transformLoading,
     })
     const updateDeletedNum = (item) => {
       item.userDeletedNum = item.fieldsMapping.filter(
@@ -486,9 +485,8 @@ export const FieldRenameProcessorPreview = defineComponent({
     }
 
     watch(
-      () => store.state.dataflow.transformLoading,
+      () => dataflowStore.transformLoading,
       (v) => {
-        config.transformLoading = store.state.dataflow.transformLoading
         if (!v) {
           loadData()
         }
@@ -525,7 +523,7 @@ export const FieldRenameProcessorPreview = defineComponent({
         <PreviewText.Placeholder value="-">
           <div
             class="processor-field-mapping flex flex-column"
-            v-loading={config.transformLoading}
+            v-loading={dataflowStore.transformLoading}
           >
             <FormLayout feedbackLayout="none">
               <FormGrid maxColumns={3} columnGap={16}>
@@ -706,7 +704,7 @@ export const FieldRenameProcessor = connect(
       props: ['value', 'nodeId', 'disabled'],
       setup(props, { emit }) {
         const tableRef = ref(null)
-        const store = useStore()
+        const dataflowStore = useDataflowStore()
         const route = useRoute()
         const formRef = useForm()
         const form = formRef.value
@@ -744,7 +742,6 @@ export const FieldRenameProcessor = connect(
             total: 0,
             count: 1,
           },
-          transformLoading: store.state.dataflow.transformLoading,
         })
         const updateDeletedNum = (item) => {
           item.userDeletedNum = item.fieldsMapping.filter(
@@ -1147,9 +1144,8 @@ export const FieldRenameProcessor = connect(
         }
 
         watch(
-          () => store.state.dataflow.transformLoading,
+          () => dataflowStore.transformLoading,
           (v) => {
-            config.transformLoading = store.state.dataflow.transformLoading
             if (!v) {
               loadData()
             }
@@ -1182,7 +1178,7 @@ export const FieldRenameProcessor = connect(
           return (
             <div
               class="processor-field-mapping flex flex-column"
-              v-loading={config.transformLoading}
+              v-loading={dataflowStore.transformLoading}
             >
               <FormItem.BaseItem class="mb-4" label={label}>
                 <div class="border border-form px-4 pb-2 rounded-xl">

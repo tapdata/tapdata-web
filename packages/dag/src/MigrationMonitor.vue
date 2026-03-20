@@ -1,10 +1,12 @@
-<script>
-import { observable } from '@formily/reactive'
+<script setup lang="ts">
 import { batchMeasurements } from '@tap/api/src/core/measurement'
 import { getTaskRecords, resetTask, startTask } from '@tap/api/src/core/task'
 import UpgradeCharges from '@tap/business/src/components/UpgradeCharges.vue'
 import UpgradeFee from '@tap/business/src/components/UpgradeFee.vue'
-import { ALARM_LEVEL_SORT } from '@tap/business/src/shared/const'
+import {
+  ALARM_LEVEL_SORT,
+  TASK_STATUS_MAP,
+} from '@tap/business/src/shared/const'
 import SharedCacheDetails from '@tap/business/src/views/shared-cache/Details'
 import SharedCacheEditor from '@tap/business/src/views/shared-cache/Editor'
 import SharedMiningEditor from '@tap/business/src/views/shared-mining/Editor'
@@ -18,8 +20,16 @@ import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
 import dagre from 'dagre'
 import { debounce } from 'lodash-es'
-import { mapMutations, mapState } from 'vuex'
-import { $off, $on } from '../utils/gogocodeTransfer'
+import {
+  computed,
+  getCurrentInstance,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from 'vue'
+import { useRouter } from 'vue-router'
 
 import { MoveNodeCommand } from './command'
 import ConfigPanel from './components/migration/ConfigPanel'
@@ -32,25 +42,16 @@ import Node from './components/monitor/Node'
 import TopHeader from './components/monitor/TopHeader'
 import { getTimeGranularity, TIME_FORMAT_MAP } from './components/monitor/util'
 import PaperScroller from './components/PaperScroller'
-import {
-  NODE_HEIGHT,
-  NODE_PREFIX,
-  NODE_WIDTH,
-  NONSUPPORT_CDC,
-  NONSUPPORT_SYNC,
-} from './constants'
+import { NODE_PREFIX, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
 import { config, jsPlumb } from './instance'
 import editor from './mixins/editor'
 import formScope from './mixins/formScope'
 import { allResourceIns } from './nodes/loader'
+import { useDataflowStore } from './stores/dataflow.store'
 
-export default {
+defineOptions({
   name: 'MigrationMonitor',
-
-  directives: {
-    resize,
-  },
-
+  directives: { resize },
   components: {
     SkipError,
     UpgradeFee,
@@ -69,1149 +70,1064 @@ export default {
     SharedCacheDetails,
     SharedCacheEditor,
   },
-
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
+})
 
-  data() {
-    const dataflow = observable({
-      id: '',
-      name: '',
-      status: '',
-      attrs: {},
-    })
+const dataflowStore = useDataflowStore()
+const dataflow = dataflowStore.dataflow
+const vm = getCurrentInstance()!.proxy as any
+const router = useRouter()
 
-    return {
-      NODE_PREFIX,
-      status: 'draft',
-      loading: false,
-      editable: false,
-      isSaving: false,
-      jsPlumbIns: jsPlumb.getInstance(config),
-      navLines: [],
-      selectBoxAttr: null,
-      selectActive: false,
-      showSelectBox: false,
+const status = ref('draft')
+const loading = ref(false)
+const editable = ref(false)
+const isSaving = ref(false)
+const jsPlumbIns = jsPlumb.getInstance(config)
+const navLines = ref<any[]>([])
+const selectBoxAttr = ref<any>(null)
+const selectActive = ref(false)
+const showSelectBox = ref(false)
 
-      nodeMenu: {
-        show: false,
-        type: '',
-        typeId: '',
-        reference: null,
-        data: null,
-        connectionData: {},
-      },
+const nodeMenu = ref({
+  show: false,
+  type: '',
+  typeId: '',
+  reference: null as any,
+  data: null as any,
+  connectionData: {} as any,
+})
 
-      dataflow,
+const scale = ref(1)
+const showBottomPanel = ref(false)
+const timer = ref<any>(null)
+const quotaTimeType = ref('5m')
+const quotaTime = ref<any[]>([])
+const quota = ref<any>({})
+const nodeDetailDialog = ref(false)
+const nodeDetailDialogId = ref('')
+const timeFormat = ref('HH:mm:ss')
+const dagData = ref<any>(null)
+const verifyTotals = ref<any>(null)
+const alarmData = ref<any>(null)
+const logTotals = ref<any[]>([])
+const refreshRate = ref(5000)
+const extraEnterCount = ref(0)
+const isReset = ref(false)
+const watchStatusCount = ref(0)
+const taskRecord = ref({ total: 0, items: [] as any[] })
+const upgradeFeeVisible = ref(false)
+const upgradeFeeVisibleTips = ref('')
+const upgradeChargesVisible = ref(false)
+const upgradeChargesVisibleTips = ref('')
+const noNeedRefresh = ref(false)
 
-      scale: 1,
-      showBottomPanel: false,
-      timer: null,
-      quotaTimeType: '5m',
-      quotaTime: [],
-      quota: {}, // 指标数据
-      nodeDetailDialog: false,
-      nodeDetailDialogId: '',
-      timeFormat: 'HH:mm:ss',
-      dagData: null,
-      verifyTotals: null,
-      alarmData: null,
-      logTotals: [],
-      refreshRate: 5000,
-      extraEnterCount: 0,
-      isReset: false, // 是否重置了
-      watchStatusCount: 0,
-      taskRecord: {
-        total: 0,
-        items: [],
-      },
-      upgradeFeeVisible: false,
-      upgradeFeeVisibleTips: '',
-      upgradeChargesVisible: false,
-      upgradeChargesVisibleTips: '',
-      noNeedRefresh: false, // 如果进入页面任务是停止运行状态，无需刷新
+const formScopeComputed = computed(() => ({
+  ...vm.scope,
+  $settings: dataflow,
+}))
+
+const firstStartTime = computed(() => {
+  const { startTime } = dataflow || {}
+  return startTime ? new Date(startTime).getTime() : null
+})
+
+const lastStopTime = computed(() => {
+  const { stopTime } = dataflow || {}
+  return stopTime ? new Date(stopTime).getTime() : null
+})
+
+const isEnterTimer = computed(() => {
+  return (
+    quotaTimeType.value !== 'custom' &&
+    !nodeDetailDialog.value &&
+    ['running', 'stopping'].includes(dataflow?.status)
+  )
+})
+
+const timeSelectRange = computed(() => {
+  let end = lastStopTime.value
+  if (['running'].includes(dataflow.status)) {
+    end = Time.now()
+  }
+  if (end < firstStartTime.value) {
+    end = firstStartTime.value + 5 * 60 * 1000
+  }
+  return [firstStartTime.value, end || Time.now()]
+})
+
+const ifEnableConcurrentRead = computed(() => {
+  if (dataflow.syncType !== 'migrate') return false
+  const sourceNode = vm.allNodes.find(
+    (node: any) => !node.$inputs.length && node.type === 'database',
+  )
+  return sourceNode?.enableConcurrentRead
+})
+
+watch(
+  () => dataflow.type,
+  (v: any) => {
+    v && init()
+  },
+)
+
+watch(
+  () => dataflow.status,
+  (v1: any, v2: any) => {
+    watchStatusCount.value++
+
+    if (watchStatusCount.value === 1) {
+      // 进入页面后首次执行
+      const flag = ['renewing', 'renew_failed'].includes(v1)
+      vm.toggleConsole(flag)
+      handleBottomPanel(!flag)
+      noNeedRefresh.value = [
+        'error',
+        'schedule_failed',
+        'stop',
+        'complete',
+      ].includes(v1)
+    } else {
+      // 状态变化，重置自动刷新状态
+      noNeedRefresh.value = false
+      extraEnterCount.value = 0
     }
+
+    if (v1 !== v2) {
+      init()
+    }
+    toggleConnectionRun(v1 === 'running')
   },
+)
 
-  computed: {
-    ...mapState('dataflow', ['showConsole']),
-
-    formScope() {
-      return {
-        ...this.scope,
-        $settings: this.dataflow,
-      }
-    },
-
-    firstStartTime() {
-      const { startTime } = this.dataflow || {}
-      return startTime ? new Date(startTime).getTime() : null
-    },
-
-    lastStopTime() {
-      const { stopTime } = this.dataflow || {}
-      return stopTime ? new Date(stopTime).getTime() : null
-    },
-
-    isEnterTimer() {
-      return (
-        this.quotaTimeType !== 'custom' &&
-        !this.nodeDetailDialog &&
-        ['running', 'stopping'].includes(this.dataflow?.status)
-      )
-    },
-
-    timeSelectRange() {
-      const { firstStartTime, lastStopTime } = this
-      let end = lastStopTime
-      if (['running'].includes(this.dataflow.status)) {
-        end = Time.now()
-      }
-      if (end < firstStartTime) {
-        end = firstStartTime + 5 * 60 * 1000
-      }
-      return [firstStartTime, end || Time.now()]
-    },
-
-    ifEnableConcurrentRead() {
-      if (this.dataflow.syncType !== 'migrate') return false
-
-      const sourceNode = this.allNodes.find(
-        (node) => !node.$inputs.length && node.type === 'database',
-      )
-
-      return sourceNode?.enableConcurrentRead
-    },
+watch(
+  () => dataflow.id,
+  () => {
+    vm.getTaskPermissions()
   },
+)
 
-  watch: {
-    'dataflow.type': function (v) {
-      v && this.init()
-    },
-    'dataflow.status': function (v1, v2) {
-      this.watchStatusCount++
+// created
+vm.setStateReadonly(true)
 
-      if (this.watchStatusCount === 1) {
-        // 进入页面后首次执行
-        const flag = ['renewing', 'renew_failed'].includes(v1)
-        this.toggleConsole(flag)
-        this.handleBottomPanel(!flag)
-        this.noNeedRefresh = [
-          'error',
-          'schedule_failed',
-          'stop',
-          'complete',
-        ].includes(v1)
-      } else {
-        // 状态变化，重置自动刷新状态
-        this.noNeedRefresh = false
-        this.extraEnterCount = 0
-      }
+onMounted(async () => {
+  vm.setValidateLanguage()
+  // 收集pdk上节点的schema
+  await vm.initPdkProperties()
+  await initNodeType()
+  // 加载权限
+  await vm.getTaskPermissions()
+  jsPlumbIns.ready(async () => {
+    try {
+      initConnectionType()
+      vm.initCommand()
+      vm.initNodeView()
+      await vm.initView(true)
+      toggleConnectionRun()
+      // initWS()
+    } catch (error) {
+      console.error(error)
+    }
+  })
+})
 
-      if (v1 !== v2) {
-        this.init()
-      }
-      this.toggleConnectionRun(v1 === 'running')
-    },
-    'dataflow.id': function () {
-      this.getTaskPermissions()
-    },
-  },
+onBeforeUnmount(() => {
+  vm.command = null
+  jsPlumbIns?.destroy()
+  vm.resetWorkspace()
+  vm.resetState()
+  vm.$ws.off('editFlush', vm.handleEditFlush)
+  timer.value && clearInterval(timer.value)
+  // $off(vm, 'loop-task')
+})
 
-  created() {
-    // 进入监控只读
-    this.setStateReadonly(true)
-  },
+const init = debounce(function () {
+  timer.value && clearTimeout(timer.value)
+  startLoadData()
+}, 200)
 
-  async mounted() {
-    this.setValidateLanguage()
-    // 收集pdk上节点的schema
-    await this.initPdkProperties()
-    await this.initNodeType()
-    // 加载权限
-    await this.getTaskPermissions()
-    this.jsPlumbIns.ready(async () => {
-      try {
-        this.initConnectionType()
-        this.initCommand()
-        this.initNodeView()
-        await this.initView(true)
-        this.toggleConnectionRun()
-        // this.initWS()
-      } catch (error) {
-        console.error(error)
+function polling() {
+  if (
+    isEnterTimer.value ||
+    (!noNeedRefresh.value &&
+      ['error', 'schedule_failed', 'stop', 'complete'].includes(
+        dataflow.status,
+      ) &&
+      ++extraEnterCount.value < 4)
+  ) {
+    startLoadData()
+  }
+}
+
+async function startLoadData() {
+  // 根据周期类型，计算时间范围
+  if (quotaTimeType.value === 'lastStart') {
+    const { id: taskId } = dataflow || {}
+    const filter = {}
+    await getTaskRecords(taskId, filter).then((data: any) => {
+      const lastStartDate = data.items?.[0]?.startDate
+      if (lastStartDate) {
+        dataflow.lastStartDate = new Date(lastStartDate).getTime()
       }
     })
-  },
+  }
+  if (quotaTimeType.value !== 'custom') {
+    quotaTime.value = getTimeRange(quotaTimeType.value)
+  }
+  loadData()
+}
 
-  beforeUnmount() {
-    this.command = null
-    this.jsPlumbIns?.destroy()
-    this.resetWorkspace()
-    this.resetState()
-    this.$ws.off('editFlush', this.handleEditFlush)
-    this.timer && clearInterval(this.timer)
-    $off(this, 'loop-task')
-  },
+async function initNodeType() {
+  vm.addResourceIns(allResourceIns)
+  await vm.loadCustomNode()
+}
 
-  methods: {
-    ...mapMutations('dataflow', ['setPdkPropertiesMap']),
+async function openDataflow(id: any) {
+  const data = await vm.loadDataflow(id)
+  if (data) {
+    if (vm.destory) return
+    const { dag } = data
+    vm.setTaskId(data.id)
+    vm.setEdges(dag.edges)
+    vm.setEditVersion(data.editVersion)
+    vm.setStateDirty(false)
 
-    init: debounce(function () {
-      this.timer && clearTimeout(this.timer)
-      this.startLoadData()
-    }, 200),
+    await nextTick()
+    await vm.addNodes(dag)
+    await nextTick()
+    await vm.initShareCache() // 共享缓存
+    bindLoopTaskEvent()
 
-    polling() {
+    // 延迟自动布局，等待ResizeObserver
+    setTimeout(() => {
+      handleAutoLayout()
+    }, 10)
+  }
+}
+
+function bindLoopTaskEvent() {
+  // $off(vm, 'loop-task')
+  // $on(vm, 'loop-task', () => {
+  //   if (!vm.sharedCacheMap || !Object.keys(vm.sharedCacheMap).length) {
+  //     // 在重置后的任务监控页面启动,首次 initShareCache 获取不到数据
+  //     vm.initShareCache()
+  //   } else {
+  //     const { usedShareCache = {} } = dataflow?.attrs || {}
+  //     vm.setNodeShareCache(usedShareCache)
+  //   }
+  // })
+}
+
+function gotoViewer() {}
+
+async function validate() {
+  if (!dataflow.name)
+    return vm.$t('packages_dag_editor_cell_validate_empty_name')
+
+  // 至少两个数据节点
+  const tableNode = vm.allNodes.filter((node: any) => node.type === 'database')
+  if (tableNode.length < 2) {
+    return vm.$t('packages_dag_editor_cell_validate_none_data_node')
+  }
+
+  await vm.validateAllNodes()
+
+  const sourceMap: any = {}
+  const targetMap: any = {}
+  const edges = vm.allEdges
+  edges.forEach((item: any) => {
+    const _source = sourceMap[item.source]
+    const _target = targetMap[item.target]
+
+    if (!_source) {
+      sourceMap[item.source] = [item]
+    } else {
+      _source.push(item)
+    }
+
+    if (!_target) {
+      targetMap[item.target] = [item]
+    } else {
+      _target.push(item)
+    }
+  })
+
+  let someErrorMsg = ''
+  // 检查每个节点的源节点个数、连线个数、节点的错误状态
+  vm.allNodes.some((node: any) => {
+    const { id } = node
+    const minInputs = node.__Ctor.minInputs ?? 1
+    const inputNum = targetMap[id]?.length ?? 0
+
+    if (!sourceMap[id] && !targetMap[id]) {
+      someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_noden', {
+        val1: node.name,
+      })
+      return true
+    }
+
+    if (inputNum < minInputs) {
+      someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_noden', {
+        val1: node.name,
+        val2: minInputs,
+      })
+      return true
+    }
+
+    if (vm.hasNodeError(id)) {
+      someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_noden', {
+        val1: node.name,
+      })
+      return true
+    }
+  })
+
+  const nodeNames: string[] = []
+  let typeName = ''
+  if (dataflow.type === 'initial_sync+cdc') {
+    typeName = i18n.t('public_task_type_initial_sync_and_cdc')
+    tableNode.forEach((node: any) => {
       if (
-        this.isEnterTimer ||
-        (!this.noNeedRefresh &&
-          ['error', 'schedule_failed', 'stop', 'complete'].includes(
-            this.dataflow.status,
-          ) &&
-          ++this.extraEnterCount < 4)
+        sourceMap[node.id] &&
+        (NONSUPPORT_SYNC.includes(node.databaseType) ||
+          NONSUPPORT_CDC.includes(node.databaseType))
       ) {
-        this.startLoadData()
-      }
-    },
-
-    async startLoadData() {
-      // 根据周期类型，计算时间范围
-      if (this.quotaTimeType === 'lastStart') {
-        const { id: taskId } = this.dataflow || {}
-        const filter = {}
-        await getTaskRecords(taskId, filter).then((data) => {
-          const lastStartDate = data.items?.[0]?.startDate
-          if (lastStartDate) {
-            this.dataflow.lastStartDate = new Date(lastStartDate).getTime()
-          }
+        nodeNames.push(node.name)
+        vm.setNodeErrorMsg({
+          id: node.id,
+          msg:
+            i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi') +
+            typeName,
         })
       }
-      if (this.quotaTimeType !== 'custom') {
-        this.quotaTime = this.getTimeRange(this.quotaTimeType)
+    })
+  } else if (dataflow.type === 'initial_sync') {
+    typeName = i18n.t('public_task_type_initial_sync')
+    tableNode.forEach((node: any) => {
+      if (sourceMap[node.id] && NONSUPPORT_SYNC.includes(node.databaseType)) {
+        nodeNames.push(node.name)
+        vm.setNodeErrorMsg({
+          id: node.id,
+          msg:
+            i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi') +
+            typeName,
+        })
       }
-      this.loadData()
-    },
-
-    async initNodeType() {
-      this.addResourceIns(allResourceIns)
-      await this.loadCustomNode()
-    },
-
-    async openDataflow(id) {
-      const data = await this.loadDataflow(id)
-      if (data) {
-        if (this.destory) return
-        const { dag } = data
-        this.setTaskId(data.id)
-        this.setEdges(dag.edges)
-        this.setEditVersion(data.editVersion)
-        this.setStateDirty(false)
-
-        await this.$nextTick()
-        await this.addNodes(dag)
-        await this.$nextTick()
-        await this.initShareCache() // 共享缓存
-        this.bindLoopTaskEvent()
-
-        // 延迟自动布局，等待ResizeObserver
-        setTimeout(() => {
-          this.handleAutoLayout()
-        }, 10)
+    })
+  } else if (dataflow.type === 'cdc') {
+    typeName = i18n.t('public_task_type_cdc')
+    tableNode.forEach((node: any) => {
+      if (sourceMap[node.id] && NONSUPPORT_CDC.includes(node.databaseType)) {
+        nodeNames.push(node.name)
+        vm.setNodeErrorMsg({
+          id: node.id,
+          msg:
+            i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi') +
+            typeName,
+        })
       }
-    },
+    })
+  }
 
-    bindLoopTaskEvent() {
-      $off(this, 'loop-task')
-      $on(this, 'loop-task', () => {
-        if (!this.sharedCacheMap || !Object.keys(this.sharedCacheMap).length) {
-          // 在重置后的任务监控页面启动,首次 initShareCache 获取不到数据
-          this.initShareCache()
-        } else {
-          const { usedShareCache = {} } = this.dataflow?.attrs || {}
-          this.setNodeShareCache(usedShareCache)
+  if (nodeNames.length) {
+    someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_cunzaibuzhichi', {
+      val1: typeName,
+    })
+  }
+
+  const accessNodeProcessIdArr = [
+    ...tableNode.reduce((set: Set<any>, item: any) => {
+      item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
+      return set
+    }, new Set()),
+  ]
+
+  if (accessNodeProcessIdArr.length > 1) {
+    const chooseId = dataflow.accessNodeProcessId
+
+    if (!chooseId) {
+      someErrorMsg = `所属agent节点冲突`
+    } else {
+      let isError = false
+      const agent = vm.scope.$agentMap[chooseId]
+      tableNode.forEach((node: any) => {
+        if (
+          node.attrs.accessNodeProcessId &&
+          chooseId !== node.attrs.accessNodeProcessId
+        ) {
+          vm.setNodeErrorMsg({
+            id: node.id,
+            msg: i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi', {
+              val1: agent.hostName,
+              val2: agent.ip,
+            }),
+          })
+          isError = true
         }
       })
-    },
+      isError && (someErrorMsg = `所属agent节点冲突`)
+    }
+  } else if (accessNodeProcessIdArr.length === 1) {
+    dataflow.accessNodeType = 'MANUALLY_SPECIFIED_BY_THE_USER'
+    dataflow.accessNodeProcessId = accessNodeProcessIdArr[0]
+  }
 
-    gotoViewer() {},
+  if (someErrorMsg) return someErrorMsg
 
-    async validate() {
-      if (!this.dataflow.name)
-        return this.$t('packages_dag_editor_cell_validate_empty_name')
+  const firstNodes = vm.allNodes.filter((node: any) => !targetMap[node.id])
+  const nodeMap = vm.allNodes.reduce(
+    (map: any, node: any) => ((map[node.id] = node), map),
+    {},
+  )
+  if (
+    firstNodes.some((node: any) => !vm.isEndOfTable(node, sourceMap, nodeMap))
+  )
+    return `链路的末位需要是一个数据节点`
 
-      // 至少两个数据节点
-      const tableNode = this.allNodes.filter((node) => node.type === 'database')
-      if (tableNode.length < 2) {
-        return this.$t('packages_dag_editor_cell_validate_none_data_node')
-      }
+  return null
+}
 
-      await this.validateAllNodes()
+function handlePageReturn() {
+  const map: any = {
+    migrate: 'migrateList',
+    logCollector: 'sharedMining',
+    shareCache: 'sharedCache',
+    connHeartbeat: 'heartbeatTable',
+  }
+  router.push({
+    name: map[dataflow.syncType] || 'dataflowList',
+  })
+  window.name = null as any
+}
 
-      const sourceMap = {}
-      const targetMap = {}
-      const edges = this.allEdges
-      edges.forEach((item) => {
-        const _source = sourceMap[item.source]
-        const _target = targetMap[item.target]
-
-        if (!_source) {
-          sourceMap[item.source] = [item]
-        } else {
-          _source.push(item)
-        }
-
-        if (!_target) {
-          targetMap[item.target] = [item]
-        } else {
-          _target.push(item)
-        }
+function handleEdit() {
+  switch (dataflow.syncType) {
+    case 'migrate':
+      router.push({
+        name: 'MigrateEditor',
+        params: { id: dataflow.id },
       })
-
-      let someErrorMsg = ''
-      // 检查每个节点的源节点个数、连线个数、节点的错误状态
-      this.allNodes.some((node) => {
-        const { id } = node
-        const minInputs = node.__Ctor.minInputs ?? 1
-        const inputNum = targetMap[id]?.length ?? 0
-
-        if (!sourceMap[id] && !targetMap[id]) {
-          // 存在没有连线的节点
-          someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_noden', {
-            val1: node.name,
-          })
-          return true
-        }
-
-        if (inputNum < minInputs) {
-          someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_noden', {
-            val1: node.name,
-            val2: minInputs,
-          })
-          return true
-        }
-
-        if (this.hasNodeError(id)) {
-          someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_noden', {
-            val1: node.name,
-          })
-          return true
-        }
+      break
+    case 'sync':
+      router.push({
+        name: 'DataflowEditor',
+        params: { id: dataflow.id },
       })
+      break
+    case 'logCollector':
+      vm.$refs.sharedMiningEditor.open(dataflow.id)
+      break
+    case 'shareCache':
+      vm.$refs.sharedCacheEditor.open(dataflow.id)
+      break
+  }
+}
 
-      const nodeNames = []
-      let typeName = ''
-      // 根据任务类型(全量、增量),检查不支持此类型的节点
-      // 脏代码。这里的校验是有节点错误信息提示的，和节点表单校验揉在了一起，但是校验没有一起做
-      if (this.dataflow.type === 'initial_sync+cdc') {
-        typeName = i18n.t('public_task_type_initial_sync_and_cdc')
-        tableNode.forEach((node) => {
-          if (
-            sourceMap[node.id] &&
-            (NONSUPPORT_SYNC.includes(node.databaseType) ||
-              NONSUPPORT_CDC.includes(node.databaseType))
-          ) {
-            nodeNames.push(node.name)
-            this.setNodeErrorMsg({
-              id: node.id,
-              msg:
-                i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi') +
-                typeName,
-            })
-          }
-        })
-      } else if (this.dataflow.type === 'initial_sync') {
-        typeName = i18n.t('public_task_type_initial_sync')
-        tableNode.forEach((node) => {
-          if (
-            sourceMap[node.id] &&
-            NONSUPPORT_SYNC.includes(node.databaseType)
-          ) {
-            nodeNames.push(node.name)
-            this.setNodeErrorMsg({
-              id: node.id,
-              msg:
-                i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi') +
-                typeName,
-            })
-          }
-        })
-      } else if (this.dataflow.type === 'cdc') {
-        typeName = i18n.t('public_task_type_cdc')
-        tableNode.forEach((node) => {
-          if (
-            sourceMap[node.id] &&
-            NONSUPPORT_CDC.includes(node.databaseType)
-          ) {
-            nodeNames.push(node.name)
-            this.setNodeErrorMsg({
-              id: node.id,
-              msg:
-                i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi') +
-                typeName,
-            })
-          }
-        })
-      }
+function handleShowVerify() {
+  vm.deselectAllNodes()
+  if (vm.activeType === 'verify') {
+    vm.setActiveType(null)
+  } else {
+    vm.setActiveType('verify')
+  }
+}
 
-      if (nodeNames.length) {
-        someErrorMsg = i18n.t(
-          'packages_dag_src_migrationmonitor_cunzaibuzhichi',
-          { val1: typeName },
-        )
-      }
+function handleShowBottomPanel() {
+  vm.toggleConsole(false)
+  handleBottomPanel(!showBottomPanel.value)
+}
 
-      const accessNodeProcessIdArr = [
-        ...tableNode.reduce((set, item) => {
-          item.attrs.accessNodeProcessId &&
-            set.add(item.attrs.accessNodeProcessId)
-          return set
-        }, new Set()),
-      ]
+function handleBottomPanel(flag = false) {
+  showBottomPanel.value = flag
+}
 
-      if (accessNodeProcessIdArr.length > 1) {
-        // 所属agent节点冲突
-        const chooseId = this.dataflow.accessNodeProcessId
+function handleAlarmShowBottomPanel() {
+  //告警错误提示点击跳转到告警列表
+  if (!showBottomPanel.value) {
+    vm.toggleConsole(false)
+    handleBottomPanel(true)
+  }
+  nextTick(() => {
+    vm.$refs.bottomPanel.changeAlertTab('alert')
+  })
+}
 
-        if (!chooseId) {
-          // someErrorMsg = `请配置任务运行agent`
-          someErrorMsg = `所属agent节点冲突` // 一样提示冲突
-        } else {
-          let isError = false
-          const agent = this.scope.$agentMap[chooseId]
-          tableNode.forEach((node) => {
-            if (
-              node.attrs.accessNodeProcessId &&
-              chooseId !== node.attrs.accessNodeProcessId
-            ) {
-              this.setNodeErrorMsg({
-                id: node.id,
-                msg: i18n.t(
-                  'packages_dag_src_migrationmonitor_gaijiedianbuzhi',
-                  {
-                    val1: agent.hostName,
-                    val2: agent.ip,
-                  },
-                ),
-              })
-              isError = true
-            }
-          })
-          isError && (someErrorMsg = `所属agent节点冲突`)
-        }
-      } else if (accessNodeProcessIdArr.length === 1) {
-        // 如果画布上仅有一个所属agent，自动设置为任务的agent
-        this.dataflow.accessNodeType = 'MANUALLY_SPECIFIED_BY_THE_USER'
-        this.dataflow.accessNodeProcessId = accessNodeProcessIdArr[0]
-      }
+async function handleStart(skip?: boolean, isDebug?: boolean) {
+  const hasError = !skip && (await vm.$refs.skipError.checkError(dataflow))
+  if (hasError) return
 
-      if (someErrorMsg) return someErrorMsg
+  if (['edit', 'wait_start'].includes(dataflow.status)) {
+    const validateDropTableEnabled = await vm.validateDropTableEnabled()
+    if (!validateDropTableEnabled) {
+      isSaving.value = false
+      return
+    }
+  }
 
-      // 检查链路的末尾节点类型是否是表节点
-      const firstNodes = this.allNodes.filter((node) => !targetMap[node.id]) // 链路的首节点
-      const nodeMap = this.allNodes.reduce(
-        (map, node) => ((map[node.id] = node), map),
-        {},
-      )
-      if (
-        firstNodes.some((node) => !this.isEndOfTable(node, sourceMap, nodeMap))
-      )
-        return `链路的末位需要是一个数据节点`
+  isSaving.value = true
+  try {
+    vm.wsAgentLive()
+    await startTask(dataflow.id, {
+      silenceMessage: true,
+    })
+    vm.$message.success(vm.$t('public_message_operation_success'))
+    isSaving.value = false
+    isReset.value = false
+    // vm.loadDataflow(dataflow?.id)
+    await openDataflow(dataflow?.id)
+    vm.toggleConsole(false)
+    handleBottomPanel(true)
 
-      return null
+    isDebug && vm.openDataCapture()
+  } catch (error) {
+    vm.handleError(error)
+    isSaving.value = false
+  }
+}
+
+function handleSkipAndRun() {
+  handleStart(true)
+}
+
+function getQuotaFilter(type: string) {
+  const { id: taskId, taskRecordId, agentId } = dataflow || {}
+  const [startAt, endAt] = quotaTime.value
+  const params: any = {
+    startAt,
+    endAt,
+    samples: {},
+  }
+  const samples: any = {
+    // 任务事件统计（条）- 任务累计 + 全量信息 + 增量信息
+    totalData: {
+      tags: {
+        type: 'task',
+        taskId,
+        taskRecordId,
+      },
+      endAt: Time.now(), // 停止时间 || 当前时间
+      fields: [
+        'inputInsertTotal',
+        'inputUpdateTotal',
+        'inputDeleteTotal',
+        'inputDdlTotal',
+        'inputOthersTotal',
+        'outputInsertTotal',
+        'outputUpdateTotal',
+        'outputDeleteTotal',
+        'outputDdlTotal',
+        'outputOthersTotal',
+        'tableTotal', // 任务中源表总数
+        'createTableTotal', // 完成建表的数量
+        'snapshotTableTotal', // 完成全量的表的数量
+        'initialCompleteTime', // 全量完成时间
+        'sourceConnection', // 增量信息:源连接、目标连接、增量时间点
+        'targetConnection',
+        'snapshotDoneAt',
+        'snapshotRowTotal',
+        'snapshotInsertRowTotal',
+        'outputQps',
+        'currentSnapshotTableRowTotal',
+        'currentSnapshotTableInsertRowTotal',
+        'replicateLag',
+        'snapshotStartAt',
+        'currentEventTimestamp',
+        'snapshotDoneCost',
+        'outputQpsMax',
+        'outputQpsAvg',
+      ],
+      type: 'instant', // 瞬时值
     },
-
-    handlePageReturn() {
-      const map = {
-        migrate: 'migrateList',
-        logCollector: 'sharedMining',
-        shareCache: 'sharedCache',
-        connHeartbeat: 'heartbeatTable',
-      }
-      this.$router.push({
-        name: map[this.dataflow.syncType] || 'dataflowList',
-      })
-      window.name = null
+    // 任务事件统计（条）-所选周期累计
+    barChartData: {
+      tags: {
+        type: 'task',
+        taskId,
+        taskRecordId,
+      },
+      fields: [
+        'inputInsertTotal',
+        'inputUpdateTotal',
+        'inputDeleteTotal',
+        'inputDdlTotal',
+        'inputOthersTotal',
+        'outputInsertTotal',
+        'outputUpdateTotal',
+        'outputDeleteTotal',
+        'outputDdlTotal',
+        'outputOthersTotal',
+      ],
+      type: 'difference',
     },
-
-    handleEdit() {
-      switch (this.dataflow.syncType) {
-        case 'migrate':
-          this.$router.push({
-            name: 'MigrateEditor',
-            params: { id: this.dataflow.id },
-          })
-          break
-        case 'sync':
-          this.$router.push({
-            name: 'DataflowEditor',
-            params: { id: this.dataflow.id },
-          })
-          break
-        case 'logCollector':
-          this.$refs.sharedMiningEditor.open(this.dataflow.id)
-          break
-        case 'shareCache':
-          this.$refs.sharedCacheEditor.open(this.dataflow.id)
-          break
-      }
+    // qps + 增量延迟
+    lineChartData: {
+      tags: {
+        type: 'task',
+        taskId,
+        taskRecordId,
+      },
+      fields: [
+        'inputQps',
+        'outputQps',
+        'timeCostAvg',
+        'replicateLag',
+        'inputSizeQps',
+        'outputSizeQps',
+        'qpsType',
+        'cpuUsage',
+        'memoryUsage',
+      ],
+      type: 'continuous', // 连续数据
     },
-
-    handleShowVerify() {
-      this.deselectAllNodes()
-      if (this.activeType === 'verify') {
-        this.setActiveType(null)
-      } else {
-        this.setActiveType('verify')
-      }
+    // dag数据
+    dagData: {
+      tags: {
+        type: 'node',
+        taskId,
+        taskRecordId,
+      },
+      fields: [
+        'inputInsertTotal',
+        'inputUpdateTotal',
+        'inputDeleteTotal',
+        'inputDdlTotal',
+        'inputOthersTotal',
+        'outputInsertTotal',
+        'outputUpdateTotal',
+        'outputDeleteTotal',
+        'outputDdlTotal',
+        'outputOthersTotal',
+        'qps',
+        'timeCostAvg',
+        'currentEventTimestamp',
+        'tcpPing',
+        'connectPing',
+        'inputTotal',
+        'outputTotal',
+        'inputQps',
+        'outputQps',
+        'snapshotRowTotal',
+        'snapshotInsertRowTotal',
+        'snapshotTableTotal',
+        'tableTotal',
+        'snapshotSourceReadTimeCostAvg',
+        'incrementalSourceReadTimeCostAvg',
+        'targetWriteTimeCostAvg',
+        'snapshotStartAt',
+        'snapshotDoneAt',
+        'replicateLag',
+      ],
+      type: 'instant', // 瞬时值
     },
-
-    handleShowBottomPanel() {
-      this.toggleConsole(false)
-      this.handleBottomPanel(!this.showBottomPanel)
+    agentData: {
+      tags: {
+        type: 'engine',
+        engineId: agentId,
+      },
+      endAt: Time.now(),
+      fields: ['memoryRate', 'cpuUsage', 'gcRate'],
+      type: 'instant',
     },
+  }
+  params.samples.data = samples[type]
+  return params
+}
 
-    handleBottomPanel(flag = false) {
-      this.showBottomPanel = flag
+function getParams() {
+  const { id: taskId, taskRecordId } = dataflow || {}
+  return {
+    verifyTotals: {
+      uri: `/api/task/auto-inspect-totals`,
+      param: { id: dataflow.id },
     },
-
-    handleAlarmShowBottomPanel() {
-      //告警错误提示点击跳转到告警列表
-      if (!this.showBottomPanel) {
-        this.toggleConsole(false)
-        this.handleBottomPanel(true)
-      }
-      this.$nextTick(() => {
-        this.$refs.bottomPanel.changeAlertTab('alert')
-      })
+    alarmData: {
+      uri: '/api/alarm/list_task',
+      param: { taskId },
     },
-
-    async handleStart(skip, isDebug) {
-      const hasError =
-        !skip && (await this.$refs.skipError.checkError(this.dataflow))
-      if (hasError) return
-
-      this.isSaving = true
-
-      if (['edit', 'wait_start'].includes(this.dataflow.status)) {
-        const validateDropTableEnabled = await this.validateDropTableEnabled()
-        if (!validateDropTableEnabled) {
-          this.isSaving = false
-          return
-        }
-      }
-
-      const validateMemoryHeap = await this.validateMemoryHeap()
-      if (!validateMemoryHeap) {
-        this.isSaving = false
-        return
-      }
-
-      try {
-        this.wsAgentLive()
-        await startTask(this.dataflow.id, {
-          silenceMessage: true,
-        })
-        this.$message.success(this.$t('public_message_operation_success'))
-        this.isSaving = false
-        this.isReset = false
-        // this.loadDataflow(this.dataflow?.id)
-        await this.openDataflow(this.dataflow?.id)
-        this.toggleConsole(false)
-        this.handleBottomPanel(true)
-
-        isDebug && this.openDataCapture()
-      } catch (error) {
-        this.handleError(error)
-        this.isSaving = false
-      }
+    logTotals: {
+      uri: '/api/MonitoringLogs/count',
+      param: { taskId, taskRecordId },
     },
-
-    handleSkipAndRun() {
-      this.handleStart(true)
+    totalData: {
+      uri: '/api/measurement/query/v2',
+      param: getQuotaFilter('totalData'),
     },
-
-    getQuotaFilter(type) {
-      const { id: taskId, taskRecordId, agentId } = this.dataflow || {}
-      const [startAt, endAt] = this.quotaTime
-      const params = {
-        startAt,
-        endAt,
-        samples: {},
-      }
-      const samples = {
-        // 任务事件统计（条）- 任务累计 + 全量信息 + 增量信息
-        totalData: {
-          tags: {
-            type: 'task',
-            taskId,
-            taskRecordId,
-          },
-          endAt: Time.now(), // 停止时间 || 当前时间
-          fields: [
-            'inputInsertTotal',
-            'inputUpdateTotal',
-            'inputDeleteTotal',
-            'inputDdlTotal',
-            'inputOthersTotal',
-            'outputInsertTotal',
-            'outputUpdateTotal',
-            'outputDeleteTotal',
-            'outputDdlTotal',
-            'outputOthersTotal',
-            'tableTotal', // 任务中源表总数
-            'createTableTotal', // 完成建表的数量
-            'snapshotTableTotal', // 完成全量的表的数量
-            'initialCompleteTime', // 全量完成时间
-            'sourceConnection', // 增量信息:源连接、目标连接、增量时间点
-            'targetConnection',
-            'snapshotDoneAt',
-            'snapshotRowTotal',
-            'snapshotInsertRowTotal',
-            'outputQps',
-            'currentSnapshotTableRowTotal',
-            'currentSnapshotTableInsertRowTotal',
-            'replicateLag',
-            'snapshotStartAt',
-            'currentEventTimestamp',
-            'snapshotDoneCost',
-            'outputQpsMax',
-            'outputQpsAvg',
-          ],
-          type: 'instant', // 瞬时值
-        },
-        // 任务事件统计（条）-所选周期累计
-        barChartData: {
-          tags: {
-            type: 'task',
-            taskId,
-            taskRecordId,
-          },
-          fields: [
-            'inputInsertTotal',
-            'inputUpdateTotal',
-            'inputDeleteTotal',
-            'inputDdlTotal',
-            'inputOthersTotal',
-            'outputInsertTotal',
-            'outputUpdateTotal',
-            'outputDeleteTotal',
-            'outputDdlTotal',
-            'outputOthersTotal',
-          ],
-          type: 'difference',
-        },
-        // qps + 增量延迟
-        lineChartData: {
-          tags: {
-            type: 'task',
-            taskId,
-            taskRecordId,
-          },
-          fields: [
-            'inputQps',
-            'outputQps',
-            'timeCostAvg',
-            'replicateLag',
-            'inputSizeQps',
-            'outputSizeQps',
-            'qpsType',
-            'cpuUsage',
-            'memoryUsage',
-          ],
-          type: 'continuous', // 连续数据
-        },
-        // dag数据
-        dagData: {
-          tags: {
-            type: 'node',
-            taskId,
-            taskRecordId,
-          },
-          fields: [
-            'inputInsertTotal',
-            'inputUpdateTotal',
-            'inputDeleteTotal',
-            'inputDdlTotal',
-            'inputOthersTotal',
-            'outputInsertTotal',
-            'outputUpdateTotal',
-            'outputDeleteTotal',
-            'outputDdlTotal',
-            'outputOthersTotal',
-            'qps',
-            'timeCostAvg',
-            'currentEventTimestamp',
-            'tcpPing',
-            'connectPing',
-            'inputTotal',
-            'outputTotal',
-            'inputQps',
-            'outputQps',
-            'snapshotRowTotal',
-            'snapshotInsertRowTotal',
-            'snapshotTableTotal',
-            'tableTotal',
-            'snapshotSourceReadTimeCostAvg',
-            'incrementalSourceReadTimeCostAvg',
-            'targetWriteTimeCostAvg',
-            'snapshotStartAt',
-            'snapshotDoneAt',
-            'replicateLag',
-          ],
-          type: 'instant', // 瞬时值
-        },
-        agentData: {
-          tags: {
-            type: 'engine',
-            engineId: agentId,
-          },
-          endAt: Time.now(),
-          fields: ['memoryRate', 'cpuUsage', 'gcRate'],
-          type: 'instant',
-        },
-      }
-      params.samples.data = samples[type]
-      return params
+    barChartData: {
+      uri: '/api/measurement/query/v2',
+      param: getQuotaFilter('barChartData'),
     },
-
-    getParams() {
-      const { id: taskId, taskRecordId } = this.dataflow || {}
-      const params = {
-        verifyTotals: {
-          uri: `/api/task/auto-inspect-totals`,
-          param: {
-            id: this.dataflow.id,
-          },
-        },
-        alarmData: {
-          uri: '/api/alarm/list_task',
-          param: {
-            taskId,
-          },
-        },
-        logTotals: {
-          uri: '/api/MonitoringLogs/count',
-          param: {
-            taskId,
-            taskRecordId,
-          },
-        },
-        totalData: {
-          uri: '/api/measurement/query/v2',
-          param: this.getQuotaFilter('totalData'),
-        },
-        barChartData: {
-          uri: '/api/measurement/query/v2',
-          param: this.getQuotaFilter('barChartData'),
-        },
-        lineChartData: {
-          uri: '/api/measurement/query/v2',
-          param: this.getQuotaFilter('lineChartData'),
-        },
-        dagData: {
-          uri: '/api/measurement/query/v2',
-          param: this.getQuotaFilter('dagData'),
-        },
-        agentData: {
-          uri: '/api/measurement/query/v2',
-          param: this.getQuotaFilter('agentData'),
-        },
-        taskRecord: {
-          uri: '/api/task/records',
-          param: {
-            taskId,
-            size: 200,
-            page: 1,
-          },
-        },
-      }
-      return params
+    lineChartData: {
+      uri: '/api/measurement/query/v2',
+      param: getQuotaFilter('lineChartData'),
     },
-
-    loadData() {
-      if (!this.dataflow?.id) {
-        return
-      }
-      if (this.isReset) {
-        this.loadResetQuotaData()
-        return
-      }
-      batchMeasurements(this.getParams())
-        .then((data) => {
-          const map = {
-            verifyTotals: this.loadVerifyTotals,
-            alarmData: this.loadAlarmData,
-            logTotals: this.loadLogTotals,
-            taskRecord: this.loadTaskRecord,
-          }
-          for (const key in data) {
-            const item = data[key]
-            if (item.code === 'ok') {
-              map[key]?.(data[key].data)
-            }
-          }
-          this.loadQuotaData(data)
-        })
-        .finally(() => {
-          this.timer && clearTimeout(this.timer)
-          this.timer = setTimeout(() => {
-            this.polling()
-          }, this.refreshRate)
-        })
+    dagData: {
+      uri: '/api/measurement/query/v2',
+      param: getQuotaFilter('dagData'),
     },
+    agentData: {
+      uri: '/api/measurement/query/v2',
+      param: getQuotaFilter('agentData'),
+    },
+    taskRecord: {
+      uri: '/api/task/records',
+      param: { taskId, size: 200, page: 1 },
+    },
+  }
+}
 
-    loadQuotaData(data) {
-      const quota = {
-        samples: {},
-        time: [],
-        interval: 5000,
+function loadData() {
+  if (!dataflow?.id) {
+    return
+  }
+  if (isReset.value) {
+    loadResetQuotaData()
+    return
+  }
+  batchMeasurements(getParams())
+    .then((data: any) => {
+      const map: any = {
+        verifyTotals: loadVerifyTotals,
+        alarmData: loadAlarmData,
+        logTotals: loadLogTotals,
+        taskRecord: loadTaskRecord,
       }
-      const arr = [
-        'totalData',
-        'barChartData',
-        'lineChartData',
-        'dagData',
-        'agentData',
-      ]
-      arr.forEach((el) => {
-        const item = data[el]
+      for (const key in data) {
+        const item = data[key]
         if (item.code === 'ok') {
-          quota.samples[el] = item.data?.samples?.data
-          if (item.data?.interval) {
-            quota.interval = item.data.interval
-          }
-          if (item.data?.time) {
-            quota.time = item.data.time
-          }
+          map[key]?.(data[key].data)
         }
-      })
-      this.quota = quota
-      const granularity = getTimeGranularity(this.quota.interval)
-      this.timeFormat = TIME_FORMAT_MAP[granularity]
-      this.dagData = this.getDagData(this.quota.samples.dagData)
-    },
-
-    loadResetQuotaData() {
-      const quota = {
-        samples: {},
-        time: [],
-        interval: 5000,
       }
-      const arr = [
-        'totalData',
-        'barChartData',
-        'lineChartData',
-        'dagData',
-        'agentData',
+      loadQuotaData(data)
+    })
+    .finally(() => {
+      timer.value && clearTimeout(timer.value)
+      timer.value = setTimeout(() => {
+        polling()
+      }, refreshRate.value)
+    })
+}
+
+function loadQuotaData(data: any) {
+  const q: any = {
+    samples: {},
+    time: [],
+    interval: 5000,
+  }
+  const arr = [
+    'totalData',
+    'barChartData',
+    'lineChartData',
+    'dagData',
+    'agentData',
+  ]
+  arr.forEach((el) => {
+    const item = data[el]
+    if (item.code === 'ok') {
+      q.samples[el] = item.data?.samples?.data
+      if (item.data?.interval) {
+        q.interval = item.data.interval
+      }
+      if (item.data?.time) {
+        q.time = item.data.time
+      }
+    }
+  })
+  quota.value = q
+  const granularity = getTimeGranularity(quota.value.interval)
+  timeFormat.value = TIME_FORMAT_MAP[granularity]
+  dagData.value = getDagData(quota.value.samples.dagData)
+}
+
+function loadResetQuotaData() {
+  const q: any = {
+    samples: {},
+    time: [],
+    interval: 5000,
+  }
+  const arr = [
+    'totalData',
+    'barChartData',
+    'lineChartData',
+    'dagData',
+    'agentData',
+  ]
+  arr.forEach((el) => {
+    q.samples[el] = []
+  })
+  quota.value = q
+  dagData.value = {}
+  loadVerifyTotals()
+  loadAlarmData()
+  loadLogTotals()
+  loadTaskRecord()
+}
+
+function loadVerifyTotals(data: any = {}) {
+  const { diffRecords = 0, diffTables = 0, totals = 0, ignore = 0 } = data
+  verifyTotals.value = {
+    diffRecords,
+    diffTables,
+    totals,
+    ignore,
+  }
+}
+
+function loadAlarmData(data: any = {}) {
+  const { alarmNum = {}, nodeInfos = [], alarmList = [] } = data
+  const { alert = 0, error = 0 } = alarmNum
+  const nodes = alarmList
+    .filter((t: any) => t.nodeId && t.level)
+    .reduce((cur: any, next: any) => {
+      const index = ALARM_LEVEL_SORT.indexOf(cur[next.nodeId]?.level)
+      return {
+        ...cur,
+        [next.nodeId]:
+          index !== -1 && index < ALARM_LEVEL_SORT.indexOf(next.level)
+            ? cur[next.nodeId]
+            : next,
+      }
+    }, {})
+  alarmData.value = {
+    alarmNum: { alert, error },
+    nodeInfos: nodeInfos.map((t: any) => {
+      return Object.assign({}, t, { num: t.num || 0 })
+    }),
+    alarmList,
+    nodes,
+  }
+}
+
+function loadLogTotals(data: any = []) {
+  logTotals.value = data
+}
+
+function loadTaskRecord(data?: any) {
+  if (!data) return
+  taskRecord.value = data
+}
+
+function getDagData(data: any[] = []) {
+  return data.reduce((pre: any, current: any) => {
+    return { ...pre, [current.tags.nodeId]: current }
+  }, {})
+}
+
+/**
+ * 自动布局
+ */
+function handleAutoLayout() {
+  const nodes = vm.allNodes
+  if (nodes.length < 2) return
+
+  let hasMove = false
+  const nodePositionMap: any = {}
+  const dg = new dagre.graphlib.Graph()
+  const newProperties: any[] = []
+  const oldProperties: any[] = []
+
+  dg.setGraph({
+    nodesep: 120,
+    ranksep: 200,
+    marginx: 0,
+    marginy: 0,
+    rankdir: 'LR',
+  })
+  dg.setDefaultEdgeLabel(function () {
+    return {}
+  })
+
+  nodes.forEach((n: any) => {
+    let { width, height } =
+      document.getElementById(NODE_PREFIX + n.id)?.getBoundingClientRect() ||
+      ({} as any)
+    width /= scale.value
+    height /= scale.value
+
+    dg.setNode(NODE_PREFIX + n.id, { width, height })
+    nodePositionMap[NODE_PREFIX + n.id] = n.attrs?.position || [0, 0]
+  })
+  jsPlumbIns.getAllConnections().forEach((edge: any) => {
+    dg.setEdge(edge.source.id, edge.target.id)
+  })
+
+  dagre.layout(dg)
+  dg.nodes().forEach((n: any) => {
+    const node = dg.node(n)
+    const top = Math.round(node.y - node.height / 2)
+    const left = Math.round(node.x - node.width / 2)
+
+    if (nodePositionMap[n].join(',') !== `${left},${top}`) {
+      hasMove = true
+      oldProperties.push({
+        id: vm.getRealId(n),
+        properties: { attrs: { position: nodePositionMap[n] } },
+      })
+      newProperties.push({
+        id: vm.getRealId(n),
+        properties: { attrs: { position: [left, top] } },
+      })
+    }
+  })
+
+  hasMove && vm.command.exec(new MoveNodeCommand(oldProperties, newProperties))
+  vm.$refs.paperScroller.autoResizePaper()
+  vm.$refs.paperScroller.centerContent()
+}
+
+function handleChangeTimeSelect(val: any, isTime: boolean, source?: any) {
+  quotaTimeType.value = isTime ? 'custom' : (source?.type ?? val)
+  quotaTime.value = isTime
+    ? val?.split(',')?.map((t: string) => Number(t))
+    : getTimeRange(val)
+  init()
+}
+
+function handleChangeFrequency(val: number) {
+  refreshRate.value = val
+  init()
+}
+
+function getTimeRange(type: string) {
+  let result
+  const { status: st } = dataflow || {}
+  let endTimestamp = lastStopTime.value || Time.now()
+  if (st === 'running') {
+    endTimestamp = Time.now()
+  }
+  switch (type) {
+    case '5m':
+      result = [endTimestamp - 5 * 60 * 1000, endTimestamp]
+      break
+    case '1h':
+      result = [endTimestamp - 60 * 60 * 1000, endTimestamp]
+      break
+    case '1d':
+      result = [endTimestamp - 24 * 60 * 60 * 1000, endTimestamp]
+      break
+    case 'lastStart':
+      result = [dataflow.lastStartDate, endTimestamp]
+      break
+    case 'full':
+      result = [firstStartTime.value, endTimestamp]
+      break
+    case 'incremental':
+      result = [
+        quota.value.samples?.totalData?.[0].snapshotDoneAt + 10000,
+        endTimestamp,
       ]
-      arr.forEach((el) => {
-        quota.samples[el] = []
-      })
-      this.quota = quota
-      this.dagData = {}
-      this.loadVerifyTotals()
-      this.loadAlarmData()
-      this.loadLogTotals()
-      this.loadTaskRecord()
-    },
+      break
+    default:
+      result = [endTimestamp - 5 * 60 * 1000, endTimestamp]
+      break
+  }
+  return result
+}
 
-    loadVerifyTotals(data = {}) {
-      const { diffRecords = 0, diffTables = 0, totals = 0, ignore = 0 } = data
-      this.verifyTotals = {
-        diffRecords,
-        diffTables,
-        totals,
-        ignore,
+function handleOpenDetail(node: any) {
+  if (['mem_cache'].includes(node.type)) return
+  nodeDetailDialogId.value = node.id
+  // 设置弹窗的周期
+  vm.$refs.nodeDetailDialog.quotaTime = quotaTime.value
+  vm.$refs.nodeDetailDialog.quotaTimeType = quotaTimeType.value
+  nodeDetailDialog.value = true
+}
+
+function handleVerifyDetails(table: any) {
+  const routeUrl = router.resolve({
+    name: 'VerifyDetails',
+    params: { id: dataflow?.id },
+    query: { table },
+  })
+  window.open(routeUrl.href)
+}
+
+function handleConnectionList(keyword: string) {
+  const routeUrl = router.resolve({
+    name: 'connectionsList',
+    query: { keyword },
+  })
+  window.open(routeUrl.href)
+}
+
+function handleReset() {
+  const msg = vm.getConfirmMessage('initialize')
+  vm.$confirm(msg).then(async (resFlag: any) => {
+    if (!resFlag) {
+      return
+    }
+    try {
+      dataflow.disabledData.reset = true
+      handleBottomPanel()
+      vm.toggleConsole(true)
+      vm.$refs.console?.startAuto('reset') // 信息输出自动加载
+      const data = await resetTask(dataflow.id)
+      vm.responseHandler(data, vm.$t('public_message_operation_success'))
+      if (!data?.fail?.length) {
+        isReset.value = true
       }
+      // init()
+      vm.loadDataflow(dataflow?.id)
+    } catch (error) {
+      vm.handleError(error, vm.$t('packages_dag_message_operation_error'))
+    }
+  })
+}
+
+/**
+ * 显示/隐藏连线动效
+ */
+function toggleConnectionRun(flag = dataflow.status === 'running') {
+  if (flag) {
+    jsPlumbIns.select().addClass('running')
+  } else {
+    jsPlumbIns.select().removeClass('running')
+  }
+}
+
+/**
+ * 初始化连接样式【告警、错误】
+ */
+function initConnectionType() {
+  jsPlumbIns.registerConnectionTypes({
+    error: {
+      paintStyle: { stroke: '#D44D4D' },
+      hoverPaintStyle: { stroke: '#D44D4D' },
     },
-
-    loadAlarmData(data = {}) {
-      const { alarmNum = {}, nodeInfos = [], alarmList = [] } = data
-      const { alert = 0, error = 0 } = alarmNum
-      const nodes = alarmList
-        .filter((t) => t.nodeId && t.level)
-        .reduce((cur, next) => {
-          const index = ALARM_LEVEL_SORT.indexOf(cur[next.nodeId]?.level)
-          return {
-            ...cur,
-            [next.nodeId]:
-              index !== -1 && index < ALARM_LEVEL_SORT.indexOf(next.level)
-                ? cur[next.nodeId]
-                : next,
-          }
-        }, {})
-      this.alarmData = {
-        alarmNum: {
-          alert,
-          error,
-        },
-        nodeInfos: nodeInfos.map((t) => {
-          return Object.assign({}, t, {
-            num: t.num || 0,
-          })
-        }),
-        alarmList,
-        nodes,
-      }
+    warn: {
+      paintStyle: { stroke: '#FF932C' },
+      hoverPaintStyle: { stroke: '#FF932C' },
     },
+  })
+}
 
-    loadLogTotals(data = []) {
-      this.logTotals = data
-    },
+function handleStopAuto() {
+  setTimeout(() => {
+    dataflowStore.showConsole && vm.$refs.console?.autoLoad()
+  }, 5000)
+}
 
-    loadTaskRecord(data) {
-      if (!data) return
-      this.taskRecord = data
-    },
+function getTime() {
+  return Time.now()
+}
 
-    getDagData(data = []) {
-      return data.reduce((pre, current) => {
-        return { ...pre, [current.tags.nodeId]: current }
-      }, {})
-    },
+function getTaskStatus(type: string) {
+  return (TASK_STATUS_MAP as any)[type] || ''
+}
 
-    /**
-     * 自动布局
-     */
-    handleAutoLayout() {
-      const nodes = this.allNodes
-      if (nodes.length < 2) return
+function upgradeFeeGoPage() {
+  const routeUrl = router.resolve({
+    name: 'createAgent',
+  })
+  window.open(routeUrl.href, '_blank')
+}
 
-      let hasMove = false
-      const nodePositionMap = {}
-      const dg = new dagre.graphlib.Graph()
-      const newProperties = []
-      const oldProperties = []
+function handleBottomPanelAction(data: any = {}) {
+  if (data.type === 'ScheduleLimit') {
+    vm.handleShowUpgradeDialog()
+  }
+}
 
-      dg.setGraph({
-        nodesep: 120,
-        ranksep: 200,
-        marginx: 0,
-        marginy: 0,
-        rankdir: 'LR',
-      })
-      dg.setDefaultEdgeLabel(function () {
-        return {}
-      })
-
-      nodes.forEach((n) => {
-        dg.setNode(NODE_PREFIX + n.id, {
-          width: NODE_WIDTH,
-          height: NODE_HEIGHT,
-        })
-        nodePositionMap[NODE_PREFIX + n.id] = n.attrs?.position || [0, 0]
-      })
-      this.jsPlumbIns.getAllConnections().forEach((edge) => {
-        dg.setEdge(edge.source.id, edge.target.id)
-      })
-
-      dagre.layout(dg)
-      dg.nodes().forEach((n) => {
-        const node = dg.node(n)
-        const top = Math.round(node.y - node.height / 2)
-        const left = Math.round(node.x - node.width / 2)
-
-        if (nodePositionMap[n].join(',') !== `${left},${top}`) {
-          hasMove = true
-          oldProperties.push({
-            id: this.getRealId(n),
-            properties: {
-              attrs: {
-                position: nodePositionMap[n],
-              },
-            },
-          })
-          newProperties.push({
-            id: this.getRealId(n),
-            properties: {
-              attrs: {
-                position: [left, top],
-              },
-            },
-          })
-        }
-      })
-
-      hasMove &&
-        this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
-      this.$refs.paperScroller.autoResizePaper()
-      this.$refs.paperScroller.centerContent()
-    },
-
-    handleChangeTimeSelect(val, isTime, source) {
-      this.quotaTimeType = isTime ? 'custom' : (source?.type ?? val)
-      this.quotaTime = isTime
-        ? val?.split(',')?.map((t) => Number(t))
-        : this.getTimeRange(val)
-      this.init()
-    },
-
-    handleChangeFrequency(val) {
-      this.refreshRate = val
-      this.init()
-    },
-
-    getTimeRange(type) {
-      let result
-      const { status } = this.dataflow || {}
-      let endTimestamp = this.lastStopTime || Time.now()
-      if (status === 'running') {
-        endTimestamp = Time.now()
-      }
-      switch (type) {
-        case '5m':
-          result = [endTimestamp - 5 * 60 * 1000, endTimestamp]
-          break
-        case '1h':
-          result = [endTimestamp - 60 * 60 * 1000, endTimestamp]
-          break
-        case '1d':
-          result = [endTimestamp - 24 * 60 * 60 * 1000, endTimestamp]
-          break
-        case 'lastStart':
-          result = [this.dataflow.lastStartDate, endTimestamp]
-          break
-        case 'full':
-          result = [this.firstStartTime, endTimestamp]
-          break
-        case 'incremental':
-          result = [
-            this.quota.samples?.totalData?.[0].snapshotDoneAt + 10000,
-            endTimestamp,
-          ]
-          break
-        default:
-          result = [endTimestamp - 5 * 60 * 1000, endTimestamp]
-          break
-      }
-      return result
-    },
-
-    handleOpenDetail(node) {
-      if (['mem_cache'].includes(node.type)) return
-      this.nodeDetailDialogId = node.id
-      // 设置弹窗的周期
-      this.$refs.nodeDetailDialog.quotaTime = this.quotaTime
-      this.$refs.nodeDetailDialog.quotaTimeType = this.quotaTimeType
-      this.nodeDetailDialog = true
-    },
-
-    handleVerifyDetails(table) {
-      const routeUrl = this.$router.resolve({
-        name: 'VerifyDetails',
-        params: {
-          id: this.dataflow?.id,
-        },
-        query: {
-          table,
-        },
-      })
-      window.open(routeUrl.href)
-    },
-
-    handleConnectionList(keyword) {
-      const routeUrl = this.$router.resolve({
-        name: 'connectionsList',
-        query: {
-          keyword,
-        },
-      })
-      window.open(routeUrl.href)
-    },
-
-    handleReset() {
-      const msg = this.getConfirmMessage('initialize')
-      this.$confirm(msg).then(async (resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        try {
-          this.dataflow.disabledData.reset = true
-          this.handleBottomPanel()
-          this.toggleConsole(true)
-          this.$refs.console?.startAuto('reset') // 信息输出自动加载
-          const data = await resetTask(this.dataflow.id)
-          this.responseHandler(
-            data,
-            this.$t('public_message_operation_success'),
-          )
-          if (!data?.fail?.length) {
-            this.isReset = true
-          }
-          // this.init()
-          this.loadDataflow(this.dataflow?.id)
-        } catch (error) {
-          this.handleError(
-            error,
-            this.$t('packages_dag_message_operation_error'),
-          )
-        }
-      })
-    },
-
-    /**
-     * 显示/隐藏连线动效
-     * @param flag
-     */
-    toggleConnectionRun(flag = this.dataflow.status === 'running') {
-      if (flag) {
-        this.jsPlumbIns.select().addClass('running')
-      } else {
-        this.jsPlumbIns.select().removeClass('running')
-      }
-    },
-
-    /**
-     * 初始化连接样式【告警、错误】
-     */
-    initConnectionType() {
-      this.jsPlumbIns.registerConnectionTypes({
-        error: {
-          paintStyle: { stroke: '#D44D4D' },
-          hoverPaintStyle: { stroke: '#D44D4D' },
-        },
-        warn: {
-          paintStyle: { stroke: '#FF932C' },
-          hoverPaintStyle: { stroke: '#FF932C' },
-        },
-      })
-    },
-
-    handleStopAuto() {
-      setTimeout(() => {
-        this.showConsole && this.$refs.console?.autoLoad()
-      }, 5000)
-    },
-
-    getTime() {
-      return Time.now()
-    },
-
-    getTaskStatus(type) {
-      return TASK_STATUS_MAP[type] || ''
-    },
-
-    handleOpenSharedCache(row = {}) {
-      this.$refs.sharedCacheDetails?.getData(row.id)
-    },
-
-    upgradeFeeGoPage() {
-      const routeUrl = this.$router.resolve({
-        name: 'createAgent',
-      })
-      window.open(routeUrl.href, '_blank')
-    },
-
-    handleBottomPanelAction(data = {}) {
-      if (data.type === 'ScheduleLimit') {
-        this.handleShowUpgradeDialog()
-      }
-    },
-
-    handleOpenInspect() {
-      this.$refs.topHeader.openValidation = true
-    },
-  },
+function handleOpenInspect() {
+  vm.$refs.topHeader.openValidation = true
 }
 </script>
 
@@ -1381,7 +1297,7 @@ export default {
       <ConfigPanel
         ref="configPanel"
         :settings="dataflow"
-        :scope="formScope"
+        :scope="formScopeComputed"
         :show-schema-panel="dataflow.syncType === 'sync'"
         :sync-type="dataflow.syncType"
         :button-show-map="buttonShowMap"

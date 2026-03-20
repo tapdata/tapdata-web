@@ -8,10 +8,10 @@ import {
 import { useI18n } from '@tap/i18n'
 
 import { reactive, ref } from 'vue'
-import { useStore } from 'vuex'
+import { useDataflowStore } from '../stores/dataflow.store'
 import type { ElDialog } from 'element-plus'
 
-const store = useStore()
+const dataflowStore = useDataflowStore()
 const { t } = useI18n()
 
 interface Props {
@@ -146,11 +146,6 @@ function handleCheckChange() {
   }
 }
 
-const hasCapability = (node, capabilityId) =>
-  node?.attrs?.capabilities?.some(
-    (capability) => capability.id === capabilityId,
-  )
-
 function validateAllowSave() {
   if (!validationEnabled.value) {
     return true
@@ -158,7 +153,7 @@ function validateAllowSave() {
 
   const sourceNodes = []
   const targetNodes = []
-  store.getters['dataflow/allNodes'].forEach((node) => {
+  dataflowStore.dag.nodes.forEach((node) => {
     if (node.type === 'table' || node.type === 'database') {
       if (!node.$inputs.length) {
         sourceNodes.push(node)
@@ -178,11 +173,11 @@ function validateAllowSave() {
   const [sourceNode] = sourceNodes
   const [targetNode] = targetNodes
 
-  const sourceNodeHasCapability = hasCapability(
+  const sourceNodeHasCapability = dataflowStore.hasCapability(
     sourceNode,
     'query_by_advance_filter_function',
   )
-  const targetNodeHasCapability = hasCapability(
+  const targetNodeHasCapability = dataflowStore.hasCapability(
     targetNode,
     'query_by_advance_filter_function',
   )

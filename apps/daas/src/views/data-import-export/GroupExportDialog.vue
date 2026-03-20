@@ -53,7 +53,7 @@ const loadGroups = async () => {
     })
     groupList.value = result.items || []
   } catch {
-    ElMessage.error('加载分组列表失败')
+    ElMessage.error(t('data_import_export_load_group_failed'))
   } finally {
     groupLoading.value = false
   }
@@ -242,13 +242,13 @@ const handleGitConfigSaved = async () => {
 // 导出分组
 const handleExport = async () => {
   if (selectedGroupIds.value.length === 0) {
-    ElMessage.warning('请至少选择一个分组')
+    ElMessage.warning(t('data_import_export_select_at_least_one'))
     return
   }
 
   // 如果是 GIT 导出，验证必填项
   if (groupTransferType.value === 'GIT' && !hasGitConfig.value) {
-    ElMessage.warning('请先配置 Git 信息')
+    ElMessage.warning(t('data_import_export_git_info_required'))
     return
   }
 
@@ -484,33 +484,43 @@ const handleCreateProject = () => {
             <template v-if="needGitFields">
               <div class="mt-2">
                 <div class="mb-1">
-                  <span class="fs-7 fw-sub">分支名</span>
+                  <span class="fs-7 fw-sub">{{
+                    $t('data_import_export_branch_name')
+                  }}</span>
                 </div>
                 <el-input
                   v-model="gitBranchName"
-                  placeholder="请输入分支名"
+                  :placeholder="
+                    $t('data_import_export_branch_name_placeholder')
+                  "
                   clearable
                 />
               </div>
               <div class="mt-2">
                 <div class="mb-1">
-                  <span class="fs-7 fw-sub">PR 标题</span>
+                  <span class="fs-7 fw-sub">{{
+                    $t('data_import_export_pr_title')
+                  }}</span>
                 </div>
                 <el-input
                   v-model="gitPrTitle"
-                  placeholder="请输入 PR 标题"
+                  :placeholder="$t('data_import_export_pr_title_placeholder')"
                   clearable
                 />
               </div>
               <div class="mt-2">
                 <div class="mb-1">
-                  <span class="fs-7 fw-sub">PR 描述</span>
+                  <span class="fs-7 fw-sub">{{
+                    $t('data_import_export_pr_description')
+                  }}</span>
                 </div>
                 <el-input
                   v-model="gitPrDescription"
                   type="textarea"
                   :rows="3"
-                  placeholder="请输入 PR 描述"
+                  :placeholder="
+                    $t('data_import_export_pr_description_placeholder')
+                  "
                 />
               </div>
             </template>

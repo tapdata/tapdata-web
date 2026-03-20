@@ -20,6 +20,8 @@ import 'ace-builds/src-noconflict/theme-chrome'
 import 'ace-builds/src-noconflict/theme-sqlserver'
 import 'ace-builds/src-noconflict/ext-beautify'
 
+import './theme-one-light.ts'
+
 const WORKER = {
   javascript: workerJavascriptUrl,
   json: workerJsonUrl,
@@ -81,7 +83,7 @@ watchEffect(() => {
   const theme = props.autoDark
     ? isDark.value
       ? 'one_dark'
-      : 'chrome'
+      : 'one-light'
     : props.theme
   if (editor.value) {
     editor.value.setTheme(`ace/theme/${theme}`)

@@ -4,10 +4,10 @@ import SettingLayout from '@/layouts/SettingLayout.vue'
 
 const FunctionForm = () => import('@/views/function/Form.vue')
 const DagEditor = () => import('@tap/dag/src/Editor.vue')
+const DagEditorView = () => import('@tap/dag/src/EditorView.vue')
+const DagMonitorView = () => import('@tap/dag/src/MonitorView.vue')
+const TaskRecordView = () => import('@tap/dag/src/RecordView.vue')
 const MigrationEditor = () => import('@tap/dag/src/MigrationEditor.vue')
-const MigrationMonitor = () => import('@tap/dag/src/MigrationMonitor.vue')
-const MigrationMonitorViewer = () =>
-  import('@tap/dag/src/MigrationMonitorViewer.vue')
 const DataCapture = () => import('@tap/dag/src/data-capture/DataCapture.vue')
 const CustomNodeList = () =>
   import('@tap/business/src/views/custom-node/List.vue')
@@ -107,9 +107,18 @@ export const routes = [
     component: NodeEditor,
   },
   {
+    path: '/dataflow/canvas/:id',
+    name: 'DataflowCanvas',
+    component: DagEditor,
+    meta: {
+      title: 'page_title_data_develop',
+      code: 'v2_data_flow_dag_edit',
+    },
+  },
+  {
     path: '/dataflow/editor',
     name: 'DataflowNew',
-    component: DagEditor,
+    component: DagEditorView,
     meta: {
       title: 'page_title_data_develop',
       code: 'v2_data_flow_dag_edit',
@@ -118,7 +127,7 @@ export const routes = [
   {
     path: '/dataflow/editor/:id',
     name: 'DataflowEditor',
-    component: DagEditor,
+    component: DagEditorView,
     meta: {
       title: 'page_title_data_develop',
       code: 'v2_data_flow_edit',
@@ -136,7 +145,7 @@ export const routes = [
   {
     path: '/dataflow/monitor/:id',
     name: 'TaskMonitor',
-    component: MigrationMonitor,
+    component: DagMonitorView,
     meta: {
       title: 'page_title_run_monitor',
       code: 'v2_data_flow_monitor',
@@ -146,7 +155,7 @@ export const routes = [
   {
     path: '/migrate/editor',
     name: 'MigrateCreate',
-    component: MigrationEditor,
+    component: DagEditorView,
     meta: {
       title: 'page_title_data_copy',
       code: 'v2_data_replication_dag_edit',
@@ -155,7 +164,7 @@ export const routes = [
   {
     path: '/migrate/editor/:id',
     name: 'MigrateEditor',
-    component: MigrationEditor,
+    component: DagEditorView,
     meta: {
       title: 'page_title_data_copy',
       code: 'v2_data_replication_dag_edit',
@@ -173,7 +182,7 @@ export const routes = [
   {
     path: '/migrate/monitor/:id',
     name: 'MigrationMonitor',
-    component: MigrationMonitor,
+    component: DagMonitorView,
     meta: {
       title: 'page_title_run_monitor',
       code: 'v2_data_replication_monitor',
@@ -182,7 +191,7 @@ export const routes = [
   {
     path: '/migrate/monitor-record/:id',
     name: 'MigrationMonitorViewer',
-    component: MigrationMonitorViewer,
+    component: TaskRecordView,
     meta: {
       title: 'page_title_run_monitor',
       code: 'v2_data_replication_record_monitor',
@@ -201,7 +210,7 @@ export const routes = [
   {
     path: '/shared-mining/monitor/:id',
     name: 'SharedMiningMonitor',
-    component: MigrationMonitor,
+    component: DagMonitorView,
     meta: {
       title: 'page_title_run_monitor',
       code: 'v2_data_replication_monitor',
@@ -210,7 +219,7 @@ export const routes = [
   {
     path: '/heartbeat/monitor/:id',
     name: 'HeartbeatMonitor',
-    component: MigrationMonitor,
+    component: DagMonitorView,
     meta: {
       title: 'page_title_run_monitor',
       code: 'v2_data_replication_monitor',
@@ -219,7 +228,7 @@ export const routes = [
   {
     path: '/shared-cache/monitor/:id',
     name: 'SharedCacheMonitor',
-    component: MigrationMonitor,
+    component: DagMonitorView,
     meta: {
       title: 'page_title_run_monitor',
       code: 'v2_data_replication_monitor',

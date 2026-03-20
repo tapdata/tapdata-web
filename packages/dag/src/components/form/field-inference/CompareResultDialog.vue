@@ -16,6 +16,9 @@ import { getFieldIcon } from '@tap/form/src/components/field-select/FieldSelect'
 import { useI18n } from '@tap/i18n'
 import { computed, onBeforeUnmount, ref, watch, type PropType } from 'vue'
 import { useStore } from 'vuex'
+import { useDataflowStore } from '../../../stores/dataflow.store'
+
+const dataflowStore = useDataflowStore()
 
 const visible = defineModel<boolean>()
 const emit = defineEmits(['loadSchema', 'changeRules', 'close'])
@@ -48,7 +51,7 @@ type TableItem = {
 
 const { t } = useI18n()
 const store = useStore()
-const taskId = store.state.dataflow.taskId
+const taskId = dataflowStore.dataflow.id
 const compareStatus = ref<string | null>(null)
 const finishTime = ref<string>()
 const tableList = ref<TableItem[]>([])
@@ -376,7 +379,7 @@ const filteredFields = computed(() => {
 })
 
 const taskSaving = computed(() => {
-  return store.state.dataflow.taskSaving
+  return dataflowStore.taskSaving
 })
 
 // 比较字段类型并返回带有红色高亮的 HTML 字符串

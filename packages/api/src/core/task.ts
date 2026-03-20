@@ -4,6 +4,36 @@ import { requestClient, type Page } from '../request'
 
 const BASE_URL = '/api/Task'
 
+export interface Node {
+  id: string
+  type: string
+  name: string
+  attrs: {
+    position: [number, number]
+    [key: string]: any
+  }
+  [key: string]: any
+}
+
+export interface Edge {
+  source: string
+  target: string
+  [key: string]: any
+}
+
+export interface Dag {
+  edges: Edge[]
+  nodes: Node[]
+}
+
+export interface Task {
+  id: string
+  name: string
+  status: string
+  [key: string]: any
+  dag: Dag
+}
+
 export interface TaskChart {
   chart1: {
     total: number
@@ -88,12 +118,12 @@ export function tranModelVersionControl(params: any) {
 
 export function getTaskById(id: string, params?: any, headers?: any) {
   if (Array.isArray(params)) {
-    return requestClient.get(`${BASE_URL}/${id}${params.join('/')}`, {
+    return requestClient.get<Task>(`${BASE_URL}/${id}${params.join('/')}`, {
       headers,
     })
   }
   params = params || {}
-  return requestClient.get(`${BASE_URL}/${id}`, { params, headers })
+  return requestClient.get<Task>(`${BASE_URL}/${id}`, { params, headers })
 }
 
 export function editTask(params: any) {
@@ -294,7 +324,7 @@ export function downloadTaskAnalyze(taskId: string, params: any) {
   })
 }
 
-export function refreshTaskSchema(taskId: string, params: any) {
+export function refreshTaskSchema(taskId: string, params?: any) {
   return requestClient.put(`${BASE_URL}/${taskId}/re-schemas`, null, {
     params,
   })

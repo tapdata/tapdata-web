@@ -1,9 +1,8 @@
 <script>
-import NodeIcon from './NodeIcon'
-
+import BaseNodeIcon from './BaseNodeIcon.vue'
 export default {
   name: 'BaseNode',
-  components: { NodeIcon },
+  components: { BaseNodeIcon },
   props: {
     node: Object,
   },
@@ -11,20 +10,22 @@ export default {
 </script>
 
 <template>
-  <div class="df-node">
-    <div class="df-node-icon">
-      <NodeIcon :node="node" />
+  <div class="df-node pb-1">
+    <div class="flex flex-1 pt-3 pb-2 px-3 align-center">
+      <BaseNodeIcon :node="node" class="mr-2" />
+      <slot :text="node.name" name="text">
+        <div class="df-node-text">{{ node.name }}</div>
+      </slot>
+      <slot />
     </div>
-    <slot :text="node.name" name="text">
-      <div class="df-node-text">{{ node.name }}</div>
-    </slot>
-    <slot />
+    <slot name="extra" />
   </div>
 </template>
 
 <style lang="scss">
-$width: 160px;
-$height: 30px;
+$width: 242px;
+$height: 52px;
+$iconSize: 24px;
 
 .layout-content .df-node {
   cursor: move;
@@ -35,29 +36,39 @@ $height: 30px;
 .df-node {
   position: absolute;
   z-index: 5;
-  display: flex;
-  align-items: center;
+  // display: flex;
+  // align-items: center;
   width: $width;
-  height: $height;
-  background-color: var(--el-bg-color-overlay);
-  border: 1px solid #2c65ff;
-  border-radius: 10px;
+  // height: $height;
+  // background-color: var(--el-bg-color-overlay);
+  background-color: var(--bg-node);
+  // border: 1px solid transparent;
+  border-radius: 15px;
   box-sizing: border-box;
   user-select: none;
+  box-shadow:
+    rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+    rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+    rgba(16, 24, 40, 0.05) 0px 1px 2px 0px;
+
+  &:hover,
+  &.is-hover {
+    box-shadow:
+      rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+      rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+      rgba(16, 24, 40, 0.03) 0px 4px 6px -2px,
+      rgba(16, 24, 40, 0.08) 0px 12px 16px -4px;
+
+    .df-node-icon-bg {
+      opacity: 1;
+    }
+  }
   &-icon {
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 28px;
-    height: 100%;
-    background-color: rgba(44, 101, 255, 0.2);
-    border-right-style: solid;
-    border-right-width: inherit;
-    border-color: inherit;
-    border-top-left-radius: 9px;
-    border-bottom-left-radius: 9px;
-    box-sizing: content-box;
+    margin-right: 8px;
 
     .icon-wrap {
       border-radius: 50%;
@@ -65,17 +76,39 @@ $height: 30px;
 
     .v-icon {
       color: #2c65ff;
-      font-size: 24px;
+      font-size: $iconSize;
     }
+  }
 
-    .el-image {
-      width: 14px;
-      height: 14px;
+  &-icon-bg {
+    position: absolute;
+    inset: 0;
+    width: $iconSize;
+    height: $iconSize;
+    border-radius: 100%;
+    opacity: 1;
+    filter: blur(8px);
+    pointer-events: none;
+    transform: scale(0.8);
+  }
+
+  &-icon-img {
+    width: $iconSize;
+    height: $iconSize;
+    background: rgb(255 255 255 / 25%);
+    border-radius: 8px;
+    backdrop-filter: blur(8px);
+    padding: 4px;
+    box-shadow:
+      0px 1px 1px 0px rgba(16, 24, 40, 0.06),
+      0px 1px 3px 0px rgba(16, 24, 40, 0.01);
+
+    &:where(html.dark *) {
+      background: transparent;
     }
   }
 
   &-text {
-    margin: 0 10px;
     flex: auto;
     width: 0;
     font-size: 12px;
@@ -118,39 +151,8 @@ $height: 30px;
     }
   }
 
-  &.node--data,
-  &.node--input {
-    border-color: #6236ff;
-    .df-node-icon {
-      background-color: rgba(98, 54, 255, 0.2);
-      &:before {
-        content: '';
-        position: absolute;
-        width: 22px;
-        height: 22px;
-        border: 1px solid #6236ff;
-        border-radius: 50%;
-        background: #fff;
-      }
-      .v-icon {
-        width: 14px;
-        height: 14px;
-        background-color: #6236ff;
-        color: #fff;
-        font-size: 14px;
-        border-radius: 100%;
-        .v-icon__svg {
-          width: 1em;
-          height: 1em;
-        }
-      }
-    }
-  }
-
   &.node--output {
-    border-color: #008eff;
     .df-node-icon {
-      background-color: rgba(0, 155, 255, 0.2);
       &:before {
         content: '';
         position: absolute;
@@ -197,9 +199,8 @@ $height: 30px;
   }
 
   &.node--disabled {
-    color: #c9cdd4;
-    background-color: #f1f2f4;
-    border-color: #c9cdd4;
+    color: var(--el-text-color-placeholder);
+    background-color: #ffffff88;
 
     .df-node-icon,
     .df-node-text {

@@ -129,6 +129,9 @@ export function getNodeIconSrc(node) {
     }
     icon = map[node.externaltype]
   }
+  if (node.type === 'mem_cache') {
+    return getIcon('memory')
+  }
   return icon ? getIcon(icon) : null
 }
 

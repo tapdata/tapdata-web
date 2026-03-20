@@ -1,23 +1,19 @@
-<script>
+<script setup lang="ts">
+import { ref, watch } from 'vue'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 import Dialog from './Dialog.vue'
 import List from './List.vue'
 
-export default {
-  name: 'FieldMapping',
-  components: { List, Dialog },
-  data() {
-    return {
-      stateIsReadonly: this.$store.state.dataflow.stateIsReadonly,
-      dialogVisible: false,
-      updateList: false,
-    }
-  },
-  watch: {
-    dialogVisible() {
-      this.updateList = !this.dialogVisible
-    },
-  },
-}
+defineOptions({ name: 'FieldMapping' })
+
+const dataflowStore = useDataflowStore()
+
+const dialogVisible = ref(false)
+const updateList = ref(false)
+
+watch(dialogVisible, (val) => {
+  updateList.value = !val
+})
 </script>
 
 <template>
@@ -26,17 +22,12 @@ export default {
       type="primary"
       class="position-absolute"
       style="right: 10px; top: 41px"
-      :disabled="stateIsReadonly"
+      :disabled="dataflowStore.stateIsReadonly"
       @click.stop="dialogVisible = true"
     >
       {{ $t('public_button_edit') }}
     </ElLink>
-    <List
-      ref="list"
-      :is-meta-data="true"
-      :read-only="true"
-      :update-list="updateList"
-    />
+    <List :is-meta-data="true" :read-only="true" :update-list="updateList" />
     <Dialog v-if="dialogVisible" v-model:visible="dialogVisible" />
   </section>
 </template>

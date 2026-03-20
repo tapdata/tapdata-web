@@ -10,18 +10,16 @@ import { IconButton } from '@tap/component/src/icon-button'
 import { FieldSelect } from '@tap/form/src/components/field-select'
 import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import i18n from '@tap/i18n'
-import { Time } from '@tap/shared'
+import { Handle, Position } from '@vue-flow/core'
 import { merge, unionBy } from 'lodash-es'
-import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
+import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useStore } from 'vuex'
-import { sourceEndpoint, targetEndpoint } from '../../style'
+import { useDataflowStore } from '../../stores/dataflow.store'
 import { TableSelect } from '../form'
 import NodeIcon from '../NodeIcon.vue'
 
 // Props definition
 const props = defineProps({
-  position: Array,
   inputs: Array,
   schema: Array,
   parentSchema: Array,
@@ -34,7 +32,6 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  jsPlumbIns: Object,
   getInputs: Function,
   getOutputs: Function,
   isMainTable: Boolean,
@@ -63,24 +60,16 @@ const emit = defineEmits([
 ])
 
 // Store and route
-const store = useStore()
+const dataflowStore = useDataflowStore()
 const route = useRoute()
 
 // Refs
 const fieldPopover = ref(null)
 const dropDownMenu = ref(null)
-const isDrag = ref(false)
-const isNotMove = ref(false)
-const onMouseDownAt = ref(undefined)
-const targetPoint = ref(null)
 const currentCommand = ref('')
 
 // Store getters and actions
-const nodeById = (id) => store.getters['dataflow/nodeById'](id)
-const isActionActive = (action) =>
-  store.getters['dataflow/isActionActive'](action)
-const isNodeSelected = (nodeId) =>
-  store.getters['dataflow/isNodeSelected'](nodeId)
+const nodeById = (id: string) => dataflowStore.nodeById(id)
 
 // State
 let fieldType = 'Flatten'
@@ -119,22 +108,6 @@ const state = reactive({
 
 // Computed properties
 const tableComment = computed(() => dagNode.value.attrs.tableComment)
-
-const ins = computed(() => props.node?.__Ctor || {})
-
-const nodeClass = computed(() => {
-  const list = []
-  ins.value && list.push(`node--${ins.value.group}`)
-  return list
-})
-
-const nodeStyle = computed(() => {
-  const [left = 0, top = 0] = props.position || []
-  return {
-    left: `${left}px`,
-    top: `${top}px`,
-  }
-})
 
 const displaySchema = computed(() => {
   return props.node.tableNode.connectionId && props.node.tableNode.tableName
@@ -191,8 +164,8 @@ const treeData = computed(() => {
   return createTree(schema)
 })
 
-const transformLoading = computed(() => store.state.dataflow.transformLoading)
-const taskSaving = computed(() => store.state.dataflow.taskSaving)
+const transformLoading = computed(() => dataflowStore.transformLoading)
+const taskSaving = computed(() => dataflowStore.taskSaving)
 
 const sourceNodes = computed(() => {
   return findParentNodes(props.node.id, true)
@@ -278,78 +251,6 @@ function findParentNodes(id, ifMyself) {
   })
 
   return parents
-}
-
-function __init() {
-  const { id } = props.node
-  const nodeId = id
-
-  const targetParams = {
-    ...targetEndpoint,
-  }
-
-  props.jsPlumbIns.makeTarget(`n_${id}`, targetParams)
-
-  props.jsPlumbIns.draggable(document.querySelector(`#n_${nodeId}`), {
-    handle: '.node-title, .node-title *',
-    start: (params) => {
-      onMouseDownAt.value = Time.now()
-      if (params.e && !isNodeSelected(props.nodeId)) {
-        props.jsPlumbIns.clearDragSelection()
-        store.commit('dataflow/resetSelectedNodes')
-      }
-
-      store.commit('dataflow/addActiveAction', 'dragActive')
-
-      emit('dragStart', params)
-      return true
-    },
-    drag: (params) => {
-      params.id = nodeId
-      isDrag.value = true
-      emit('dragMove', params)
-    },
-    stop: () => {
-      isNotMove.value = false
-
-      if (isActionActive('dragActive')) {
-        props.position[0] = Number.parseFloat(
-          document.getElementById(`n_${nodeId}`).style.left,
-        )
-        props.position[1] = Number.parseFloat(
-          document.getElementById(`n_${nodeId}`).style.top,
-        )
-      }
-
-      onMouseDownAt.value = undefined
-      emit('dragStop', isNotMove.value, [], [])
-    },
-  })
-
-  targetPoint.value = props.jsPlumbIns.addEndpoint(
-    document.querySelector(`#n_${nodeId}`),
-    targetParams,
-    {
-      uuid: `${id}_target`,
-    },
-  )
-
-  props.jsPlumbIns.addEndpoint(
-    document.querySelector(`#n_${nodeId}`),
-    {
-      ...sourceEndpoint,
-      enabled: false,
-      connectorStyle: {
-        strokeWidth: 1,
-        stroke: '#9f9f9f',
-        outlineStroke: 'transparent',
-        outlineWidth: 20,
-      },
-    },
-    {
-      uuid: `${id}_source`,
-    },
-  )
 }
 
 async function loadDatabases(filter) {
@@ -697,7 +598,7 @@ function onConnectionSelect(connection) {
 
 async function onChangeConnection() {
   dagNode.value.tableName = ''
-  await store.dispatch('dataflow/updateDag', { vm: this, isNow: true })
+  await dataflowStore.patchDataflow()
 }
 
 async function onChangeTable(table) {
@@ -727,29 +628,6 @@ function onChangeType(type) {
       emit('changePath', props.node, '')
     }
   }
-}
-
-function onNodeExpandAndCollapse() {
-  let animationStartTime
-  let animationId
-
-  const revalidate = (timestamp) => {
-    if (!animationStartTime) {
-      animationStartTime = timestamp
-    }
-
-    const elapsedTime = timestamp - animationStartTime
-
-    props.jsPlumbIns.revalidate(`n_${props.node.id}`)
-
-    if (elapsedTime < 350) {
-      animationId = requestAnimationFrame(revalidate)
-    } else {
-      cancelAnimationFrame(animationId)
-    }
-  }
-
-  animationId = requestAnimationFrame(revalidate)
 }
 
 /**
@@ -791,25 +669,28 @@ function richFields(inputs, targetPath) {
 
   return arr
 }
-
-// Init component
-onMounted(() => {
-  if (props.node && ins.value) {
-    __init()
-  }
-})
 </script>
 
 <template>
   <div
-    :id="`n_${node.id}`"
     tabindex="1"
-    class="materialized-view-node position-absolute rounded-lg bg-white"
+    class="materialized-view-node rounded-lg bg-white"
     :class="{
       '--main-table': props.isMainTable,
     }"
-    :style="nodeStyle"
   >
+    <Handle
+      type="target"
+      :position="Position.Left"
+      :connectable="false"
+      class="mv-node-handle mv-node-handle-left"
+    />
+    <Handle
+      type="source"
+      :position="Position.Right"
+      :connectable="false"
+      class="mv-node-handle mv-node-handle-right"
+    />
     <div class="node-header overflow-hidden">
       <div class="node-title text-white lh-base flex align-center p-1">
         <VIcon class="mr-1">drag</VIcon
@@ -1050,8 +931,6 @@ onMounted(() => {
         :data="treeData"
         :render-content="renderContent"
         :empty-text="treeEmptyText"
-        @node-expand="onNodeExpandAndCollapse"
-        @node-collapse="onNodeExpandAndCollapse"
       />
       <code class="color-success-light-5">}</code>
     </div>

@@ -9,10 +9,10 @@ import {
   type Ref,
 } from 'vue'
 import VueJsonPretty from 'vue-json-pretty'
-import { useStore } from 'vuex'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 import 'vue-json-pretty/lib/styles.css'
 
-const store = useStore()
+const dataflowStore = useDataflowStore()
 
 const previewData = inject<Ref<Record<string, { data: any }>>>('previewData')
 const previewLoading = inject<Ref<boolean>>('previewLoading')
@@ -20,7 +20,7 @@ const handlePreview = inject<((id: string) => void) | undefined>(
   'handlePreview',
 )
 
-const activeNode = computed(() => store.getters['dataflow/activeNode'])
+const activeNode = computed(() => dataflowStore.selectedNode)
 
 const data = computed(() => {
   if (!activeNode.value || !previewData?.value) return {}

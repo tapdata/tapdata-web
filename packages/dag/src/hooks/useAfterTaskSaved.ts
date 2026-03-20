@@ -1,7 +1,7 @@
 import { observe, reaction } from '@formily/reactive'
 import i18n from '@tap/i18n'
 import { onBeforeUnmount, watch, type InjectionKey, type Ref } from 'vue'
-import { useStore } from 'vuex'
+import { useDataflowStore } from '../stores/dataflow.store'
 
 export const TaskSavingSymbol: InjectionKey<Ref<boolean>> = Symbol('taskSaving')
 export const TransformLoadingSymbol: InjectionKey<Ref<boolean>> =
@@ -14,11 +14,11 @@ export const TransformLoadingSymbol: InjectionKey<Ref<boolean>> =
  * @param callback
  */
 export const useAfterTaskSaved = (obs, callback) => {
-  const store = useStore()
+  const dataflowStore = useDataflowStore()
 
   const dispose = observe(obs, (...args) => {
     const unwatchSaving = watch(
-      () => store.state.dataflow.taskSaving,
+      () => dataflowStore.taskSaving,
       (v) => {
         if (!v) {
           callback()
@@ -30,7 +30,7 @@ export const useAfterTaskSaved = (obs, callback) => {
 
   // 模型生成状态变化
   const unWatch = watch(
-    () => store.state.dataflow.transformLoading,
+    () => dataflowStore.transformLoading,
     (v) => {
       if (!v) {
         console.debug(
@@ -48,10 +48,10 @@ export const useAfterTaskSaved = (obs, callback) => {
 }
 
 export const useSchemaEffect = (tracker, callback) => {
-  const store = useStore()
+  const dataflowStore = useDataflowStore()
   const dispose = reaction(tracker, (...args) => {
     const unwatchSaving = watch(
-      () => store.state.dataflow.taskSaving,
+      () => dataflowStore.taskSaving,
       (v) => {
         if (!v) {
           callback()
@@ -63,7 +63,7 @@ export const useSchemaEffect = (tracker, callback) => {
 
   // 模型生成状态变化
   const unWatch = watch(
-    () => store.state.dataflow.transformLoading,
+    () => dataflowStore.transformLoading,
     (v) => {
       if (!v) {
         callback()
