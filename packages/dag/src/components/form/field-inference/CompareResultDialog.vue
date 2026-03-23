@@ -21,7 +21,12 @@ import { useDataflowStore } from '../../../stores/dataflow.store'
 const dataflowStore = useDataflowStore()
 
 const visible = defineModel<boolean>()
-const emit = defineEmits(['loadSchema', 'changeRules', 'close'])
+const emit = defineEmits([
+  'loadSchema',
+  'changeRules',
+  'close',
+  'update:ignoreCase',
+])
 
 const props = defineProps({
   nodeId: {
@@ -35,6 +40,10 @@ const props = defineProps({
   rules: {
     type: Array as PropType<string[]>,
     default: () => [],
+  },
+  ignoreCase: {
+    type: Boolean,
+    default: false,
   },
 })
 
@@ -457,6 +466,17 @@ const handleApplyCompareRulesChange = async (value: string[]) => {
   applyAfterLoading.value = false
 }
 
+const handleIgnoreCaseChange = async (value: string | number | boolean) => {
+  applyAfterLoading.value = true
+  emit('update:ignoreCase', value)
+
+  await afterTaskSaved()
+
+  fetchCompareResult()
+
+  applyAfterLoading.value = false
+}
+
 const afterTaskSaved = () => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -629,6 +649,11 @@ onBeforeUnmount(() => {
             </el-tag>
           </el-checkbox>
         </el-checkbox-group>
+        <el-divider direction="vertical" class="mx-3" />
+        <div class="fw-sub mr-4">
+          {{ $t('packages_dag_compareIgnoreCase') }}
+        </div>
+        <el-switch :model-value="ignoreCase" @change="handleIgnoreCaseChange" />
       </div>
     </div>
 
