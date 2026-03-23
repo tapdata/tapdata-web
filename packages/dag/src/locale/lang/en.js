@@ -1172,6 +1172,7 @@ export default {
   public_api_alarmDate: 'Alarm Date',
   packages_dag_drop_table_enabled_confirm:
     'Confirm clearing target table data?',
+  packages_dag_compareIgnoreCase: 'Ignore Case',
   packages_dag_memory_heap_risk_title: 'Memory Risk Warning',
   packages_dag_memory_heap_risk_message:
     'Potential memory risk detected. This task may require more memory than available resources.It is recommended to reduce the source node’s full-load batch size before proceeding. Continue anyway?',

@@ -1024,6 +1024,7 @@ export default {
   public_api_alarmDate: '告警时间',
   packages_dag_drop_table_enabled_confirm:
     '您已选择清空目标表数据，是否确认继续？',
+  packages_dag_compareIgnoreCase: '忽略大小写',
   packages_dag_memory_heap_risk_title: '内存风险提示',
   packages_dag_memory_heap_risk_message:
     '检测到潜在的内存风险，当前任务可能需要比可用资源更多的内存，建议适当降低源节点的「全量读取每批条数（Batch Size）」后再运行。是否继续运行？',
