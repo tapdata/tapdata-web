@@ -317,6 +317,7 @@ export const useDrawer = (t: any, apiApplication?: Ref<any>) => {
             defaultvalue: t.defaultvalue,
             description: t.description,
             required: t.required,
+            textEncryptionRuleIds: t.textEncryptionRuleIds
           }
         }) || getDefaultParams(formData.apiType)
     if (
