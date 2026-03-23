@@ -466,7 +466,10 @@ const onTableDragStart = (item) => {
   <div
     class="nodes-panel position-absolute start-3 rounded-2xl bg-overlay shadow-canvas z-10 flex flex-column"
   >
-    <div class="flex-1 min-h-0 flex flex-column">
+    <div
+      data-testid="connection-container"
+      class="flex-1 min-h-0 flex flex-column"
+    >
       <div class="flex align-center p-3 pb-1">
         <el-icon class="mr-2"><i-lucide-database /></el-icon>
         <span
@@ -545,7 +548,10 @@ const onTableDragStart = (item) => {
     </div>
     <template v-if="isSyncTask">
       <el-divider class="m-0" />
-      <div class="flex-1 min-h-0 flex flex-column">
+      <div
+        data-testid="table-container"
+        class="flex-1 min-h-0 flex flex-column"
+      >
         <div class="flex align-center p-3 pb-1" style="--btn-space: 0">
           <el-icon class="mr-2"><i-lucide-table /></el-icon>
           <span
@@ -639,7 +645,10 @@ const onTableDragStart = (item) => {
     </template>
 
     <el-divider class="m-0" />
-    <div class="processor-container min-h-0 flex flex-column">
+    <div
+      data-testid="processor-container"
+      class="processor-container min-h-0 flex flex-column"
+    >
       <div class="flex align-center p-3">
         <el-icon class="mr-2"><i-lucide-workflow /></el-icon>
         <span class="flex-1 user-select-none text-start fw-sub">

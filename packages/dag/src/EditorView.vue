@@ -507,7 +507,7 @@ provide('isSyncTask', isSyncTask)
       ref="taskDetailRef"
       class="task-detail position-absolute top-3 start-3 z-10 bg-overlay rounded-xl flex p-2 align-center gap-2 shadow-canvas"
     >
-      <el-button text @click="handlePageReturn">
+      <el-button data-testid="back-button" text @click="handlePageReturn">
         <template #icon>
           <i-lucide-chevron-left />
         </template>
@@ -532,6 +532,7 @@ provide('isSyncTask', isSyncTask)
         placement="right"
       >
         <el-button
+          data-testid="nodes-panel-button"
           text
           :type="nodesPanelExpanded ? 'primary' : undefined"
           :bg="nodesPanelExpanded"

@@ -2055,6 +2055,7 @@ defineExpose({
 
 <template>
   <div
+    data-testid="settings-panel"
     class="bg-overlay rounded-2xl h-100 shadow-canvas flex-column node-panel overflow-y-auto"
     style="width: 600px; display: flex"
   >

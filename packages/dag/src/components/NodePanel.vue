@@ -197,6 +197,7 @@ function onDescChange() {
 <template>
   <!-- BasePanel -->
   <div
+    data-testid="node-panel"
     class="bg-overlay rounded-2xl h-100 shadow-canvas flex flex-column node-panel overflow-y-auto"
     style="width: 600px"
   >
