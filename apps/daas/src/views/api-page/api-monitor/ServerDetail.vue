@@ -509,7 +509,7 @@ const requestChartOption = computed<EChartsOption>(() => ({
     },
     {
       type: 'value',
-      name: '错误率 (%)',
+      name: t('api_monitor_error_rate'),
       position: 'right',
     },
   ],
@@ -532,13 +532,13 @@ const requestChartOption = computed<EChartsOption>(() => ({
     },
   },
   legend: {
-    data: ['请求数', '错误率'],
+    data: [t('api_monitor_request_count'), t('api_monitor_error_rate')],
     // left: 0,
     top: 0,
   },
   series: [
     {
-      name: '请求数',
+      name: t('api_monitor_request_count'),
       type: 'line',
       yAxisIndex: 0,
       data: serverChart.value?.request.requestCount || [],
@@ -555,7 +555,7 @@ const requestChartOption = computed<EChartsOption>(() => ({
       },
     },
     {
-      name: '错误率',
+      name: t('api_monitor_error_rate'),
       type: 'line',
       yAxisIndex: 1,
       data: serverChart.value?.request.errorRate || [],
@@ -600,7 +600,7 @@ const latencyChartOption = computed<EChartsOption>(() => ({
   },
   yAxis: {
     type: 'value',
-    name: '延迟 (ms)',
+    name: t('api_monitor_latency_ms'),
   },
   tooltip: {
     borderRadius: 12,
@@ -845,7 +845,7 @@ const handleNavigateToAuditWithError = (row?: string) => {
 
   if (row.apiPath) {
     query.keyword = row.apiPath
-    query.options='-'
+    query.options = '-'
   }
 
   const href = router.resolve({
@@ -869,7 +869,7 @@ const handleNavigateToAuditWithResponseTime = (
 
   if (row.apiPath) {
     query.keyword = row.apiPath
-    query.options='-'
+    query.options = '-'
   }
 
   const href = router.resolve({
@@ -1154,9 +1154,7 @@ const handleBack = () => {
               <span
                 v-if="row.maxDelay !== undefined"
                 class="underline-dashed cursor-pointer flex align-center gap-1"
-                @click.stop="
-                  handleNavigateToAuditWithResponseTime(row, 'DESC')
-                "
+                @click.stop="handleNavigateToAuditWithResponseTime(row, 'DESC')"
               >
                 {{ row.maxDelay }}
                 <el-icon>
@@ -1176,9 +1174,7 @@ const handleBack = () => {
               <span
                 v-if="row.minDelay !== undefined"
                 class="underline-dashed cursor-pointer flex align-center gap-1"
-                @click.stop="
-                  handleNavigateToAuditWithResponseTime(row, 'ASC')
-                "
+                @click.stop="handleNavigateToAuditWithResponseTime(row, 'ASC')"
               >
                 {{ row.minDelay }}
                 <el-icon>
