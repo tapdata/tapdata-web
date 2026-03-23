@@ -197,7 +197,7 @@ function onDescChange() {
 <template>
   <!-- BasePanel -->
   <div
-    class="bg-card rounded-2xl h-100 shadow-canvas flex flex-column node-panel overflow-y-auto"
+    class="bg-overlay rounded-2xl h-100 shadow-canvas flex flex-column node-panel overflow-y-auto"
     style="width: 600px"
   >
     <div class="flex align-center px-4 pt-4 gap-1">

@@ -8,6 +8,7 @@ import SharedMiningEditor from '@tap/business/src/views/shared-mining/Editor.vue
 import SkipError from '@tap/business/src/views/task/SkipError.vue'
 import { TextEditable } from '@tap/component/src/base/text-editable'
 import Time from '@tap/shared/src/time'
+import { useDark } from '@vueuse/core'
 import { debounce } from 'lodash-es'
 import { computed, onUnmounted, provide, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -21,6 +22,8 @@ import { getTimeGranularity, TIME_FORMAT_MAP } from './components/monitor/util'
 import TaskOperations from './components/TaskOperations.vue'
 import { useCanvasOperation } from './composables/useCanvasOperation'
 import { useDataflowStore } from './stores/dataflow.store'
+
+useDark()
 
 const dataflowStore = useDataflowStore()
 const router = useRouter()
@@ -632,7 +635,7 @@ provide('isInitialized', isInitialized)
     class="w-100 h-100 position-relative overflow-hidden"
   >
     <div
-      class="task-detail position-absolute top-3 start-3 z-10 bg-card rounded-xl flex p-2 align-center gap-2 shadow-canvas"
+      class="task-detail position-absolute top-3 start-3 z-10 bg-overlay rounded-xl flex p-2 align-center gap-2 shadow-canvas"
     >
       <el-button text @click="handlePageReturn">
         <template #icon>

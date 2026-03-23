@@ -71,6 +71,7 @@ html.dark {
   }
 
   --color-components-kbd-bg-gray: #ffffff08;
+  --color-dataflow-canvas-bg: #1d1d20;
 }
 html.dark {
   color-scheme: dark;

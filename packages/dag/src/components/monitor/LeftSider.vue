@@ -654,7 +654,7 @@ onMounted(() => {
 
 <template>
   <aside
-    class="layout-sidebar --left flex-shrink-0 nodes-panel position-absolute start-3 rounded-2xl bg-card shadow-canvas z-10 flex flex-column font-color-light"
+    class="layout-sidebar --left flex-shrink-0 nodes-panel position-absolute start-3 rounded-2xl bg-overlay shadow-canvas z-10 flex flex-column font-color-light"
   >
     <div class="flex flex-column flex-1 min-h-0 overflow-y-auto py-2">
       <div

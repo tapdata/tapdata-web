@@ -505,7 +505,7 @@ provide('isSyncTask', isSyncTask)
   >
     <div
       ref="taskDetailRef"
-      class="task-detail position-absolute top-3 start-3 z-10 bg-card rounded-xl flex p-2 align-center gap-2 shadow-canvas"
+      class="task-detail position-absolute top-3 start-3 z-10 bg-overlay rounded-xl flex p-2 align-center gap-2 shadow-canvas"
     >
       <el-button text @click="handlePageReturn">
         <template #icon>

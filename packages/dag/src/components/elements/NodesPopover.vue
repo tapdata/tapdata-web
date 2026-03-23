@@ -662,7 +662,7 @@ defineExpose({
     }
 
     &--active {
-      background-color: #fff;
+      background-color: var(--el-bg-color-overlay);
       color: var(--color-primary);
       box-shadow:
         0px 6px 18px 6px rgba(31, 35, 41, 0.03),
@@ -680,7 +680,7 @@ defineExpose({
       bottom: 0;
       width: 8px;
       height: 8px;
-      fill: #fff;
+      fill: var(--el-bg-color-overlay);
 
       &--left {
         left: -8px;

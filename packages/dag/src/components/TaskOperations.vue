@@ -84,7 +84,7 @@ defineExpose({
       >{{ $t('packages_dag_model_generation') }}</el-button
     >
     <div
-      class="btn-shadow bg-card p-0.5 rounded-lg flex align-center gap-1.5 icon-btn-bar cursor-pointer"
+      class="btn-shadow bg-overlay p-0.5 rounded-lg flex align-center gap-1.5 icon-btn-bar cursor-pointer"
       style="border: var(--el-border)"
     >
       <el-popover

@@ -11,6 +11,7 @@ import {
   type GraphNode,
   type NodeChange,
 } from '@vue-flow/core'
+import { useDark } from '@vueuse/core'
 import {
   computed,
   inject,
@@ -41,6 +42,8 @@ import { useUiStore } from './stores/ui.store'
 import { getHelperLines } from './utils/helperLines'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
+
+const dark = useDark()
 
 const emit = defineEmits<{
   'update:nodes:position': [events: any[]]
@@ -804,7 +807,7 @@ defineExpose({
       <div class="flex align-center justify-content-end gap-2">
         <div
           v-if="!dataflowStore.stateIsReadonly"
-          class="bg-card shadow-canvas p-1 rounded-xl"
+          class="bg-overlay shadow-canvas p-1 rounded-xl"
           style="--btn-space: 0"
         >
           <el-tooltip :enterable="false" :hide-after="0" placement="top">
@@ -839,7 +842,7 @@ defineExpose({
         </div>
 
         <div
-          class="bg-card shadow-canvas p-1 rounded-xl flex align-items-stretch gap-0.5"
+          class="bg-overlay shadow-canvas p-1 rounded-xl flex align-items-stretch gap-0.5"
           style="--btn-space: 0"
         >
           <el-tooltip
@@ -987,6 +990,7 @@ defineExpose({
     </svg>
 
     <VueFlow
+      :class="{ dark }"
       data-id="flow-container"
       :nodes="nodes"
       :edges="edges"

@@ -464,7 +464,7 @@ const onTableDragStart = (item) => {
 
 <template>
   <div
-    class="nodes-panel position-absolute start-3 rounded-2xl bg-card shadow-canvas z-10 flex flex-column"
+    class="nodes-panel position-absolute start-3 rounded-2xl bg-overlay shadow-canvas z-10 flex flex-column"
   >
     <div class="flex-1 min-h-0 flex flex-column">
       <div class="flex align-center p-3 pb-1">
