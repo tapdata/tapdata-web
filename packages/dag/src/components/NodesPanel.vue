@@ -543,7 +543,7 @@ const onTableDragStart = (item) => {
         </div>
       </el-scrollbar>
     </div>
-    <template v-if="dataflow.syncType === 'sync'">
+    <template v-if="isSyncTask">
       <el-divider class="m-0" />
       <div class="flex-1 min-h-0 flex flex-column">
         <div class="flex align-center p-3 pb-1" style="--btn-space: 0">

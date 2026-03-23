@@ -798,7 +798,7 @@ defineExpose({
     <!-- bottom bar -->
     <div
       ref="bottomBar"
-      class="bottom-bar position-absolute bottom-3 z-10 flex flex-column gap-2"
+      class="bottom-bar position-absolute bottom-3 z-20 flex flex-column gap-2"
       :style="bottomBarStyle"
     >
       <div class="flex align-center justify-content-end gap-2">

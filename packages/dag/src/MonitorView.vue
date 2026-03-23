@@ -603,12 +603,6 @@ const init = async () => {
   initWS()
   pollingTimer = setTimeout(pollTaskDetail, 10000)
   isInitialized.value = true
-
-  // nextTick(() => {
-  //   setTimeout(() => {
-  //     canvasRef.value.handleLayoutGraph()
-  //   }, 0)
-  // })
 }
 
 init()
@@ -775,7 +769,7 @@ provide('isInitialized', isInitialized)
       :quota-time-type="quotaTimeType"
       :get-time-range="getTimeRange"
       :if-enable-concurrent-read="ifEnableConcurrentRead"
-      @load-data="init"
+      @load-data="initMonitor"
     />
 
     <SharedMiningEditor
