@@ -261,6 +261,15 @@ export default {
       //保留当前操作数据
       this.updateData(data.checked, data)
 
+      // 页面权限开启
+      if (type === 'page' && data.checked) {
+        // 按钮权限全部开启
+        data.buttons?.forEach((el) => {
+          el.checked = true
+          this.updateData(el.checked, el)
+        })
+      }
+
       // 页面权限关闭
       if (type === 'page' && !data.checked) {
         // 如果父元素的页面权限全部不勾选，则父元素也隐藏
