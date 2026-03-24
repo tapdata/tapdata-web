@@ -91,7 +91,7 @@ export const loadSchemaTree = observer(
                   where: {
                     'source.id': connectionId,
                     meta_type: {
-                      in: ['collection', 'table', 'view'],
+                      in: ['collection', 'table'],
                     },
                     is_deleted: false,
                     sourceType: 'SOURCE',
