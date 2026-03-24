@@ -7,6 +7,7 @@ import { computed, inject, onBeforeUnmount, ref, watch, type Ref } from 'vue'
 import { useCreateTable } from '../../composables/useCreateTable'
 import { makeNode, makeProcessorNode } from '../../composables/useDnD'
 import { useFetchConnections } from '../../composables/useFetchConnections'
+import { useNodeFocus } from '../../composables/useNodeFocus'
 import { useDataflowStore } from '../../stores/dataflow.store'
 import { useHistoryStore } from '../../stores/history.store'
 import ConnectionType from '../ConnectionType.vue'
@@ -24,6 +25,7 @@ const Y_OFFSET = 40
 const props = defineProps<Props>()
 
 const { findNode, getOutgoers, getIncomers } = useVueFlow()
+const { focusNode } = useNodeFocus()
 
 const { t } = useI18n()
 
@@ -237,6 +239,7 @@ const handleAddNode = (node: any) => {
     })
 
     historyStore.stopRecordingUndo()
+    focusNode(node.id)
     return
   } else if (prevNodeId && !nextNodeId) {
     // 在节点后面添加
@@ -308,6 +311,7 @@ const handleAddNode = (node: any) => {
   }
 
   historyStore.stopRecordingUndo()
+  focusNode(node.id)
 }
 
 const onClickConnection = (item: any) => {

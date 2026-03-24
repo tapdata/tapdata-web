@@ -139,7 +139,7 @@ function onClipboardPaste(plainTextData: string) {
 
 watch([() => dag.value.nodes.length, () => dag.value.edges.length], () => {
   if (isInitialized.value) {
-    dataflowStore.patchDataflowDebounce()
+    dataflowStore.patchDataflow()
   }
 })
 
