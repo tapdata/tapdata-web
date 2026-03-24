@@ -315,7 +315,7 @@ async function loadTable(filter, config) {
   filter.where &&
     Object.assign(filter.where, {
       meta_type: {
-        in: ['collection', 'table', 'view'],
+        in: ['collection', 'table'],
       },
       is_deleted: false,
       sourceType: 'SOURCE',
