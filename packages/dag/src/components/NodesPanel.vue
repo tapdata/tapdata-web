@@ -9,6 +9,7 @@ import { debounce, escapeRegExp } from 'lodash-es'
 import { computed, inject, nextTick, reactive, ref, shallowRef } from 'vue'
 import { useCreateTable } from '../composables/useCreateTable'
 import { makeNode, makeProcessorNode, useDnD } from '../composables/useDnD'
+import { useNodeFocus } from '../composables/useNodeFocus'
 import { useDataflowStore } from '../stores/dataflow.store'
 import { useHistoryStore } from '../stores/history.store'
 import BaseNode from './BaseNode.vue'
@@ -251,6 +252,8 @@ useI18n()
 const { findNode, getOutgoers, screenToFlowCoordinate, viewportRef } =
   useVueFlow()
 
+const { focusNode } = useNodeFocus()
+
 const historyStore = useHistoryStore()
 
 const X_OFFSET = 100
@@ -434,6 +437,9 @@ const handleDblClickAddNode = (node: any) => {
   }
 
   historyStore.stopRecordingUndo()
+
+  // 选中新添加的节点并确保可见
+  focusNode(node.id)
 }
 
 const handleDblClickConnection = (item: any) => {
