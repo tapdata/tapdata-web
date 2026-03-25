@@ -67,7 +67,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run ESLint on changed files
-        run: pnpm eslint --no-warn-ignored ${{ needs.changed-files.outputs.lint_files }}
+        run: pnpm eslint --no-warn-ignored --quiet ${{ needs.changed-files.outputs.lint_files }}
 
   check-i18n:
     name: Check i18n
