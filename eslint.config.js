@@ -19,6 +19,8 @@ export default sxzz(
       rules: {
         'unicorn/filename-case': 'off',
         '@eslint-community/eslint-comments/no-unlimited-disable': 'off', // 允许 eslint-disable 不指定规则
+        'unused-imports/no-unused-vars': 'warn',
+        'vue/no-unused-refs': 'warn',
       },
     },
   ],
