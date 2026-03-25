@@ -25,6 +25,7 @@ const EXCLUDE_PATTERNS = [
   /\.spec\.[jt]sx?$/,
   /\.d\.ts$/,
   /[\\/]i18n[\\/]langs[\\/]/,
+  /scripts[\\/]check-i18n\.js$/,
 ]
 
 // 需要检查的文件扩展名
@@ -116,10 +117,21 @@ function checkFile(filePath) {
   const lines = content.split('\n')
 
   let inBlockComment = false
+  let inHtmlComment = false
   let skipBlockDepth = 0 // 块级排除：追踪括号深度
 
   for (const [i, line] of lines.entries()) {
     const lineNum = i + 1
+
+    // HTML 块注释追踪 <!-- ... -->
+    if (inHtmlComment) {
+      if (line.includes('-->')) inHtmlComment = false
+      continue
+    }
+    if (line.includes('<!--') && !line.includes('-->')) {
+      inHtmlComment = true
+      continue
+    }
 
     // 块级排除追踪（如 registerDesignerLocales 整块）
     if (skipBlockDepth > 0) {
@@ -141,7 +153,7 @@ function checkFile(filePath) {
       continue
     }
 
-    // 块注释追踪
+    // JS 块注释追踪
     if (inBlockComment) {
       if (line.includes('*/')) inBlockComment = false
       continue
