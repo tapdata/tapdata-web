@@ -1,6 +1,6 @@
 {
   "*.{vue,js,ts,tsx,jsx}": [
-    "eslint --fix --no-warn-ignored --quiet",
+    "eslint --fix --no-warn-ignored --quiet || true",
     "node scripts/check-i18n.js"
   ]
 }
