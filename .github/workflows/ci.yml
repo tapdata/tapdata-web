@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  pull_request:
+    branches: ['main', 'develop', 'release-v*.*']
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changed-files:
+    name: Get Changed Files
+    runs-on: ubuntu-latest
+    outputs:
+      lint_files: ${{ steps.changed.outputs.lint_files }}
+      has_lint_files: ${{ steps.changed.outputs.has_lint_files }}
+      i18n_files: ${{ steps.changed.outputs.i18n_files }}
+      has_i18n_files: ${{ steps.changed.outputs.has_i18n_files }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed
+        run: |
+          FILES=$(git diff --name-only --diff-filter=ACM origin/${{ github.base_ref }}...HEAD)
+
+          # ESLint: 所有 vue/js/ts/tsx/jsx 文件
+          LINT_FILES=$(echo "$FILES" | grep -E '\.(vue|js|ts|tsx|jsx)$' || true)
+          if [ -n "$LINT_FILES" ]; then
+            echo "has_lint_files=true" >> $GITHUB_OUTPUT
+            # 转成空格分隔的单行
+            echo "lint_files=$(echo "$LINT_FILES" | tr '\n' ' ')" >> $GITHUB_OUTPUT
+          else
+            echo "has_lint_files=false" >> $GITHUB_OUTPUT
+            echo "lint_files=" >> $GITHUB_OUTPUT
+          fi
+
+          # i18n: 排除 locale 目录的 vue/js/ts/tsx/jsx 文件
+          I18N_FILES=$(echo "$LINT_FILES" | grep -v -E '(locale[s]?/|i18n/langs/)' || true)
+          if [ -n "$I18N_FILES" ]; then
+            echo "has_i18n_files=true" >> $GITHUB_OUTPUT
+            echo "i18n_files=$(echo "$I18N_FILES" | tr '\n' ' ')" >> $GITHUB_OUTPUT
+          else
+            echo "has_i18n_files=false" >> $GITHUB_OUTPUT
+            echo "i18n_files=" >> $GITHUB_OUTPUT
+          fi
+
+  eslint:
+    name: ESLint
+    runs-on: ubuntu-latest
+    needs: changed-files
+    if: needs.changed-files.outputs.has_lint_files == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run ESLint on changed files
+        run: pnpm eslint --no-warn-ignored ${{ needs.changed-files.outputs.lint_files }}
+
+  check-i18n:
+    name: Check i18n
+    runs-on: ubuntu-latest
+    needs: changed-files
+    if: needs.changed-files.outputs.has_i18n_files == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for hardcoded Chinese text
+        run: node scripts/check-i18n.js ${{ needs.changed-files.outputs.i18n_files }}
+

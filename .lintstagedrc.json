@@ -1,0 +1,6 @@
+{
+  "*.{vue,js,ts,tsx,jsx}": [
+    "node scripts/check-i18n.js",
+    "eslint --fix --no-warn-ignored"
+  ]
+}
