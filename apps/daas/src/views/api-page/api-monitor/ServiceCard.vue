@@ -22,7 +22,13 @@ const configs = {
 }
 
 const statusConfig = computed(() => {
-  return configs[props.data.serverPingStatus]
+  const { serverPingTime, serverPingStatus } = props.data
+  // serverPingTime（时间戳）距今超过 15s 则视为 stopped
+  if (serverPingTime && Date.now() - serverPingTime > 15_000) {
+    return configs.stopped
+  }
+
+  return configs[serverPingStatus as keyof typeof configs]
 })
 
 const cpuUsage = computed(() => {
