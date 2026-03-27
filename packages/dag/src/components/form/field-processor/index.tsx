@@ -582,7 +582,7 @@ export const FieldRenameProcessorPreview = defineComponent({
                     }}
                   ></ElInput>
                 </div>
-                <div class="bg-main flex justify-content-between line-height processor-ml-10 table-checkbox-wrap">
+                <div class="bg-main flex justify-content-between line-height processor-ml-10 table-checkbox-wrap dark:bg-overlay">
                   <span>
                     <span class="table-name ml-2">
                       {i18n.t('packages_form_field_mapping_list_biaoming')}
@@ -1286,7 +1286,7 @@ export const FieldRenameProcessor = connect(
                       }}
                     </ElInput>
                   </div>
-                  <div class="bg-main flex justify-content-between line-height processor-ml-10 table-checkbox-wrap">
+                  <div class="bg-main flex justify-content-between line-height processor-ml-10 table-checkbox-wrap dark:bg-overlay">
                     <span>
                       <span class="table-name ml-2">
                         {i18n.t('packages_form_field_mapping_list_biaoming')}

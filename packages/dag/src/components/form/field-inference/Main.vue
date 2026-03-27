@@ -456,8 +456,7 @@ defineExpose({
           />
         </div>
         <div
-          class="flex-fill flex flex-column bg-card mt-4 rounded-xl overflow-hidden"
-          style="border: 1px solid #f2f4f7"
+          class="flex-fill flex flex-column bg-card mt-4 rounded-xl overflow-hidden border"
         >
           <div class="flex align-items-center p-2 font-color-dark">
             <ElInput
