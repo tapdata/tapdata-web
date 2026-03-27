@@ -2,14 +2,14 @@
 import {
   createGroupInfo,
   deleteGroupInfo,
+  fetchGroupInfoApis,
   fetchGroupInfoList,
+  fetchGroupInfoTasks,
   updateGroupInfo,
   type GroupInfoDto,
   type ResourceItem,
   type ResourceType,
 } from '@tap/api/core/group-info'
-import { fetchApiModules } from '@tap/api/core/modules'
-import { fetchTasks } from '@tap/api/core/task'
 import { PageContainer } from '@tap/business'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import { makeStatusAndDisabled } from '@tap/business/src/shared'
@@ -215,6 +215,23 @@ const handleGroupCommand = (command: string, group: GroupInfoDto) => {
   }
 }
 
+// 判断资源是否属于其他分组
+const isResourceInOtherGroup = (resource: any) => {
+  return (
+    resource.groupId &&
+    selectedGroup.value?.id &&
+    resource.groupId !== selectedGroup.value.id
+  )
+}
+
+// 点击分组名称跳转到对应分组
+const handleNavigateToGroup = (resource: any) => {
+  const targetGroup = groupList.value.find((g) => g.id === resource.groupId)
+  if (targetGroup) {
+    selectedGroup.value = targetGroup
+  }
+}
+
 // 加载资源列表
 const loadResources = async () => {
   resourceLoading.value = true
@@ -240,23 +257,25 @@ const loadResources = async () => {
         name: item.name,
         status: item.status,
         type,
+        groupId: item.groupId || null,
+        groupName: item.groupName || null,
       }
     }
 
     switch (type) {
       case 'SYNC_TASK':
         filter.where.syncType = 'sync'
-        result = await fetchTasks(filter)
+        result = await fetchGroupInfoTasks(filter)
         resourceList.value = result.items.map(mapTask)
         break
       case 'MIGRATE_TASK':
         filter.where.syncType = 'migrate'
-        result = await fetchTasks(filter)
+        result = await fetchGroupInfoTasks(filter)
         resourceList.value = result.items.map(mapTask)
         break
       case 'MODULE':
-        result = await fetchApiModules(filter)
-        resourceList.value = result.items.map((item) => {
+        result = await fetchGroupInfoApis(filter)
+        resourceList.value = result.items.map((item: any) => {
           const pathJoin: string[] = []
           item.apiVersion && pathJoin.push(item.apiVersion)
           item.prefix && pathJoin.push(item.prefix)
@@ -266,6 +285,8 @@ const loadResources = async () => {
             name: item.name,
             path: `/${pathJoin.join('/')}`,
             type,
+            groupId: item.groupId || null,
+            groupName: item.groupName || null,
           }
         })
         break
@@ -273,7 +294,7 @@ const loadResources = async () => {
 
     totalCount.value = result?.total || 0
   } catch {
-    ElMessage.error('加载资源列表失败')
+    ElMessage.error(t('data_import_export_load_resource_failed'))
   } finally {
     resourceLoading.value = false
   }
@@ -284,9 +305,14 @@ const isResourceAdded = (id: string) => {
   return addedResources.value.some((item) => item.id === id)
 }
 
+// 判断资源是否不可操作（已添加或属于其他分组）
+const isResourceDisabled = (resource: any) => {
+  return isResourceAdded(resource.id) || isResourceInOtherGroup(resource)
+}
+
 // 切换资源选中状态
 const toggleResourceSelection = (resource: any) => {
-  if (isResourceAdded(resource.id)) {
+  if (isResourceDisabled(resource)) {
     return
   }
   const index = selectedResources.value.indexOf(resource.id)
@@ -490,7 +516,7 @@ onMounted(() => {
 // 全选/取消全选可用资源
 const isAllSelected = computed(() => {
   const availableResources = resourceList.value.filter(
-    (item) => !isResourceAdded(item.id),
+    (item) => !isResourceDisabled(item),
   )
   return (
     availableResources.length > 0 &&
@@ -503,7 +529,7 @@ const isAllSelected = computed(() => {
 const handleSelectAll = (checked: any) => {
   if (checked) {
     const availableResources = resourceList.value.filter(
-      (item) => !isResourceAdded(item.id),
+      (item) => !isResourceDisabled(item),
     )
     selectedResources.value = availableResources.map((item) => item.id)
   } else {
@@ -689,13 +715,16 @@ const handleSelectAll = (checked: any) => {
                 v-for="resource in resourceList"
                 :key="resource.id"
                 class="resource-item rounded-xl"
-                :class="{ 'is-disabled': isResourceAdded(resource.id) }"
+                :class="{
+                  'is-disabled': isResourceDisabled(resource),
+                  'is-other-group': isResourceInOtherGroup(resource),
+                }"
                 @click="toggleResourceSelection(resource)"
               >
                 <el-checkbox
                   v-model="selectedResources"
                   :label="resource.id"
-                  :disabled="isResourceAdded(resource.id)"
+                  :disabled="isResourceDisabled(resource)"
                   @click.stop
                 >
                   <div class="resource-content">
@@ -711,8 +740,19 @@ const handleSelectAll = (checked: any) => {
                     <TaskStatus v-else :task="resource" class="zoom-xs" />
                   </div>
                 </el-checkbox>
+                <el-tag
+                  v-if="isResourceInOtherGroup(resource)"
+                  type="warning"
+                  size="small"
+                  class="group-tag"
+                  disable-transitions
+                  @click.stop="handleNavigateToGroup(resource)"
+                >
+                  <el-icon class="mr-1"><i-lucide-folder /></el-icon>
+                  {{ resource.groupName }}
+                </el-tag>
                 <el-button
-                  v-if="!isResourceAdded(resource.id)"
+                  v-else-if="!isResourceAdded(resource.id)"
                   text
                   class="add-btn"
                   @click.stop="addSingleResource(resource)"
@@ -1047,6 +1087,21 @@ const handleSelectAll = (checked: any) => {
       opacity: 0.6;
       cursor: not-allowed;
       background-color: var(--el-fill-color-lighter);
+    }
+
+    &.is-other-group {
+      opacity: 0.7;
+      border-color: var(--el-color-warning-light-5);
+      background-color: var(--el-color-warning-light-9);
+    }
+
+    .group-tag {
+      cursor: pointer;
+      flex-shrink: 0;
+
+      &:hover {
+        opacity: 0.8;
+      }
     }
 
     .resource-content {
