@@ -138,6 +138,7 @@ export default {
   data_import_export_git_operation_records: 'Git 操作記錄',
   data_import_export_stack_trace: '堆疊信息',
   data_import_export_load_group_failed: '加載分組列表失敗',
+  data_import_export_load_resource_failed: '加載資源列表失敗',
   data_import_export_select_at_least_one: '請至少選擇一個分組',
   data_import_export_git_info_required: '請先配置 Git 信息',
   data_import_export_branch_name: '分支名',

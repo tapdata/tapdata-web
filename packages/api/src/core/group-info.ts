@@ -191,3 +191,25 @@ export function fetchGroupInfoRecordList(filter?: Filter) {
 export function fetchLastestGitTag(groupId: string) {
   return requestClient.get(`${BASE_URL}/lastestGitTag/${groupId}`)
 }
+
+/**
+ * 获取带有分组信息的任务列表
+ */
+export function fetchGroupInfoTasks(filter?: any) {
+  return requestClient.get<PageFetchResult<any>>(`${BASE_URL}/tasks`, {
+    params: {
+      filter: filter ? JSON.stringify(filter) : undefined,
+    },
+  })
+}
+
+/**
+ * 获取带有分组信息的 API（模块）列表
+ */
+export function fetchGroupInfoApis(filter?: any) {
+  return requestClient.get<PageFetchResult<any>>(`${BASE_URL}/apis`, {
+    params: {
+      filter: filter ? JSON.stringify(filter) : undefined,
+    },
+  })
+}
