@@ -386,16 +386,25 @@ const handleSave = async () => {
 
   saving.value = true
   try {
+    const newResourceItemList = addedResources.value.map((item) => ({
+      id: item.id,
+      type: item.type,
+    }))
     await updateGroupInfo({
       ...selectedGroup.value,
-      resourceItemList: addedResources.value.map((item) => ({
-        id: item.id,
-        type: item.type,
-      })),
+      resourceItemList: newResourceItemList,
     })
+    // 同步更新当前选中分组和列表中的 resourceItemList
+    const updatedResourceItemList = [...addedResources.value]
+    selectedGroup.value.resourceItemList = updatedResourceItemList
+    const groupInList = groupList.value.find(
+      (g) => g.id === selectedGroup.value!.id,
+    )
+    if (groupInList) {
+      groupInList.resourceItemList = updatedResourceItemList
+    }
     ElMessage.success(t('public_message_save_ok'))
-    // emit('saved')
-    // visible.value = false
+    loadResources()
   } catch {
     console.error('保存失败:', error)
     ElMessage.error(t('public_message_save_fail'))
