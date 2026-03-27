@@ -293,8 +293,9 @@ const loadResources = async () => {
     }
 
     totalCount.value = result?.total || 0
-  } catch {
+  } catch (error) {
     ElMessage.error(t('data_import_export_load_resource_failed'))
+    console.error(error)
   } finally {
     resourceLoading.value = false
   }
@@ -743,7 +744,6 @@ const handleSelectAll = (checked: any) => {
                 <el-tag
                   v-if="isResourceInOtherGroup(resource)"
                   type="warning"
-                  size="small"
                   class="group-tag"
                   disable-transitions
                   @click.stop="handleNavigateToGroup(resource)"
@@ -807,8 +807,8 @@ const handleSelectAll = (checked: any) => {
 
         <!-- 右侧：已选资源树 -->
         <div class="selected-panel">
-          <div class="panel-header p-3">
-            <span class="fw-sub font-color-dark lh-6">{{
+          <div class="panel-header p-3" style="height: 49px">
+            <span class="fw-sub font-color-dark">{{
               t('data_import_export_selected')
             }}</span>
             <div class="flex gap-2" style="--btn-space: 0">
