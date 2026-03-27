@@ -142,6 +142,7 @@ export default {
   data_import_export_git_operation_records: 'Git Operation Records',
   data_import_export_stack_trace: 'Stack Trace',
   data_import_export_load_group_failed: 'Failed to load group list',
+  data_import_export_load_resource_failed: 'Failed to load resource list',
   data_import_export_select_at_least_one: 'Please select at least one group',
   data_import_export_git_info_required: 'Please configure Git info first',
   data_import_export_branch_name: 'Branch Name',
