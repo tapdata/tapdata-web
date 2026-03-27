@@ -174,7 +174,7 @@
   }
 
   .table-checkbox-wrap {
-    border-top: 1px solid #ebeef5;
+    border-top: 1px solid var(--el-border-color-lighter);
   }
 
   .field-search-input-wrap {
@@ -182,7 +182,7 @@
   }
 
   .fields-toolbar {
-    border-left: 1px solid #ebeef5;
+    border-left: 1px solid var(--el-border-color-lighter);
   }
   /*.el-table__empty-block {
     height: 100% !important;
