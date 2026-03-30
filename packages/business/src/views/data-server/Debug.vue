@@ -154,7 +154,7 @@ const debugData = async () => {
     return
   }
   const hostPath = urlsMap.value[debugMethod.value]?.replace(/\/$/, '') || ''
-  const url = `${hostPath}?access_token=${token.value}`
+  const url = `${hostPath}?access_token=${token.value.access_token}`
   const queryBody = {
     apiId: form.value.id,
     url: null,
