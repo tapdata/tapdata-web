@@ -560,7 +560,7 @@ defineExpose({
               <div
                 v-for="item in tables"
                 :key="item.id"
-                class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg grabbable user-select-none"
+                class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg user-select-none"
                 @click="onClickTable(item)"
               >
                 <el-icon :size="16"><i-lucide-table /></el-icon>
@@ -601,7 +601,7 @@ defineExpose({
               <div
                 v-for="(item, ni) in filteredProcessorNodeTypes"
                 :key="ni"
-                class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg grabbable user-select-none"
+                class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg user-select-none"
                 @click="onClickProcessor(item)"
               >
                 <NodeIcon
