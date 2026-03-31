@@ -1,588 +1,572 @@
-<script>
+<script setup lang="ts">
 import {
   checkMultipleDataType,
   dataType2TapType,
 } from '@tap/api/src/core/metadata-instances'
 import { VTable } from '@tap/component/src/base/v-table'
+import { Modal } from '@tap/component/src/modal'
 import i18n from '@tap/i18n'
 import { uuid } from '@tap/shared'
+import { ElMessage } from 'element-plus'
 import { cloneDeep } from 'lodash-es'
-import { mapGetters } from 'vuex'
+import { computed, onMounted, reactive, ref, useTemplateRef, watch } from 'vue'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 
-export default {
-  name: 'List',
-  components: { VTable },
-  props: {
-    data: {
-      type: Object,
-      default: () => {
-        return {
-          qualified_name: '',
-          fields: [],
-        }
-      },
-    },
-    showColumns: {
-      type: Array,
-      default: () => [],
-    },
-    showDelete: {
-      type: Boolean,
-      default: false,
-    },
-    readonly: {
-      type: Boolean,
-      default: false,
-    },
-    fieldChangeRules: {
-      type: Array,
-      default: () => [],
-    },
-    singleTable: {
-      type: Boolean,
-      default: false,
-    },
-    type: {
-      type: String,
-      default: 'target',
-    },
-    ignoreError: Boolean,
-    dataTypesJson: {
-      type: Object,
-      default: () => {
-        return {}
-      },
-    },
-  },
-  data() {
-    return {
-      columns: [
-        {
-          label: '#',
-          type: 'index',
-          prop: 'index',
-          minWidth: 40,
-        },
-        {
-          label: i18n.t('packages_form_field_add_del_index_ziduanmingcheng'),
-          prop: 'field_name',
-          slotName: 'field_name',
-          'min-width': '90px',
-          'show-overflow-tooltip': true,
-        },
-        {
-          label: i18n.t('packages_form_dag_dialog_field_mapping_type'),
-          prop: 'data_type',
-          slotName: 'data_type',
-          'min-width': '126px',
-        },
-        {
-          label: i18n.t('packages_form_field_inference_list_feikong'),
-          prop: 'is_nullable',
-          slotName: 'is_nullable',
-          width: '60px',
-        },
-        {
-          label: i18n.t('packages_form_field_inference_list_ziduanzhushi'),
-          prop: 'comment',
-        },
-        {
-          label: i18n.t('public_operation'),
-          prop: 'operation',
-          slotName: 'operation',
-          headerSlot: 'operationHeader',
-          minWidth: 60,
-        },
-      ],
-      nullableMap: {
-        true: i18n.t('packages_dag_meta_table_true'),
-        false: i18n.t('packages_dag_meta_table_false'),
-      },
-      editDataTypeVisible: false,
-      currentData: {
-        changeRuleId: '',
-        fieldName: '',
-        dataTypeTemp: '',
-        dataType: '',
-        newDataType: '',
-        selectDataType: '',
-        useToAll: false,
-        errorMessage: '',
-        source: {},
-        canUseDataTypes: [],
-        coefficient: 1,
-        customInputData: {},
-        selectedDataType: '',
-      },
-      customInputDataValue: '',
-      customInputLabelMap: {
-        precision: i18n.t('packages_dag_meta_table_precision'),
-        scale: i18n.t('packages_dag_meta_table_scale'),
-        byte: i18n.t('packages_dag_meta_table_precision'),
-        fraction: i18n.t('packages_dag_meta_table_precision'),
-      },
-      editBtnLoading: false,
-      rules: [],
-      modeType: 'custom',
-      originType: '',
+defineOptions({ name: 'List' })
+
+const props = withDefaults(
+  defineProps<{
+    data?: {
+      qualified_name: string
+      fields: any[]
+      nodeId?: string
+      [key: string]: any
     }
+    showColumns?: any[]
+    showDelete?: boolean
+    readonly?: boolean
+    fieldChangeRules?: any[]
+    singleTable?: boolean
+    type?: string
+    ignoreError?: boolean
+    dataTypesJson?: Record<string, any>
+  }>(),
+  {
+    data: () => ({ qualified_name: '', fields: [] }),
+    showColumns: () => [],
+    showDelete: false,
+    readonly: false,
+    fieldChangeRules: () => [],
+    singleTable: false,
+    type: 'target',
+    ignoreError: false,
+    dataTypesJson: () => ({}),
   },
-  computed: {
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'stateIsReadonly']),
+)
 
-    columnsList() {
-      const { showColumns, columns, readonly } = this
-      let result = columns
-      if (readonly) {
-        result = result.filter((t) => t.prop !== 'operation')
-      }
-      if (!showColumns.length) {
-        return result
-      }
-      return showColumns
-        .map((t) => {
-          return result.find((f) => f.prop === t || f.type === t)
-        })
-        .filter((t) => t)
-    },
+const emit = defineEmits<{
+  'update-rules': [data: any[]]
+  'open-update-rules': []
+}>()
 
-    tableList() {
-      const { fields } = this.data
-      const list = (fields || []).sort(
-        (a, b) => a.columnPosition - b.columnPosition,
-      )
-      return this.showDelete ? list : list.filter((t) => !t.is_deleted)
-    },
+const dataflowStore = useDataflowStore()
+const activeNode = computed(() => dataflowStore.selectedNode)
+const stateIsReadonly = computed(() => dataflowStore.stateIsReadonly)
 
-    revokeTableDisabled() {
-      const { qualified_name } = this.data
-      if (this.singleTable) return !this.rules.length
-      return this.rules.every((t) => t.namespace?.[1] !== qualified_name)
-    },
+const tableRef = useTemplateRef<InstanceType<typeof VTable>>('table')
 
-    computedDataTypes() {
-      return [
-        {
-          label: i18n.t('packages_dag_field_inference_list_zidingyileixing'),
-          value: '',
-        },
-        ...this.currentData.canUseDataTypes,
-      ]
-    },
+const columns = [
+  {
+    label: '#',
+    type: 'index',
+    prop: 'index',
+    minWidth: 40,
   },
-  watch: {
-    fieldChangeRules: {
-      deep: true,
-      handler(val = []) {
-        this.setRules(val)
-      },
-    },
+  {
+    label: i18n.t('packages_form_field_add_del_index_ziduanmingcheng'),
+    prop: 'field_name',
+    slotName: 'field_name',
+    'min-width': '90px',
+    'show-overflow-tooltip': true,
   },
-  mounted() {
-    this.setRules(this.fieldChangeRules)
+  {
+    label: i18n.t('packages_form_dag_dialog_field_mapping_type'),
+    prop: 'data_type',
+    slotName: 'data_type',
+    'min-width': '126px',
   },
-  methods: {
-    setRules(data = []) {
-      this.rules = cloneDeep(data)
-    },
-
-    findInRulesById(id) {
-      return this.rules.find((t) => t.id === id)
-    },
-
-    findNodeRuleByType(type) {
-      return this.rules.find((t) => t.accept === type && t.scope === 'Node')
-    },
-
-    deleteRuleById(id) {
-      const index = this.rules.findIndex((t) => t.id === id)
-      this.rules.splice(index, 1)
-    },
-
-    async openEditDataTypeVisible(row) {
-      const { source = {}, canUseDataTypes = [] } = row || {}
-      this.currentData.changeRuleId = row.changeRuleId
-      this.currentData.dataType = this.getDataType(row)
-      this.currentData.dataTypeTemp = row.dataTypeTemp
-      this.currentData.fieldName = row.field_name
-      this.currentData.newDataType = this.currentData.dataType
-      this.currentData.useToAll = false
-      this.currentData.errorMessage = ''
-      this.currentData.source = source
-      this.currentData.canUseDataTypes = await this.getTypeJson()
-      const findRule = this.rules.find(
-        (t) => t.id === this.currentData.changeRuleId,
-      )
-      this.currentData.selectDataType = findRule?.result?.selectDataType || ''
-      this.currentData.coefficient = findRule?.multiple || 1
-      this.currentData.selectedDataType = '' // 下拉框选择的类型，仅前端使用
-
-      const dataTypeCheckMultiple = await checkMultipleDataType({
-        databaseType: this.activeNode.databaseType,
-        dataType: this.currentData.dataType,
-      })
-
-      let modeType = 'custom'
-      if (dataTypeCheckMultiple?.result) {
-        this.originType = dataTypeCheckMultiple.originType
-        const rule = this.findInRulesById(this.currentData.changeRuleId)
-        if (rule?.scope !== 'Field') {
-          this.fieldChangeRules
-            .filter((t) => t.type !== 'Field')
-            .forEach((item = {}) => {
-              const { namespace = [] } = item
-              if (
-                item.type === 'MutiDataType' &&
-                item.accept === this.originType
-              ) {
-                this.currentData.coefficient = item.multiple
-                modeType = 'coefficient'
-              } else {
-                const flag =
-                  namespace[0] === this.data.nodeId &&
-                  (namespace.length === 1 ||
-                    (namespace[1] === this.data.qualified_name &&
-                      namespace[2] === this.currentData.fieldName))
-                if (flag) {
-                  modeType = 'custom'
-                }
-              }
-            })
-        }
-      } else {
-        this.originType = ''
-      }
-
-      this.modeType = modeType
-      this.editDataTypeVisible = true
-    },
-
-    handleUpdate(data) {
-      this.$emit('update-rules', cloneDeep(data || this.rules))
-    },
-
-    submitEdit() {
-      const { qualified_name, nodeId } = this.data
-      const {
-        changeRuleId,
-        fieldName,
-        dataType,
-        dataTypeTemp,
-        newDataType,
-        useToAll,
-        selectDataType,
-        coefficient = 1,
-      } = this.currentData
-      const params = {
-        databaseType: this.activeNode.databaseType,
-        dataTypes: [newDataType],
-      }
-
-      if (this.modeType === 'coefficient') {
-        const f = this.findInRulesById(changeRuleId)
-        let ruleId = f?.id
-        let ruleAccept = f?.accept
-        if (f?.type === 'MutiDataType') {
-          f.multiple = coefficient
-          f.accept = this.originType
-          f.result = {
-            dataType: `${this.originType}(${coefficient}n)`,
-            dataTypeTemp,
-          }
-          const index = this.rules.findIndex((t) => t.id === ruleId)
-          this.rules.splice(index, 1)
-          this.rules.push(f)
-        } else {
-          const index = this.rules.findIndex(
-            (t) => t.accept === this.originType && t.type === 'MutiDataType',
-          )
-          if (index !== -1) {
-            this.rules.splice(index, 1)
-          }
-          const op = {
-            id: uuid(),
-            scope: 'Node',
-            namespace: [nodeId],
-            type: 'MutiDataType',
-            accept: this.originType,
-            multiple: coefficient,
-            result: {
-              dataType: `${this.originType}(${coefficient}n)`,
-              dataTypeTemp,
-            },
-          }
-          ruleId = op.id
-          ruleAccept = op.accept
-          this.rules.push(op)
-        }
-
-        // 刷新字段
-        this.data.fields.forEach((t) => {
-          const fieldOriginType = t.data_type?.split('(')[0]
-          if (fieldOriginType === this.originType) {
-            t.data_type = t.dataTypeTemp.replace(
-              /(\w+\()(\w+)([,)][\s\S]*)/,
-              function (val, sub1, sub2, sub3) {
-                return `${sub1}${sub2 * coefficient}${sub3}`
-              },
-            )
-            t.changeRuleId = ruleId
-          }
-        })
-        this.handleUpdate()
-        this.$message.success(i18n.t('public_message_operation_success'))
-        this.editDataTypeVisible = false
-        return
-      }
-
-      this.editBtnLoading = true
-      this.currentData.errorMessage = ''
-      dataType2TapType(params)
-        .then((data) => {
-          const val = data[newDataType]
-          const tapType = val && val.type !== 7 ? JSON.stringify(val) : null
-          if (!tapType) {
-            this.currentData.errorMessage = i18n.t(
-              'packages_form_field_inference_list_geshicuowu',
-            )
-            this.editBtnLoading = false
-            return
-          }
-          const f = this.findInRulesById(changeRuleId)
-          let ruleId = f?.id
-          if (f?.scope === 'Field') {
-            if (useToAll) {
-              const batchRule = this.findNodeRuleByType(f.accept)
-              if (batchRule) {
-                // 删除节点规则
-                this.deleteRuleById(f.id)
-                // 修改批量规则
-                batchRule.result = {
-                  dataType: newDataType,
-                  tapType,
-                  selectDataType,
-                }
-                ruleId = batchRule.id
-              } else {
-                // 修改规则为批量规则 scope、namespace
-                f.scope = 'Node'
-                f.namespace = [nodeId]
-                f.result = { dataType: newDataType, tapType, selectDataType }
-              }
-            } else {
-              // 修改字段规则
-              f.result = { dataType: newDataType, tapType, selectDataType }
-            }
-            const index = this.rules.findIndex((t) => t.id === ruleId)
-            this.rules.splice(index, 1)
-            this.rules.push(f)
-          } else {
-            const op = {
-              id: uuid(),
-              scope: useToAll ? 'Node' : 'Field',
-              namespace: useToAll
-                ? [nodeId]
-                : [nodeId, qualified_name, fieldName],
-              type: 'DataType',
-              accept: dataTypeTemp,
-              result: { dataType: newDataType, tapType, selectDataType },
-            }
-            ruleId = op.id
-            this.rules.push(op)
-          }
-
-          this.data.fields.forEach((t) => {
-            if (
-              (useToAll &&
-                t.data_type === t.dataTypeTemp &&
-                t.dataTypeTemp === dataTypeTemp) ||
-              t.field_name === fieldName
-            ) {
-              t.data_type = newDataType
-              t.changeRuleId = ruleId
-            }
-          })
-          this.handleUpdate()
-          this.editBtnLoading = false
-          this.$message.success(i18n.t('public_message_operation_success'))
-          this.editDataTypeVisible = false
-        })
-        .catch(() => {
-          this.editBtnLoading = false
-        })
-    },
-
-    revoke(row) {
-      if (this.getRevokeDisabled(row)) return
-      const f = this.findInRulesById(row.changeRuleId)
-      if (!f) return
-      if (f.scope === 'Node') {
-        this.$emit('open-update-rules')
-        return
-      }
-      if (f.scope === 'Field') {
-        row.data_type = f.accept
-        const index = this.rules.findIndex((t) => t.id === f.id)
-        this.rules.splice(index, 1)
-      }
-      row.data_type = row.dataTypeTemp
-      this.handleUpdate()
-    },
-
-    revokeAll() {
-      if (this.revokeTableDisabled) {
-        return
-      }
-      this.$confirm(
-        i18n.t('packages_form_field_inference_list_ninquerenyaohui'),
-      ).then((resFlag) => {
-        if (resFlag) {
-          const { qualified_name } = this.data
-          if (this.singleTable) {
-            this.rules = [] // 清空数据
-            this.handleUpdate()
-          } else {
-            this.rules = this.rules.filter(
-              (t) => t.namespace?.[1] !== qualified_name,
-            ) // 清空当前表的数据
-            this.handleUpdate()
-          }
-          this.$message.success(i18n.t('public_message_operation_success'))
-        }
-      })
-    },
-
-    doLayout() {
-      this.$refs.table.doLayout()
-    },
-
-    getRevokeDisabled(row) {
-      return !this.fieldChangeRules.find((t) => t.id === row.changeRuleId)
-        ?.scope
-    },
-
-    getFieldScope(row = {}) {
-      return this.fieldChangeRules.find((t) => t.id === row.changeRuleId)?.scope
-    },
-
-    getRevokeColorClass(row = {}) {
-      const map = {
-        Node: 'color-warning',
-        Field: 'color-primary',
-      }
-      return map[this.getFieldScope(row)] || 'color-disable'
-    },
-
-    tableRowClassName({ row }) {
-      return !this.ignoreError && row.matchedDataTypeLevel === 'error'
-        ? 'warning-row'
-        : ''
-    },
-
-    getCanUseDataTypesTooltip(matchedDataTypeLevel) {
-      const map = {
-        error:
-          this.type === 'target'
-            ? i18n.t('packages_dag_field_inference_list_gaiziduanshuju')
-            : i18n.t('packages_dag_field_inference_list_gaiziduanwufa'),
-        // warning: i18n.t('packages_dag_field_inference_list_gaiziduanyingshe')
-      }
-      return map[matchedDataTypeLevel]
-    },
-
-    querySearch(val, cb) {
-      cb(
-        this.currentData.canUseDataTypes?.map((t) => {
-          return { value: t }
-        }) || [],
-      )
-    },
-
-    handleAutocomplete(itemValue) {
-      if (!itemValue) {
-        this.currentData.newDataType = this.currentData.dataTypeTemp
-        return
-      }
-      const item = this.computedDataTypes.find((t) => t.value === itemValue)
-      this.currentData.customInputData = {}
-
-      /**
-       * 1.选中选项后，检查选项是否有变量；有变量向下走
-       * 2.把括号内字符串提取出来，并进行分割
-       * 3.根据多个变量名（$开头的），获取输入框的范围；默认最小值
-       * 4.每次修改输入框都会改变最终结果
-       */
-      this.customInputDataValue = itemValue // 记录原始值
-      this.currentData.selectDataType = itemValue
-      const contentStr = item.value.match(/\(([^)]+)\)/)?.[1]
-      if (contentStr) {
-        const contentArr = contentStr.split(',')
-        contentArr.forEach((el) => {
-          const key = el.replace(/^\$/, '')
-          let min, max
-          if (typeof item.attrs[key] === 'number') {
-            max = typeof item.attrs[key]
-          } else if (Array.isArray(item.attrs[key])) {
-            min = item.attrs[key][0] ? item.attrs[key][0] * 1 : undefined
-            max = item.attrs[key][1] ? item.attrs[key][1] * 1 : undefined
-          }
-          this.currentData.customInputData[key] = {
-            min,
-            max,
-            label: this.customInputLabelMap[key] || key,
-          }
-          const defaultValue =
-            item.attrs.default ??
-            item.attrs[
-              `default${key.charAt(0).toUpperCase()}${key.slice(1)}`
-            ] ??
-            item.attrs[key]?.[0] ??
-            null
-          this.currentData.customInputData[key].value = defaultValue
-            ? defaultValue * 1
-            : null
-        })
-      }
-      this.handleChangeCustomInput()
-    },
-
-    getDataType(row = {}) {
-      // 这里不清楚为要返回 dataTypeTemp，不过 dataTypeTemp 可能为空，所以加上 || row.data_type
-      if (
-        !this.rules.length ||
-        !this.rules.find((t) => t.id === row.changeRuleId)
-      )
-        return row.dataTypeTemp || row.data_type
-      return row.data_type
-    },
-
-    async getTypeJson() {
-      const dataTypes = this.dataTypesJson
-      const result = []
-      for (const key in dataTypes) {
-        const item = dataTypes[key]
-        result.push({
-          label: key.replace(/[([]([^)]+)\)\]/, ''),
-          value: key,
-          attrs: item,
-        })
-      }
-      return result
-    },
-
-    handleChangeCustomInput() {
-      const { customInputData } = this.currentData
-      this.currentData.newDataType = this.customInputDataValue
-        .replaceAll(/\[(.*?)\]/g, '$1') // 去掉所有的方括号，保留内容
-        .replaceAll(/\$\w+/g, (match) => {
-          // 匹配所有 $ 开头的变量
-          const key = match.slice(1) // 去掉 $ 前缀
-          return customInputData[key]?.value || match
-        })
-    },
+  {
+    label: i18n.t('packages_form_field_inference_list_feikong'),
+    prop: 'is_nullable',
+    slotName: 'is_nullable',
+    width: '60px',
   },
-  emits: ['update-rules'],
+  {
+    label: i18n.t('packages_form_field_inference_list_ziduanzhushi'),
+    prop: 'comment',
+  },
+  {
+    label: i18n.t('public_operation'),
+    prop: 'operation',
+    slotName: 'operation',
+    headerSlot: 'operationHeader',
+    minWidth: 60,
+  },
+]
+
+const nullableMap: Record<string, string> = {
+  true: i18n.t('packages_dag_meta_table_true'),
+  false: i18n.t('packages_dag_meta_table_false'),
 }
+
+const editDataTypeVisible = ref(false)
+const currentData = reactive({
+  changeRuleId: '',
+  fieldName: '',
+  dataTypeTemp: '',
+  dataType: '',
+  newDataType: '',
+  selectDataType: '',
+  useToAll: false,
+  errorMessage: '',
+  source: {} as any,
+  canUseDataTypes: [] as any[],
+  coefficient: 1,
+  customInputData: {} as Record<string, any>,
+  selectedDataType: '',
+})
+const customInputDataValue = ref('')
+const customInputLabelMap: Record<string, string> = {
+  precision: i18n.t('packages_dag_meta_table_precision'),
+  scale: i18n.t('packages_dag_meta_table_scale'),
+  byte: i18n.t('packages_dag_meta_table_precision'),
+  fraction: i18n.t('packages_dag_meta_table_precision'),
+}
+const editBtnLoading = ref(false)
+const rules = ref<any[]>([])
+const modeType = ref('custom')
+const originType = ref('')
+
+// Computed
+const columnsList = computed(() => {
+  let result = columns
+  if (props.readonly) {
+    result = result.filter((t) => t.prop !== 'operation')
+  }
+  if (!props.showColumns.length) {
+    return result
+  }
+  return props.showColumns
+    .map((t) => result.find((f) => f.prop === t || f.type === t))
+    .filter((t) => t)
+})
+
+const tableList = computed(() => {
+  const { fields } = props.data
+  const list = (fields || []).sort(
+    (a: any, b: any) => a.columnPosition - b.columnPosition,
+  )
+  return props.showDelete ? list : list.filter((t: any) => !t.is_deleted)
+})
+
+const revokeTableDisabled = computed(() => {
+  const { qualified_name } = props.data
+  if (props.singleTable) return !rules.value.length
+  return rules.value.every((t) => t.namespace?.[1] !== qualified_name)
+})
+
+const computedDataTypes = computed(() => {
+  return [
+    {
+      label: i18n.t('packages_dag_field_inference_list_zidingyileixing'),
+      value: '',
+    },
+    ...currentData.canUseDataTypes,
+  ]
+})
+
+// Watch
+watch(
+  () => props.fieldChangeRules,
+  (val = []) => {
+    setRules(val)
+  },
+  { deep: true },
+)
+
+// Lifecycle
+onMounted(() => {
+  setRules(props.fieldChangeRules)
+})
+
+// Methods
+function setRules(data: any[] = []) {
+  rules.value = cloneDeep(data)
+}
+
+function findInRulesById(id: string) {
+  return rules.value.find((t) => t.id === id)
+}
+
+function findNodeRuleByType(type: string) {
+  return rules.value.find((t) => t.accept === type && t.scope === 'Node')
+}
+
+function deleteRuleById(id: string) {
+  const index = rules.value.findIndex((t) => t.id === id)
+  rules.value.splice(index, 1)
+}
+
+async function openEditDataTypeVisible(row: any) {
+  const { source = {} } = row || {}
+  currentData.changeRuleId = row.changeRuleId
+  currentData.dataType = getDataType(row)
+  currentData.dataTypeTemp = row.dataTypeTemp
+  currentData.fieldName = row.field_name
+  currentData.newDataType = currentData.dataType
+  currentData.useToAll = false
+  currentData.errorMessage = ''
+  currentData.source = source
+  currentData.canUseDataTypes = await getTypeJson()
+  const findRule = rules.value.find((t) => t.id === currentData.changeRuleId)
+  currentData.selectDataType = findRule?.result?.selectDataType || ''
+  currentData.coefficient = findRule?.multiple || 1
+  currentData.selectedDataType = '' // 下拉框选择的类型，仅前端使用
+
+  const dataTypeCheckMultiple = await checkMultipleDataType({
+    databaseType: activeNode.value?.databaseType,
+    dataType: currentData.dataType,
+  })
+
+  let _modeType = 'custom'
+  if (dataTypeCheckMultiple?.result) {
+    originType.value = dataTypeCheckMultiple.originType
+    const rule = findInRulesById(currentData.changeRuleId)
+    if (rule?.scope !== 'Field') {
+      props.fieldChangeRules
+        .filter((t) => t.type !== 'Field')
+        .forEach((item: any = {}) => {
+          const { namespace = [] } = item
+          if (
+            item.type === 'MutiDataType' &&
+            item.accept === originType.value
+          ) {
+            currentData.coefficient = item.multiple
+            _modeType = 'coefficient'
+          } else {
+            const flag =
+              namespace[0] === props.data.nodeId &&
+              (namespace.length === 1 ||
+                (namespace[1] === props.data.qualified_name &&
+                  namespace[2] === currentData.fieldName))
+            if (flag) {
+              _modeType = 'custom'
+            }
+          }
+        })
+    }
+  } else {
+    originType.value = ''
+  }
+
+  modeType.value = _modeType
+  editDataTypeVisible.value = true
+}
+
+function handleUpdate(data?: any[]) {
+  emit('update-rules', cloneDeep(data || rules.value))
+}
+
+function submitEdit() {
+  const { qualified_name, nodeId } = props.data
+  const {
+    changeRuleId,
+    fieldName,
+    dataTypeTemp,
+    newDataType,
+    useToAll,
+    selectDataType,
+    coefficient = 1,
+  } = currentData
+  const params = {
+    databaseType: activeNode.value?.databaseType,
+    dataTypes: [newDataType],
+  }
+
+  if (modeType.value === 'coefficient') {
+    const f = findInRulesById(changeRuleId)
+    let ruleId = f?.id
+    let ruleAccept = f?.accept
+    if (f?.type === 'MutiDataType') {
+      f.multiple = coefficient
+      f.accept = originType.value
+      f.result = {
+        dataType: `${originType.value}(${coefficient}n)`,
+        dataTypeTemp,
+      }
+      const index = rules.value.findIndex((t) => t.id === ruleId)
+      rules.value.splice(index, 1)
+      rules.value.push(f)
+    } else {
+      const index = rules.value.findIndex(
+        (t) => t.accept === originType.value && t.type === 'MutiDataType',
+      )
+      if (index !== -1) {
+        rules.value.splice(index, 1)
+      }
+      const op = {
+        id: uuid(),
+        scope: 'Node',
+        namespace: [nodeId],
+        type: 'MutiDataType',
+        accept: originType.value,
+        multiple: coefficient,
+        result: {
+          dataType: `${originType.value}(${coefficient}n)`,
+          dataTypeTemp,
+        },
+      }
+      ruleId = op.id
+      ruleAccept = op.accept
+      rules.value.push(op)
+    }
+
+    // 刷新字段
+    props.data.fields.forEach((t: any) => {
+      const fieldOriginType = t.data_type?.split('(')[0]
+      if (fieldOriginType === originType.value) {
+        t.data_type = t.dataTypeTemp.replace(
+          /(\w+\()(\w+)([,)][\s\S]*)/,
+          function (_val: string, sub1: string, sub2: string, sub3: string) {
+            return `${sub1}${(sub2 as any) * coefficient}${sub3}`
+          },
+        )
+        t.changeRuleId = ruleId
+      }
+    })
+    handleUpdate()
+    ElMessage.success(i18n.t('public_message_operation_success'))
+    editDataTypeVisible.value = false
+    return
+  }
+
+  editBtnLoading.value = true
+  currentData.errorMessage = ''
+  dataType2TapType(params)
+    .then((data) => {
+      const val = data[newDataType]
+      const tapType = val && val.type !== 7 ? JSON.stringify(val) : null
+      if (!tapType) {
+        currentData.errorMessage = i18n.t(
+          'packages_form_field_inference_list_geshicuowu',
+        )
+        editBtnLoading.value = false
+        return
+      }
+      const f = findInRulesById(changeRuleId)
+      let ruleId = f?.id
+      if (f?.scope === 'Field') {
+        if (useToAll) {
+          const batchRule = findNodeRuleByType(f.accept)
+          if (batchRule) {
+            deleteRuleById(f.id)
+            batchRule.result = {
+              dataType: newDataType,
+              tapType,
+              selectDataType,
+            }
+            ruleId = batchRule.id
+          } else {
+            f.scope = 'Node'
+            f.namespace = [nodeId]
+            f.result = { dataType: newDataType, tapType, selectDataType }
+          }
+        } else {
+          f.result = { dataType: newDataType, tapType, selectDataType }
+        }
+        const index = rules.value.findIndex((t) => t.id === ruleId)
+        rules.value.splice(index, 1)
+        rules.value.push(f)
+      } else {
+        const op = {
+          id: uuid(),
+          scope: useToAll ? 'Node' : 'Field',
+          namespace: useToAll ? [nodeId] : [nodeId, qualified_name, fieldName],
+          type: 'DataType',
+          accept: dataTypeTemp,
+          result: { dataType: newDataType, tapType, selectDataType },
+        }
+        ruleId = op.id
+        rules.value.push(op)
+      }
+
+      props.data.fields.forEach((t: any) => {
+        if (
+          (useToAll &&
+            t.data_type === t.dataTypeTemp &&
+            t.dataTypeTemp === dataTypeTemp) ||
+          t.field_name === fieldName
+        ) {
+          t.data_type = newDataType
+          t.changeRuleId = ruleId
+        }
+      })
+      handleUpdate()
+      editBtnLoading.value = false
+      ElMessage.success(i18n.t('public_message_operation_success'))
+      editDataTypeVisible.value = false
+    })
+    .catch(() => {
+      editBtnLoading.value = false
+    })
+}
+
+function revoke(row: any) {
+  if (getRevokeDisabled(row)) return
+  const f = findInRulesById(row.changeRuleId)
+  if (!f) return
+  if (f.scope === 'Node') {
+    emit('open-update-rules')
+    return
+  }
+  if (f.scope === 'Field') {
+    row.data_type = f.accept
+    const index = rules.value.findIndex((t) => t.id === f.id)
+    rules.value.splice(index, 1)
+  }
+  row.data_type = row.dataTypeTemp
+  handleUpdate()
+}
+
+function revokeAll() {
+  if (revokeTableDisabled.value) {
+    return
+  }
+  Modal.confirm(
+    i18n.t('packages_form_field_inference_list_ninquerenyaohui'),
+  ).then((resFlag: boolean) => {
+    if (resFlag) {
+      const { qualified_name } = props.data
+      if (props.singleTable) {
+        rules.value = [] // 清空数据
+        handleUpdate()
+      } else {
+        rules.value = rules.value.filter(
+          (t) => t.namespace?.[1] !== qualified_name,
+        ) // 清空当前表的数据
+        handleUpdate()
+      }
+      ElMessage.success(i18n.t('public_message_operation_success'))
+    }
+  })
+}
+
+function doLayout() {
+  ;(tableRef.value as any)?.doLayout()
+}
+
+function getRevokeDisabled(row: any) {
+  return !props.fieldChangeRules.find((t) => t.id === row.changeRuleId)?.scope
+}
+
+function getFieldScope(row: any = {}) {
+  return props.fieldChangeRules.find((t) => t.id === row.changeRuleId)?.scope
+}
+
+function getRevokeColorClass(row: any = {}) {
+  const map: Record<string, string> = {
+    Node: 'color-warning',
+    Field: 'color-primary',
+  }
+  return map[getFieldScope(row)] || 'color-disable'
+}
+
+function tableRowClassName({ row }: { row: any }) {
+  return !props.ignoreError && row.matchedDataTypeLevel === 'error'
+    ? 'warning-row'
+    : ''
+}
+
+function getCanUseDataTypesTooltip(matchedDataTypeLevel: string) {
+  const map: Record<string, string> = {
+    error:
+      props.type === 'target'
+        ? i18n.t('packages_dag_field_inference_list_gaiziduanshuju')
+        : i18n.t('packages_dag_field_inference_list_gaiziduanwufa'),
+  }
+  return map[matchedDataTypeLevel]
+}
+
+function querySearch(val: string, cb: (items: any[]) => void) {
+  cb(
+    currentData.canUseDataTypes?.map((t) => {
+      return { value: t }
+    }) || [],
+  )
+}
+
+function handleAutocomplete(itemValue: string) {
+  if (!itemValue) {
+    currentData.newDataType = currentData.dataTypeTemp
+    return
+  }
+  const item = computedDataTypes.value.find((t) => t.value === itemValue)
+  currentData.customInputData = {}
+
+  /**
+   * 1.选中选项后，检查选项是否有变量；有变量向下走
+   * 2.把括号内字符串提取出来，并进行分割
+   * 3.根据多个变量名（$开头的），获取输入框的范围；默认最小值
+   * 4.每次修改输入框都会改变最终结果
+   */
+  customInputDataValue.value = itemValue // 记录原始值
+  currentData.selectDataType = itemValue
+  const contentStr = item?.value.match(/\(([^)]+)\)/)?.[1]
+  if (contentStr) {
+    const contentArr = contentStr.split(',')
+    contentArr.forEach((el) => {
+      const key = el.replace(/^\$/, '')
+      let min: number | undefined, max: number | string | undefined
+      if (typeof item.attrs[key] === 'number') {
+        max = typeof item.attrs[key]
+      } else if (Array.isArray(item.attrs[key])) {
+        min = item.attrs[key][0] ? item.attrs[key][0] * 1 : undefined
+        max = item.attrs[key][1] ? item.attrs[key][1] * 1 : undefined
+      }
+      currentData.customInputData[key] = {
+        min,
+        max,
+        label: customInputLabelMap[key] || key,
+      }
+      const defaultValue =
+        item.attrs.default ??
+        item.attrs[`default${key.charAt(0).toUpperCase()}${key.slice(1)}`] ??
+        item.attrs[key]?.[0] ??
+        null
+      currentData.customInputData[key].value = defaultValue
+        ? defaultValue * 1
+        : null
+    })
+  }
+  handleChangeCustomInput()
+}
+
+function getDataType(row: any = {}) {
+  // 这里不清楚为要返回 dataTypeTemp，不过 dataTypeTemp 可能为空，所以加上 || row.data_type
+  if (
+    !rules.value.length ||
+    !rules.value.find((t) => t.id === row.changeRuleId)
+  )
+    return row.dataTypeTemp || row.data_type
+  return row.data_type
+}
+
+async function getTypeJson() {
+  const dataTypes = props.dataTypesJson
+  const result: any[] = []
+  for (const key in dataTypes) {
+    const item = dataTypes[key]
+    result.push({
+      label: key.replace(/[([]([^)]+)\)\]/, ''),
+      value: key,
+      attrs: item,
+    })
+  }
+  return result
+}
+
+function handleChangeCustomInput() {
+  const { customInputData } = currentData
+  currentData.newDataType = customInputDataValue.value
+    .replaceAll(/\[(.*?)\]/g, '$1') // 去掉所有的方括号，保留内容
+    .replaceAll(/\$\w+/g, (match) => {
+      // 匹配所有 $ 开头的变量
+      const key = match.slice(1) // 去掉 $ 前缀
+      return customInputData[key]?.value || match
+    })
+}
+
+defineExpose({ setRules, doLayout })
 </script>
 
 <template>
