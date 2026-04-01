@@ -1,5 +1,5 @@
 import { FormPath } from '@formily/core'
-import { raw, toJS } from '@formily/reactive'
+import { toJS } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
 import { each, reduce } from '@formily/shared'
 import {
@@ -91,7 +91,7 @@ const toDesignableFieldProps = (schema, components, nodeIdAttrName, id) => {
       props[fieldKey] = filterExpression(value)
     }
   })
-  console.log('raw', raw(components), toJS(components))
+
   if (!components.FormItem) {
     components.FormItem = FormItem
   }
