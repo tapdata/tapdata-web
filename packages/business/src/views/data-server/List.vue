@@ -756,9 +756,20 @@ defineExpose({
           :min-width="110"
         >
           <template #default="{ row }">
-            <span class="status-block" :class="`status-${row.status}`">{{
-              row.statusFmt
-            }}</span>
+            <div class="flex align-center gap-1">
+              <span class="status-block" :class="`status-${row.status}`">{{
+                row.statusFmt
+              }}</span>
+              <el-tooltip
+                v-if="row.status === 'active' && row.publishStatus"
+                :content="row.publishStatus"
+                placement="top"
+              >
+                <el-icon class="color-warning cursor-pointer">
+                  <i-mingcute-alert-line />
+                </el-icon>
+              </el-tooltip>
+            </div>
           </template>
         </el-table-column>
         <template v-if="!inAppList">
