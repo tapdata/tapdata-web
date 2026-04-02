@@ -197,7 +197,6 @@ const debugData = async () => {
         filterInfo.limit = Number(params?.limit || 20)
         //@ts-ignore
         filterInfo.page = Number(params?.page || 1)
-        filterInfo.fields = params.fields ? JSON.parse(params.fields) : []
         //@ts-ignore
         queryBody.body = filterInfo
         //@ts-ignore
