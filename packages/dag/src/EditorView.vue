@@ -82,8 +82,8 @@ const init = async () => {
   await dataflowStore.initPdkProperties()
 
   if (taskId) {
+    await initNodeType()
     await dataflowStore.fetchDataflow(taskId)
-    await initNodeType(dataflowStore.dataflow.syncType)
     // nextTick(() => {
     //   setTimeout(() => {
     //     canvasRef.value.fitViewWithOffset({ duration: 0, maxZoom: 1 })
@@ -100,7 +100,7 @@ const init = async () => {
       syncType = 'migrate'
       targetRoute = 'MigrateEditor'
     }
-    await initNodeType(syncType!)
+    await initNodeType()
     await dataflowStore.createDataflow(syncType)
     router.push({
       name: targetRoute,
