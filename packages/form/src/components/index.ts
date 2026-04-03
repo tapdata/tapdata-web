@@ -49,4 +49,5 @@ export * from './verify-fields-dialog'
 export * from './infinite-select'
 // export * from './switch' // 为了扩展开关的二次确认
 
+export * from './aggregate'
 export * from './ElementPlus'
