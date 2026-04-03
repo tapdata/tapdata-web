@@ -12,6 +12,7 @@ import {
   watch,
   type PropType,
 } from 'vue'
+import { AiAggregateDialog } from './AiAggregateDialog'
 import 'monaco-editor/esm/vs/language/json/monaco.contribution'
 import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution'
 import 'monaco-editor/esm/vs/editor/contrib/suggest/browser/suggestController'
@@ -240,6 +241,16 @@ export const PipelineEditor = defineComponent({
       }
     }
 
+    const showAiDialog = ref(false)
+
+    const onAiApply = (code: string) => {
+      if (editor) {
+        editor.setValue(code)
+      }
+      emit('update:modelValue', code)
+      emit('change', code)
+    }
+
     const heightPx =
       typeof props.height === 'number' ? `${props.height}px` : props.height
 
@@ -252,6 +263,18 @@ export const PipelineEditor = defineComponent({
         ]}
       >
         <div class="pipeline-editor-toolbar">
+          <ElTooltip
+            content={t('packages_form_aggregate_ai_btn')}
+            placement="top"
+            enterable={false}
+          >
+            <el-button
+              text
+              size="small"
+              onClick={() => (showAiDialog.value = true)}
+              icon={IconLucideSparkles}
+            />
+          </ElTooltip>
           <ElTooltip
             content={t('packages_form_aggregate_format')}
             placement="top"
@@ -287,6 +310,13 @@ export const PipelineEditor = defineComponent({
           ref={containerRef}
           class="pipeline-editor"
           style={{ height: isFullscreen.value ? undefined : heightPx }}
+        />
+        <AiAggregateDialog
+          visible={showAiDialog.value}
+          onUpdate:visible={(val: boolean) => (showAiDialog.value = val)}
+          fields={props.fields}
+          existingCode={props.modelValue}
+          onApply={onAiApply}
         />
       </div>
     )

@@ -290,4 +290,14 @@ export default {
   packages_form_aggregate_op_all: 'Array Contains All',
   packages_form_aggregate_op_elemMatch: 'Element Match',
   packages_form_aggregate_op_size: 'Array Size',
+
+  // AggregatePanel AI
+  packages_form_aggregate_ai_btn: 'AI Generate',
+  packages_form_aggregate_ai_title: 'AI Generate Aggregation Pipeline',
+  packages_form_aggregate_ai_placeholder: 'Describe the aggregation you want, e.g.: group by status, count each group and calculate average amount',
+  packages_form_aggregate_ai_generating: 'Generating...',
+  packages_form_aggregate_ai_apply: 'Apply',
+  packages_form_aggregate_ai_retry: 'Regenerate',
+  packages_form_aggregate_ai_stop: 'Stop',
+  packages_form_aggregate_ai_error: 'Generation failed, please retry',
 }

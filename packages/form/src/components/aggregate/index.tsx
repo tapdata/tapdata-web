@@ -1,3 +1,4 @@
+export { AiAggregateDialog } from './AiAggregateDialog'
 export { AggregatePanel } from './AggregatePanel'
 export { buildPipelineJSON, buildPipelineStages } from './buildPipeline'
 export { resolveSourceInfo } from './resolveSourceInfo'

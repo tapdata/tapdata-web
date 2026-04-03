@@ -45,19 +45,29 @@ export async function generateAiCode(
   return response.data
 }
 
+export interface AiAggregateRequest {
+  prompt: string
+  fields?: Array<{
+    name: string
+    type: string
+    primaryKey?: boolean
+    nullable?: boolean
+    comment?: string
+  }>
+  existingCode?: string
+}
+
 /**
- * Generate JavaScript code using AI with SSE streaming
- * @param data - The request data containing prompt and optional fields
- * @param callbacks - Callbacks for handling SSE events
- * @returns AbortController to cancel the request
+ * Internal helper: create an SSE streaming request
  */
-export function generateAiCodeStream(
-  data: AiGenerateRequest,
+function createSSEStream(
+  url: string,
+  data: any,
   callbacks: SSECallbacks,
 ): AbortController {
   const controller = new AbortController()
 
-  fetch(`${AI_BASE_URL}/generate/stream`, {
+  fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -90,9 +100,8 @@ export function generateAiCodeStream(
 
         buffer += decoder.decode(value, { stream: true })
 
-        // Parse SSE events from buffer
         const lines = buffer.split('\n')
-        buffer = lines.pop() || '' // Keep incomplete line in buffer
+        buffer = lines.pop() || ''
 
         let currentEvent = ''
         let currentData = ''
@@ -103,7 +112,6 @@ export function generateAiCodeStream(
           } else if (line.startsWith('data: ')) {
             currentData = line.slice(6)
           } else if (line === '' && currentEvent && currentData) {
-            // Empty line signals end of event
             try {
               const parsed = JSON.parse(currentData)
               if (currentEvent === 'chunk' && parsed.content) {
@@ -129,4 +137,30 @@ export function generateAiCodeStream(
     })
 
   return controller
+}
+
+/**
+ * Generate MongoDB aggregation pipeline using AI with SSE streaming
+ * @param data - The request data containing prompt, fields and optional existing pipeline
+ * @param callbacks - Callbacks for handling SSE events
+ * @returns AbortController to cancel the request
+ */
+export function generateAiAggregateStream(
+  data: AiAggregateRequest,
+  callbacks: SSECallbacks,
+): AbortController {
+  return createSSEStream(`${AI_BASE_URL}/aggregate/stream`, data, callbacks)
+}
+
+/**
+ * Generate JavaScript code using AI with SSE streaming
+ * @param data - The request data containing prompt and optional fields
+ * @param callbacks - Callbacks for handling SSE events
+ * @returns AbortController to cancel the request
+ */
+export function generateAiCodeStream(
+  data: AiGenerateRequest,
+  callbacks: SSECallbacks,
+): AbortController {
+  return createSSEStream(`${AI_BASE_URL}/generate/stream`, data, callbacks)
 }

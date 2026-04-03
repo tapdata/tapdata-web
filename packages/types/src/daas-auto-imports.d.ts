@@ -33,6 +33,7 @@ declare global {
   const IconLucideMaximize2: typeof import('~icons/lucide/maximize2').default
   const IconLucideMinimize2: typeof import('~icons/lucide/minimize2').default
   const IconLucideSettings2: typeof import('~icons/lucide/settings2').default
+  const IconLucideSparkles: typeof import('~icons/lucide/sparkles').default
   const IconLucideTrash2: typeof import('~icons/lucide/trash2').default
   const IconLucideTriangleAlert: typeof import('~icons/lucide/triangle-alert').default
   const IconMingcuteCheckCircleFill: typeof import('~icons/mingcute/check-circle-fill').default

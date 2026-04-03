@@ -306,3 +306,40 @@
 .pipeline-editor {
   width: 100%;
 }
+
+// AI Aggregate Dialog
+.ai-aggregate-dialog {
+  &__result {
+    margin-top: 12px;
+    padding: 12px 16px;
+    max-height: 360px;
+    overflow: auto;
+    border-radius: var(--el-border-radius-base, 4px);
+    border: 1px solid var(--el-border-color-lighter, #ebeef5);
+    background-color: var(--el-fill-color-lighter, #fafafa);
+    font-size: 12px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-all;
+
+    code {
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo,
+        Courier, monospace;
+    }
+  }
+
+  &__cursor {
+    animation: ai-cursor-blink 1s step-end infinite;
+    color: var(--el-color-primary, #409eff);
+  }
+}
+
+@keyframes ai-cursor-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}

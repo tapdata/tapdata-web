@@ -259,4 +259,14 @@ export default {
   packages_form_aggregate_op_all: '數組全包含',
   packages_form_aggregate_op_elemMatch: '數組元素匹配',
   packages_form_aggregate_op_size: '數組長度',
+
+  // AggregatePanel AI
+  packages_form_aggregate_ai_btn: 'AI 生成',
+  packages_form_aggregate_ai_title: 'AI 生成聚合管道',
+  packages_form_aggregate_ai_placeholder: '請描述你想要的聚合操作，例如：按 status 分組，統計每組的數量和平均金額',
+  packages_form_aggregate_ai_generating: '正在生成...',
+  packages_form_aggregate_ai_apply: '應用',
+  packages_form_aggregate_ai_retry: '重新生成',
+  packages_form_aggregate_ai_stop: '停止',
+  packages_form_aggregate_ai_error: '生成失敗，請重試',
 }
