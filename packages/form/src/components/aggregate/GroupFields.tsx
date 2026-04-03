@@ -16,6 +16,7 @@ function genId() {
 export const GroupFields = defineComponent({
   name: 'GroupFields',
   props: {
+    disabled: Boolean,
     fields: {
       type: Array as PropType<GroupField[]>,
       default: () => [],
@@ -84,6 +85,7 @@ export const GroupFields = defineComponent({
             </div>
 
             <BaseFieldSelect
+              disabled={props.disabled}
               class="group-fields__field"
               modelValue={gf.field}
               options={props.fieldOptions}
@@ -96,6 +98,7 @@ export const GroupFields = defineComponent({
             />
 
             <ElInput
+              disabled={props.disabled}
               class="group-fields__alias"
               modelValue={gf.alias}
               onUpdate:modelValue={(val: string) =>
@@ -105,6 +108,7 @@ export const GroupFields = defineComponent({
             />
 
             <el-button
+              disabled={props.disabled}
               class="group-fields__delete"
               text
               type="danger"
@@ -115,7 +119,13 @@ export const GroupFields = defineComponent({
           </div>
         ))}
 
-        <ElButton type="primary" text size="small" onClick={addField}>
+        <ElButton
+          disabled={props.disabled}
+          type="primary"
+          text
+          size="small"
+          onClick={addField}
+        >
           <el-icon class="mr-1">
             <i-lucide-plus />
           </el-icon>

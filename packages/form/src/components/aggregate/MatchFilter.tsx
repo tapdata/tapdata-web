@@ -30,6 +30,7 @@ function genId() {
 export const MatchFilter = defineComponent({
   name: 'MatchFilter',
   props: {
+    disabled: Boolean,
     conditions: {
       type: Array as PropType<MatchCondition[]>,
       default: () => [],
@@ -101,6 +102,7 @@ export const MatchFilter = defineComponent({
 
             {index > 0 ? (
               <ElSelect
+                disabled={props.disabled}
                 class="match-filter__logic"
                 modelValue={cond.logic}
                 onUpdate:modelValue={(val: string) =>
@@ -116,6 +118,7 @@ export const MatchFilter = defineComponent({
             )}
 
             <BaseFieldSelect
+              disabled={props.disabled}
               class="match-filter__field"
               modelValue={cond.field}
               options={props.fieldOptions}
@@ -129,6 +132,7 @@ export const MatchFilter = defineComponent({
             />
 
             <ElSelect
+              disabled={props.disabled}
               class="match-filter__operator"
               modelValue={cond.operator}
               onUpdate:modelValue={(val: string) =>
@@ -142,6 +146,7 @@ export const MatchFilter = defineComponent({
             </ElSelect>
 
             <ElInput
+              disabled={props.disabled}
               class="match-filter__value"
               modelValue={cond.value}
               onUpdate:modelValue={(val: string) =>
@@ -151,6 +156,7 @@ export const MatchFilter = defineComponent({
             />
 
             <el-button
+              disabled={props.disabled}
               class="match-filter__delete"
               text
               type="danger"
@@ -161,7 +167,13 @@ export const MatchFilter = defineComponent({
           </div>
         ))}
 
-        <ElButton type="primary" text size="small" onClick={addCondition}>
+        <ElButton
+          disabled={props.disabled}
+          type="primary"
+          text
+          size="small"
+          onClick={addCondition}
+        >
           <el-icon class="mr-1">
             <i-lucide-plus />
           </el-icon>

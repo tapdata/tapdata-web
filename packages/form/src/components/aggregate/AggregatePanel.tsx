@@ -25,6 +25,10 @@ import './style.scss'
 export const AggregatePanel = defineComponent({
   name: 'AggregatePanel',
   props: {
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     value: {
       type: Object as PropType<{
         useRawPipeline: boolean
@@ -173,6 +177,7 @@ export const AggregatePanel = defineComponent({
             placement="top"
           >
             <ElSwitch
+              disabled={props.disabled}
               class="ml-auto"
               modelValue={useRawPipeline.value}
               onUpdate:modelValue={(val: any) => (useRawPipeline.value = !!val)}
@@ -185,6 +190,7 @@ export const AggregatePanel = defineComponent({
         {useRawPipeline.value ? (
           <div class="aggregate-panel__raw">
             <PipelineEditor
+              disabled={props.disabled}
               modelValue={rawPipeline.value}
               fields={rawFields.value}
               height={320}
@@ -204,6 +210,7 @@ export const AggregatePanel = defineComponent({
                   ),
                 default: () => (
                   <MatchFilter
+                    disabled={props.disabled}
                     conditions={config.value.matchConditions}
                     fieldOptions={fieldOptions.value}
                     loading={fieldsLoading.value}
@@ -225,6 +232,7 @@ export const AggregatePanel = defineComponent({
                   ),
                 default: () => (
                   <GroupFields
+                    disabled={props.disabled}
                     fields={config.value.groupFields}
                     fieldOptions={fieldOptions.value}
                     loading={fieldsLoading.value}
@@ -246,6 +254,7 @@ export const AggregatePanel = defineComponent({
                   ),
                 default: () => (
                   <AggregateFields
+                    disabled={props.disabled}
                     fields={config.value.aggregateFields}
                     fieldOptions={fieldOptions.value}
                     loading={fieldsLoading.value}

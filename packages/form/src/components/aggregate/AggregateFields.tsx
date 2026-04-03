@@ -29,6 +29,7 @@ function genId() {
 export const AggregateFields = defineComponent({
   name: 'AggregateFields',
   props: {
+    disabled: Boolean,
     fields: {
       type: Array as PropType<AggregateField[]>,
       default: () => [],
@@ -98,6 +99,7 @@ export const AggregateFields = defineComponent({
             </div>
 
             <ElInput
+              disabled={props.disabled}
               class="aggregate-fields__output"
               modelValue={af.outputField}
               onUpdate:modelValue={(val: string) =>
@@ -107,6 +109,7 @@ export const AggregateFields = defineComponent({
             />
 
             <ElSelect
+              disabled={props.disabled}
               class="aggregate-fields__operator"
               modelValue={af.operator}
               onUpdate:modelValue={(val: string) =>
@@ -120,6 +123,7 @@ export const AggregateFields = defineComponent({
             </ElSelect>
 
             <BaseFieldSelect
+              disabled={props.disabled}
               class="aggregate-fields__source"
               modelValue={af.sourceField}
               options={props.fieldOptions}
@@ -134,6 +138,7 @@ export const AggregateFields = defineComponent({
             />
 
             <el-button
+              disabled={props.disabled}
               class="aggregate-fields__delete"
               text
               type="danger"
@@ -144,7 +149,13 @@ export const AggregateFields = defineComponent({
           </div>
         ))}
 
-        <ElButton type="primary" text size="small" onClick={addField}>
+        <ElButton
+          disabled={props.disabled}
+          type="primary"
+          text
+          size="small"
+          onClick={addField}
+        >
           <el-icon class="mr-1">
             <i-lucide-plus />
           </el-icon>
