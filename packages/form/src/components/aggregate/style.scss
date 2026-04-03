@@ -1,0 +1,308 @@
+.aggregate-panel {
+  color: var(--el-text-color-regular, #606266);
+
+  &__mode {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 0 12px;
+
+    .el-switch {
+      --el-switch-on-color: var(--el-color-primary, #409eff);
+    }
+  }
+
+  &__raw {
+    margin-bottom: 12px;
+  }
+
+  .el-switch__label {
+    font-weight: 400;
+    &:not(.is-active) {
+      color: var(--el-text-color-regular, #606266);
+    }
+  }
+
+  // Collapse overrides for Element Plus
+  .el-collapse {
+    border-top: none;
+    border-bottom: none;
+  }
+
+  .el-collapse-item__header {
+    height: 40px;
+    line-height: 40px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--el-text-color-primary, #303133);
+    background-color: var(--el-fill-color-lighter, #fafafa);
+    border-radius: 10px;
+    padding: 0 12px;
+    border-bottom: none;
+    margin-bottom: 4px;
+
+    .el-badge {
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    .el-badge__content--primary {
+      background-color: var(--el-color-primary, #409eff);
+    }
+  }
+
+  .el-collapse-item__wrap {
+    border-bottom: none;
+  }
+
+  .el-collapse-item__content {
+    padding: 8px 4px 12px;
+  }
+}
+
+// Shared drag-item row styles
+@mixin drag-item-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: var(--el-border-radius-base, 4px);
+  border: 1px solid transparent;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
+
+  &:hover {
+    background-color: var(--el-fill-color-light, #f5f7fa);
+    border-color: var(--el-border-color-lighter, #ebeef5);
+
+    .match-filter__delete,
+    .group-fields__delete,
+    .aggregate-fields__delete {
+      opacity: 1;
+    }
+  }
+
+  & + & {
+    margin-top: 4px;
+  }
+
+  // compact inputs inside rows
+  .el-input,
+  .el-select,
+  .field-select {
+    --el-input-height: 28px;
+    font-size: 12px;
+  }
+}
+
+@mixin drag-handle {
+  cursor: grab;
+  color: var(--el-text-color-placeholder, #c0c4cc);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 2px;
+  border-radius: 2px;
+  transition: color 0.15s;
+
+  &:hover {
+    color: var(--el-text-color-secondary, #909399);
+  }
+
+  &:active {
+    cursor: grabbing;
+    color: var(--el-color-primary, #409eff);
+  }
+}
+
+@mixin delete-btn {
+  opacity: 0;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+
+  &.el-button {
+    --el-button-hover-text-color: var(--el-color-danger, #f56c6c);
+    padding: 4px;
+  }
+}
+
+// MatchFilter
+.match-filter {
+  &__item {
+    @include drag-item-row;
+  }
+
+  &__drag-handle {
+    @include drag-handle;
+  }
+
+  &__logic-placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 28px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--el-color-primary, #409eff);
+    background-color: var(--el-color-primary-light-9, #ecf5ff);
+    border-radius: var(--el-border-radius-base, 4px);
+    flex-shrink: 0;
+    letter-spacing: 1px;
+  }
+
+  &__field {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__operator {
+    flex-shrink: 0;
+  }
+
+  &__value {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__delete {
+    @include delete-btn;
+  }
+}
+
+// GroupFields
+.group-fields {
+  &__item {
+    @include drag-item-row;
+  }
+
+  &__drag-handle {
+    @include drag-handle;
+  }
+
+  &__field {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__alias {
+    flex: 0.6;
+    min-width: 0;
+  }
+
+  &__delete {
+    @include delete-btn;
+  }
+}
+
+// AggregateFields
+.aggregate-fields {
+  &__item {
+    @include drag-item-row;
+  }
+
+  &__drag-handle {
+    @include drag-handle;
+  }
+
+  &__output {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__operator {
+    flex-shrink: 0;
+  }
+
+  &__source {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__delete {
+    @include delete-btn;
+  }
+}
+
+// PipelinePreview
+.pipeline-preview {
+  border-top: 1px solid var(--el-border-color-lighter, #ebeef5);
+  padding-top: 12px;
+  margin-top: 8px;
+
+  &__code {
+    border-radius: 10px;
+    border: 1px solid var(--el-border-color-lighter, #ebeef5);
+    overflow: hidden;
+    font-size: 12px;
+    background-color: var(--el-fill-color-lighter, #fafafa);
+
+    pre {
+      margin: 0;
+      padding: 12px 16px;
+      max-height: 300px;
+      overflow: auto;
+
+      code {
+        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo,
+          Courier, monospace;
+        font-size: 12px;
+        line-height: 1.6;
+      }
+    }
+  }
+}
+
+// PipelineEditor
+.pipeline-editor-wrap {
+  border: 1px solid var(--el-border-color, #dcdfe6);
+  border-radius: var(--el-border-radius-base, 4px);
+  overflow: hidden;
+  transition: border-color 0.2s;
+  position: relative;
+
+  &:focus-within {
+    border-color: var(--el-color-primary, #409eff);
+  }
+
+  // 全屏模式（浏览器原生 Fullscreen API）
+  &.is-fullscreen,
+  &:fullscreen {
+    border-radius: 0;
+    border: none;
+    background: var(--el-bg-color, #fff);
+
+    .pipeline-editor {
+      height: calc(100vh - 36px) !important;
+    }
+
+    .pipeline-editor-toolbar {
+      border-bottom: 1px solid var(--el-border-color-lighter, #ebeef5);
+      background-color: var(--el-bg-color, #fff);
+    }
+  }
+}
+
+.pipeline-editor-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+  padding: 2px 4px;
+  background-color: var(--el-fill-color-lighter, #fafafa);
+  border-bottom: 1px solid var(--el-border-color-extra-light, #f2f6fc);
+
+  .el-button {
+    color: var(--el-text-color-secondary, #909399);
+    padding: 4px;
+
+    &:hover {
+      color: var(--el-color-primary, #409eff);
+    }
+  }
+}
+
+.pipeline-editor {
+  width: 100%;
+}

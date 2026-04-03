@@ -22,12 +22,16 @@ declare global {
   const ElRadioButton: typeof import('element-plus/es').ElRadioButton
   const ElRadioGroup: typeof import('element-plus/es').ElRadioGroup
   const ElSwitch: typeof import('element-plus/es').ElSwitch
+  const IconLucideAlignLeft: typeof import('~icons/lucide/align-left').default
   const IconLucideArrowDownAZ: typeof import('~icons/lucide/arrow-down-a-z').default
   const IconLucideArrowUpZA: typeof import('~icons/lucide/arrow-up-z-a').default
   const IconLucideClock: typeof import('~icons/lucide/clock').default
+  const IconLucideCopy: typeof import('~icons/lucide/copy').default
   const IconLucideFileText: typeof import('~icons/lucide/file-text').default
   const IconLucideHash: typeof import('~icons/lucide/hash').default
   const IconLucideList: typeof import('~icons/lucide/list').default
+  const IconLucideMaximize2: typeof import('~icons/lucide/maximize2').default
+  const IconLucideMinimize2: typeof import('~icons/lucide/minimize2').default
   const IconLucideSettings2: typeof import('~icons/lucide/settings2').default
   const IconLucideTrash2: typeof import('~icons/lucide/trash2').default
   const IconLucideTriangleAlert: typeof import('~icons/lucide/triangle-alert').default
