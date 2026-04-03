@@ -10,7 +10,7 @@ import { TextEditable } from '@tap/component/src/base/text-editable'
 import Time from '@tap/shared/src/time'
 import { useDark } from '@vueuse/core'
 import { debounce } from 'lodash-es'
-import { computed, onUnmounted, provide, ref, watch } from 'vue'
+import { computed, onUnmounted, provide, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Canvas from './Canvas.vue'
 import ConsolePanel from './components/migration/ConsolePanel.vue'
@@ -561,13 +561,6 @@ const initMonitor = debounce(() => {
   startLoadData()
 }, 200)
 
-watch(
-  () => dataflowStore.stateIsReadonly,
-  (v) => {
-    console.trace('stateIsReadonly', v)
-  },
-)
-
 function handleOpenDetail(node: any) {
   if (['mem_cache'].includes(node.type)) return
   nodeDetailDialogId.value = node.id
@@ -599,8 +592,8 @@ const init = async () => {
   await dataflowStore.initPdkProperties()
 
   if (taskId) {
+    await initNodeType()
     await dataflowStore.fetchDataflow(taskId)
-    await initNodeType(dataflowStore.dataflow.syncType)
   }
   initMonitor()
   initWS()
