@@ -420,6 +420,7 @@ function addLogTagsFilter(params: any) {
     if (
       node &&
       [
+        'custom_processor',
         'js_processor',
         'migrate_js_processor',
         'standard_js_processor',
