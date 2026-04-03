@@ -113,7 +113,12 @@ export function useCanvasOperation() {
   )
 
   const isSyncTask = computed(() => {
-    return ['DataflowNew', 'DataflowEditor'].includes(route.name)
+    return [
+      'DataflowNew',
+      'DataflowEditor',
+      'TaskMonitor',
+      'MigrationMonitorViewer', // 任务记录也加载自定节点
+    ].includes(route.name)
   })
 
   const monitorRoute = computed(() => {
