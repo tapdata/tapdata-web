@@ -406,13 +406,13 @@ function taskDialogSubmit(start: boolean) {
     } catch (error: any) {
       let msg
 
-      if (error?.data?.code === 'Task.ListWarnMessage' && error.data.data) {
-        const keys = Object.keys(error.data.data)
+      if (error?.code === 'Task.ListWarnMessage' && error.data) {
+        const keys = Object.keys(error.data)
         msg = error.data.data[keys[0]]?.[0]?.msg
       }
 
       showErrorMessage({
-        msg: msg || error?.data?.message || t('public_message_save_fail'),
+        msg: msg || error?.message || t('public_message_save_fail'),
         stack: error?.data?.stack,
       })
     }
