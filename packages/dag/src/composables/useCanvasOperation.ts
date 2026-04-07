@@ -248,10 +248,10 @@ export function useCanvasOperation() {
     } */,
   ]
 
-  const initNodeType = async (syncType: string) => {
-    let nodes = syncType === 'sync' ? syncProcessor : migrateProcessor
+  const initNodeType = async () => {
+    let nodes = isSyncTask.value ? syncProcessor : migrateProcessor
     //仅企业版有的节点
-    if (isDaas && syncType === 'sync') {
+    if (isDaas && isSyncTask.value) {
       const isDaasNode = [
         {
           name: t('packages_dag_src_editor_join'),
@@ -263,7 +263,7 @@ export function useCanvasOperation() {
     dataflowStore.addProcessorNode(nodes.filter((item) => !item.hidden))
     // dataflowStore.addResourceIns(allResourceIns)
 
-    if (syncType === 'sync' && hasFeature('customProcessor')) {
+    if (isSyncTask.value && hasFeature('customProcessor')) {
       await dataflowStore.loadCustomNode()
     }
   }
