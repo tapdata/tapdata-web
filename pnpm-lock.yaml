@@ -1033,6 +1033,9 @@ importers:
       lodash:
         specifier: 'catalog:'
         version: 4.17.21
+      monaco-editor:
+        specifier: 'catalog:'
+        version: 0.52.2
       resize-observer-polyfill:
         specifier: 'catalog:'
         version: 1.5.1
