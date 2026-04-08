@@ -1016,6 +1016,9 @@ export default {
   packages_business_data_server_drawer_tiaoshi: 'Debug',
   packages_business_data_server_drawer_peizhi: 'Configuration',
   packages_business_data_server_drawer_chuangjianfuwu: 'Create API',
+  packages_business_copy_server: 'Copy API',
+  packages_business_import_server: 'Import API',
+  packages_business_export_server: 'Export API',
   packages_business_data_server_drawer_fuwuxiangqing: 'Service Details',
   packages_business_data_server_list_quedingchexiaogai:
     'Are you sure you want to revoke this service?',

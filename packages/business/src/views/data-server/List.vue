@@ -26,6 +26,7 @@ import { uid } from '@tap/shared'
 import { cloneDeep, escapeRegExp } from 'lodash-es'
 import {
   computed,
+  h,
   nextTick,
   onBeforeMount,
   onBeforeUnmount,
@@ -39,6 +40,7 @@ import { DatabaseIcon } from '../../components/DatabaseIcon'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
 import Upload from '../../components/UploadDialog.vue'
+import { useHas } from '../../composables'
 import Delete from '../api-application/Delete.vue'
 import Editor from '../api-application/Editor.vue'
 import Drawer from './Drawer.vue'
@@ -77,6 +79,8 @@ const emit = defineEmits<{
 const route = useRoute()
 const { t } = useI18n()
 
+const spacer = h(ElDivider, { direction: 'vertical', class: 'mx-1' })
+
 // Refs
 const table = ref<InstanceType<typeof TablePage>>()
 const drawer = ref<InstanceType<typeof Drawer>>()
@@ -100,6 +104,17 @@ const searchParams = ref<SearchParams>({
   status: '',
   keyword: '',
   appId: '',
+})
+
+const $has = useHas()
+
+const btnPermissions = computed(() => {
+  return {
+    creation: $has('v2_data-server-list_creation'),
+    copy: $has('v2_data-server-list_copy'),
+    import: $has('v2_data-server-list_import'),
+    export: $has('v2_data-server-list_export'),
+  }
 })
 
 const statusOptions: StatusOption[] = [
@@ -466,7 +481,10 @@ const handleDragLeave = (event: DragEvent) => {
   event.preventDefault()
 
   const currentTarget = event.currentTarget as HTMLElement | null
-  if (currentTarget && !currentTarget.contains(event.relatedTarget as Node | null)) {
+  if (
+    currentTarget &&
+    !currentTarget.contains(event.relatedTarget as Node | null)
+  ) {
     const dropNode = findParentNodeByClassName(
       event.currentTarget as HTMLElement,
       'list-item-hover',
@@ -525,17 +543,14 @@ defineExpose({
       <slot name="title" />
     </template>
     <template #actions>
-      <ElButton
-        v-readonlybtn="'SYNC_job_import'"
-        class="btn"
-        @click="handleImport"
-      >
+      <ElButton v-if="btnPermissions.import" class="btn" @click="handleImport">
         <template #icon>
           <ImportOutlined />
         </template>
         <span> {{ $t('packages_business_button_bulk_import') }}</span>
       </ElButton>
       <ElButton
+        v-if="btnPermissions.creation"
         class="btn btn-create"
         type="primary"
         @click.stop="showDrawer()"
@@ -576,7 +591,11 @@ defineExpose({
               <i-mingcute-search-line />
             </template>
           </el-button>
-          <el-button text @click="appEditor.open()">
+          <el-button
+            v-if="btnPermissions.creation"
+            text
+            @click="appEditor.open()"
+          >
             <template #icon>
               <i-mingcute-add-line />
             </template>
@@ -708,14 +727,14 @@ defineExpose({
             </template>
             <span> {{ $t('public_batch_publish') }}</span>
           </ElButton>
-          <ElButton v-readonlybtn="'SYNC_job_export'" @click="handleExport">
+          <ElButton v-if="btnPermissions.export" @click="handleExport">
             <template #icon>
               <ExportOutlined />
             </template>
             <span> {{ $t('public_button_export') }}</span>
           </ElButton>
           <ElButton
-            v-readonlybtn="'SYNC_job_export'"
+            v-if="btnPermissions.export"
             class="btn"
             @click="handleExportApiDoc"
           >
@@ -825,33 +844,40 @@ defineExpose({
           fixed="right"
         >
           <template #default="{ row }">
-            <ElButton
-              v-if="row.status !== 'active'"
-              :disabled="row.status !== 'pending'"
-              text
-              type="primary"
-              @click="changeStatus(row)"
-              >{{ $t('public_button_public') }}</ElButton
-            >
-            <ElButton
-              v-if="row.status === 'active'"
-              text
-              type="primary"
-              @click="changeStatus(row)"
-              >{{ $t('public_button_unpublish') }}</ElButton
-            >
-            <ElDivider class="mx-1" direction="vertical" />
-            <ElButton text type="primary" @click="output(row)">{{
-              $t('public_button_export')
-            }}</ElButton>
-            <ElDivider class="mx-1" direction="vertical" />
-            <ElButton text type="primary" @click="showDrawer(row, true)">{{
-              $t('public_button_copy')
-            }}</ElButton>
-            <ElDivider class="mx-1" direction="vertical" />
-            <ElButton text type="primary" @click="removeServer(row)">{{
-              $t('public_button_delete')
-            }}</ElButton>
+            <el-space :spacer="spacer" :size="0" class="lh-1">
+              <ElButton
+                v-if="row.status !== 'active'"
+                :disabled="row.status !== 'pending'"
+                text
+                type="primary"
+                @click="changeStatus(row)"
+                >{{ $t('public_button_public') }}</ElButton
+              >
+              <ElButton
+                v-if="row.status === 'active'"
+                text
+                type="primary"
+                @click="changeStatus(row)"
+                >{{ $t('public_button_unpublish') }}</ElButton
+              >
+              <ElButton
+                v-if="btnPermissions.export"
+                text
+                type="primary"
+                @click="output(row)"
+                >{{ $t('public_button_export') }}</ElButton
+              >
+              <ElButton
+                v-if="btnPermissions.copy"
+                text
+                type="primary"
+                @click="showDrawer(row, true)"
+                >{{ $t('public_button_copy') }}</ElButton
+              >
+              <ElButton text type="primary" @click="removeServer(row)">{{
+                $t('public_button_delete')
+              }}</ElButton>
+            </el-space>
           </template>
         </el-table-column>
       </TablePage>
