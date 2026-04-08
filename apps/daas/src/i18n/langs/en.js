@@ -1961,6 +1961,7 @@ export default {
   account_editFail: 'User name modification failed',
   role_allData: 'All role data',
   role_functionDataPermission: 'Function and data permissions',
+  role_dataPermission: 'Data Permissions',
   role_module: 'Module',
   role_choosePermissionTip:
     'Please select the functions and data permissions available for this role (checking all role data means you can browse or operate the data of all roles, unchecking means you can only browse or operate your own data )',

@@ -1,11 +1,35 @@
-<script>
+<script setup lang="ts">
 import { Check } from '@element-plus/icons-vue'
 import { fetchPermissions } from '@tap/api/src/core/permissions'
 import { fetchRoleMappings } from '@tap/api/src/core/role-mappings'
 import { updatePermissionRoleMapping } from '@tap/api/src/core/users'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import i18n from '@/i18n'
+import { Modal } from '@tap/component/src/modal'
+import { useI18n } from '@tap/i18n'
+import { ElMessage } from 'element-plus'
+import { computed, onMounted, reactive, ref } from 'vue'
 
+import { useRoute, useRouter } from 'vue-router'
+
+const { t } = useI18n()
+const route = useRoute()
+const router = useRouter()
+
+const emit = defineEmits<{
+  saveBack: []
+}>()
+
+// ---- 模块图标映射（与 menu.ts 中 icon 对应） ----
+const MODULE_ICONS: Record<string, string> = {
+  'v2_data-console': 'process-platform',
+  v2_datasource_menu: 'agent',
+  v2_data_pipeline: 'migrate',
+  v2_advanced_features: 'vip-one',
+  'v2_data-server': 'apiServer_navbar',
+  'v2_system-management': 'setting',
+}
+
+// ---- pageSort 配置 ----
 const pageSort = [
   { name: 'v2_data-console', children: [{ name: 'v2_data-console' }] },
   {
@@ -15,17 +39,20 @@ const pageSort = [
         name: 'v2_datasource_menu',
         buttons: [
           {
-            label: i18n.t('public_connection_button_create'),
+            label: t('public_connection_button_create'),
             name: 'v2_datasource_creation',
           },
           {
-            label: i18n.t('public_connection_button_copy'),
+            label: t('public_connection_button_copy'),
             name: 'v2_datasource_copy',
           },
         ],
         filterData: [
+          { label: t('public_view_all'), name: 'v2_datasource_all_data' },
+          { label: t('public_edit_all'), name: 'v2_datasource_all_data_Edit' },
           {
-            name: 'v2_datasource_all_data',
+            label: t('public_delete_all'),
+            name: 'v2_datasource_all_data_Delete',
           },
         ],
       },
@@ -38,29 +65,47 @@ const pageSort = [
         name: 'v2_data_replication',
         buttons: [
           {
-            label: i18n.t('public_task_create'),
+            label: t('public_task_create'),
             name: 'v2_data_replication_creation',
             checked: false,
           },
           {
-            label: i18n.t('public_task_copy'),
+            label: t('public_task_copy'),
             name: 'v2_data_replication_copy',
             checked: false,
           },
           {
-            label: i18n.t('public_task_import'),
+            label: t('public_task_import'),
             name: 'v2_data_replication_import',
             checked: false,
           },
           {
-            label: i18n.t('public_task_export'),
+            label: t('public_task_export'),
             name: 'v2_data_replication_export',
             checked: false,
           },
         ],
         filterData: [
+          { label: t('public_view_all'), name: 'v2_data_replication_all_data' },
           {
-            name: 'v2_data_replication_all_data',
+            label: t('public_edit_all'),
+            name: 'v2_data_replication_all_data_Edit',
+          },
+          {
+            label: t('public_delete_all'),
+            name: 'v2_data_replication_all_data_Delete',
+          },
+          {
+            label: t('public_reset_all'),
+            name: 'v2_data_replication_all_data_Reset',
+          },
+          {
+            label: t('public_start_all'),
+            name: 'v2_data_replication_all_data_Start',
+          },
+          {
+            label: t('public_stop_all'),
+            name: 'v2_data_replication_all_data_Stop',
           },
         ],
       },
@@ -68,33 +113,136 @@ const pageSort = [
         name: 'v2_data_flow',
         buttons: [
           {
-            label: i18n.t('public_task_create'),
+            label: t('public_task_create'),
             name: 'v2_data_flow_creation',
             checked: false,
           },
           {
-            label: i18n.t('public_task_copy'),
+            label: t('public_task_copy'),
             name: 'v2_data_flow_copy',
             checked: false,
           },
           {
-            label: i18n.t('public_task_import'),
+            label: t('public_task_import'),
             name: 'v2_data_flow_import',
             checked: false,
           },
           {
-            label: i18n.t('public_task_export'),
+            label: t('public_task_export'),
             name: 'v2_data_flow_export',
             checked: false,
           },
         ],
         filterData: [
+          { label: t('public_view_all'), name: 'v2_data_flow_all_data' },
+          { label: t('public_edit_all'), name: 'v2_data_flow_all_data_Edit' },
           {
-            name: 'v2_data_flow_all_data',
+            label: t('public_delete_all'),
+            name: 'v2_data_flow_all_data_Delete',
           },
+          { label: t('public_reset_all'), name: 'v2_data_flow_all_data_Reset' },
+          { label: t('public_start_all'), name: 'v2_data_flow_all_data_Start' },
+          { label: t('public_stop_all'), name: 'v2_data_flow_all_data_Stop' },
         ],
       },
       { name: 'v2_data_check' },
+    ],
+  },
+  {
+    name: 'v2_data-server',
+    children: [
+      { name: 'v2_api-application' },
+      {
+        name: 'v2_data-server-list',
+        buttons: [
+          {
+            label: t('packages_business_chuangjianfuwu'),
+            name: 'v2_data-server-list_creation',
+            checked: false,
+          },
+          {
+            label: t('packages_business_copy_server'),
+            name: 'v2_data-server-list_copy',
+            checked: false,
+          },
+          {
+            label: t('packages_business_import_server'),
+            name: 'v2_data-server-list_import',
+            checked: false,
+          },
+          {
+            label: t('packages_business_export_server'),
+            name: 'v2_data-server-list_export',
+            checked: false,
+          },
+        ],
+        filterData: [
+          { label: t('public_view_all'), name: 'v2_data-server-list_all_data' },
+          {
+            label: t('public_edit_all'),
+            name: 'v2_data-server-list_all_data_Edit',
+          },
+          {
+            label: t('public_publish_all'),
+            name: 'v2_data-server-list_all_data_Publish',
+          },
+          {
+            label: t('public_revoke_all'),
+            name: 'v2_data-server-list_all_data_Revoke',
+          },
+          {
+            label: t('public_export_all'),
+            name: 'v2_data-server-list_all_data_Export',
+          },
+          {
+            label: t('public_delete_all'),
+            name: 'v2_data-server-list_all_data_Delete',
+          },
+        ],
+      },
+      {
+        name: 'v2_api-client',
+        buttons: [
+          {
+            label: t('application_create'),
+            name: 'v2_api-client_creation',
+            checked: false,
+          },
+        ],
+        filterData: [
+          { label: t('public_view_all'), name: 'v2_api-client_all_data' },
+          { label: t('public_edit_all'), name: 'v2_api-client_all_data_Edit' },
+          {
+            label: t('public_delete_all'),
+            name: 'v2_api-client_all_data_Delete',
+          },
+        ],
+      },
+      {
+        name: 'v2_api-servers',
+        buttons: [
+          {
+            label: t('api_server_create_server'),
+            name: 'v2_api-servers_creation',
+            checked: false,
+          },
+          {
+            label: t('api_server_download_API_Server_config'),
+            name: 'v2_api-servers_download',
+            checked: false,
+          },
+        ],
+        filterData: [
+          { label: t('public_view_all'), name: 'v2_api-servers_all_data' },
+          { label: t('public_edit_all'), name: 'v2_api-servers_all_data_Edit' },
+          {
+            label: t('public_delete_all'),
+            name: 'v2_api-servers_all_data_Delete',
+          },
+        ],
+      },
+      { name: 'v2_data_server_audit' },
+      { name: 'v2_api_monitor' },
     ],
   },
   {
@@ -104,21 +252,6 @@ const pageSort = [
       { name: 'v2_function_management' },
       { name: 'v2_custom_node' },
       { name: 'v2_shared_cache' },
-    ],
-  },
-  // {
-  //   name: 'v2_data_discovery',
-  //   children: [{ name: 'v2_data_object' }, { name: 'v2_data_catalogue' }],
-  // },
-  {
-    name: 'v2_data-server',
-    children: [
-      { name: 'v2_api-application' },
-      { name: 'v2_data-server-list' },
-      { name: 'v2_api-client' },
-      { name: 'v2_api-servers' },
-      { name: 'v2_data_server_audit' },
-      { name: 'v2_api_monitor' },
     ],
   },
   {
@@ -132,503 +265,705 @@ const pageSort = [
   },
 ]
 
-export default {
-  components: {
-    PageContainer,
-    Check,
-  },
-  emits: ['saveBack'],
-  data() {
-    return {
-      loading: false,
-      saveloading: false,
-      permissLoading: false,
-      form: {
-        name: '',
-        description: '',
-        register_user_default: false,
-      },
-      dataList: [],
-      rolemappings: [],
-      roleusers: [],
-      selectRole: [],
-      permissionList: [],
-      roleName: '',
-      radio: 1,
-      moduleList: [],
-      adds: [],
-      deletes: [],
-    }
-  },
-  created() {
-    this.roleName = this.$route.query.name ? this.$route.query.name : ''
-    this.getPermission()
-  },
-  methods: {
-    // 获取用户权限数据
-    getMappingData(pageData) {
-      this.loading = true
-      const filter = {
-        where: {
-          roleId: this.$route.query.id,
-        },
-      }
-      fetchRoleMappings(filter)
-        .then((data) => {
-          if (data?.length) {
-            data.forEach((item) => {
-              if (item.principalType === 'USER') {
-                this.roleusers.push(item.principalId)
-              }
-              if (item.principalType === 'PERMISSION') {
-                const selected = this.permissionList.filter(
-                  (v) => v.name === item.principalId,
-                )
-                if (selected && selected.length > 0) {
-                  selected[0].self_only = item.self_only
-                  this.selectRole.push(selected[0].name)
-                }
-              }
-            })
-            this.rolemappings = data?.items
+// ---- 状态 ----
+const loading = ref(false)
+const saveloading = ref(false)
+const permissLoading = ref(false)
+const dataList = ref<any[]>([])
+const permissionList = ref<any[]>([])
+const selectRole = ref<string[]>([])
+const roleusers = ref<string[]>([])
+const adds = ref<any[]>([])
+const deletes = ref<any[]>([])
+const searchKeyword = ref('')
+const expandedModules = reactive<Record<string, boolean>>({})
 
-            pageData?.forEach((item) => {
-              // 页面权限
-              item.children?.forEach((childItem) => {
-                childItem.checked = this.selectRole.includes(childItem.name)
-                childItem.checkOrigin = this.selectRole.includes(childItem.name)
+const roleName = computed(() => (route.query.name as string) || '')
 
-                // 按钮权限
-                childItem.buttons?.forEach((el) => {
-                  el.checked = this.selectRole.includes(el.name)
-                  el.checkOrigin = this.selectRole.includes(el.name)
-                })
+// ---- 计算属性 ----
 
-                // 显示数据
-                childItem.filterData?.forEach((el) => {
-                  el.checked = this.selectRole.includes(el.name)
-                  el.checkOrigin = this.selectRole.includes(el.name)
-                })
-              })
-            })
-          }
-        })
-        .finally(() => {
-          this.loading = false
-        })
-    },
-
-    // 获取权限信息
-    getPermission() {
-      const self = this
-      this.permissLoading = true
-      const filter = { where: { version: 'v2' } }
-
-      fetchPermissions(filter)
-        .then((data) => {
-          if (data && data.length) {
-            self.permissionList = data
-
-            // 页面排序  ---- 开始
-            const pageMap = {}
-            self.permissionList.forEach((item) => {
-              pageMap[item.name] = item
-            })
-
-            const pageMenu = (items) => {
-              return items.map((item) => {
-                const page = pageMap[item.name]
-                const menu = Object.assign({}, item, page)
-                if (menu.children) {
-                  menu.children = pageMenu(menu.children)
-                }
-                return menu
-              })
-            }
-
-            this.dataList = pageMenu(pageSort)
-            // 页面排序  ---- 结束
-            this.getMappingData(this.dataList)
-          }
-        })
-        .finally(() => {
-          this.permissLoading = false
-        })
-    },
-
-    // 页面单选
-    handleCheckChange(data, parentData, type = 'page') {
-      //保留当前操作数据
-      this.updateData(data.checked, data)
-
-      // 页面权限开启
-      if (type === 'page' && data.checked) {
-        // 按钮权限全部开启
-        data.buttons?.forEach((el) => {
-          el.checked = true
-          this.updateData(el.checked, el)
-        })
-      }
-
-      // 页面权限关闭
-      if (type === 'page' && !data.checked) {
-        // 如果父元素的页面权限全部不勾选，则父元素也隐藏
-        if (
-          !!parentData.children?.every((t) => !t.checked) &&
-          !this.checkPrincipalId(this.deletes, parentData.name)?.length
-        ) {
-          parentData.checked = false
-          this.updateData(false, parentData)
-        }
-
-        // 按钮权限全部关闭
-        data.buttons?.forEach((el) => {
-          el.checked = false
-          this.updateData(el.checked, el)
-        })
-      }
-
-      // 按钮权限勾选
-      if (type === 'button' && data.checked) {
-        // 页面权限勾选上
-        parentData.checked = true
-        this.updateData(parentData.checked, parentData)
-      }
-    },
-
-    updateData(checked, data) {
-      //保留当前操作数据
-      const roleId = this.$route.query.id
-      if (checked) {
-        // 和初始值不一样，则进行记录
-        if (
-          checked !== data.checkOrigin &&
-          this.checkPrincipalId(this.adds, data.name)?.length === 0
-        ) {
-          this.adds.push({
-            principalType: 'PERMISSION',
-            principalId: data.name,
-            roleId,
-          })
-        }
-        //同时清掉 deletes
-        const index = this.deletes?.findIndex(
-          (del) => del.principalId === data.name,
-        )
-        if (index > -1) {
-          this.deletes.splice(index, 1)
-        }
-      } else {
-        // 和初始值不一样，则进行记录
-        if (
-          checked !== data.checkOrigin &&
-          this.checkPrincipalId(this.deletes, data.name)
-        ) {
-          this.deletes.push({
-            principalType: 'PERMISSION',
-            principalId: data.name,
-            roleId,
-          })
-        }
-
-        //同时清掉 adds
-        const index = this.adds?.findIndex(
-          (add) => add.principalId === data.name,
-        )
-        if (index > -1) {
-          this.adds.splice(index, 1)
-        }
-      }
-    },
-    //查找是否存在某个字段
-    checkPrincipalId(data, principalId) {
-      return data.filter((item) => item.principalId === principalId) || []
-    },
-    //新的保存方法
-    save() {
-      //数据组装
-      const roleId = this.$route.query.id
-      this.saveloading = true
-      const data = {
-        adds: this.adds,
-        deletes: this.deletes,
-      }
-      updatePermissionRoleMapping(roleId, data)
-        .then(() => {
-          this.$emit('saveBack')
-          this.$message.success(this.$t('public_message_save_ok'))
-          this.adds = []
-          this.deletes = []
-          this.$router.push({
-            name: 'roleList',
-          })
-        })
-        .finally(() => {
-          this.saveloading = false
-        })
-    },
-    // 返回
-    back() {
-      // 检查是否有改动
-      if (!this.adds.length && !this.deletes.length) {
-        this.$router.push({ name: 'roles' })
-        return
-      }
-
-      this.$confirm(
-        this.$t('public_message_title_prompt'),
-        this.$t('daas_role_role_ninhaiweibaocun'),
-      ).then((flag) => {
-        flag && this.save()
-      })
-    },
-  },
+// 计算每个模块的权限统计
+function getModuleStats(item: any) {
+  let total = 0
+  let enabled = 0
+  item.children?.forEach((child: any) => {
+    total++ // 页面权限
+    if (child.checked) enabled++
+    child.buttons?.forEach((btn: any) => {
+      total++
+      if (btn.checked) enabled++
+    })
+    child.filterData?.forEach((fd: any) => {
+      total++
+      if (fd.checked) enabled++
+    })
+  })
+  return { total, enabled }
 }
+
+const filteredDataList = computed(() => {
+  if (!searchKeyword.value) return dataList.value
+  const kw = searchKeyword.value.toLowerCase()
+  return dataList.value.filter((item: any) => {
+    // 匹配模块名
+    if (item.description?.toLowerCase().includes(kw)) return true
+    // 匹配页面权限名称
+    return item.children?.some((child: any) =>
+      child.description?.toLowerCase().includes(kw),
+    )
+  })
+})
+
+function isExpanded(name: string) {
+  return expandedModules[name] ?? false
+}
+
+function toggleExpand(name: string) {
+  expandedModules[name] = !isExpanded(name)
+}
+
+function expandAll() {
+  filteredDataList.value.forEach((item: any) => {
+    expandedModules[item.name] = true
+  })
+}
+
+function collapseAll() {
+  Object.keys(expandedModules).forEach((key) => {
+    expandedModules[key] = false
+  })
+}
+
+// ---- API 逻辑 ----
+
+function getMappingData(pageData: any[]) {
+  loading.value = true
+  const filter = { where: { roleId: route.query.id } }
+  fetchRoleMappings(filter)
+    .then((data: any) => {
+      if (data?.length) {
+        data.forEach((item: any) => {
+          if (item.principalType === 'USER') {
+            roleusers.value.push(item.principalId)
+          }
+          if (item.principalType === 'PERMISSION') {
+            const selected = permissionList.value.filter(
+              (v: any) => v.name === item.principalId,
+            )
+            if (selected?.length > 0) {
+              selected[0].self_only = item.self_only
+              selectRole.value.push(selected[0].name)
+            }
+          }
+        })
+
+        pageData?.forEach((item: any) => {
+          item.children?.forEach((childItem: any) => {
+            childItem.checked = selectRole.value.includes(childItem.name)
+            childItem.checkOrigin = selectRole.value.includes(childItem.name)
+            childItem.buttons?.forEach((el: any) => {
+              el.checked = selectRole.value.includes(el.name)
+              el.checkOrigin = selectRole.value.includes(el.name)
+            })
+            childItem.filterData?.forEach((el: any) => {
+              el.checked = selectRole.value.includes(el.name)
+              el.checkOrigin = selectRole.value.includes(el.name)
+            })
+          })
+        })
+      }
+    })
+    .finally(() => {
+      loading.value = false
+    })
+}
+
+function getPermission() {
+  permissLoading.value = true
+  const filter = { where: { version: 'v2' } }
+
+  fetchPermissions(filter)
+    .then((data: any) => {
+      if (data?.length) {
+        permissionList.value = data
+        const pageMap: Record<string, any> = {}
+        permissionList.value.forEach((item: any) => {
+          pageMap[item.name] = item
+        })
+        const pageMenu = (items: any[]): any[] => {
+          return items.map((item) => {
+            const page = pageMap[item.name]
+            const menu = Object.assign({}, item, page)
+            if (menu.children) {
+              menu.children = pageMenu(menu.children)
+            }
+            return menu
+          })
+        }
+        dataList.value = pageMenu(pageSort)
+        // 默认全部展开
+        dataList.value.forEach((item: any) => {
+          expandedModules[item.name] = true
+        })
+        getMappingData(dataList.value)
+      }
+    })
+    .finally(() => {
+      permissLoading.value = false
+    })
+}
+
+// ---- 复选框逻辑 ----
+
+function handleCheckChange(data: any, parentData: any, type = 'page') {
+  updateData(data.checked, data)
+
+  if (type === 'page' && data.checked) {
+    data.buttons?.forEach((el: any) => {
+      el.checked = true
+      updateData(el.checked, el)
+    })
+  }
+
+  if (type === 'page' && !data.checked) {
+    if (
+      !!parentData.children?.every((t: any) => !t.checked) &&
+      !checkPrincipalId(deletes.value, parentData.name)?.length
+    ) {
+      parentData.checked = false
+      updateData(false, parentData)
+    }
+    data.buttons?.forEach((el: any) => {
+      el.checked = false
+      updateData(el.checked, el)
+    })
+  }
+
+  if (type === 'button' && data.checked) {
+    parentData.checked = true
+    updateData(parentData.checked, parentData)
+  }
+}
+
+// ---- 数据权限全选 ----
+
+function isDataAllChecked(second: any) {
+  return (
+    second.filterData?.length > 0 &&
+    second.filterData.every((d: any) => d.checked)
+  )
+}
+
+function isDataIndeterminate(second: any) {
+  if (!second.filterData?.length) return false
+  const checkedCount = second.filterData.filter((d: any) => d.checked).length
+  return checkedCount > 0 && checkedCount < second.filterData.length
+}
+
+function toggleDataAll(checked: any, second: any) {
+  second.filterData?.forEach((sItem: any) => {
+    sItem.checked = checked
+    updateData(checked, sItem)
+  })
+  if (checked) {
+    second.checked = true
+    updateData(true, second)
+  }
+}
+
+function updateData(checked: boolean, data: any) {
+  const roleId = route.query.id as string
+  if (checked) {
+    if (
+      checked !== data.checkOrigin &&
+      checkPrincipalId(adds.value, data.name)?.length === 0
+    ) {
+      adds.value.push({
+        principalType: 'PERMISSION',
+        principalId: data.name,
+        roleId,
+      })
+    }
+    const index = deletes.value.findIndex(
+      (del: any) => del.principalId === data.name,
+    )
+    if (index !== -1) deletes.value.splice(index, 1)
+  } else {
+    if (
+      checked !== data.checkOrigin &&
+      checkPrincipalId(deletes.value, data.name)
+    ) {
+      deletes.value.push({
+        principalType: 'PERMISSION',
+        principalId: data.name,
+        roleId,
+      })
+    }
+    const index = adds.value.findIndex(
+      (add: any) => add.principalId === data.name,
+    )
+    if (index !== -1) adds.value.splice(index, 1)
+  }
+}
+
+function checkPrincipalId(data: any[], principalId: string) {
+  return data.filter((item: any) => item.principalId === principalId) || []
+}
+
+// ---- 保存 / 返回 ----
+
+function save() {
+  const roleId = route.query.id as string
+  saveloading.value = true
+  const payload = { adds: adds.value, deletes: deletes.value }
+  updatePermissionRoleMapping(roleId, payload)
+    .then(() => {
+      emit('saveBack')
+      ElMessage.success(t('public_message_save_ok'))
+      adds.value = []
+      deletes.value = []
+      router.push({ name: 'roleList' })
+    })
+    .finally(() => {
+      saveloading.value = false
+    })
+}
+
+function back() {
+  if (!adds.value.length && !deletes.value.length) {
+    router.push({ name: 'roles' })
+    return
+  }
+  Modal.confirm(
+    t('public_message_title_prompt'),
+    t('daas_role_role_ninhaiweibaocun'),
+  ).then((flag: any) => {
+    flag && save()
+  })
+}
+
+onMounted(() => {
+  getPermission()
+})
 </script>
 
 <template>
   <PageContainer mode="auto">
     <template #left-actions>
       <el-divider direction="vertical" />
-      <span class="flex align-center gap-2 bg-color-main rounded-lg px-2 py-1"
-        ><span class="font-color-light">{{ $t('role_currentRole') }}</span>
+      <span class="flex align-center gap-2 bg-color-main rounded-lg px-2 py-1">
+        <span class="font-color-light">{{ t('role_currentRole') }}</span>
         <el-tag type="primary" class="border-0 bg-white shadow-sm">{{
           roleName
         }}</el-tag>
       </span>
     </template>
     <template #actions>
-      <el-button
-        type="primary"
-        :loading="saveloading"
-        @click="save('ruleForm')"
-      >
-        <template #icon>
-          <Check />
-        </template>
-        {{ $t('public_button_save') }}
+      <el-button type="primary" :loading="saveloading" @click="save">
+        <template #icon><Check /></template>
+        {{ t('public_button_save') }}
       </el-button>
     </template>
 
-    <div v-loading="loading">
-      <el-alert
-        class="mb-4"
-        type="warning"
-        show-icon
-        :closable="false"
-        :title="$t('daas_role_role_gouxuanxiangyingmo')"
-      />
+    <div v-loading="loading" class="role-permission-wrap">
+      <!-- 工具栏：搜索 + 展开/收起 -->
+      <div class="role-toolbar">
+        <el-input
+          v-model="searchKeyword"
+          :placeholder="t('public_input_placeholder_search')"
+          clearable
+          class="role-toolbar__search"
+        >
+          <template #prefix>
+            <el-icon><i-lucide-search /></el-icon>
+          </template>
+        </el-input>
+        <div class="role-toolbar__actions">
+          <el-button text @click="expandAll">
+            <template #icon><i-lucide-unfold-vertical /></template>
+            {{ t('public_button_expand_all') }}
+          </el-button>
+          <el-button text @click="collapseAll">
+            <template #icon><i-lucide-fold-vertical /></template>
+            {{ t('public_button_collapse_all') }}
+          </el-button>
+        </div>
+      </div>
 
-      <ul class="role-table border rounded-xl page-table overflow-hidden">
-        <li class="role-head">
-          <el-row class="e-row">
-            <el-col class="e-col borderRight pl-0 text-center" :span="4">{{
-              $t('daas_role_role_gongnengmokuai')
-            }}</el-col>
-            <el-col class="e-col borderRight pl-5" :span="4">{{
-              $t('daas_role_role_yemianquanxian')
-            }}</el-col>
-            <el-col class="e-col borderRight pl-5" :span="14">{{
-              $t('daas_role_role_gongnengquanxian')
-            }}</el-col>
-            <el-col class="e-col flex align-items-center" :span="2">
-              <span>{{ $t('daas_role_role_chakanquanbushu') }}</span>
-            </el-col>
-          </el-row>
-        </li>
-        <li v-for="item in dataList" :key="item.id">
-          <el-row class="e-row flex">
-            <el-col
-              class="e-col flex justify-content-center align-items-center"
-              :span="4"
-            >
-              <span>{{ item.description }}</span>
-            </el-col>
-            <el-col class="e-col border-start" :span="4">
-              <div
-                v-for="(second, secondIndex) in item.children"
-                :key="secondIndex"
-                :class="['pl-3', secondIndex !== 0 ? 'border-top' : '']"
-              >
-                <el-checkbox
-                  v-if="second.id"
-                  v-cloak
-                  v-model="second.checked"
-                  @change="handleCheckChange(second, item, 'page')"
-                >
-                  <span>
-                    {{ second.description }}
-                  </span>
-                </el-checkbox>
-              </div>
-            </el-col>
-            <el-col class="e-col border-start border-end" :span="14">
-              <div
-                v-for="(second, secondIndex) in item.children"
-                :key="secondIndex"
-                :class="['pl-3', secondIndex !== 0 ? 'border-top' : '']"
-              >
-                <el-checkbox
-                  v-if="!second.buttons || !second.buttons.length"
-                  v-cloak
-                  :model-value="true"
-                  disabled
-                >
-                  <span>{{ $t('daas_role_role_quanbugongneng') }}</span>
-                </el-checkbox>
-                <el-checkbox
-                  v-for="(sItem, sIndex) in second.buttons"
-                  v-else
-                  v-cloak
-                  v-model="sItem.checked"
-                  class="mr-10"
-                  @change="handleCheckChange(sItem, second, 'button')"
-                >
-                  <span>{{ sItem.label }} </span>
-                </el-checkbox>
-              </div>
-            </el-col>
-            <el-col class="e-col" :span="2">
-              <div
-                v-for="(second, secondIndex) in item.children"
-                :key="secondIndex"
-                :class="[
-                  'pl-3',
-                  secondIndex !== 0 && second.filterData
-                    ? 'border-top border-bottom'
-                    : '',
-                ]"
-              >
-                <span v-if="!second.filterData" class="invisible">-</span>
-                <el-switch
-                  v-for="(sItem, sIndex) in second.filterData"
-                  v-else
-                  v-model="sItem.checked"
-                  @change="handleCheckChange(sItem, second, 'data')"
+      <!-- 模块卡片列表 -->
+      <div v-if="filteredDataList.length" class="role-module-list">
+        <div
+          v-for="item in filteredDataList"
+          :key="item.name"
+          class="role-module-card"
+        >
+          <!-- 卡片头部 -->
+          <div
+            class="role-module-card__header"
+            @click="toggleExpand(item.name)"
+          >
+            <span class="role-module-card__icon">
+              <VIcon size="20">{{
+                MODULE_ICONS[item.name] || 'setting'
+              }}</VIcon>
+            </span>
+            <div class="role-module-card__info">
+              <span class="role-module-card__name">{{ item.description }}</span>
+              <span class="role-module-card__stats">
+                {{ getModuleStats(item).enabled }} /
+                {{ getModuleStats(item).total }}
+                {{ t('public_permissions_enabled') }}
+              </span>
+            </div>
+            <div class="role-module-card__progress">
+              <div class="role-progress-bar">
+                <div
+                  class="role-progress-bar__fill"
+                  :style="{
+                    width: getModuleStats(item).total
+                      ? `${
+                          (getModuleStats(item).enabled /
+                            getModuleStats(item).total) *
+                          100
+                        }%`
+                      : '0%',
+                  }"
                 />
               </div>
-            </el-col>
-          </el-row>
-        </li>
-      </ul>
+            </div>
+            <el-button
+              text
+              class="role-module-card__arrow"
+              :class="{ 'is-expanded': isExpanded(item.name) }"
+            >
+              <template #icon>
+                <!-- <el-icon
+                  class="role-module-card__arrow"
+                  :class="{ 'is-expanded': isExpanded(item.name) }"
+                >
+                  <i-lucide-chevron-down />
+                </el-icon> -->
+                <i-lucide-chevron-down />
+              </template>
+            </el-button>
+          </div>
+
+          <!-- 卡片内容 -->
+          <div v-show="isExpanded(item.name)" class="role-module-card__body">
+            <div
+              v-for="(second, secondIndex) in item.children"
+              :key="secondIndex"
+              class="role-permission-row"
+              :class="{ 'role-permission-row--bordered': secondIndex !== 0 }"
+            >
+              <!-- 页面权限 -->
+              <div class="role-permission-col role-permission-col--page">
+                <div class="role-permission-col__title">
+                  {{ t('daas_role_role_yemianquanxian') }}
+                </div>
+                <div v-if="second.id" class="role-checkbox-item">
+                  <el-checkbox
+                    v-model="second.checked"
+                    @change="handleCheckChange(second, item, 'page')"
+                  >
+                    {{ second.description }}
+                  </el-checkbox>
+                </div>
+              </div>
+
+              <!-- 功能权限 -->
+              <div class="role-permission-col role-permission-col--func">
+                <div class="role-permission-col__title">
+                  {{ t('daas_role_role_gongnengquanxian') }}
+                </div>
+                <div
+                  v-if="!second.buttons || !second.buttons.length"
+                  class="role-checkbox-item"
+                >
+                  <el-checkbox :model-value="true" disabled>
+                    {{ t('daas_role_role_quanbugongneng') }}
+                  </el-checkbox>
+                </div>
+                <div v-else class="role-checkbox-group">
+                  <div
+                    v-for="(sItem, sIndex) in second.buttons"
+                    :key="sIndex"
+                    class="role-checkbox-item"
+                  >
+                    <el-checkbox
+                      v-model="sItem.checked"
+                      @change="handleCheckChange(sItem, second, 'button')"
+                    >
+                      {{ sItem.label }}
+                    </el-checkbox>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 数据权限 -->
+              <div class="role-permission-col role-permission-col--data">
+                <div class="role-permission-col__title">
+                  {{ t('role_dataPermission') }}
+                </div>
+                <div v-if="!second.filterData" class="role-permission-empty">
+                  <span class="font-color-light fs-7">--</span>
+                </div>
+                <div v-else class="role-checkbox-group">
+                  <div class="role-checkbox-item role-checkbox-item--all">
+                    <el-checkbox
+                      :model-value="isDataAllChecked(second)"
+                      :indeterminate="isDataIndeterminate(second)"
+                      @change="(val: any) => toggleDataAll(val, second)"
+                    >
+                      {{ t('public_select_all') }}
+                    </el-checkbox>
+                  </div>
+                  <div
+                    v-for="(sItem, sIndex) in second.filterData"
+                    :key="sIndex"
+                    class="role-checkbox-item"
+                  >
+                    <el-checkbox
+                      v-model="sItem.checked"
+                      @change="handleCheckChange(sItem, second, 'data')"
+                    >
+                      {{ sItem.label }}
+                    </el-checkbox>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 空状态 -->
+      <div v-else class="role-empty">
+        <el-empty :description="t('public_data_no_data') || '没有匹配的模块'" />
+      </div>
     </div>
   </PageContainer>
 </template>
 
 <style lang="scss" scoped>
-.role-table {
-  position: relative;
+.role-permission-wrap {
+  // max-width: 1200px;
+  margin: 0 auto;
+}
 
-  li {
-    min-height: 39px;
-    overflow: hidden;
-    border-bottom: 1px solid #e7e7e7;
-    &:last-child {
-      border-bottom: 0;
-    }
-  }
-  .role-head {
-    height: 40px !important;
-    line-height: 40px;
-    font-size: 14px;
-    color: var(--text-light);
-    background-color: var(--bg-main);
-    .e-col {
-      padding-left: 12px;
-    }
-  }
-  .module-style {
-    .e-row {
-      border-bottom: 1px solid #e7e7e7;
-      &:last-child {
-        border-bottom: 0;
-      }
-      .nav {
-        display: block;
-        padding-left: 12px;
-        font-size: 14px;
-      }
+// 提示信息栏
+.role-tip-bar {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  background-color: #f0faf0;
+  border: 1px solid #b7e4b7;
+  border-radius: 8px;
+  color: #2e7d32;
+  font-size: 13px;
+  line-height: 1.6;
 
-      .box {
-        .e-col {
-          padding-top: 8px;
-          border-right: 1px solid #e7e7e7;
-          border-bottom: 0;
-          box-sizing: border-box;
-          &:last-child {
-            border: 0;
-          }
-        }
-      }
-    }
-    .heightStyle {
-      line-height: 40px;
-      .e-col {
-        padding-top: 0 !important;
-        line-height: 34px;
-        min-height: 40px;
-
-        .checkbox-radio {
-          vertical-align: middle;
-        }
-      }
-    }
-  }
-  .line {
-    width: 100%;
-    height: 1px;
-    background: #e7e7e7;
-  }
-  .borderRight {
-    border-right: 1px solid #e7e7e7;
-  }
-  .borderLine {
-    border-left: 1px solid #e7e7e7;
-    border-bottom: 0;
-    // border-right: 1px solid #e7e7e7;
-  }
-
-  :deep(.e-row) {
-    .allSelectBox {
-      line-height: 20px;
-    }
-    .el-checkbox {
-      margin: 0 8px;
-      box-sizing: border-box;
-    }
-    .checkbox-position {
-      line-height: 1px;
-      vertical-align: top;
-      .el-checkbox__input {
-        padding-top: 0;
-        vertical-align: top;
-      }
-    }
-    .checkbox-radio {
-      .el-checkbox__input {
-        padding-top: 3px;
-        vertical-align: top;
-      }
-
-      .e-checkbox {
-        padding: 5px 0;
-        margin: 0;
-        font-size: 12px;
-        color: var(--text-light);
-      }
-    }
+  &__icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-size: 16px;
   }
 }
 
-.page-table {
-  li {
-    line-height: 40px;
+// 工具栏
+.role-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+
+  &__search {
+    max-width: 300px;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 4px;
   }
 }
-[v-cloak] {
-  display: none;
+
+// 模块卡片列表
+.role-module-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
-.alert-tip {
-  border-left: 4px solid #ffcf8b;
+
+// 模块卡片
+.role-module-card {
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #fafafa;
+    }
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+    border-radius: 8px;
+    color: var(--el-color-primary, #4caf50);
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-title, #1a1a1a);
+  }
+
+  &__stats {
+    font-size: 12px;
+    color: var(--text-light, #999);
+  }
+
+  &__progress {
+    margin-left: auto;
+    width: 100px;
+    flex-shrink: 0;
+  }
+
+  &__arrow {
+    // flex-shrink: 0;
+    // font-size: 16px;
+    // transition: transform 0.25s;
+
+    &.is-expanded {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__body {
+    border-top: 1px solid #f0f0f0;
+    padding: 0 20px;
+  }
+}
+
+// 进度条
+.role-progress-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: #e8e8e8;
+  overflow: hidden;
+
+  &__fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--el-color-primary, #4caf50);
+    transition: width 0.3s;
+  }
+}
+
+// 权限行
+.role-permission-row {
+  display: flex;
+  padding: 16px 0;
+
+  &--bordered {
+    border-top: 1px solid #f0f0f0;
+  }
+}
+
+// 权限列
+.role-permission-col {
+  &--page {
+    flex: 0 0 calc(2 / 12 * 100%);
+    min-width: 0;
+  }
+
+  &--func {
+    flex: 0 0 calc(5 / 12 * 100%);
+    min-width: 0;
+  }
+
+  &--data {
+    flex: 0 0 calc(5 / 12 * 100%);
+    min-width: 0;
+  }
+
+  &__title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-light, #999);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+}
+
+// 复选框
+.role-checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+
+.role-checkbox-item {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: 10px;
+  transition: background-color 0.15s;
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
+
+  :deep(.el-checkbox) {
+    --el-checkbox-height: 20px;
+  }
+
+  :deep(.el-checkbox__input.is-checked .el-checkbox__inner) {
+    border-radius: 4px;
+  }
+
+  :deep(.el-checkbox__inner) {
+    border-radius: 4px;
+  }
+
+  &--all {
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+}
+
+.role-permission-empty {
+  padding: 3px 6px;
+  font-style: italic;
+}
+
+// 空状态
+.role-empty {
+  padding: 60px 0;
+  text-align: center;
 }
 </style>

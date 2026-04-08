@@ -1199,6 +1199,9 @@ export default {
   packages_business_tiaoshi: '调试',
   packages_business_peizhi: '配置',
   packages_business_chuangjianfuwu: '创建服务',
+  packages_business_copy_server: '复制服务',
+  packages_business_import_server: '导入服务',
+  packages_business_export_server: '导出服务',
   packages_business_fuwuxiangqing: '服务详情',
   packages_business_geshicuowu: '格式错误',
   packages_business_validate:
