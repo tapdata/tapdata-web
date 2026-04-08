@@ -49,17 +49,36 @@ export const useAfterTaskSaved = (obs, callback) => {
 
 export const useSchemaEffect = (tracker, callback) => {
   const dataflowStore = useDataflowStore()
-  const dispose = reaction(tracker, (...args) => {
-    const unwatchSaving = watch(
+  let unWatchSaving: () => void
+  let dispose: () => void
+
+  if (tracker?.length) {
+    dispose = reaction(tracker, (...args) => {
+      unWatchSaving?.()
+      unWatchSaving = watch(
+        () => dataflowStore.taskSaving,
+        (v) => {
+          if (!v) {
+            callback()
+            unWatchSaving?.()
+          }
+        },
+      )
+    })
+  }
+
+  let unwatchSavingMain: () => void
+  if (dataflowStore.taskSaving) {
+    unwatchSavingMain = watch(
       () => dataflowStore.taskSaving,
       (v) => {
         if (!v) {
           callback()
         }
-        unwatchSaving()
+        unwatchSavingMain()
       },
     )
-  })
+  }
 
   // 模型生成状态变化
   const unWatch = watch(
@@ -72,7 +91,9 @@ export const useSchemaEffect = (tracker, callback) => {
   )
 
   onBeforeUnmount(() => {
-    dispose()
+    dispose?.()
     unWatch()
+    unwatchSavingMain?.()
+    unWatchSaving?.()
   })
 }
