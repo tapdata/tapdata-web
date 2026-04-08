@@ -1,146 +1,139 @@
-<script>
+<script setup lang="ts">
 import { fetchApiCall } from '@tap/api/src/core/api-calls'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-
 import { HighlightCode } from '@tap/form/src/components/highlight-code'
+import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
 import dayjs from 'dayjs'
-import { formatMs } from '@/utils/util'
+import { reactive, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
-export default {
-  components: { HighlightCode, PageContainer },
-  data() {
-    return {
-      auditData: null,
-      loading: true,
-      list: [
-        {
-          label: this.$t('apiaudit_access_records'),
-          key: 'visitTotalCount',
-          value: 0,
-        },
-        {
-          label: this.$t('apiaudit_total_records'),
-          key: 'totalRows',
-          value: 0,
-        },
-        {
-          label: this.$t('apiaudit_average_access_rate'),
-          key: 'speed',
-          value: 0,
-        },
-        { label: this.$t('apiaudit_access_time'), key: 'latency', value: 0 },
-        {
-          label: this.$t('apiaudit_average_response_time'),
-          key: 'dataQueryTotalTime',
-          value: 0,
-        },
-      ],
-    }
-  },
-  created() {
-    this.getData()
-  },
-  methods: {
-    dayjs,
-    // 获取数据
-    getData() {
-      const id = this.$route.params?.id
-      this.loading = true
-      fetchApiCall(id)
-        .then((data) => {
-          if (data) {
-            this.auditData = data
-            this.auditData.createAt = data.createAt
-              ? dayjs(data.createAt).format('YYYY-MM-DD HH:mm:ss')
-              : '-'
-            this.auditData.reqTime = this.auditData.reqTime
-              ? dayjs(this.auditData.reqTime).format('YYYY-MM-DD HH:mm:ss')
-              : '-'
-            const jsonData = this.auditData.body
-              ? this.auditData.body
-              : this.auditData.query
-                ? this.auditData.query
-                : this.auditData.reqParams
-            this.auditData.jsonParam = {
-              validation: false,
-              json: jsonData,
-              fullCustomQuery: true,
-            }
-            try {
-              this.auditData.jsonParam.json = jsonData
-              this.auditData.jsonParam.validation = true
-            } catch (error) {
-              console.log(`parseJsonData error: ${error}`)
-            }
+const { t } = useI18n()
+const route = useRoute()
 
-            this.list.forEach((item) => {
-              for (const el of Object.keys(data)) {
-                if (item.key === el) {
-                  item.value = data[el]
-                }
-              }
-            })
+const auditData = ref<any>(null)
+const loading = ref(true)
+
+const list = reactive([
+  { label: t('apiaudit_access_records'), key: 'visitTotalCount', value: 0 },
+  { label: t('apiaudit_total_records'), key: 'totalRows', value: 0 },
+  { label: t('apiaudit_average_access_rate'), key: 'speed', value: 0 },
+  { label: t('apiaudit_access_time'), key: 'latency', value: 0 },
+  {
+    label: t('apiaudit_average_response_time'),
+    key: 'dataQueryTotalTime',
+    value: 0,
+  },
+])
+
+function getData() {
+  const id = route.params?.id as string
+  loading.value = true
+  fetchApiCall(id)
+    .then((data: any) => {
+      if (data) {
+        auditData.value = data
+        auditData.value.createAt = data.createAt
+          ? dayjs(data.createAt).format('YYYY-MM-DD HH:mm:ss')
+          : '-'
+        auditData.value.reqTime = auditData.value.reqTime
+          ? dayjs(auditData.value.reqTime).format('YYYY-MM-DD HH:mm:ss')
+          : '-'
+        const jsonData = auditData.value.body
+          ? auditData.value.body
+          : auditData.value.query
+            ? auditData.value.query
+            : auditData.value.reqParams
+        auditData.value.jsonParam = {
+          validation: false,
+          json: jsonData,
+          fullCustomQuery: true,
+        }
+        try {
+          auditData.value.jsonParam.json = jsonData
+          auditData.value.jsonParam.validation = true
+        } catch (error) {
+          console.error(`parseJsonData error: ${error}`)
+        }
+
+        list.forEach((item) => {
+          for (const el of Object.keys(data)) {
+            if (item.key === el) {
+              item.value = data[el]
+            }
           }
         })
-        .finally(() => {
-          this.loading = false
-        })
-    },
-    formatDuring(mss) {
-      let time = ''
-      const minutes = Number.parseInt((mss % (1000 * 60 * 60)) / (1000 * 60))
-      const seconds = (mss % (1000 * 60)) / 1000
-      if (minutes > 1) {
-        time = `${minutes.toFixed(2)}min`
-      } else if (minutes < 1 && seconds > 1) {
-        time = `${seconds.toFixed(2)}s`
-      } else if (minutes < 1 && seconds < 1 && mss > 0) {
-        time = `${mss}ms`
       }
-      return time
-    },
-    formatMs(ms) {
-      return formatMs(ms)
-    },
-    calcUnit(...args) {
-      return calcUnit(...args)
-    },
-    formatReqHeaders(headers) {
-      if (typeof headers === 'string') return headers
-      try {
-        return JSON.stringify(headers, null, 2)
-      } catch {
-        return String(headers)
-      }
-    },
-    handleFormat() {
-      this.handleJsonTransformation(2)
-    },
-    handleCompress() {
-      this.handleJsonTransformation(null)
-    },
-    handleJsonTransformation(indent) {
-      try {
-        const jsonString = this.auditData?.jsonParam?.json
-        if (!jsonString) return
-        const isCurrentlyFormatted =
-          this.auditData.jsonParam.fullCustomQuery === false
-        const isTargetFormat = indent !== null
-        if (isTargetFormat === isCurrentlyFormatted) return
-        const parsedJson = JSON.parse(jsonString)
-        this.auditData.jsonParam.json = JSON.stringify(parsedJson, null, indent)
-        this.auditData.jsonParam.fullCustomQuery = !isTargetFormat
-      } catch (error) {
-        console.error('JSON处理失败:', error)
-      }
-    },
-  },
+    })
+    .finally(() => {
+      loading.value = false
+    })
 }
+
+function formatDuring(mss: number) {
+  let time = ''
+  const minutes = Math.floor((mss % (1000 * 60 * 60)) / (1000 * 60))
+  const seconds = (mss % (1000 * 60)) / 1000
+  if (minutes > 1) {
+    time = `${minutes.toFixed(2)}min`
+  } else if (minutes < 1 && seconds > 1) {
+    time = `${seconds.toFixed(2)}s`
+  } else if (minutes < 1 && seconds < 1 && mss > 0) {
+    time = `${mss}ms`
+  }
+  return time
+}
+
+function formatReqHeaders(headers: any) {
+  if (typeof headers === 'string') return headers
+  try {
+    return JSON.stringify(headers, null, 2)
+  } catch {
+    return String(headers)
+  }
+}
+
+function handleFormat() {
+  handleJsonTransformation(2)
+}
+
+function handleCompress() {
+  handleJsonTransformation(null)
+}
+
+function handleJsonTransformation(indent: number | null) {
+  try {
+    const jsonString = auditData.value?.jsonParam?.json
+    if (!jsonString) return
+    const isCurrentlyFormatted =
+      auditData.value.jsonParam.fullCustomQuery === false
+    const isTargetFormat = indent !== null
+    if (isTargetFormat === isCurrentlyFormatted) return
+    const parsedJson = JSON.parse(jsonString)
+    auditData.value.jsonParam.json = JSON.stringify(
+      parsedJson,
+      null,
+      indent ?? undefined,
+    )
+    auditData.value.jsonParam.fullCustomQuery = !isTargetFormat
+  } catch (error) {
+    console.error('JSON处理失败:', error)
+  }
+}
+
+// 初始化
+getData()
 </script>
 
 <template>
   <PageContainer v-loading="loading" mode="auto">
+    <template #back>
+      <el-button text class="mr-1" @click="$router.back()">
+        <template #icon>
+          <VIcon>left</VIcon>
+        </template>
+      </el-button>
+    </template>
     <section class="apiaudit-info-wrap">
       <div class="details-box">
         <div class="title fs-7 fw-sub font-color-dark">

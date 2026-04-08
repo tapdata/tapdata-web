@@ -1,241 +1,242 @@
-<script>
-import { CircleCloseFilled, SuccessFilled } from '@element-plus/icons-vue'
+<script setup lang="ts">
 import { fetchAllMethods, fetchApiCalls } from '@tap/api/src/core/api-calls'
 import { fetchApiClients } from '@tap/api/src/core/api-client'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import { FilterBar } from '@tap/component/src/filter-bar'
+import { useI18n } from '@tap/i18n'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
+import { reactive, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
-export default {
-  components: {
-    PageContainer,
-    TablePage,
-    FilterBar,
-    CircleCloseFilled,
-    SuccessFilled,
-  },
-  data() {
-    return {
-      searchParams: {
-        keyword: '',
-        clientName: '',
-        method: '',
-        code: '',
-        start: '',
-        end: '',
-        options: 'i',
-      },
-      filterItems: [],
-      order: 'createTime DESC',
-      createDialogVisible: false,
-      createForm: {
-        processId: '',
-        clientName: '',
-        clientURI: '',
-      },
-      colorMap: {
-        POST: '#478C6C',
-        PATCH: '#F2994B',
-        DELETE: '#DB5050',
-        GET: '#09819C',
-      },
-      defaultSort: { prop: 'createTime', order: 'descending' },
-    }
-  },
-  computed: {
-    table() {
-      return this.$refs.table
-    },
-  },
-  watch: {
-    '$route.query': function (newQuery) {
-      this.initFromQuery(newQuery)
-      this.table.fetch(1)
-    },
-    'searchParams.createTime': function () {},
-  },
-  created() {
-    this.getFilterItems()
-    this.initFromQuery(this.$route.query)
-  },
-  methods: {
-    // 从 route.query 初始化参数
-    initFromQuery(query) {
-      if (query.keyword) {
-        this.searchParams.keyword = query.keyword
-      }
-      if (query.code) {
-        this.searchParams.code = query.code
-      }
-      if (query.start) {
-        this.searchParams.start = Number(query.start)
-      }
-      if (query.end) {
-        this.searchParams.end = Number(query.end)
-      }
-      if (query.sortBy && query.sortOrder) {
-        this.order = `${query.sortBy} ${query.sortOrder}`
-        this.defaultSort = {
-          prop: query.sortBy,
-          order: query.sortOrder === 'ASC' ? 'ascending' : 'descending',
-        }
-      }
-    },
+const { t } = useI18n()
+const route = useRoute()
+const router = useRouter()
 
-    toDetails(item) {
-      this.$router.push({
-        name: 'dataServerAuditDetails',
-        params: { id: item.id },
-      })
-    },
+const tableRef = ref<InstanceType<typeof TablePage>>()
 
-    // 获取数据
-    getData({ page }) {
-      const { current, size } = page
-      const { method, code, start, end, clientId, keyword, options } =
-        this.searchParams
-      const where = {}
-      if (method) {
-        where.method = method
-      }
-      if (code) {
-        where.code = code
-      }
-      if (start) {
-        where.start = start
-      }
-      if (end) {
-        where.end = end
-      }
-      if (clientId) {
-        where.clientId = clientId
-      }
-      if (keyword && keyword.trim()) {
-        const filterObj = {
-          like: escapeRegExp(keyword),
-          options: options ? '-' : options,
-        }
-        where.or = [{ name: filterObj }, { id: filterObj }]
-      }
+const searchParams = reactive({
+  keyword: '',
+  clientName: '',
+  method: '',
+  code: '',
+  start: '' as string | number,
+  end: '' as string | number,
+  options: 'i',
+})
 
-      const filter = {
-        order: this.order,
-        limit: size,
-        skip: (current - 1) * size,
-        where,
-      }
-      return fetchApiCalls(filter).then((data) => {
-        return {
-          total: data?.total || 0,
-          data:
-            data?.items.map((item) => {
-              item.createTimeFmt = item.createTime
-                ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-                : '-'
-              item.reqTimeFmt = item.reqTime
-                ? dayjs(item.reqTime).format('YYYY-MM-DD HH:mm:ss')
-                : '-'
-              return item
-            }) || [],
-        }
-      })
-    },
-    formatDuring(mss) {
-      let time = ''
-      const minutes = Number.parseInt((mss % (1000 * 60 * 60)) / (1000 * 60))
-      const seconds = (mss % (1000 * 60)) / 1000
-      if (minutes > 1) {
-        time = `${minutes.toFixed(2)}min`
-      } else if (minutes < 1 && seconds > 1) {
-        time = `${seconds.toFixed(2)}s`
-      } else if (minutes < 1 && seconds < 1 && mss > 0) {
-        time = `${mss}ms`
-      }
-      return time
-    },
+const filterItems = ref<any[]>([])
+const order = ref('createTime DESC')
 
-    // 表格排序
-    handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
-      this.table.fetch(1)
-    },
-    getFilterItems() {
-      this.filterItems = [
-        {
-          label: this.$t('apiaudit_access_type'),
-          key: 'method',
-          type: 'select-inner',
-          items: async () => {
-            let data = await fetchAllMethods()
-            data = data || []
-            return data.map((item) => {
-              return {
-                label: item,
-                value: item,
-              }
-            })
-          },
-          selectedWidth: '200px',
-        },
-        {
-          label: this.$t('apiaudit_visit_result'),
-          key: 'code',
-          type: 'select-inner',
-          items: [
-            {
-              label: this.$t('apiaudit_success'),
-              value: '200',
-            },
-            {
-              label: this.$t('public_status_failed'),
-              value: '500',
-            },
-          ],
-          selectedWidth: '200px',
-        },
-        {
-          label: this.$t('api_monitor_total_clientName'),
-          key: 'clientId',
-          type: 'select-inner',
-          items: async () => {
-            const res = await fetchApiClients({
-              limit: 1000,
-            })
-
-            return (
-              res.items?.map((item) => {
-                return {
-                  label: item.clientName,
-                  value: item.clientId,
-                }
-              }) || []
-            )
-          },
-        },
-        {
-          key: 'start,end',
-          type: 'datetimerange',
-          startPlaceholder: this.$t('apiaudit_interview_time_start'),
-          endPlaceholder: this.$t('apiaudit_interview_time_end'),
-        },
-        {
-          placeholder: this.$t('apiaudit_placeholder'),
-          key: 'keyword',
-          type: 'input',
-        },
-      ]
-    },
-  },
+const colorMap: Record<string, string> = {
+  POST: '#478C6C',
+  PATCH: '#F2994B',
+  DELETE: '#DB5050',
+  GET: '#09819C',
 }
+
+const defaultSort = ref<{
+  prop: string
+  order: 'descending' | 'ascending' | null
+}>({
+  prop: 'createTime',
+  order: 'descending',
+})
+
+// 从 route.query 初始化参数
+function initFromQuery(query: Record<string, any>) {
+  if (query.keyword) {
+    searchParams.keyword = query.keyword
+  }
+  if (query.code) {
+    searchParams.code = query.code
+  }
+  if (query.start) {
+    searchParams.start = Number(query.start)
+  }
+  if (query.end) {
+    searchParams.end = Number(query.end)
+  }
+  if (query.sortBy && query.sortOrder) {
+    order.value = `${query.sortBy} ${query.sortOrder}`
+    defaultSort.value = {
+      prop: query.sortBy,
+      order: query.sortOrder === 'ASC' ? 'ascending' : 'descending',
+    }
+  }
+}
+
+function toDetails(item: any) {
+  router.push({
+    name: 'dataServerAuditDetails',
+    params: { id: item.id },
+  })
+}
+
+// 获取数据
+function getData({ page }: { page: { current: number; size: number } }) {
+  const { current, size } = page
+  const { method, code, start, end, clientId, keyword, options } =
+    searchParams as any
+  const where: Record<string, any> = {}
+  if (method) {
+    where.method = method
+  }
+  if (code) {
+    where.code = code
+  }
+  if (start) {
+    where.start = start
+  }
+  if (end) {
+    where.end = end
+  }
+  if (clientId) {
+    where.clientId = clientId
+  }
+  if (keyword && keyword.trim()) {
+    const filterObj = {
+      like: escapeRegExp(keyword),
+      options: options ? '-' : options,
+    }
+    where.or = [{ name: filterObj }, { id: filterObj }]
+  }
+
+  const filter = {
+    order: order.value,
+    limit: size,
+    skip: (current - 1) * size,
+    where,
+  }
+  return fetchApiCalls(filter).then((data: any) => {
+    return {
+      total: data?.total || 0,
+      data:
+        data?.items.map((item: any) => {
+          item.createTimeFmt = item.createTime
+            ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+            : '-'
+          item.reqTimeFmt = item.reqTime
+            ? dayjs(item.reqTime).format('YYYY-MM-DD HH:mm:ss')
+            : '-'
+          return item
+        }) || [],
+    }
+  })
+}
+
+function formatDuring(mss: number) {
+  let time = ''
+  const minutes = Math.floor((mss % (1000 * 60 * 60)) / (1000 * 60))
+  const seconds = (mss % (1000 * 60)) / 1000
+  if (minutes > 1) {
+    time = `${minutes.toFixed(2)}min`
+  } else if (minutes < 1 && seconds > 1) {
+    time = `${seconds.toFixed(2)}s`
+  } else if (minutes < 1 && seconds < 1 && mss > 0) {
+    time = `${mss}ms`
+  }
+  return time
+}
+
+// 表格排序
+function handleSortTable({
+  order: sortOrder,
+  prop,
+}: {
+  order: string
+  prop: string
+}) {
+  order.value = `${sortOrder ? prop : 'createTime'} ${sortOrder === 'ascending' ? 'ASC' : 'DESC'}`
+  tableRef.value?.fetch(1)
+}
+
+function getFilterItems() {
+  filterItems.value = [
+    {
+      label: t('apiaudit_access_type'),
+      key: 'method',
+      type: 'select-inner',
+      items: async () => {
+        let data = await fetchAllMethods()
+        data = data || []
+        return data.map((item: string) => {
+          return {
+            label: item,
+            value: item,
+          }
+        })
+      },
+      selectedWidth: '200px',
+    },
+    {
+      label: t('apiaudit_visit_result'),
+      key: 'code',
+      type: 'select-inner',
+      items: [
+        {
+          label: t('apiaudit_success'),
+          value: '200',
+        },
+        {
+          label: t('public_status_failed'),
+          value: '500',
+        },
+      ],
+      selectedWidth: '200px',
+    },
+    {
+      label: t('api_monitor_total_clientName'),
+      key: 'clientId',
+      type: 'select-inner',
+      items: async () => {
+        const res = await fetchApiClients({
+          limit: 1000,
+        })
+
+        return (
+          (res as any).items?.map((item: any) => {
+            return {
+              label: item.clientName,
+              value: item.clientId,
+            }
+          }) || []
+        )
+      },
+    },
+    {
+      key: 'start,end',
+      type: 'datetimerange',
+      startPlaceholder: t('apiaudit_interview_time_start'),
+      endPlaceholder: t('apiaudit_interview_time_end'),
+    },
+    {
+      placeholder: t('apiaudit_placeholder'),
+      key: 'keyword',
+      type: 'input',
+    },
+  ]
+}
+
+watch(
+  () => route.query,
+  (newQuery) => {
+    initFromQuery(newQuery)
+    tableRef.value?.fetch(1)
+  },
+)
+
+// 初始化
+getFilterItems()
+initFromQuery(route.query)
 </script>
 
 <template>
   <PageContainer>
     <!-- 服务审计 -->
     <TablePage
-      ref="table"
+      ref="tableRef"
       row-key="id"
       class="apiaudit-list"
       :default-sort="defaultSort"
@@ -247,7 +248,7 @@ export default {
           <FilterBar
             v-model:value="searchParams"
             :items="filterItems"
-            @fetch="table.fetch(1)"
+            @fetch="tableRef?.fetch(1)"
           />
         </div>
       </template>
