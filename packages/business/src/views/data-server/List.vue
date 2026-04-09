@@ -765,7 +765,7 @@ defineExpose({
               class="ellipsis"
               type="primary"
               style="display: block; line-height: 20px"
-              :disabled="row.permissionActions?.includes('Edit')"
+              :disabled="!row.permissionActions?.includes('Edit')"
               @click.stop="showDrawer(row)"
             >
               {{ row.name }}
