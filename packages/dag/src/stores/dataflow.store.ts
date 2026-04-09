@@ -268,6 +268,10 @@ export const useDataflowStore = defineStore('dataflow', () => {
 
       dag.value.nodes = nodes
       dag.value.edges = edges
+
+      return response
+    } catch (error) {
+      console.error(error)
     } finally {
       taskLoading.value = false
     }

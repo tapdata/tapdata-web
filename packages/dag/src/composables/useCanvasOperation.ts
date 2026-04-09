@@ -1771,8 +1771,22 @@ export function useCanvasOperation() {
     connHeartbeat: 'heartbeatTable',
   }
 
+  const listRoute = computed(() => {
+    const name = route.name as string
+    const map = {
+      DataflowEditor: 'dataflowList',
+      TaskMonitor: 'dataflowList',
+      MigrateEditor: 'migrateList',
+      MigrationMonitor: 'migrateList',
+    }
+
+    return map[name]
+  })
+
   const handlePageReturn = () => {
-    const listRoute = listRouteMap[dataflow.value.syncType]
+    const routeName = dataflow.value.syncType
+      ? listRouteMap[dataflow.value.syncType]
+      : listRoute.value
 
     if (!dataflowStore.dag.nodes.length && dataflow.value.id) {
       Modal.confirm(
@@ -1787,13 +1801,13 @@ export function useCanvasOperation() {
           deleteTask(dataflow.value.id)
         }
         router.push({
-          name: listRoute,
+          name: routeName,
         })
         window.name = ''
       })
     } else {
       router.push({
-        name: listRoute,
+        name: routeName,
       })
       window.name = ''
     }
