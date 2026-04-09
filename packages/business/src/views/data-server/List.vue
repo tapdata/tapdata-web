@@ -764,6 +764,7 @@ defineExpose({
               class="ellipsis"
               type="primary"
               style="display: block; line-height: 20px"
+              :disabled="row.permissionActions?.includes('Edit')"
               @click.stop="showDrawer(row)"
             >
               {{ row.name }}
@@ -834,7 +835,10 @@ defineExpose({
           <template #default="{ row }">
             <el-space :spacer="spacer" :size="0" class="lh-1">
               <ElButton
-                v-if="row.status !== 'active'"
+                v-if="
+                  row.status !== 'active' &&
+                  row.permissionActions?.includes('Publish')
+                "
                 :disabled="row.status !== 'pending'"
                 text
                 type="primary"
@@ -842,7 +846,10 @@ defineExpose({
                 >{{ $t('public_button_public') }}</ElButton
               >
               <ElButton
-                v-if="row.status === 'active'"
+                v-if="
+                  row.status === 'active' &&
+                  row.permissionActions?.includes('Revoke')
+                "
                 text
                 type="primary"
                 @click="changeStatus(row)"
@@ -862,9 +869,13 @@ defineExpose({
                 @click="showDrawer(row, true)"
                 >{{ $t('public_button_copy') }}</ElButton
               >
-              <ElButton text type="primary" @click="removeServer(row)">{{
-                $t('public_button_delete')
-              }}</ElButton>
+              <ElButton
+                v-if="row.permissionActions?.includes('Delete')"
+                text
+                type="primary"
+                @click="removeServer(row)"
+                >{{ $t('public_button_delete') }}</ElButton
+              >
             </el-space>
           </template>
         </el-table-column>

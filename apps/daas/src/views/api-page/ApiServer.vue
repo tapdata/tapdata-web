@@ -231,14 +231,23 @@ const handleSortTable = ({
         width="200"
         fixed="right"
       >
-        <template #default="scope">
+        <template #default="{ row }">
           <el-space :spacer="spacer" :size="0" class="lh-1">
-            <el-button text type="primary" @click="edit(scope.row)">
+            <el-button
+              v-if="row.permissionActions?.includes('Edit')"
+              text
+              type="primary"
+              @click="edit(row)"
+            >
               {{ $t('public_button_edit') }}
             </el-button>
-            <el-button text type="primary" @click="remove(scope.row)">{{
-              $t('public_button_delete')
-            }}</el-button>
+            <el-button
+              v-if="row.permissionActions?.includes('Delete')"
+              text
+              type="primary"
+              @click="remove(row)"
+              >{{ $t('public_button_delete') }}</el-button
+            >
             <el-tooltip
               v-if="$has('v2_api-servers_download')"
               class="item"
@@ -246,12 +255,9 @@ const handleSortTable = ({
               :content="$t('api_server_download_API_Server_config')"
               placement="top"
             >
-              <el-button
-                text
-                type="primary"
-                @click="downloadConfig(scope.row)"
-                >{{ $t('public_button_download') }}</el-button
-              >
+              <el-button text type="primary" @click="downloadConfig(row)">{{
+                $t('public_button_download')
+              }}</el-button>
             </el-tooltip>
           </el-space>
         </template>

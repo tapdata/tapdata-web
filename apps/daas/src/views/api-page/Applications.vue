@@ -28,6 +28,8 @@ interface CreateForm {
   [key: string]: any
 }
 
+const spacer = h(ElDivider, { direction: 'vertical', class: 'mx-1' })
+
 const table = ref()
 const formRef = ref()
 const searchParams = ref({
@@ -273,25 +275,29 @@ const handleSortTable = ({
         min-width="120"
         fixed="right"
       >
-        <template #default="scope">
-          <ElButton
-            v-readonlybtn="'API_clients_amangement'"
-            text
-            type="primary"
-            @click="edit(scope.row)"
-          >
-            {{ $t('public_button_edit') }}
-          </ElButton>
-          <template v-if="scope.row.id !== '5c0e750b7a5cd42464a5099d'">
-            <ElDivider class="mx-1" direction="vertical" />
+        <template #default="{ row }">
+          <el-space :spacer="spacer" :size="0" class="lh-1">
             <ElButton
+              v-if="row.permissionActions?.includes('Edit')"
               v-readonlybtn="'API_clients_amangement'"
               text
               type="primary"
-              @click="remove(scope.row)"
+              @click="edit(row)"
+            >
+              {{ $t('public_button_edit') }}
+            </ElButton>
+            <ElButton
+              v-if="
+                row.id !== '5c0e750b7a5cd42464a5099d' &&
+                row.permissionActions?.includes('Delete')
+              "
+              v-readonlybtn="'API_clients_amangement'"
+              text
+              type="primary"
+              @click="remove(row)"
               >{{ $t('public_button_delete') }}</ElButton
             >
-          </template>
+          </el-space>
         </template>
       </el-table-column>
     </TablePage>

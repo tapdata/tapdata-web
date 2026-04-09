@@ -191,10 +191,6 @@ const pageSort = [
             name: 'v2_data-server-list_all_data_Revoke',
           },
           {
-            label: t('public_export_all'),
-            name: 'v2_data-server-list_all_data_Export',
-          },
-          {
             label: t('public_delete_all'),
             name: 'v2_data-server-list_all_data_Delete',
           },
