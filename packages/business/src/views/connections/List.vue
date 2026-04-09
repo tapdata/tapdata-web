@@ -875,7 +875,7 @@ onUnmounted(() => {
         min-width="160"
       >
         <template #default="scope">
-          {{ scope.row.connectionUrl }}
+          {{ row.connectionUrl }}
         </template>
       </ElTableColumn>
       <ElTableColumn
@@ -898,7 +898,7 @@ onUnmounted(() => {
         :label="$t('public_connection_type')"
       >
         <template #default="scope">
-          {{ getType(scope.row.connection_type) }}
+          {{ getType(row.connection_type) }}
         </template>
       </ElTableColumn>
       <ElTableColumn min-width="125">
@@ -944,17 +944,17 @@ onUnmounted(() => {
             </ElTooltip>
           </div>
         </template>
-        <template #default="scope">
+        <template #default="{ row }">
           <el-space :spacer="spacer" :size="0">
             <ElButton
               data-testid="test-connection"
               text
               type="primary"
-              @click="testConnection(scope.row)"
+              @click="testConnection(row)"
               >{{ $t('public_connection_button_test') }}
             </ElButton>
             <ElTooltip
-              :disabled="!isFileSource(scope.row)"
+              :disabled="!isFileSource(row)"
               :content="
                 $t('packages_business_connections_list_wenjianleixingde')
               "
@@ -965,56 +965,40 @@ onUnmounted(() => {
                   text
                   type="primary"
                   data-testid="load-schema"
-                  :disabled="
-                    isFileSource(scope.row) || scope.row.disabledLoadSchema
-                  "
-                  @click="handleLoadSchema(scope.row)"
+                  :disabled="isFileSource(row) || row.disabledLoadSchema"
+                  @click="handleLoadSchema(row)"
                   >{{ $t('public_connection_button_load_schema') }}
                 </ElButton>
               </span>
             </ElTooltip>
             <ElButton
-              v-if="havePermission(scope.row.permissionActions, 'Edit')"
-              v-readonlybtn="'datasource_edition'"
+              v-if="havePermission(row.permissionActions, 'Edit')"
               text
               type="primary"
               data-testid="edit-connection"
-              :disabled="
-                $disabledByPermission(
-                  'datasource_edition_all_data',
-                  scope.row.user_id,
-                ) || scope.row.agentType === 'Cloud'
-              "
-              @click="edit(scope.row.id, scope.row)"
+              :disabled="row.agentType === 'Cloud'"
+              @click="edit(row.id, row)"
               >{{ $t('public_button_edit') }}
             </ElButton>
             <ElButton
               v-if="buttonShowMap.copy"
-              v-readonlybtn="'datasource_creation'"
               text
               type="primary"
               data-testid="copy-connection"
-              :loading="scope.row.copyLoading"
-              :disabled="scope.row.agentType === 'Cloud'"
-              @click="copy(scope.row)"
+              :loading="row.copyLoading"
+              :disabled="row.agentType === 'Cloud'"
+              @click="copy(row)"
               >{{ $t('public_button_copy') }}
             </ElButton>
             <ElButton
               v-if="
-                havePermission(scope.row.permissionActions, 'Delete') &&
-                !scope.row.isInit
+                havePermission(row.permissionActions, 'Delete') && !row.isInit
               "
-              v-readonlybtn="'datasource_delete'"
               text
               type="primary"
               data-testid="delete-connection"
-              :disabled="
-                $disabledByPermission(
-                  'datasource_delete_all_data',
-                  scope.row.user_id,
-                ) || scope.row.agentType === 'Cloud'
-              "
-              @click="remove(scope.row)"
+              :disabled="row.agentType === 'Cloud'"
+              @click="remove(row)"
               >{{ $t('public_button_delete') }}
             </ElButton>
           </el-space>
