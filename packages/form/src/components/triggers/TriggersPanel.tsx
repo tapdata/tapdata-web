@@ -230,6 +230,8 @@ export const TriggersPanel = defineComponent({
             }
             disabled={props.disabled}
             class="w-full"
+            multiple
+            clearable
           >
             {OP_OPTIONS.map((op) => (
               <ElOption
