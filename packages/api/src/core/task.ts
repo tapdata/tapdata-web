@@ -442,3 +442,88 @@ export function checkTaskMemoryHeap(taskId: string) {
     isSafe: boolean
   }>(`${BASE_URL}/checkTaskMemoryHeap/${taskId}`)
 }
+
+// ── Task Dashboard ──────────────────────────────────────────────────
+
+export interface TaskDashboardQuery {
+  type: string
+  step: number
+  dashboardType: string
+  top: number
+  startAt: number
+  endAt: number
+}
+
+export interface TaskDashboardActiveTasks {
+  total: number
+  running: number
+  error: number
+  maxLag: number
+  minLag: number
+}
+
+export interface TaskDashboardThroughput {
+  current: number
+  peak: number
+  dataRate: number
+  changeRate: number
+}
+
+export interface TaskDashboardConnectedDb {
+  id: string
+  name: string
+  tableCount: number
+}
+
+export interface TaskDashboardApiRequests {
+  total: number
+  failed: number
+  errorRate: number
+  avgTime: number
+}
+
+export interface TaskDashboardTrendSeries {
+  ts: number[]
+  values: number[]
+}
+
+export interface TaskDashboardTopTask {
+  taskId: string
+  taskName: string
+  latency: number
+  throughput: number
+}
+
+export interface TaskDashboardVo {
+  query: TaskDashboardQuery
+  summary: {
+    activeTasks: TaskDashboardActiveTasks
+    totalThroughput: TaskDashboardThroughput
+    connectedDbs: {
+      total: number
+      items: TaskDashboardConnectedDb[]
+    }
+    apiRequests: TaskDashboardApiRequests
+  }
+  trends: {
+    throughput: TaskDashboardTrendSeries
+    apiRequests: TaskDashboardTrendSeries
+  }
+  tops: {
+    topLaggingTasks: TaskDashboardTopTask[]
+    topThroughputTasks: TaskDashboardTopTask[]
+  }
+}
+
+export interface TaskDashboardParams {
+  type?: 'minute' | 'hours' | 'days'
+  step?: number
+  dashboardType?: string
+  top?: number
+}
+
+export function fetchTaskDashboard(params?: TaskDashboardParams) {
+  return requestClient.get<TaskDashboardVo>(`${BASE_URL}/dashboard`, {
+    params,
+  })
+}
