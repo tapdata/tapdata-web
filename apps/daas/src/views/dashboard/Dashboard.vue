@@ -8,9 +8,10 @@ import {
   type TaskDashboardTopTask,
   type TaskDashboardVo,
 } from '@tap/api/src/core/task'
-import { getProcessInfo } from '@tap/api/src/core/workers'
+import { fetchWorkers, getProcessInfo } from '@tap/api/src/core/workers'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import Chart from '@tap/component/src/chart/Chart.vue'
+import { calcUnit } from '@tap/shared/src/number'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { STATUS_MAP as DASHBOARD_STATUS_MAP } from './const'
@@ -31,7 +32,16 @@ const trendsTimeRange = ref<'5min' | '1h' | '24h'>('24h')
 
 // Top Tasks state
 const topTaskTab = ref<'lagging' | 'throughput'>('lagging')
+const topTaskTabOptions = [
+  { label: 'Most Lagging', value: 'lagging' },
+  { label: 'Highest Throughput', value: 'throughput' },
+]
 const topTaskLimit = ref<5 | 10 | 20>(5)
+const topTaskLimitOptions = [
+  { label: 'Top 5', value: 5 },
+  { label: 'Top 10', value: 10 },
+  { label: 'Top 20', value: 20 },
+]
 
 // Cluster / Agent data
 interface AgentNode extends ClusterState {
@@ -85,7 +95,7 @@ const apiChartOption = computed(() => {
 })
 
 function formatTimeLabel(ts: number): string {
-  const d = new Date(ts)
+  const d = new Date(Number(`${ts}000`))
   const hh = String(d.getHours()).padStart(2, '0')
   const mm = String(d.getMinutes()).padStart(2, '0')
   return `${hh}:${mm}`
@@ -245,18 +255,22 @@ function getStatusLabel(type: string) {
   return (DASHBOARD_STATUS_MAP as any)[type] || '-'
 }
 
+// ── Helpers ────────────────────────────────────────────
+function rangeToTimeParams(range: string): {
+  type: 'minute' | 'hours' | 'days'
+} {
+  if (range === '5m' || range === '5min') return { type: 'minute' }
+  if (range === '1h') return { type: 'hours' }
+  return { type: 'days' }
+}
+
 // ── Data fetching ──────────────────────────────────────
 async function fetchDashboardData() {
   loading.value = true
   try {
     const [dashboard, clusterData] = await Promise.all([
       fetchTaskDashboard({
-        type:
-          trendsTimeRange.value === '5min'
-            ? 'minute'
-            : trendsTimeRange.value === '1h'
-              ? 'hours'
-              : 'days',
+        ...rangeToTimeParams(trendsTimeRange.value),
         top: topTaskLimit.value,
       }).catch(() => null),
       fetchClusterStates({ type: 'dashboard' }).catch(() => ({ items: [] })),
@@ -265,7 +279,7 @@ async function fetchDashboardData() {
     if (dashboard) dashboardData.value = dashboard
 
     // Process cluster data
-    const processIdSet = new Set<string>()
+    const processIds: string[] = []
     const items: AgentNode[] = (clusterData?.items || []).map((item: any) => {
       const node: AgentNode = { ...item }
       if (node.status !== 'running') {
@@ -278,22 +292,59 @@ async function fetchDashboardData() {
       }
       if (node.systemInfo?.process_id) {
         node.processId = node.systemInfo.process_id
-        processIdSet.add(node.systemInfo.process_id)
+        processIds.push(node.systemInfo.process_id)
       }
       return node
     })
-    agentNodes.value = items
 
-    if (processIdSet.size > 0) {
+    // Fetch worker usage rates (CPU / Memory) — same approach as Cluster.vue
+    if (processIds.length > 0) {
       try {
-        const processData = await getProcessInfo(Array.from(processIdSet))
-        for (const id of Object.keys(processData)) {
-          agentRunningTask.value[id] = (processData as any)[id].runningTaskNum
+        const [workerResponse, processData] = await Promise.all([
+          fetchWorkers({
+            where: {
+              process_id: { inq: processIds },
+              worker_type: 'connector',
+            },
+          }).catch(() => null),
+          getProcessInfo(processIds).catch(() => null),
+        ])
+
+        // Build metricValues map from worker data
+        const metricMap: Record<
+          string,
+          { CpuUsage: string; HeapMemoryUsage: string }
+        > = {}
+        if (workerResponse?.items?.length) {
+          for (const w of workerResponse.items) {
+            if (w.metricValues) {
+              metricMap[(w as any).process_id] = {
+                CpuUsage: `${(((w.metricValues as any).CpuUsage ?? 0) * 100).toFixed(2)}%`,
+                HeapMemoryUsage: `${(((w.metricValues as any).HeapMemoryUsage ?? 0) * 100).toFixed(2)}%`,
+              }
+            }
+          }
+        }
+
+        // Apply metricValues onto each node
+        for (const node of items) {
+          if (node.processId && metricMap[node.processId]) {
+            node.metricValues = metricMap[node.processId]
+          }
+        }
+
+        // Running task counts
+        if (processData) {
+          for (const id of Object.keys(processData)) {
+            agentRunningTask.value[id] = (processData as any)[id].runningTaskNum
+          }
         }
       } catch {
         /* ignore */
       }
     }
+
+    agentNodes.value = items
 
     lastUpdated.value = new Date().toLocaleTimeString()
   } finally {
@@ -301,9 +352,55 @@ async function fetchDashboardData() {
   }
 }
 
-function onTrendsTimeChange(range: '5min' | '1h' | '24h') {
-  trendsTimeRange.value = range
-  fetchDashboardData()
+// ── Partial fetchers (only re-fetch the changed section) ──
+async function fetchPartial(
+  dashboardType: string,
+  range: string,
+  top?: number,
+) {
+  try {
+    const result = await fetchTaskDashboard({
+      ...rangeToTimeParams(range),
+      dashboardType,
+      ...(top != null ? { top } : {}),
+    })
+    if (!result) return
+    // Merge partial result into existing data
+    const prev = dashboardData.value
+    if (!prev) {
+      dashboardData.value = result
+      return
+    }
+    if (result.summary) {
+      prev.summary = { ...prev.summary, ...result.summary }
+    }
+    if (result.trends) {
+      // Only overwrite non-empty trend arrays
+      if (result.trends.throughput?.ts?.length) {
+        prev.trends = { ...prev.trends, throughput: result.trends.throughput }
+      }
+      if (result.trends.apiRequests?.ts?.length) {
+        prev.trends = { ...prev.trends, apiRequests: result.trends.apiRequests }
+      }
+    }
+    if (result.tops) {
+      prev.tops = result.tops
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
+function onApiTimeRangeChange() {
+  fetchPartial('apiRequests', apiTimeRange.value)
+}
+
+function onTrendsTimeChange() {
+  fetchPartial('trends', trendsTimeRange.value)
+}
+
+function onTopTaskLimitChange() {
+  fetchPartial('tops', trendsTimeRange.value, topTaskLimit.value)
 }
 
 // ── Navigation ─────────────────────────────────────────
@@ -340,7 +437,7 @@ onBeforeUnmount(() => {
           <div class="dashboard__card p-5">
             <div class="flex justify-content-between align-items-start mb-3">
               <span class="fs-7 text-secondary fw-sub">Active Tasks</span>
-              <div class="p-2 bg-gray-50 rounded-lg">
+              <div class="p-2 bg-gray-50 rounded-lg mt-n2">
                 <el-icon size="20" class="text-blue-500 align-top">
                   <i-lucide-activity />
                 </el-icon>
@@ -369,7 +466,7 @@ onBeforeUnmount(() => {
           <div class="dashboard__card p-5">
             <div class="flex justify-content-between align-items-start mb-3">
               <span class="fs-7 text-secondary fw-sub">Total Throughput</span>
-              <div class="p-2 bg-gray-50 rounded-lg">
+              <div class="p-2 bg-gray-50 rounded-lg mt-n2">
                 <el-icon class="text-indigo-500 align-top" size="20">
                   <i-lucide-trending-up />
                 </el-icon>
@@ -377,16 +474,16 @@ onBeforeUnmount(() => {
             </div>
             <div class="din-font lh-1 mb-1">
               <span class="fs-2 font-semibold">{{
-                formatNumber(throughput?.current ?? 0)
+                (throughput?.current ?? 0).toFixed(2)
               }}</span>
               <span class="fs-7 text-secondary ml-1">events/sec</span>
             </div>
             <div class="flex flex-wrap gap-2 mt-3">
               <span class="dashboard__tag dashboard__tag--amber"
-                >Peak {{ formatNumber(throughput?.peak ?? 0) }}</span
+                >Peak {{ (throughput?.peak ?? 0).toFixed(2) }}</span
               >
               <span class="dashboard__tag dashboard__tag--indigo"
-                >Data {{ throughput?.dataRate ?? 0 }} MB/s</span
+                >Data {{ calcUnit(throughput?.dataRate ?? 0, 'b') }}/s</span
               >
             </div>
             <p
@@ -397,7 +494,7 @@ onBeforeUnmount(() => {
               "
             >
               {{ throughput.changeRate > 0 ? '+' : ''
-              }}{{ throughput.changeRate }}% vs last hour
+              }}{{ throughput.changeRate.toFixed(2) }}% vs last hour
             </p>
           </div>
 
@@ -405,7 +502,7 @@ onBeforeUnmount(() => {
           <div class="dashboard__card p-5">
             <div class="flex justify-content-between align-items-start mb-3">
               <span class="fs-7 text-secondary fw-sub">Connected DBs</span>
-              <div class="p-2 bg-gray-50 rounded-lg">
+              <div class="p-2 bg-gray-50 rounded-lg mt-n2">
                 <el-icon class="text-teal-500 align-top" size="20">
                   <i-lucide-database />
                 </el-icon>
@@ -422,7 +519,7 @@ onBeforeUnmount(() => {
                 v-for="db in (connectedDbs?.items || []).slice(0, 3)"
                 :key="db.id"
                 class="dashboard__tag dashboard__tag--blue"
-                >{{ db.name }} {{ db.tableCount }} tbls</span
+                >{{ db.name }} <strong>{{ db.tableCount }} tbls</strong></span
               >
             </div>
           </div>
@@ -432,19 +529,15 @@ onBeforeUnmount(() => {
             <div class="flex justify-content-between align-items-start mb-3">
               <div class="flex align-items-center gap-2">
                 <span class="fs-7 text-secondary fw-sub">API Requests</span>
-                <div class="dashboard__time-switcher">
-                  <button
-                    v-for="r in ['5m', '1h', '24h'] as const"
-                    :key="r"
-                    :class="{ active: apiTimeRange === r }"
-                    @click="apiTimeRange = r"
-                  >
-                    {{ r }}
-                  </button>
-                </div>
+                <el-segmented
+                  v-model="apiTimeRange"
+                  :options="['5m', '1h', '24h']"
+                  size="small"
+                  @change="onApiTimeRangeChange"
+                />
               </div>
               <div class="p-2 bg-gray-50 rounded-lg">
-                <el-icon class="text-purple-500 align-top" size="20">
+                <el-icon class="text-purple-500 align-top mt-n2" size="20">
                   <i-lucide-server />
                 </el-icon>
               </div>
@@ -470,16 +563,12 @@ onBeforeUnmount(() => {
         <div class="dashboard__card p-5 mb-6">
           <div class="flex justify-content-between align-items-center mb-5">
             <h2 class="fs-5 font-semibold m-0">System Trends</h2>
-            <div class="dashboard__time-switcher">
-              <button
-                v-for="r in ['5min', '1h', '24h'] as const"
-                :key="r"
-                :class="{ active: trendsTimeRange === r }"
-                @click="onTrendsTimeChange(r)"
-              >
-                {{ r }}
-              </button>
-            </div>
+            <el-segmented
+              v-model="trendsTimeRange"
+              :options="['5min', '1h', '24h']"
+              size="small"
+              @change="onTrendsTimeChange"
+            />
           </div>
           <div class="grid grid-cols-2 gap-6">
             <div>
@@ -506,31 +595,18 @@ onBeforeUnmount(() => {
           <div class="flex justify-content-between align-items-center mb-4">
             <div class="flex align-items-center gap-3">
               <h2 class="fs-5 font-semibold m-0">Top Tasks</h2>
-              <div class="dashboard__tab-switcher">
-                <button
-                  :class="{ active: topTaskTab === 'lagging' }"
-                  @click="topTaskTab = 'lagging'"
-                >
-                  Most Lagging
-                </button>
-                <button
-                  :class="{ active: topTaskTab === 'throughput' }"
-                  @click="topTaskTab = 'throughput'"
-                >
-                  Highest Throughput
-                </button>
-              </div>
+              <el-segmented
+                v-model="topTaskTab"
+                :options="topTaskTabOptions"
+                size="small"
+              />
             </div>
-            <div class="dashboard__time-switcher">
-              <button
-                v-for="n in [5, 10, 20] as const"
-                :key="n"
-                :class="{ active: topTaskLimit === n }"
-                @click="topTaskLimit = n"
-              >
-                Top {{ n }}
-              </button>
-            </div>
+            <el-segmented
+              v-model="topTaskLimit"
+              :options="topTaskLimitOptions"
+              size="small"
+              @change="onTopTaskLimitChange"
+            />
           </div>
 
           <div v-if="topTasks.length" class="dashboard__table-wrap">
@@ -749,37 +825,6 @@ onBeforeUnmount(() => {
     border-radius: 0.25rem;
     font-size: 0.75rem;
     font-weight: 500;
-  }
-
-  // ── Time / Tab switcher ────────────────────────────────
-  &__time-switcher,
-  &__tab-switcher {
-    display: inline-flex;
-    background-color: #f1f5f9;
-    border-radius: 0.375rem;
-    padding: 2px;
-
-    button {
-      padding: 0.125rem 0.5rem;
-      border: none;
-      background: none;
-      border-radius: 0.25rem;
-      font-size: 0.6875rem;
-      font-weight: 500;
-      color: #64748b;
-      cursor: pointer;
-      transition: all 0.15s ease;
-
-      &.active {
-        background-color: #fff;
-        color: #0f172a;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-      }
-
-      &:hover:not(.active) {
-        color: #334155;
-      }
-    }
   }
 
   // ── Nodes badge ────────────────────────────────────────
