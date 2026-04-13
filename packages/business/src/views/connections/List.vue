@@ -874,7 +874,7 @@ onUnmounted(() => {
         :label="$t('public_connection_information')"
         min-width="160"
       >
-        <template #default="scope">
+        <template #default="{ row }">
           {{ row.connectionUrl }}
         </template>
       </ElTableColumn>
@@ -897,7 +897,7 @@ onUnmounted(() => {
         min-width="135"
         :label="$t('public_connection_type')"
       >
-        <template #default="scope">
+        <template #default="{ row }">
           {{ getType(row.connection_type) }}
         </template>
       </ElTableColumn>
@@ -914,9 +914,9 @@ onUnmounted(() => {
             </ElTooltip>
           </div>
         </template>
-        <template #default="scope">
-          <div v-if="isFileSource(scope.row)">-</div>
-          <SchemaProgress :data="scope.row" />
+        <template #default="{ row }">
+          <div v-if="isFileSource(row)">-</div>
+          <SchemaProgress :data="row" />
         </template>
       </ElTableColumn>
       <ElTableColumn
