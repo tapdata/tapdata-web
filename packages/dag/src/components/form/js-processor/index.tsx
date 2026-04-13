@@ -5,24 +5,21 @@ import {
   getNodeSchema,
   getNodeSchemaPage,
 } from '@tap/api/src/core/metadata-instances'
-import { queryMonitoringLogs } from '@tap/api/src/core/monitoring-logs'
 import {
+  getJsMockData,
   getNodeTableInfo,
-  getRunJsResult,
-  testRunJs,
   testRunJsRpc,
 } from '@tap/api/src/core/task'
-import { VEmpty } from '@tap/component/src/base/v-empty'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import VIcon from '@tap/component/src/base/VIcon.vue'
-import resize from '@tap/component/src/directives/resize'
 
-import { FormItem, HighlightCode, JsEditor, useForm } from '@tap/form'
-import i18n from '@tap/i18n'
-import Time from '@tap/shared/src/time'
-import { defineComponent, inject, onUnmounted, reactive, ref } from 'vue'
+import { FormItem, JsEditor, useForm } from '@tap/form'
+
+import { useI18n } from '@tap/i18n'
+import { computed, defineComponent, inject, nextTick, reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
+import BaseNodeIcon from '../../BaseNodeIcon.vue'
 import { JsDeclare } from '../js-declare'
 import AiCodeDialog from './AiCodeDialog.vue'
 import './style.scss'
@@ -30,10 +27,8 @@ import './style.scss'
 export const JsProcessor = observer(
   defineComponent({
     props: ['value', 'disabled', 'isStandard'],
-    directives: {
-      resize,
-    },
     setup(props, { emit, attrs }) {
+      const { t, locale } = useI18n()
       const store = useStore()
       const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
       const SchemaExpressionScopeContext = inject(SchemaExpressionScopeSymbol)
@@ -42,23 +37,15 @@ export const JsProcessor = observer(
       const formRef = useForm()
       const form = formRef.value
       const tableLoading = ref(false)
-      const running = ref(false)
-      const runningText = ref('')
-      const fullscreen = ref(false)
       const showDoc = ref(false)
       const isMigrate = syncType === 'migrate'
-      const showJsonArea = ref(false)
       const aiDialogRef = ref(null)
       const docSrc = `${
         isDaas
-          ? `${location.origin}/docs${i18n.locale === 'en' ? '/en' : ''}`
+          ? `${location.origin}/docs${locale.value === 'en' ? '/en' : ''}`
           : `https://docs.tapdata.${store.getters.isDomesticStation ? 'net' : 'io'}`
       }/appendix/${props.isStandard ? 'standard' : 'enhanced'}-js?from=cloud`
-      const beforeJsonRef = ref()
-      const afterJsonRef = ref()
 
-      let queryStart
-      let queryTimes = 0
       const params = reactive({
         taskId,
         jsNodeId: form.values.id,
@@ -96,181 +83,192 @@ export const JsProcessor = observer(
         loadTable()
       }
 
-      const inputRef = ref('')
-      const outputRef = ref('')
-
-      let timer
-      let outTimer
-      let logTimer
-      let version
-      const logList = ref([])
-      const logLoading = ref(false)
       const nodeId = form.values.id
 
-      const queryLog = async () => {
+      // Mock test run state
+      const mockMode = ref(false)
+      const mockInput = ref('')
+      const mockOutput = ref('')
+      const mockOutputError = ref('')
+      const mockLogs = ref<
+        Array<{ time: string; level: string; content: string }>
+      >([])
+      const mockRunning = ref(false)
+      const gettingSample = ref(false)
+      const sqlDialogVisible = ref(false)
+      const sqlText = ref('SELECT * FROM ')
+      const sqlPreviewData = ref<any[]>([])
+      const sqlPreviewLoading = ref(false)
+
+      const mockInputValid = computed(() => {
+        if (!mockInput.value.trim()) return null
         try {
-          const logData = await queryMonitoringLogs({
-            taskId: task.testTaskId,
-            type: 'testRun',
-            order: 'asc',
-            page: 1,
-            pageSize: 50,
-            start: queryStart,
-            nodeId,
-            end: Time.now(),
-          })
-          logList.value =
-            logData?.items.filter(
-              (item) => !new RegExp(`^.*\\[${nodeId}]`).test(item.message),
-            ) || []
-        } catch (error) {
-          console.error('Failed to query logs:', error)
-          logList.value = []
+          const parsed = JSON.parse(mockInput.value)
+          return Array.isArray(parsed)
+        } catch {
+          return false
         }
-      }
-
-      const handleQuery = async () => {
-        const lastVersion = version
-        const isOver = await getRunJsResult({
-          version,
-          taskId,
-          jsNodeId: nodeId,
-        }).then((res) => {
-          // 版本号不一致
-          if (lastVersion !== version) return true
-          inputRef.value = res.before ? JSON.stringify(res.before, null, 2) : ''
-          outputRef.value = res.after ? JSON.stringify(res.after, null, 2) : ''
-          return res.over
-        })
-
-        if (isOver) running.value = false
-
-        await queryLog()
-
-        return isOver
-      }
-
-      const resetQuery = () => {
-        queryTimes = 0
-        running.value = false
-        runningText.value = ''
-        logLoading.value = false
-        clearTimeout(timer)
-        clearTimeout(logTimer)
-        clearTimeout(outTimer)
-      }
-
-      const handleAutoQuery = () => {
-        running.value = true
-        queryTimes++
-        clearTimeout(timer)
-        if (queryTimes > 5) {
-          runningText.value = i18n.t(
-            'packages_form_js_processor_index_rengzaipinmingjia',
-          )
-        }
-
-        if (queryTimes > 40) {
-          resetQuery()
-          ElMessage.error(
-            i18n.t('packages_form_js_processor_index_qingqiuchaoshiqing'),
-          )
-          return
-        }
-        handleQuery()
-          .then((isOver) => {
-            if (!isOver) {
-              timer = setTimeout(() => {
-                handleAutoQuery()
-              }, 500)
-            } else {
-              // 两秒后再去拿一次日志
-              outTimer = setTimeout(() => {
-                logTimer = setInterval(async () => {
-                  await queryLog()
-                  // 不继续轮询了
-                  // if (logList.value.length) {
-                  resetQuery()
-                  // }
-                }, 1000)
-              }, 2000)
-
-              /*if (!logList.value.length) {
-                outTimer = setTimeout(() => {
-                  logTimer = setInterval(async () => {
-                    await queryLog()
-                    if (logList.value.length) {
-                      resetQuery()
-                    }
-                  }, 500)
-                }, 1000)
-              } else {
-                resetQuery()
-              }*/
-            }
-          })
-          .catch(resetQuery)
-      }
-
-      const handleRun = async () => {
-        const { jsType } = form.values
-        resetQuery()
-        running.value = true
-        logLoading.value = true
-        showJsonArea.value = true
-        clearTimeout(timer)
-        version = Time.now()
-        queryStart = Time.now()
-
-        if (!fullscreen.value) toggleFullscreen()
-
-        if (jsType === 1) {
-          let before, after, logs, result
-          try {
-            result = await testRunJsRpc({
-              ...params,
-              version,
-              script: props.value,
-              jsType,
-            })
-          } catch (error) {
-            console.log(error) // eslint-disable-line
-            result = error?.data?.data
-          }
-          before = result?.before
-          after = result?.after
-          logs = result?.logs
-          inputRef.value = before ? JSON.stringify(before, null, 2) : ''
-          outputRef.value = after ? JSON.stringify(after, null, 2) : ''
-          logList.value =
-            logs?.filter(
-              (item) => !new RegExp(`^.*\\[${nodeId}]`).test(item.message),
-            ) || []
-          resetQuery()
-        } else {
-          testRunJs({ ...params, version, script: props.value, jsType }).then(
-            () => {
-              queryStart = Time.now()
-              handleAutoQuery()
-            },
-            async () => {
-              // 脚本执行出错
-              await queryLog()
-              resetQuery()
-            },
-          )
-        }
-      }
-
-      onUnmounted(() => {
-        clearTimeout(timer)
       })
 
-      const toggleFullscreen = () => {
-        fullscreen.value = !fullscreen.value
-        setTimeout(() => {
-          jsEditor.resize(true)
-        }, 10)
+      const mockOutputCount = computed(() => {
+        if (!mockOutput.value.trim()) return 0
+        try {
+          const parsed = JSON.parse(mockOutput.value)
+          return Array.isArray(parsed) ? parsed.length : 1
+        } catch {
+          return 0
+        }
+      })
+
+      const addMockLog = (level: string, content: string) => {
+        const now = new Date()
+        const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`
+        mockLogs.value.push({ time, level, content })
+      }
+
+      const handleMockRun = async () => {
+        if (mockInputValid.value !== true) {
+          ElMessage.warning(t('packages_form_js_processor_mock_json_invalid'))
+          return
+        }
+        mockRunning.value = true
+        mockOutput.value = ''
+        mockOutputError.value = ''
+        const startTime = Date.now()
+        addMockLog('info', t('packages_form_js_processor_mock_log_start'))
+        try {
+          const result = await testRunJsRpc({
+            ...params,
+            version: Date.now(),
+            script: props.value,
+            jsType: form.values.jsType ?? 1,
+            mockData: JSON.parse(mockInput.value),
+          })
+          const elapsed = Date.now() - startTime
+          const after = result?.after
+          mockOutput.value = after ? JSON.stringify(after, null, 2) : ''
+          addMockLog(
+            'success',
+            t('packages_form_js_processor_mock_log_success', { val1: elapsed }),
+          )
+          if (result?.logs?.length) {
+            result.logs.forEach((log: any) => {
+              addMockLog('info', log.message || log.errorStack || '')
+            })
+          }
+        } catch (error: any) {
+          const elapsed = Date.now() - startTime
+          const errMsg =
+            error?.data?.data?.logs?.[0]?.errorStack ||
+            error?.message ||
+            t('packages_form_js_processor_mock_unknown_error')
+          mockOutputError.value = errMsg
+          addMockLog(
+            'error',
+            t('packages_form_js_processor_mock_log_fail', {
+              val1: elapsed,
+              val2: errMsg,
+            }),
+          )
+        } finally {
+          mockRunning.value = false
+        }
+      }
+
+      const handleGetSample = async () => {
+        gettingSample.value = true
+        addMockLog(
+          'info',
+          t('packages_form_js_processor_mock_log_getting_sample'),
+        )
+        try {
+          const data = await getJsMockData({
+            taskId,
+            nodeId,
+          })
+          if (data && Array.isArray(data)) {
+            mockInput.value = JSON.stringify(data, null, 2)
+            addMockLog(
+              'success',
+              t('packages_form_js_processor_mock_log_sample_count', {
+                val1: data.length,
+              }),
+            )
+          } else if (data) {
+            mockInput.value = JSON.stringify([data], null, 2)
+            addMockLog(
+              'success',
+              t('packages_form_js_processor_mock_log_sample_count', {
+                val1: 1,
+              }),
+            )
+          } else {
+            addMockLog(
+              'warning',
+              t('packages_form_js_processor_mock_log_sample_empty'),
+            )
+          }
+        } catch (error: any) {
+          addMockLog(
+            'error',
+            t('packages_form_js_processor_mock_log_sample_fail', {
+              val1:
+                error?.message ||
+                t('packages_form_js_processor_mock_unknown_error'),
+            }),
+          )
+          ElMessage.error(
+            t('packages_form_js_processor_mock_log_sample_fail', {
+              val1:
+                error?.message ||
+                t('packages_form_js_processor_mock_unknown_error'),
+            }),
+          )
+        } finally {
+          gettingSample.value = false
+        }
+      }
+
+      const handleSqlPreview = async () => {
+        sqlPreviewLoading.value = true
+        try {
+          const data = await getJsMockData({
+            taskId,
+            nodeId,
+            sql: sqlText.value,
+          })
+          sqlPreviewData.value = Array.isArray(data) ? data : data ? [data] : []
+        } catch (error: any) {
+          ElMessage.error(
+            error?.message ||
+              t('packages_form_js_processor_mock_sql_query_fail'),
+          )
+          sqlPreviewData.value = []
+        } finally {
+          sqlPreviewLoading.value = false
+        }
+      }
+
+      const handleUseSqlData = () => {
+        if (sqlPreviewData.value.length) {
+          mockInput.value = JSON.stringify(sqlPreviewData.value, null, 2)
+          addMockLog(
+            'info',
+            t('packages_form_js_processor_mock_log_sql_import', {
+              val1: sqlPreviewData.value.length,
+            }),
+          )
+        }
+        sqlDialogVisible.value = false
+      }
+
+      const toggleMockMode = () => {
+        mockMode.value = !mockMode.value
+        if (mockMode.value) {
+          nextTick(() => {
+            jsEditor?.resize?.(true)
+          })
+        }
       }
 
       const toggleDoc = (event) => {
@@ -285,18 +283,6 @@ export const JsProcessor = observer(
       const handleAiGenerate = (generatedCode: string) => {
         // Replace the current code with the AI generated code
         emit('change', generatedCode)
-      }
-
-      const onTabChange = (current) => {
-        if (current == '1') {
-          beforeJsonRef.value.editor.resize(true)
-          afterJsonRef.value.editor.resize(true)
-
-          setTimeout(() => {
-            beforeJsonRef.value.editor.resize(true)
-            afterJsonRef.value.editor.resize(true)
-          }, 300)
-        }
       }
 
       function getPrefix(line, index) {
@@ -397,113 +383,18 @@ export const JsProcessor = observer(
       // 模型自动改变
       useAfterTaskSaved(formRef.value.values.$inputs, loadFields)
 
-      const renderTool = () => (
-        <div class="flex align-center">
-          {isMigrate && (
-            <FormItem.BaseItem
-              asterisk
-              class="flex-1 mr-4"
-              label={i18n.t('packages_form_js_processor_index_xuanzebiao')}
-              layout="horizontal"
-              feedbackLayout="none"
-            >
-              <ElSelectV2
-                disabled={props.disabled}
-                v-model={params.tableName}
-                filterable
-                class="form-input"
-                item-size={34}
-                options={tableList.value}
-                loading={tableLoading.value}
-              />
-            </FormItem.BaseItem>
-          )}
-          <div class="flex-1 flex justify-content-between">
-            <FormItem.BaseItem
-              label={i18n.t('packages_form_js_processor_index_shujuhangshu')}
-              layout="horizontal"
-              feedbackLayout="none"
-            >
-              <ElInputNumber
-                disabled={props.disabled}
-                style="width: 100px;"
-                modelValue={params.rows}
-                min={1}
-                max={10}
-                onInput={(val) => {
-                  params.rows = val
-                }}
-                controls-position="right"
-              ></ElInputNumber>
-            </FormItem.BaseItem>
-            <ElButton
-              class="ml-4"
-              disabled={props.disabled || (isMigrate && !params.tableName)}
-              loading={running.value || tableLoading.value}
-              onClick={handleRun}
-              type="primary"
-            >
-              {i18n.t('packages_form_js_processor_index_shiyunxing')}
-            </ElButton>
-          </div>
-        </div>
-      )
-
-      const jsonView = () => (
-        <div
-          class="flex json-view-wrap"
-          v-loading={running.value}
-          element-loading-text={runningText.value}
-        >
-          <div class="json-view flex-1 mr-4 border rounded-2 overflow-hidden">
-            <div class="json-view-header">
-              {i18n.t('packages_form_js_processor_index_tiaoshishuru')}
-            </div>
-            <VCodeEditor
-              ref={beforeJsonRef}
-              class="py-0 json-view-editor flex-1"
-              value={inputRef.value}
-              lang="json"
-              options={{
-                readOnly: true,
-                highlightActiveLine: false,
-                highlightGutterLine: false,
-              }}
-              theme="chrome"
-            ></VCodeEditor>
-          </div>
-          <div class="json-view flex-1 border rounded-2 overflow-hidden">
-            <div class="json-view-header">
-              {i18n.t('packages_form_js_processor_index_jieguoshuchu')}
-            </div>
-            <VCodeEditor
-              ref={afterJsonRef}
-              class="py-0 json-view-editor flex-1"
-              value={outputRef.value}
-              lang="json"
-              options={{
-                readOnly: true,
-                highlightActiveLine: false,
-                highlightGutterLine: false,
-              }}
-              theme="chrome"
-            ></VCodeEditor>
-          </div>
-        </div>
-      )
-
       return () => {
         const editorProps = { ...attrs }
         editorProps.options.readOnly = props.disabled
         const tooltip = props.isStandard
-          ? i18n.t('packages_form_js_processor_index_tooltip1')
-          : i18n.t('packages_form_js_processor_index_tooltip2')
+          ? t('packages_form_js_processor_index_tooltip1')
+          : t('packages_form_js_processor_index_tooltip2')
         const label = (
           <div class="position-absolute flex justify-content-between w-100">
             <div class="flex align-center">
               <span class="formily-element-plus-form-item-asterisk">*</span>
               <span class="mr-1">
-                {i18n.t('packages_form_js_processor_index_jiaoben')}
+                {t('packages_form_js_processor_index_jiaoben')}
               </span>
               <ElTooltip content={tooltip} placement="top">
                 <VIcon size="14" class="color-primary">
@@ -512,30 +403,17 @@ export const JsProcessor = observer(
               </ElTooltip>
             </div>
             <div class="flex align-center" style="--btn-space: 4px;">
-              {/* <ElButton
-                text
-                tag="a"
-                onClick={handleOpenAiDialog}
-                type="primary"
-                disabled={props.disabled}
-              >
-                <el-icon>
-                  <i-lucide-sparkle />
-                </el-icon>
-                {i18n.t('packages_dag_ai_generate')}
-              </ElButton> */}
-              <ElButton text tag="a" onClick={toggleDoc} type="primary">
-                {i18n.t('packages_dag_api_docs')}
-              </ElButton>
               <ElButton
                 text
                 tag="a"
-                onClick={toggleFullscreen}
-                class="js-editor-fullscreen"
+                onClick={toggleMockMode}
                 type="primary"
+                icon={IconLucidePlay}
               >
-                <VIcon class="mr-1">fangda</VIcon>
-                {i18n.t('packages_form_js_editor_fullscreen')}
+                {t('packages_form_js_processor_mock_title')}
+              </ElButton>
+              <ElButton text tag="a" onClick={toggleDoc} type="primary">
+                {t('packages_dag_api_docs')}
               </ElButton>
             </div>
           </div>
@@ -552,164 +430,30 @@ export const JsProcessor = observer(
             <ElDrawer
               append-to-body
               modal-class="bg-transparent"
-              title={i18n.t('packages_dag_api_docs')}
+              title={t('packages_dag_api_docs')}
               size={680}
               v-model={showDoc.value}
               class="js-api-drawer"
             >
               <iframe src={docSrc} class="w-100 h-100 block" />
             </ElDrawer>
-            <div
-              class={[
-                'js-processor-editor',
-                {
-                  fullscreen: fullscreen.value,
-                },
-              ]}
-            >
-              <div class="js-processor-editor-toolbar border-bottom justify-content-between align-center px-4 py-2">
-                <div
-                  style={{ display: fullscreen.value ? 'contents' : 'none' }}
-                >
-                  {renderTool()}
-                </div>
-                <div style="--btn-space: 4px;">
-                  <ElButton text type="primary" onClick={toggleDoc}>
-                    {i18n.t('packages_dag_api_docs')}
-                  </ElButton>
-                  <ElButton
-                    text
-                    type="primary"
-                    onClick={toggleFullscreen}
-                    class="js-editor-fullscreen"
-                  >
-                    <VIcon class="mr-1">suoxiao</VIcon>{' '}
-                    {i18n.t('packages_form_js_editor_exit_fullscreen')}
-                  </ElButton>
-                </div>
-              </div>
-
-              <div class="js-editor-form-item-wrap overflow-hidden">
-                <FormItem.BaseItem class="js-editor-form-item" label={label}>
-                  <JsEditor
-                    value={props.value}
-                    onChange={(val) => {
-                      emit('change', val)
-                    }}
-                    onInit={onEditorInit}
-                    height={350}
-                    showFullscreen={false}
-                    options={editorProps.options}
-                    includeBeforeAndAfter={editorProps.includeBeforeAndAfter}
-                    before={editorProps.before}
-                    beforeRegexp={editorProps.beforeRegexp}
-                    afterRegexp={editorProps.afterRegexp}
-                    after={editorProps.after}
-                  />
-                </FormItem.BaseItem>
-
-                <div
-                  {...{
-                    directives: [
-                      {
-                        name: 'resize',
-                        value: {
-                          minWidth: 100,
-                        },
-                        modifiers: {
-                          left: true,
-                        },
-                      },
-                    ],
-                  }}
-                  class="js-processor-editor-console border-start"
-                >
-                  <ElTabs
-                    onInput={onTabChange}
-                    class="w-100 flex"
-                    style="--el-tabs-padding-left: 1rem;"
-                  >
-                    <ElTabPane label={i18n.t('public_time_output')}>
-                      <div class="js-processor-editor-console-panel h-100 overflow-auto">
-                        <div class="js-log-list">
-                          {logList.value.length
-                            ? logList.value.map((item) => {
-                                if (/^[{[].*[\]}]$/.test(item.message)) {
-                                  let code
-                                  try {
-                                    code = JSON.stringify(
-                                      JSON.parse(item.message),
-                                      null,
-                                      2,
-                                    )
-                                  } catch {
-                                    const message = item.message
-                                      .replace(/^[{[](.*)[\]}]$/, '$1')
-                                      .split(', ')
-                                    code = `${item.message.charAt(0)}\n${message
-                                      .map((line) => `  ${line}`)
-                                      .join(
-                                        '\n',
-                                      )}\n${item.message.charAt(item.message.length - 1)}`
-                                  }
-
-                                  return (
-                                    <details class="js-log-list-item p-2">
-                                      <summary class="text-truncate px-2">
-                                        {item.message}
-                                      </summary>
-                                      <HighlightCode
-                                        class="m-0"
-                                        language="json"
-                                        code={code}
-                                      ></HighlightCode>
-                                    </details>
-                                  )
-                                }
-                                return (
-                                  <div class="js-log-list-item text-prewrap text-break p-2">
-                                    {item.errorStack || item.message}
-                                  </div>
-                                )
-                              })
-                            : !logLoading.value && <VEmpty large></VEmpty>}
-                          <div
-                            class={[
-                              'justify-content-center align-center m-0 p-2',
-                              logLoading.value ? 'flex' : 'none',
-                            ]}
-                          >
-                            <svg viewBox="25 25 50 50" class="circular">
-                              <circle
-                                cx="50"
-                                cy="50"
-                                r="20"
-                                fill="none"
-                                class="path"
-                              ></circle>
-                            </svg>
-                            <span class="ml-1 font-color-light">
-                              {i18n.t('packages_dag_loading')}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </ElTabPane>
-                    <ElTabPane
-                      label={i18n.t('packages_dag_js_processor_index_duibi')}
-                    >
-                      <div
-                        style={{
-                          display: fullscreen.value ? 'contents' : 'none',
-                        }}
-                      >
-                        {jsonView()}
-                      </div>
-                    </ElTabPane>
-                  </ElTabs>
-                </div>
-              </div>
-            </div>
+            <FormItem.BaseItem class="js-editor-form-item" label={label}>
+              <JsEditor
+                value={props.value}
+                onChange={(val) => {
+                  emit('change', val)
+                }}
+                onInit={onEditorInit}
+                height={350}
+                showFullscreen={false}
+                options={editorProps.options}
+                includeBeforeAndAfter={editorProps.includeBeforeAndAfter}
+                before={editorProps.before}
+                beforeRegexp={editorProps.beforeRegexp}
+                afterRegexp={editorProps.afterRegexp}
+                after={editorProps.after}
+              />
+            </FormItem.BaseItem>
 
             <JsDeclare
               value={form.values.declareScript}
@@ -721,14 +465,319 @@ export const JsProcessor = observer(
               param={editorProps.param}
               handleAddCompleter={editorProps.handleAddCompleter}
             />
-            <div class="pb-4">
-              <div style={{ display: !fullscreen.value ? 'contents' : 'none' }}>
-                {renderTool()}
+
+            {/* Mock Test Run Fullscreen */}
+            {mockMode.value && (
+              <div class="mock-test-run-fullscreen">
+                {/* Toolbar */}
+                <div class="mock-test-run-toolbar">
+                  <div class="mock-test-run-toolbar__left">
+                    <BaseNodeIcon node={form.values} class="mr-2" />
+                    <span>{form.values.name}</span>
+                  </div>
+                  <div
+                    class="mock-test-run-toolbar__right"
+                    style="--btn-space: 0;"
+                  >
+                    <ElButton
+                      type="primary"
+                      loading={mockRunning.value}
+                      onClick={handleMockRun}
+                      disabled={props.disabled}
+                    >
+                      <VIcon class="mr-1" size="14">
+                        play
+                      </VIcon>
+                      {t('packages_form_js_processor_index_shiyunxing')}
+                    </ElButton>
+                    <ElButton onClick={toggleDoc}>
+                      {t('packages_dag_api_docs')}
+                    </ElButton>
+                    <ElButton onClick={toggleMockMode}>
+                      <VIcon class="mr-1" size="14">
+                        suoxiao
+                      </VIcon>
+                      {t('packages_form_js_editor_exit_fullscreen')}
+                    </ElButton>
+                  </div>
+                </div>
+
+                {/* Body: left editor + right panels */}
+                <div class="mock-test-run-body">
+                  {/* Left: JS Editor */}
+                  <div class="mock-test-run-editor-pane">
+                    {/* <div class="editor-pane-header">
+                      <VIcon size="14" class="header-icon">
+                        code
+                      </VIcon>
+                      {t('packages_form_js_processor_mock_js_code')}
+                    </div> */}
+                    <div class="position-relative flex-1 overflow-hidden">
+                      <JsEditor
+                        value={props.value}
+                        onChange={(val) => emit('change', val)}
+                        onInit={onEditorInit}
+                        height="100%"
+                        showFullscreen={false}
+                        options={editorProps.options}
+                        includeBeforeAndAfter={
+                          editorProps.includeBeforeAndAfter
+                        }
+                        before={editorProps.before}
+                        beforeRegexp={editorProps.beforeRegexp}
+                        afterRegexp={editorProps.afterRegexp}
+                        after={editorProps.after}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Right panels */}
+                  <div class="mock-test-run-right-pane">
+                    {/* Input / Output */}
+                    <div class="mock-test-run-io-pane">
+                      {/* Input panel */}
+                      <div class="mock-test-run-input-panel">
+                        <div class="mock-test-run-panel-header">
+                          <div class="mock-test-run-panel-header__left">
+                            <span class="panel-title">
+                              <VIcon size="14">download</VIcon>
+                              {t('packages_form_js_processor_mock_input')}
+                            </span>
+                          </div>
+                          <div
+                            class="mock-test-run-panel-header__right"
+                            style="--btn-space: 0;"
+                          >
+                            <ElButton
+                              text
+                              type="primary"
+                              onClick={() => {
+                                sqlDialogVisible.value = true
+                              }}
+                            >
+                              {t('packages_form_js_processor_mock_sql_query')}
+                            </ElButton>
+                            <ElButton
+                              text
+                              type="primary"
+                              loading={gettingSample.value}
+                              onClick={handleGetSample}
+                            >
+                              {t('packages_form_js_processor_mock_get_sample')}
+                            </ElButton>
+                          </div>
+                        </div>
+                        <div class="mock-panel-body">
+                          <VCodeEditor
+                            class="mock-input-editor h-100 py-0"
+                            value={mockInput.value}
+                            onChange={(val) => {
+                              mockInput.value = val
+                            }}
+                            lang="json"
+                            theme="chrome"
+                            options={{
+                              highlightActiveLine: true,
+                              highlightGutterLine: true,
+                            }}
+                          />
+                          {mockInputValid.value !== null && (
+                            <div
+                              class={[
+                                'json-status-bar',
+                                mockInputValid.value ? 'valid' : 'invalid',
+                              ]}
+                            >
+                              <VIcon size="12">
+                                {mockInputValid.value
+                                  ? 'check-circle'
+                                  : 'warning'}
+                              </VIcon>
+                              {mockInputValid.value
+                                ? t(
+                                    'packages_form_js_processor_mock_json_valid',
+                                  )
+                                : t(
+                                    'packages_form_js_processor_mock_json_invalid',
+                                  )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Output panel */}
+                      <div class="mock-test-run-output-panel">
+                        <div class="mock-test-run-panel-header">
+                          <div class="mock-test-run-panel-header__left">
+                            <span class="panel-title">
+                              <VIcon size="14">upload</VIcon>
+                              {t('packages_form_js_processor_mock_output')}
+                            </span>
+                            {mockOutputCount.value > 0 && (
+                              <span class="panel-badge">
+                                {t('packages_form_js_processor_mock_items', {
+                                  val1: mockOutputCount.value,
+                                })}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div class="mock-panel-body">
+                          {mockOutput.value ? (
+                            <VCodeEditor
+                              class="mock-output-editor h-100"
+                              value={mockOutput.value}
+                              lang="json"
+                              theme="chrome"
+                              options={{
+                                readOnly: true,
+                                highlightActiveLine: false,
+                                highlightGutterLine: false,
+                              }}
+                            />
+                          ) : mockOutputError.value ? (
+                            <div class="mock-error-output">
+                              {mockOutputError.value}
+                            </div>
+                          ) : (
+                            <div class="mock-empty-state">
+                              <VIcon class="empty-icon" size="40">
+                                file-blank
+                              </VIcon>
+                              <div class="empty-title">
+                                {t('packages_form_js_processor_mock_no_output')}
+                              </div>
+                              <div class="empty-desc">
+                                {t(
+                                  'packages_form_js_processor_mock_no_output_tip',
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Log panel */}
+                    <div class="mock-log-panel">
+                      <div class="mock-test-run-panel-header">
+                        <div class="mock-test-run-panel-header__left">
+                          <span class="panel-title">
+                            <VIcon size="14">list</VIcon>
+                            {t('packages_form_js_processor_mock_log')}
+                          </span>
+                        </div>
+                        <div class="mock-test-run-panel-header__right">
+                          <ElButton
+                            size="small"
+                            text
+                            onClick={() => {
+                              mockLogs.value = []
+                            }}
+                          >
+                            {t('packages_form_js_processor_mock_log_clear')}
+                          </ElButton>
+                        </div>
+                      </div>
+                      <div class="mock-log-list">
+                        {mockLogs.value.length ? (
+                          mockLogs.value.map((log, idx) => (
+                            <div class="mock-log-item" key={idx}>
+                              <span class="log-time">{log.time}</span>
+                              <span class={['log-icon', log.level]}>
+                                <VIcon size="12">
+                                  {log.level === 'error'
+                                    ? 'close-circle'
+                                    : log.level === 'success'
+                                      ? 'check-circle'
+                                      : log.level === 'warning'
+                                        ? 'warning'
+                                        : 'info-circle'}
+                                </VIcon>
+                              </span>
+                              <span class="log-content">{log.content}</span>
+                            </div>
+                          ))
+                        ) : (
+                          <div class="mock-empty-state" style="padding: 24px;">
+                            <div class="empty-title">
+                              {t('packages_form_js_processor_mock_no_log')}
+                            </div>
+                            <div class="empty-desc">
+                              {t('packages_form_js_processor_mock_no_log_tip')}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* SQL Query Dialog */}
+                <ElDialog
+                  v-model={sqlDialogVisible.value}
+                  title={t('packages_form_js_processor_mock_sql_dialog_title')}
+                  width="640px"
+                  class="mock-sql-dialog"
+                  append-to-body
+                >
+                  {{
+                    default: () => (
+                      <>
+                        <VCodeEditor
+                          class="border rounded-xl py-0"
+                          value={sqlText.value}
+                          onChange={(val) => {
+                            sqlText.value = val
+                          }}
+                          lang="sql"
+                          theme="chrome"
+                          height={120}
+                          options={{ highlightActiveLine: true }}
+                        />
+                        {sqlPreviewData.value.length > 0 && (
+                          <div class="sql-preview-table">
+                            <ElTable
+                              data={sqlPreviewData.value}
+                              size="small"
+                              maxHeight={260}
+                            >
+                              {Object.keys(sqlPreviewData.value[0] || {}).map(
+                                (key) => (
+                                  <ElTableColumn
+                                    prop={key}
+                                    label={key}
+                                    key={key}
+                                    minWidth={120}
+                                  />
+                                ),
+                              )}
+                            </ElTable>
+                          </div>
+                        )}
+                      </>
+                    ),
+                    footer: () => (
+                      <div class="flex justify-content-end gap-2">
+                        <ElButton
+                          onClick={handleSqlPreview}
+                          loading={sqlPreviewLoading.value}
+                        >
+                          {t('packages_form_js_processor_mock_sql_preview')}
+                        </ElButton>
+                        <ElButton
+                          type="primary"
+                          onClick={handleUseSqlData}
+                          disabled={!sqlPreviewData.value.length}
+                        >
+                          {t('packages_form_js_processor_mock_sql_use_data')}
+                        </ElButton>
+                      </div>
+                    ),
+                  }}
+                </ElDialog>
               </div>
-              {showJsonArea.value && (
-                <div class="mt-4 json-view-area">{jsonView()}</div>
-              )}
-            </div>
+            )}
           </div>
         )
       }

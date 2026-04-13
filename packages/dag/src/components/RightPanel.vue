@@ -9,7 +9,7 @@ const dataflow = inject<Ref<any>>('dataflow')
 </script>
 
 <template>
-  <div class="position-absolute end-0 top-14 bottom-3 z-20">
+  <div class="position-absolute end-0 top-14 bottom-3 z-30">
     <div class="position-relative pr-3 h-100">
       <!-- BasePanel -->
       <NodePanel
