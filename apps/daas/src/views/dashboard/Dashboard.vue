@@ -11,16 +11,18 @@ import {
 import { fetchWorkers, getProcessInfo } from '@tap/api/src/core/workers'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import Chart from '@tap/component/src/chart/Chart.vue'
+import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared/src/number'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { STATUS_MAP as DASHBOARD_STATUS_MAP } from './const'
 
 const router = useRouter()
+const { t } = useI18n()
 
 // ── State ──────────────────────────────────────────────
 const loading = ref(false)
-const lastUpdated = ref('Just now')
+const lastUpdated = ref(t('dashboard_odh_just_now'))
 const dashboardData = ref<TaskDashboardVo | null>(null)
 let refreshTimer: ReturnType<typeof setInterval> | null = null
 
@@ -32,16 +34,16 @@ const trendsTimeRange = ref<'5min' | '1h' | '24h'>('24h')
 
 // Top Tasks state
 const topTaskTab = ref<'lagging' | 'throughput'>('lagging')
-const topTaskTabOptions = [
-  { label: 'Most Lagging', value: 'lagging' },
-  { label: 'Highest Throughput', value: 'throughput' },
-]
+const topTaskTabOptions = computed(() => [
+  { label: t('dashboard_odh_most_lagging'), value: 'lagging' },
+  { label: t('dashboard_odh_highest_throughput'), value: 'throughput' },
+])
 const topTaskLimit = ref<5 | 10 | 20>(5)
-const topTaskLimitOptions = [
-  { label: 'Top 5', value: 5 },
-  { label: 'Top 10', value: 10 },
-  { label: 'Top 20', value: 20 },
-]
+const topTaskLimitOptions = computed(() => [
+  { label: t('dashboard_odh_top_n', [5]), value: 5 },
+  { label: t('dashboard_odh_top_n', [10]), value: 10 },
+  { label: t('dashboard_odh_top_n', [20]), value: 20 },
+])
 
 // Cluster / Agent data
 interface AgentNode extends ClusterState {
@@ -78,26 +80,38 @@ const connectedDbs = computed(() => dashboardData.value?.summary?.connectedDbs)
 
 // ── KPI: API Requests ──────────────────────────────────
 const apiRequests = computed(() => dashboardData.value?.summary?.apiRequests)
+const hasApiTrendsData = computed(() => {
+  const trends = dashboardData.value?.trends?.apiRequests
+  return (trends?.ts?.length ?? 0) > 0
+})
 
 // ── System Trends: ECharts options ─────────────────────
 const throughputChartOption = computed(() => {
   const trends = dashboardData.value?.trends?.throughput
   if (!trends?.ts?.length) return buildAreaChartOption([], [], '#6366f1')
-  const xData = trends.ts.map((t) => formatTimeLabel(t))
-  return buildAreaChartOption(xData, trends.values, '#6366f1')
+  // const showSeconds = trendsTimeRange.value === '5min'
+  const xData = trends.ts.map((t) => formatTimeLabel(t, true))
+  const yData = trends.values.map((v: number) => Number(v.toFixed(2)))
+  return buildAreaChartOption(xData, yData, '#6366f1')
 })
 
 const apiChartOption = computed(() => {
   const trends = dashboardData.value?.trends?.apiRequests
   if (!trends?.ts?.length) return buildLineChartOption([], [], '#a855f7')
-  const xData = trends.ts.map((t) => formatTimeLabel(t))
-  return buildLineChartOption(xData, trends.values, '#a855f7')
+  // const showSeconds = apiTimeRange.value === '5m'
+  const xData = trends.ts.map((t) => formatTimeLabel(t, true))
+  const yData = trends.values.map((v: number) => Number(v.toFixed(2)))
+  return buildLineChartOption(xData, yData, '#a855f7')
 })
 
-function formatTimeLabel(ts: number): string {
+function formatTimeLabel(ts: number, showSeconds = false): string {
   const d = new Date(Number(`${ts}000`))
   const hh = String(d.getHours()).padStart(2, '0')
   const mm = String(d.getMinutes()).padStart(2, '0')
+  if (showSeconds) {
+    const ss = String(d.getSeconds()).padStart(2, '0')
+    return `${hh}:${mm}:${ss}`
+  }
   return `${hh}:${mm}`
 }
 
@@ -436,7 +450,9 @@ onBeforeUnmount(() => {
           <!-- 1) Active Tasks -->
           <div class="dashboard__card p-5">
             <div class="flex justify-content-between align-items-start mb-3">
-              <span class="fs-7 text-secondary fw-sub">Active Tasks</span>
+              <span class="fs-7 text-secondary fw-sub">{{
+                t('dashboard_odh_active_tasks')
+              }}</span>
               <div class="p-2 bg-gray-50 rounded-lg mt-n2">
                 <el-icon size="20" class="text-blue-500 align-top">
                   <i-lucide-activity />
@@ -448,16 +464,20 @@ onBeforeUnmount(() => {
             </div>
             <div class="flex flex-wrap gap-2">
               <span class="dashboard__tag dashboard__tag--emerald"
-                >Running {{ activeTasks?.running ?? 0 }}</span
+                >{{ t('dashboard_odh_running') }}
+                {{ activeTasks?.running ?? 0 }}</span
               >
               <span class="dashboard__tag dashboard__tag--red"
-                >Error {{ activeTasks?.error ?? 0 }}</span
+                >{{ t('dashboard_odh_error') }}
+                {{ activeTasks?.error ?? 0 }}</span
               >
               <span class="dashboard__tag dashboard__tag--slate"
-                >Max Lag {{ formatLag(activeTasks?.maxLag ?? 0) }}</span
+                >{{ t('dashboard_odh_max_lag') }}
+                {{ formatLag(activeTasks?.maxLag ?? 0) }}</span
               >
               <span class="dashboard__tag dashboard__tag--slate"
-                >Min Lag {{ formatLag(activeTasks?.minLag ?? 0) }}</span
+                >{{ t('dashboard_odh_min_lag') }}
+                {{ formatLag(activeTasks?.minLag ?? 0) }}</span
               >
             </div>
           </div>
@@ -465,7 +485,9 @@ onBeforeUnmount(() => {
           <!-- 2) Total Throughput -->
           <div class="dashboard__card p-5">
             <div class="flex justify-content-between align-items-start mb-3">
-              <span class="fs-7 text-secondary fw-sub">Total Throughput</span>
+              <span class="fs-7 text-secondary fw-sub">{{
+                t('dashboard_odh_total_throughput')
+              }}</span>
               <div class="p-2 bg-gray-50 rounded-lg mt-n2">
                 <el-icon class="text-indigo-500 align-top" size="20">
                   <i-lucide-trending-up />
@@ -476,14 +498,18 @@ onBeforeUnmount(() => {
               <span class="fs-2 font-semibold">{{
                 (throughput?.current ?? 0).toFixed(2)
               }}</span>
-              <span class="fs-7 text-secondary ml-1">events/sec</span>
+              <span class="fs-7 text-secondary ml-1">{{
+                t('dashboard_odh_events_sec')
+              }}</span>
             </div>
             <div class="flex flex-wrap gap-2 mt-3">
               <span class="dashboard__tag dashboard__tag--amber"
-                >Peak {{ (throughput?.peak ?? 0).toFixed(2) }}</span
+                >{{ t('dashboard_odh_peak') }}
+                {{ (throughput?.peak ?? 0).toFixed(2) }}</span
               >
               <span class="dashboard__tag dashboard__tag--indigo"
-                >Data {{ calcUnit(throughput?.dataRate ?? 0, 'b') }}/s</span
+                >{{ t('dashboard_odh_data') }}
+                {{ calcUnit(throughput?.dataRate ?? 0, 'b') }}/s</span
               >
             </div>
             <p
@@ -494,14 +520,17 @@ onBeforeUnmount(() => {
               "
             >
               {{ throughput.changeRate > 0 ? '+' : ''
-              }}{{ throughput.changeRate.toFixed(2) }}% vs last hour
+              }}{{ throughput.changeRate.toFixed(2) }}%
+              {{ t('dashboard_odh_vs_last_hour') }}
             </p>
           </div>
 
           <!-- 3) Connected DBs -->
           <div class="dashboard__card p-5">
             <div class="flex justify-content-between align-items-start mb-3">
-              <span class="fs-7 text-secondary fw-sub">Connected DBs</span>
+              <span class="fs-7 text-secondary fw-sub">{{
+                t('dashboard_odh_connected_dbs')
+              }}</span>
               <div class="p-2 bg-gray-50 rounded-lg mt-n2">
                 <el-icon class="text-teal-500 align-top" size="20">
                   <i-lucide-database />
@@ -512,14 +541,19 @@ onBeforeUnmount(() => {
               <span class="fs-2 font-semibold">{{
                 connectedDbs?.total ?? 0
               }}</span>
-              <span class="fs-7 text-secondary ml-1">sources</span>
+              <span class="fs-7 text-secondary ml-1">{{
+                t('dashboard_odh_sources')
+              }}</span>
             </div>
             <div class="flex flex-wrap gap-2 mt-3">
               <span
                 v-for="db in (connectedDbs?.items || []).slice(0, 3)"
                 :key="db.id"
                 class="dashboard__tag dashboard__tag--blue"
-                >{{ db.name }} <strong>{{ db.tableCount }} tbls</strong></span
+                >{{ db.name }}
+                <strong
+                  >{{ db.tableCount }} {{ t('dashboard_odh_tbls') }}</strong
+                ></span
               >
             </div>
           </div>
@@ -528,7 +562,9 @@ onBeforeUnmount(() => {
           <div class="dashboard__card p-5">
             <div class="flex justify-content-between align-items-start mb-3">
               <div class="flex align-items-center gap-2">
-                <span class="fs-7 text-secondary fw-sub">API Requests</span>
+                <span class="fs-7 text-secondary fw-sub">{{
+                  t('dashboard_odh_api_requests')
+                }}</span>
                 <el-segmented
                   v-model="apiTimeRange"
                   :options="['5m', '1h', '24h']"
@@ -547,13 +583,16 @@ onBeforeUnmount(() => {
             </div>
             <div class="flex flex-wrap gap-2">
               <span class="dashboard__tag dashboard__tag--red"
-                >Failed {{ apiRequests?.failed ?? 0 }}</span
+                >{{ t('dashboard_odh_failed') }}
+                {{ apiRequests?.failed ?? 0 }}</span
               >
               <span class="dashboard__tag dashboard__tag--amber"
-                >Rate {{ apiRequests?.errorRate ?? 0 }}%</span
+                >{{ t('dashboard_odh_rate') }}
+                {{ apiRequests?.errorRate ?? 0 }}%</span
               >
               <span class="dashboard__tag dashboard__tag--indigo"
-                >Avg Time {{ apiRequests?.avgTime ?? 0 }}ms</span
+                >{{ t('dashboard_odh_avg_time') }}
+                {{ apiRequests?.avgTime ?? 0 }}ms</span
               >
             </div>
           </div>
@@ -562,7 +601,9 @@ onBeforeUnmount(() => {
         <!-- ═══ System Trends ═══ -->
         <div class="dashboard__card p-5 mb-6">
           <div class="flex justify-content-between align-items-center mb-5">
-            <h2 class="fs-5 font-semibold m-0">System Trends</h2>
+            <h2 class="fs-5 font-semibold m-0">
+              {{ t('dashboard_odh_system_trends') }}
+            </h2>
             <el-segmented
               v-model="trendsTimeRange"
               :options="['5min', '1h', '24h']"
@@ -573,7 +614,7 @@ onBeforeUnmount(() => {
           <div class="grid grid-cols-2 gap-6">
             <div>
               <p class="fs-7 text-secondary mb-3 mt-0">
-                Throughput (events/sec)
+                {{ t('dashboard_odh_throughput_chart') }}
               </p>
               <div class="dashboard__trend-chart">
                 <Chart type="line" :extend="throughputChartOption" />
@@ -581,10 +622,20 @@ onBeforeUnmount(() => {
             </div>
             <div>
               <p class="fs-7 text-secondary mb-3 mt-0">
-                API Requests (req/sec)
+                {{ t('dashboard_odh_api_chart') }}
               </p>
               <div class="dashboard__trend-chart">
-                <Chart type="line" :extend="apiChartOption" />
+                <template v-if="hasApiTrendsData">
+                  <Chart type="line" :extend="apiChartOption" />
+                </template>
+                <div
+                  v-else
+                  class="flex align-items-center justify-content-center h-100"
+                >
+                  <span class="fs-7 text-secondary">{{
+                    t('dashboard_odh_no_data_in_range')
+                  }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -594,7 +645,9 @@ onBeforeUnmount(() => {
         <div class="dashboard__card p-5 mb-6">
           <div class="flex justify-content-between align-items-center mb-4">
             <div class="flex align-items-center gap-3">
-              <h2 class="fs-5 font-semibold m-0">Top Tasks</h2>
+              <h2 class="fs-5 font-semibold m-0">
+                {{ t('dashboard_odh_top_tasks') }}
+              </h2>
               <el-segmented
                 v-model="topTaskTab"
                 :options="topTaskTabOptions"
@@ -614,9 +667,9 @@ onBeforeUnmount(() => {
               <thead>
                 <tr>
                   <th class="text-start">#</th>
-                  <th class="text-start">Task Name</th>
-                  <th class="text-end">Latency</th>
-                  <th class="text-end">Throughput</th>
+                  <th class="text-start">{{ t('dashboard_odh_task_name') }}</th>
+                  <th class="text-end">{{ t('dashboard_odh_latency') }}</th>
+                  <th class="text-end">{{ t('dashboard_odh_throughput') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -637,27 +690,39 @@ onBeforeUnmount(() => {
               </tbody>
             </table>
           </div>
-          <el-empty v-else description="No task data" :image-size="60" />
+          <el-empty
+            v-else
+            :description="t('dashboard_odh_no_task_data')"
+            :image-size="60"
+          />
         </div>
 
         <!-- ═══ Agent Cluster Status ═══ -->
         <div class="dashboard__card p-5">
           <div class="flex justify-content-between align-items-center mb-4">
-            <h2 class="fs-5 font-semibold m-0">Agent Cluster Status</h2>
-            <span class="dashboard__nodes-badge"
-              >{{ agentNodes.length }} Nodes Total</span
-            >
+            <h2 class="fs-5 font-semibold m-0">
+              {{ t('dashboard_odh_agent_cluster') }}
+            </h2>
+            <span class="dashboard__nodes-badge">{{
+              t('dashboard_odh_nodes_total', [agentNodes.length])
+            }}</span>
           </div>
 
           <div v-if="agentNodes.length" class="dashboard__table-wrap">
             <table class="dashboard__table w-100">
               <thead>
                 <tr>
-                  <th class="text-start">Agent Name</th>
-                  <th class="text-start">Status</th>
-                  <th class="text-start">CPU Usage</th>
-                  <th class="text-start">Memory Usage</th>
-                  <th class="text-end">Running Tasks</th>
+                  <th class="text-start">
+                    {{ t('dashboard_odh_agent_name') }}
+                  </th>
+                  <th class="text-start">{{ t('dashboard_odh_status') }}</th>
+                  <th class="text-start">{{ t('dashboard_odh_cpu_usage') }}</th>
+                  <th class="text-start">
+                    {{ t('dashboard_odh_memory_usage') }}
+                  </th>
+                  <th class="text-end">
+                    {{ t('dashboard_odh_running_tasks') }}
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -737,7 +802,11 @@ onBeforeUnmount(() => {
               </tbody>
             </table>
           </div>
-          <el-empty v-else description="No agents found" :image-size="60" />
+          <el-empty
+            v-else
+            :description="t('dashboard_odh_no_agents')"
+            :image-size="60"
+          />
         </div>
       </div>
     </section>
