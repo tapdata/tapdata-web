@@ -114,6 +114,7 @@ const allFields = ref<any[]>([])
 const tempFields = ref<Field[]>([])
 const fieldLoading = ref(false)
 const databaseTypes = ref<any[] | null>(null)
+const permissionActions = ref<any[]>([])
 
 const mqlEditor = ref<any>(null)
 const containerRef = ref<HTMLElement | null>(null)
@@ -336,6 +337,7 @@ const open = (formData?: any, copy?: boolean) => {
   debugParams.value = null
   allFields.value = []
   selectedFieldSize.value = 0
+  permissionActions.value = formData?.permissionActions || []
 
   if (isEmpty(formData)) {
     form.value = getInitData()
@@ -523,6 +525,7 @@ const save = async (type?: boolean) => {
       formatData(data)
       emit('save', data)
       isEdit.value = false
+      visible.value = false
     } finally {
       loading.value = false
       emit('update:loading', false)
@@ -886,6 +889,7 @@ provide('form', form)
           $t('packages_business_data_server_drawer_fuwuxiangqing')
         }}</span>
         <el-button
+          v-if="permissionActions?.includes('Edit')"
           text
           type="primary"
           :class="{
