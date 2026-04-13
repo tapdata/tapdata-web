@@ -490,6 +490,7 @@ export interface TaskDashboardTrendSeries {
 export interface TaskDashboardTopTask {
   taskId: string
   taskName: string
+  syncType?: string
   latency: number
   throughput: number
 }

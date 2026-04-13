@@ -212,6 +212,15 @@ const topTasks = computed<TaskDashboardTopTask[]>(() => {
   return (list || []).slice(0, topTaskLimit.value)
 })
 
+function goToMonitor(task: TaskDashboardTopTask) {
+  const route =
+    task.syncType === 'migrate'
+      ? { name: 'MigrationMonitor', params: { id: task.taskId } }
+      : { name: 'TaskMonitor', params: { id: task.taskId } }
+  const href = router.resolve(route).href
+  window.open(href, '_blank')
+}
+
 function latencyClass(ms: number): string {
   const s = ms / 1000
   if (s > 60) return 'badge--red'
@@ -675,7 +684,13 @@ onBeforeUnmount(() => {
               <tbody>
                 <tr v-for="(task, idx) in topTasks" :key="task.taskId">
                   <td class="text-secondary">{{ idx + 1 }}</td>
-                  <td class="font-semibold">{{ task.taskName }}</td>
+                  <td class="font-semibold">
+                    <a
+                      class="color-primary cursor-pointer text-decoration-none"
+                      @click="goToMonitor(task)"
+                      >{{ task.taskName }}</a
+                    >
+                  </td>
                   <td class="text-end">
                     <span
                       class="dashboard__badge"
