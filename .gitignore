@@ -31,5 +31,3 @@ output.js
 webpack.confi.production.js
 
 build/deploy.sh
-
-daas-components.d.ts
