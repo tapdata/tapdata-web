@@ -891,6 +891,7 @@ export const routes = [
           import('@/views/data-import-export/ProjectManagement.vue'),
         meta: {
           title: 'page_title_project_management',
+          code: 'v2_project_management',
         },
       },
       {
@@ -899,6 +900,7 @@ export const routes = [
         component: () => import('@/views/data-import-export/List.vue'),
         meta: {
           title: 'page_title_data_import_export',
+          code: 'v2_project_import_and_export',
         },
       },
     ],

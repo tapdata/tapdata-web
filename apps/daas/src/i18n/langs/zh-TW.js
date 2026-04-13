@@ -1862,6 +1862,7 @@ export default {
   account_editFail: '用戶名修改失敗',
   role_allData: '全部角色數據',
   role_functionDataPermission: '功能與數據權限',
+  role_dataPermission: '數據權限',
   role_module: '模塊',
   role_choosePermissionTip:
     '請選擇此角色可用的功能和數據權限 （勾選全部角色數據表示可對全部角色的數據進行瀏覽或操作，不勾選則表示只能對自己的數據進行瀏覽或操作）',

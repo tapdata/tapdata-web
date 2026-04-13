@@ -369,6 +369,18 @@ export default {
 
   public_please_wait: '请稍等...',
   public_view_all: '查看全部',
+  public_edit_all: '编辑全部',
+  public_delete_all: '删除全部',
+  public_reset_all: '重置全部',
+  public_start_all: '启动全部',
+  public_stop_all: '停止全部',
+  public_export_all: '导出全部',
+  public_publish_all: '发布全部',
+  public_revoke_all: '撤销全部',
+  public_button_expand_all: '展开全部',
+  public_button_collapse_all: '收起全部',
+  public_select_all: '全选',
+  public_permissions_enabled: '权限已启用',
 
   public_today: '今天',
   public_yesterday: '昨天',
