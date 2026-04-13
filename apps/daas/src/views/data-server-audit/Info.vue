@@ -434,7 +434,7 @@ export default {
       const ms = Number(mss)
       if (!Number.isFinite(ms) || ms <= 0) return '0ms'
 
-      if (ms >= 24 * 60 * 60 * 1000) return '超过24h'
+      if (ms >= 24 * 60 * 60 * 1000) return '24h+'
       if (ms >= 60 * 60 * 1000) return `${(ms / (60 * 60 * 1000)).toFixed(2)}h`
       if (ms >= 60 * 1000) return `${(ms / (60 * 1000)).toFixed(2)}min`
       if (ms >= 1000) return `${(ms / 1000).toFixed(2)}s`
