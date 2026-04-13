@@ -285,7 +285,13 @@ export const SchemaPreview = defineComponent({
       )
     }
 
-    useSchemaEffect(() => [formRef.value.values.tableName], loadSchema)
+    useSchemaEffect(
+      () =>
+        formRef.value.values.type === 'table'
+          ? [formRef.value.values.tableName]
+          : [],
+      loadSchema,
+    )
 
     if (!dataflowStore.taskSaving) {
       loadSchema()
@@ -310,6 +316,10 @@ export const SchemaPreview = defineComponent({
       }).finally(() => {
         refreshing.value = false
       })
+
+      if (formRef.value.values.type !== 'table') {
+        loadSchema()
+      }
     }
 
     return () => (

@@ -644,6 +644,13 @@ export default {
 
 <template>
   <PageContainer v-loading="loading" mode="auto">
+    <template #back>
+      <el-button text class="mr-1" @click="$router.back()">
+        <template #icon>
+          <VIcon>left</VIcon>
+        </template>
+      </el-button>
+    </template>
     <section class="apiaudit-info-wrap">
       <div class="details-box">
         <div class="title fs-7 fw-sub font-color-dark">

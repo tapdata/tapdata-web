@@ -49,6 +49,7 @@ import {
   InputNumber,
   Radio,
   Select,
+  TriggersPanel,
 } from './sources'
 import './locales'
 import './theme.scss'
@@ -99,7 +100,7 @@ export default {
   data() {
     return {
       sources: [Input, Select, InputNumber, Checkbox, Radio],
-      businessSources: [FieldSelect, AggregatePanel],
+      businessSources: [FieldSelect, AggregatePanel, TriggersPanel],
       components: markRaw({
         Field,
         Input,
@@ -111,6 +112,7 @@ export default {
         Radio,
         FieldSelect,
         AggregatePanel,
+        TriggersPanel,
       }),
       settingsFormComponents: markRaw({
         SizeInput,
