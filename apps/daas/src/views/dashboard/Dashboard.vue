@@ -404,8 +404,12 @@ async function fetchPartial(
         }
         break
       case 'trends':
-        if (result.trends?.throughput?.ts?.length) {
-          prev.trends = { ...prev.trends, throughput: result.trends.throughput }
+        if (result.trends) {
+          prev.trends = {
+            ...prev.trends,
+            throughput: result.trends.throughput,
+            apiRequests: result.trends.apiRequests,
+          }
         }
         break
       case 'tops':
