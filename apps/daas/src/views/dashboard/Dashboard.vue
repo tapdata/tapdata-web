@@ -394,20 +394,25 @@ async function fetchPartial(
       dashboardData.value = result
       return
     }
-    if (result.summary) {
-      prev.summary = { ...prev.summary, ...result.summary }
-    }
-    if (result.trends) {
-      // Only overwrite non-empty trend arrays
-      if (result.trends.throughput?.ts?.length) {
-        prev.trends = { ...prev.trends, throughput: result.trends.throughput }
-      }
-      if (result.trends.apiRequests?.ts?.length) {
-        prev.trends = { ...prev.trends, apiRequests: result.trends.apiRequests }
-      }
-    }
-    if (result.tops) {
-      prev.tops = result.tops
+    switch (dashboardType) {
+      case 'apiRequests':
+        if (result.summary?.apiRequests) {
+          prev.summary = {
+            ...prev.summary,
+            apiRequests: result.summary.apiRequests,
+          }
+        }
+        break
+      case 'trends':
+        if (result.trends?.throughput?.ts?.length) {
+          prev.trends = { ...prev.trends, throughput: result.trends.throughput }
+        }
+        break
+      case 'tops':
+        if (result.tops) {
+          prev.tops = result.tops
+        }
+        break
     }
   } catch {
     /* ignore */
@@ -558,7 +563,7 @@ onBeforeUnmount(() => {
               <span
                 v-for="db in (connectedDbs?.items || []).slice(0, 3)"
                 :key="db.id"
-                class="dashboard__tag dashboard__tag--blue"
+                class="dashboard__tag dashboard__tag--blue break-all"
                 >{{ db.name }}
                 <strong
                   >{{ db.tableCount }} {{ t('dashboard_odh_tbls') }}</strong
