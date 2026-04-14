@@ -16,9 +16,18 @@ import VIcon from '@tap/component/src/base/VIcon.vue'
 import { FormItem, JsEditor, useForm } from '@tap/form'
 
 import { useI18n } from '@tap/i18n'
-import { computed, defineComponent, inject, nextTick, reactive, ref } from 'vue'
+import {
+  computed,
+  defineComponent,
+  inject,
+  nextTick,
+  onBeforeUnmount,
+  reactive,
+  ref,
+} from 'vue'
 import { useStore } from 'vuex'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 import BaseNodeIcon from '../../BaseNodeIcon.vue'
 import { JsDeclare } from '../js-declare'
 import AiCodeDialog from './AiCodeDialog.vue'
@@ -28,11 +37,13 @@ export const JsProcessor = observer(
   defineComponent({
     props: ['value', 'disabled', 'isStandard'],
     setup(props, { emit, attrs }) {
+      const dataflowStore = useDataflowStore()
       const { t, locale } = useI18n()
       const store = useStore()
       const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
       const SchemaExpressionScopeContext = inject(SchemaExpressionScopeSymbol)
       const task = SchemaExpressionScopeContext!.value.$settings
+      const findParentNode = SchemaExpressionScopeContext!.value.findParentNode
       const { id: taskId, syncType } = task
       const formRef = useForm()
       const form = formRef.value
@@ -53,6 +64,16 @@ export const JsProcessor = observer(
         rows: 1,
       })
       const tableList = ref([])
+
+      const checkSqlCapability = () => {
+        const sourceNode = findParentNode(form.values.id)
+        return dataflowStore.hasCapability(
+          sourceNode,
+          'run_raw_command_function',
+        )
+      }
+
+      const hasSqlCapability = ref(checkSqlCapability())
 
       const loadTable = () => {
         if (!formRef.value.values.$inputs.length) return
@@ -75,11 +96,19 @@ export const JsProcessor = observer(
           })
       }
 
-      if (isMigrate) {
-        observe(formRef.value.values.$inputs, () => {
+      const dispose = observe(formRef.value.values.$inputs, () => {
+        if (isMigrate) {
           loadTable()
-        })
+        }
 
+        hasSqlCapability.value = checkSqlCapability()
+      })
+
+      onBeforeUnmount(() => {
+        dispose?.()
+      })
+
+      if (isMigrate) {
         loadTable()
       }
 
@@ -183,8 +212,7 @@ export const JsProcessor = observer(
         )
         try {
           const data = await getJsMockData({
-            taskId,
-            nodeId,
+            ...params,
           })
           if (data && Array.isArray(data)) {
             mockInput.value = JSON.stringify(data, null, 2)
@@ -233,8 +261,7 @@ export const JsProcessor = observer(
         sqlPreviewLoading.value = true
         try {
           const data = await getJsMockData({
-            taskId,
-            nodeId,
+            ...params,
             sql: sqlText.value,
           })
           sqlPreviewData.value = Array.isArray(data) ? data : data ? [data] : []
@@ -506,12 +533,6 @@ export const JsProcessor = observer(
                 <div class="mock-test-run-body">
                   {/* Left: JS Editor */}
                   <div class="mock-test-run-editor-pane">
-                    {/* <div class="editor-pane-header">
-                      <VIcon size="14" class="header-icon">
-                        code
-                      </VIcon>
-                      {t('packages_form_js_processor_mock_js_code')}
-                    </div> */}
                     <div class="position-relative flex-1 overflow-hidden">
                       <JsEditor
                         value={props.value}
@@ -548,15 +569,17 @@ export const JsProcessor = observer(
                             class="mock-test-run-panel-header__right"
                             style="--btn-space: 0;"
                           >
-                            <ElButton
-                              text
-                              type="primary"
-                              onClick={() => {
-                                sqlDialogVisible.value = true
-                              }}
-                            >
-                              {t('packages_form_js_processor_mock_sql_query')}
-                            </ElButton>
+                            {hasSqlCapability.value && (
+                              <ElButton
+                                text
+                                type="primary"
+                                onClick={() => {
+                                  sqlDialogVisible.value = true
+                                }}
+                              >
+                                {t('packages_form_js_processor_mock_sql_query')}
+                              </ElButton>
+                            )}
                             <ElButton
                               text
                               type="primary"

@@ -230,7 +230,7 @@ export function getRunJsResult(params: any) {
 }
 
 export function getJsMockData(params: any) {
-  return requestClient.get('/api/task/migrate-js/mock-data', { data: params })
+  return requestClient.post('/api/task/migrate-js/mock-data', params)
 }
 
 export function testRunPythonRpc(params: any) {
