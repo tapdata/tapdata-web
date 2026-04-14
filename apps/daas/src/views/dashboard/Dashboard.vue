@@ -11,6 +11,7 @@ import {
 import { fetchWorkers, getProcessInfo } from '@tap/api/src/core/workers'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import Chart from '@tap/component/src/chart/Chart.vue'
+import CountUp from '@tap/component/src/CountUp.vue'
 import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared/src/number'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
@@ -67,13 +68,6 @@ function formatLag(ms: number): string {
 
 // ── KPI: Total Throughput ──────────────────────────────
 const throughput = computed(() => dashboardData.value?.summary?.totalThroughput)
-
-function formatNumber(n: number): string {
-  if (!n && n !== 0) return '0'
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
-  if (n >= 1_000) return n.toLocaleString()
-  return String(n)
-}
 
 // ── KPI: Connected DBs ────────────────────────────────
 const connectedDbs = computed(() => dashboardData.value?.summary?.connectedDbs)
@@ -288,87 +282,76 @@ function rangeToTimeParams(range: string): {
 }
 
 // ── Data fetching ──────────────────────────────────────
-async function fetchDashboardData() {
-  loading.value = true
-  try {
-    const [dashboard, clusterData] = await Promise.all([
-      fetchTaskDashboard({
-        ...rangeToTimeParams(trendsTimeRange.value),
-        top: topTaskLimit.value,
-      }).catch(() => null),
-      fetchClusterStates({ type: 'dashboard' }).catch(() => ({ items: [] })),
-    ])
+async function fetchClusterData() {
+  const clusterData = await fetchClusterStates({ type: 'dashboard' }).catch(
+    () => ({ items: [] }),
+  )
 
-    if (dashboard) dashboardData.value = dashboard
-
-    // Process cluster data
-    const processIds: string[] = []
-    const items: AgentNode[] = (clusterData?.items || []).map((item: any) => {
-      const node: AgentNode = { ...item }
-      if (node.status !== 'running') {
-        for (const svc of ['management', 'engine', 'apiServer'] as const) {
-          if ((node as any)[svc]) {
-            ;(node as any)[svc].status = 'stopped'
-            ;(node as any)[svc].serviceStatus = 'stopped'
-          }
+  const processIds: string[] = []
+  const items: AgentNode[] = (clusterData?.items || []).map((item: any) => {
+    const node: AgentNode = { ...item }
+    if (node.status !== 'running') {
+      for (const svc of ['management', 'engine', 'apiServer'] as const) {
+        if ((node as any)[svc]) {
+          ;(node as any)[svc].status = 'stopped'
+          ;(node as any)[svc].serviceStatus = 'stopped'
         }
       }
-      if (node.systemInfo?.process_id) {
-        node.processId = node.systemInfo.process_id
-        processIds.push(node.systemInfo.process_id)
-      }
-      return node
-    })
+    }
+    if (node.systemInfo?.process_id) {
+      node.processId = node.systemInfo.process_id
+      processIds.push(node.systemInfo.process_id)
+    }
+    return node
+  })
 
-    // Fetch worker usage rates (CPU / Memory) — same approach as Cluster.vue
-    if (processIds.length > 0) {
-      try {
-        const [workerResponse, processData] = await Promise.all([
-          fetchWorkers({
-            where: {
-              process_id: { inq: processIds },
-              worker_type: 'connector',
-            },
-          }).catch(() => null),
-          getProcessInfo(processIds).catch(() => null),
-        ])
+  if (processIds.length > 0) {
+    try {
+      const [workerResponse, processData] = await Promise.all([
+        fetchWorkers({
+          where: { process_id: { inq: processIds }, worker_type: 'connector' },
+        }).catch(() => null),
+        getProcessInfo(processIds).catch(() => null),
+      ])
 
-        // Build metricValues map from worker data
-        const metricMap: Record<
-          string,
-          { CpuUsage: string; HeapMemoryUsage: string }
-        > = {}
-        if (workerResponse?.items?.length) {
-          for (const w of workerResponse.items) {
-            if (w.metricValues) {
-              metricMap[(w as any).process_id] = {
-                CpuUsage: `${(((w.metricValues as any).CpuUsage ?? 0) * 100).toFixed(2)}%`,
-                HeapMemoryUsage: `${(((w.metricValues as any).HeapMemoryUsage ?? 0) * 100).toFixed(2)}%`,
-              }
+      const metricMap: Record<
+        string,
+        { CpuUsage: string; HeapMemoryUsage: string }
+      > = {}
+      if (workerResponse?.items?.length) {
+        for (const w of workerResponse.items) {
+          if (w.metricValues) {
+            metricMap[(w as any).process_id] = {
+              CpuUsage: `${(((w.metricValues as any).CpuUsage ?? 0) * 100).toFixed(2)}%`,
+              HeapMemoryUsage: `${(((w.metricValues as any).HeapMemoryUsage ?? 0) * 100).toFixed(2)}%`,
             }
           }
         }
-
-        // Apply metricValues onto each node
-        for (const node of items) {
-          if (node.processId && metricMap[node.processId]) {
-            node.metricValues = metricMap[node.processId]
-          }
-        }
-
-        // Running task counts
-        if (processData) {
-          for (const id of Object.keys(processData)) {
-            agentRunningTask.value[id] = (processData as any)[id].runningTaskNum
-          }
-        }
-      } catch {
-        /* ignore */
       }
+
+      for (const node of items) {
+        if (node.processId && metricMap[node.processId]) {
+          node.metricValues = metricMap[node.processId]
+        }
+      }
+
+      if (processData) {
+        for (const id of Object.keys(processData)) {
+          agentRunningTask.value[id] = (processData as any)[id].runningTaskNum
+        }
+      }
+    } catch {
+      /* ignore */
     }
+  }
 
-    agentNodes.value = items
+  agentNodes.value = items
+}
 
+async function fetchDashboardData() {
+  loading.value = true
+  try {
+    await Promise.all([refreshAll(), fetchClusterData()])
     lastUpdated.value = new Date().toLocaleTimeString()
   } finally {
     loading.value = false
@@ -395,12 +378,24 @@ async function fetchPartial(
       return
     }
     switch (dashboardType) {
+      case 'activeTasks':
+        if (result.summary?.activeTasks) {
+          prev.summary.activeTasks = result.summary.activeTasks
+        }
+        break
+      case 'totalThroughput':
+        if (result.summary?.totalThroughput) {
+          prev.summary.totalThroughput = result.summary.totalThroughput
+        }
+        break
+      case 'connectedDbs':
+        if (result.summary?.connectedDbs) {
+          prev.summary.connectedDbs = result.summary.connectedDbs
+        }
+        break
       case 'apiRequests':
         if (result.summary?.apiRequests) {
-          prev.summary = {
-            ...prev.summary,
-            apiRequests: result.summary.apiRequests,
-          }
+          prev.summary.apiRequests = result.summary.apiRequests
         }
         break
       case 'trends':
@@ -440,10 +435,22 @@ function navigateToCluster() {
   router.push({ name: 'clusterManagement' })
 }
 
+// ── Refresh ────────────────────────────────────────────
+async function refreshAll() {
+  await Promise.all([
+    fetchPartial('activeTasks', trendsTimeRange.value),
+    fetchPartial('totalThroughput', trendsTimeRange.value),
+    fetchPartial('connectedDbs', trendsTimeRange.value),
+    fetchPartial('apiRequests', apiTimeRange.value),
+    fetchPartial('trends', trendsTimeRange.value),
+    fetchPartial('tops', trendsTimeRange.value, topTaskLimit.value),
+  ])
+}
+
 // ── Lifecycle ──────────────────────────────────────────
 onMounted(() => {
   fetchDashboardData()
-  refreshTimer = setInterval(fetchDashboardData, 60_000)
+  refreshTimer = setInterval(refreshAll, 60_000)
 })
 
 onBeforeUnmount(() => {
@@ -478,7 +485,7 @@ onBeforeUnmount(() => {
               </div>
             </div>
             <div class="din-font fs-2 font-semibold lh-1 mb-4">
-              {{ formatNumber(activeTasks?.total ?? 0) }}
+              <CountUp :end-val="activeTasks?.total ?? 0" :duration="2" />
             </div>
             <div class="flex flex-wrap gap-2">
               <span class="dashboard__tag dashboard__tag--emerald"
@@ -513,9 +520,12 @@ onBeforeUnmount(() => {
               </div>
             </div>
             <div class="din-font lh-1 mb-1">
-              <span class="fs-2 font-semibold">{{
-                (throughput?.current ?? 0).toFixed(2)
-              }}</span>
+              <CountUp
+                class="fs-2 font-semibold"
+                :end-val="throughput?.current ?? 0"
+                :duration="2"
+                :decimals="2"
+              />
               <span class="fs-7 text-secondary ml-1">{{
                 t('dashboard_odh_events_sec')
               }}</span>
@@ -556,9 +566,11 @@ onBeforeUnmount(() => {
               </div>
             </div>
             <div class="din-font lh-1 mb-1">
-              <span class="fs-2 font-semibold">{{
-                connectedDbs?.total ?? 0
-              }}</span>
+              <CountUp
+                class="fs-2 font-semibold"
+                :end-val="connectedDbs?.total ?? 0"
+                :duration="2"
+              />
               <span class="fs-7 text-secondary ml-1">{{
                 t('dashboard_odh_sources')
               }}</span>
@@ -597,7 +609,7 @@ onBeforeUnmount(() => {
               </div>
             </div>
             <div class="din-font fs-2 font-semibold lh-1 mb-4">
-              {{ formatNumber(apiRequests?.total ?? 0) }}
+              <CountUp :end-val="apiRequests?.total ?? 0" :duration="2" />
             </div>
             <div class="flex flex-wrap gap-2">
               <span class="dashboard__tag dashboard__tag--red"
