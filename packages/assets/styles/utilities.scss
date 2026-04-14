@@ -12852,6 +12852,10 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .grid-cols-5 {
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
@@ -13188,4 +13192,20 @@
 
 .bg-components-kbd-bg-gray {
   background-color: var(--color-components-kbd-bg-gray);
+}
+
+.text-blue-500 {
+  color: var(--color-blue-500);
+}
+
+.text-indigo-500 {
+  color: var(--color-indigo-500);
+}
+
+.text-teal-500 {
+  color: var(--color-teal-500);
+}
+
+.text-purple-500 {
+  color: var(--color-purple-500);
 }

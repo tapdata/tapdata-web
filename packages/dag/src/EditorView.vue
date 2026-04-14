@@ -83,12 +83,13 @@ const init = async () => {
 
   if (taskId) {
     await initNodeType()
-    await dataflowStore.fetchDataflow(taskId)
-    // nextTick(() => {
-    //   setTimeout(() => {
-    //     canvasRef.value.fitViewWithOffset({ duration: 0, maxZoom: 1 })
-    //   }, 0)
-    // })
+    const task = await dataflowStore.fetchDataflow(taskId)
+
+    if (!task) {
+      ElMessage.error(t('packages_dag_mixins_editor_renwubucunzai'))
+      handlePageReturn()
+      return
+    }
   } else {
     let syncType
     let targetRoute
