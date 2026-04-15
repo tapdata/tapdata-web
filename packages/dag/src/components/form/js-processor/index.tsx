@@ -638,11 +638,12 @@ export const JsProcessor = observer(
             sql: sqlText.value,
           })
           const sampleData = res?.sampleData
-          sqlPreviewData.value = Array.isArray(sampleData)
+          const arr = Array.isArray(sampleData)
             ? sampleData
             : sampleData
               ? [sampleData]
               : []
+          sqlPreviewData.value = arr.map((item: any) => item?.after || item)
         } catch (error: any) {
           ElMessage.error(
             error?.message ||
@@ -1149,7 +1150,7 @@ export const JsProcessor = observer(
                               {t('packages_form_js_processor_mock_input')}
                             </span>
                           </div>
-                          {isMigrate && (
+                          {isMigrate ? (
                             <ElSelectV2
                               disabled={props.disabled}
                               v-model={params.tableName}
@@ -1171,6 +1172,8 @@ export const JsProcessor = observer(
                                 ),
                               }}
                             </ElSelectV2>
+                          ) : (
+                            <div class="flex-1"></div>
                           )}
                           {hasSqlCapability.value && (
                             <ElButton
@@ -1490,7 +1493,7 @@ export const JsProcessor = observer(
                 <ElDialog
                   v-model={sqlDialogVisible.value}
                   title={t('packages_form_js_processor_mock_sql_dialog_title')}
-                  width="640px"
+                  width="80vw"
                   class="mock-sql-dialog"
                   append-to-body
                 >
@@ -1498,7 +1501,7 @@ export const JsProcessor = observer(
                     default: () => (
                       <>
                         <VCodeEditor
-                          class="border rounded-xl py-0"
+                          class="border rounded-lg py-0"
                           value={sqlText.value}
                           onChange={(val) => {
                             sqlText.value = val
@@ -1509,19 +1512,57 @@ export const JsProcessor = observer(
                           options={{ highlightActiveLine: true }}
                         />
                         {sqlPreviewData.value.length > 0 && (
-                          <div class="sql-preview-table">
+                          <div class="sql-preview-table mt-3">
+                            <div class="sql-preview-table__header">
+                              <span class="sql-preview-table__count">
+                                {t('packages_form_js_processor_mock_items', {
+                                  val1: sqlPreviewData.value.length,
+                                })}
+                              </span>
+                            </div>
                             <ElTable
                               data={sqlPreviewData.value}
                               size="small"
-                              maxHeight={260}
+                              maxHeight={360}
+                              border
+                              scrollbarAlwaysOn
+                              stripe
+                              class="sql-preview-el-table"
                             >
+                              <ElTableColumn
+                                type="index"
+                                label="#"
+                                width={50}
+                                fixed="left"
+                              />
                               {Object.keys(sqlPreviewData.value[0] || {}).map(
                                 (key) => (
                                   <ElTableColumn
                                     prop={key}
                                     label={key}
                                     key={key}
-                                    minWidth={120}
+                                    minWidth={160}
+                                    showOverflowTooltip
+                                    v-slots={{
+                                      default: ({ row }: any) => {
+                                        const val = row[key]
+                                        if (val === null || val === undefined) {
+                                          return (
+                                            <span class="text-muted font-italic">
+                                              null
+                                            </span>
+                                          )
+                                        }
+                                        if (typeof val === 'object') {
+                                          return (
+                                            <span class="text-muted">
+                                              {JSON.stringify(val)}
+                                            </span>
+                                          )
+                                        }
+                                        return String(val)
+                                      },
+                                    }}
                                   />
                                 ),
                               )}
