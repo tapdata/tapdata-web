@@ -33,7 +33,7 @@ export function fetchAllResponseCodes(params?: unknown) {
 
 // Base Http methods that are used in the codebase
 export function fetchApiCalls(filter?: Filter) {
-  return requestClient.get<PageFetchResult<ApiCall>>(BASE_URL, {
+  return requestClient.get<PageFetchResult<ApiCall>>(`${BASE_URL}/cursor`, {
     params: { filter: filter ? JSON.stringify(filter) : undefined },
   })
 }

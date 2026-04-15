@@ -2,7 +2,7 @@
 import { fetchAllMethods, fetchApiCalls } from '@tap/api/src/core/api-calls'
 import { fetchApiClients } from '@tap/api/src/core/api-client'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import TablePage from '@tap/business/src/components/TablePage.vue'
+import TableCursor from '@tap/business/src/components/TableCursor.vue'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import { useI18n } from '@tap/i18n'
 import dayjs from 'dayjs'
@@ -14,11 +14,12 @@ const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
-const tableRef = ref<InstanceType<typeof TablePage>>()
+const tableRef = ref<InstanceType<typeof TableCursor>>()
 
 const searchParams = reactive({
   keyword: '',
   clientName: '',
+  clientId: '',
   method: '',
   code: '',
   start: '' as string | number,
@@ -58,6 +59,12 @@ function initFromQuery(query: Record<string, any>) {
   if (query.end) {
     searchParams.end = Number(query.end)
   }
+  if (query.method) {
+    searchParams.method = query.method
+  }
+  if (query.clientId) {
+    searchParams.clientId = query.clientId
+  }
   if (query.sortBy && query.sortOrder) {
     order.value = `${query.sortBy} ${query.sortOrder}`
     defaultSort.value = {
@@ -75,8 +82,14 @@ function toDetails(item: any) {
 }
 
 // 获取数据
-function getData({ page }: { page: { current: number; size: number } }) {
-  const { current, size } = page
+function getData({
+  page,
+}: {
+  page: { current: number; size: number; skip: number }
+  tags: any[]
+  isSelectedNoTag: boolean
+}) {
+  const { size, skip } = page
   const { method, code, start, end, clientId, keyword, options } =
     searchParams as any
   const where: Record<string, any> = {}
@@ -106,7 +119,7 @@ function getData({ page }: { page: { current: number; size: number } }) {
   const filter = {
     order: order.value,
     limit: size,
-    skip: (current - 1) * size,
+    skip,
     where,
   }
   return fetchApiCalls(filter).then((data: any) => {
@@ -233,7 +246,7 @@ initFromQuery(route.query)
 <template>
   <PageContainer>
     <!-- 服务审计 -->
-    <TablePage
+    <TableCursor
       ref="tableRef"
       row-key="id"
       class="apiaudit-list"
@@ -368,7 +381,7 @@ initFromQuery(route.query)
           </el-button>
         </template>
       </el-table-column>
-    </TablePage>
+    </TableCursor>
   </PageContainer>
 </template>
 
