@@ -153,22 +153,32 @@ export default {
   packages_form_js_processor_mock_no_output: '暫無輸出',
   packages_form_js_processor_mock_no_output_tip: '運行代碼後查看輸出結果',
   packages_form_js_processor_mock_no_log: '暫無日誌',
-  packages_form_js_processor_mock_no_log_tip: '點擊「試運行」執行代碼後查看日誌輸出',
+  packages_form_js_processor_mock_no_log_tip:
+    '點擊「試運行」執行代碼後查看日誌輸出',
   packages_form_js_processor_mock_items: '{val1} 條',
   packages_form_js_processor_mock_run_time: '{val1}ms',
-  packages_form_js_processor_mock_json_placeholder: '請輸入 JSON 陣列格式的測試數據，例如：\n[\n  {\n    "id": 1,\n    "name": "張三"\n  }\n]',
+  packages_form_js_processor_mock_json_placeholder:
+    '請輸入 JSON 陣列格式的測試數據，例如：\n[\n  {\n    "id": 1,\n    "name": "張三"\n  }\n]',
   packages_form_js_processor_mock_js_editor: 'JS 節點編輯器',
   packages_form_js_processor_mock_js_code: 'JS 代碼',
   packages_form_js_processor_mock_log_start: '開始執行 JS 代碼...',
   packages_form_js_processor_mock_log_success: '執行完成，耗時 {val1}ms',
   packages_form_js_processor_mock_log_fail: '執行失敗 ({val1}ms): {val2}',
-  packages_form_js_processor_mock_log_getting_sample: '正在獲取前置節點樣本數據...',
+  packages_form_js_processor_mock_log_getting_sample:
+    '正在獲取前置節點樣本數據...',
   packages_form_js_processor_mock_log_sample_count: '獲取到 {val1} 條樣本數據',
   packages_form_js_processor_mock_log_sample_empty: '未獲取到樣本數據',
   packages_form_js_processor_mock_log_sample_fail: '獲取樣本失敗: {val1}',
-  packages_form_js_processor_mock_log_sql_import: '從 SQL 查詢導入 {val1} 條數據',
+  packages_form_js_processor_mock_log_sql_import:
+    '從 SQL 查詢導入 {val1} 條數據',
   packages_form_js_processor_mock_sql_query_fail: 'SQL 查詢失敗',
   packages_form_js_processor_mock_unknown_error: '未知錯誤',
+  packages_form_js_processor_mock_event_insert: '插入',
+  packages_form_js_processor_mock_event_update: '更新',
+  packages_form_js_processor_mock_event_delete: '刪除',
+  packages_form_js_processor_mock_event_custom: '自定義事件',
+  packages_form_js_processor_mock_before_data: 'Before（變更前數據）',
+  packages_form_js_processor_mock_after_data: 'After（變更後數據）',
   packages_form_table_rename_index_qingkong: '清空',
   packages_form_table_rename_search_text: '查找文本',
   packages_form_table_rename_replace_with: '替換為',
@@ -225,11 +235,13 @@ export default {
 
   // AggregatePanel
   packages_form_aggregate_mode: '聚合模式',
-  packages_form_aggregate_mode_tip: '切換到原始管道模式可直接編輯 MongoDB 聚合管道 JSON',
+  packages_form_aggregate_mode_tip:
+    '切換到原始管道模式可直接編輯 MongoDB 聚合管道 JSON',
   packages_form_aggregate_raw_pipeline: '原始管道',
   packages_form_aggregate_visual: '可視化配置',
   packages_form_aggregate_match_title: '$match 篩選條件',
-  packages_form_aggregate_match_tip: '用於過濾文檔，只傳遞滿足條件的文檔到下一階段',
+  packages_form_aggregate_match_tip:
+    '用於過濾文檔，只傳遞滿足條件的文檔到下一階段',
   packages_form_aggregate_group_title: '$group 分組字段',
   packages_form_aggregate_group_tip: '指定用於分組的字段，類似 SQL 的 GROUP BY',
   packages_form_aggregate_fields_title: '聚合計算字段',
@@ -294,7 +306,8 @@ export default {
   // AggregatePanel AI
   packages_form_aggregate_ai_btn: 'AI 生成',
   packages_form_aggregate_ai_title: 'AI 生成聚合管道',
-  packages_form_aggregate_ai_placeholder: '請描述你想要的聚合操作，例如：按 status 分組，統計每組的數量和平均金額',
+  packages_form_aggregate_ai_placeholder:
+    '請描述你想要的聚合操作，例如：按 status 分組，統計每組的數量和平均金額',
   packages_form_aggregate_ai_generating: '正在生成...',
   packages_form_aggregate_ai_apply: '應用',
   packages_form_aggregate_ai_retry: '重新生成',
@@ -323,7 +336,9 @@ export default {
   packages_form_triggers_tpl_mongo_title: 'MongoDB Trigger Function',
   packages_form_triggers_tpl_mongo_change_event: '變更事件物件',
   packages_form_triggers_help_tapdata_title: 'TapData JS 函數說明',
-  packages_form_triggers_help_tapdata_desc: '支援 record（當前資料記錄）和 context（上下文資訊）兩個參數，函數需回傳處理後的記錄物件。',
+  packages_form_triggers_help_tapdata_desc:
+    '支援 record（當前資料記錄）和 context（上下文資訊）兩個參數，函數需回傳處理後的記錄物件。',
   packages_form_triggers_help_mongo_title: 'Mongo Function 函數說明',
-  packages_form_triggers_help_mongo_desc: '支援 changeEvent 物件，包含 documentKey、updateDescription、fullDocument 等變更事件資訊。',
+  packages_form_triggers_help_mongo_desc:
+    '支援 changeEvent 物件，包含 documentKey、updateDescription、fullDocument 等變更事件資訊。',
 }

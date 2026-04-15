@@ -49,17 +49,19 @@
 
 `Content-Type: application/json`
 
-| 字段 | 类型 | 是否必填 | 说明 |
-| --- | --- | --- | --- |
-| `taskId` | `string` | 是 | 原任务 ID。 |
-| `jsNodeId` | `string` | 是 | 待试运行的 JS 节点 ID。 |
-| `tableName` | `string` | 条件必填 | 迁移任务场景下用于限定源表。 |
-| `rows` | `number` | 否 | 试运行抽取的样本行数。 |
-| `script` | `string` | 否 | 覆盖节点当前脚本；为空时使用任务中已有脚本。 |
-| `version` | `number` | 否 | 试运行任务版本号。 |
-| `testRunInputEventJson` | `string` | 否 | 自定义试运行输入事件 JSON 字符串。 |
-| `sql` | `string` | 否 | DTO 中存在，但当前接口实现未消费该字段。 |
-| `logOutputCount` | `number` | 否 | DTO 中存在，但当前接口实现未消费该字段。 |
+
+| 字段                      | 类型       | 是否必填 | 说明                     |
+| ----------------------- | -------- | ---- | ---------------------- |
+| `taskId`                | `string` | 是    | 原任务 ID。                |
+| `jsNodeId`              | `string` | 是    | 待试运行的 JS 节点 ID。        |
+| `tableName`             | `string` | 条件必填 | 迁移任务场景下用于限定源表。         |
+| `rows`                  | `number` | 否    | 试运行抽取的样本行数。            |
+| `script`                | `string` | 否    | 覆盖节点当前脚本；为空时使用任务中已有脚本。 |
+| `version`               | `number` | 否    | 试运行任务版本号。              |
+| `testRunInputEventJson` | `string` | 否    | 自定义试运行输入事件 JSON 字符串。   |
+| `sql`                   | `string` | 否    | DTO 中存在，但当前接口实现未消费该字段。 |
+| `logOutputCount`        | `number` | 否    | DTO 中存在，但当前接口实现未消费该字段。 |
+
 
 ### 请求示例
 
@@ -131,17 +133,19 @@ curl --location 'http://localhost:5173/api/task/migrate-js/test-run?access_token
 
 `Content-Type: application/json`
 
-| 字段 | 类型 | 是否必填 | 说明 |
-| --- | --- | --- | --- |
-| `taskId` | `string` | 是 | 原任务 ID。 |
-| `jsNodeId` | `string` | 是 | JS 节点 ID。 |
-| `tableName` | `string` | 是 | 取样本数据的表名。 |
-| `rows` | `number` | 否 | 按表查询时的样本条数；当 `sql` 为空时使用。 |
-| `sql` | `string` | 否 | 自定义 SQL 查询语句；非空时优先走 SQL 取样路径。 |
-| `script` | `string` | 否 | 当前接口未使用。 |
-| `version` | `number` | 否 | 当前接口未使用。 |
-| `testRunInputEventJson` | `string` | 否 | 当前接口未使用。 |
-| `logOutputCount` | `number` | 否 | 当前接口未使用。 |
+
+| 字段                      | 类型       | 是否必填 | 说明                            |
+| ----------------------- | -------- | ---- | ----------------------------- |
+| `taskId`                | `string` | 是    | 原任务 ID。                       |
+| `jsNodeId`              | `string` | 是    | JS 节点 ID。                     |
+| `tableName`             | `string` | 是    | 取样本数据的表名。                     |
+| `rows`                  | `number` | 否    | 按表查询时的样本条数；当 `sql` 为空时使用。     |
+| `sql`                   | `string` | 否    | 自定义 SQL 查询语句；非空时优先走 SQL 取样路径。 |
+| `script`                | `string` | 否    | 当前接口未使用。                      |
+| `version`               | `number` | 否    | 当前接口未使用。                      |
+| `testRunInputEventJson` | `string` | 否    | 当前接口未使用。                      |
+| `logOutputCount`        | `number` | 否    | 当前接口未使用。                      |
+
 
 ### 取样模式
 
@@ -229,14 +233,16 @@ curl --location --request GET 'http://localhost:5173/api/task/migrate-js/mock-da
 
 服务层已定义的典型业务错误码如下：
 
-| 错误码 | 说明 |
-| --- | --- |
-| `MockData.TaskNotFound` | 任务不存在。 |
-| `MockData.PreNodeNotFound` | 未找到 JS 节点的前置数据节点。 |
-| `MockData.ConnectionNotFound` | 前置节点关联的数据源连接不存在。 |
-| `MockData.ConnectionNotSupportRawCommand` | 连接不支持执行原始命令。 |
-| `MockData.ConnectionNotSupportQuery` | 连接不支持按过滤条件取数。 |
-| `MockData.SampleDataError` | 获取样本数据失败。 |
+
+| 错误码                                       | 说明                |
+| ----------------------------------------- | ----------------- |
+| `MockData.TaskNotFound`                   | 任务不存在。            |
+| `MockData.PreNodeNotFound`                | 未找到 JS 节点的前置数据节点。 |
+| `MockData.ConnectionNotFound`             | 前置节点关联的数据源连接不存在。  |
+| `MockData.ConnectionNotSupportRawCommand` | 连接不支持执行原始命令。      |
+| `MockData.ConnectionNotSupportQuery`      | 连接不支持按过滤条件取数。     |
+| `MockData.SampleDataError`                | 获取样本数据失败。         |
+
 
 错误文案定义见：
 
@@ -261,11 +267,14 @@ curl --location --request GET 'http://localhost:5173/api/task/migrate-js/mock-da
 
 字段含义：
 
-| 字段 | 类型 | 说明 |
-| --- | --- | --- |
-| `reqId` | `string` | 请求唯一标识。 |
-| `ts` | `number` | 服务端响应时间戳。 |
-| `code` | `string` | 成功通常为 `ok`。 |
-| `message` | `string` | 失败时的错误信息。 |
-| `stack` | `string` | 异常堆栈，通常仅调试时使用。 |
-| `data` | `object \| null` | 业务返回数据。 |
+
+| 字段        | 类型              | 说明             |
+| --------- | --------------- | -------------- |
+| `reqId`   | `string`        | 请求唯一标识。        |
+| `ts`      | `number`        | 服务端响应时间戳。      |
+| `code`    | `string`        | 成功通常为 `ok`。    |
+| `message` | `string`        | 失败时的错误信息。      |
+| `stack`   | `string`        | 异常堆栈，通常仅调试时使用。 |
+| `data`    | `object | null` | 业务返回数据。        |
+
+

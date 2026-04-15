@@ -160,7 +160,7 @@
   }
 
   &-editor-pane {
-    flex: 1;
+    flex: 0.4;
     min-width: 0;
     display: flex;
     flex-direction: column;
@@ -206,14 +206,14 @@
   }
 
   &-right-pane {
-    flex: 1;
+    flex: 0.6;
     min-width: 0;
     display: flex;
     flex-direction: column;
   }
 
   &-io-pane {
-    flex: 1;
+    flex: 0.6;
     min-height: 0;
     display: flex;
     border-bottom: 1px solid var(--el-border-color-light);
@@ -344,7 +344,7 @@
 }
 
 .mock-log-panel {
-  flex: 1;
+  flex: 0.4;
   min-height: 0;
   display: flex;
   flex-direction: column;
@@ -396,6 +396,73 @@
   }
 }
 
+// Event type bar
+.mock-event-type-bar {
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--el-border-color-lighter);
+}
+
+// Before/After editor sections
+.mock-panel-body--editors {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+
+  .mock-editor-section {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+
+    & + .mock-editor-section {
+      border-top: 1px solid var(--el-border-color-lighter);
+    }
+
+    .mock-editor-section-label {
+      padding: 4px 12px;
+      font-size: 12px;
+      line-height: 20px;
+      color: var(--el-text-color-secondary);
+      background: var(--el-fill-color-light);
+      border-bottom: 1px solid var(--el-border-color-extra-light);
+      flex-shrink: 0;
+    }
+
+    .mock-editor-section-body {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+
+      .mock-input-editor {
+        flex: 1;
+        min-height: 0;
+      }
+
+      .json-status-bar {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        padding: 4px 12px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        z-index: 1;
+
+        &.valid {
+          color: var(--el-color-success);
+        }
+
+        &.invalid {
+          color: var(--el-color-danger);
+        }
+      }
+    }
+  }
+}
+
 .mock-sql-dialog {
   .el-dialog__body {
     padding-top: 8px;
@@ -410,7 +477,6 @@
   }
 }
 
-.mock-input-editor,
 .mock-output-editor {
   .ace_cursor {
     display: none !important;
