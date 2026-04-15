@@ -127,17 +127,15 @@ function getData({ page }: { page: { current: number; size: number } }) {
 }
 
 function formatDuring(mss: number) {
-  let time = ''
-  const minutes = Math.floor((mss % (1000 * 60 * 60)) / (1000 * 60))
-  const seconds = (mss % (1000 * 60)) / 1000
-  if (minutes > 1) {
-    time = `${minutes.toFixed(2)}min`
-  } else if (minutes < 1 && seconds > 1) {
-    time = `${seconds.toFixed(2)}s`
-  } else if (minutes < 1 && seconds < 1 && mss > 0) {
-    time = `${mss}ms`
-  }
-  return time
+  const ms = Number(mss)
+  if (!Number.isFinite(ms) || ms <= 0) return '0ms'
+
+  if (ms >= 24 * 60 * 60 * 1000) return '24h+'
+  if (ms >= 60 * 60 * 1000) return `${(ms / (60 * 60 * 1000)).toFixed(2)}h`
+  if (ms >= 60 * 1000) return `${(ms / (60 * 1000)).toFixed(2)}min`
+  if (ms >= 1000) return `${(ms / 1000).toFixed(2)}s`
+
+  return `${Math.round(ms)}ms`
 }
 
 // 表格排序
