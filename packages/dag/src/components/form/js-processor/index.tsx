@@ -95,6 +95,10 @@ export const JsProcessor = observer(
               value: item.previousTableName,
             }))
             params.tableName = tableList.value[0]?.value
+            // Update SQL template with the loaded table name
+            if (params.tableName && sqlText.value === 'SELECT * FROM ') {
+              sqlText.value = `SELECT * FROM ${params.tableName}`
+            }
           })
           .finally(() => {
             tableLoading.value = false
@@ -242,7 +246,14 @@ export const JsProcessor = observer(
       const mockRunning = ref(false)
       const gettingSample = ref(false)
       const sqlDialogVisible = ref(false)
-      const sqlText = ref('SELECT * FROM ')
+      const getSourceTableName = () => {
+        if (isMigrate) {
+          return params.tableName || ''
+        }
+        const sourceNode = findParentNode(form.values.id)
+        return sourceNode?.tableName || ''
+      }
+      const sqlText = ref(`SELECT * FROM ${getSourceTableName()}`)
       const sqlPreviewData = ref<any[]>([])
       const sqlPreviewLoading = ref(false)
 
