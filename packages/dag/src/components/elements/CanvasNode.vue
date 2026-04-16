@@ -91,7 +91,9 @@ const canBeTarget = computed(() => {
           :text="text"
           popper-class="df-node-text-tooltip"
           placement="top"
-          :open-delay="400"
+          :enterable="false"
+          :show-after="300"
+          :hide-after="0"
         />
         <!-- <VIcon v-if="ins.beta" class="mr-1" size="32">beta</VIcon> -->
       </template>
