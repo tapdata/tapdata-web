@@ -169,6 +169,8 @@ export default {
   packages_form_js_processor_mock_log_sample_count: '获取到 {val1} 条样本数据',
   packages_form_js_processor_mock_log_sample_empty: '未获取到样本数据',
   packages_form_js_processor_mock_log_sample_fail: '获取样本失败: {val1}',
+  packages_form_js_processor_mock_log_loading_more: '加载更多日志...',
+  packages_form_js_processor_mock_log_no_more: '没有更多日志了',
   packages_form_js_processor_mock_log_sql_import:
     '从 SQL 查询导入 {val1} 条数据',
   packages_form_js_processor_mock_sql_query_fail: 'SQL 查询失败',

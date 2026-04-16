@@ -188,6 +188,8 @@ export default {
   packages_form_js_processor_mock_log_sample_count: 'Fetched {val1} sample records',
   packages_form_js_processor_mock_log_sample_empty: 'No sample data available',
   packages_form_js_processor_mock_log_sample_fail: 'Failed to get sample: {val1}',
+  packages_form_js_processor_mock_log_loading_more: 'Loading more logs...',
+  packages_form_js_processor_mock_log_no_more: 'No more logs',
   packages_form_js_processor_mock_log_sql_import: 'Imported {val1} records from SQL query',
   packages_form_js_processor_mock_sql_query_fail: 'SQL query failed',
   packages_form_js_processor_mock_unknown_error: 'Unknown error',

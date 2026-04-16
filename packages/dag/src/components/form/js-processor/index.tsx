@@ -138,6 +138,7 @@ export const JsProcessor = observer(
       const logList = ref<any[]>([])
       const logLoading = ref(false)
 
+      let lastQueryLogTotal = 0
       const queryLog = async () => {
         try {
           const logData = await queryMonitoringLogs({
@@ -150,6 +151,7 @@ export const JsProcessor = observer(
             nodeId,
             end: Time.now(),
           })
+          lastQueryLogTotal = logData?.total || 0
           logList.value =
             logData?.items.filter(
               (item) =>
@@ -244,6 +246,14 @@ export const JsProcessor = observer(
         Array<{ time: string; level: string; content: string }>
       >([])
       const mockRunning = ref(false)
+      // Pagination state for server logs (reverse infinite scroll)
+      const mockLogTotal = ref(0)
+      const mockLogPageSize = 20
+      const mockLogOldestPage = ref(0) // the oldest page we've loaded (counting from last)
+      const mockLogLoadingMore = ref(false)
+      const mockLogHasMore = computed(() => mockLogOldestPage.value > 1)
+      const mockLogSeenIds = new Set<string>()
+      const mockLogListRef = ref<HTMLElement | null>(null)
       const gettingSample = ref(false)
       const sqlDialogVisible = ref(false)
       const getSourceTableName = () => {
@@ -302,10 +312,127 @@ export const JsProcessor = observer(
         level: string,
         content: string,
         timestamp?: number,
+        logId?: string,
       ) => {
+        // Deduplicate server logs by id
+        if (logId) {
+          if (mockLogSeenIds.has(logId)) return
+          mockLogSeenIds.add(logId)
+        }
         const now = timestamp ? new Date(timestamp) : new Date()
         const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`
         mockLogs.value.push({ time, level, content })
+      }
+
+      const scrollMockLogToBottom = () => {
+        nextTick(() => {
+          const el = mockLogListRef.value
+          if (el) {
+            el.scrollTop = el.scrollHeight
+          }
+        })
+      }
+
+      /** Fetch a page of server logs from the API (desc order) and return items + total */
+      const fetchMockLogPage = async (page: number) => {
+        const logData = await queryMonitoringLogs({
+          taskId: task.testTaskId,
+          type: 'testRun',
+          order: 'asc',
+          page,
+          pageSize: mockLogPageSize,
+          start: queryStart,
+          nodeId,
+          end: Time.now(),
+        })
+        const items =
+          logData?.items?.filter(
+            (item: any) =>
+              !new RegExp(`(\\[${nodeId}]|${nodeId}\\))`).test(item.message),
+          ) || []
+        return { items, total: logData?.total || 0 }
+      }
+
+      /** Load the last page of server logs, append to mockLogs, scroll to bottom.
+       *  Uses lastQueryLogTotal from polling to avoid an extra request. */
+      const loadLastPageLogs = async () => {
+        try {
+          const total = lastQueryLogTotal
+          mockLogTotal.value = total
+          if (total === 0) return
+
+          const lastPage = Math.ceil(total / mockLogPageSize)
+          // Polling queryLog (page:1, pageSize:50) already covered pages within first 50 items.
+          // Only need to fetch lastPage if it has items beyond what polling returned.
+          const { items } = await fetchMockLogPage(lastPage)
+          mockLogOldestPage.value = lastPage
+          items.forEach((item: any) => {
+            addMockLog(
+              'info',
+              item.message || '',
+              item.timestamp,
+              item.id || `${item.timestamp}_${item.message}`,
+            )
+          })
+          scrollMockLogToBottom()
+        } catch (error) {
+          console.error('Failed to load last page logs:', error)
+        }
+      }
+
+      /** Load older page (scroll up infinite scroll) */
+      const loadOlderLogs = async () => {
+        if (mockLogLoadingMore.value || !mockLogHasMore.value) return
+        const prevPage = mockLogOldestPage.value - 1
+        if (prevPage < 1) return
+
+        mockLogLoadingMore.value = true
+        try {
+          const el = mockLogListRef.value
+          const prevScrollHeight = el?.scrollHeight || 0
+
+          const { items } = await fetchMockLogPage(prevPage)
+          mockLogOldestPage.value = prevPage
+
+          // Prepend older logs at the beginning (they are older, so insert before current)
+          const olderEntries: Array<{
+            time: string
+            level: string
+            content: string
+          }> = []
+          items.forEach((item: any) => {
+            const logId = item.id || `${item.timestamp}_${item.message}`
+            if (mockLogSeenIds.has(logId)) return
+            mockLogSeenIds.add(logId)
+            const d = new Date(item.timestamp)
+            const time = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`
+            olderEntries.push({
+              time,
+              level: 'info',
+              content: item.message || '',
+            })
+          })
+          mockLogs.value = [...olderEntries, ...mockLogs.value]
+
+          // Restore scroll position so the view doesn't jump
+          nextTick(() => {
+            if (el) {
+              const newScrollHeight = el.scrollHeight
+              el.scrollTop = newScrollHeight - prevScrollHeight
+            }
+          })
+        } catch (error) {
+          console.error('Failed to load older logs:', error)
+        } finally {
+          mockLogLoadingMore.value = false
+        }
+      }
+
+      const onMockLogScroll = (e: Event) => {
+        const el = e.target as HTMLElement
+        if (el.scrollTop < 40 && mockLogHasMore.value) {
+          loadOlderLogs()
+        }
       }
 
       const buildTestRunInputEventJson = (): string => {
@@ -357,10 +484,15 @@ export const JsProcessor = observer(
         mockRunning.value = true
         mockOutput.value = ''
         mockOutputError.value = ''
+        // Reset pagination state for new run
+        mockLogTotal.value = 0
+        mockLogOldestPage.value = 0
+        mockLogSeenIds.clear()
         const startTime = Date.now()
         version = Time.now()
         queryStart = Time.now()
         addMockLog('info', t('packages_form_js_processor_mock_log_start'))
+        scrollMockLogToBottom()
 
         const testRunInputEventJson = buildTestRunInputEventJson()
 
@@ -389,6 +521,7 @@ export const JsProcessor = observer(
                     'info',
                     log.message || log.errorStack || '',
                     log.timestamp,
+                    log.id,
                   )
                 })
             }
@@ -398,6 +531,7 @@ export const JsProcessor = observer(
                 val1: elapsed,
               }),
             )
+            scrollMockLogToBottom()
           } catch (error: any) {
             const elapsed = Date.now() - startTime
             const errMsg =
@@ -449,10 +583,16 @@ export const JsProcessor = observer(
                     }),
                   ])
 
-                  // 追加新日志到 mock 面板
+                  // 追加新日志到 mock 面板 (with dedup)
                   logList.value.forEach((item: any) => {
-                    addMockLog('info', item.message || '', item.timestamp)
+                    addMockLog(
+                      'info',
+                      item.message || '',
+                      item.timestamp,
+                      item.id || `${item.timestamp}_${item.message}`,
+                    )
                   })
+                  scrollMockLogToBottom()
 
                   // 更新输出
                   mockOutput.value = result.after
@@ -467,6 +607,8 @@ export const JsProcessor = observer(
                         val1: elapsed,
                       }),
                     )
+                    // Load final page of logs (may have more than polled)
+                    await loadLastPageLogs()
                     resetQuery()
                     mockRunning.value = false
                   } else {
@@ -483,7 +625,12 @@ export const JsProcessor = observer(
               // 脚本执行出错
               await queryLog()
               logList.value.forEach((item: any) => {
-                addMockLog('error', item.message || '', item.timestamp)
+                addMockLog(
+                  'error',
+                  item.message || '',
+                  item.timestamp,
+                  item.id || `${item.timestamp}_${item.message}`,
+                )
               })
               const elapsed = Date.now() - startTime
               addMockLog(
@@ -493,6 +640,7 @@ export const JsProcessor = observer(
                   val2: t('packages_form_js_processor_mock_unknown_error'),
                 }),
               )
+              scrollMockLogToBottom()
               resetQuery()
               mockRunning.value = false
             },
@@ -1195,28 +1343,56 @@ export const JsProcessor = observer(
                             text
                             onClick={() => {
                               mockLogs.value = []
+                              mockLogSeenIds.clear()
+                              mockLogTotal.value = 0
+                              mockLogOldestPage.value = 0
                             }}
                           >
                             {t('packages_form_js_processor_mock_log_clear')}
                           </ElButton>
                         </div>
                       </div>
-                      <div class="mock-log-list">
+                      <div
+                        class="mock-log-list"
+                        ref={mockLogListRef}
+                        onScroll={onMockLogScroll}
+                      >
+                        {mockLogLoadingMore.value && (
+                          <div class="mock-log-loading-more">
+                            <el-icon class="is-loading" size="14">
+                              <i-lucide-loader-2></i-lucide-loader-2>
+                            </el-icon>
+                            <span>
+                              {t(
+                                'packages_form_js_processor_mock_log_loading_more',
+                              )}
+                            </span>
+                          </div>
+                        )}
+                        {!mockLogHasMore.value &&
+                          mockLogs.value.length > 0 &&
+                          mockLogTotal.value > 0 && (
+                            <div class="mock-log-no-more">
+                              {t('packages_form_js_processor_mock_log_no_more')}
+                            </div>
+                          )}
                         {mockLogs.value.length ? (
                           mockLogs.value.map((log, idx) => (
                             <div class="mock-log-item" key={idx}>
-                              <span class="log-time">{log.time}</span>
                               <span class={['log-icon', log.level]}>
-                                <VIcon size="12">
-                                  {log.level === 'error'
-                                    ? 'close-circle'
-                                    : log.level === 'success'
-                                      ? 'check-circle'
-                                      : log.level === 'warning'
-                                        ? 'warning'
-                                        : 'info-circle'}
-                                </VIcon>
+                                <el-icon size="12">
+                                  {log.level === 'error' ? (
+                                    <i-lucide-circle-x></i-lucide-circle-x>
+                                  ) : log.level === 'success' ? (
+                                    <i-lucide-circle-check></i-lucide-circle-check>
+                                  ) : log.level === 'warning' ? (
+                                    <i-lucide-circle-alert></i-lucide-circle-alert>
+                                  ) : (
+                                    <i-lucide-info></i-lucide-info>
+                                  )}
+                                </el-icon>
                               </span>
+                              <span class="log-time">{log.time}</span>
                               <span class="log-content">{log.content}</span>
                             </div>
                           ))
