@@ -270,6 +270,25 @@ export default {
   packages_form_aggregate_ai_stop: '停止',
   packages_form_aggregate_ai_error: '生成失敗，請重試',
 
+  // AggregatePanel Event Handling
+  packages_form_aggregate_event_title: '事件處理邏輯',
+  packages_form_aggregate_event_configured: '已配置',
+  packages_form_aggregate_event_tip: '配置刪除事件和更新事件在聚合節點中的處理策略',
+  packages_form_aggregate_event_delete_title: '刪除事件處理',
+  packages_form_aggregate_event_delete_desc: '當源端發送刪除事件時，聚合節點如何處理下游資料',
+  packages_form_aggregate_event_delete_desc_highlight: '刪除事件',
+  packages_form_aggregate_event_delete_switch: '聚合結果為空時刪除下游記錄',
+  packages_form_aggregate_event_delete_switch_tip: '開啟：當刪除事件導致聚合結果為空時，自動刪除下游對應記錄。關閉：保留下游記錄，僅更新聚合值。',
+  packages_form_aggregate_event_delete_warning: '開啟後，當所有源記錄被刪除導致聚合結果為空時，下游記錄也會被自動刪除，請確認這是期望的行為。',
+  packages_form_aggregate_event_update_title: '有效更新欄位',
+  packages_form_aggregate_event_update_desc: '指定哪些欄位變更時需要重新計算聚合',
+  packages_form_aggregate_event_update_tip_intro: '當更新事件涉及這些欄位時，將觸發雙重聚合計算：',
+  packages_form_aggregate_event_update_tip_step1: '使用更新前的值反向計算，撤銷舊的聚合貢獻',
+  packages_form_aggregate_event_update_tip_step2: '使用更新後的值正向計算，應用新的聚合貢獻',
+  packages_form_aggregate_event_update_tip_note: '通常建議選擇分組欄位，以確保分組變更時聚合結果正確更新。',
+  packages_form_aggregate_event_update_placeholder: '選擇欄位',
+  packages_form_aggregate_event_update_hint: '偵測到已配置分組欄位，建議將分組欄位添加為有效更新欄位，以確保分組變更時聚合結果正確更新。',
+
   // Triggers
   packages_form_triggers_source: '資料來源',
   packages_form_triggers_source_collection: '來源集合',

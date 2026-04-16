@@ -270,6 +270,25 @@ export default {
   packages_form_aggregate_ai_stop: '停止',
   packages_form_aggregate_ai_error: '生成失败，请重试',
 
+  // AggregatePanel Event Handling
+  packages_form_aggregate_event_title: '事件处理逻辑',
+  packages_form_aggregate_event_configured: '已配置',
+  packages_form_aggregate_event_tip: '配置删除事件和更新事件在聚合节点中的处理策略',
+  packages_form_aggregate_event_delete_title: '删除事件处理',
+  packages_form_aggregate_event_delete_desc: '当源端发送删除事件时，聚合节点如何处理下游数据',
+  packages_form_aggregate_event_delete_desc_highlight: '删除事件',
+  packages_form_aggregate_event_delete_switch: '聚合结果为空时删除下游记录',
+  packages_form_aggregate_event_delete_switch_tip: '开启：当删除事件导致聚合结果为空时，自动删除下游对应记录。关闭：保留下游记录，仅更新聚合值。',
+  packages_form_aggregate_event_delete_warning: '开启后，当所有源记录被删除导致聚合结果为空时，下游记录也会被自动删除，请确认这是期望的行为。',
+  packages_form_aggregate_event_update_title: '有效更新字段',
+  packages_form_aggregate_event_update_desc: '指定哪些字段变更时需要重新计算聚合',
+  packages_form_aggregate_event_update_tip_intro: '当更新事件涉及这些字段时，将触发双重聚合计算：',
+  packages_form_aggregate_event_update_tip_step1: '使用更新前的值反向计算，撤销旧的聚合贡献',
+  packages_form_aggregate_event_update_tip_step2: '使用更新后的值正向计算，应用新的聚合贡献',
+  packages_form_aggregate_event_update_tip_note: '通常建议选择分组字段，以确保分组变更时聚合结果正确更新。',
+  packages_form_aggregate_event_update_placeholder: '选择字段',
+  packages_form_aggregate_event_update_hint: '检测到已配置分组字段，建议将分组字段添加为有效更新字段，以确保分组变更时聚合结果正确更新。',
+
   // Triggers
   packages_form_triggers_source: '数据源',
   packages_form_triggers_source_collection: '源集合',

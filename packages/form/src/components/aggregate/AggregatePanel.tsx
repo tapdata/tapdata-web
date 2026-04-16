@@ -12,7 +12,7 @@ import {
   ref,
   type PropType,
 } from 'vue'
-import { mapFieldsData } from '../field-select/FieldSelect'
+import { BaseFieldSelect, mapFieldsData } from '../field-select'
 import { AggregateFields, type AggregateField } from './AggregateFields'
 import { buildPipelineJSON } from './buildPipeline'
 import { GroupFields, type GroupField } from './GroupFields'
@@ -42,6 +42,9 @@ export const AggregatePanel = defineComponent({
         tableName: string
         connectionId: string
         databaseType: string
+        // 事件处理逻辑
+        enableDeleteWhenEmpty: boolean
+        effectiveUpdateFields: string[]
       }>,
       default: () => ({
         useRawPipeline: false,
@@ -54,6 +57,8 @@ export const AggregatePanel = defineComponent({
         tableName: '',
         connectionId: '',
         databaseType: '',
+        enableDeleteWhenEmpty: false,
+        effectiveUpdateFields: [],
       }),
     },
   },
@@ -168,6 +173,33 @@ export const AggregatePanel = defineComponent({
 
     const pipelineJson = computed(() => buildPipelineJSON(config.value))
 
+    const enableDeleteWhenEmpty = computed({
+      get: () => config.value.enableDeleteWhenEmpty ?? false,
+      set: (val: boolean) =>
+        emitChange({ ...config.value, enableDeleteWhenEmpty: val }),
+    })
+
+    const effectiveUpdateFields = computed({
+      get: () => config.value.effectiveUpdateFields ?? [],
+      set: (val: string[]) =>
+        emitChange({ ...config.value, effectiveUpdateFields: val }),
+    })
+
+    const hasEventConfig = computed(
+      () =>
+        enableDeleteWhenEmpty.value || effectiveUpdateFields.value.length > 0,
+    )
+
+    const groupFieldNames = computed(() =>
+      (config.value.groupFields || []).map((g) => g.field).filter(Boolean),
+    )
+
+    const hasGroupButNoEffective = computed(
+      () =>
+        groupFieldNames.value.length > 0 &&
+        effectiveUpdateFields.value.length === 0,
+    )
+
     return () => (
       <div class="aggregate-panel">
         <div class="aggregate-panel__mode flex align-center gap-2">
@@ -267,6 +299,175 @@ export const AggregatePanel = defineComponent({
             </ElCollapseItem>
           </ElCollapse>
         )}
+
+        {/* 事件处理逻辑 */}
+        <div class="event-handling">
+          <div class="event-handling__header">
+            <div class="event-handling__header-left">
+              <el-icon size={14} class="event-handling__icon">
+                <i-lucide-zap />
+              </el-icon>
+              <span class="event-handling__title">
+                {t('packages_form_aggregate_event_title')}
+              </span>
+              {hasEventConfig.value && (
+                <ElTag type="primary" size="small">
+                  {t('packages_form_aggregate_event_configured')}
+                </ElTag>
+              )}
+            </div>
+            <ElTooltip
+              content={t('packages_form_aggregate_event_tip')}
+              placement="top"
+            >
+              <el-icon class="event-handling__info">
+                <i-lucide-info />
+              </el-icon>
+            </ElTooltip>
+          </div>
+
+          <div class="event-handling__body pt-0">
+            {/* 删除事件处理 */}
+            <div class="event-handling__card">
+              <div class="event-handling__card-title">
+                <el-icon size={16} class="text-red-500">
+                  <i-lucide-trash-2 />
+                </el-icon>
+                <div>
+                  <div class="text-sm font-medium">
+                    {t('packages_form_aggregate_event_delete_title')}
+                  </div>
+                  <div class="event-handling__desc">
+                    {t('packages_form_aggregate_event_delete_desc')}
+                  </div>
+                </div>
+              </div>
+
+              <div class="event-handling__switch-row">
+                <div class="event-handling__switch-left">
+                  <el-icon size={16} class="text-amber-500">
+                    <i-lucide-alert-triangle />
+                  </el-icon>
+                  <span class="text-sm">
+                    {t('packages_form_aggregate_event_delete_switch')}
+                  </span>
+                  <ElTooltip
+                    placement="top"
+                    content={t(
+                      'packages_form_aggregate_event_delete_switch_tip',
+                    )}
+                  >
+                    <el-icon class="event-handling__info-sm">
+                      <i-lucide-info />
+                    </el-icon>
+                  </ElTooltip>
+                </div>
+                <ElSwitch
+                  disabled={props.disabled}
+                  modelValue={enableDeleteWhenEmpty.value}
+                  onUpdate:modelValue={(val: any) =>
+                    (enableDeleteWhenEmpty.value = !!val)
+                  }
+                />
+              </div>
+
+              {enableDeleteWhenEmpty.value && (
+                <div class="event-handling__warning">
+                  <el-icon size={14} class="event-handling__warning-icon">
+                    <i-lucide-alert-circle />
+                  </el-icon>
+                  <span class="text-xs">
+                    {t('packages_form_aggregate_event_delete_warning')}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* 有效更新字段 */}
+            <div class="event-handling__card">
+              <div class="event-handling__card-title">
+                <el-icon size={14} class="text-blue-500">
+                  <i-lucide-refresh-cw />
+                </el-icon>
+                <div class="flex-1">
+                  <div class="flex align-center gap-2">
+                    <span class="text-sm font-medium">
+                      {t('packages_form_aggregate_event_update_title')}
+                    </span>
+                    <ElTooltip placement="top">
+                      {{
+                        content: () => (
+                          <div style="max-width: 280px">
+                            <p>
+                              {t(
+                                'packages_form_aggregate_event_update_tip_intro',
+                              )}
+                            </p>
+                            <ol class="pl-4 mt-1" style="list-style: decimal">
+                              <li>
+                                {t(
+                                  'packages_form_aggregate_event_update_tip_step1',
+                                )}
+                              </li>
+                              <li>
+                                {t(
+                                  'packages_form_aggregate_event_update_tip_step2',
+                                )}
+                              </li>
+                            </ol>
+                            <p class="mt-1">
+                              {t(
+                                'packages_form_aggregate_event_update_tip_note',
+                              )}
+                            </p>
+                          </div>
+                        ),
+                        default: () => (
+                          <el-icon class="event-handling__info-sm">
+                            <i-lucide-info />
+                          </el-icon>
+                        ),
+                      }}
+                    </ElTooltip>
+                  </div>
+                  <div class="event-handling__desc">
+                    {t('packages_form_aggregate_event_update_desc')}
+                  </div>
+                </div>
+              </div>
+
+              <BaseFieldSelect
+                disabled={props.disabled}
+                modelValue={effectiveUpdateFields.value}
+                options={fieldOptions.value}
+                loading={fieldsLoading.value}
+                {...({
+                  multiple: true,
+                  filterable: true,
+                  clearable: true,
+                  collapseTags: true,
+                  collapseTagsTooltip: true,
+                  placeholder: t(
+                    'packages_form_aggregate_event_update_placeholder',
+                  ),
+                  onChange: (val: string[]) =>
+                    (effectiveUpdateFields.value = val),
+                } as any)}
+              />
+
+              {hasGroupButNoEffective.value && (
+                <div class="event-handling__hint">
+                  <el-icon size={14} class="event-handling__hint-icon">
+                    <i-lucide-alert-triangle />
+                  </el-icon>
+                  <span class="text-xs">
+                    {t('packages_form_aggregate_event_update_hint')}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
 
         {!useRawPipeline.value && <PipelinePreview code={pipelineJson.value} />}
       </div>

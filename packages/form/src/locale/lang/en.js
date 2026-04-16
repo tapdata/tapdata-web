@@ -301,6 +301,25 @@ export default {
   packages_form_aggregate_ai_stop: 'Stop',
   packages_form_aggregate_ai_error: 'Generation failed, please retry',
 
+  // AggregatePanel Event Handling
+  packages_form_aggregate_event_title: 'Event Handling',
+  packages_form_aggregate_event_configured: 'Configured',
+  packages_form_aggregate_event_tip: 'Configure how delete and update events are handled in the aggregation node',
+  packages_form_aggregate_event_delete_title: 'Delete Event Handling',
+  packages_form_aggregate_event_delete_desc: 'How the aggregation node handles downstream data when a delete event is received',
+  packages_form_aggregate_event_delete_desc_highlight: 'delete event',
+  packages_form_aggregate_event_delete_switch: 'Delete downstream records when aggregation result is empty',
+  packages_form_aggregate_event_delete_switch_tip: 'On: Automatically delete downstream records when the aggregation result becomes empty after a delete event. Off: Keep downstream records and only update aggregated values.',
+  packages_form_aggregate_event_delete_warning: 'When enabled, if all source records are deleted and the aggregation result becomes empty, downstream records will be automatically deleted. Please confirm this is the expected behavior.',
+  packages_form_aggregate_event_update_title: 'Effective Update Fields',
+  packages_form_aggregate_event_update_desc: 'Specify which field changes should trigger aggregation recalculation',
+  packages_form_aggregate_event_update_tip_intro: 'When update events involve these fields, a dual aggregation calculation is triggered:',
+  packages_form_aggregate_event_update_tip_step1: 'Reverse calculate using the pre-update value to undo the old aggregation contribution',
+  packages_form_aggregate_event_update_tip_step2: 'Forward calculate using the post-update value to apply the new aggregation contribution',
+  packages_form_aggregate_event_update_tip_note: 'It is recommended to select group fields to ensure aggregation results are correctly updated when groups change.',
+  packages_form_aggregate_event_update_placeholder: 'Select Fields',
+  packages_form_aggregate_event_update_hint: 'Group fields detected. It is recommended to add group fields as effective update fields to ensure aggregation results are correctly updated when groups change.',
+
   // Triggers
   packages_form_triggers_source: 'Data Source',
   packages_form_triggers_source_collection: 'Source Collection',

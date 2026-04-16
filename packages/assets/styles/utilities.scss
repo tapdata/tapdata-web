@@ -2727,6 +2727,10 @@
   font-weight: bolder !important;
 }
 
+.font-medium {
+  font-weight: 500 !important;
+}
+
 .font-semibold {
   font-weight: 600 !important;
 }
@@ -12901,6 +12905,11 @@
   color: oklch(44.6% 0.03 256.802);
 }
 
+.text-sm {
+  font-size: 0.875rem;
+  line-height: calc(1.25 / 0.875);
+}
+
 .text-xs {
   font-size: 0.75rem;
   line-height: calc(1 / 0.75);
@@ -13208,4 +13217,12 @@
 
 .text-purple-500 {
   color: var(--color-purple-500);
+}
+
+.text-red-500 {
+  color: oklch(63.7% 0.237 25.331);
+}
+
+.text-amber-500 {
+  color: oklch(76.9% 0.188 70.08);
 }
