@@ -5,12 +5,9 @@ import {
   getNodeSchema,
   getNodeSchemaPage,
 } from '@tap/api/src/core/metadata-instances'
-import { queryMonitoringLogs } from '@tap/api/src/core/monitoring-logs'
 import {
   getJsMockData,
   getNodeTableInfo,
-  getRunJsResult,
-  testRunJs,
   testRunJsRpc,
 } from '@tap/api/src/core/task'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
@@ -26,7 +23,6 @@ import {
   inject,
   nextTick,
   onBeforeUnmount,
-  onUnmounted,
   reactive,
   ref,
 } from 'vue'
@@ -36,7 +32,7 @@ import { useDataflowStore } from '../../../stores/dataflow.store'
 import BaseNodeIcon from '../../BaseNodeIcon.vue'
 import { JsDeclare } from '../js-declare'
 import AiCodeDialog from './AiCodeDialog.vue'
-import { useVirtualLogScroller, type LogEntry } from './useVirtualLogScroller'
+import { useVirtualLogScroller } from './useVirtualLogScroller'
 import './style.scss'
 
 export const JsProcessor = observer(
@@ -123,31 +119,7 @@ export const JsProcessor = observer(
       }
 
       const nodeId = form.values.id
-
-      const inputRef = ref('')
-      const outputRef = ref('')
-      const running = ref(false)
-      const runningText = ref('')
-      const fullscreen = ref(false)
-
-      let queryStart: number
-      let queryTimes = 0
-      let timer: ReturnType<typeof setTimeout> | undefined
-      let logTimer: ReturnType<typeof setTimeout> | undefined
       let version: number
-      const resetQuery = () => {
-        queryTimes = 0
-        running.value = false
-        runningText.value = ''
-        clearTimeout(timer)
-        clearTimeout(logTimer)
-      }
-
-      onUnmounted(() => {
-        clearTimeout(timer)
-        clearTimeout(logTimer)
-      })
-
       // Mock test run state
       const mockMode = ref(false)
       const eventType = ref<'insert' | 'update' | 'delete' | 'custom'>('insert')
@@ -168,62 +140,10 @@ export const JsProcessor = observer(
         level: string
         content: string
       } | null>(null)
-      // Pagination state for server logs (reverse infinite scroll)
-      const mockLogTotal = ref(0)
-      const mockLogPageSize = 20
-      const mockLogOldestPage = ref(0) // the oldest page we've loaded (counting from last)
-
-      /** Fetch a page of server logs from the API and return items + total */
-      const fetchMockLogPage = async (page: number) => {
-        const logData = await queryMonitoringLogs({
-          taskId: task.testTaskId,
-          type: 'testRun',
-          order: 'asc',
-          page,
-          pageSize: mockLogPageSize,
-          start: queryStart,
-          nodeId,
-          end: Time.now(),
-        })
-        const items =
-          logData?.items?.filter(
-            (item: any) =>
-              !new RegExp(`(\\[${nodeId}]|${nodeId}\\))`).test(item.message),
-          ) || []
-        return { items, total: logData?.total || 0 }
-      }
-
-      /** Load older page (scroll up infinite scroll) - called by virtual scroller */
-      const loadOlderLogs = async () => {
-        const prevPage = mockLogOldestPage.value - 1
-        if (prevPage < 1) return
-
-        try {
-          const { items } = await fetchMockLogPage(prevPage)
-          mockLogOldestPage.value = prevPage
-          logScroller.hasMore.value = prevPage > 1
-
-          const olderEntries: LogEntry[] = items.map((item: any) => {
-            const d = new Date(item.date || item.timestamp)
-            const time = formatLogTime(d)
-            return {
-              id: item.id || `${item.timestamp}_${item.message}`,
-              time,
-              level: 'info',
-              content: item.message || '',
-            }
-          })
-          await logScroller.prepend(...olderEntries)
-        } catch (error) {
-          console.error('Failed to load older logs:', error)
-        }
-      }
-
       // Virtual log scroller
       const logScroller = useVirtualLogScroller({
         estimatedHeight: 32,
         overscan: 10,
-        onLoadMore: loadOlderLogs,
       })
       const gettingSample = ref(false)
       const sqlDialogVisible = ref(false)
@@ -303,43 +223,6 @@ export const JsProcessor = observer(
         })
       }
 
-      /** Fetch the latest page of server logs and append to virtual scroller.
-       *  Also updates pagination state (mockLogOldestPage, hasMore).
-       *  Returns the total count of logs on the server. */
-      const fetchAndAppendLatestLogs = async (): Promise<number> => {
-        // First, get the total by fetching page 1 (lightweight)
-        const { total } = await fetchMockLogPage(1)
-        if (total === 0) return 0
-
-        const newLastPage = Math.ceil(total / mockLogPageSize)
-        // 上一页没满时需要回拉，避免页码边界变化漏条目；满页则直接从新页开始
-        const oldTotal = mockLogTotal.value
-        const oldLastPageFull = oldTotal > 0 && oldTotal % mockLogPageSize === 0
-        const startPage =
-          oldTotal > 0 && !oldLastPageFull
-            ? Math.ceil(oldTotal / mockLogPageSize) // 回拉未满的那一页
-            : newLastPage
-
-        for (let p = startPage; p <= newLastPage; p++) {
-          const { items } = await fetchMockLogPage(p)
-          items.forEach((item: any) => {
-            addMockLog(
-              'info',
-              item.message || '',
-              item.date || item.timestamp,
-              item.id || `${item.timestamp}_${item.message}`,
-            )
-          })
-        }
-
-        // Update pagination state so upward scroll can load older pages
-        mockLogTotal.value = total
-        mockLogOldestPage.value = newLastPage
-        logScroller.hasMore.value = newLastPage > 1
-
-        return total
-      }
-
       const buildTestRunInputEventJson = (): string => {
         const et = eventType.value
 
@@ -385,199 +268,71 @@ export const JsProcessor = observer(
           return
         }
         const { jsType } = form.values
-        resetQuery()
         mockRunning.value = true
         mockOutput.value = ''
         mockOutputError.value = ''
-        // Reset pagination state for new run
-        mockLogTotal.value = 0
-        mockLogOldestPage.value = 0
         logScroller.clear()
         mockLogEnd.value = null
         const startTime = Date.now()
         version = Time.now()
-        queryStart = Time.now()
-        // mockLogStart.value = {
-        //   time: formatLogTime(new Date()),
-        //   level: 'info',
-        //   content: t('packages_form_js_processor_mock_log_start'),
-        // }
+        mockLogStart.value = {
+          time: formatLogTime(new Date()),
+          level: 'info',
+          content: t('packages_form_js_processor_mock_log_start'),
+        }
 
         const testRunInputEventJson = buildTestRunInputEventJson()
 
-        if (jsType === 1) {
-          try {
-            const result = await testRunJsRpc({
-              ...params,
-              version,
-              script: props.value,
-              jsType,
-              testRunInputEventJson,
-            })
-            const elapsed = Date.now() - startTime
-            const after = result?.after
-            mockOutput.value = after ? JSON.stringify(after, null, 2) : ''
-            if (result?.logs?.length) {
-              result.logs
-                ?.filter(
-                  (item) =>
-                    !new RegExp(`(\\[${nodeId}]|${nodeId}\\))`).test(
-                      item.message,
-                    ),
-                )
-                .forEach((log: any) => {
-                  addMockLog(
-                    'info',
-                    log.message || log.errorStack || '',
-                    log.date || log.timestamp,
-                    log.id,
-                  )
-                })
-            }
-            setEndLog(
-              'success',
-              t('packages_form_js_processor_mock_log_success', {
-                val1: elapsed,
-              }),
-            )
-          } catch (error: any) {
-            const elapsed = Date.now() - startTime
-            const errMsg =
-              error?.data?.data?.logs?.[0]?.errorStack ||
-              error?.message ||
-              t('packages_form_js_processor_mock_unknown_error')
-            mockOutputError.value = errMsg
-            setEndLog(
-              'error',
-              t('packages_form_js_processor_mock_log_fail', {
-                val1: elapsed,
-                val2: errMsg,
-              }),
-            )
-          } finally {
-            mockRunning.value = false
-          }
-        } else {
-          testRunJs({
+        try {
+          const result = await testRunJsRpc({
             ...params,
             version,
             script: props.value,
             jsType,
             testRunInputEventJson,
-          }).then(
-            () => {
-              queryStart = Time.now()
-              let resultOver = false
-              let resultFailed = false
-
-              // ── Result 轮询 ──────────────────────────────
-              const pollResult = async () => {
-                queryTimes++
-                clearTimeout(timer)
-                if (queryTimes > 40) {
-                  resultOver = true
-                  resultFailed = true
-                  resetQuery()
-                  ElMessage.error(
-                    t('packages_form_js_processor_index_qingqiuchaoshiqing'),
-                  )
-                  return
-                }
-
-                try {
-                  const result = await getRunJsResult({
-                    version,
-                    taskId,
-                    jsNodeId: nodeId,
-                  })
-
-                  mockOutput.value = result.after
-                    ? JSON.stringify(result.after, null, 2)
-                    : ''
-
-                  if (result.over) {
-                    resultOver = true
-                  } else {
-                    timer = setTimeout(pollResult, 500)
-                  }
-                } catch {
-                  resultOver = true
-                  resultFailed = true
-                  resetQuery()
-                }
-              }
-
-              // ── Log 轮询 ──────────────────────────────
-              const finishLogs = () => {
-                if (!resultFailed) {
-                  // const elapsed = Date.now() - startTime
-                  // setEndLog(
-                  //   'success',
-                  //   t('packages_form_js_processor_mock_log_success', {
-                  //     val1: elapsed,
-                  //   }),
-                  // )
-                }
-              }
-
-              // Result 结束后，日志可能分批写入，延迟 1s 后每 5s 查一次，最多 12 次
-              const tailPollLogs = async (remaining: number) => {
-                if (remaining <= 0) {
-                  finishLogs()
-                  return
-                }
-                try {
-                  const { total } = await fetchMockLogPage(1)
-                  if (total > mockLogTotal.value) {
-                    // 有新日志，拉取追加
-                    await fetchAndAppendLatestLogs()
-                  }
-                } catch (error) {
-                  console.error('Failed to tail-poll logs:', error)
-                }
-                logTimer = setTimeout(() => tailPollLogs(remaining - 1), 5000)
-              }
-
-              const pollLogs = async () => {
-                try {
-                  await fetchAndAppendLatestLogs()
-                } catch (error) {
-                  console.error('Failed to poll logs:', error)
-                }
-
-                if (resultOver) {
-                  // Result 结束，立即停止按钮 loading
-                  mockRunning.value = false
-                  // 进入尾部轮询：延迟 1s，每 5s 查一次，最多 12 次
-                  logTimer = setTimeout(() => tailPollLogs(12), 1000)
-                } else {
-                  logTimer = setTimeout(pollLogs, 500)
-                }
-              }
-
-              // 同时启动两个独立轮询
-              pollResult()
-              pollLogs()
-            },
-            async () => {
-              // 脚本执行出错 - 拉一次最终日志
-              try {
-                await fetchAndAppendLatestLogs()
-              } catch (error) {
-                console.error('Error fetching logs after failure:', error)
-              }
-              const elapsed = Date.now() - startTime
-              // setEndLog(
-              //   'error',
-              //   t('packages_form_js_processor_mock_log_fail', {
-              //     val1: elapsed,
-              //     val2: t('packages_form_js_processor_mock_unknown_error'),
-              //   }),
-              // )
-              resetQuery()
-              mockRunning.value = false
-            },
+          })
+          const elapsed = Date.now() - startTime
+          const after = result?.after
+          mockOutput.value = after ? JSON.stringify(after, null, 2) : ''
+          if (result?.logs?.length) {
+            result.logs
+              ?.filter(
+                (item: any) =>
+                  !new RegExp(`(\\[${nodeId}]|${nodeId}\\))`).test(
+                    item.message,
+                  ),
+              )
+              .forEach((log: any) => {
+                addMockLog(
+                  'info',
+                  log.message || log.errorStack || '',
+                  log.date || log.timestamp,
+                  log.id,
+                )
+              })
+          }
+          setEndLog(
+            'success',
+            t('packages_form_js_processor_mock_log_success', {
+              val1: elapsed,
+            }),
           )
+        } catch (error: any) {
+          const elapsed = Date.now() - startTime
+          const errMsg =
+            error?.data?.data?.logs?.[0]?.errorStack ||
+            error?.message ||
+            t('packages_form_js_processor_mock_unknown_error')
+          mockOutputError.value = errMsg
+          setEndLog(
+            'error',
+            t('packages_form_js_processor_mock_log_fail', {
+              val1: elapsed,
+              val2: errMsg,
+            }),
+          )
+        } finally {
+          mockRunning.value = false
         }
       }
 
@@ -707,10 +462,6 @@ export const JsProcessor = observer(
         event.stopPropagation()
         showDoc.value = !showDoc.value
       }
-
-      // const handleOpenAiDialog = () => {
-      //   aiDialogRef.value?.open()
-      // }
 
       const handleAiGenerate = (generatedCode: string) => {
         // Replace the current code with the AI generated code
@@ -1276,8 +1027,6 @@ export const JsProcessor = observer(
                             text
                             onClick={() => {
                               logScroller.clear()
-                              mockLogTotal.value = 0
-                              mockLogOldestPage.value = 0
                               mockLogStart.value = null
                               mockLogEnd.value = null
                             }}
@@ -1308,11 +1057,6 @@ export const JsProcessor = observer(
                                 </span>
                               </div>
                             )}
-                            {/* Sentinel for IntersectionObserver load-more */}
-                            <div
-                              ref={logScroller.sentinelRef}
-                              style={{ height: '1px', marginBottom: '-1px' }}
-                            />
                             {/* Top spacer for virtual scroll */}
                             <div
                               style={{
@@ -1323,19 +1067,6 @@ export const JsProcessor = observer(
                                     : '0',
                               }}
                             />
-                            {/* Loading more indicator */}
-                            {logScroller.loadingMore.value && (
-                              <div class="mock-log-loading-more">
-                                <el-icon class="is-loading" size="14">
-                                  <i-lucide-loader-2></i-lucide-loader-2>
-                                </el-icon>
-                                <span>
-                                  {t(
-                                    'packages_form_js_processor_mock_log_loading_more',
-                                  )}
-                                </span>
-                              </div>
-                            )}
                             {/* Visible virtual items */}
                             {logScroller.visibleItems.value.map((log) => (
                               <div
