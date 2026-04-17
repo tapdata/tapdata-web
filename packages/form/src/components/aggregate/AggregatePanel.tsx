@@ -445,8 +445,6 @@ export const AggregatePanel = defineComponent({
                   multiple: true,
                   filterable: true,
                   clearable: true,
-                  collapseTags: true,
-                  collapseTagsTooltip: true,
                   placeholder: t(
                     'packages_form_aggregate_event_update_placeholder',
                   ),
