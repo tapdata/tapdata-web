@@ -316,19 +316,11 @@ export const AggregatePanel = defineComponent({
                 </ElTag>
               )}
             </div>
-            <ElTooltip
-              content={t('packages_form_aggregate_event_tip')}
-              placement="top"
-            >
-              <el-icon class="event-handling__info">
-                <i-lucide-info />
-              </el-icon>
-            </ElTooltip>
           </div>
 
           <div class="event-handling__body pt-0">
             {/* 删除事件处理 */}
-            <div class="event-handling__card">
+            {/* <div class="event-handling__card">
               <div class="event-handling__card-title">
                 <el-icon size={16} class="text-red-500">
                   <i-lucide-trash-2 />
@@ -381,7 +373,7 @@ export const AggregatePanel = defineComponent({
                   </span>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* 有效更新字段 */}
             <div class="event-handling__card">
