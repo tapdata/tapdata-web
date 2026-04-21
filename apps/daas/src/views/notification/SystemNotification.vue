@@ -7,13 +7,15 @@ import {
   readAllNotifications,
 } from '@tap/api/src/core/notification'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import VIcon from '@tap/component/src/base/VIcon.vue'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import { $emit, $on } from '@tap/shared/src/event'
 import dayjs from 'dayjs'
+import { debounce } from 'lodash-es'
 import { TYPEMAP } from './tyepMap'
 
 export default {
-  components: { SelectList, PageContainer },
+  components: { SelectList, PageContainer, VIcon },
   emits: ['notificationUpdate'],
   data() {
     return {
@@ -25,6 +27,8 @@ export default {
       searchParams: {
         search: '',
         msg: '',
+        system: '',
+        serverName: '',
       },
 
       currentPage: 1,
@@ -44,6 +48,14 @@ export default {
         JobDDL: this.$t('notify_ddl_deal'),
         system: this.$t('notify_system'),
       },
+      systemOptions: [
+        { value: 'sync', label: this.$t('notify_sync') },
+        { value: 'migration', label: this.$t('notify_migration') },
+        { value: 'agent', label: this.$t('notify_manage_sever') },
+        { value: 'inspect', label: this.$t('notify_inspect') },
+        { value: 'JobDDL', label: this.$t('notify_ddl_deal') },
+        { value: 'system', label: this.$t('notify_system') },
+      ],
       options: [
         {
           value: 'ERROR',
@@ -113,6 +125,7 @@ export default {
     }
   },
   created() {
+    this.getDataDebounce = debounce(this.getData, 300)
     this.getData()
     this.getFilterItems()
     $on(this.$root, 'notificationUpdate', () => {
@@ -124,7 +137,7 @@ export default {
       this.$router.push({ name: 'notificationSetting' })
     },
     getData() {
-      const { search, msg } = this.searchParams
+      const { search, msg, system, serverName } = this.searchParams
       const where = {}
       if (!this.read) {
         where.read = false
@@ -134,6 +147,12 @@ export default {
       }
       if (msg || msg !== '') {
         where.msg = msg
+      }
+      if (system || system !== '') {
+        where.system = system
+      }
+      if (serverName || serverName !== '') {
+        where.serverName = { like: serverName, options: 'i' }
       }
       const filter = {
         where,
@@ -369,6 +388,26 @@ export default {
           dropdown-width="240px"
           @change="getData()"
         />
+        <SelectList
+          v-model="searchParams.system"
+          :items="systemOptions"
+          :label="$t('notify_belong_module')"
+          clearable
+          dropdown-width="240px"
+          @change="getData()"
+        />
+        <ElInput
+          v-model="searchParams.serverName"
+          :placeholder="$t('notify_search_server_name')"
+          clearable
+          style="width: 300px"
+          @keyup="getDataDebounce()"
+          @clear="getData()"
+        >
+          <template #prefix>
+            <VIcon>magnify</VIcon>
+          </template>
+        </ElInput>
       </div>
       <ul
         v-if="listData && listData.length"
