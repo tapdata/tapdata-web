@@ -936,6 +936,8 @@ export default {
   notify_migration: 'Data copy',
   notify_notice_type: 'Message Type',
   notify_notice_level: 'Message level',
+  notify_belong_module: 'Module',
+  notify_search_server_name: 'Search task name or other keywords',
   notify_manage_sever: 'Management side',
   notify_inspect: 'Verify Task',
   notify_ddl_deal: 'DDL processing',

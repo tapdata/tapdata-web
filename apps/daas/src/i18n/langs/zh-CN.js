@@ -884,6 +884,8 @@ export default {
   notify_migration: '数据复制',
   notify_notice_type: '消息类型',
   notify_notice_level: '消息级别',
+  notify_belong_module: '所属模块',
+  notify_search_server_name: '搜索任务名称或其他关键字',
   notify_manage_sever: '管理端',
   notify_inspect: '校验任务',
   notify_ddl_deal: 'DDL处理',

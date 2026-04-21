@@ -880,6 +880,8 @@ export default {
   notify_migration: '數據複製',
   notify_notice_type: '消息類型',
   notify_notice_level: '消息級別',
+  notify_belong_module: '所屬模組',
+  notify_search_server_name: '搜尋任務名稱或其他關鍵字',
   notify_manage_sever: '管理端',
   notify_inspect: '校驗任務',
   notify_ddl_deal: 'DDL處理',
