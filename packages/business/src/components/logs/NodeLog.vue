@@ -319,7 +319,7 @@ function loadOld(callback?: () => void) {
   }
   queryMonitoringLogs(filter)
     .then((data: any = {}) => {
-      const rows = getFormatRow(data.items?.toReversed())
+      const rows = getFormatRow(data.items?.reverse())
       oldPageObj.total = data.total || 0
       oldPageObj.page = filter.page
 
