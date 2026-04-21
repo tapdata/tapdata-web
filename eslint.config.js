@@ -18,6 +18,7 @@ export default sxzz(
     {
       rules: {
         'unicorn/filename-case': 'off',
+        'unicorn/no-array-reverse': 'off',
         '@eslint-community/eslint-comments/no-unlimited-disable': 'off', // 允许 eslint-disable 不指定规则
       },
     },
