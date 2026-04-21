@@ -1,8 +1,5 @@
 import { SchemaExpressionScopeSymbol, useForm } from '@formily/vue'
-import {
-  getNodeSchema,
-  getNodeSchemaPage,
-} from '@tap/api/src/core/metadata-instances'
+import { getNodeSchema } from '@tap/api/src/core/metadata-instances'
 import { useI18n } from '@tap/i18n'
 import {
   computed,
@@ -88,32 +85,15 @@ export const AggregatePanel = defineComponent({
     }
 
     const loadFields = async () => {
-      if (!nodeId) return
+      // 使用前置节点的 ID 加载字段
+      const inputNodeId = form?.values?.$inputs?.[0]
+      if (!inputNodeId) return
       fieldsLoading.value = true
       try {
         let fields: any[] = []
-        if (form?.values?.type?.includes?.('migrate')) {
-          const result = await getNodeSchemaPage({
-            nodeId,
-            fields: [
-              'original_name',
-              'fields',
-              'qualified_name',
-              'name',
-              'indices',
-            ],
-            page: 1,
-            pageSize: 1,
-          })
-          const { fields: mapped } = mapFieldsData(result?.items?.[0])
-          fields = mapped
-        } else {
-          const data = await getNodeSchema(nodeId)
-          const { fields: mapped } = mapFieldsData({
-            fields: data?.[0]?.fields || [],
-          })
-          fields = mapped
-        }
+        const data = await getNodeSchema(inputNodeId)
+        const { fields: mapped } = mapFieldsData(data?.[0])
+        fields = mapped
         fieldOptions.value = fields
         rawFields.value = fields.map((f: any) => ({
           field_name: f.field_name || f.value,
