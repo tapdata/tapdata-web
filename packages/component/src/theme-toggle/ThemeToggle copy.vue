@@ -59,7 +59,7 @@ const changeTheme = async (mode: 'light' | 'dark' | 'auto') => {
     ]
     const animate = document.documentElement.animate(
       {
-        clipPath: isDark ? clipPath.toReversed() : clipPath,
+        clipPath: isDark ? [...clipPath].reverse() : clipPath,
       },
       {
         duration: 450,

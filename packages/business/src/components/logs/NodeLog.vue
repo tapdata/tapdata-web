@@ -410,7 +410,7 @@ export default {
       }
       queryMonitoringLogs(filter)
         .then((data = {}) => {
-          const items = this.getFormatRow(data.items?.toReversed())
+          const items = this.getFormatRow(data.items?.reverse())
           this.oldPageObj.total = data.total || 0
           this.oldPageObj.page = filter.page
 
