@@ -225,6 +225,158 @@
   }
 }
 
+// Event Handling — shadcn/ui neutral palette, only Zap icon uses amber
+.event-handling {
+  margin-top: 12px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: 10px 10px 0 0;
+    border: 1px solid var(--el-border-color-lighter, #ebeef5);
+    border-bottom: none;
+    background-color: var(--el-fill-color-lighter, #fafafa);
+  }
+
+  &__header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__icon {
+    color: #d97706; // amber-600 — only this icon keeps amber
+  }
+
+  &__title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--el-text-color-primary, #303133);
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    border-radius: 9999px;
+    background-color: var(--el-fill-color, #f0f2f5);
+    color: var(--el-text-color-regular, #606266);
+  }
+
+  &__info {
+    color: var(--el-text-color-placeholder, #c0c4cc);
+    cursor: help;
+    transition: color 0.15s;
+
+    &:hover {
+      color: var(--el-text-color-secondary, #909399);
+    }
+  }
+
+  &__info-sm {
+    color: var(--el-text-color-placeholder, #c0c4cc);
+    cursor: help;
+    font-size: 14px;
+
+    &:hover {
+      color: var(--el-text-color-secondary, #909399);
+    }
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--el-border-color-lighter, #ebeef5);
+    border-top: none;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background-color: var(--el-fill-color-lighter, #fafafa);
+  }
+
+  &__card {
+    padding: 12px;
+    border-radius: 10px;
+    background-color: var(--el-bg-color, #fff);
+    border: 1px solid var(--el-border-color-lighter, #ebeef5);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__card-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+
+    > .el-icon {
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+  }
+
+  &__desc {
+    font-size: 12px;
+    color: var(--el-text-color-secondary, #909399);
+    margin-top: 2px;
+  }
+
+  &__switch-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background-color: var(--el-fill-color-lighter, #fafafa);
+    border: 1px solid var(--el-border-color-lighter, #ebeef5);
+  }
+
+  &__switch-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+  }
+
+  &__warning-icon {
+    color: #ef4444;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  &__hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background-color: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #b45309;
+  }
+
+  &__hint-icon {
+    color: #f59e0b;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+}
+
 // PipelinePreview
 .pipeline-preview {
   border-top: 1px solid var(--el-border-color-lighter, #ebeef5);

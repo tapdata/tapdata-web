@@ -41,9 +41,23 @@ export const useAfterTaskSaved = (obs, callback) => {
     },
   )
 
+  let unwatchSavingMain: () => void
+  if (dataflowStore.taskSaving) {
+    unwatchSavingMain = watch(
+      () => dataflowStore.taskSaving,
+      (v) => {
+        if (!v) {
+          callback()
+        }
+        unwatchSavingMain()
+      },
+    )
+  }
+
   onBeforeUnmount(() => {
     dispose()
     unWatch()
+    unwatchSavingMain?.()
   })
 }
 

@@ -138,6 +138,49 @@ export default {
   packages_form_js_processor_index_qingqiuchaoshiqing: '请求超时，请重试',
   packages_form_js_processor_index_rengzaipinmingjia:
     '仍在拼命加载中，请耐心等待',
+  packages_form_js_processor_mock_title: 'Mock 数据试运行',
+  packages_form_js_processor_mock_input: '输入',
+  packages_form_js_processor_mock_output: '输出',
+  packages_form_js_processor_mock_log: '日志',
+  packages_form_js_processor_mock_log_clear: '清空',
+  packages_form_js_processor_mock_sql_query: 'SQL 查询',
+  packages_form_js_processor_mock_get_sample: '获取样本',
+  packages_form_js_processor_mock_sql_dialog_title: 'SQL 查询获取数据',
+  packages_form_js_processor_mock_sql_preview: '执行预览',
+  packages_form_js_processor_mock_sql_use_data: '使用此数据',
+  packages_form_js_processor_mock_json_valid: '格式正确',
+  packages_form_js_processor_mock_json_invalid: '格式错误',
+  packages_form_js_processor_mock_no_output: '暂无输出',
+  packages_form_js_processor_mock_no_output_tip: '运行代码后查看输出结果',
+  packages_form_js_processor_mock_no_log: '暂无日志',
+  packages_form_js_processor_mock_no_log_tip:
+    '点击「试运行」执行代码后查看日志输出',
+  packages_form_js_processor_mock_items: '{val1} 条',
+  packages_form_js_processor_mock_run_time: '{val1}ms',
+  packages_form_js_processor_mock_json_placeholder:
+    '请输入 JSON 数组格式的测试数据，例如：\n[\n  {\n    "id": 1,\n    "name": "张三"\n  }\n]',
+  packages_form_js_processor_mock_js_editor: 'JS 节点编辑器',
+  packages_form_js_processor_mock_js_code: 'JS 代码',
+  packages_form_js_processor_mock_log_start: '开始执行 JS 代码...',
+  packages_form_js_processor_mock_log_success: '执行完成，耗时 {val1}ms',
+  packages_form_js_processor_mock_log_fail: '执行失败 ({val1}ms): {val2}',
+  packages_form_js_processor_mock_log_getting_sample:
+    '正在获取前置节点样本数据...',
+  packages_form_js_processor_mock_log_sample_count: '获取到 {val1} 条样本数据',
+  packages_form_js_processor_mock_log_sample_empty: '未获取到样本数据',
+  packages_form_js_processor_mock_log_sample_fail: '获取样本失败: {val1}',
+  packages_form_js_processor_mock_log_loading_more: '加载更多日志...',
+  packages_form_js_processor_mock_log_no_more: '没有更多日志了',
+  packages_form_js_processor_mock_log_sql_import:
+    '从 SQL 查询导入 {val1} 条数据',
+  packages_form_js_processor_mock_sql_query_fail: 'SQL 查询失败',
+  packages_form_js_processor_mock_unknown_error: '未知错误',
+  packages_form_js_processor_mock_event_insert: '插入',
+  packages_form_js_processor_mock_event_update: '更新',
+  packages_form_js_processor_mock_event_delete: '删除',
+  packages_form_js_processor_mock_event_custom: '自定义事件',
+  packages_form_js_processor_mock_before_data: 'Before（变更前数据）',
+  packages_form_js_processor_mock_after_data: 'After（变更后数据）',
   packages_form_table_rename_index_qingkong: '清空',
   packages_form_table_rename_search_text: '查找文本',
   packages_form_table_rename_replace_with: '替换为',
@@ -194,11 +237,13 @@ export default {
 
   // AggregatePanel
   packages_form_aggregate_mode: '聚合模式',
-  packages_form_aggregate_mode_tip: '切换到原始管道模式可直接编辑 MongoDB 聚合管道 JSON',
+  packages_form_aggregate_mode_tip:
+    '切换到原始管道模式可直接编辑 MongoDB 聚合管道 JSON',
   packages_form_aggregate_raw_pipeline: '原始管道',
   packages_form_aggregate_visual: '可视化配置',
   packages_form_aggregate_match_title: '$match 筛选条件',
-  packages_form_aggregate_match_tip: '用于过滤文档，只传递满足条件的文档到下一阶段',
+  packages_form_aggregate_match_tip:
+    '用于过滤文档，只传递满足条件的文档到下一阶段',
   packages_form_aggregate_group_title: '$group 分组字段',
   packages_form_aggregate_group_tip: '指定用于分组的字段，类似 SQL 的 GROUP BY',
   packages_form_aggregate_fields_title: '聚合计算字段',
@@ -263,12 +308,32 @@ export default {
   // AggregatePanel AI
   packages_form_aggregate_ai_btn: 'AI 生成',
   packages_form_aggregate_ai_title: 'AI 生成聚合管道',
-  packages_form_aggregate_ai_placeholder: '请描述你想要的聚合操作，例如：按 status 分组，统计每组的数量和平均金额',
+  packages_form_aggregate_ai_placeholder:
+    '请描述你想要的聚合操作，例如：按 status 分组，统计每组的数量和平均金额',
   packages_form_aggregate_ai_generating: '正在生成...',
   packages_form_aggregate_ai_apply: '应用',
   packages_form_aggregate_ai_retry: '重新生成',
   packages_form_aggregate_ai_stop: '停止',
   packages_form_aggregate_ai_error: '生成失败，请重试',
+
+  // AggregatePanel Event Handling
+  packages_form_aggregate_event_title: '事件处理逻辑',
+  packages_form_aggregate_event_configured: '已配置',
+  packages_form_aggregate_event_tip: '配置删除事件和更新事件在聚合节点中的处理策略',
+  packages_form_aggregate_event_delete_title: '删除事件处理',
+  packages_form_aggregate_event_delete_desc: '当源端发送删除事件时，聚合节点如何处理下游数据',
+  packages_form_aggregate_event_delete_desc_highlight: '删除事件',
+  packages_form_aggregate_event_delete_switch: '聚合结果为空时删除下游记录',
+  packages_form_aggregate_event_delete_switch_tip: '开启：当删除事件导致聚合结果为空时，自动删除下游对应记录。关闭：保留下游记录，仅更新聚合值。',
+  packages_form_aggregate_event_delete_warning: '开启后，当所有源记录被删除导致聚合结果为空时，下游记录也会被自动删除，请确认这是期望的行为。',
+  packages_form_aggregate_event_update_title: '有效更新字段',
+  packages_form_aggregate_event_update_desc: '指定哪些字段变更时需要重新计算聚合',
+  packages_form_aggregate_event_update_tip_intro: '当更新事件涉及这些字段时，将触发双重聚合计算：',
+  packages_form_aggregate_event_update_tip_step1: '使用更新前的值反向计算，撤销旧的聚合贡献',
+  packages_form_aggregate_event_update_tip_step2: '使用更新后的值正向计算，应用新的聚合贡献',
+  packages_form_aggregate_event_update_tip_note: '通常建议选择分组字段，以确保分组变更时聚合结果正确更新。',
+  packages_form_aggregate_event_update_placeholder: '选择字段',
+  packages_form_aggregate_event_update_hint: '检测到已配置分组字段，建议将分组字段添加为有效更新字段，以确保分组变更时聚合结果正确更新。',
 
   // Triggers
   packages_form_triggers_source: '数据源',
@@ -292,7 +357,9 @@ export default {
   packages_form_triggers_tpl_mongo_title: 'MongoDB Trigger Function',
   packages_form_triggers_tpl_mongo_change_event: '变更事件对象',
   packages_form_triggers_help_tapdata_title: 'TapData JS 函数说明',
-  packages_form_triggers_help_tapdata_desc: '支持 record（当前数据记录）和 context（上下文信息）两个参数，函数需返回处理后的记录对象。',
+  packages_form_triggers_help_tapdata_desc:
+    '支持 record（当前数据记录）和 context（上下文信息）两个参数，函数需返回处理后的记录对象。',
   packages_form_triggers_help_mongo_title: 'Mongo Function 函数说明',
-  packages_form_triggers_help_mongo_desc: '支持 changeEvent 对象，包含 documentKey、updateDescription、fullDocument 等变更事件信息。',
+  packages_form_triggers_help_mongo_desc:
+    '支持 changeEvent 对象，包含 documentKey、updateDescription、fullDocument 等变更事件信息。',
 }

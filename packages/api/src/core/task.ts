@@ -229,6 +229,10 @@ export function getRunJsResult(params: any) {
   return requestClient.get('/api/task/migrate-js/get-result', { params })
 }
 
+export function getJsMockData(params: any) {
+  return requestClient.post('/api/task/migrate-js/mock-data', params)
+}
+
 export function testRunPythonRpc(params: any) {
   return requestClient.post('/api/task/migrate-python/test-run-rpc', params)
 }
