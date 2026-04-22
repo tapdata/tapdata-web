@@ -5,6 +5,7 @@ import {
   multiTransform,
 } from '@tap/api/src/core/metadata-instances'
 import noData from '@tap/assets/images/noData.png'
+import { Modal } from '@tap/component/src/modal'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import { FieldSelect, mapFieldsData } from '@tap/form'
 import { useI18n } from '@tap/i18n'
@@ -298,8 +299,16 @@ async function getCurrentTableFields(item: any = {}, rules: any[] = []) {
   return data.fields.length ? data.fields : fields
 }
 
-function changeUniqueIndexEnable(val: boolean) {
-  props.form.setValuesIn('uniqueIndexEnable', val)
+function rollbackAll() {
+  Modal.confirm(t('packages_form_field_inference_main_ninquerenyaoquan')).then(
+    (resFlag) => {
+      if (resFlag) {
+        fieldChangeRules.value = []
+        handleUpdate()
+        ElMessage.success(t('public_message_operation_success'))
+      }
+    },
+  )
 }
 
 // Watch
@@ -319,6 +328,8 @@ onMounted(() => {
 defineExpose({
   refresh,
   loadData,
+  handleOpen,
+  rollbackAll,
 })
 </script>
 
