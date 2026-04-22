@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { fetchDatabaseTypeByPdkHash } from '@tap/api/src/core/database-types'
-import {
-  getNodeSchemaPage,
-  multiTransform,
-} from '@tap/api/src/core/metadata-instances'
+import { getNodeSchemaPage } from '@tap/api/src/core/metadata-instances'
 import noData from '@tap/assets/images/noData.png'
 import { Modal } from '@tap/component/src/modal'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
@@ -203,15 +200,13 @@ function refresh() {
   loadData()
 }
 
-async function filterFields() {
+function filterFields() {
   fieldsLoading.value = true
   const item = navList.value[position.value]
-  let fields = await getCurrentTableFields(item, fieldChangeRules.value)
-  const { fields: newFields } = mapFieldsData(item)
-  newFields.forEach((t: any) => {
+  let { fields } = mapFieldsData(item)
+  fields.forEach((t: any) => {
     delete t.dataType
   })
-  fields = newFields
   item.fields = fields
   const findPossibleDataTypes = item?.findPossibleDataTypes || {}
   if (searchField.value) {
@@ -264,39 +259,19 @@ function handleUpdateList() {
   )
 }
 
-async function handleUpdateRules(val: any[] = []) {
+function handleUpdateRules(val: any[] = []) {
   fieldChangeRules.value = val
   handleUpdate()
-  updateSelectedAllFields(await getCurrentTableFields(selected.value, val))
 }
 
-function updateSelectedAllFields(fields: any[] = []) {
-  selected.value.fields.forEach((t: any) => {
-    const f = fields.find((el: any) => el.field_name === t.field_name)
-    if (f) {
-      t.data_type = f.data_type
-      t.changeRuleId = f.changeRuleId
+function handleUpdateFields(
+  updater: (fields: any[], qualifiedName: string) => void,
+) {
+  navList.value.forEach((item: any) => {
+    if (item.fields?.length) {
+      updater(item.fields, item.qualified_name)
     }
   })
-}
-
-async function getCurrentTableFields(item: any = {}, rules: any[] = []) {
-  const { qualified_name, nodeId, source = {}, fields = [] } = item
-  const { database_type } = source
-  const params = {
-    rules: rules.filter(
-      (t: any) =>
-        t.namespace.length === 1 || t.namespace.includes(qualified_name),
-    ),
-    qualifiedName: qualified_name,
-    nodeId,
-    databaseType: database_type,
-    fields,
-  }
-  const data = (await multiTransform(params)) || {
-    fields: [],
-  }
-  return data.fields.length ? data.fields : fields
 }
 
 function rollbackAll() {
@@ -496,6 +471,7 @@ defineExpose({
             ignore-error
             class="content__list flex-fill"
             @update-rules="handleUpdateRules"
+            @update-fields="handleUpdateFields"
             @open-update-rules="handleOpen"
           />
         </div>

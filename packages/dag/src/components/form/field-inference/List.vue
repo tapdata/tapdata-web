@@ -47,6 +47,7 @@ const props = withDefaults(
 const emit = defineEmits<{
   'update-rules': [data: any[]]
   'open-update-rules': []
+  'update-fields': [updater: (fields: any[]) => void]
 }>()
 
 const dataflowStore = useDataflowStore()
@@ -311,18 +312,23 @@ function submitEdit() {
       rules.value.push(op)
     }
 
-    // 刷新字段
-    props.data.fields.forEach((t: any) => {
-      const fieldOriginType = t.data_type?.split('(')[0]
-      if (fieldOriginType === originType.value) {
-        t.data_type = t.dataTypeTemp.replace(
-          /(\w+\()(\w+)([,)][\s\S]*)/,
-          function (_val: string, sub1: string, sub2: string, sub3: string) {
-            return `${sub1}${(sub2 as any) * coefficient}${sub3}`
-          },
-        )
-        t.changeRuleId = ruleId
-      }
+    // 刷新字段 - emit 到 Main.vue 对所有表做处理
+    const _originType = originType.value
+    const _coefficient = coefficient
+    const _ruleId = ruleId
+    emit('update-fields', (fields: any[]) => {
+      fields.forEach((t: any) => {
+        const fieldOriginType = t.data_type?.split('(')[0]
+        if (fieldOriginType === _originType) {
+          t.data_type = t.dataTypeTemp.replace(
+            /(\w+\()(\w+)([,)][\s\S]*)/,
+            function (_val: string, sub1: string, sub2: string, sub3: string) {
+              return `${sub1}${(sub2 as any) * _coefficient}${sub3}`
+            },
+          )
+          t.changeRuleId = _ruleId
+        }
+      })
     })
     handleUpdate()
     ElMessage.success(i18n.t('public_message_operation_success'))
@@ -380,16 +386,24 @@ function submitEdit() {
         rules.value.push(op)
       }
 
-      props.data.fields.forEach((t: any) => {
-        if (
-          (useToAll &&
-            t.data_type === t.dataTypeTemp &&
-            t.dataTypeTemp === dataTypeTemp) ||
-          t.field_name === fieldName
-        ) {
-          t.data_type = newDataType
-          t.changeRuleId = ruleId
-        }
+      // emit 到 Main.vue 对所有表做处理
+      const _useToAll = useToAll
+      const _dataTypeTemp = dataTypeTemp
+      const _fieldName = fieldName
+      const _newDataType = newDataType
+      const _ruleId = ruleId
+      emit('update-fields', (fields: any[], qualifiedName: string) => {
+        fields.forEach((t: any) => {
+          if (
+            (_useToAll &&
+              t.data_type === t.dataTypeTemp &&
+              t.dataTypeTemp === _dataTypeTemp) ||
+            (t.field_name === _fieldName && qualifiedName === qualified_name)
+          ) {
+            t.data_type = _newDataType
+            t.changeRuleId = _ruleId
+          }
+        })
       })
       handleUpdate()
       editBtnLoading.value = false

@@ -1,135 +1,123 @@
-<script>
+<script setup lang="ts">
 import { dataType2TapType } from '@tap/api/src/core/metadata-instances'
 import noData from '@tap/assets/images/noData.png'
-import i18n from '@tap/i18n'
+import { useI18n } from '@tap/i18n'
+import { ElMessage } from 'element-plus'
 import { cloneDeep } from 'lodash-es'
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { computed, reactive, ref, watch } from 'vue'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 
-export default {
-  name: 'FieldInferenceDialog',
-  props: {
-    form: {
-      type: Object,
-    },
-    visible: {
-      type: Boolean,
-      default: false,
-    },
-    fieldChangeRules: {
-      type: Array,
-      default: () => [],
-    },
-    readonly: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  computed: {
-    ...mapGetters('dataflow', [
-      'activeType',
-      'activeNode',
-      'nodeById',
-      'stateIsReadonly',
-    ]),
-    ...mapState('dataflow', ['editVersion']),
-  },
-  data() {
-    return {
-      ruleForm: {
-        visible: false,
-        list: [],
-        options: [],
-      },
-      editBtnLoading: false,
-      noData,
-    }
-  },
-  watch: {
-    visible(v) {
-      this.ruleForm.visible = v
-      v && this.loadData()
-    },
-  },
-  methods: {
-    ...mapMutations('dataflow', ['updateNodeProperties']),
-    ...mapActions('dataflow', ['updateDag']),
+defineOptions({ name: 'FieldInferenceDialog' })
 
-    getItem() {
-      return {
-        scope: 'Node',
-        namespace: [this.activeNode?.id],
-        type: 'DataType',
-        accept: '',
-        result: { dataType: '', tapType: '' },
-      }
-    },
-    handleAdd(index = 0) {
-      this.ruleForm.list.splice(index + 1, 0, this.getItem())
-    },
-    loadData() {
-      this.ruleForm.list = cloneDeep(
-        this.fieldChangeRules.filter((t) => t.scope === 'Node'),
-      )
-    },
-    handleCancel() {
-      this.loadData()
-      this.ruleForm.visible = false
-      this.$emit('update:visible', this.ruleForm.visible)
-    },
-    getSubmitDisabled() {
-      return (
-        this.readonly ||
-        this.ruleForm.list.some((t) => !t.accept || !t.result?.dataType) ||
-        JSON.stringify(this.nodeRules) === JSON.stringify(this.ruleForm.list)
-      )
-    },
-    handleUpdate() {
-      this.ruleForm.visible = false
-      const result = [
-        ...this.fieldChangeRules.filter((t) => t.scope === 'Field'),
-        ...this.ruleForm.list,
-      ]
-      this.form.setValuesIn('fieldChangeRules', result)
-      this.$emit('update:fieldChangeRules', result)
-      this.$emit('update:visible', this.ruleForm.visible)
-    },
-    submit() {
-      const { activeNode = {} } = this
-      const { list } = this.ruleForm
-      if (!list.length) {
-        this.handleUpdate()
+const props = withDefaults(
+  defineProps<{
+    form: any
+    visible?: boolean
+    fieldChangeRules?: any[]
+    readonly?: boolean
+  }>(),
+  {
+    visible: false,
+    fieldChangeRules: () => [],
+    readonly: false,
+  },
+)
+
+const emit = defineEmits<{
+  'update:visible': [value: boolean]
+  'update:fieldChangeRules': [value: any[]]
+}>()
+
+const { t } = useI18n()
+const dataflowStore = useDataflowStore()
+
+const activeNode = computed(() => dataflowStore.selectedNode)
+
+const ruleForm = reactive<{
+  visible: boolean
+  list: any[]
+  options: any[]
+}>({
+  visible: false,
+  list: [],
+  options: [],
+})
+
+const editBtnLoading = ref(false)
+const nodeRules = ref<any[]>([])
+
+watch(
+  () => props.visible,
+  (v) => {
+    ruleForm.visible = v
+    v && loadData()
+  },
+)
+
+function loadData() {
+  const filtered = props.fieldChangeRules.filter(
+    (item: any) => item.scope === 'Node',
+  )
+  nodeRules.value = cloneDeep(filtered)
+  ruleForm.list = cloneDeep(filtered)
+}
+
+function handleCancel() {
+  loadData()
+  ruleForm.visible = false
+  emit('update:visible', ruleForm.visible)
+}
+
+function getSubmitDisabled() {
+  return (
+    props.readonly ||
+    ruleForm.list.some((item: any) => !item.accept || !item.result?.dataType) ||
+    JSON.stringify(nodeRules.value) === JSON.stringify(ruleForm.list)
+  )
+}
+
+function handleUpdate() {
+  ruleForm.visible = false
+  const result = [
+    ...props.fieldChangeRules.filter((item: any) => item.scope === 'Field'),
+    ...ruleForm.list,
+  ]
+  props.form.setValuesIn('fieldChangeRules', result)
+  emit('update:fieldChangeRules', result)
+  emit('update:visible', ruleForm.visible)
+}
+
+function submit() {
+  const node = activeNode.value ?? ({} as any)
+  const { list } = ruleForm
+  if (!list.length) {
+    handleUpdate()
+    return
+  }
+  const dataTypes = list.map((item: any) => item.result.dataType)
+  const params = {
+    databaseType: node.databaseType,
+    dataTypes,
+  }
+  editBtnLoading.value = true
+  dataType2TapType(params)
+    .then((data: any) => {
+      const result = list.map((item: any) => {
+        const val = data[item.result.dataType]
+        item.result.tapType = val && val.type !== 7 ? JSON.stringify(val) : null
+        return item
+      })
+      if (result.some((item: any) => !item.result?.tapType)) {
+        ElMessage.error(t('packages_form_field_inference_list_geshicuowu'))
+        editBtnLoading.value = false
         return
       }
-      const dataTypes = list.map((t) => t.result.dataType)
-      const params = {
-        databaseType: activeNode.databaseType,
-        dataTypes,
-      }
-      this.editBtnLoading = true
-      dataType2TapType(params)
-        .then((data) => {
-          const result = list.map((t) => {
-            const val = data[t.result.dataType]
-            t.result.tapType =
-              val && val.type !== 7 ? JSON.stringify(val) : null
-            return t
-          })
-          if (result.some((t) => !t.result?.tapType)) {
-            this.$message.error(
-              i18n.t('packages_form_field_inference_list_geshicuowu'),
-            )
-            this.editBtnLoading = false
-            return
-          }
-          this.handleUpdate()
-          this.$message.success(i18n.t('public_message_operation_success'))
-        })
-        .finally(() => {
-          this.editBtnLoading = false
-        })
-    },
-  },
-  emits: ['update:visible', 'update:fieldChangeRules'],
+      handleUpdate()
+      ElMessage.success(t('public_message_operation_success'))
+    })
+    .finally(() => {
+      editBtnLoading.value = false
+    })
 }
 </script>
 
