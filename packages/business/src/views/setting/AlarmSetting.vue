@@ -226,6 +226,9 @@ const keyMapping = reactive({
     'packages_business_setting_alarmnotification_api_server_worker_memory_usage_alter',
   ),
   DATASOURCE_MONITOR_ALTER: t('packages_business_datasource_monitor_alter'),
+  API_SERVER_P95_WARN: t('packages_business_api_server_p95_warn'),
+  API_SERVER_P99_WARN: t('packages_business_api_server_p99_warn'),
+  API_SERVER_ERROR_RATE_WARN: t('packages_business_api_server_error_rate_warn'),
 })
 const variables = ref([])
 
@@ -325,7 +328,7 @@ const save = async () => {
     }
   } catch (error) {
     console.error('Failed to save alarm settings:', error)
-    ElMessage.error('保存失败')
+    ElMessage.error(t('public_message_save_fail'))
   }
 }
 
@@ -392,7 +395,7 @@ const saveAlarmRules = async () => {
     ElMessage.success(t('public_message_save_ok'))
   } catch (error) {
     console.error('Failed to save alarm rules:', error)
-    ElMessage.error('保存失败')
+    ElMessage.error(t('public_message_save_fail'))
   }
 }
 
