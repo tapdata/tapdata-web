@@ -1513,6 +1513,9 @@ export default {
     'Click to view the IP address information for the fully managed agent.',
   packages_business_demo_database_desc:
     'Demo data source, allows for quick creation of data source information, with no need to prepare database details for an immediate experience.',
+  packages_business_api_server_p95_warn: 'When the time taken for any API Server request exceeds the alarm threshold P95',
+  packages_business_api_server_p99_warn: 'When the response time P99 of any API Server request exceeds the alarm threshold',
+  packages_business_api_server_error_rate_warn: 'When the error rate of any API Server request exceeds the alarm threshold',
   packages_business_use_ssl: 'Use SSL',
   packages_business_certificate_authority: 'CA File',
   packages_business_client_certificate: 'Client Certificate File',
