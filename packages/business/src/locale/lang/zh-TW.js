@@ -712,6 +712,9 @@ export default {
     '當任一API Server的工作行程記憶體使用量超過告警閾值時',
   packages_business_setting_alarmnotification_api_server_worker_memory_usage_alter:
     '當任一API Server的工作行程記憶體使用量超過通知閾值時',
+  packages_business_api_server_p95_warn: '當任一API Server請求耗時P95超過告警閾值時',
+  packages_business_api_server_p99_warn: '當任一API Server請求耗時P99超過告警閾值時',
+  packages_business_api_server_error_rate_warn: '當任一API Server請求錯誤率超過告警閾值時',
   packages_business_setting_alarmnotification_dangrenwuuP: 'Agent服务啓動時',
   packages_business_setting_alarmnotification_msshigaojing: ' 時告警',
   packages_business_setting_alarmnotification_lianxu: '連續',
