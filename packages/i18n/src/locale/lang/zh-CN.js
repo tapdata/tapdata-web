@@ -645,4 +645,10 @@ export default {
   public_table_regex_example_2: '匹配以 _temp 结尾的表',
   public_table_regex_example_3: '匹配包含 test 或 demo 的表',
   public_data_no_result: '未找到数据',
+  public_form_view: '表单视图',
+  public_text_view: '文本视图',
+  public_parse_failed: '解析失败，请检查格式',
+  public_import_count: '已导入 {0} 条',
+  public_apply_to_form: '应用到表单',
+  public_copy_text: '复制文本',
 }

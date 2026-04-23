@@ -141,7 +141,6 @@ $formNamespace: formily-element-plus;
     background-color: #bcbfc3;
   }
 }
-
 .#{$formNamespace}-form-item-label .el-button {
   line-height: 1;
 
@@ -152,6 +151,10 @@ $formNamespace: formily-element-plus;
   * {
     line-height: inherit;
   }
+}
+
+.#{$formNamespace}-form-item-label .el-segmented__item-label {
+  line-height: normal;
 }
 
 

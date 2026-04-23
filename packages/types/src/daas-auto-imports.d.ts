@@ -33,6 +33,7 @@ declare global {
   const IconLucideMaximize2: typeof import('~icons/lucide/maximize2').default
   const IconLucideMinimize2: typeof import('~icons/lucide/minimize2').default
   const IconLucidePlay: typeof import('~icons/lucide/play').default
+  const IconLucidePlus: typeof import('~icons/lucide/plus').default
   const IconLucideSettings2: typeof import('~icons/lucide/settings2').default
   const IconLucideSparkles: typeof import('~icons/lucide/sparkles').default
   const IconLucideTrash2: typeof import('~icons/lucide/trash2').default
