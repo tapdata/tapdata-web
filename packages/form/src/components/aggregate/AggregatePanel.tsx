@@ -42,6 +42,7 @@ export const AggregatePanel = defineComponent({
         // 事件处理逻辑
         enableDeleteWhenEmpty: boolean
         effectiveUpdateFields: string[]
+        groupChangeFields: string[]
       }>,
       default: () => ({
         useRawPipeline: false,
@@ -56,6 +57,7 @@ export const AggregatePanel = defineComponent({
         databaseType: '',
         enableDeleteWhenEmpty: false,
         effectiveUpdateFields: [],
+        groupChangeFields: [],
       }),
     },
   },
@@ -165,9 +167,17 @@ export const AggregatePanel = defineComponent({
         emitChange({ ...config.value, effectiveUpdateFields: val }),
     })
 
+    const groupChangeFields = computed({
+      get: () => config.value.groupChangeFields ?? [],
+      set: (val: string[]) =>
+        emitChange({ ...config.value, groupChangeFields: val }),
+    })
+
     const hasEventConfig = computed(
       () =>
-        enableDeleteWhenEmpty.value || effectiveUpdateFields.value.length > 0,
+        enableDeleteWhenEmpty.value ||
+        effectiveUpdateFields.value.length > 0 ||
+        groupChangeFields.value.length > 0,
     )
 
     const groupFieldNames = computed(() =>
@@ -177,7 +187,7 @@ export const AggregatePanel = defineComponent({
     const hasGroupButNoEffective = computed(
       () =>
         groupFieldNames.value.length > 0 &&
-        effectiveUpdateFields.value.length === 0,
+        groupChangeFields.value.length === 0,
     )
 
     return () => (
@@ -366,6 +376,41 @@ export const AggregatePanel = defineComponent({
                     <span class="text-sm font-medium">
                       {t('packages_form_aggregate_event_update_title')}
                     </span>
+                  </div>
+                  <div class="event-handling__desc">
+                    {t('packages_form_aggregate_event_update_desc')}
+                  </div>
+                </div>
+              </div>
+
+              <BaseFieldSelect
+                disabled={props.disabled}
+                modelValue={effectiveUpdateFields.value}
+                options={fieldOptions.value}
+                loading={fieldsLoading.value}
+                {...({
+                  multiple: true,
+                  filterable: true,
+                  clearable: true,
+                  placeholder: t(
+                    'packages_form_aggregate_event_update_placeholder',
+                  ),
+                  onChange: (val: string[]) =>
+                    (effectiveUpdateFields.value = val),
+                } as any)}
+              />
+            </div>
+
+            <div class="event-handling__card">
+              <div class="event-handling__card-title">
+                <el-icon size={14} class="text-blue-500">
+                  <i-lucide-refresh-cw />
+                </el-icon>
+                <div class="flex-1">
+                  <div class="flex align-center gap-2">
+                    <span class="text-sm font-medium">
+                      {t('packages_form_aggregate_event_group_change_title')}
+                    </span>
                     <ElTooltip placement="top">
                       {{
                         content: () => (
@@ -403,14 +448,14 @@ export const AggregatePanel = defineComponent({
                     </ElTooltip>
                   </div>
                   <div class="event-handling__desc">
-                    {t('packages_form_aggregate_event_update_desc')}
+                    {t('packages_form_aggregate_event_group_change_desc')}
                   </div>
                 </div>
               </div>
 
               <BaseFieldSelect
                 disabled={props.disabled}
-                modelValue={effectiveUpdateFields.value}
+                modelValue={groupChangeFields.value}
                 options={fieldOptions.value}
                 loading={fieldsLoading.value}
                 {...({
@@ -418,10 +463,9 @@ export const AggregatePanel = defineComponent({
                   filterable: true,
                   clearable: true,
                   placeholder: t(
-                    'packages_form_aggregate_event_update_placeholder',
+                    'packages_form_aggregate_event_group_change_placeholder',
                   ),
-                  onChange: (val: string[]) =>
-                    (effectiveUpdateFields.value = val),
+                  onChange: (val: string[]) => (groupChangeFields.value = val),
                 } as any)}
               />
 

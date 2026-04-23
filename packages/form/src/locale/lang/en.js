@@ -175,22 +175,30 @@ export default {
   packages_form_js_processor_mock_no_output: 'No Output',
   packages_form_js_processor_mock_no_output_tip: 'Run code to see output',
   packages_form_js_processor_mock_no_log: 'No Logs',
-  packages_form_js_processor_mock_no_log_tip: 'Click "Test Run" to see log output',
+  packages_form_js_processor_mock_no_log_tip:
+    'Click "Test Run" to see log output',
   packages_form_js_processor_mock_items: '{val1} items',
   packages_form_js_processor_mock_run_time: '{val1}ms',
-  packages_form_js_processor_mock_json_placeholder: 'Enter test data in JSON array format, e.g.:\n[\n  {\n    "id": 1,\n    "name": "John"\n  }\n]',
+  packages_form_js_processor_mock_json_placeholder:
+    'Enter test data in JSON array format, e.g.:\n[\n  {\n    "id": 1,\n    "name": "John"\n  }\n]',
   packages_form_js_processor_mock_js_editor: 'JS Node Editor',
   packages_form_js_processor_mock_js_code: 'JS Code',
   packages_form_js_processor_mock_log_start: 'Start executing JS code...',
-  packages_form_js_processor_mock_log_success: 'Execution completed in {val1}ms',
-  packages_form_js_processor_mock_log_fail: 'Execution failed ({val1}ms): {val2}',
-  packages_form_js_processor_mock_log_getting_sample: 'Fetching sample data from preceding node...',
-  packages_form_js_processor_mock_log_sample_count: 'Fetched {val1} sample records',
+  packages_form_js_processor_mock_log_success:
+    'Execution completed in {val1}ms',
+  packages_form_js_processor_mock_log_fail:
+    'Execution failed ({val1}ms): {val2}',
+  packages_form_js_processor_mock_log_getting_sample:
+    'Fetching sample data from preceding node...',
+  packages_form_js_processor_mock_log_sample_count:
+    'Fetched {val1} sample records',
   packages_form_js_processor_mock_log_sample_empty: 'No sample data available',
-  packages_form_js_processor_mock_log_sample_fail: 'Failed to get sample: {val1}',
+  packages_form_js_processor_mock_log_sample_fail:
+    'Failed to get sample: {val1}',
   packages_form_js_processor_mock_log_loading_more: 'Loading more logs...',
   packages_form_js_processor_mock_log_no_more: 'No more logs',
-  packages_form_js_processor_mock_log_sql_import: 'Imported {val1} records from SQL query',
+  packages_form_js_processor_mock_log_sql_import:
+    'Imported {val1} records from SQL query',
   packages_form_js_processor_mock_sql_query_fail: 'SQL query failed',
   packages_form_js_processor_mock_unknown_error: 'Unknown error',
   packages_form_js_processor_mock_event_insert: 'Insert',
@@ -264,15 +272,19 @@ export default {
 
   // AggregatePanel
   packages_form_aggregate_mode: 'Aggregate Mode',
-  packages_form_aggregate_mode_tip: 'Switch to raw pipeline mode to directly edit MongoDB aggregation pipeline JSON',
+  packages_form_aggregate_mode_tip:
+    'Switch to raw pipeline mode to directly edit MongoDB aggregation pipeline JSON',
   packages_form_aggregate_raw_pipeline: 'Raw Pipeline',
   packages_form_aggregate_visual: 'Visual Config',
   packages_form_aggregate_match_title: '$match Filter',
-  packages_form_aggregate_match_tip: 'Filter documents, only pass matching documents to the next stage',
+  packages_form_aggregate_match_tip:
+    'Filter documents, only pass matching documents to the next stage',
   packages_form_aggregate_group_title: '$group Fields',
-  packages_form_aggregate_group_tip: 'Specify fields for grouping, similar to SQL GROUP BY',
+  packages_form_aggregate_group_tip:
+    'Specify fields for grouping, similar to SQL GROUP BY',
   packages_form_aggregate_fields_title: 'Aggregate Fields',
-  packages_form_aggregate_fields_tip: 'Configure aggregate expressions, such as $sum, $avg, etc.',
+  packages_form_aggregate_fields_tip:
+    'Configure aggregate expressions, such as $sum, $avg, etc.',
   packages_form_aggregate_add_condition: 'Add Condition',
   packages_form_aggregate_add_group_field: 'Add Group Field',
   packages_form_aggregate_add_agg_field: 'Add Aggregate Field',
@@ -333,7 +345,8 @@ export default {
   // AggregatePanel AI
   packages_form_aggregate_ai_btn: 'AI Generate',
   packages_form_aggregate_ai_title: 'AI Generate Aggregation Pipeline',
-  packages_form_aggregate_ai_placeholder: 'Describe the aggregation you want, e.g.: group by status, count each group and calculate average amount',
+  packages_form_aggregate_ai_placeholder:
+    'Describe the aggregation you want, e.g.: group by status, count each group and calculate average amount',
   packages_form_aggregate_ai_generating: 'Generating...',
   packages_form_aggregate_ai_apply: 'Apply',
   packages_form_aggregate_ai_retry: 'Regenerate',
@@ -343,21 +356,48 @@ export default {
   // AggregatePanel Event Handling
   packages_form_aggregate_event_title: 'Event Handling',
   packages_form_aggregate_event_configured: 'Configured',
-  packages_form_aggregate_event_tip: 'Configure how delete and update events are handled in the aggregation node',
+  packages_form_aggregate_event_tip:
+    'Configure how delete and update events are handled in the aggregation node',
   packages_form_aggregate_event_delete_title: 'Delete Event Handling',
-  packages_form_aggregate_event_delete_desc: 'How the aggregation node handles downstream data when a delete event is received',
+  packages_form_aggregate_event_delete_desc:
+    'How the aggregation node handles downstream data when a delete event is received',
   packages_form_aggregate_event_delete_desc_highlight: 'delete event',
-  packages_form_aggregate_event_delete_switch: 'Delete downstream records when aggregation result is empty',
-  packages_form_aggregate_event_delete_switch_tip: 'On: Automatically delete downstream records when the aggregation result becomes empty after a delete event. Off: Keep downstream records and only update aggregated values.',
-  packages_form_aggregate_event_delete_warning: 'When enabled, if all source records are deleted and the aggregation result becomes empty, downstream records will be automatically deleted. Please confirm this is the expected behavior.',
+  packages_form_aggregate_event_delete_switch:
+    'Delete downstream records when aggregation result is empty',
+  packages_form_aggregate_event_delete_switch_tip:
+    'On: Automatically delete downstream records when the aggregation result becomes empty after a delete event. Off: Keep downstream records and only update aggregated values.',
+  packages_form_aggregate_event_delete_warning:
+    'When enabled, if all source records are deleted and the aggregation result becomes empty, downstream records will be automatically deleted. Please confirm this is the expected behavior.',
   packages_form_aggregate_event_update_title: 'Effective Update Fields',
-  packages_form_aggregate_event_update_desc: 'Specify which field changes should trigger aggregation recalculation',
-  packages_form_aggregate_event_update_tip_intro: 'When update events involve these fields, a dual aggregation calculation is triggered:',
-  packages_form_aggregate_event_update_tip_step1: 'Reverse calculate using the pre-update value to undo the old aggregation contribution',
-  packages_form_aggregate_event_update_tip_step2: 'Forward calculate using the post-update value to apply the new aggregation contribution',
-  packages_form_aggregate_event_update_tip_note: 'It is recommended to select group fields to ensure aggregation results are correctly updated when groups change.',
+  packages_form_aggregate_event_update_desc:
+    'Only recalculate aggregation when the following fields change. Changes to other fields will be ignored',
+  packages_form_aggregate_event_update_tip_intro:
+    'When update events involve these fields, a dual aggregation calculation is triggered:',
+  packages_form_aggregate_event_update_tip_step1:
+    'Reverse calculate using the pre-update value to undo the old aggregation contribution',
+  packages_form_aggregate_event_update_tip_step2:
+    'Forward calculate using the post-update value to apply the new aggregation contribution',
+  packages_form_aggregate_event_update_tip_note:
+    'It is recommended to select group fields to ensure aggregation results are correctly updated when groups change.',
   packages_form_aggregate_event_update_placeholder: 'Select Fields',
-  packages_form_aggregate_event_update_hint: 'Group fields detected. It is recommended to add group fields as effective update fields to ensure aggregation results are correctly updated when groups change.',
+  packages_form_aggregate_event_update_hint:
+    'Group fields detected. It is recommended to add group fields as effective update fields to ensure aggregation results are correctly updated when groups change.',
+
+  // AggregatePanel Group Change Double Aggregation
+  packages_form_aggregate_event_group_change_title:
+    'Group Change Double Aggregation',
+  packages_form_aggregate_event_group_change_desc:
+    'When a group field value changes, both the old and new group aggregation values need to be updated.',
+  packages_form_aggregate_event_group_change_tip_intro:
+    'When the fields below change, the system performs the following steps in order:',
+  packages_form_aggregate_event_group_change_tip_step1:
+    "Calculate aggregation using the pre-change value to remove the record's contribution from the old group",
+  packages_form_aggregate_event_group_change_tip_step2:
+    'Calculate aggregation using the post-change value to add the record to the new group',
+  packages_form_aggregate_event_group_change_placeholder:
+    'Select grouping fields',
+  packages_form_aggregate_event_group_change_hint:
+    'It is recommended to select only group fields',
 
   // Triggers
   packages_form_triggers_source: 'Data Source',
@@ -381,7 +421,9 @@ export default {
   packages_form_triggers_tpl_mongo_title: 'MongoDB Trigger Function',
   packages_form_triggers_tpl_mongo_change_event: 'Change event object',
   packages_form_triggers_help_tapdata_title: 'TapData JS Function',
-  packages_form_triggers_help_tapdata_desc: 'Supports record (current data record) and context (context info) parameters. The function should return the processed record object.',
+  packages_form_triggers_help_tapdata_desc:
+    'Supports record (current data record) and context (context info) parameters. The function should return the processed record object.',
   packages_form_triggers_help_mongo_title: 'Mongo Function',
-  packages_form_triggers_help_mongo_desc: 'Supports changeEvent object containing documentKey, updateDescription, fullDocument and other change event information.',
+  packages_form_triggers_help_mongo_desc:
+    'Supports changeEvent object containing documentKey, updateDescription, fullDocument and other change event information.',
 }
