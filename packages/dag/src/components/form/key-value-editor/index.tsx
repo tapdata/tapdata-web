@@ -138,6 +138,7 @@ export const KeyValueEditor = observer(
         <div class="inline-flex align-center w-100 justify-content-between">
           <span>{fieldRef.value.title}</span>
           <ElSegmented
+            class="position-absolute end-0 top-1"
             modelValue={viewMode.value}
             options={viewOptions.value}
             onChange={handleViewChange}
