@@ -199,9 +199,9 @@ export const KeyValueEditor = observer(
                   onUpdate:modelValue={(val: string) =>
                     (textContent.value = val)
                   }
-                  rows={8}
                   placeholder={`'bucket' = '8'\n"file.format" = "parquet"\ncompression=snappy`}
                   disabled={props.disabled}
+                  autosize
                 />
                 <div class="key-value-editor__text-actions">
                   <ElButton onClick={handleCopy}>

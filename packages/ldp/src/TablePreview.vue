@@ -1571,9 +1571,9 @@ export default {
     }
   }
 
-  :deep(.table-preview-tabs > .el-tabs__content > .el-tab-pane) {
-    background-color: rgb(245, 248, 254);
-  }
+  // :deep(.table-preview-tabs > .el-tabs__content > .el-tab-pane) {
+  //   background-color: rgb(245, 248, 254);
+  // }
 
   :deep(th .cell) {
     white-space: nowrap;
