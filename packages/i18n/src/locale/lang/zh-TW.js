@@ -642,4 +642,10 @@ export default {
   public_table_regex_example_2: '匹配以 _temp 結尾的表',
   public_table_regex_example_3: '匹配包含 test 或 demo 的表',
   public_data_no_result: '未找到數據',
+  public_form_view: '表單檢視',
+  public_text_view: '文字檢視',
+  public_parse_failed: '解析失敗，請檢查格式',
+  public_import_count: '已匯入 {0} 條',
+  public_apply_to_form: '套用到表單',
+  public_copy_text: '複製文字',
 }

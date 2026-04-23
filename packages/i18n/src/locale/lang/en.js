@@ -653,4 +653,10 @@ export default {
   public_table_regex_example_2: 'Matches tables ending with _temp',
   public_table_regex_example_3: 'Matches tables containing test or demo',
   public_data_no_result: 'No Data Found',
+  public_form_view: 'Form View',
+  public_text_view: 'Text View',
+  public_parse_failed: 'Parse failed, please check the format',
+  public_import_count: '{0} items imported',
+  public_apply_to_form: 'Apply to Form',
+  public_copy_text: 'Copy Text',
 }

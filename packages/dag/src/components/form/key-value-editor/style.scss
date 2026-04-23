@@ -1,0 +1,41 @@
+.key-value-editor-form-item {
+  .formily-element-plus-form-item-label-content {
+    flex: 1;
+  }
+  .formily-element-plus-form-item-colon {
+    display: none;
+  }
+  .formily-element-plus-space {
+    display: flex;
+  }
+}
+
+.key-value-editor__text-box {
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px var(--el-border-color) inset;
+  transition: box-shadow var(--el-transition-duration);
+
+  &:focus-within {
+    box-shadow: 0 0 0 1px var(--el-color-primary) inset;
+  }
+
+  .el-textarea {
+    .el-textarea__inner {
+      border: none;
+      box-shadow: none;
+      background: transparent;
+      resize: none;
+    }
+  }
+}
+
+.key-value-editor__text-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 8px;
+}
