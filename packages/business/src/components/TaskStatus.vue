@@ -3,7 +3,8 @@ import { useI18n } from '@tap/i18n'
 import { calcTimeUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 import cronParse from 'cron-parser'
-import { computed, ref } from 'vue'
+import { ElLink } from 'element-plus'
+import { computed, defineComponent, h, ref, type VNode } from 'vue'
 import { useRouter } from 'vue-router'
 import { dayjs, STATUS_MAP } from '../shared'
 
@@ -74,9 +75,23 @@ const taskRetryStartTimeTip = computed(() =>
 
 interface Warning {
   key: string
-  text: string
+  text: string | VNode
   type: 'warning' | 'danger'
   clickable?: boolean
+}
+
+const RenderContent = defineComponent({
+  props: { content: { type: [String, Object], required: true } },
+  render() {
+    return this.content
+  },
+})
+
+function navigateToAgent() {
+  const route = isDaas
+    ? { name: 'clusterManagement' }
+    : { name: 'Instance', query: { keyword: agentInfo.value?.itemId } }
+  router.push(route)
 }
 
 const warnings = computed<Warning[]>(() => {
@@ -84,12 +99,30 @@ const warnings = computed<Warning[]>(() => {
 
   // 心跳超时
   if (props.agentMap && pingTime.value) {
-    let text = t('packages_business_task_status_agent_tooltip_time', {
+    const timeText = t('packages_business_task_status_agent_tooltip_time', {
       time: pingTime.value,
     })
-    if (agentStatus.value) {
-      text += `，${t('packages_business_task_status_agent_tooltip_agent')}：${agentStatus.value}`
-    }
+    const text = agentStatus.value
+      ? h('span', [
+          timeText,
+          '，',
+          t('packages_business_task_status_agent_tooltip_agent'),
+          '：',
+          h(
+            ElLink,
+            {
+              type: 'primary',
+              class: 'align-top',
+              onClick: (e: MouseEvent) => {
+                e.preventDefault()
+                e.stopPropagation()
+                navigateToAgent()
+              },
+            },
+            () => agentStatus.value,
+          ),
+        ])
+      : timeText
     list.push({ key: 'pingTime', text, type: 'warning' })
   }
 
@@ -142,11 +175,6 @@ const warnings = computed<Warning[]>(() => {
 function onWarningClick(w: Warning) {
   if (w.key === 'errorCause') {
     showErrorCause.value = true
-  } else if (w.key === 'pingTime') {
-    const route = isDaas
-      ? { name: 'clusterManagement' }
-      : { name: 'Instance', query: { keyword: agentInfo.value?.itemId } }
-    router.push(route)
   }
 }
 
@@ -179,7 +207,8 @@ function getNextStartTime() {
       <ElPopover
         v-if="warnings.length"
         placement="top"
-        :width="320"
+        trigger="hover"
+        :width="340"
         popper-class="task-warning-popover"
       >
         <template #reference>
@@ -206,13 +235,12 @@ function getNextStartTime() {
             :key="w.key"
             class="task-warning-item flex gap-2"
             :class="{ 'is-clickable': w.clickable }"
-            @click="onWarningClick(w)"
           >
             <div
               class="w-2 h-2 mt-1.5 bg-color-warning rounded-circle flex-shrink-0"
             />
             <div>
-              {{ w.text }}
+              <RenderContent :content="w.text" />
             </div>
           </li>
         </ul>

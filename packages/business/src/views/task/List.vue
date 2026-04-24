@@ -1302,7 +1302,7 @@ export default {
         sortable
         prop="currentEventTimestamp"
         :label="$t('public_task_cdc_time_point')"
-        min-width="168"
+        min-width="170"
       >
         <template #default="{ row }">
           {{ formatTime(row.currentEventTimestamp) }}
