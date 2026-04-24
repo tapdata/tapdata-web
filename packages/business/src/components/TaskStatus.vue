@@ -1,111 +1,165 @@
-<script>
+<script setup lang="ts">
+import { useI18n } from '@tap/i18n'
+import { calcTimeUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
-
 import cronParse from 'cron-parser'
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { dayjs, STATUS_MAP } from '../shared'
 
-export default {
-  name: 'TaskStatus',
-  props: {
-    task: Object,
-    agentMap: Object,
-    errorCause: String,
-    reverse: Boolean,
-  },
-  data() {
-    return {
-      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
-      STATUS_MAP,
-      showErrorCause: false,
+defineOptions({ name: 'TaskStatus' })
+
+const props = defineProps<{
+  task: Record<string, any>
+  agentMap?: Record<string, any>
+  errorCause?: string
+  reverse?: boolean
+}>()
+
+const { t } = useI18n()
+const router = useRouter()
+
+const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+const showErrorCause = ref(false)
+
+const show = computed(() => props.task.status in STATUS_MAP)
+
+const pingTime = computed(() => {
+  const pt = props.task.pingTime
+  if (
+    props.task.status === 'running' &&
+    pt &&
+    Time.now() - pt > 5 * 60 * 1000
+  ) {
+    return dayjs(pt).from(Time.now(), true)
+  }
+  return undefined
+})
+
+const agentInfo = computed(() => props.agentMap?.[props.task.agentId])
+
+const agentStatus = computed(() => {
+  const info = agentInfo.value
+  return info ? `${info.name}（${info.status}）` : null
+})
+
+const showCronTip = computed(() => {
+  const task = props.task
+  const ifShow =
+    task.status !== 'edit' &&
+    task.type === 'initial_sync' &&
+    task.crontabExpressionFlag &&
+    task.crontabExpression
+  if (!ifShow) return ifShow
+  try {
+    if (cronParse.parseExpression(task.crontabExpression).hasNext()) {
+      return true
     }
-  },
-  computed: {
-    show() {
-      return this.task.status in this.STATUS_MAP
-    },
+  } catch (error: any) {
+    console.error(`Error: ${error.message}`)
+  }
+  return false
+})
 
-    pingTime() {
-      const pingTime = this.task.pingTime
-      if (
-        this.task.status === 'running' &&
-        pingTime &&
-        Time.now() - this.task.pingTime > 5 * 60 * 1000
-      ) {
-        return dayjs(pingTime).from(Time.now(), true)
-      }
-      return undefined
-    },
+const showRetrying = computed(() => {
+  const { functionRetryStatus, status } = props.task
+  return status === 'running' && functionRetryStatus === 'Retrying'
+})
 
-    agentInfo() {
-      return this.agentMap?.[this.task.agentId]
-    },
+const taskRetryStartTimeTip = computed(() =>
+  t('packages_business_task_status_retrying_tooltip', {
+    val: dayjs(props.task.taskRetryStartTime).format('YYYY-MM-DD HH:mm:ss'),
+  }),
+)
 
-    agentStatus() {
-      const info = this.agentInfo
-      return info ? `${info.name}（${info.status}）` : null
-    },
+interface Warning {
+  key: string
+  text: string
+  type: 'warning' | 'danger'
+  clickable?: boolean
+}
 
-    showCronTip() {
-      const task = this.task
-      const ifShow =
-        task.status !== 'edit' &&
-        task.type === 'initial_sync' &&
-        task.crontabExpressionFlag &&
-        task.crontabExpression
-      if (!ifShow) return ifShow
-      try {
-        if (cronParse.parseExpression(this.task.crontabExpression).hasNext()) {
-          return true
-        }
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.log(`Error: ${error.message}`)
-      }
-      return false
-    },
+const warnings = computed<Warning[]>(() => {
+  const list: Warning[] = []
 
-    showRetrying() {
-      const { functionRetryStatus, status } = this.task
-      return status === 'running' && functionRetryStatus === 'Retrying'
-    },
+  // 心跳超时
+  if (props.agentMap && pingTime.value) {
+    let text = t('packages_business_task_status_agent_tooltip_time', {
+      time: pingTime.value,
+    })
+    if (agentStatus.value) {
+      text += `，${t('packages_business_task_status_agent_tooltip_agent')}：${agentStatus.value}`
+    }
+    list.push({ key: 'pingTime', text, type: 'warning' })
+  }
 
-    taskRetryStartTimeTip() {
-      return this.$t('packages_business_task_status_retrying_tooltip', {
-        val: dayjs(this.task.taskRetryStartTime).format('YYYY-MM-DD HH:mm:ss'),
-      })
-    },
-  },
+  // 共享 CDC 停止
+  if (props.task.shareCdcStop && !props.task.restartFlag) {
+    list.push({
+      key: 'shareCdc',
+      text: props.task.shareCdcStopMessage,
+      type: 'warning',
+    })
+  }
 
-  methods: {
-    onClickStatus() {
-      let route
-      if (this.isDaas) {
-        route = {
-          name: 'clusterManagement',
-        }
-      } else {
-        route = {
-          name: 'Instance',
-          query: {
-            keyword: this.agentInfo?.itemId,
-          },
-        }
-      }
-      this.$router.push(route)
-    },
+  // 错误解读
+  if (props.errorCause && props.task.status === 'error') {
+    list.push({
+      key: 'errorCause',
+      text: props.errorCause,
+      type: 'danger',
+      clickable: true,
+    })
+  }
 
-    getNextStartTime() {
-      try {
-        if (!this.task.crontabExpression) return
-        const interval = cronParse.parseExpression(this.task.crontabExpression)
-        return this.$t('packages_business_task_status_next_run_time', {
-          val: dayjs(interval.next()).format('YYYY-MM-DD HH:mm:ss'),
-        })
-      } catch (error) {
-        console.log(`Error: ${error.message}`)
-      }
-    },
-  },
+  // 增量延迟告警
+  if (
+    props.task.taskIncrementDelay != null &&
+    props.task.taskIncrementDelayThreshold != null
+  ) {
+    list.push({
+      key: 'incrementDelay',
+      text: t('packages_business_task_status_increment_delay_warning', {
+        delay: calcTimeUnit(props.task.taskIncrementDelay),
+        threshold: calcTimeUnit(props.task.taskIncrementDelayThreshold),
+      }),
+      type: 'warning',
+    })
+  }
+
+  // 重试状态
+  if (showRetrying.value) {
+    list.push({
+      key: 'retrying',
+      text: taskRetryStartTimeTip.value,
+      type: 'warning',
+    })
+  }
+
+  return list
+})
+
+function onWarningClick(w: Warning) {
+  if (w.key === 'errorCause') {
+    showErrorCause.value = true
+  } else if (w.key === 'pingTime') {
+    const route = isDaas
+      ? { name: 'clusterManagement' }
+      : { name: 'Instance', query: { keyword: agentInfo.value?.itemId } }
+    router.push(route)
+  }
+}
+
+function getNextStartTime() {
+  try {
+    if (!props.task.crontabExpression) return
+    const interval = cronParse.parseExpression(props.task.crontabExpression)
+    return t('packages_business_task_status_next_run_time', {
+      val: dayjs(interval.next().toDate()).format('YYYY-MM-DD HH:mm:ss'),
+    })
+  } catch (error: any) {
+    console.error(`Error: ${error.message}`)
+  }
 }
 </script>
 
@@ -116,10 +170,53 @@ export default {
   >
     <span
       v-if="show"
-      class="task-status-block"
+      class="task-status-block flex align-center justify-center gap-1"
       :class="[`task-status-${task.status}`]"
     >
-      {{ $t(STATUS_MAP[task.status].i18n) }}
+      {{ $t(STATUS_MAP[task.status as keyof typeof STATUS_MAP].i18n) }}
+
+      <!--告警合并图标-->
+      <ElPopover
+        v-if="warnings.length"
+        placement="top"
+        :width="320"
+        popper-class="task-warning-popover"
+      >
+        <template #reference>
+          <el-badge
+            :offset="[4, 0]"
+            :hidden="warnings.length < 2"
+            :value="warnings.length"
+            class="lh-1"
+            badge-class="zoom-xs"
+          >
+            <span
+              class="task-warning-trigger"
+              @click="warnings[0] && onWarningClick(warnings[0])"
+            >
+              <VIcon size="16" class="color-warning task-warning-icon"
+                >warning</VIcon
+              >
+            </span>
+          </el-badge>
+        </template>
+        <ul class="task-warning-list flex flex-column gap-2">
+          <li
+            v-for="w in warnings"
+            :key="w.key"
+            class="task-warning-item flex gap-2"
+            :class="{ 'is-clickable': w.clickable }"
+            @click="onWarningClick(w)"
+          >
+            <div
+              class="w-2 h-2 mt-1.5 bg-color-warning rounded-circle flex-shrink-0"
+            />
+            <div>
+              {{ w.text }}
+            </div>
+          </li>
+        </ul>
+      </ElPopover>
     </span>
     <ElTooltip v-if="showCronTip" placement="top">
       <VIcon size="16" :color="task.crontabScheduleMsg ? '#F3961A' : '#008b58'"
@@ -129,76 +226,18 @@ export default {
         {{ task.crontabScheduleMsg || getNextStartTime() }}
       </template>
     </ElTooltip>
-    <!--心跳超时-->
-    <template v-if="agentMap">
-      <ElTooltip
-        v-if="pingTime"
-        placement="top"
-        popper-class="agent-tooltip__popper"
-        :visible-arrow="false"
-        effect="light"
-      >
-        <VIcon size="16" class="color-warning ssss">warning</VIcon>
-        <template #content>
-          <span class="font-color-dark">
-            {{
-              $t('packages_business_task_status_agent_tooltip_time', {
-                time: pingTime,
-              })
-            }}<template v-if="agentStatus"
-              >，{{ $t('packages_business_task_status_agent_tooltip_agent') }}：
-              <ElLink class="align-top" type="primary" @click="onClickStatus">{{
-                agentStatus
-              }}</ElLink></template
-            >
-          </span>
-        </template>
-      </ElTooltip>
-    </template>
-    <template v-if="task.shareCdcStop && !task.restartFlag">
-      <ElTooltip
-        placement="top"
-        popper-class="agent-tooltip__popper"
-        :visible-arrow="false"
-        effect="light"
-      >
-        <VIcon size="16" class="color-warning">warning</VIcon>
-        <template #content>
-          <div class="font-color-dark">{{ task.shareCdcStopMessage }}</div>
-        </template>
-      </ElTooltip>
-    </template>
-    <!--错误解读-->
-    <template v-if="errorCause && task.status === 'error'">
-      <VIcon size="16" class="color-danger" @click="showErrorCause = true"
-        >question-circle</VIcon
-      >
-      <ElDialog
-        v-model="showErrorCause"
-        append-to-body
-        :title="$t('public_task_reasons_for_error')"
-      >
-        <div class="p-4 rounded-4 bg-subtle text-preline font-color-dark">
-          {{ errorCause }}
-        </div>
-      </ElDialog>
-    </template>
-    <!--重试状态-->
-    <template v-if="showRetrying">
-      <ElTooltip
-        key="retrying"
-        placement="top"
-        popper-class="agent-tooltip__popper"
-        effect="light"
-      >
-        <VIcon size="16" class="color-warning">warning</VIcon>
-        <template #content>
-          <span class="font-color-dark">
-            {{ taskRetryStartTimeTip }}
-          </span>
-        </template>
-      </ElTooltip>
-    </template>
+
+    <!--错误解读弹窗-->
+    <ElDialog
+      v-if="errorCause"
+      v-model="showErrorCause"
+      append-to-body
+      :title="$t('public_task_reasons_for_error')"
+    >
+      <div class="p-4 rounded-4 bg-subtle text-preline font-color-dark">
+        {{ errorCause }}
+      </div>
+    </ElDialog>
   </div>
 </template>
 
@@ -208,7 +247,7 @@ export default {
   min-width: 72px;
   padding: 2px 8px;
   text-align: center;
-  border-radius: 6px;
+  border-radius: 8px;
   box-sizing: border-box;
   word-break: keep-all;
   line-height: 22px;
@@ -249,11 +288,48 @@ export default {
 }
 </style>
 
-<style>
-.agent-tooltip__popper {
-  border: none !important;
-  box-shadow:
-    0px 4px 10px 0px rgba(0, 0, 0, 0.1),
-    0px 4px 10px 0px rgba(0, 0, 0, 0.1);
+<style lang="scss">
+.task-warning-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+
+  &:hover .task-warning-icon {
+    transform: scale(1.15);
+  }
+
+  .task-warning-icon {
+    transition: transform 0.2s ease;
+  }
+}
+
+.task-warning-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.task-warning-item {
+  position: relative;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--el-button-text-color);
+
+  &.is-clickable {
+    cursor: pointer;
+    &:hover {
+      background-color: #f7f8fa;
+      border-radius: 4px;
+    }
+    &::before {
+      background-color: #f43f5e;
+    }
+  }
+
+  & + & {
+    border-top: 1px solid #f2f3f5;
+    padding-top: 8px;
+  }
 }
 </style>

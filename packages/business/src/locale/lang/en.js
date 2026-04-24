@@ -680,6 +680,8 @@ export default {
     'The Agent where the task is located is',
   packages_business_task_status_retrying_tooltip:
     'The current task is being retried. Retry start at: {val}',
+  packages_business_task_status_increment_delay_warning:
+    'Current max delay is {delay}, exceeding threshold {threshold}',
   packages_business_select_placeholder: 'Please add or select',
   packages_business_verification_form_youjiantongzhi: 'Mail Notification',
   packages_business_verification_form_xitongtongzhi: 'System Notification',
