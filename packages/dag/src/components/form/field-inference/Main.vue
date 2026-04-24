@@ -1,6 +1,5 @@
 <script>
 import { fetchDatabaseTypeByPdkHash } from '@tap/api/src/core/database-types'
-import { multiTransform } from '@tap/api/src/core/metadata-instances'
 import noData from '@tap/assets/images/noData.png'
 
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
@@ -190,15 +189,14 @@ export default {
       this.loadData()
     },
 
-    async filterFields() {
+    filterFields() {
       this.fieldsLoading = true
       const item = this.navList[this.position]
-      let fields = await this.getCurrentTableFields(item, this.fieldChangeRules)
-      const { fields: newFields } = mapFieldsData(item)
-      newFields.forEach((t) => {
+      const { fields } = mapFieldsData(item)
+      fields.forEach((t) => {
         delete t.dataType
       })
-      fields = newFields
+
       item.fields = fields
       const findPossibleDataTypes = item?.findPossibleDataTypes || {}
       if (this.searchField) {
@@ -263,45 +261,17 @@ export default {
       )
     },
 
-    async handleUpdateRules(val = []) {
+    handleUpdateRules(val = []) {
       this.fieldChangeRules = val
       this.handleUpdate()
-      this.updateSelectedAllFields(
-        await this.getCurrentTableFields(this.selected, val),
-      )
     },
 
-    updateSelectedAllFields(fields = []) {
-      this.selected.fields.forEach((t) => {
-        const f = fields.find((el) => el.field_name === t.field_name)
-        if (f) {
-          t.data_type = f.data_type
-          t.changeRuleId = f.changeRuleId
+    handleUpdateFields(updater) {
+      this.navList.forEach((item) => {
+        if (item.fields?.length) {
+          updater(item.fields, item.qualified_name)
         }
       })
-    },
-
-    async getCurrentTableFields(item = {}, rules = []) {
-      const { qualified_name, nodeId, source = {}, fields = [] } = item
-      const { database_type } = source
-      const params = {
-        rules: rules.filter(
-          (t) =>
-            t.namespace.length === 1 || t.namespace.includes(qualified_name),
-        ),
-        qualifiedName: qualified_name,
-        nodeId,
-        databaseType: database_type,
-        fields,
-      }
-      const data = (await multiTransform(params)) || {
-        fields: [],
-      }
-      return data.fields.length ? data.fields : fields
-    },
-
-    changeUniqueIndexEnable(val) {
-      this.form.setValuesIn('uniqueIndexEnable', val)
     },
   },
 }
@@ -471,6 +441,7 @@ export default {
             ignore-error
             class="content__list flex-fill"
             @update-rules="handleUpdateRules"
+            @update-fields="handleUpdateFields"
             @open-update-rules="handleOpen"
           />
         </div>

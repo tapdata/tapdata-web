@@ -316,19 +316,25 @@ export default {
           this.rules.push(op)
         }
 
-        // 刷新字段
-        this.data.fields.forEach((t) => {
-          const fieldOriginType = t.data_type?.split('(')[0]
-          if (fieldOriginType === this.originType) {
-            t.data_type = t.dataTypeTemp.replace(
-              /(\w+\()(\w+)([,)][\s\S]*)/,
-              function (val, sub1, sub2, sub3) {
-                return `${sub1}${sub2 * coefficient}${sub3}`
-              },
-            )
-            t.changeRuleId = ruleId
-          }
+        // 刷新字段 - emit 到 Main.vue 对所有表做处理
+        const _originType = this.originType
+        const _coefficient = coefficient
+        const _ruleId = ruleId
+        this.$emit('update-fields', (fields) => {
+          fields.forEach((t) => {
+            const fieldOriginType = t.data_type?.split('(')[0]
+            if (fieldOriginType === _originType) {
+              t.data_type = t.dataTypeTemp.replace(
+                /(\w+\()(\w+)([,)][\s\S]*)/,
+                function (_val, sub1, sub2, sub3) {
+                  return `${sub1}${sub2 * _coefficient}${sub3}`
+                },
+              )
+              t.changeRuleId = _ruleId
+            }
+          })
         })
+
         this.handleUpdate()
         this.$message.success(i18n.t('public_message_operation_success'))
         this.editDataTypeVisible = false
@@ -391,17 +397,27 @@ export default {
             this.rules.push(op)
           }
 
-          this.data.fields.forEach((t) => {
-            if (
-              (useToAll &&
-                t.data_type === t.dataTypeTemp &&
-                t.dataTypeTemp === dataTypeTemp) ||
-              t.field_name === fieldName
-            ) {
-              t.data_type = newDataType
-              t.changeRuleId = ruleId
-            }
+          // emit 到 Main.vue 对所有表做处理
+          const _useToAll = useToAll
+          const _dataTypeTemp = dataTypeTemp
+          const _fieldName = fieldName
+          const _newDataType = newDataType
+          const _ruleId = ruleId
+          this.$emit('update-fields', (fields, qualifiedName) => {
+            fields.forEach((t) => {
+              if (
+                (_useToAll &&
+                  t.data_type === t.dataTypeTemp &&
+                  t.dataTypeTemp === _dataTypeTemp) ||
+                (t.field_name === _fieldName &&
+                  qualifiedName === qualified_name)
+              ) {
+                t.data_type = _newDataType
+                t.changeRuleId = _ruleId
+              }
+            })
           })
+
           this.handleUpdate()
           this.editBtnLoading = false
           this.$message.success(i18n.t('public_message_operation_success'))
@@ -581,7 +597,7 @@ export default {
         })
     },
   },
-  emits: ['update-rules'],
+  emits: ['update-rules', 'update-fields'],
 }
 </script>
 
