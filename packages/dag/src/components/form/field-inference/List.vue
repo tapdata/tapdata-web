@@ -319,7 +319,7 @@ function submitEdit() {
     emit('update-fields', (fields: any[]) => {
       fields.forEach((t: any) => {
         const fieldOriginType = t.data_type?.split('(')[0]
-        if (fieldOriginType === _originType) {
+        if (fieldOriginType === _originType && t.dataTypeTemp) {
           t.data_type = t.dataTypeTemp.replace(
             /(\w+\()(\w+)([,)][\s\S]*)/,
             function (_val: string, sub1: string, sub2: string, sub3: string) {
