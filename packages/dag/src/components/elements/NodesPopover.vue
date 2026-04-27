@@ -189,6 +189,32 @@ onBeforeUnmount(() => {
   document.removeEventListener('mousedown', handleMouseDown, true)
 })
 
+/**
+ * 确保节点拥有 __Ctor，连线校验需要
+ */
+const ensureNodeCtor = (node: any) => {
+  if (!node.__Ctor) {
+    const ins = dataflowStore.getResourceInsByNode(node)
+    if (ins) {
+      Object.defineProperty(node, '__Ctor', {
+        value: ins,
+        enumerable: false,
+      })
+    }
+  }
+}
+
+/**
+ * 判断 source 节点能否连接到 target 节点
+ */
+const canConnect = (sourceNode: any, targetNode: any): boolean => {
+  ensureNodeCtor(sourceNode)
+  ensureNodeCtor(targetNode)
+  if (!sourceNode.__Ctor || !targetNode.__Ctor) return true // 无法校验时放行
+
+  return dataflowStore.checkAllowTargetOrSource(sourceNode, targetNode, true)
+}
+
 const handleAddNode = (node: any) => {
   const { nextNodeId, prevNodeId } = props.params || {}
   let connection = null
@@ -198,6 +224,19 @@ const handleAddNode = (node: any) => {
 
   if (nextNodeId && prevNodeId) {
     // 在两个节点之间添加
+    const prevNode = dataflowStore.findNodeById(prevNodeId)
+    const nextNodeData = dataflowStore.findNodeById(nextNodeId)
+
+    // 校验 prevNode → newNode 和 newNode → nextNode 是否允许连接
+    if (prevNode && !canConnect(prevNode, node)) {
+      historyStore.stopRecordingUndo()
+      return
+    }
+    if (nextNodeData && !canConnect(node, nextNodeData)) {
+      historyStore.stopRecordingUndo()
+      return
+    }
+
     const afterNodes = dataflowStore.getAfterNodesInSameBranch(nextNodeId)
     const nextNode = findNode(nextNodeId)!
     const offset = nextNode.dimensions.width + X_OFFSET
@@ -242,7 +281,13 @@ const handleAddNode = (node: any) => {
     focusNode(node.id)
     return
   } else if (prevNodeId && !nextNodeId) {
-    // 在节点后面添加
+    // 在节点后面添加 - 校验 prevNode → newNode
+    const prevNode = dataflowStore.findNodeById(prevNodeId)
+    if (prevNode && !canConnect(prevNode, node)) {
+      historyStore.stopRecordingUndo()
+      return
+    }
+
     const canvasNode = findNode(prevNodeId)
     const outgoers = getOutgoers(prevNodeId).sort(
       (a, b) => a.position.y - b.position.y,
@@ -264,7 +309,13 @@ const handleAddNode = (node: any) => {
       target: node.id,
     }
   } else if (!prevNodeId && nextNodeId) {
-    // 在节点前面添加
+    // 在节点前面添加 - 校验 newNode → nextNode
+    const nextNodeData = dataflowStore.findNodeById(nextNodeId)
+    if (nextNodeData && !canConnect(node, nextNodeData)) {
+      historyStore.stopRecordingUndo()
+      return
+    }
+
     const nextNode = findNode(nextNodeId)
     const afterNodes = dataflowStore.getAfterNodesInSameBranch(nextNodeId)
     const offset = nextNode!.dimensions.width + X_OFFSET
