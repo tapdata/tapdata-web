@@ -52,7 +52,6 @@ const emit = defineEmits<{
 
 const dataflowStore = useDataflowStore()
 const activeNode = computed(() => dataflowStore.selectedNode)
-const stateIsReadonly = computed(() => dataflowStore.stateIsReadonly)
 
 const tableRef = useTemplateRef<InstanceType<typeof VTable>>('table')
 
@@ -91,7 +90,7 @@ const columns = [
     prop: 'operation',
     slotName: 'operation',
     headerSlot: 'operationHeader',
-    minWidth: 60,
+    minWidth: 70,
   },
 ]
 

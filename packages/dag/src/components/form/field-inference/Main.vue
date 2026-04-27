@@ -194,6 +194,7 @@ async function loadData(resetSelect = false) {
     handleSelect()
   }
   navLoading.value = false
+  fieldsLoading.value = false
 }
 
 function refresh() {
@@ -201,23 +202,27 @@ function refresh() {
 }
 
 function filterFields() {
-  fieldsLoading.value = true
   const item = navList.value[position.value]
+
+  if (!item) return
+
   let { fields } = mapFieldsData(item)
+
   fields.forEach((t: any) => {
     delete t.dataType
   })
+
   item.fields = fields
   const findPossibleDataTypes = item?.findPossibleDataTypes || {}
+
   if (searchField.value) {
     fields = item.fields.filter((t: any) =>
       t.field_name.toLowerCase().includes(searchField.value?.toLowerCase()),
     )
   }
+
   selected.value = Object.assign({}, item, { fields, findPossibleDataTypes })
   updateList.value = updateConditionFieldMap.value[selected.value.name] || []
-  fieldsLoading.value = false
-
   fieldOptions.value = fields
   selected.value.fields = fields
 }
