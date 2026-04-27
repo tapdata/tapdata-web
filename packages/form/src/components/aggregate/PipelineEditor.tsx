@@ -263,7 +263,7 @@ export const PipelineEditor = defineComponent({
         ]}
       >
         <div class="pipeline-editor-toolbar">
-          <ElTooltip
+          {/* <ElTooltip
             content={t('packages_form_aggregate_ai_btn')}
             placement="top"
             enterable={false}
@@ -274,7 +274,7 @@ export const PipelineEditor = defineComponent({
               onClick={() => (showAiDialog.value = true)}
               icon={IconLucideSparkles}
             />
-          </ElTooltip>
+          </ElTooltip> */}
           <ElTooltip
             content={t('packages_form_aggregate_format')}
             placement="top"
