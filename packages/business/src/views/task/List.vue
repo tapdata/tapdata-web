@@ -1287,7 +1287,7 @@ export default {
         sortable="custom"
       >
         <template #default="{ row }">
-          <el-tag effect="light" round type="warning">
+          <el-tag effect="light" round type="warning" disable-transitions>
             <div class="flex align-center">
               <el-icon class="mr-1">
                 <i-lucide-clock />
