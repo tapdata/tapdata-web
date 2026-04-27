@@ -96,7 +96,7 @@ export const KeyValueEditor = observer(
           .map((l) => l.trim())
           .filter(Boolean)
           .map((line) => {
-            line = line.replace(/[,;]+$/, '').trim()
+            line = line.replace(/[,;，]+$/, '').trim()
             const match = line.match(
               /^['"]?([^'"=]+?)['"]?\s*=\s*['"]?([^'"]*)['"]?$/,
             )
