@@ -295,6 +295,7 @@ export default {
   //Api server
   public_api_name: 'API Name',
   public_api_server_name: 'API Server Name',
+  public_datasource_name: 'Datasource Name',
   public_api_worker_name: 'API Server Worker Name',
   public_api_threshold: 'Threshold',
   public_api_threshold_unit: 'Unit',
