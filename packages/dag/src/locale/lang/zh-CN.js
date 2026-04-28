@@ -1016,6 +1016,7 @@ export default {
   //Api server
   public_api_name: 'API 名称',
   public_api_server_name: 'API服务名称',
+  public_datasource_name: '数据源连接名称',
   public_api_worker_name: 'API服务工作进程',
   public_api_threshold: '阈值',
   public_api_threshold_unit: '单位',

@@ -321,6 +321,23 @@ const latencyChartOption = computed(() => {
           borderWidth: 2,
         },
       },
+      {
+        name: 'Max',
+        type: 'line',
+        data: apiChart.value?.maxDelay || [],
+        smooth: true,
+        symbol: 'circle',
+        showSymbol: false,
+        lineStyle: {
+          color: '#8b5cf6',
+          width: 2,
+        },
+        itemStyle: {
+          color: '#8b5cf6',
+          borderColor: '#fff',
+          borderWidth: 2,
+        },
+      },
     ],
   }
 })

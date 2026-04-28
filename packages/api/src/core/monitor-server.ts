@@ -93,6 +93,11 @@ export interface ApiOverview {
   p99?: number | string
 }
 
+export interface ConnectionWithName {
+  id: string,
+  name: string
+}
+
 export interface ServerDetail {
   queryFrom: number
   queryEnd: number
@@ -124,6 +129,15 @@ export interface ServerChart {
     minCpuUsage: number[]
     maxMemoryUsage: number[]
     minMemoryUsage: number[]
+    poolUsedConnections: number[]
+    poolMaxConnections: number[]
+    poolQueueSize: number[]
+    ts: number[]
+  }
+  poolUsage: {
+    poolUsedConnections: number[]
+    poolMaxConnections: number[]
+    poolQueueSize: number[]
     ts: number[]
   }
   request: {
@@ -285,6 +299,10 @@ export async function fetchMonitorServerList(params?: Params) {
   return data
 }
 
+export async function fetchConnectionWithName(serverId: string) {
+  return await requestClient.get<ConnectionWithName>(`api/Connections/allConnections/${serverId}`, {})
+}
+
 export async function fetchMonitorServerDetail(params?: Params) {
   const data = await requestClient.get<ServerDetail>(`${BASE_URL}/detail`, {
     params,
@@ -315,6 +333,9 @@ export function fetchMonitorServerChart(params?: Params) {
         maxCpuUsage: [],
         minCpuUsage: [],
         minMemoryUsage: [],
+        poolUsedConnections: [],
+        poolMaxConnections: [],
+        poolQueueSize: [],
         ts: [],
       },
       request: {

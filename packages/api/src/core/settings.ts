@@ -18,6 +18,21 @@ export interface Setting {
   user_visible: boolean
   value: string
   open?: boolean
+  children?: SettingChild[]
+}
+
+export interface SettingChild {
+  prop?: string
+  key?: string
+  key_label?: string
+  type?: 'switch' | 'text' | 'number' | 'select'
+  enums?: any[]
+  min?: number
+  max?: number
+  default_value?: any
+  activeValue?: any
+  inactiveValue?: any
+  mask?: any
 }
 
 export function fetchSettings() {
