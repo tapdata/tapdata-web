@@ -270,6 +270,7 @@ export default {
         delayTime: true,
         taskIncrementDelay: true,
         taskIncrementDelayThreshold: true,
+        heartbeatTaskRunning: true,
       }
       const where = {
         syncType,
