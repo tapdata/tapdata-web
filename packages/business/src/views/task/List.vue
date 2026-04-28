@@ -1287,7 +1287,31 @@ export default {
         sortable="custom"
       >
         <template #default="{ row }">
-          <el-tag effect="light" round type="warning" disable-transitions>
+          <el-tooltip
+            v-if="
+              row.taskIncrementDelay != null &&
+              row.taskIncrementDelayThreshold != null
+            "
+            :content="
+              $t('packages_business_task_status_increment_delay_warning', {
+                delay: formatTimeUnit(row.taskIncrementDelay),
+                threshold: formatTimeUnit(row.taskIncrementDelayThreshold),
+              })
+            "
+            placement="top"
+            :enterable="false"
+            :hide-after="0"
+          >
+            <el-tag effect="light" round type="warning" disable-transitions>
+              <div class="flex align-center">
+                <el-icon class="mr-1">
+                  <i-lucide-clock />
+                </el-icon>
+                {{ formatTimeUnit(row.delayTime) }}
+              </div>
+            </el-tag>
+          </el-tooltip>
+          <el-tag v-else effect="light" round type="info" disable-transitions>
             <div class="flex align-center">
               <el-icon class="mr-1">
                 <i-lucide-clock />
@@ -1295,6 +1319,7 @@ export default {
               {{ formatTimeUnit(row.delayTime) }}
             </div>
           </el-tag>
+
           <!-- <span v-else>-</span> -->
         </template>
       </el-table-column>
