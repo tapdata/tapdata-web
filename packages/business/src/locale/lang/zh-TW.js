@@ -616,6 +616,8 @@ export default {
     '當前任務正在重試中，重試開始時間：{val}',
   packages_business_task_status_increment_delay_warning:
     '當前任務最大延遲為 {delay}，已超過閾值 {threshold}',
+  packages_business_task_status_heartbeat_task_abnormal:
+    '心跳任務異常，請檢查並恢復',
   packages_business_select_placeholder: '請添加或選擇',
   packages_business_verification_form_youjiantongzhi: '郵件通知',
   packages_business_verification_form_xitongtongzhi: '系統通知',

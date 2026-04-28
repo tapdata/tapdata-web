@@ -169,6 +169,15 @@ const warnings = computed<Warning[]>(() => {
     })
   }
 
+  // 心跳任务异常
+  if (props.task.heartbeatTaskRunning === false) {
+    list.push({
+      key: 'heartbeatTask',
+      text: t('packages_business_task_status_heartbeat_task_abnormal'),
+      type: 'warning',
+    })
+  }
+
   return list
 })
 
