@@ -648,4 +648,7 @@ export default {
   public_import_count: '已匯入 {0} 條',
   public_apply_to_form: '套用到表單',
   public_copy_text: '複製文字',
+  public_last_capture_time: '最近觀測時間',
+  public_alarm_date: '告警時間',
+  public_duration: '時長',
 }
