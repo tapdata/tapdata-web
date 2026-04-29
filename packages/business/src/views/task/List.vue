@@ -1288,8 +1288,9 @@ export default {
         sortable="custom"
       >
         <template #default="{ row }">
+          <span v-if="row.delayTime == null">-</span>
           <el-tooltip
-            v-if="
+            v-else-if="
               row.taskIncrementDelay != null &&
               row.taskIncrementDelayThreshold != null
             "
