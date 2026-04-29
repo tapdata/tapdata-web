@@ -659,4 +659,7 @@ export default {
   public_import_count: '{0} items imported',
   public_apply_to_form: 'Apply to Form',
   public_copy_text: 'Copy Text',
+  public_last_capture_time: 'Last Capture Time',
+  public_alarm_date: 'Alarm Time',
+  public_duration: 'Duration',
 }

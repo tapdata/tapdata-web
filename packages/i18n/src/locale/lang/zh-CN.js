@@ -651,4 +651,7 @@ export default {
   public_import_count: '已导入 {0} 条',
   public_apply_to_form: '应用到表单',
   public_copy_text: '复制文本',
+  public_last_capture_time: '最近观测时间',
+  public_alarm_date: '告警时间',
+  public_duration: '时长',
 }
