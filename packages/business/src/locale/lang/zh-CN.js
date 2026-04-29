@@ -784,6 +784,7 @@ export default {
   packages_business_api_server_p95_warn: '当任一API Server 请求耗时P95超过告警阈值时',
   packages_business_api_server_p99_warn: '当任一API Server 请求耗时P99超过告警阈值时',
   packages_business_api_server_error_rate_warn: '当任一API Server 请求错误率超过告警阈值时',
+  packages_business_task_source_no_incremental_event: '源端已开启心跳表，连续 60 秒未接收到增量事件',
   //表详情
   daas_data_discovery_previewdrawer_qingshurumingcheng: '请输入名称',
   daas_data_discovery_previewdrawer_jiedian: '节点',

@@ -1523,6 +1523,7 @@ export default {
   packages_business_api_server_p95_warn: 'When the time taken for any API Server request exceeds the alarm threshold P95',
   packages_business_api_server_p99_warn: 'When the response time P99 of any API Server request exceeds the alarm threshold',
   packages_business_api_server_error_rate_warn: 'When the error rate of any API Server request exceeds the alarm threshold',
+  packages_business_task_source_no_incremental_event: 'The source has enabled the heartbeat table, but no incremental events have been received for 60 consecutive seconds',
   packages_business_use_ssl: 'Use SSL',
   packages_business_certificate_authority: 'CA File',
   packages_business_client_certificate: 'Client Certificate File',

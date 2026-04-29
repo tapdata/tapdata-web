@@ -719,6 +719,7 @@ export default {
   packages_business_api_server_p95_warn: '當任一API Server請求耗時P95超過告警閾值時',
   packages_business_api_server_p99_warn: '當任一API Server請求耗時P99超過告警閾值時',
   packages_business_api_server_error_rate_warn: '當任一API Server請求錯誤率超過告警閾值時',
+  packages_business_task_source_no_incremental_event: '源端已開啟心跳表，連續 60 秒未接收到增量事件',
   packages_business_setting_alarmnotification_dangrenwuuP: 'Agent服务啓動時',
   packages_business_setting_alarmnotification_msshigaojing: ' 時告警',
   packages_business_setting_alarmnotification_lianxu: '連續',
