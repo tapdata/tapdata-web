@@ -1527,7 +1527,7 @@ export default {
   packages_business_api_server_error_rate_warn:
     'When the error rate of any API Server request exceeds the alarm threshold',
   packages_business_task_source_no_incremental_event:
-    'When the source has enabled the heartbeat table but no incremental events have been received for 60 consecutive seconds',
+    'When the source heartbeat table is enabled and no incremental events are received for 60 consecutive seconds',
   packages_business_use_ssl: 'Use SSL',
   packages_business_certificate_authority: 'CA File',
   packages_business_client_certificate: 'Client Certificate File',
