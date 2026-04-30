@@ -220,7 +220,10 @@ const transformData = (row: Connection) => {
   row.database_name = row.config.database || row.config.sid
   row.database_owner = row.config.schema
   row.database_username = row.config.user || row.config.username
-  row.addtionalString = row.config.extParams || row.config.addtionalString
+  row.addtionalString =
+    row.config.extParams ||
+    row.config.additionalString ||
+    row.config.addtionalString
   row.database_datetype_without_timezone = row.config.timezone
   row.sourceFrom = getSourceFrom(row)
   row.loadSchemaTime = row.loadSchemaTime
