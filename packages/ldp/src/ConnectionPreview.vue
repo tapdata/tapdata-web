@@ -71,7 +71,8 @@ export default {
       const data = cloneDeep(this.viewData)
       const { config } = data
       config.username = config.user || config.username
-      config.additionalString = config.extParams || config.addtionalString
+      config.additionalString =
+        config.extParams || config.additionalString || config.addtionalString
 
       if (config.uri && config.isUri !== false) {
         const regResult =
