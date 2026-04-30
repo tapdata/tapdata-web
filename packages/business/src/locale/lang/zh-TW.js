@@ -1550,4 +1550,6 @@ export default {
     '若任務名衝突則替換任務，連接名衝突則重用系統中已有連接。',
   public_connector_beta_tip: '正在測試階段，我們正在不斷優化體驗',
   public_connector_alpha_tip: '正在持續開發中，部分功能可能還在完善',
+  packages_business_column_setting: '顯示設定',
+  packages_business_column_reset: '重置',
 }

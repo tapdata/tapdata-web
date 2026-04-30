@@ -23,6 +23,7 @@
     "juice": "catalog:",
     "lodash": "catalog:",
     "monaco-editor": "catalog:",
+    "motion-v": "^2.2.1",
     "qs": "catalog:",
     "tiny-emitter": "catalog:",
     "vue": "catalog:",

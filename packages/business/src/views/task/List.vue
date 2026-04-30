@@ -1090,6 +1090,8 @@ export default {
       ref="table"
       row-key="id"
       class="data-flow-list"
+      :enable-custom-columns="syncType"
+      :locked-columns="['name', 'operation']"
       :classify="{
         authority: 'SYNC_category_management',
         types: ['dataflow'],
@@ -1366,6 +1368,7 @@ export default {
         </template>
       </el-table-column>
       <el-table-column
+        prop="operation"
         fixed="right"
         :label="$t('public_operation')"
         :width="colWidth.operation"
