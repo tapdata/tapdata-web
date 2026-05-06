@@ -713,8 +713,8 @@ export default {
   packages_business_setting_alarmnotification_api_server_worker_memory_usage_alter:
     '當任一API Server的工作行程記憶體使用量超過通知閾值時',
   packages_business_setting_alarmnotification_dangrenwuuP: 'Agent服务啓動時',
-  packages_business_setting_alarmnotification_dangyinqinglixian: '當引擎離線時',
-  packages_business_setting_alarmnotification_dangyinqinghuifu: '當引擎恢復時',
+  packages_business_setting_alarmnotification_dangyinqinglixian: '當引擎停止時',
+  packages_business_setting_alarmnotification_dangyinqinghuifu: '當引擎啓動時',
   packages_business_setting_alarmnotification_msshigaojing: ' 時告警',
   packages_business_setting_alarmnotification_lianxu: '連續',
   packages_business_setting_alarmnotification_cichugaojinggui:
