@@ -721,8 +721,8 @@ export default {
   packages_business_api_server_error_rate_warn: '當任一API Server請求錯誤率超過告警閾值時',
   packages_business_task_source_no_incremental_event: '當源端已開啟心跳表，連續 60 秒未接收到增量事件時',
   packages_business_setting_alarmnotification_dangrenwuuP: 'Agent服务啓動時',
-  packages_business_setting_alarmnotification_dangyinqinglixian: '當引擎離線時',
-  packages_business_setting_alarmnotification_dangyinqinghuifu: '當引擎恢復時',
+  packages_business_setting_alarmnotification_dangyinqinglixian: '當引擎停止時',
+  packages_business_setting_alarmnotification_dangyinqinghuifu: '當引擎啓動時',
   packages_business_setting_alarmnotification_msshigaojing: ' 時告警',
   packages_business_setting_alarmnotification_lianxu: '連續',
   packages_business_setting_alarmnotification_cichugaojinggui:
