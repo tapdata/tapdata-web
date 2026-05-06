@@ -748,6 +748,8 @@ export default {
     'When the task encounters an error',
   packages_business_setting_alarmnotification_dangrenwustop:
     'When the Agent service stops',
+  packages_business_setting_alarmnotification_dangyinqinglixian: 'When the engine is offline',
+  packages_business_setting_alarmnotification_dangyinqinghuifu: 'When the engine is recovered',
   packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn:
     'When APIServer worker P50 per minute exceeding threshold',
   packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn:
