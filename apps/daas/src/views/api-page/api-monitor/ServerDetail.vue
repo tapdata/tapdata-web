@@ -1194,25 +1194,25 @@ const handleChangeConnectionId = (value: string) => {
       <div class="charts-section">
         <!-- connection pool Usage Trend -->
         <div class="chart-card border">
-          <h3 class="chart-title">
+          <p class="chart-title">
             <!-- <span class="chart-legend-dot chart-legend-blue" /> -->
             {{ t('api_monitor_connection_pool') }}
-          </h3>
-          <div class="flex align-center gap-4">
-            <el-select
-                :model-value="connectionId"
-                :placeholder="t('api_monitor_time_range_placeholder')"
-                style="width: 160px"
-                @update:model-value="handleChangeConnectionId"
-            >
-              <el-option
-                  v-for="option in connectionWithName"
-                  :key="option.id"
-                  :label="option.name"
-                  :value="option.id"
-              />
-            </el-select>
-          </div>
+            <div class="flex align-center gap-4">
+              <el-select
+                  :model-value="connectionId"
+                  :placeholder="t('api_monitor_time_range_placeholder')"
+                  style="width: 160px"
+                  @update:model-value="handleChangeConnectionId"
+              >
+                <el-option
+                    v-for="option in connectionWithName"
+                    :key="option.id"
+                    :label="option.name"
+                    :value="option.id"
+                />
+              </el-select>
+            </div>
+          </p>
           <div class="chart-container">
             <VChart :option="connectionPollChartOption" :autoresize="true" />
           </div>
