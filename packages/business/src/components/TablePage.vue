@@ -554,6 +554,31 @@ export default defineComponent({
           }
         }
       }
+
+      // Build dragColumns respecting saved order
+      buildDragColumns()
+    }
+
+    const buildDragColumns = () => {
+      const cols = extractSlotColumns()
+      if (columnOrder.value.length) {
+        const colMap = new Map(cols.map((c) => [c.key, c]))
+        const ordered: ColumnConfig[] = []
+        for (const key of columnOrder.value) {
+          const col = colMap.get(key)
+          if (col) {
+            ordered.push(col)
+            colMap.delete(key)
+          }
+        }
+        // Append any new columns not in the saved order
+        for (const col of colMap.values()) {
+          ordered.push(col)
+        }
+        dragColumns.value = ordered
+      } else {
+        dragColumns.value = cols
+      }
     }
 
     const _doSaveColumnConfig = () => {
@@ -587,29 +612,6 @@ export default defineComponent({
     }
 
     const saveColumnConfig = debounce(_doSaveColumnConfig, 300)
-
-    const onColumnPopoverShow = () => {
-      // Rebuild dragColumns respecting current order
-      const cols = extractSlotColumns()
-      if (columnOrder.value.length) {
-        const colMap = new Map(cols.map((c) => [c.key, c]))
-        const ordered: ColumnConfig[] = []
-        for (const key of columnOrder.value) {
-          const col = colMap.get(key)
-          if (col) {
-            ordered.push(col)
-            colMap.delete(key)
-          }
-        }
-        // Append any new columns not in the saved order
-        for (const col of colMap.values()) {
-          ordered.push(col)
-        }
-        dragColumns.value = ordered
-      } else {
-        dragColumns.value = cols
-      }
-    }
 
     const toggleColumnVisibility = (col: ColumnConfig) => {
       col.visible = !col.visible
@@ -694,7 +696,6 @@ export default defineComponent({
       toggleColumnVisibility,
       onReorderEnd,
       resetColumns,
-      onColumnPopoverShow,
     }
   },
 })
@@ -771,7 +772,6 @@ export default defineComponent({
                 placement="bottom-end"
                 popper-class="p-0"
                 :show-arrow="false"
-                @show="onColumnPopoverShow"
               >
                 <template #reference>
                   <el-button>
