@@ -229,6 +229,8 @@ const keyMapping = reactive({
   API_SERVER_P95_WARN: t('packages_business_api_server_p95_warn'),
   API_SERVER_P99_WARN: t('packages_business_api_server_p99_warn'),
   API_SERVER_ERROR_RATE_WARN: t('packages_business_api_server_error_rate_warn'),
+  API_SERVER_CONNECTION_POOL_DEFICIENCY_WARN: t('packages_business_api_server_connection_pool_deficiency_warn'),
+  API_SERVER_CONNECTION_POOL_IDLE_WARN: t('packages_business_api_server_connection_pool_idle_warn'),
 })
 const variables = ref([])
 
