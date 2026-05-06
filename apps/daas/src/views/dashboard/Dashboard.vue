@@ -13,7 +13,7 @@ import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import Chart from '@tap/component/src/chart/Chart.vue'
 import CountUp from '@tap/component/src/CountUp.vue'
 import { useI18n } from '@tap/i18n'
-import { calcUnit } from '@tap/shared/src/number'
+import { calcTimeUnit, calcUnit } from '@tap/shared/src/number'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { STATUS_MAP as DASHBOARD_STATUS_MAP } from './const'
@@ -716,7 +716,7 @@ onBeforeUnmount(() => {
                     <span
                       class="dashboard__badge"
                       :class="latencyClass(task.latency ?? 0)"
-                      >{{ formatLatency(task.latency ?? 0) }}</span
+                      >{{ calcTimeUnit(task.latency ?? 0) }}</span
                     >
                   </td>
                   <td class="text-end font-mono">

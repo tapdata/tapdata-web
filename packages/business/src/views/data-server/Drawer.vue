@@ -1986,6 +1986,7 @@ provide('form', form)
                 <ElSelect
                   v-model="item.fieldName"
                   class="mr-4"
+                  filterable
                   :placeholder="$t('public_select_field')"
                 >
                   <ElOption
@@ -2106,6 +2107,7 @@ provide('form', form)
             >
               <ElSelect
                 v-model="item.fieldName"
+                filterable
                 class="flex-1"
                 :placeholder="$t('public_select_field')"
               >
