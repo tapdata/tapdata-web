@@ -1318,7 +1318,9 @@ export default {
               <el-icon class="mr-1">
                 <i-lucide-clock />
               </el-icon>
-              {{ formatTimeUnit(row.delayTime) }}
+              <span class="font-color-light">
+                {{ formatTimeUnit(row.delayTime) }}
+              </span>
             </div>
           </el-tag>
 
