@@ -679,6 +679,8 @@ export default {
     '当任务遇到错误时',
   packages_business_setting_alarmnotification_dangrenwustop: 'Agent服务停止时',
   packages_business_setting_alarmnotification_dangrenwuuP: 'Agent服务启动时',
+  packages_business_setting_alarmnotification_dangyinqinglixian: '当引擎离线时',
+  packages_business_setting_alarmnotification_dangyinqinghuifu: '当引擎恢复时',
   packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn:
     '当APIServer工作进程每分钟请求延时P50超过阈值时',
   packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn:
