@@ -768,9 +768,10 @@ export default defineComponent({
                 v-if="enableCustomColumns"
                 v-model:visible="columnPopoverVisible"
                 trigger="click"
-                :width="280"
+                width="auto"
                 placement="bottom-end"
                 popper-class="p-0"
+                popper-style="min-width: 280px;"
                 :show-arrow="false"
               >
                 <template #reference>
@@ -810,16 +811,14 @@ export default defineComponent({
                         @drag-end="onReorderEnd"
                       >
                         <span
-                          class="custom-column-drag-handle flex align-items-center gap-2"
+                          class="custom-column-drag-handle flex align-items-center gap-2 overflow-hidden"
                         >
                           <el-icon
                             class="custom-column-grip-icon font-color-light w-4 h-4"
                             :size="16"
                             ><i-lucide-grip-vertical
                           /></el-icon>
-                          <span class="custom-column-name">{{
-                            col.label
-                          }}</span>
+                          <span class="text-truncate">{{ col.label }}</span>
                         </span>
                         <el-button
                           text
@@ -1156,13 +1155,6 @@ export default defineComponent({
 
   .custom-column-grip-icon {
     flex-shrink: 0;
-  }
-
-  .custom-column-name {
-    font-size: 14px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 }
 </style>
