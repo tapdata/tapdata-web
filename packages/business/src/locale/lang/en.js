@@ -1759,4 +1759,6 @@ export default {
     'Currently in testing. We are continuously optimizing the experience.',
   public_connector_alpha_tip:
     'Under active development. Some features may still be incomplete.',
+  packages_business_column_setting: 'Display Settings',
+  packages_business_column_reset: 'Reset',
 }

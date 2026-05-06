@@ -1566,4 +1566,6 @@ export default {
     '若任务名冲突则替换任务，连接名冲突则复用系统中已有连接。',
   public_connector_beta_tip: '正在测试阶段，我们正在不断优化体验',
   public_connector_alpha_tip: '正在持续开发中，部分功能可能还在完善',
+  packages_business_column_setting: '显示设置',
+  packages_business_column_reset: '重置',
 }
