@@ -473,9 +473,9 @@ onBeforeUnmount(() => {
         <!-- ═══ KPI Cards (4 columns) ═══ -->
         <div class="grid grid-cols-4 gap-5 mb-6">
           <!-- 1) Active Tasks -->
-          <div class="dashboard__card p-5">
+          <div class="dashboard__card bg-card p-5">
             <div class="flex justify-content-between align-items-start mb-3">
-              <span class="fs-7 text-secondary fw-sub">{{
+              <span class="fs-7 lh-6 text-secondary fw-sub">{{
                 t('dashboard_odh_active_tasks')
               }}</span>
               <div class="p-2 bg-gray-50 rounded-lg mt-n2">
@@ -508,9 +508,9 @@ onBeforeUnmount(() => {
           </div>
 
           <!-- 2) Total Throughput -->
-          <div class="dashboard__card p-5">
+          <div class="dashboard__card bg-card p-5">
             <div class="flex justify-content-between align-items-start mb-3">
-              <span class="fs-7 text-secondary fw-sub">{{
+              <span class="fs-7 lh-6 text-secondary fw-sub">{{
                 t('dashboard_odh_total_throughput')
               }}</span>
               <div class="p-2 bg-gray-50 rounded-lg mt-n2">
@@ -554,9 +554,9 @@ onBeforeUnmount(() => {
           </div>
 
           <!-- 3) Connected DBs -->
-          <div class="dashboard__card p-5">
+          <div class="dashboard__card bg-card p-5">
             <div class="flex justify-content-between align-items-start mb-3">
-              <span class="fs-7 text-secondary fw-sub">{{
+              <span class="fs-7 lh-6 text-secondary fw-sub">{{
                 t('dashboard_odh_connected_dbs')
               }}</span>
               <div class="p-2 bg-gray-50 rounded-lg mt-n2">
@@ -589,10 +589,10 @@ onBeforeUnmount(() => {
           </div>
 
           <!-- 4) API Requests -->
-          <div class="dashboard__card p-5">
+          <div class="dashboard__card bg-card p-5">
             <div class="flex justify-content-between align-items-start mb-3">
               <div class="flex align-items-center gap-2">
-                <span class="fs-7 text-secondary fw-sub">{{
+                <span class="fs-7 lh-6 text-secondary fw-sub">{{
                   t('dashboard_odh_api_requests')
                 }}</span>
                 <el-segmented
@@ -602,8 +602,8 @@ onBeforeUnmount(() => {
                   @change="onApiTimeRangeChange"
                 />
               </div>
-              <div class="p-2 bg-gray-50 rounded-lg">
-                <el-icon class="text-purple-500 align-top mt-n2" size="20">
+              <div class="p-2 bg-gray-50 rounded-lg mt-n2">
+                <el-icon class="text-purple-500 align-top" size="20">
                   <i-lucide-server />
                 </el-icon>
               </div>
@@ -629,9 +629,9 @@ onBeforeUnmount(() => {
         </div>
 
         <!-- ═══ System Trends ═══ -->
-        <div class="dashboard__card p-5 mb-6">
+        <div class="dashboard__card bg-card p-5 mb-6">
           <div class="flex justify-content-between align-items-center mb-5">
-            <h2 class="fs-5 font-semibold m-0">
+            <h2 class="fs-5 lh-6 font-semibold m-0">
               {{ t('dashboard_odh_system_trends') }}
             </h2>
             <el-segmented
@@ -672,7 +672,7 @@ onBeforeUnmount(() => {
         </div>
 
         <!-- ═══ Top Tasks ═══ -->
-        <div class="dashboard__card p-5 mb-6">
+        <div class="dashboard__card bg-card p-5 mb-6">
           <div class="flex justify-content-between align-items-center mb-4">
             <div class="flex align-items-center gap-3">
               <h2 class="fs-5 font-semibold m-0">
@@ -734,7 +734,7 @@ onBeforeUnmount(() => {
         </div>
 
         <!-- ═══ Agent Cluster Status ═══ -->
-        <div class="dashboard__card p-5">
+        <div class="dashboard__card bg-card p-5">
           <div class="flex justify-content-between align-items-center mb-4">
             <h2 class="fs-5 font-semibold m-0">
               {{ t('dashboard_odh_agent_cluster') }}
@@ -859,9 +859,8 @@ onBeforeUnmount(() => {
 
   // ── Cards ──────────────────────────────────────────────
   &__card {
-    background-color: #fff;
     border-radius: 0.75rem;
-    border: 1px solid #f1f5f9;
+    // border: 1px solid #f1f5f9;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     transition: box-shadow 0.2s ease;
 
@@ -961,22 +960,22 @@ onBeforeUnmount(() => {
       padding: 0.625rem 1rem;
       font-size: 0.75rem;
       font-weight: 600;
-      color: #64748b;
+      color: var(--el-text-color-secondary);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: var(--el-border);
       white-space: nowrap;
     }
 
     td {
       padding: 0.75rem 1rem;
       font-size: 0.8125rem;
-      border-bottom: 1px solid #f8fafc;
+      border-bottom: var(--el-border);
       white-space: nowrap;
     }
 
     tbody tr:hover {
-      background-color: #f8fafc;
+      background-color: var(--el-fill-color-light);
     }
   }
 
