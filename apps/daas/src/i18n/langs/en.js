@@ -472,11 +472,11 @@ export default {
   connection_reload_schema_confirm_msg:
     'If there are too many schemas in this library, it may take a long time. Make sure to refresh the schema of the data source',
   connection_reload_schema_fail: 'Schema load failed',
-  apiaudit_time_line:"Time Line",
-  apiaudit_req_start_point: "Request start",
-  apiaudit_req_end_point: "Request to end",
-  apiaudit_db_start_point: "Database response starts",
-  apiaudit_db_end_point: "Database response completed",
+  apiaudit_time_line: 'Time Line',
+  apiaudit_req_start_point: 'Request start',
+  apiaudit_req_end_point: 'Request to end',
+  apiaudit_db_start_point: 'Database response starts',
+  apiaudit_db_end_point: 'Database response completed',
   //Dag
   //Task edit缓存节点提示
   task_list_status_all: 'All status',
