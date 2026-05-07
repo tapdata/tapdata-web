@@ -49,9 +49,9 @@ const topTaskLimitOptions = computed(() => [
 // Cluster / Agent data
 interface AgentNode extends ClusterState {
   processId?: string
+  runningTaskNum?: { migrate?: number; sync?: number }
 }
 const agentNodes = ref<AgentNode[]>([])
-const agentRunningTask = ref<Record<string, any>>({})
 
 // ── KPI: Active Tasks ──────────────────────────────────
 const activeTasks = computed(() => dashboardData.value?.summary?.activeTasks)
@@ -261,11 +261,13 @@ function usageBarColor(pct: number) {
   return '#22c55e'
 }
 
-function getRunningTaskCount(node: AgentNode): number {
-  if (!node.processId) return 0
-  const info = agentRunningTask.value[node.processId]
-  if (!info) return 0
-  return (info.migrate || 0) + (info.sync || 0)
+function navigateToTaskList(node: AgentNode, syncType: 'migrate' | 'sync') {
+  if (!node.processId) return
+  const routeName = syncType === 'migrate' ? 'migrateList' : 'dataflowList'
+  router.push({
+    name: routeName,
+    query: { agentId: node.processId, status: 'running' },
+  })
 }
 
 function getStatusLabel(type: string) {
@@ -330,14 +332,15 @@ async function fetchClusterData() {
       }
 
       for (const node of items) {
-        if (node.processId && metricMap[node.processId]) {
-          node.metricValues = metricMap[node.processId]
-        }
-      }
-
-      if (processData) {
-        for (const id of Object.keys(processData)) {
-          agentRunningTask.value[id] = (processData as any)[id].runningTaskNum
+        if (node.processId) {
+          if (metricMap[node.processId]) {
+            node.metricValues = metricMap[node.processId]
+          }
+          if (processData && (processData as any)[node.processId]) {
+            node.runningTaskNum = (processData as any)[
+              node.processId
+            ].runningTaskNum
+          }
         }
       }
     } catch {
@@ -757,7 +760,10 @@ onBeforeUnmount(() => {
                     {{ t('dashboard_odh_memory_usage') }}
                   </th>
                   <th class="text-end">
-                    {{ t('dashboard_odh_running_tasks') }}
+                    {{ t('public_task_type_migrate') }}
+                  </th>
+                  <th class="text-end">
+                    {{ t('public_task_type_sync') }}
                   </th>
                 </tr>
               </thead>
@@ -832,7 +838,37 @@ onBeforeUnmount(() => {
                     </div>
                   </td>
                   <td class="text-end font-mono font-semibold">
-                    {{ getRunningTaskCount(node) }}
+                    <el-button
+                      v-if="
+                        node.runningTaskNum?.migrate &&
+                        node.runningTaskNum?.migrate > 0
+                      "
+                      type="primary"
+                      plain
+                      round
+                      size="small"
+                      @click.stop="navigateToTaskList(node, 'migrate')"
+                    >
+                      <span class="font-mono font-semibold">
+                        {{ node.runningTaskNum?.migrate || 0 }}
+                      </span>
+                    </el-button>
+                    <span v-else>-</span>
+                  </td>
+                  <td class="text-end font-mono font-semibold">
+                    <el-button
+                      v-if="node.runningTaskNum?.sync > 0"
+                      type="primary"
+                      plain
+                      round
+                      size="small"
+                      @click.stop="navigateToTaskList(node, 'sync')"
+                    >
+                      <span class="font-mono font-semibold">
+                        {{ node.runningTaskNum?.sync || 0 }}
+                      </span>
+                    </el-button>
+                    <span v-else>-</span>
                   </td>
                 </tr>
               </tbody>
@@ -963,14 +999,14 @@ onBeforeUnmount(() => {
       color: var(--el-text-color-secondary);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      border-bottom: var(--el-border);
+      border-bottom: 1px solid var(--el-border-color-lighter);
       white-space: nowrap;
     }
 
     td {
       padding: 0.75rem 1rem;
       font-size: 0.8125rem;
-      border-bottom: var(--el-border);
+      border-bottom: 1px solid var(--el-border-color-lighter);
       white-space: nowrap;
     }
 
@@ -1009,7 +1045,7 @@ onBeforeUnmount(() => {
   &__usage-bar {
     flex: 1;
     height: 6px;
-    background-color: #f1f5f9;
+    background-color: var(--el-fill-color);
     border-radius: 3px;
     overflow: hidden;
     min-width: 60px;

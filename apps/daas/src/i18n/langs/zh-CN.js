@@ -449,11 +449,11 @@ export default {
   apiaudit_success: '成功',
   apiaudit_placeholder: '请输入名称/ID',
   apiaudit_client_name_placeholder: '请输入客户端名称',
-  apiaudit_time_line:"时间线",
-  apiaudit_req_start_point: "请求开始",
-  apiaudit_req_end_point: "请求结束",
-  apiaudit_db_start_point: "数据库响应开始",
-  apiaudit_db_end_point: "数据库响应结束",
+  apiaudit_time_line: '时间线',
+  apiaudit_req_start_point: '请求开始',
+  apiaudit_req_end_point: '请求结束',
+  apiaudit_db_start_point: '数据库响应开始',
+  apiaudit_db_end_point: '数据库响应结束',
 
   // 连接
   connection_list_form_database_type: '数据库类型',
