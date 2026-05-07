@@ -2,8 +2,8 @@
 import {
   addTables,
   exclusionTables,
+  getConnectionIdsByTaskId,
   getExcludeTableInfos,
-  getLogcollectorByTaskId,
   getTableInfos,
 } from '@tap/api/src/core/logcollector'
 import { taskConsoleRelations } from '@tap/api/src/core/task'
@@ -137,7 +137,7 @@ export default {
 
   async created() {
     this.currentTab = this.tabItems[0].value
-    this.connectionsList = await getLogcollectorByTaskId(this.taskId)
+    this.connectionsList = (await getConnectionIdsByTaskId(this.taskId)) || []
     // this.selectedConnectionId = this.connectionsList[0]?.id
 
     //定时轮询
