@@ -1203,6 +1203,7 @@ const handleChangeConnectionId = (value: string) => {
                   :placeholder="t('api_monitor_time_range_placeholder')"
                   style="width: 160px"
                   @update:model-value="handleChangeConnectionId"
+                  @change="refreshData"
               >
                 <el-option
                     v-for="option in connectionWithName"
