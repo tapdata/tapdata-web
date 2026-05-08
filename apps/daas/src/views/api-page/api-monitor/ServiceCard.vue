@@ -136,6 +136,12 @@ const handleViewDetails = () => {
           </div>
           <div v-else class="stat-value">0</div>
         </div>
+        <div class="stat-item">
+          <div class="stat-label">
+            {{ $t('api_monitor_connection_pool_max') }}
+          </div>
+          <div class="stat-value">{{ data.poolMaxConnections ?? '--' }}</div>
+        </div>
       </div>
       <div class="stat-group">
         <div class="stat-item">
@@ -149,6 +155,12 @@ const handleViewDetails = () => {
             {{ $t('api_monitor_p99_response_time') }}
           </div>
           <div class="stat-value">{{ data.p99 ?? '--' }}</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">
+            {{ $t('api_monitor_connection_pool_used') }}
+          </div>
+          <div class="stat-value">{{ data.poolUsedConnections ?? '--' }}</div>
         </div>
       </div>
     </div>

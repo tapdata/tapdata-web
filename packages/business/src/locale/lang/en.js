@@ -1763,4 +1763,6 @@ export default {
     'Under active development. Some features may still be incomplete.',
   packages_business_column_setting: 'Display Settings',
   packages_business_column_reset: 'Reset',
+  packages_business_api_server_connection_pool_deficiency_warn: 'When the number of connections in any API Server connection pool exceeds the alarm threshold',
+  packages_business_api_server_connection_pool_idle_warn: 'When the number of connections in the connection pool of any API Server falls below the alarm threshold',
 }

@@ -1555,4 +1555,6 @@ export default {
   public_connector_alpha_tip: '正在持續開發中，部分功能可能還在完善',
   packages_business_column_setting: '顯示設定',
   packages_business_column_reset: '重置',
+  packages_business_api_server_connection_pool_deficiency_warn: '當任一API Server 連接池連接數超過告警閾值時',
+  packages_business_api_server_connection_pool_idle_warn: '當任一API Server 連接池連接數低於告警閾值時',
 }

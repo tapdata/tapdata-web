@@ -238,6 +238,8 @@ const keyMapping = reactive({
   TASK_SOURCE_NO_INCREMENTAL_EVENT: t(
     'packages_business_task_source_no_incremental_event',
   ),
+  API_SERVER_CONNECTION_POOL_DEFICIENCY_WARN: t('packages_business_api_server_connection_pool_deficiency_warn'),
+  API_SERVER_CONNECTION_POOL_IDLE_WARN: t('packages_business_api_server_connection_pool_idle_warn'),
 })
 const variables = ref([])
 
