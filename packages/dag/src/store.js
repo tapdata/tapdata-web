@@ -85,6 +85,7 @@ const getState = () => ({
   pdkSchemaFreeMap: {},
   pdkDoubleActiveMap: {},
   pdkCapabilitiesMap: {},
+  pdkIdMap: {},
   taskSaving: false,
   materializedViewVisible: false,
   schemaRefreshing: false,
@@ -1016,6 +1017,10 @@ const mutations = {
 
   setPdkCapabilitiesMap(state, map) {
     state.pdkCapabilitiesMap = map
+  },
+
+  setPdkIdMap(state, map) {
+    state.pdkIdMap = map
   },
 
   toggleTaskSaving(state, flag = !state.taskSaving) {

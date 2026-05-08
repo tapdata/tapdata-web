@@ -174,6 +174,7 @@ export default {
       'setPdkDoubleActiveMap',
       'setPdkCapabilitiesMap',
       'setMaterializedViewVisible',
+      'setPdkIdMap',
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag', 'loadCustomNode']),
@@ -227,6 +228,15 @@ export default {
         node.hiddenMap = {
           setting: this.loadNodeHiddenSetting(node),
           totalData: this.loadNodeHiddenTotalData(node),
+        }
+
+        if (
+          this.dataflow.syncType === 'shareCache' &&
+          node.databaseType &&
+          !node.attrs.pdkHash
+        ) {
+          node.attrs.pdkHash =
+            this.$store.state.dataflow.pdkIdMap[node.databaseType]
         }
         this.addNode(node)
       })
@@ -2882,30 +2892,36 @@ export default {
       const doubleActiveMap = {}
       const propertiesMap = {}
       const capabilitiesMap = {}
+      const pdkIdMap = {}
 
-      databaseItems.forEach(({ properties, pdkHash, tags, capabilities }) => {
-        const nodeProperties = properties?.node
+      databaseItems.forEach(
+        ({ properties, pdkHash, pdkId, tags, capabilities }) => {
+          const nodeProperties = properties?.node
 
-        if (nodeProperties) {
-          propertiesMap[pdkHash] = nodeProperties
-        }
-        if (tags?.includes('schema-free')) {
-          tagsMap[pdkHash] = true
-        }
-        if (tags?.includes('doubleActive')) {
-          doubleActiveMap[pdkHash] = true
-        }
-        if (capabilities?.length) {
-          capabilitiesMap[pdkHash] = capabilities.reduce((map, item) => {
-            map[item.id] = item
-            return map
-          }, {})
-        }
-      })
+          pdkIdMap[pdkId] = pdkHash
+
+          if (nodeProperties) {
+            propertiesMap[pdkHash] = nodeProperties
+          }
+          if (tags?.includes('schema-free')) {
+            tagsMap[pdkHash] = true
+          }
+          if (tags?.includes('doubleActive')) {
+            doubleActiveMap[pdkHash] = true
+          }
+          if (capabilities?.length) {
+            capabilitiesMap[pdkHash] = capabilities.reduce((map, item) => {
+              map[item.id] = item
+              return map
+            }, {})
+          }
+        },
+      )
       this.setPdkPropertiesMap(propertiesMap)
       this.setPdkSchemaFreeMap(tagsMap)
       this.setPdkDoubleActiveMap(doubleActiveMap)
       this.setPdkCapabilitiesMap(capabilitiesMap)
+      this.setPdkIdMap(pdkIdMap)
     },
 
     getIsDataflow() {
