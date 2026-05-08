@@ -65,7 +65,8 @@ export interface ServerItem {
   queryFrom: number
   queryEnd: number
   granularity: number
-  serverPingStatus: string
+  status: string //启动器服务状态
+  serviceStatus: string //api server进程状态
   serverPingTime: number
   serverName: string
   serverId: string
