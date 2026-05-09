@@ -103,6 +103,7 @@ async function getData(op: Record<string, any> = {}) {
           'name',
           'indices',
           'constraints',
+          'ancestorsName',
         ],
         page: 1,
         pageSize: 20,
@@ -270,11 +271,11 @@ function handleUpdateRules(val: any[] = []) {
 }
 
 function handleUpdateFields(
-  updater: (fields: any[], qualifiedName: string) => void,
+  updater: (fields: any[], ancestorsName: string) => void,
 ) {
   navList.value.forEach((item: any) => {
     if (item.fields?.length) {
-      updater(item.fields, item.qualified_name)
+      updater(item.fields, item.ancestorsName)
     }
   })
 }
