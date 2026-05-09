@@ -461,6 +461,31 @@ export default {
       }
       clusterApi.get(params).then(data => {
         let items = data?.items || []
+        items.map(item => {
+          const { management, engine, apiServer } = item
+          const isStopped = item.status !== 'running'
+
+          // 停止了上报状态后，因为不再上报状态了，所以各个服务的状态就不再更新了。
+          if (isStopped) {
+            if (management) {
+              management.status = 'stopped'
+              management.serviceStatus = 'stopped'
+            }
+            if (engine) {
+              engine.status = 'stopped'
+              engine.serviceStatus = 'stopped'
+              engine.netStat = []
+              engine.netStatTotals = 0
+            }
+            if (apiServer) {
+              apiServer.status = 'stopped'
+              apiServer.serviceStatus = 'stopped'
+            }
+          }
+
+          return item
+        })
+
         this.serverProcess.tableData = items
         this.serverTable = items
       })
