@@ -3,6 +3,7 @@ import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { computed } from 'vue'
 import MiniChart from './MiniChart.vue'
 import type { ServerItem } from '@tap/api/src/core/monitor-server'
+import i18n from "@/i18n";
 
 interface ServiceCardProps {
   data: ServerItem
@@ -15,10 +16,10 @@ const emit = defineEmits<{
 }>()
 
 const configs = {
-  running: { type: 'success' as const, text: 'Running' },
-  starting: { type: 'primary' as const, text: 'Starting' },
-  stopped: { type: 'danger' as const, text: 'Stopped' },
-  deploy_fail: { type: 'danger' as const, text: 'Deploy Fail' },
+  running: { type: 'success' as const, text: i18n.t('cluster_running') },
+  starting: { type: 'primary' as const, text: i18n.t('cluster_starting') },
+  stopped: { type: 'danger' as const, text: i18n.t('cluster_stopped') },
+  deploy_fail: { type: 'danger' as const, text: i18n.t('cluster_deploy_fail') },
 }
 
 const statusConfig = computed(() => {
