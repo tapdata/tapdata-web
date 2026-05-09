@@ -22,6 +22,7 @@ import {
 import { getConnectors, getSupervisor } from '@tap/api/src/core/proxy'
 import {
   fetchWorkers,
+  getProcessInfo,
   queryAllBindWorker,
   unbindByProcessId,
 } from '@tap/api/src/core/workers'
@@ -78,10 +79,6 @@ interface DragState {
 
 interface SearchParams {
   keyword: string
-}
-
-interface ApiResponse<T> {
-  items: T[]
 }
 
 interface ClusterData {
@@ -144,33 +141,21 @@ const childRules = ref()
 const tree = ref()
 const engineTable = ref()
 const tagForm = ref()
-const editAgentForm = ref()
 
 // State
 const hideDownload = ref(import.meta.env.VUE_APP_HIDE_CLUSTER_DOWNLOAD)
 const waterfallData = ref([])
 const currentData = ref<ClusterData | null>(null)
 const dialogForm = ref(false)
-const activeIndex = ref('1')
-const serveStatus = ref('')
-const isStop = ref(false)
-const engineState = ref('')
-const managementState = ref('')
-const apiServerState = ref('')
 const editItem = ref({})
 const timer = ref(null)
-const downLoadAgetntdialog = ref(false)
 const editAgentDialog = ref(false)
-const deleteDialogVisible = ref(false)
-const downLoadNum = ref(0)
 const version = ref(null)
 const ips = ref([])
 const custIP = ref('')
 const custId = ref('')
 const agentName = ref('')
 const currentNde = ref({})
-const delData = ref('')
-const processIdData = ref([])
 const searchParams = ref<SearchParams>({
   keyword: '',
 })
@@ -562,6 +547,25 @@ const getDataApi = async (noFilter?: boolean) => {
       }, 0)
     }
   }
+  // Fetch running task counts
+  if (processId.length > 0) {
+    try {
+      const processData = await getProcessInfo(processId)
+      if (processData) {
+        for (const item of clusterData) {
+          const pid = item.systemInfo?.process_id
+          if (pid && (processData as any)[pid]) {
+            ;(item as any).runningTaskNum = (processData as any)[
+              pid
+            ].runningTaskNum
+          }
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+
   waterfallData.value = clusterData
 
   apiServerData.value = _apiServerData
@@ -624,6 +628,16 @@ const editNameRest = () => {
 
 const getStatus = (type: string) => {
   return STATUS_MAP[type] || '-'
+}
+
+const navigateToTaskList = (item: any, syncType: 'migrate' | 'sync') => {
+  const processId = item.systemInfo?.process_id
+  if (!processId) return
+  const routeName = syncType === 'migrate' ? 'migrateList' : 'dataflowList'
+  router.push({
+    name: routeName,
+    query: { agentId: processId, status: 'running' },
+  })
 }
 
 const openNetStatDialog = (row: any) => {
@@ -1488,12 +1502,38 @@ const onUpdateLicenseSuccess = () => {
                       <h2 class="name fs-6">
                         {{ item.agentName || item.systemInfo.hostname }}
                       </h2>
-                      <div class="uuid fs-8 my-1">
+                      <div class="uuid fs-8 my-2">
                         {{ item.systemInfo.uuid }}
                       </div>
-                      <span class="ip">{{
-                        item.custIP ? item.custIP : item.systemInfo.ip
-                      }}</span>
+                      <div class="flex gap-2">
+                        <span class="ip">{{
+                          item.custIP ? item.custIP : item.systemInfo.ip
+                        }}</span>
+                        <el-tag
+                          v-if="item.runningTaskNum?.migrate > 0"
+                          type="primary"
+                          size="small"
+                          class="cursor-pointer"
+                          @click.stop="navigateToTaskList(item, 'migrate')"
+                        >
+                          {{ $t('public_task_type_migrate')
+                          }}<span class="ml-1 fw-bold">{{
+                            item.runningTaskNum?.migrate || 0
+                          }}</span>
+                        </el-tag>
+                        <el-tag
+                          v-if="item.runningTaskNum?.sync > 0"
+                          type="primary"
+                          size="small"
+                          class="cursor-pointer"
+                          @click.stop="navigateToTaskList(item, 'sync')"
+                        >
+                          {{ $t('public_task_type_sync')
+                          }}<span class="ml-1 fw-bold">{{
+                            item.runningTaskNum?.sync || 0
+                          }}</span>
+                        </el-tag>
+                      </div>
                     </div>
                   </div>
                   <div
@@ -2133,7 +2173,6 @@ const onUpdateLicenseSuccess = () => {
         @close="editAgentDialog = false"
       >
         <el-form
-          ref="editAgentForm"
           label-width="100px"
           class="edit-agent-form"
           label-position="top"
@@ -2174,11 +2213,9 @@ const onUpdateLicenseSuccess = () => {
             <ElButton @click="editAgentDialog = false">{{
               $t('public_button_cancel')
             }}</ElButton>
-            <ElButton
-              type="primary"
-              @click="submitEditAgent('editAgentForm')"
-              >{{ $t('public_button_confirm') }}</ElButton
-            >
+            <ElButton type="primary" @click="submitEditAgent">{{
+              $t('public_button_confirm')
+            }}</ElButton>
           </div>
         </template>
       </el-dialog>
