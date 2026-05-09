@@ -879,6 +879,8 @@ export default {
   cluster_update: 'Update',
   cluster_running: 'running',
   cluster_stopped: 'stopped',
+  cluster_starting: 'starting',
+  cluster_deploy_fail: 'deploy failed',
   cluster_sync_gover: 'Flow Engine',
   cluster_manage_sys: 'Backend Admin',
   cluster_add_server_mon: 'Add service monitoring',

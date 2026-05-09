@@ -65,6 +65,7 @@
 }
 .status-complete,
 .status-finish,
+.status-starting,
 .status-finished {
   color: #008b58;
   background-color: #b4edd8;
@@ -72,6 +73,7 @@
 .status-renew_failed,
 .status-error,
 .status-rejected,
+.status-deploy_fail,
 .status-stopped {
   color: #d44d4d;
   background-color: #ffecec;

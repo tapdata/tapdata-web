@@ -824,6 +824,8 @@ export default {
   cluster_update: '更新',
   cluster_running: '運行中',
   cluster_stopped: '已停止',
+  cluster_starting: '啟動中',
+  cluster_deploy_fail: '部署失敗',
   cluster_sync_gover: '同步治理',
   cluster_manage_sys: '管理後台',
   instance_details_shujuyuanziyuan: '資料源資源下載',
