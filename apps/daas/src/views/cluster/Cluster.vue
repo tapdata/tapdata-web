@@ -1389,7 +1389,7 @@ const onUpdateLicenseSuccess = () => {
             <div class="flex-1 border rounded-xl p-4">
               <div class="flex align-center justify-content-between mb-3">
                 <span class="section-title font-color-dark fs-6 fw-sub"
-                  >API server</span
+                  >API Server</span
                 >
               </div>
               <ElTable :data="apiServerData">
@@ -1749,7 +1749,7 @@ const onUpdateLicenseSuccess = () => {
                   </el-row>
                   <el-row :gutter="16" class="data-list">
                     <el-col :span="6">
-                      <span class="txt fw-normal">API server</span>
+                      <span class="txt fw-normal">API Server</span>
                     </el-col>
                     <el-col :span="4">
                       <span
@@ -1763,7 +1763,7 @@ const onUpdateLicenseSuccess = () => {
                           `status-${item.apiServer.serviceStatus}`,
                           'status',
                         ]"
-                        >{{ getStatus(item.apiServer.status) }}</span
+                        >{{ getStatus(item.apiServer.serviceStatus) }}</span
                       >
                     </el-col>
                     <el-col :span="10">
