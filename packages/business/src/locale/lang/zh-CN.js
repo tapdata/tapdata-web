@@ -1570,6 +1570,6 @@ export default {
   public_connector_alpha_tip: '正在持续开发中，部分功能可能还在完善',
   packages_business_column_setting: '显示设置',
   packages_business_column_reset: '重置',
-  packages_business_api_server_connection_pool_deficiency_warn: '当任一API Server 连接池连接数超过告警阈值时',
+  packages_business_api_server_connection_pool_deficiency_warn: '当任一API Server 连接池资源紧张触发告警阈值时',
   packages_business_api_server_connection_pool_idle_warn: '当任一API Server 连接池连接数低于告警阈值时',
 }
