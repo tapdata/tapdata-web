@@ -1554,6 +1554,6 @@ export default {
     '若任务名冲突则替换任务，连接名冲突则复用系统中已有连接。',
   public_connector_beta_tip: '正在测试阶段，我们正在不断优化体验',
   public_connector_alpha_tip: '正在持续开发中，部分功能可能还在完善',
-  packages_business_api_server_connection_pool_deficiency_warn: '当任一API Server 连接池连接数超过告警阈值时',
+  packages_business_api_server_connection_pool_deficiency_warn: '当任一API Server 连接池资源紧张触发告警阈值时',
   packages_business_api_server_connection_pool_idle_warn: '当任一API Server 连接池连接数低于告警阈值时',
 }
