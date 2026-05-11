@@ -47,11 +47,14 @@ const props = withDefaults(
 const emit = defineEmits<{
   'update-rules': [data: any[]]
   'open-update-rules': []
-  'update-fields': [updater: (fields: any[]) => void]
+  updateFields: [updater: (fields: any[]) => void, tableName?: string]
 }>()
 
 const dataflowStore = useDataflowStore()
-const activeNode = computed(() => dataflowStore.selectedNode)
+const activeNode = computed<any>(() => dataflowStore.selectedNode)
+const isDatabaseNode = computed<boolean>(
+  () => activeNode.value.type === 'database',
+)
 
 const tableRef = useTemplateRef<InstanceType<typeof VTable>>('table')
 
@@ -258,7 +261,7 @@ function handleUpdate(data?: any[]) {
 }
 
 function submitEdit() {
-  const { qualified_name, nodeId } = props.data
+  const { nodeId, ancestorsName } = props.data
   const {
     changeRuleId,
     fieldName,
@@ -315,7 +318,7 @@ function submitEdit() {
     const _originType = originType.value
     const _coefficient = coefficient
     const _ruleId = ruleId
-    emit('update-fields', (fields: any[]) => {
+    const updater = (fields: any[]) => {
       fields.forEach((t: any) => {
         const fieldOriginType = t.data_type?.split('(')[0]
         if (fieldOriginType === _originType && t.dataTypeTemp) {
@@ -328,7 +331,10 @@ function submitEdit() {
           t.changeRuleId = _ruleId
         }
       })
-    })
+    }
+    isDatabaseNode.value
+      ? emit('updateFields', updater)
+      : updater(props.data.fields)
     handleUpdate()
     ElMessage.success(i18n.t('public_message_operation_success'))
     editDataTypeVisible.value = false
@@ -376,7 +382,9 @@ function submitEdit() {
         const op = {
           id: uuid(),
           scope: useToAll ? 'Node' : 'Field',
-          namespace: useToAll ? [nodeId] : [nodeId, qualified_name, fieldName],
+          namespace: useToAll
+            ? [nodeId]
+            : [nodeId, isDatabaseNode.value ? ancestorsName : null, fieldName],
           type: 'DataType',
           accept: dataTypeTemp,
           result: { dataType: newDataType, tapType, selectDataType },
@@ -391,19 +399,32 @@ function submitEdit() {
       const _fieldName = fieldName
       const _newDataType = newDataType
       const _ruleId = ruleId
-      emit('update-fields', (fields: any[], qualifiedName: string) => {
+      const updater = (fields: any[], tableName?: string) => {
         fields.forEach((t: any) => {
           if (
             (_useToAll &&
               t.data_type === t.dataTypeTemp &&
               t.dataTypeTemp === _dataTypeTemp) ||
-            (t.field_name === _fieldName && qualifiedName === qualified_name)
+            (t.field_name === _fieldName && tableName === ancestorsName)
           ) {
             t.data_type = _newDataType
             t.changeRuleId = _ruleId
           }
         })
-      })
+      }
+      isDatabaseNode.value
+        ? emit('updateFields', updater)
+        : props.data.fields.forEach((t: any) => {
+            if (
+              (_useToAll &&
+                t.data_type === t.dataTypeTemp &&
+                t.dataTypeTemp === _dataTypeTemp) ||
+              t.field_name === _fieldName
+            ) {
+              t.data_type = _newDataType
+              t.changeRuleId = _ruleId
+            }
+          })
       handleUpdate()
       editBtnLoading.value = false
       ElMessage.success(i18n.t('public_message_operation_success'))
@@ -463,6 +484,13 @@ function getRevokeDisabled(row: any) {
 }
 
 function getFieldScope(row: any = {}) {
+  console.log('getFieldScope')
+  console.log(
+    row.changeRuleId,
+    props.fieldChangeRules,
+    props.fieldChangeRules.find((t) => t.id === row.changeRuleId)?.scope,
+  )
+
   return props.fieldChangeRules.find((t) => t.id === row.changeRuleId)?.scope
 }
 

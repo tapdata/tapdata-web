@@ -742,9 +742,9 @@ onBeforeUnmount(() => {
             <h2 class="fs-5 font-semibold m-0">
               {{ t('dashboard_odh_agent_cluster') }}
             </h2>
-            <span class="dashboard__nodes-badge">{{
-              t('dashboard_odh_nodes_total', [agentNodes.length])
-            }}</span>
+            <el-tag type="primary" size="small" round>
+              {{ t('dashboard_odh_nodes_total', [agentNodes.length]) }}
+            </el-tag>
           </div>
 
           <div v-if="agentNodes.length" class="dashboard__table-wrap">

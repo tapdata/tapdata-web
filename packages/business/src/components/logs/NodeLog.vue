@@ -87,7 +87,7 @@ const colorMap: Record<string, string> = {
   FATAL: 'color-danger',
   DEBUG: 'color-disable',
 }
-const newPageObj = reactive({ page: 0, pageSize: 50, total: 0 })
+const newPageObj = reactive({ page: 0, pageSize: 100, total: 0 })
 const oldPageObj = reactive({ page: 0, pageSize: 50, total: 0 })
 const isScrollBottom = ref(false)
 const form = reactive({
@@ -199,7 +199,9 @@ const isNoMore = computed(() => {
 
 const isEnterTimer = computed(() => {
   return (
-    quotaTimeType.value !== 'custom' && props.dataflow?.status === 'running'
+    quotaTimeType.value !== 'custom' &&
+    (props.dataflow?.status === 'running' ||
+      props.dataflow?.status === 'starting')
   )
 })
 
@@ -254,7 +256,7 @@ function resetOldPage() {
 }
 
 function resetNewPage() {
-  Object.assign(newPageObj, { page: 0, pageSize: 20, total: 0 })
+  Object.assign(newPageObj, { page: 0, pageSize: 100, total: 0 })
 }
 
 function clearTimer() {
@@ -300,7 +302,7 @@ function scrollFnc(ev: Event) {
     loadOld()
   }
   isScrollBottom.value =
-    target.scrollHeight - target.scrollTop <= target.clientHeight
+    target.scrollHeight - target.scrollTop - target.clientHeight < 30
 }
 
 function loadOld(callback?: () => void) {
@@ -347,36 +349,42 @@ function loadOld(callback?: () => void) {
     })
 }
 
-function loadNew() {
-  let filter: any
-  const { page, pageSize, total } = newPageObj
-  if (page === 0 || page * pageSize > total) {
+let loadNewLock = false
+
+async function loadNew() {
+  if (loadNewLock) return
+  loadNewLock = true
+
+  try {
     resetNewPage()
-    filter = getNewFilter()
-    filter.page++
-  } else {
-    newFilter.value.page++
-    filter = Object.assign({}, newFilter.value, {
-      page: newFilter.value.page,
-    })
-  }
-  if (!filter.start || !filter.end) {
-    return
-  }
+    const filter = getNewFilter()
+    filter.page = 1
 
-  queryMonitoringLogs(filter).then((data: any = {}) => {
-    const rows = getFormatRow(data.items)
-    newPageObj.total = data.total || 0
+    if (!filter.start || !filter.end) return
 
-    if (!rows.length) {
-      resetNewPage()
-      return
+    // 第一次请求，获取 total
+    const d: any = await queryMonitoringLogs(filter)
+    const total = firstData.total || 0
+    let allRows = getFormatRow(firstData.items)
+
+    if (!allRows.length) return
+
+    // 如果还有更多页，并行请求剩余所有页（上限10页防止极端情况）
+    if (total > filter.pageSize) {
+      const totalPages = Math.min(Math.ceil(total / filter.pageSize), 10)
+      const promises = []
+      for (let p = 2; p <= totalPages; p++) {
+        promises.push(queryMonitoringLogs({ ...filter, page: p }))
+      }
+      const results = await Promise.all(promises)
+      for (const data of results) {
+        allRows = allRows.concat(getFormatRow((data as any).items))
+      }
     }
 
-    const mergedList = uniqBy([...list.value, ...rows], 'id')
+    const mergedList = uniqBy([...list.value, ...allRows], 'id')
 
     if (mergedList.length !== list.value.length) {
-      newPageObj.page = filter.page
       list.value = mergedList
 
       if (isScrollBottom.value) {
@@ -386,10 +394,10 @@ function loadNew() {
       if (isEnterTimer.value) {
         extraEnterCount.value = 0
       }
-    } else {
-      resetNewPage()
     }
-  })
+  } finally {
+    loadNewLock = false
+  }
 }
 
 function getFormatRow(rowData: any[] = []) {
@@ -931,9 +939,21 @@ onUnmounted(() => {
       </div>
       <div
         v-loading="loading"
-        class="log-list flex-1 rounded-2"
+        class="log-list flex-1 rounded-2 position-relative"
         style="height: 0"
       >
+        <Transition name="fade">
+          <el-button
+            v-show="!isScrollBottom && list.length"
+            class="jump-to-latest"
+            type="primary"
+            circle
+            size="small"
+            @click="scrollToBottom"
+          >
+            <VIcon>arrow-down</VIcon>
+          </el-button>
+        </Transition>
         <DynamicScroller
           ref="virtualScroller"
           :items="list"
@@ -1400,6 +1420,24 @@ onUnmounted(() => {
   :deep(.log__label) {
     white-space: nowrap;
   }
+}
+
+.jump-to-latest {
+  position: absolute;
+  bottom: 16px;
+  right: 24px;
+  z-index: 3;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
 .no-more__alert {
