@@ -926,6 +926,8 @@ export default {
   packages_business_data_server_drawer_zanwumiaoshu: '暫無描述',
   packages_business_data_server_drawer_tiaoshi: '調試',
   packages_business_data_server_drawer_peizhi: '配置',
+  packages_business_data_server_drawer_refresh_fields: '刷新字段',
+  packages_business_data_server_add_sub_field: '添加子字段',
   packages_business_data_server_drawer_chuangjianfuwu: '創建服務',
   packages_business_copy_server: '復製服務',
   packages_business_import_server: '導入服務',

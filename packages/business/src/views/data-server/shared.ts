@@ -32,7 +32,8 @@ export const makeTree = (data: any[]) => {
         Object.assign(parent, item, {
           label: field_alias || name,
           name,
-          dataType: item.data_type.replace(/\(.+\)/, ''),
+          simpleTypeName:
+            item.simpleTypeName || item.data_type?.replace(/\(.+\)/, '') || '',
         })
       }
     }
@@ -317,7 +318,7 @@ export const useDrawer = (t: any, apiApplication?: Ref<any>) => {
             defaultvalue: t.defaultvalue,
             description: t.description,
             required: t.required,
-            textEncryptionRuleIds: t.textEncryptionRuleIds
+            textEncryptionRuleIds: t.textEncryptionRuleIds,
           }
         }) || getDefaultParams(formData.apiType)
     if (
