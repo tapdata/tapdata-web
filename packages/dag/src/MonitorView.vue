@@ -8,6 +8,7 @@ import SharedCacheEditor from '@tap/business/src/views/shared-cache/Editor.vue'
 import SharedMiningEditor from '@tap/business/src/views/shared-mining/Editor.vue'
 import SkipError from '@tap/business/src/views/task/SkipError.vue'
 import { TextEditable } from '@tap/component/src/base/text-editable'
+import { useI18n } from '@tap/i18n'
 import Time from '@tap/shared/src/time'
 import { useDark } from '@vueuse/core'
 import { debounce } from 'lodash-es'
@@ -44,6 +45,7 @@ const nodeDetailDialog = ref(false)
 const nodeDetailDialogId = ref('')
 const noNeedRefresh = ref(false)
 const canvasRef = ref<any>(null)
+const { t } = useI18n()
 
 const {
   dataflow,
@@ -594,7 +596,12 @@ const init = async () => {
 
   if (taskId) {
     await initNodeType()
-    await dataflowStore.fetchDataflow(taskId)
+    const task = await dataflowStore.fetchDataflow(taskId)
+    if (!task) {
+      ElMessage.error(t('packages_dag_mixins_editor_renwubucunzai'))
+      handlePageReturn()
+      return
+    }
   }
   initMonitor()
   initWS()

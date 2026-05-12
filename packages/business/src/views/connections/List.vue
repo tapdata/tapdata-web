@@ -875,7 +875,7 @@ onUnmounted(() => {
         min-width="160"
       >
         <template #default="{ row }">
-          {{ row.connectionUrl }}
+          {{ row.connectionUrl || '-' }}
         </template>
       </ElTableColumn>
       <ElTableColumn

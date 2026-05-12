@@ -166,6 +166,12 @@ const keyMapping = reactive({
   SYSTEM_FLOW_EGINGE_UP: t(
     'packages_business_setting_alarmnotification_dangrenwuuP',
   ),
+  ENGINE_OFFLINE: t(
+    'packages_business_setting_alarmnotification_dangyinqinglixian',
+  ),
+  ENGINE_ONLINE: t(
+    'packages_business_setting_alarmnotification_dangyinqinghuifu',
+  ),
   TASK_INSPECT_DIFFERENCE: t('packages_dag_task_inspect_difference_alarm'),
   TASK_RETRY_WARN: t('packages_dag_task_retry_alert'),
   API_SERVER_WORKER_DELAY_P50_WARN: t(

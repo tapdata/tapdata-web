@@ -721,6 +721,8 @@ export default {
   packages_business_api_server_error_rate_warn: '當任一API Server請求錯誤率超過告警閾值時',
   packages_business_task_source_no_incremental_event: '當源端已開啟心跳表，連續 60 秒未接收到增量事件時',
   packages_business_setting_alarmnotification_dangrenwuuP: 'Agent服务啓動時',
+  packages_business_setting_alarmnotification_dangyinqinglixian: '當引擎停止時',
+  packages_business_setting_alarmnotification_dangyinqinghuifu: '當引擎啓動時',
   packages_business_setting_alarmnotification_msshigaojing: ' 時告警',
   packages_business_setting_alarmnotification_lianxu: '連續',
   packages_business_setting_alarmnotification_cichugaojinggui:
@@ -1551,4 +1553,6 @@ export default {
     '若任務名衝突則替換任務，連接名衝突則重用系統中已有連接。',
   public_connector_beta_tip: '正在測試階段，我們正在不斷優化體驗',
   public_connector_alpha_tip: '正在持續開發中，部分功能可能還在完善',
+  packages_business_column_setting: '顯示設定',
+  packages_business_column_reset: '重置',
 }

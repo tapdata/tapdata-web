@@ -13,7 +13,7 @@ import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import Chart from '@tap/component/src/chart/Chart.vue'
 import CountUp from '@tap/component/src/CountUp.vue'
 import { useI18n } from '@tap/i18n'
-import { calcUnit } from '@tap/shared/src/number'
+import { calcTimeUnit, calcUnit } from '@tap/shared/src/number'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { STATUS_MAP as DASHBOARD_STATUS_MAP } from './const'
@@ -49,9 +49,9 @@ const topTaskLimitOptions = computed(() => [
 // Cluster / Agent data
 interface AgentNode extends ClusterState {
   processId?: string
+  runningTaskNum?: { migrate?: number; sync?: number }
 }
 const agentNodes = ref<AgentNode[]>([])
-const agentRunningTask = ref<Record<string, any>>({})
 
 // ── KPI: Active Tasks ──────────────────────────────────
 const activeTasks = computed(() => dashboardData.value?.summary?.activeTasks)
@@ -261,11 +261,13 @@ function usageBarColor(pct: number) {
   return '#22c55e'
 }
 
-function getRunningTaskCount(node: AgentNode): number {
-  if (!node.processId) return 0
-  const info = agentRunningTask.value[node.processId]
-  if (!info) return 0
-  return (info.migrate || 0) + (info.sync || 0)
+function navigateToTaskList(node: AgentNode, syncType: 'migrate' | 'sync') {
+  if (!node.processId) return
+  const routeName = syncType === 'migrate' ? 'migrateList' : 'dataflowList'
+  router.push({
+    name: routeName,
+    query: { agentId: node.processId, status: 'running' },
+  })
 }
 
 function getStatusLabel(type: string) {
@@ -330,14 +332,15 @@ async function fetchClusterData() {
       }
 
       for (const node of items) {
-        if (node.processId && metricMap[node.processId]) {
-          node.metricValues = metricMap[node.processId]
-        }
-      }
-
-      if (processData) {
-        for (const id of Object.keys(processData)) {
-          agentRunningTask.value[id] = (processData as any)[id].runningTaskNum
+        if (node.processId) {
+          if (metricMap[node.processId]) {
+            node.metricValues = metricMap[node.processId]
+          }
+          if (processData && (processData as any)[node.processId]) {
+            node.runningTaskNum = (processData as any)[
+              node.processId
+            ].runningTaskNum
+          }
         }
       }
     } catch {
@@ -473,9 +476,9 @@ onBeforeUnmount(() => {
         <!-- ═══ KPI Cards (4 columns) ═══ -->
         <div class="grid grid-cols-4 gap-5 mb-6">
           <!-- 1) Active Tasks -->
-          <div class="dashboard__card p-5">
+          <div class="dashboard__card bg-card p-5">
             <div class="flex justify-content-between align-items-start mb-3">
-              <span class="fs-7 text-secondary fw-sub">{{
+              <span class="fs-7 lh-6 text-secondary fw-sub">{{
                 t('dashboard_odh_active_tasks')
               }}</span>
               <div class="p-2 bg-gray-50 rounded-lg mt-n2">
@@ -508,9 +511,9 @@ onBeforeUnmount(() => {
           </div>
 
           <!-- 2) Total Throughput -->
-          <div class="dashboard__card p-5">
+          <div class="dashboard__card bg-card p-5">
             <div class="flex justify-content-between align-items-start mb-3">
-              <span class="fs-7 text-secondary fw-sub">{{
+              <span class="fs-7 lh-6 text-secondary fw-sub">{{
                 t('dashboard_odh_total_throughput')
               }}</span>
               <div class="p-2 bg-gray-50 rounded-lg mt-n2">
@@ -554,9 +557,9 @@ onBeforeUnmount(() => {
           </div>
 
           <!-- 3) Connected DBs -->
-          <div class="dashboard__card p-5">
+          <div class="dashboard__card bg-card p-5">
             <div class="flex justify-content-between align-items-start mb-3">
-              <span class="fs-7 text-secondary fw-sub">{{
+              <span class="fs-7 lh-6 text-secondary fw-sub">{{
                 t('dashboard_odh_connected_dbs')
               }}</span>
               <div class="p-2 bg-gray-50 rounded-lg mt-n2">
@@ -589,10 +592,10 @@ onBeforeUnmount(() => {
           </div>
 
           <!-- 4) API Requests -->
-          <div class="dashboard__card p-5">
+          <div class="dashboard__card bg-card p-5">
             <div class="flex justify-content-between align-items-start mb-3">
               <div class="flex align-items-center gap-2">
-                <span class="fs-7 text-secondary fw-sub">{{
+                <span class="fs-7 lh-6 text-secondary fw-sub">{{
                   t('dashboard_odh_api_requests')
                 }}</span>
                 <el-segmented
@@ -602,8 +605,8 @@ onBeforeUnmount(() => {
                   @change="onApiTimeRangeChange"
                 />
               </div>
-              <div class="p-2 bg-gray-50 rounded-lg">
-                <el-icon class="text-purple-500 align-top mt-n2" size="20">
+              <div class="p-2 bg-gray-50 rounded-lg mt-n2">
+                <el-icon class="text-purple-500 align-top" size="20">
                   <i-lucide-server />
                 </el-icon>
               </div>
@@ -629,9 +632,9 @@ onBeforeUnmount(() => {
         </div>
 
         <!-- ═══ System Trends ═══ -->
-        <div class="dashboard__card p-5 mb-6">
+        <div class="dashboard__card bg-card p-5 mb-6">
           <div class="flex justify-content-between align-items-center mb-5">
-            <h2 class="fs-5 font-semibold m-0">
+            <h2 class="fs-5 lh-6 font-semibold m-0">
               {{ t('dashboard_odh_system_trends') }}
             </h2>
             <el-segmented
@@ -672,7 +675,7 @@ onBeforeUnmount(() => {
         </div>
 
         <!-- ═══ Top Tasks ═══ -->
-        <div class="dashboard__card p-5 mb-6">
+        <div class="dashboard__card bg-card p-5 mb-6">
           <div class="flex justify-content-between align-items-center mb-4">
             <div class="flex align-items-center gap-3">
               <h2 class="fs-5 font-semibold m-0">
@@ -716,7 +719,7 @@ onBeforeUnmount(() => {
                     <span
                       class="dashboard__badge"
                       :class="latencyClass(task.latency ?? 0)"
-                      >{{ formatLatency(task.latency ?? 0) }}</span
+                      >{{ calcTimeUnit(task.latency ?? 0) }}</span
                     >
                   </td>
                   <td class="text-end font-mono">
@@ -734,14 +737,14 @@ onBeforeUnmount(() => {
         </div>
 
         <!-- ═══ Agent Cluster Status ═══ -->
-        <div class="dashboard__card p-5">
+        <div class="dashboard__card bg-card p-5">
           <div class="flex justify-content-between align-items-center mb-4">
             <h2 class="fs-5 font-semibold m-0">
               {{ t('dashboard_odh_agent_cluster') }}
             </h2>
-            <span class="dashboard__nodes-badge">{{
-              t('dashboard_odh_nodes_total', [agentNodes.length])
-            }}</span>
+            <el-tag type="primary" size="small" round>
+              {{ t('dashboard_odh_nodes_total', [agentNodes.length]) }}
+            </el-tag>
           </div>
 
           <div v-if="agentNodes.length" class="dashboard__table-wrap">
@@ -757,7 +760,10 @@ onBeforeUnmount(() => {
                     {{ t('dashboard_odh_memory_usage') }}
                   </th>
                   <th class="text-end">
-                    {{ t('dashboard_odh_running_tasks') }}
+                    {{ t('public_task_type_migrate') }}
+                  </th>
+                  <th class="text-end">
+                    {{ t('public_task_type_sync') }}
                   </th>
                 </tr>
               </thead>
@@ -832,7 +838,37 @@ onBeforeUnmount(() => {
                     </div>
                   </td>
                   <td class="text-end font-mono font-semibold">
-                    {{ getRunningTaskCount(node) }}
+                    <el-button
+                      v-if="
+                        node.runningTaskNum?.migrate &&
+                        node.runningTaskNum?.migrate > 0
+                      "
+                      type="primary"
+                      plain
+                      round
+                      size="small"
+                      @click.stop="navigateToTaskList(node, 'migrate')"
+                    >
+                      <span class="font-mono font-semibold">
+                        {{ node.runningTaskNum?.migrate || 0 }}
+                      </span>
+                    </el-button>
+                    <span v-else>-</span>
+                  </td>
+                  <td class="text-end font-mono font-semibold">
+                    <el-button
+                      v-if="node.runningTaskNum?.sync > 0"
+                      type="primary"
+                      plain
+                      round
+                      size="small"
+                      @click.stop="navigateToTaskList(node, 'sync')"
+                    >
+                      <span class="font-mono font-semibold">
+                        {{ node.runningTaskNum?.sync || 0 }}
+                      </span>
+                    </el-button>
+                    <span v-else>-</span>
                   </td>
                 </tr>
               </tbody>
@@ -859,9 +895,8 @@ onBeforeUnmount(() => {
 
   // ── Cards ──────────────────────────────────────────────
   &__card {
-    background-color: #fff;
     border-radius: 0.75rem;
-    border: 1px solid #f1f5f9;
+    // border: 1px solid #f1f5f9;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     transition: box-shadow 0.2s ease;
 
@@ -961,22 +996,22 @@ onBeforeUnmount(() => {
       padding: 0.625rem 1rem;
       font-size: 0.75rem;
       font-weight: 600;
-      color: #64748b;
+      color: var(--el-text-color-secondary);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid var(--el-border-color-lighter);
       white-space: nowrap;
     }
 
     td {
       padding: 0.75rem 1rem;
       font-size: 0.8125rem;
-      border-bottom: 1px solid #f8fafc;
+      border-bottom: 1px solid var(--el-border-color-lighter);
       white-space: nowrap;
     }
 
     tbody tr:hover {
-      background-color: #f8fafc;
+      background-color: var(--el-fill-color-light);
     }
   }
 
@@ -1010,7 +1045,7 @@ onBeforeUnmount(() => {
   &__usage-bar {
     flex: 1;
     height: 6px;
-    background-color: #f1f5f9;
+    background-color: var(--el-fill-color);
     border-radius: 3px;
     overflow: hidden;
     min-width: 60px;

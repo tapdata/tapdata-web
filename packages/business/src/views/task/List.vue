@@ -1090,6 +1090,8 @@ export default {
       ref="table"
       row-key="id"
       class="data-flow-list"
+      :enable-custom-columns="syncType"
+      :locked-columns="['name', 'operation']"
       :classify="{
         authority: 'SYNC_category_management',
         types: ['dataflow'],
@@ -1288,8 +1290,9 @@ export default {
         sortable="custom"
       >
         <template #default="{ row }">
+          <span v-if="row.delayTime == null">-</span>
           <el-tooltip
-            v-if="
+            v-else-if="
               row.taskIncrementDelay != null &&
               row.taskIncrementDelayThreshold != null
             "
@@ -1317,7 +1320,9 @@ export default {
               <el-icon class="mr-1">
                 <i-lucide-clock />
               </el-icon>
-              {{ formatTimeUnit(row.delayTime) }}
+              <span class="font-color-light">
+                {{ formatTimeUnit(row.delayTime) }}
+              </span>
             </div>
           </el-tag>
 
@@ -1365,6 +1370,7 @@ export default {
         </template>
       </el-table-column>
       <el-table-column
+        prop="operation"
         fixed="right"
         :label="$t('public_operation')"
         :width="colWidth.operation"

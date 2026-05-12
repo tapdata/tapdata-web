@@ -752,6 +752,8 @@ export default {
     'When the task encounters an error',
   packages_business_setting_alarmnotification_dangrenwustop:
     'When the Agent service stops',
+  packages_business_setting_alarmnotification_dangyinqinglixian: 'When the engine stops',
+  packages_business_setting_alarmnotification_dangyinqinghuifu: 'When the engine starts',
   packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn:
     'When APIServer worker P50 per minute exceeding threshold',
   packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn:
@@ -1759,4 +1761,6 @@ export default {
     'Currently in testing. We are continuously optimizing the experience.',
   public_connector_alpha_tip:
     'Under active development. Some features may still be incomplete.',
+  packages_business_column_setting: 'Display Settings',
+  packages_business_column_reset: 'Reset',
 }

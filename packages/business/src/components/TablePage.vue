@@ -1,19 +1,54 @@
 <script lang="ts">
+import { fetchSettings, saveSettings } from '@tap/api/src/core/settings'
 import Classification from '@tap/component/src/Classification.vue'
 import { off, on } from '@tap/shared'
+import { getSettingByKey, setSettings } from '@tap/shared/src/settings'
+
+import { debounce } from 'lodash-es'
+import { ReorderGroup, ReorderItem } from 'motion-v'
 import {
+  computed,
   defineComponent,
+  Fragment,
   onMounted,
   onUnmounted,
   ref,
   shallowRef,
+  useSlots,
   type PropType,
+  type VNode,
 } from 'vue'
 import { useRoute } from 'vue-router'
 import { makeDragNodeImage } from '../shared'
 import SelectClassify from './SelectClassify.vue'
 
 import type { TableColumnCtx } from 'element-plus'
+
+export interface ColumnConfig {
+  key: string
+  label: string
+  visible: boolean
+}
+
+function flattenSlotVNodes(vnodes: VNode[]): VNode[] {
+  return vnodes.flatMap((vnode) => {
+    if (vnode.type === Fragment && Array.isArray(vnode.children)) {
+      return flattenSlotVNodes(vnode.children as VNode[])
+    }
+    return [vnode]
+  })
+}
+
+function getColumnKey(vnode: VNode): string | undefined {
+  const props = (vnode.props || {}) as Record<string, any>
+  return props.prop || props.label
+}
+
+function isConfigurableColumn(vnode: VNode): boolean {
+  const props = (vnode.props || {}) as Record<string, any>
+  if (props.type === 'selection') return false
+  return !!(props.prop || props.label)
+}
 
 interface TableSettings {
   settings: Record<string, { pageSize: number }>
@@ -83,11 +118,82 @@ interface DragState {
   allowDrop: boolean
 }
 
+const FilteredColumns = defineComponent({
+  name: 'FilteredColumns',
+  props: {
+    hiddenKeys: {
+      type: Object as PropType<Set<string>>,
+      required: true,
+    },
+    columnOrder: {
+      type: Array as PropType<string[]>,
+      default: () => [],
+    },
+    lockedKeys: {
+      type: Array as PropType<string[]>,
+      default: () => [],
+    },
+  },
+  setup(filterProps, { slots: innerSlots }) {
+    return () => {
+      const vnodes = innerSlots.default?.() || []
+      const flat = flattenSlotVNodes(vnodes)
+
+      // Filter out hidden columns
+      const visible = flat.filter((vnode) => {
+        const key = getColumnKey(vnode)
+        return !key || !filterProps.hiddenKeys.has(key)
+      })
+
+      // If no order specified, return as-is
+      if (!filterProps.columnOrder.length) return visible
+
+      const lockedSet = new Set(filterProps.lockedKeys)
+
+      // Separate locked columns (keep original positions) from reorderable ones
+      // Record original indices of locked columns
+      const lockedSlots: Array<{ index: number; vnode: VNode }> = []
+      const reorderable: VNode[] = []
+
+      visible.forEach((vnode, idx) => {
+        const key = getColumnKey(vnode)
+        if (key && lockedSet.has(key)) {
+          lockedSlots.push({ index: idx, vnode })
+        } else {
+          reorderable.push(vnode)
+        }
+      })
+
+      // Sort only reorderable columns by columnOrder
+      const orderMap = new Map(
+        filterProps.columnOrder.map((key, i) => [key, i]),
+      )
+      reorderable.sort((a, b) => {
+        const ka = getColumnKey(a)
+        const kb = getColumnKey(b)
+        const ia = ka ? (orderMap.get(ka) ?? Infinity) : -1
+        const ib = kb ? (orderMap.get(kb) ?? Infinity) : -1
+        return ia - ib
+      })
+
+      // Re-insert locked columns at their original positions
+      const result = [...reorderable]
+      for (const { index, vnode } of lockedSlots) {
+        result.splice(index, 0, vnode)
+      }
+      return result
+    }
+  },
+})
+
 export default defineComponent({
   name: 'TablePage',
   components: {
     Classification,
     SelectClassify,
+    FilteredColumns,
+    ReorderGroup,
+    ReorderItem,
   },
   props: {
     title: {
@@ -136,6 +242,18 @@ export default defineComponent({
       type: Object as PropType<Sort>,
     },
     draggable: Boolean,
+    enableCustomColumns: {
+      type: String,
+      default: '',
+    },
+    lockedColumns: {
+      type: Array as PropType<string[]>,
+      default: () => [],
+    },
+    defaultHiddenColumns: {
+      type: Array as PropType<string[]>,
+      default: () => [],
+    },
   },
   emits: [
     'selectionChange',
@@ -352,10 +470,177 @@ export default defineComponent({
       fetch(1)
     }
 
+    // ---- Custom column display (slot introspection + drag-and-drop) ----
+    const slots = useSlots()
+    const columnVisibility = ref<Record<string, boolean>>({})
+    const defaultVisibility = ref<Record<string, boolean>>({})
+    const columnPopoverVisible = ref(false)
+    const columnOrder = ref<string[]>([])
+
+    const dragColumns = ref<ColumnConfig[]>([])
+
+    // Settings persistence key: e.g. "syncColumns", "migrateColumns"
+    const settingsKey = computed(() =>
+      props.enableCustomColumns ? `${props.enableCustomColumns}Columns` : '',
+    )
+
+    const extractSlotColumns = (): ColumnConfig[] => {
+      const vnodes = slots.default?.() || []
+      const flat = flattenSlotVNodes(vnodes)
+      const result: ColumnConfig[] = []
+      for (const vnode of flat) {
+        if (!isConfigurableColumn(vnode)) continue
+        const vprops = (vnode.props || {}) as Record<string, any>
+        const key = vprops.prop || vprops.label
+        if (!key) continue
+        // Skip locked columns — they are always visible and not configurable
+        if (props.lockedColumns.includes(key)) continue
+        result.push({
+          key,
+          label: vprops.label || vprops.prop || key,
+          visible: columnVisibility.value[key] ?? true,
+        })
+      }
+      return result
+    }
+
+    const hiddenColumnKeys = computed(() => {
+      const keys = new Set<string>()
+      for (const [key, visible] of Object.entries(columnVisibility.value)) {
+        if (!visible) keys.add(key)
+      }
+      return keys
+    })
+
+    const visibleColumnCount = computed(() => {
+      return extractSlotColumns().filter((c) => c.visible).length
+    })
+
+    const initColumnVisibility = () => {
+      const vnodes = slots.default?.() || []
+      const flat = flattenSlotVNodes(vnodes)
+      const vis: Record<string, boolean> = {}
+      for (const vnode of flat) {
+        if (!isConfigurableColumn(vnode)) continue
+        const vprops = (vnode.props || {}) as Record<string, any>
+        const key = vprops.prop || vprops.label
+        if (!key) continue
+        // Skip locked columns — they don't need visibility tracking
+        if (props.lockedColumns.includes(key)) continue
+        vis[key] = !props.defaultHiddenColumns.includes(key)
+      }
+      columnVisibility.value = { ...vis }
+      defaultVisibility.value = { ...vis }
+
+      // Load saved config from settings
+      if (settingsKey.value) {
+        const saved = getSettingByKey(settingsKey.value)
+        if (saved) {
+          try {
+            const config = typeof saved === 'string' ? JSON.parse(saved) : saved
+            if (config.visibility) {
+              // Only apply saved visibility for keys that exist in current columns
+              for (const [key, visible] of Object.entries(config.visibility)) {
+                if (key in vis) {
+                  columnVisibility.value[key] = visible as boolean
+                }
+              }
+            }
+            if (config.order) {
+              columnOrder.value = config.order
+            }
+          } catch {
+            // Ignore invalid saved config
+          }
+        }
+      }
+
+      // Build dragColumns respecting saved order
+      buildDragColumns()
+    }
+
+    const buildDragColumns = () => {
+      const cols = extractSlotColumns()
+      if (columnOrder.value.length) {
+        const colMap = new Map(cols.map((c) => [c.key, c]))
+        const ordered: ColumnConfig[] = []
+        for (const key of columnOrder.value) {
+          const col = colMap.get(key)
+          if (col) {
+            ordered.push(col)
+            colMap.delete(key)
+          }
+        }
+        // Append any new columns not in the saved order
+        for (const col of colMap.values()) {
+          ordered.push(col)
+        }
+        dragColumns.value = ordered
+      } else {
+        dragColumns.value = cols
+      }
+    }
+
+    const _doSaveColumnConfig = () => {
+      if (!settingsKey.value) return
+
+      const config = JSON.stringify({
+        visibility: columnVisibility.value,
+        order: columnOrder.value,
+      })
+
+      const existing = getSettingByKey(settingsKey.value, 'id')
+      const settingData: Record<string, any> = {
+        key: settingsKey.value,
+        value: config,
+      }
+      if (existing) {
+        settingData.id = existing
+      }
+
+      saveSettings([settingData])
+        .then(() => {
+          // Reload settings to sync id (for newly created entries)
+          return fetchSettings()
+        })
+        .then((data) => {
+          setSettings(data || [])
+        })
+        .catch((error) => {
+          console.error('Failed to save column config:', error)
+        })
+    }
+
+    const saveColumnConfig = debounce(_doSaveColumnConfig, 300)
+
+    const toggleColumnVisibility = (col: ColumnConfig) => {
+      col.visible = !col.visible
+      columnVisibility.value = {
+        ...columnVisibility.value,
+        [col.key]: col.visible,
+      }
+      saveColumnConfig()
+    }
+
+    const onReorderEnd = () => {
+      columnOrder.value = dragColumns.value.map((c) => c.key)
+      saveColumnConfig()
+    }
+
+    const resetColumns = () => {
+      columnVisibility.value = { ...defaultVisibility.value }
+      columnOrder.value = []
+      dragColumns.value = extractSlotColumns()
+      saveColumnConfig()
+    }
+
     onMounted(() => {
       fetch(1)
       on(document, 'keydown', handleKeyDown)
       on(document, 'keyup', handleKeyUp)
+      if (props.enableCustomColumns) {
+        initColumnVisibility()
+      }
     })
 
     onUnmounted(() => {
@@ -402,6 +687,15 @@ export default defineComponent({
       onSelectRow,
       handleSizeChange,
       onSelectNoTag,
+      // Custom columns
+      dragColumns,
+      columnPopoverVisible,
+      columnOrder,
+      visibleColumnCount,
+      hiddenColumnKeys,
+      toggleColumnVisibility,
+      onReorderEnd,
+      resetColumns,
     }
   },
 })
@@ -468,8 +762,79 @@ export default defineComponent({
               </el-button>
               <slot name="search" />
             </div>
-            <div class="table-page-operation-bar">
+            <div class="table-page-operation-bar flex align-center gap-2">
               <slot name="operation" />
+              <el-popover
+                v-if="enableCustomColumns"
+                v-model:visible="columnPopoverVisible"
+                trigger="click"
+                width="auto"
+                placement="bottom-end"
+                popper-class="p-0"
+                popper-style="min-width: 280px;"
+                :show-arrow="false"
+              >
+                <template #reference>
+                  <el-button>
+                    <template #icon>
+                      <el-icon :size="14"><i-lucide-columns-3-cog /></el-icon>
+                    </template>
+                    {{ $t('packages_business_column_setting') }}
+                  </el-button>
+                </template>
+                <div class="custom-column-panel">
+                  <div class="custom-column-header p-3 pb-0">
+                    <span class="custom-column-title">{{
+                      $t('packages_business_column_setting')
+                    }}</span>
+                    <el-button text type="primary" @click="resetColumns">{{
+                      $t('packages_business_column_reset')
+                    }}</el-button>
+                  </div>
+                  <div class="py-3">
+                    <ReorderGroup
+                      v-model:values="dragColumns"
+                      axis="y"
+                      class="custom-column-list px-1"
+                    >
+                      <ReorderItem
+                        v-for="col in dragColumns"
+                        :key="col.key"
+                        :value="col"
+                        class="custom-column-item flex align-items-center justify-content-between px-2 py-1 rounded-lg user-select-none grabbable"
+                        :class="{ 'is-hidden': !col.visible }"
+                        :while-drag="{
+                          boxShadow: '0 1rem 3rem rgba(0,0,0,0.175)',
+                          scale: 1.02,
+                          zIndex: 50,
+                        }"
+                        @drag-end="onReorderEnd"
+                      >
+                        <span
+                          class="custom-column-drag-handle flex align-items-center gap-2 overflow-hidden"
+                        >
+                          <el-icon
+                            class="custom-column-grip-icon font-color-light w-4 h-4"
+                            :size="16"
+                            ><i-lucide-grip-vertical
+                          /></el-icon>
+                          <span class="text-truncate">{{ col.label }}</span>
+                        </span>
+                        <el-button
+                          text
+                          size="small"
+                          @click="toggleColumnVisibility(col)"
+                        >
+                          <template #icon>
+                            <i-lucide-eye v-if="col.visible" />
+                            <i-lucide-eye-closed v-else />
+                          </template>
+                        </el-button>
+                      </ReorderItem>
+                    </ReorderGroup>
+                  </div>
+                </div>
+              </el-popover>
             </div>
           </div>
           <el-table
@@ -516,7 +881,15 @@ export default defineComponent({
                 </el-button>
               </template>
             </el-table-column>
-            <slot />
+            <FilteredColumns
+              v-if="enableCustomColumns"
+              :hidden-keys="hiddenColumnKeys"
+              :column-order="columnOrder"
+              :locked-keys="lockedColumns"
+            >
+              <slot />
+            </FilteredColumns>
+            <slot v-else />
             <template #empty>
               <el-empty image-size="100">
                 <slot name="noDataText" />
@@ -724,18 +1097,64 @@ export default defineComponent({
     margin-left: 0;
   }
 }
-</style>
-<!-- .el-table--border .el-table__inner-wrapper::after {
-  left: 0px;
-  top: 0px;
-  width: 100%;
-  height: 1px;
-  z-index: calc(var(--el-table-index) + 2);
+
+.custom-column-panel {
+  .custom-column-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 16px 12px;
+  }
+
+  .custom-column-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--el-text-color-primary);
+  }
+
+  .custom-column-list {
+    max-height: 320px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .custom-column-item {
+    position: relative;
+    z-index: 0;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: var(--el-fill-color-light);
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    &:hover::before {
+      opacity: 1;
+    }
+
+    &.is-hidden {
+      opacity: 0.6;
+    }
+  }
+
+  .custom-column-drag-handle {
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  .custom-column-grip-icon {
+    flex-shrink: 0;
+  }
 }
-<style>
-.el-table--border::after, .el-table--border::before, .el-table--border .el-table__inner-wrapper::after, .el-table__inner-wrapper::before {
-  content: "";
-  position: absolute;
-  background-color: var(--el-table-border-color);
-  z-index: calc(var(--el-table-index) + 2);
-} -->
+</style>

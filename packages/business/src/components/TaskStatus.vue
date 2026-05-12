@@ -221,22 +221,14 @@ function getNextStartTime() {
         popper-class="task-warning-popover"
       >
         <template #reference>
-          <el-badge
-            :offset="[4, 0]"
-            :hidden="warnings.length < 2"
-            :value="warnings.length"
-            class="lh-1"
-            badge-class="zoom-xs"
+          <span
+            class="task-warning-trigger"
+            @click="warnings[0] && onWarningClick(warnings[0])"
           >
-            <span
-              class="task-warning-trigger"
-              @click="warnings[0] && onWarningClick(warnings[0])"
+            <VIcon size="16" class="color-warning task-warning-icon"
+              >warning</VIcon
             >
-              <VIcon size="16" class="color-warning task-warning-icon"
-                >warning</VIcon
-              >
-            </span>
-          </el-badge>
+          </span>
         </template>
         <ul class="task-warning-list flex flex-column gap-2">
           <li

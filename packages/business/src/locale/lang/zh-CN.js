@@ -679,6 +679,8 @@ export default {
     '当任务遇到错误时',
   packages_business_setting_alarmnotification_dangrenwustop: 'Agent服务停止时',
   packages_business_setting_alarmnotification_dangrenwuuP: 'Agent服务启动时',
+  packages_business_setting_alarmnotification_dangyinqinglixian: '当引擎停止时',
+  packages_business_setting_alarmnotification_dangyinqinghuifu: '当引擎启动时',
   packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn:
     '当APIServer工作进程每分钟请求延时P50超过阈值时',
   packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn:
@@ -1566,4 +1568,6 @@ export default {
     '若任务名冲突则替换任务，连接名冲突则复用系统中已有连接。',
   public_connector_beta_tip: '正在测试阶段，我们正在不断优化体验',
   public_connector_alpha_tip: '正在持续开发中，部分功能可能还在完善',
+  packages_business_column_setting: '显示设置',
+  packages_business_column_reset: '重置',
 }
