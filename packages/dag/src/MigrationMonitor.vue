@@ -445,7 +445,7 @@ async function validate() {
     const chooseId = dataflow.accessNodeProcessId
 
     if (!chooseId) {
-      someErrorMsg = `所属agent节点冲突`
+      someErrorMsg = i18n.t('packages_dag_mixins_editor_suoshuage')
     } else {
       let isError = false
       const agent = vm.scope.$agentMap[chooseId]
@@ -464,7 +464,8 @@ async function validate() {
           isError = true
         }
       })
-      isError && (someErrorMsg = `所属agent节点冲突`)
+      isError &&
+        (someErrorMsg = i18n.t('packages_dag_mixins_editor_suoshuage'))
     }
   } else if (accessNodeProcessIdArr.length === 1) {
     dataflow.accessNodeType = 'MANUALLY_SPECIFIED_BY_THE_USER'
@@ -481,7 +482,7 @@ async function validate() {
   if (
     firstNodes.some((node: any) => !vm.isEndOfTable(node, sourceMap, nodeMap))
   )
-    return `链路的末位需要是一个数据节点`
+    return i18n.t('packages_dag_link_end_must_be_data_node')
 
   return null
 }

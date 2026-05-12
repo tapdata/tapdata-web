@@ -1248,9 +1248,17 @@ export default {
   packages_dag_panning_mode: 'Panning Mode',
   packages_dag_zoom_in: 'Zoom In',
   packages_dag_zoom_out: 'Zoom Out',
+  packages_dag_zoom_reset: 'Reset to 100%',
   packages_dag_undo: 'Undo',
   packages_dag_redo: 'Redo',
   packages_dag_src_editor_copy_success: 'Copied to clipboard',
   packages_dag_hide_nodes_panel_tip:
     'Collapse panel. Right-click on the canvas to quickly add nodes.',
+  packages_dag_handle_click: 'Click',
+  packages_dag_handle_click_add_node: 'to add node',
+  packages_dag_handle_drag: 'Drag',
+  packages_dag_handle_drag_connect_node: 'to connect nodes',
+  packages_dag_link_end_must_be_data_node:
+    'The end of the link must be a data node',
+  packages_dag_node_panel_desc_placeholder: 'Add description...',
 }

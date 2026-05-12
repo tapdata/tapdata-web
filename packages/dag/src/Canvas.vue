@@ -881,7 +881,7 @@ defineExpose({
             </el-button>
           </el-tooltip>
           <el-tooltip
-            content="重置为100%"
+            :content="$t('packages_dag_zoom_reset')"
             :enterable="false"
             :hide-after="0"
             placement="top"

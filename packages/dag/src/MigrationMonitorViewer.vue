@@ -350,7 +350,7 @@ export default {
 
         if (!chooseId) {
           // someErrorMsg = `请配置任务运行agent`
-          someErrorMsg = `所属agent节点冲突` // 一样提示冲突
+          someErrorMsg = this.$t('packages_dag_mixins_editor_suoshuage') // 一样提示冲突
         } else {
           let isError = false
           const agent = this.scope.$agentMap[chooseId]
@@ -372,7 +372,7 @@ export default {
               isError = true
             }
           })
-          isError && (someErrorMsg = `所属agent节点冲突`)
+          isError && (someErrorMsg = this.$t('packages_dag_mixins_editor_suoshuage'))
         }
       } else if (accessNodeProcessIdArr.length === 1) {
         // 如果画布上仅有一个所属agent，自动设置为任务的agent
@@ -391,7 +391,7 @@ export default {
       if (
         firstNodes.some((node) => !this.isEndOfTable(node, sourceMap, nodeMap))
       )
-        return `链路的末位需要是一个数据节点`
+        return i18n.t('packages_dag_link_end_must_be_data_node')
 
       return null
     },

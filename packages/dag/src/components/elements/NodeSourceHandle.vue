@@ -45,9 +45,17 @@ const isPopoverActive = computed(
       >
         <div class="fs-8 font-color-sslight lh-4">
           <div class="text-nowrap">
-            <span class="fw-sub font-color-dark">点击</span>添加节点
+            <span class="fw-sub font-color-dark">{{
+              $t('packages_dag_handle_click')
+            }}</span>
+            {{ $t('packages_dag_handle_click_add_node') }}
           </div>
-          <div><span class="fw-sub font-color-dark">拖拽</span>连接节点</div>
+          <div class="text-nowrap">
+            <span class="fw-sub font-color-dark">{{
+              $t('packages_dag_handle_drag')
+            }}</span>
+            {{ $t('packages_dag_handle_drag_connect_node') }}
+          </div>
         </div>
       </div>
       <div
