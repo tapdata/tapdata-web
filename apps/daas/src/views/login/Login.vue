@@ -81,10 +81,10 @@ export default {
         Cookie.set('access_token', data?.id)
         Cookie.set('tem_token', data?.id)
 
-        await this.$store.dispatch('feature/getFeatures')
-
         const settings = await fetchSettings()
         setSettings(settings)
+
+        await this.$store.dispatch('feature/getFeatures')
 
         if (settings.length) {
           localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(settings))

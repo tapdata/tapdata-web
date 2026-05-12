@@ -130,9 +130,10 @@ const bootstrap = async () => {
     if (user) {
       configUser(user)
 
-      await store.dispatch('feature/getFeatures')
       const settings = await fetchSettings()
       setSettings(settings)
+
+      await store.dispatch('feature/getFeatures')
 
       if (settings.length) {
         localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(settings))
