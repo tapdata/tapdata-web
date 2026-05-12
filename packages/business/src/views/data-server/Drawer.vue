@@ -316,12 +316,26 @@ const getFields = async () => {
     const data = await fetchMetadataInstances(filter)
 
     const metaFields = data.items?.[0]?.fields || []
-
-    // 编辑时，把之前用户添加的自定义字段合并回来
-    const userCreatedFields = (form.value.fields || []).filter(
+    const userCreatedFields = allFields.value.filter(
       (f: any) => f.tag === 'USER_CREATE',
     )
-    allFields.value = [...metaFields, ...userCreatedFields]
+    const metaFieldNames = new Set(metaFields.map((f: any) => f.field_name))
+    const userFieldsMap = userCreatedFields.reduce((acc: any, f: any) => {
+      acc[f.field_name] = f
+      return acc
+    }, {})
+    const mergedMetaFields = metaFields.map((f: any) => {
+      const userField = userFieldsMap[f.field_name]
+      if (userField?.textEncryptionRuleIds?.length) {
+        return { ...f, textEncryptionRuleIds: userField.textEncryptionRuleIds }
+      }
+      return f
+    })
+    // 只保留 metaFields 中不存在的用户字段
+    const remainingUserFields = userCreatedFields.filter(
+      (f: any) => !metaFieldNames.has(f.field_name),
+    )
+    allFields.value = [...mergedMetaFields, ...remainingUserFields]
 
     if (!form.value.id || !form.value.fields?.length) {
       nextTick(() => {
@@ -358,14 +372,16 @@ const open = (formData?: any, copy?: boolean) => {
   } else {
     formatData(cloneDeep(formData))
 
-    const { connectionId, tableName } = formData
-
-    if (copy) {
-      allFields.value = formData?.fields || []
-    } else if (connectionId && tableName) {
-      selectedFieldSize.value = 0
-      getFields()
-    }
+    // const { connectionId, tableName } = formData
+    allFields.value = formData?.fields || []
+    selectedFieldSize.value = 0
+    getFields()
+    // if (copy) {
+    //   // allFields.value = formData?.fields || []
+    // } else if (connectionId && tableName) {
+    //   selectedFieldSize.value = 0
+    //   getFields()
+    // }
 
     if (!formData.id) {
       edit(copy)
@@ -510,20 +526,21 @@ const save = async (type?: boolean) => {
       }
 
       if (!type && connectionId && tableName) {
-        const fieldList = await getAllFields()
+        formData.fields = allFields.value
+        // const fieldList = await getAllFields()
 
-        const map = fields.reduce((acc: any, field: any) => {
-          field.field_alias = field.field_alias?.trim() || ''
-          acc[field.id] = field
-          return acc
-        }, {})
+        // const map = fields.reduce((acc: any, field: any) => {
+        //   field.field_alias = field.field_alias?.trim() || ''
+        //   acc[field.id] = field
+        //   return acc
+        // }, {})
 
-        formData.fields = fieldList.map((f: any) => {
-          return {
-            ...f,
-            field_alias: map[f.id]?.field_alias,
-          }
-        })
+        // formData.fields = fieldList.map((f: any) => {
+        //   return {
+        //     ...f,
+        //     field_alias: map[f.id]?.field_alias,
+        //   }
+        // })
       }
 
       const func = id ? updateApiModule : createApiModule

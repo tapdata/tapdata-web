@@ -321,7 +321,8 @@ const startAddField = (parentFieldName = 'root') => {
   // 新字段自动选中 + 展开父节点 + 聚焦输入框
   nextTick(() => {
     if (parentFieldName !== 'root') {
-      updateExpandedKeys(parentFieldName, true)
+      const parentNode = treeRef.value?.getNode(parentFieldName)
+      if (parentNode) parentNode.expanded = true
     }
     // 恢复之前的选中状态 + 新字段
     const newKeys = [...checkedKeys, fieldName]
