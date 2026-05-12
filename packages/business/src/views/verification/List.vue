@@ -352,7 +352,7 @@ const getFilterItems = () => {
         { label: t('public_select_option_all'), value: '' },
         {
           label: t('packages_business_verification_single'),
-          value: 'MANUALLY_SPECIFIED_BY_THE_USER',
+          value: 'manual',
         },
         {
           label: t('packages_business_verification_repeating'),
