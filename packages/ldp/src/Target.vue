@@ -1225,7 +1225,7 @@ export default {
             <ElRadioGroup v-model="taskDialogConfig.task.type">
               <ElTooltip
                 :disabled="!taskDialogConfig.notSupportedCDC"
-                content="当前源数据不支持增量"
+                :content="$t('packages_ldp_not_support_increments')"
               >
                 <ElRadio
                   label="initial_sync+cdc"

@@ -1,5 +1,4 @@
 <script>
-import { $emit } from '../../utils/gogocodeTransfer'
 export default {
   name: 'MiniView',
   props: {
@@ -132,7 +131,7 @@ export default {
         const point = this.getMousePositionWithinPaperView(e)
         left = point.x - width / 2
         top = point.y - height / 2
-        $emit(this, 'drag-move', {
+        this.$emit('drag-move', {
           x: left / this.scale,
           y: top / this.scale,
         })
@@ -141,7 +140,7 @@ export default {
       this.dragDelegate((e, { x, y }) => {
         x = (left + x) / this.scale
         y = (top + y) / this.scale
-        $emit(this, 'drag-move', {
+        this.$emit('drag-move', {
           x,
           y,
         })

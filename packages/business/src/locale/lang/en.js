@@ -680,6 +680,10 @@ export default {
     'The Agent where the task is located is',
   packages_business_task_status_retrying_tooltip:
     'The current task is being retried. Retry start at: {val}',
+  packages_business_task_status_increment_delay_warning:
+    'Current max delay is {delay}, exceeding threshold {threshold}',
+  packages_business_task_status_heartbeat_task_abnormal:
+    'Heartbeat task is abnormal, please check and restore',
   packages_business_select_placeholder: 'Please add or select',
   packages_business_verification_form_youjiantongzhi: 'Mail Notification',
   packages_business_verification_form_xitongtongzhi: 'System Notification',
@@ -1016,6 +1020,9 @@ export default {
   packages_business_data_server_drawer_tiaoshi: 'Debug',
   packages_business_data_server_drawer_peizhi: 'Configuration',
   packages_business_data_server_drawer_chuangjianfuwu: 'Create API',
+  packages_business_copy_server: 'Copy API',
+  packages_business_import_server: 'Import API',
+  packages_business_export_server: 'Export API',
   packages_business_data_server_drawer_fuwuxiangqing: 'Service Details',
   packages_business_data_server_list_quedingchexiaogai:
     'Are you sure you want to revoke this service?',

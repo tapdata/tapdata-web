@@ -1,27 +1,19 @@
-<script>
+<script setup lang="ts">
+import { computed } from 'vue'
 import { MILESTONE_TYPE as STATUS_MAP } from '../shared'
 
-export default {
-  name: 'SyncStatus',
-  props: {
-    status: String,
-  },
-  data() {
-    return {
-      typeIconMap: {
-        info: 'exclamation-circle-filled',
-        success: 'success-filled',
-        primary: 'more-circle-filled',
-      },
-      STATUS_MAP,
-    }
-  },
-  computed: {
-    item() {
-      return this.STATUS_MAP[this.status]
-    },
-  },
-}
+defineOptions({ name: 'SyncStatus' })
+
+const props = defineProps<{
+  status?: string
+  delayTime?: number
+}>()
+
+const item = computed(() =>
+  props.status
+    ? STATUS_MAP[props.status as keyof typeof STATUS_MAP]
+    : undefined,
+)
 </script>
 
 <template>

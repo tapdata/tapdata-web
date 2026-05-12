@@ -650,7 +650,7 @@ defineExpose({
             row.fail_message
           }}</span>
           <div v-else class="flex align-center">
-            <span>
+            <span class="text-break">
               {{ row.item_exception.message }}
             </span>
             <el-button text type="primary" @click="showError(row)">{{

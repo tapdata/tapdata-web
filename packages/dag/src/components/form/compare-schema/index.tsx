@@ -7,18 +7,18 @@ import { dayjs } from '@tap/business/src/shared/dayjs'
 import { useForm } from '@tap/form'
 import { useI18n } from '@tap/i18n'
 import { computed, defineComponent, ref, watch } from 'vue'
-import { useStore } from 'vuex'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 import CompareResultDialog from '../field-inference/CompareResultDialog.vue'
 
 const CompareSchema = defineComponent({
   setup() {
-    const store = useStore()
+    const store = useDataflowStore()
     const { t } = useI18n()
 
     const formRef = useForm()
     const form = formRef.value
     const nodeId = form.values.id
-    const taskId = store.state.dataflow.taskId
+    const taskId = store.dataflow.id
     const dialogOpen = ref(false)
     const compareResultStatistics = ref<CompareResultStatistics | null>(null)
     const singleTable = form.values.type === 'table'
@@ -30,7 +30,7 @@ const CompareSchema = defineComponent({
     const ignoreCase = ref(form.values.compareIgnoreCase)
 
     const taskSaving = computed(() => {
-      return store.state.dataflow.taskSaving
+      return store.dataflow.taskSaving
     })
 
     const fetchCompareResultStatistics = async () => {
@@ -231,97 +231,6 @@ const CompareSchema = defineComponent({
         compareResultStatistics.value && (
           <div class="flex flex-column gap-2 my-2">
             {renderAlert()}
-            {/* <el-alert
-            type="info"
-            show-icon
-            closable={false}
-            class="fit-content"
-            v-slots={{
-              title: () => (
-                <div class="flex align-center gap-2">
-                  <span>1 小时前对比数据库模型无差异</span>
-                  <el-button
-                    type="primary"
-                    text
-                    class="ml-auto"
-                    onClick={openCompareResult}
-                  >
-                    查看
-                  </el-button>
-                </div>
-              ),
-            }}
-          ></el-alert>
-          <el-alert
-            type="info"
-            show-icon
-            closable={false}
-            class="fit-content"
-            v-slots={{
-              title: () => (
-                <div class="flex align-center gap-2">
-                  <span>2 小时前未找到数据库模型，暂未进行对比</span>
-                  <el-button
-                    type="primary"
-                    text
-                    class="ml-auto"
-                    onClick={openCompareResult}
-                  >
-                    查看
-                  </el-button>
-                </div>
-              ),
-            }}
-          ></el-alert>
-          <el-alert
-            type="info"
-            show-icon
-            closable={false}
-            class="fit-content"
-            v-slots={{
-              title: () => (
-                <div class="flex align-center gap-2">
-                  <span>
-                    5 分钟前对比数据库模型，发现 6 个字段差异（1 个只读，5
-                    个缺失），已处理
-                  </span>
-                  <el-button
-                    type="primary"
-                    text
-                    class="ml-auto"
-                    onClick={openCompareResult}
-                  >
-                    查看
-                  </el-button>
-                </div>
-              ),
-            }}
-          />
-          <el-alert
-            type="warning"
-            show-icon
-            closable={false}
-            class="fit-content"
-            v-slots={{
-              title: () => (
-                <div class="flex align-center gap-2">
-                  <span>
-                    5 分钟前对比数据库模型，发现 6 个字段差异（1 个只读，5
-                    个缺失）
-                  </span>
-                  <el-button
-                    type="primary"
-                    text
-                    class="ml-auto"
-                    onClick={openCompareResult}
-                  >
-                    查看
-                  </el-button>
-                </div>
-              ),
-            }}
-          /> */}
-
             <CompareResultDialog
               v-model={dialogOpen.value}
               nodeId={nodeId}

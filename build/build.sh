@@ -26,6 +26,9 @@ build_cmd="pnpm build:$app"
 
 echo "$build_cmd"
 
+npm set registry https://registry.npmmirror.com/
+pnpm set registry https://registry.npmmirror.com/
+
 npm i -g corepack@latest
 
 corepack enable

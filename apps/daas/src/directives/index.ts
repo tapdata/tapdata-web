@@ -37,12 +37,11 @@ export function installDirectives(app) {
   app.provide('hasPermissionByCode', hasPermissionByCode)
 
   app.directive('readonlybtn', {
-    mounted(el, binding, vnode) {
+    mounted(el, binding) {
       const code = binding.value
 
       if (!hasPermissionByCode(code)) {
         el.remove()
-        vnode.child && vnode.child.$destroy()
       }
     },
   })

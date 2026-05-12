@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { computed } from 'vue'
+import i18n from '@/i18n'
 import MiniChart from './MiniChart.vue'
 import type { ServerItem } from '@tap/api/src/core/monitor-server'
-import i18n from "@/i18n";
 
 interface ServiceCardProps {
   data: ServerItem

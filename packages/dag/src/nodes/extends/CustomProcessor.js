@@ -45,4 +45,11 @@ export class CustomProcessor extends NodeType {
       node.type === this.type && node.customNodeId === this.props.customNodeId
     )
   }
+
+  allowSource(source, target) {
+    if (target.__Ctor.props?.formSchema?.form?.key === 'aggregate') {
+      return source.databaseType?.toLowerCase().includes('mongodb')
+    }
+    return true
+  }
 }

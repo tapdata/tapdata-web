@@ -8,20 +8,20 @@ import { getUpdateConditionFields } from '@tap/form/src/components/field-select/
 import i18n from '@tap/i18n'
 import { debounce, isEqual } from 'lodash-es'
 import { defineComponent, ref } from 'vue'
-import { useStore } from 'vuex'
 import { useSchemaEffect } from '../../../hooks/useAfterTaskSaved'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 import {
   errorFiledType,
   getCanUseDataTypes,
   getMatchedDataTypeLevel,
 } from '../../../util'
-import FieldList from '../field-inference/List'
+import FieldList from '../field-inference/List.vue'
 import './style.scss'
 
 export const SchemaPreview = defineComponent({
   props: ['ignoreError', 'disabled'],
-  setup(props, { emit }) {
-    const store = useStore()
+  setup(props) {
+    const dataflowStore = useDataflowStore()
     const formRef = useForm()
     const fieldRef = useField()
     const form = formRef.value
@@ -35,7 +35,7 @@ export const SchemaPreview = defineComponent({
       form.values.type === 'table' && !!form.values.$inputs.length
     const isSource = form.values.type === 'table' && !form.values.$inputs.length
     const readonly = ref(
-      props.disabled || store.state.dataflow?.stateIsReadonly || !isTarget,
+      props.disabled || dataflowStore?.stateIsReadonly || !isTarget,
     )
     let fieldChangeRules = form.values.fieldChangeRules || []
     const createTree = (data) => {
@@ -285,9 +285,15 @@ export const SchemaPreview = defineComponent({
       )
     }
 
-    useSchemaEffect(() => [formRef.value.values.tableName], loadSchema)
+    useSchemaEffect(
+      () =>
+        formRef.value.values.type === 'table'
+          ? [formRef.value.values.tableName]
+          : [],
+      loadSchema,
+    )
 
-    if (!store.state.dataflow.taskSaving) {
+    if (!dataflowStore.taskSaving) {
       loadSchema()
     }
 
@@ -298,7 +304,8 @@ export const SchemaPreview = defineComponent({
       fieldChangeRules = rules
     }
 
-    const { taskId, activeNodeId } = store.state?.dataflow || {}
+    const taskId = dataflowStore.dataflow.id
+    const activeNodeId = dataflowStore.selectedNode?.id
     const refreshing = ref(false)
     const refreshSchema = async () => {
       if (refreshing.value) return
@@ -309,6 +316,10 @@ export const SchemaPreview = defineComponent({
       }).finally(() => {
         refreshing.value = false
       })
+
+      if (formRef.value.values.type !== 'table') {
+        loadSchema()
+      }
     }
 
     return () => (
@@ -318,9 +329,11 @@ export const SchemaPreview = defineComponent({
             {i18n.t('public_schema')}
             <el-divider direction="vertical" class="mr-1" />
             <el-tooltip
-              transition="tooltip-fade-in"
               content={i18n.t('packages_dag_refresh_schema')}
               placement="top"
+              hide-after={0}
+              enterable={false}
+              transition="none"
             >
               <IconButton
                 disabled={props.disabled}
@@ -331,13 +344,15 @@ export const SchemaPreview = defineComponent({
               </IconButton>
             </el-tooltip>
             <el-tooltip
-              transition="tooltip-fade-in"
               content={i18n.t(
                 isTreeView.value
                   ? 'packages_dag_switch_to_table_view'
                   : 'packages_dag_switch_to_tree_view',
               )}
               placement="top"
+              hide-after={0}
+              enterable={false}
+              transition="none"
             >
               <IconButton
                 onClick={() => {
@@ -360,12 +375,12 @@ export const SchemaPreview = defineComponent({
           ]}
         >
           {isTreeView.value ? (
-            <div class="schema-card rounded-lg inline-block overflow-hidden shadow-sm border border-light">
+            <div class="schema-card rounded-xl inline-block overflow-hidden shadow-sm border border-light">
               <div class="schema-card-header border-bottom px-3 py-2 fs-7 lh-base text-center">
                 {tableName.value}
               </div>
               <div
-                class="schema-card-body"
+                class="schema-card-body p-1"
                 {...{
                   directives: [
                     {

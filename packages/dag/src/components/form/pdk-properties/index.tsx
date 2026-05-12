@@ -1,18 +1,18 @@
 import { observer } from '@formily/reactive-vue'
 import { RecursionField, useField, useForm } from '@tap/form'
 import { defineComponent, ref } from 'vue'
-import { useStore } from 'vuex'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 
 export const PdkProperties = observer(
   defineComponent({
     setup() {
-      const store = useStore()
+      const dataflowStore = useDataflowStore()
       const form = useForm()
       const field = useField()
       const schema = ref({})
       const pdkHash = form.value.values.attrs.pdkHash
       if (pdkHash) {
-        const properties = store.state.dataflow.pdkPropertiesMap[pdkHash]
+        const properties = dataflowStore.pdkPropertiesMap[pdkHash]
         schema.value = properties
       }
 

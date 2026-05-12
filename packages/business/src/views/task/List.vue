@@ -18,7 +18,7 @@ import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import FilterBar from '@tap/component/src/filter-bar/Main.vue'
 import i18n from '@tap/i18n'
-import { calcUnit } from '@tap/shared'
+import { calcTimeUnit, calcUnit } from '@tap/shared'
 import dayjs from 'dayjs'
 import { escapeRegExp, isNumber, uniqBy } from 'lodash-es'
 import { h } from 'vue'
@@ -227,6 +227,9 @@ export default {
   },
 
   methods: {
+    formatTimeUnit(val) {
+      return isNumber(val) ? calcTimeUnit(val) : '-'
+    },
     getData({ page, tags, isSelectedNoTag }) {
       const { current, size } = page
       const { syncType } = this
@@ -264,6 +267,10 @@ export default {
         restartFlag: true,
         attrs: true,
         metricInfo: true,
+        delayTime: true,
+        taskIncrementDelay: true,
+        taskIncrementDelayThreshold: true,
+        heartbeatTaskRunning: true,
       }
       const where = {
         syncType,
@@ -463,7 +470,7 @@ export default {
 
       if (this.showInstanceInfo) {
         items.splice(-1, 0, {
-          label: '数据源通道',
+          label: this.$t('daas_datasourcePipeline'),
           key: 'id',
           slotName: 'pipeline',
           type: 'select-inner',
@@ -1255,6 +1262,7 @@ export default {
         prop="status"
         :label="$t('public_task_status')"
         :min-width="colWidth.status"
+        class-name="task-status-cell"
       >
         <template #default="{ row }">
           <TaskStatus
@@ -1270,14 +1278,60 @@ export default {
         :min-width="colWidth.syncStatus"
       >
         <template #default="{ row }">
-          <SyncStatus :status="row.syncStatus" />
+          <SyncStatus :status="row.syncStatus" :delay-time="row.delayTime" />
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="delayTime"
+        :label="$t('public_event_incremental_delay')"
+        min-width="170"
+        sortable="custom"
+      >
+        <template #default="{ row }">
+          <span v-if="row.delayTime == null">-</span>
+          <el-tooltip
+            v-else-if="
+              row.taskIncrementDelay != null &&
+              row.taskIncrementDelayThreshold != null
+            "
+            :content="
+              $t('packages_business_task_status_increment_delay_warning', {
+                delay: formatTimeUnit(row.taskIncrementDelay),
+                threshold: formatTimeUnit(row.taskIncrementDelayThreshold),
+              })
+            "
+            placement="top"
+            :enterable="false"
+            :hide-after="0"
+          >
+            <el-tag effect="light" round type="warning" disable-transitions>
+              <div class="flex align-center">
+                <el-icon class="mr-1">
+                  <i-lucide-clock />
+                </el-icon>
+                {{ formatTimeUnit(row.delayTime) }}
+              </div>
+            </el-tag>
+          </el-tooltip>
+          <el-tag v-else effect="light" round type="info" disable-transitions>
+            <div class="flex align-center">
+              <el-icon class="mr-1">
+                <i-lucide-clock />
+              </el-icon>
+              <span class="font-color-light">
+                {{ formatTimeUnit(row.delayTime) }}
+              </span>
+            </div>
+          </el-tag>
+
+          <!-- <span v-else>-</span> -->
         </template>
       </el-table-column>
       <el-table-column
         sortable
         prop="currentEventTimestamp"
         :label="$t('public_task_cdc_time_point')"
-        min-width="168"
+        min-width="170"
       >
         <template #default="{ row }">
           {{ formatTime(row.currentEventTimestamp) }}
@@ -1286,11 +1340,31 @@ export default {
       <el-table-column
         prop="lastStartDate"
         :label="$t('public_task_last_run_time')"
-        min-width="168"
+        min-width="170"
         sortable="custom"
       >
         <template #default="{ row }">
           {{ formatTime(row.lastStartDate) }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="createTime"
+        :label="$t('public_create_time')"
+        min-width="170"
+        sortable="custom"
+      >
+        <template #default="{ row }">
+          {{ formatTime(row.createTime) }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="last_updated"
+        :label="$t('public_update_time')"
+        min-width="170"
+        sortable="custom"
+      >
+        <template #default="{ row }">
+          {{ formatTime(row.last_updated) }}
         </template>
       </el-table-column>
       <el-table-column
@@ -1593,6 +1667,10 @@ export default {
       pointer-events: auto;
       position: static;
     }
+  }
+
+  :deep(.task-status-cell .cell) {
+    overflow: visible;
   }
 }
 </style>

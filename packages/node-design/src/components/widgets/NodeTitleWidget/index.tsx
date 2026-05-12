@@ -1,5 +1,5 @@
 import { observer } from '@formily/reactive-vue'
-import { defineComponent, type PropType } from 'vue'
+import { defineComponent, isRef, type PropType } from 'vue'
 import type { TreeNode } from '@designable/core'
 
 const NodeTitleWidgetComponent = defineComponent({
@@ -9,7 +9,10 @@ const NodeTitleWidgetComponent = defineComponent({
   },
   setup(props) {
     const takeNode = () => {
-      const node = props.node!
+      let node = props.node!
+      if (isRef(node)) {
+        node = node.value
+      }
       if (node.componentName === '$$ResourceNode$$') {
         return node.children[0]
       }

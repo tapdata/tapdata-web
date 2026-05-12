@@ -252,7 +252,7 @@ export default {
   packages_business_dataFlow_button_reset: '重置',
   packages_business_connection_type_source: '源头',
   packages_business_connection_type_target: '目标',
-  packages_business_connection_type_source_and_target: '源头和目标',
+  packages_business_connection_type_source_and_target: '源和目标',
   packages_business_task_preview_status_error: '错误',
   packages_business_task_preview_status_edit: '编辑中',
   packages_business_task_preview_status_wait_run: '启动中',
@@ -613,6 +613,10 @@ export default {
   packages_business_task_status_agent_tooltip_agent: '任务所在的引擎为',
   packages_business_task_status_retrying_tooltip:
     '当前任务正在重试中，重试开始时间：{val}',
+  packages_business_task_status_increment_delay_warning:
+    '当前任务最大延迟为 {delay}，已超过阈值 {threshold}',
+  packages_business_task_status_heartbeat_task_abnormal:
+    '心跳任务异常，请检查并恢复',
   packages_business_select_placeholder: '请添加或选择',
   packages_business_verification_form_youjiantongzhi: '邮件通知',
   packages_business_verification_form_xitongtongzhi: '系统通知',
@@ -1200,6 +1204,9 @@ export default {
   packages_business_tiaoshi: '调试',
   packages_business_peizhi: '配置',
   packages_business_chuangjianfuwu: '创建服务',
+  packages_business_copy_server: '复制服务',
+  packages_business_import_server: '导入服务',
+  packages_business_export_server: '导出服务',
   packages_business_fuwuxiangqing: '服务详情',
   packages_business_geshicuowu: '格式错误',
   packages_business_validate:

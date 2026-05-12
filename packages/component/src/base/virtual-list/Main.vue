@@ -214,7 +214,7 @@ export default {
 <template>
   <div :class="['virtual-list-wrap', { 'is-border': border }]">
     <div class="header-wrapper">
-      <div class="header__list flex">
+      <div class="header__list flex bg-main dark:bg-overlay">
         <div
           v-for="(item, index) in cols"
           :key="index"
@@ -314,23 +314,22 @@ export default {
   height: 100%;
   &.is-border {
     .column-item {
-      border-right: 1px solid #ebeef5;
-      border-bottom: 1px solid #ebeef5;
+      border-right: 1px solid var(--el-border-color);
+      border-bottom: 1px solid var(--el-border-color);
     }
 
     .header-wrapper {
-      border-top: 1px solid #ebeef5;
-      border-left: 1px solid #ebeef5;
+      border-top: 1px solid var(--el-border-color);
+      border-left: 1px solid var(--el-border-color);
     }
 
     .body-wrapper {
-      border-left: 1px solid #ebeef5;
+      border-left: 1px solid var(--el-border-color);
     }
   }
 }
 .header__list {
-  background-color: #fafafa;
-  color: #333c4a;
+  color: var(--text-dark);
   font-weight: 500;
 }
 .body-wrapper {
@@ -341,9 +340,9 @@ export default {
   height: 100%;
 }
 .body__row {
-  color: #535f72;
+  color: var(--text-light);
   &:hover {
-    background-color: #f2f3f5;
+    background-color: var(--el-bg-color-overlay);
   }
 }
 .column-item {

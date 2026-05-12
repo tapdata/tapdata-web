@@ -191,7 +191,7 @@ export default defineComponent({
                   return (
                     <div class="path-breadcrumb-item flex align-center">
                       <div
-                        class="path-breadcrumb-item__name rounded-2 px-1"
+                        class="path-breadcrumb-item__name rounded-lg px-1"
                         onClick={() => {
                           notLast && setTreeCurrent(node.data)
                         }}
@@ -266,7 +266,7 @@ export default defineComponent({
                     <TablePreview
                       tag="div"
                       ref={previewRef}
-                      class="border rounded-4 sw-table-drawer h-100 overflow-y-auto"
+                      class="border rounded-xl px-4 pb-4 sw-table-drawer h-100 overflow-y-auto"
                     ></TablePreview>
                   )}
                 </div>

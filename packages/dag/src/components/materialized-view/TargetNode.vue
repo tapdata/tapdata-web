@@ -7,17 +7,14 @@ import {
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared/const'
 import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import i18n from '@tap/i18n'
-import { Time } from '@tap/shared'
+import { Handle, Position } from '@vue-flow/core'
 import { merge } from 'lodash-es'
-import { computed, onMounted, ref, watch } from 'vue'
-import { useStore } from 'vuex'
-import { NODE_PREFIX } from '../../constants'
-import { targetEndpoint } from '../../style'
+import { computed, watch } from 'vue'
+import { useDataflowStore } from '../../stores/dataflow.store'
 import { TableSelect } from '../form/table-select'
 import NodeIcon from '../NodeIcon.vue'
 
 interface Props {
-  position?: [number, number]
   schema?: any[]
   node: {
     id?: string
@@ -29,13 +26,11 @@ interface Props {
     targetPath?: string
   }
   data: any
-  jsPlumbIns: any
   schemaLoading?: boolean
   disabled?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  position: () => [0, 0],
   schema: () => [],
   schemaLoading: false,
   disabled: false,
@@ -57,10 +52,7 @@ const emit = defineEmits<{
   (e: 'loadSchema'): void
 }>()
 
-const store = useStore()
-const isDrag = ref(false)
-const isNotMove = ref(false)
-const onMouseDownAt = ref<number>()
+const dataflowStore = useDataflowStore()
 
 const params = {
   isTarget: true,
@@ -70,24 +62,6 @@ const params = {
     },
   },
 }
-
-const ins = computed(() => props.node?.__Ctor || {})
-
-const nodeClass = computed(() => {
-  const list: string[] = []
-  if (ins.value) {
-    list.push(`node--${ins.value.group}`)
-  }
-  return list
-})
-
-const nodeStyle = computed(() => {
-  const [left = 0, top = 0] = props.position || []
-  return {
-    left: `${left}px`,
-    top: `${top}px`,
-  }
-})
 
 const treeData = computed(() => (props.schema ? createTree(props.schema) : []))
 
@@ -103,124 +77,8 @@ const treeEmptyText = computed(() => {
   return i18n.t('public_data_no_data')
 })
 
-const transformLoading = computed(() => store.state.dataflow.transformLoading)
-const taskSaving = computed(() => store.state.dataflow.taskSaving)
-
-onMounted(() => {
-  if (props.node.id) {
-    init()
-  }
-})
-
-function init() {
-  const { id } = props.node
-  const nodeId = id
-
-  const targetParams = {
-    ...targetEndpoint,
-  }
-
-  props.jsPlumbIns.makeTarget(`n_${id}`, targetParams)
-
-  props.jsPlumbIns.draggable(document.querySelector(`#n_${id}`), {
-    handle: '.node-title, .node-title *',
-    start: (params: any) => {
-      onMouseDownAt.value = Time.now()
-      if (params.e && !isNodeSelected(props.node.id)) {
-        props.jsPlumbIns.clearDragSelection()
-        store.commit('dataflow/resetSelectedNodes')
-      }
-
-      store.commit('dataflow/addActiveAction', 'dragActive')
-
-      emit('dragStart', params)
-      return true
-    },
-    drag: (params: any) => {
-      params.id = nodeId
-      isDrag.value = true
-      emit('dragMove', params)
-    },
-    stop: () => {
-      isNotMove.value = false
-      const { position } = props.data.attrs
-      const newProperties: any[] = []
-      const oldProperties: any[] = []
-
-      if (store.getters['dataflow/isActionActive']('dragActive')) {
-        const moveNodes = [...store.getters['dataflow/getSelectedNodes']]
-
-        if (!isNodeSelected(props.node.id)) {
-          moveNodes.push(props.data)
-        }
-
-        const element = document.querySelector(
-          `#n_${props.node.id}`,
-        ) as HTMLElement
-        const x = Number.parseFloat(element.style.left)
-        const y = Number.parseFloat(element.style.top)
-
-        const distance = Math.hypot(x - position[0], y - position[1])
-
-        if (x === position[0] && y === position[1]) {
-          isNotMove.value = true
-          store.commit('dataflow/removeActiveAction', 'dragActive')
-        }
-
-        if (distance < 4 || Time.now() - (onMouseDownAt.value || 0) < 10) {
-          store.commit('dataflow/removeActiveAction', 'dragActive')
-        }
-
-        moveNodes.forEach((node) => {
-          const nodeElement = NODE_PREFIX + node.id
-          const element = document.querySelector(
-            `#${nodeElement}`,
-          ) as HTMLElement
-          if (!element) {
-            return
-          }
-
-          const newNodePosition = [
-            Number.parseFloat(element.style.left),
-            Number.parseFloat(element.style.top),
-          ]
-
-          const updateInformation = {
-            id: node.id,
-            properties: {
-              attrs: { position: newNodePosition },
-            },
-          }
-
-          oldProperties.push({
-            id: node.id,
-            properties: {
-              attrs: { position },
-            },
-          })
-          newProperties.push(updateInformation)
-        })
-      }
-
-      onMouseDownAt.value = undefined
-      emit('dragStop', isNotMove.value, oldProperties, newProperties)
-    },
-  })
-
-  props.jsPlumbIns.addEndpoint(
-    document.querySelector(`#n_${id}`),
-    targetParams,
-    {
-      uuid: `${id}_target`,
-    },
-  )
-}
-
-function isNodeSelected(nodeId: string) {
-  return store.getters['dataflow/getSelectedNodes'].some(
-    (node: any) => node.id === nodeId,
-  )
-}
+const transformLoading = computed(() => dataflowStore.transformLoading)
+const taskSaving = computed(() => dataflowStore.taskSaving)
 
 interface DatabaseItem {
   name: string
@@ -356,7 +214,7 @@ async function loadTable(
   if (filter.where) {
     Object.assign(filter.where, {
       meta_type: {
-        in: ['collection', 'table', 'view'],
+        in: ['collection', 'table'],
       },
       is_deleted: false,
       sourceType: 'SOURCE',
@@ -475,7 +333,7 @@ function onConnectionSelect(connection: any) {
     db_version: connection.db_version,
   }
 
-  store.commit('dataflow/updateNodeProperties', {
+  dataflowStore.updateNodeProperties({
     id: props.node.id,
     properties: {
       attrs: nodeAttrs,
@@ -485,49 +343,27 @@ function onConnectionSelect(connection: any) {
 
 async function onChangeConnection() {
   props.node.tableName = ''
-  await store.dispatch('dataflow/updateDag', { isNow: true })
+  await dataflowStore.patchDataflow()
 }
 
 async function onChangeTable() {
-  await store.dispatch('dataflow/updateDag', { isNow: true })
+  await dataflowStore.patchDataflow()
   setTimeout(async () => {
     await waitTaskSaved()
     await waitTaskTransform()
     emit('loadSchema')
   }, 100)
 }
-
-function onNodeExpandAndCollapse() {
-  let animationStartTime: number
-  let animationId: number
-
-  const revalidate = (timestamp: number) => {
-    if (!animationStartTime) {
-      animationStartTime = timestamp
-    }
-
-    const elapsedTime = timestamp - animationStartTime
-
-    props.jsPlumbIns.revalidate(`n_${props.node.id}`)
-
-    if (elapsedTime < 350) {
-      animationId = requestAnimationFrame(revalidate)
-    } else {
-      cancelAnimationFrame(animationId)
-    }
-  }
-
-  animationId = requestAnimationFrame(revalidate)
-}
 </script>
 
 <template>
-  <div
-    :id="`n_${node.id}`"
-    class="materialized-view-node --target position-absolute rounded-lg bg-white"
-    :class="nodeClass"
-    :style="nodeStyle"
-  >
+  <div class="materialized-view-node --target rounded-lg bg-white">
+    <Handle
+      type="target"
+      :position="Position.Left"
+      :connectable="false"
+      class="mv-node-handle mv-node-handle-left"
+    />
     <div class="node-header bg-primary">
       <div class="node-title text-white lh-base flex align-center px-2 py-1">
         <VIcon class="mr-1">drag</VIcon
@@ -579,8 +415,6 @@ function onNodeExpandAndCollapse() {
         :data="treeData"
         :render-content="renderContent"
         :empty-text="treeEmptyText"
-        @node-expand="onNodeExpandAndCollapse"
-        @node-collapse="onNodeExpandAndCollapse"
       />
       <code class="color-success-light-5">}</code>
     </div>

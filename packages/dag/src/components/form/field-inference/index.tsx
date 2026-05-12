@@ -2,7 +2,6 @@ import { FormItem, computed as reactiveComputed, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { defineComponent, ref } from 'vue'
 import { connect, mapProps } from '../../../../../form'
-import CompareResultDialog from './CompareResultDialog.vue'
 import SchemaFieldList from './List.vue'
 import Main from './Main.vue'
 
@@ -12,7 +11,6 @@ export const fieldInference = connect(
     setup(props, { attrs }) {
       const formRef = useForm()
       const form = formRef.value
-      const nodeId = form.values.id
 
       const batchRuleCounts = reactiveComputed(() => {
         return (
@@ -24,21 +22,11 @@ export const fieldInference = connect(
       const fieldMapping = ref(null)
 
       const rollbackAll = () => {
-        fieldMapping.value.rollbackAll()
+        fieldMapping.value?.rollbackAll()
       }
 
       const open = () => {
-        fieldMapping.value.handleOpen()
-      }
-
-      const dialogOpen = ref(false)
-
-      const openCompareResult = () => {
-        dialogOpen.value = true
-      }
-
-      const handleLoadSchema = () => {
-        fieldMapping.value.loadData()
+        fieldMapping.value?.handleOpen()
       }
 
       const renderLabel = () => {
@@ -90,12 +78,6 @@ export const fieldInference = connect(
                 uniqueIndexEnable={form.values.uniqueIndexEnable}
               />
             </FormItem.BaseItem>
-
-            <CompareResultDialog
-              v-model={dialogOpen.value}
-              nodeId={nodeId}
-              onLoadSchema={handleLoadSchema}
-            />
           </div>
         )
       }

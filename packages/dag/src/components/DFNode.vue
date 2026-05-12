@@ -396,8 +396,11 @@ export default {
       >
       <div class="node-anchor input" />
       <div v-show="allowTarget" class="node-anchor output" />
+
+      <template #extra>
+        <slot />
+      </template>
     </BaseNode>
-    <slot />
   </div>
 </template>
 
@@ -424,6 +427,7 @@ export default {
   }
 }
 .df-node-text {
+  font-weight: 500;
   font-size: var(--font-base-title);
 }
 .df-node-text-tooltip {
@@ -445,7 +449,7 @@ export default {
     display: none;
     width: 16px;
     height: 16px;
-    border-color: inherit;
+    border-color: var(--color-primary);
     position: absolute;
     cursor: crosshair;
     left: 100%;
@@ -461,19 +465,13 @@ export default {
       border-color: inherit;
       border-radius: 50%;
       background: var(--el-bg-color);
-      width: 12px;
-      height: 12px;
+      width: 16px;
+      height: 16px;
     }
 
     &.input {
       left: 0;
     }
-
-    //&:hover:before {
-    //  border-width: 2px;
-    //  width: 16px;
-    //  height: 16px;
-    //}
   }
 
   &:hover .node-anchor.output {

@@ -1,310 +1,316 @@
-<script>
+<script setup lang="ts">
 import { fetchDatabaseTypeByPdkHash } from '@tap/api/src/core/database-types'
-import { multiTransform } from '@tap/api/src/core/metadata-instances'
+import { getNodeSchemaPage } from '@tap/api/src/core/metadata-instances'
 import noData from '@tap/assets/images/noData.png'
-
+import { Modal } from '@tap/component/src/modal'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import { FieldSelect, mapFieldsData } from '@tap/form'
-import i18n from '@tap/i18n'
+import { useI18n } from '@tap/i18n'
 import { cloneDeep, debounce } from 'lodash-es'
-import { mapGetters } from 'vuex'
-
+import { computed, onMounted, ref, useTemplateRef, watch } from 'vue'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 import { getCanUseDataTypes, getMatchedDataTypeLevel } from '../../../util'
 import Dialog from './Dialog.vue'
 import List from './List.vue'
-import mixins from './mixins'
 
-export default {
-  name: 'FieldInference',
+defineOptions({ name: 'FieldInference' })
 
-  components: { OverflowTooltip, List, Dialog, FieldSelect },
+const props = defineProps<{
+  form: any
+  readOnly?: boolean
+  disabled?: boolean
+  uniqueIndexEnable?: boolean
+}>()
 
-  mixins: [mixins],
+const { t } = useI18n()
+const dataflowStore = useDataflowStore()
 
-  props: {
-    form: Object,
-    readOnly: Boolean,
-    disabled: Boolean,
-    uniqueIndexEnable: Boolean,
+const listRef = useTemplateRef<any>('list')
+
+// Vuex → Pinia
+const activeNode = computed(() => dataflowStore.selectedNode)
+const stateIsReadonly = computed(() => dataflowStore.stateIsReadonly)
+
+// Data
+const navLoading = ref(false)
+const fieldsLoading = ref(false)
+const position = ref(0)
+const selected = ref<any>({})
+const navList = ref<any[]>([])
+const page = ref({
+  size: 10,
+  current: 1,
+  total: 0,
+  count: 1,
+})
+const searchTable = ref('')
+const searchField = ref('')
+const visible = ref(false)
+const fieldChangeRules = ref<any[]>([])
+const updateList = ref<any[]>([])
+const updateConditionFieldMap = ref<Record<string, any>>({})
+const activeClassification = ref('')
+const tableClassification = ref([
+  {
+    type: '',
+    title: t('packages_dag_field_inference_main_quanbubiao'),
+    total: 0,
+    label: '',
   },
-
-  data() {
-    return {
-      navLoading: false,
-      fieldsLoading: false,
-      position: 0,
-      selected: {},
-      navList: [],
-      page: {
-        size: 10,
-        current: 1,
-        total: 0,
-        count: 1,
-      },
-      searchTable: '',
-      searchField: '',
-      visible: false,
-      fieldChangeRules: [],
-      noData,
-      updateList: [],
-      updateConditionFieldMap: {},
-      activeClassification: '',
-      tableClassification: [
-        {
-          type: '',
-          title: i18n.t('packages_dag_field_inference_main_quanbubiao'),
-          total: 0,
-        },
-        {
-          type: 'updateEx',
-          title: i18n.t('packages_dag_field_inference_main_gengxintiaojianyi'),
-          total: 0,
-        },
-        {
-          type: 'transformEx',
-          title: i18n.t('packages_dag_field_inference_main_tuiyanyichang'),
-          total: 0,
-        },
-      ],
-      transformExNum: 0,
-      updateExNum: 0,
-      dataTypesJson: {},
-      fieldOptions: [],
-    }
+  {
+    type: 'updateEx',
+    title: t('packages_dag_field_inference_main_gengxintiaojianyi'),
+    total: 0,
+    label: '',
   },
-
-  computed: {
-    ...mapGetters('dataflow', ['stateIsReadonly']),
-
-    batchRuleCounts() {
-      return this.fieldChangeRules.filter((t) => t.scope === 'Node').length
-    },
-
-    readonly() {
-      return this.stateIsReadonly
-    },
-
-    isErrorSelect() {
-      const { hasPrimaryKey, hasUnionIndex, hasUpdateField } =
-        this.selected || {}
-      return !hasPrimaryKey && !hasUnionIndex && !hasUpdateField
-    },
+  {
+    type: 'transformEx',
+    title: t('packages_dag_field_inference_main_tuiyanyichang'),
+    total: 0,
+    label: '',
   },
-  watch: {
-    updateExNum(newVal, oldVal) {
-      if (oldVal === 1 && newVal === 0) {
-        //当前更新异常表全部更新完成
-        this.activeClassification = ''
-        this.loadData()
-      }
-    },
-  },
+])
+const transformExNum = ref(0)
+const updateExNum = ref(0)
+const dataTypesJson = ref<any>({})
+const fieldOptions = ref<any[]>([])
 
-  mounted() {
-    this.activeClassification = this.tableClassification[0].type
-    this.loadData()
-  },
+// Computed
+const batchRuleCounts = computed(
+  () => fieldChangeRules.value.filter((t: any) => t.scope === 'Node').length,
+)
 
-  methods: {
-    async loadData(resetSelect = false) {
-      this.navLoading = true
-      this.fieldsLoading = true
-      // TODO 获取原字段类型
-      const rules = this.form.getValuesIn('fieldChangeRules') || []
-      const nodeAttrs = this.form.getValuesIn('attrs') || {}
-      const pdkHashData = await fetchDatabaseTypeByPdkHash(nodeAttrs.pdkHash)
-      this.dataTypesJson = pdkHashData
-        ? JSON.parse(pdkHashData?.expression || '{}')
-        : {}
-      if (rules.length) {
-        const allTableFields = []
-        this.navList.forEach((el) => {
-          allTableFields.push(...el.fields.filter((t) => !!t.changeRuleId))
-        })
-        rules.forEach((el) => {
-          const f = allTableFields.find((t) => t.changeRuleId === el.id)
-          if (f && el.accept !== f.dataTypeTemp) {
-            el.accept = f.dataTypeTemp
-          }
-        })
-      }
-      this.fieldChangeRules = rules
-      this.$refs.list.setRules(this.fieldChangeRules)
-      this.updateConditionFieldMap = cloneDeep(
-        this.form.getValuesIn('updateConditionFieldMap') || {},
-      )
-      const { size, current } = this.page
-      const tableFilterRegex = this.searchTable ? `.*${this.searchTable}.*` : ''
-      const res = await this.getData({
-        page: current,
-        pageSize: size,
-        tableFilter: tableFilterRegex,
-        filterType: this.activeClassification,
-      })
-      const { items, total } = res
-      this.updateExNum = res.updateExNum
-      this.transformExNum = res.transformExNum
-      this.navList = items.map((t) => {
-        const { fields = [], findPossibleDataTypes = {} } = t
-        fields.forEach((el) => {
-          const { dataTypes = [], lastMatchedDataType = '' } =
-            findPossibleDataTypes[el.field_name] || {}
-          el.canUseDataTypes =
-            getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
-          el.matchedDataTypeLevel = getMatchedDataTypeLevel(
-            el,
-            el.canUseDataTypes,
-            this.fieldChangeRules,
-            findPossibleDataTypes,
-          )
-        })
-        t.matchedDataTypeLevel = fields.some(
-          (f) => f.matchedDataTypeLevel === 'error',
-        )
-          ? 'error'
-          : fields.some((f) => f.matchedDataTypeLevel === 'warning')
-            ? 'warning'
-            : ''
-        return t
-      })
+const readonly = computed(() => stateIsReadonly.value)
 
-      this.page.total = total
-      this.tableClassification.forEach((el) => {
-        if (!el.type) {
-          el.total = res.wholeNum
-        } else {
-          el.total = res[`${el.type}Num`]
-        }
-        el.label = `${el.title}(${el.total})`
-      })
-      this.page.count = total ? Math.ceil(total / this.page.size) : 1
-      if (resetSelect) {
-        this.handleSelect(this.position)
-      } else {
-        this.handleSelect()
-      }
-      this.navLoading = false
-    },
+const isErrorSelect = computed(() => {
+  const { hasPrimaryKey, hasUnionIndex, hasUpdateField } = selected.value || {}
+  return !hasPrimaryKey && !hasUnionIndex && !hasUpdateField
+})
 
-    refresh() {
-      this.loadData()
-    },
-
-    async filterFields() {
-      this.fieldsLoading = true
-      const item = this.navList[this.position]
-      let fields = await this.getCurrentTableFields(item, this.fieldChangeRules)
-      const { fields: newFields } = mapFieldsData(item)
-      newFields.forEach((t) => {
-        delete t.dataType
-      })
-      fields = newFields
-      item.fields = fields
-      const findPossibleDataTypes = item?.findPossibleDataTypes || {}
-      if (this.searchField) {
-        fields = item.fields.filter((t) =>
-          t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()),
-        )
-      }
-      this.selected = Object.assign({}, item, { fields, findPossibleDataTypes })
-      this.updateList = this.updateConditionFieldMap[this.selected.name] || []
-      this.fieldsLoading = false
-
-      this.fieldOptions = fields
-      this.selected.fields = fields
-    },
-
-    handleSelect(index = 0) {
-      this.position = index
-      this.filterFields()
-    },
-
-    handleOpen() {
-      this.visible = true
-    },
-
-    rollbackAll() {
-      this.$confirm(
-        i18n.t('packages_form_field_inference_main_ninquerenyaoquan'),
-      ).then((resFlag) => {
-        if (resFlag) {
-          this.fieldChangeRules = []
-          this.handleUpdate()
-          this.$message.success(i18n.t('public_message_operation_success'))
-        }
-      })
-    },
-
-    handleUpdate() {
-      this.form.setValuesIn('fieldChangeRules', this.fieldChangeRules)
-    },
-
-    handleSearchTable: debounce(function () {
-      this.loadData()
-    }, 200),
-
-    handleSearchField: debounce(function () {
-      this.filterFields()
-    }, 200),
-
-    handleVisibleChange(val) {
-      !val && this.handleUpdateList()
-    },
-
-    handleRemoveTag: debounce(function () {
-      this.handleUpdateList()
-    }, 1000),
-
-    handleUpdateList() {
-      this.updateConditionFieldMap[this.selected.name] = this.updateList
-      this.form.setValuesIn(
-        'updateConditionFieldMap',
-        cloneDeep(this.updateConditionFieldMap),
-      )
-    },
-
-    async handleUpdateRules(val = []) {
-      this.fieldChangeRules = val
-      this.handleUpdate()
-      this.updateSelectedAllFields(
-        await this.getCurrentTableFields(this.selected, val),
-      )
-    },
-
-    updateSelectedAllFields(fields = []) {
-      this.selected.fields.forEach((t) => {
-        const f = fields.find((el) => el.field_name === t.field_name)
-        if (f) {
-          t.data_type = f.data_type
-          t.changeRuleId = f.changeRuleId
-        }
-      })
-    },
-
-    async getCurrentTableFields(item = {}, rules = []) {
-      const { qualified_name, nodeId, source = {}, fields = [] } = item
-      const { database_type } = source
-      const params = {
-        rules: rules.filter(
-          (t) =>
-            t.namespace.length === 1 || t.namespace.includes(qualified_name),
-        ),
-        qualifiedName: qualified_name,
+// Methods from mixin
+async function getData(op: Record<string, any> = {}) {
+  const nodeId = activeNode.value?.id
+  if (!nodeId) return { items: [], total: 0 }
+  let data: any = { items: [], total: 0 }
+  try {
+    const params = Object.assign(
+      {
         nodeId,
-        databaseType: database_type,
-        fields,
-      }
-      const data = (await multiTransform(params)) || {
-        fields: [],
-      }
-      return data.fields.length ? data.fields : fields
-    },
-
-    changeUniqueIndexEnable(val) {
-      this.form.setValuesIn('uniqueIndexEnable', val)
-    },
-  },
+        fields: [
+          'original_name',
+          'fields',
+          'qualified_name',
+          'name',
+          'indices',
+          'constraints',
+        ],
+        page: 1,
+        pageSize: 20,
+      },
+      op,
+    )
+    data = await getNodeSchemaPage(params)
+  } catch {
+    // catch
+  }
+  return data
 }
+
+async function loadData(resetSelect = false) {
+  navLoading.value = true
+  fieldsLoading.value = true
+  // TODO 获取原字段类型
+  const rules = props.form.getValuesIn('fieldChangeRules') || []
+  const nodeAttrs = props.form.getValuesIn('attrs') || {}
+  const pdkHashData = await fetchDatabaseTypeByPdkHash(nodeAttrs.pdkHash)
+  dataTypesJson.value = pdkHashData
+    ? JSON.parse(pdkHashData?.expression || '{}')
+    : {}
+  if (rules.length) {
+    const allTableFields: any[] = []
+    navList.value.forEach((el: any) => {
+      allTableFields.push(...el.fields.filter((t: any) => !!t.changeRuleId))
+    })
+    rules.forEach((el: any) => {
+      const f = allTableFields.find((t: any) => t.changeRuleId === el.id)
+      if (f && el.accept !== f.dataTypeTemp) {
+        el.accept = f.dataTypeTemp
+      }
+    })
+  }
+  fieldChangeRules.value = rules
+  listRef.value?.setRules(fieldChangeRules.value)
+  updateConditionFieldMap.value = cloneDeep(
+    props.form.getValuesIn('updateConditionFieldMap') || {},
+  )
+  const { size, current } = page.value
+  const tableFilterRegex = searchTable.value ? `.*${searchTable.value}.*` : ''
+  const res = await getData({
+    page: current,
+    pageSize: size,
+    tableFilter: tableFilterRegex,
+    filterType: activeClassification.value,
+  })
+  const { items, total } = res
+  updateExNum.value = res.updateExNum
+  transformExNum.value = res.transformExNum
+  navList.value = items.map((t: any) => {
+    const { fields = [], findPossibleDataTypes = {} } = t
+    fields.forEach((el: any) => {
+      const { dataTypes = [], lastMatchedDataType = '' } =
+        findPossibleDataTypes[el.field_name] || {}
+      el.canUseDataTypes =
+        getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
+      el.matchedDataTypeLevel = getMatchedDataTypeLevel(
+        el,
+        el.canUseDataTypes,
+        fieldChangeRules.value,
+        findPossibleDataTypes,
+      )
+    })
+    t.matchedDataTypeLevel = fields.some(
+      (f: any) => f.matchedDataTypeLevel === 'error',
+    )
+      ? 'error'
+      : fields.some((f: any) => f.matchedDataTypeLevel === 'warning')
+        ? 'warning'
+        : ''
+    return t
+  })
+
+  page.value.total = total
+  tableClassification.value.forEach((el) => {
+    if (!el.type) {
+      el.total = res.wholeNum
+    } else {
+      el.total = res[`${el.type}Num`]
+    }
+    el.label = `${el.title}(${el.total})`
+  })
+  page.value.count = total ? Math.ceil(total / page.value.size) : 1
+  if (resetSelect) {
+    handleSelect(position.value)
+  } else {
+    handleSelect()
+  }
+  navLoading.value = false
+  fieldsLoading.value = false
+}
+
+function refresh() {
+  loadData()
+}
+
+function filterFields() {
+  const item = navList.value[position.value]
+
+  if (!item) return
+
+  let { fields } = mapFieldsData(item)
+
+  fields.forEach((t: any) => {
+    delete t.dataType
+  })
+
+  item.fields = fields
+  const findPossibleDataTypes = item?.findPossibleDataTypes || {}
+
+  if (searchField.value) {
+    fields = item.fields.filter((t: any) =>
+      t.field_name.toLowerCase().includes(searchField.value?.toLowerCase()),
+    )
+  }
+
+  selected.value = Object.assign({}, item, { fields, findPossibleDataTypes })
+  updateList.value = updateConditionFieldMap.value[selected.value.name] || []
+  fieldOptions.value = fields
+  selected.value.fields = fields
+}
+
+function handleSelect(index = 0) {
+  position.value = index
+  filterFields()
+}
+
+function handleOpen() {
+  visible.value = true
+}
+
+function handleUpdate() {
+  props.form.setValuesIn('fieldChangeRules', fieldChangeRules.value)
+}
+
+const handleSearchTable = debounce(() => {
+  loadData()
+}, 200)
+
+const handleSearchField = debounce(() => {
+  filterFields()
+}, 200)
+
+function handleVisibleChange(val: boolean) {
+  !val && handleUpdateList()
+}
+
+const handleRemoveTag = debounce(() => {
+  handleUpdateList()
+}, 1000)
+
+function handleUpdateList() {
+  updateConditionFieldMap.value[selected.value.name] = updateList.value
+  props.form.setValuesIn(
+    'updateConditionFieldMap',
+    cloneDeep(updateConditionFieldMap.value),
+  )
+}
+
+function handleUpdateRules(val: any[] = []) {
+  fieldChangeRules.value = val
+  handleUpdate()
+}
+
+function handleUpdateFields(
+  updater: (fields: any[], qualifiedName: string) => void,
+) {
+  navList.value.forEach((item: any) => {
+    if (item.fields?.length) {
+      updater(item.fields, item.qualified_name)
+    }
+  })
+}
+
+function rollbackAll() {
+  Modal.confirm(t('packages_form_field_inference_main_ninquerenyaoquan')).then(
+    (resFlag) => {
+      if (resFlag) {
+        fieldChangeRules.value = []
+        handleUpdate()
+        ElMessage.success(t('public_message_operation_success'))
+      }
+    },
+  )
+}
+
+// Watch
+watch(updateExNum, (newVal, oldVal) => {
+  if (oldVal === 1 && newVal === 0) {
+    activeClassification.value = ''
+    loadData()
+  }
+})
+
+// Mounted
+onMounted(() => {
+  activeClassification.value = tableClassification.value[0].type
+  loadData()
+})
+
+defineExpose({
+  refresh,
+  loadData,
+  handleOpen,
+  rollbackAll,
+})
 </script>
 
 <template>
@@ -441,8 +447,7 @@ export default {
           />
         </div>
         <div
-          class="flex-fill flex flex-column bg-card mt-4 rounded-xl overflow-hidden"
-          style="border: 1px solid #f2f4f7"
+          class="flex-fill flex flex-column bg-card mt-4 rounded-xl overflow-hidden border"
         >
           <div class="flex align-items-center p-2 font-color-dark">
             <ElInput
@@ -471,6 +476,7 @@ export default {
             ignore-error
             class="content__list flex-fill"
             @update-rules="handleUpdateRules"
+            @update-fields="handleUpdateFields"
             @open-update-rules="handleOpen"
           />
         </div>

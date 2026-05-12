@@ -251,7 +251,7 @@ export default {
   packages_business_dataFlow_button_reset: '重置',
   packages_business_connection_type_source: '源頭',
   packages_business_connection_type_target: '目標',
-  packages_business_connection_type_source_and_target: '源頭和目標',
+  packages_business_connection_type_source_and_target: '源和目標',
   packages_business_task_preview_status_error: '錯誤',
   packages_business_task_preview_status_edit: '編輯中',
   packages_business_task_preview_status_wait_run: '啟動中',
@@ -614,6 +614,10 @@ export default {
   packages_business_task_status_agent_tooltip_agent: '任務所在的引擎為',
   packages_business_task_status_retrying_tooltip:
     '當前任務正在重試中，重試開始時間：{val}',
+  packages_business_task_status_increment_delay_warning:
+    '當前任務最大延遲為 {delay}，已超過閾值 {threshold}',
+  packages_business_task_status_heartbeat_task_abnormal:
+    '心跳任務異常，請檢查並恢復',
   packages_business_select_placeholder: '請添加或選擇',
   packages_business_verification_form_youjiantongzhi: '郵件通知',
   packages_business_verification_form_xitongtongzhi: '系統通知',
@@ -920,6 +924,9 @@ export default {
   packages_business_data_server_drawer_tiaoshi: '調試',
   packages_business_data_server_drawer_peizhi: '配置',
   packages_business_data_server_drawer_chuangjianfuwu: '創建服務',
+  packages_business_copy_server: '復製服務',
+  packages_business_import_server: '導入服務',
+  packages_business_export_server: '導出服務',
   packages_business_data_server_drawer_fuwuxiangqing: '服務詳情',
   packages_business_data_server_list_quedingchexiaogai: '確定撤銷該服務？',
   packages_business_data_server_list_quedingfabugai: '確定發布該服務？',

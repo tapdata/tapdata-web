@@ -39,6 +39,7 @@
     "element-plus": "catalog:",
     "github-markdown-css": "catalog:",
     "lodash": "catalog:",
+    "pinia": "^3.0.4",
     "qs": "catalog:",
     "vue": "catalog:",
     "vue-echarts": "catalog:",

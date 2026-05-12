@@ -6,6 +6,12 @@ import './src/cloud-auto-imports.d.ts'
 import './src/cloud-components.d.ts'
 
 import 'vue-router'
+import type { DefineComponent } from 'vue'
+
+declare module '*.vue' {
+  const component: DefineComponent<{}, {}, any>
+  export default component
+}
 
 declare module 'vue-router' {
   interface RouteMeta extends IRouteMeta {}

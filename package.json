@@ -2,7 +2,7 @@
   "name": "tapdata-web",
   "version": "4.0.0",
   "private": true,
-  "packageManager": "pnpm@10.7.0",
+  "packageManager": "pnpm@10.32.1",
   "type": "module",
   "scripts": {
     "start:daas": "pnpm --filter daas start:test",
@@ -21,7 +21,9 @@
     "type-check": "vue-tsc --noEmit",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
     "format": "prettier --write src/",
-    "catalog": "pnpx codemod pnpm/catalog"
+    "catalog": "pnpx codemod pnpm/catalog",
+    "check-i18n": "node scripts/check-i18n.js",
+    "prepare": "husky"
   },
   "dependencies": {
     "element-plus": "catalog:",
@@ -47,9 +49,11 @@
     "cross-env": "catalog:",
     "eslint": "catalog:",
     "file-loader": "catalog:",
+    "husky": "^9.1.7",
     "inquirer": "catalog:",
     "inquirer-autocomplete-prompt": "catalog:",
     "jsdom": "catalog:",
+    "lint-staged": "^16.4.0",
     "npm-run-all2": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:",

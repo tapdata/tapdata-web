@@ -14,7 +14,6 @@ import { deepEqual } from '@tap/shared'
 import { debounce } from 'lodash-es'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
-import { $emit } from '../../utils/gogocodeTransfer'
 import { getSchema } from '../util'
 import FormRender from './FormRender'
 
@@ -151,7 +150,7 @@ export default {
             const $inputs = this.form.getFieldState('$inputs')
             if ($inputs && $inputs.value.join(',') !== v.join(',')) {
               this.form.setValuesIn('$inputs', [...v])
-              $emit(this, 'update:InputsOrOutputs')
+              this.$emit('update:InputsOrOutputs')
             }
           }),
         )
@@ -161,7 +160,7 @@ export default {
             const $outputs = this.form.getFieldState('$outputs')
             if ($outputs && $outputs.value.join(',') !== v.join(',')) {
               this.form.setValuesIn('$outputs', [...v])
-              $emit(this, 'update:InputsOrOutputs')
+              this.$emit('update:InputsOrOutputs')
             }
           }),
         )

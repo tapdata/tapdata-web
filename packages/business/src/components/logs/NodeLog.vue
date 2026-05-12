@@ -1,4 +1,4 @@
-<script>
+<script setup lang="ts">
 import {
   exportMonitoringLogs,
   queryMonitoringLogs,
@@ -7,950 +7,834 @@ import { callProxy } from '@tap/api/src/core/proxy'
 import { downloadTaskAnalyze, putTaskLogSetting } from '@tap/api/src/core/task'
 import { CancelToken } from '@tap/api/src/request'
 import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
-
 import TimeSelect from '@tap/component/src/TimeSelect.vue'
-import i18n from '@tap/i18n'
+import { useI18n } from '@tap/i18n'
 import { copyToClipboard, CountUp, downloadBlob, openUrl } from '@tap/shared'
 import Time from '@tap/shared/src/time'
-
 import dayjs from 'dayjs'
 import { cloneDeep, debounce, escape, uniqBy } from 'lodash-es'
+import {
+  computed,
+  inject,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  reactive,
+  ref,
+  useTemplateRef,
+  watch,
+  type Ref,
+} from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import { mapGetters } from 'vuex'
+import NodeList from '../nodes/List.vue'
+import Download from './Download.vue'
 
-import NodeList from '../nodes/List'
-import Download from './Download'
+defineOptions({ name: 'NodeLog' })
 
-export default {
-  name: 'NodeLog',
-  components: {
-    TimeSelect,
-    DynamicScroller,
-    DynamicScrollerItem,
-    VEmpty,
-    NodeList,
-    Download,
+const { t, locale } = useI18n()
+const route = useRoute()
+const router = useRouter()
+const dag = inject<Ref<{ nodes: any[]; edges: any[] }>>('dag')
+
+const props = withDefaults(
+  defineProps<{
+    dataflow?: Record<string, any>
+    logsData?: { total: number; items: any[] }
+    hideFilter?: boolean
+    logTotals?: any[]
+    nodeId?: string
+  }>(),
+  {
+    dataflow: () => ({}),
+    logsData: () => ({ total: 0, items: [] }),
+    hideFilter: false,
+    logTotals: () => [],
+    nodeId: '',
   },
-
-  props: {
-    dataflow: {
-      type: Object,
-      default: () => {},
-    },
-    logsData: {
-      type: Object,
-      default: () => {
-        return {
-          total: 0,
-          items: [],
-        }
-      },
-    },
-    hideFilter: {
-      type: Boolean,
-      default: false,
-    },
-    logTotals: {
-      type: Array,
-      default: () => [],
-    },
-    nodeId: {
-      type: String,
-      default: '',
-    },
-  },
-  data() {
-    const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
-    return {
-      isDaas,
-      hideDownload: import.meta.env.VUE_APP_HIDE_ANALYSE_DOWNLOAD,
-      activeNodeId: this.nodeId,
-      keyword: '',
-      checkList: [],
-      checkItems: [
-        /*{
-          label: 'DEBUG',
-          text: 'DEBUG',
-        },*/
-        {
-          label: 'INFO',
-          text: 'INFO',
-        },
-        {
-          label: 'WARN',
-          text: 'WARN',
-        },
-        {
-          label: 'ERROR',
-          text: 'ERROR',
-        },
-      ],
-      timer: null,
-      downloadLoading: false,
-      loading: false,
-      saveLoading: false,
-      preLoading: false,
-      resetDataTime: null,
-      list: [],
-      iconMap: {
-        INFO: 'success',
-        WARN: 'warning',
-        ERROR: 'error',
-        FATAL: 'error',
-        DEBUG: 'debug',
-      },
-      colorMap: {
-        INFO: 'color-info',
-        WARN: 'color-warning',
-        ERROR: 'color-danger',
-        FATAL: 'color-danger',
-        DEBUG: 'color-disable',
-      },
-      newPageObj: {
-        page: 0,
-        pageSize: 50,
-        total: 0,
-      },
-      oldPageObj: {
-        page: 0,
-        pageSize: 50,
-        total: 0,
-      },
-      isScrollBottom: false,
-      form: {
-        level: 'INFO',
-        intervalCeiling: 500,
-        recordCeiling: 500,
-      },
-      dialog: false,
-      timeOptions: [
-        {
-          label: i18n.t('public_select_option_all'),
-          value: 'full',
-        },
-        {
-          label: i18n.t('public_time_Last_six_hours'),
-          value: '6h',
-        },
-        {
-          label: i18n.t('public_time_last_day'),
-          value: '1d',
-        },
-        {
-          label: i18n.t('public_time_last_three_days'),
-          value: '3d',
-        },
-        {
-          label: i18n.t('public_time_custom_time'),
-          type: 'custom',
-          value: 'custom',
-        },
-      ],
-      quotaTimeType: 'full',
-      quotaTime: [],
-      newFilter: {},
-      showNoMore: false,
-      extraEnterCount: 0,
-      codeDialog: {
-        visible: false,
-        data: {
-          errorStack: '',
-          errorCode: '',
-          fullErrorCode: '',
-          describe: '',
-          solution: '',
-          dynamicDescribe: '',
-          seeAlso: [],
-          module: '',
-          message: '',
-        },
-      },
-      showCols: [],
-      switchData: {
-        timestamp: false,
-      },
-      fullscreen: false,
-      showTooltip: false,
-      hideSeeAlso:
-        import.meta.env.VUE_APP_PAGE_TITLE === 'IKAS' ||
-        import.meta.env.VUE_APP_HIDE_LOG_SEE_ALSO,
-      downloadAnalysis: {
-        visible: false,
-        progress: 0,
-        currentStep: 0,
-        steps: [
-          {
-            label: i18n.t('packages_business_exporting_task'),
-          },
-          {
-            label: i18n.t('packages_business_exporting_run_history'),
-          },
-          {
-            label: i18n.t('packages_business_exporting_task_log'),
-          },
-          {
-            label: i18n.t('packages_business_exporting_metrics'),
-          },
-          {
-            label: i18n.t('packages_business_gen_engine_cpu_chart'),
-          },
-          {
-            label: i18n.t('packages_business_gen_tm_cpu_chart'),
-          },
-          {
-            label: i18n.t('packages_business_gen_engine_mem_chart'),
-          },
-          {
-            label: i18n.t('packages_business_gen_tm_mem_chart'),
-          },
-          {
-            label: i18n.t('packages_business_exporting_engine_thread'),
-          },
-          {
-            label: i18n.t('packages_business_exporting_tm_thread'),
-          },
-          {
-            label: i18n.t('packages_business_downloading_file'),
-          },
-        ],
-      },
-      expandErrorMessage: false,
-      downloadDialog: false,
-      overflowObserver: null,
-    }
-  },
-  computed: {
-    ...mapGetters('dataflow', ['allNodes', 'nodeById']),
-
-    nodeLogCountMap() {
-      return this.logTotals
-        .filter((t) => t.nodeId)
-        .reduce((cur, next) => {
-          const count = cur[next.nodeId] || 0
-          return { ...cur, [next.nodeId]: count + next.count }
-        }, {})
-    },
-
-    items() {
-      return this.allNodes.filter((t) => !!this.nodeLogCountMap[t.id])
-    },
-
-    firstStartTime() {
-      const { startTime } = this.dataflow || {}
-      const { taskRecordId, start } = this.$route.query || {}
-      if (taskRecordId) {
-        return Number(start)
-      }
-      return startTime ? new Date(startTime).getTime() : null
-    },
-
-    lastStopTime() {
-      const { stopTime } = this.dataflow || {}
-      const { taskRecordId, end } = this.$route.query || {}
-      if (taskRecordId) {
-        return Number(end)
-      }
-      return stopTime ? new Date(stopTime).getTime() : null
-    },
-
-    isNoMore() {
-      const { page, pageSize, total } = this.oldPageObj
-      if (!page) return false
-      return page * pageSize > total
-    },
-
-    isEnterTimer() {
-      return (
-        this.quotaTimeType !== 'custom' && this.dataflow?.status === 'running'
-      )
-    },
-
-    logSetting() {
-      return this.dataflow?.logSetting || {}
-    },
-  },
-  watch: {
-    dataflow: {
-      deep: true,
-      handler(v1, v2) {
-        if (v1.status === 'edit') return
-        if (v1.taskRecordId + v1.startTime !== v2.taskRecordId + v2.startTime) {
-          this.init()
-        }
-      },
-    },
-    nodeId(v) {
-      this.activeNodeId = v
-    },
-  },
-  created() {
-    this.checkList = ['error'].includes(this.dataflow.status)
-      ? ['WARN', 'ERROR']
-      : ['INFO', 'WARN', 'ERROR']
-  },
-  mounted() {
-    this.init()
-
-    // 添加MutationObserver检测日志内容溢出
-    this.setupOverflowDetection()
-  },
-  unmounted() {
-    this.clearTimer()
-
-    // 清理观察器
-    if (this.overflowObserver) {
-      this.overflowObserver.disconnect()
-    }
-  },
-  methods: {
-    init: debounce(function () {
-      if (this.$route.name === 'MigrationMonitorViewer') {
-        this.timeOptions = [
-          {
-            label: i18n.t('public_select_option_all'),
-            value: 'full',
-          },
-          {
-            label: i18n.t('public_time_custom_time'),
-            type: 'custom',
-            value: 'custom',
-          },
-        ]
-      }
-      this.extraEnterCount = 0
-      this.clearTimer()
-      this.resetData()
-    }, 500),
-
-    resetData() {
-      this.preLoading = false
-      this.resList()
-      this.resetNewPage()
-      this.resetOldPage()
-      this.resetDataTime = Time.now()
-      this.loadOld(this.pollingData)
-    },
-
-    resetOldPage() {
-      this.oldPageObj = {
-        page: 0,
-        pageSize: 20,
-        total: 0,
-      }
-    },
-
-    resetNewPage() {
-      this.newPageObj = {
-        page: 0,
-        pageSize: 20,
-        total: 0,
-      }
-    },
-
-    clearTimer() {
-      this.timer && clearInterval(this.timer)
-      this.timer = null
-    },
-
-    pollingData() {
-      this.clearTimer()
-      this.timer = setInterval(() => {
-        // 不满足轮询条件，则多请求几次结束
-        if (
-          this.isEnterTimer ||
-          (['error', 'schedule_failed'].includes(this.dataflow.status) &&
-            ++this.extraEnterCount < 5)
-        ) {
-          this.loadNew()
-        }
-      }, 5000)
-      this.loadNew()
-    },
-
-    changeItem(val) {
-      this.$emit('update:nodeId', val)
-      this.init()
-    },
-
-    changeTime(val, isTime, source) {
-      this.quotaTimeType = source?.type ?? val
-      this.quotaTime = isTime
-        ? val?.split(',')?.map((t) => Number(t))
-        : this.getTimeRange(val)
-      this.init()
-    },
-
-    searchFnc() {
-      this.clearTimer()
-      this.init()
-    },
-
-    scrollFnc(ev) {
-      const target = ev.target
-      if (this.list.length && target.scrollTop <= 0) {
-        this.loadOld()
-      }
-      this.isScrollBottom =
-        target.scrollHeight - target.scrollTop <= target.clientHeight
-    },
-
-    loadOld(callback) {
-      if (this.isNoMore || this.loading) {
-        return
-      }
-      const filter = this.getOldFilter()
-      if (!filter.start || !filter.end) {
-        return
-      }
-      filter.page++
-      if (this.list.length) {
-        this.preLoading = true
-      } else {
-        this.loading = true
-      }
-      queryMonitoringLogs(filter)
-        .then((data = {}) => {
-          const items = this.getFormatRow(data.items?.toReversed())
-          this.oldPageObj.total = data.total || 0
-          this.oldPageObj.page = filter.page
-
-          // 避免重复添加相同的项
-          if (this.list.length && this.oldPageObj.page !== 1) {
-            // 使用优化的方式合并数组，减少不必要的循环
-            const mergedList = uniqBy([...items, ...this.list], 'id')
-
-            // 只有当合并后的数组与原数组不同时才更新
-            if (mergedList.length !== this.list.length) {
-              this.list = mergedList
-              this.scrollToItem(items.length - 1)
-            }
-          } else {
-            this.list = items
-            this.scrollToBottom()
-          }
-        })
-        .finally(() => {
-          this.preLoading = false
-          this.loading = false
-          callback?.()
-          this.showNoMore = this.oldPageObj.page > 1 ? this.isNoMore : false
-          if (this.showNoMore) {
-            setTimeout(() => {
-              this.showNoMore = false
-            }, 3000)
-          }
-        })
-    },
-
-    loadNew() {
-      let filter
-      const { page, pageSize, total } = this.newPageObj
-      if (page === 0 || page * pageSize > total) {
-        this.resetNewPage()
-        filter = this.getNewFilter()
-        filter.page++
-      } else {
-        this.newFilter.page++
-        filter = Object.assign({}, this.newFilter, {
-          page: this.newFilter.page,
-        })
-      }
-      if (!filter.start || !filter.end) {
-        return
-      }
-
-      queryMonitoringLogs(filter).then((data = {}) => {
-        const items = this.getFormatRow(data.items)
-        this.newPageObj.total = data.total || 0
-
-        // 检查是否有新数据
-        if (!items.length) {
-          this.resetNewPage()
-          return
-        }
-
-        // 优化合并逻辑
-        const mergedList = uniqBy([...this.list, ...items], 'id')
-
-        // 只有当合并后的数组与原数组不同时才更新
-        if (mergedList.length !== this.list.length) {
-          this.newPageObj.page = filter.page
-          this.list = mergedList
-
-          if (this.isScrollBottom) {
-            this.scrollToBottom()
-          }
-
-          // 清空额外请求的计数
-          if (this.isEnterTimer) {
-            this.extraEnterCount = 0
-          }
-        } else {
-          this.resetNewPage()
-        }
-      })
-    },
-
-    getFormatRow(rowData = []) {
-      const result = cloneDeep(rowData)
-      result.forEach((row) => {
-        row.timestampLabel = this.formatTime(row.date)
-        row.expand = false
-        row.hideContent = false
-        row.message = escape(row.message)
-        if (row.fullErrorCode === 'Task.ScheduleLimit') {
-          row.message = i18n.t('packages_business_logs_nodelog_yinqingkeyibei')
-        }
-      })
-      return result
-    },
-
-    getHighlightSpan(str = '') {
-      const { keyword } = this
-      if (!keyword) {
-        return str
-      }
-      const reg = new RegExp(keyword.toLowerCase(), 'gi')
-      return str.replace(reg, `<span class="highlight-bg-color">$&</span>`)
-    },
-
-    getOldFilter() {
-      const [start, end] = this.quotaTime.length
-        ? this.quotaTime
-        : this.getTimeRange(this.quotaTimeType)
-      let { id: taskId, taskRecordId } = this.dataflow || {}
-      const { query } = this.$route
-      if (query?.taskRecordId) {
-        taskRecordId = query?.taskRecordId
-        taskId = this.$route.params?.id
-      }
-      const params = {
-        start,
-        end,
-        page: this.oldPageObj.page,
-        pageSize: this.oldPageObj.pageSize,
-        order: 'desc',
-        taskId,
-        taskRecordId,
-        nodeId: this.activeNodeId === '' ? null : this.activeNodeId,
-        search: this.keyword,
-        levels: this.checkList,
-      }
-
-      if (this.activeNodeId) {
-        const node = this.nodeById(this.activeNodeId)
-        if (
-          [
-            'js_processor',
-            'migrate_js_processor',
-            'standard_js_processor',
-            'standard_migrate_js_processor',
-          ].includes(node.type)
-        ) {
-          params.includeLogTags = ['src=user_script']
-        }
-      } else {
-        params.excludeLogTags = ['src=user_script']
-      }
-
-      return params
-    },
-
-    getNewFilter() {
-      const [start, end] = [
-        this.list.at(-1)?.timestamp || this.resetDataTime,
-        Time.now(),
-      ]
-      let { id: taskId, taskRecordId } = this.dataflow || {}
-      const { query } = this.$route
-      if (query?.taskRecordId) {
-        taskRecordId = query?.taskRecordId
-        taskId = this.$route.params?.id
-      }
-      const params = {
-        start,
-        end,
-        page: this.newPageObj.page,
-        pageSize: this.newPageObj.pageSize,
-        order: 'asc',
-        taskId,
-        taskRecordId,
-        nodeId: this.activeNodeId === '' ? null : this.activeNodeId,
-        search: this.keyword,
-        levels: this.checkList,
-      }
-
-      if (this.activeNodeId) {
-        const node = this.nodeById(this.activeNodeId)
-        if (
-          [
-            'js_processor',
-            'migrate_js_processor',
-            'standard_js_processor',
-            'standard_migrate_js_processor',
-          ].includes(node.type)
-        ) {
-          params.includeLogTags = ['src=user_script']
-        }
-      } else {
-        params.excludeLogTags = ['src=user_script']
-      }
-
-      this.newFilter = params
-      return params
-    },
-
-    scrollToBottom() {
-      this.$nextTick(() => {
-        this.$refs.virtualScroller?.scrollToBottom?.()
-        this.isScrollBottom = true
-      })
-    },
-
-    scrollToItem(index) {
-      this.$nextTick(() => {
-        this.$refs.virtualScroller?.scrollToItem?.(index)
-      })
-    },
-
-    formatTime(date, type = 'YYYY-MM-DD HH:mm:ss.SSS') {
-      return dayjs(date).format(type)
-    },
-
-    handleDownload() {
-      this.downloadDialog = true
-      const [start, end] = this.quotaTime.length
-        ? this.quotaTime
-        : this.getTimeRange(this.quotaTimeType)
-      let { id: taskId, taskRecordId } = this.dataflow || {}
-      const { query } = this.$route
-      if (query?.taskRecordId) {
-        taskRecordId = query?.taskRecordId
-        taskId = this.$route.params?.id
-      }
-      const filter = {
-        start,
-        end,
-        taskId,
-        taskRecordId,
-      }
-      this.downloadLoading = true
-      exportMonitoringLogs(filter)
-        .then((data) => {
-          downloadBlob(data)
-        })
-        .catch(() => {
-          this.$message.error(
-            i18n.t('packages_dag_components_log_xiazaishibai'),
-          )
-        })
-        .finally(() => {
-          this.downloadLoading = false
-        })
-    },
-
-    handleSetting(val) {
-      const { level, intervalCeiling, recordCeiling } = this.logSetting
-      this.form.level = val
-      if (level) {
-        this.form = {
-          level,
-          intervalCeiling,
-          recordCeiling,
-        }
-      }
-      this.dialog = true
-    },
-
-    handleClose() {
-      const index = this.checkList.indexOf('DEBUG')
-      this.checkList.splice(index, 1)
-      this.searchFnc()
-      this.dialog = false
-    },
-
-    handleSave() {
-      const { form } = this
-      const params = {
-        level: form.level,
-      }
-      if (form.level === 'DEBUG') {
-        params.intervalCeiling = form.intervalCeiling
-        params.recordCeiling = form.recordCeiling
-      }
-      this.saveLoading = true
-      putTaskLogSetting(this.dataflow.id, params)
-        .then(() => {
-          this.$message.success(this.$t('public_message_save_ok'))
-          this.dialog = false
-        })
-        .finally(() => {
-          this.saveLoading = false
-        })
-        .catch(() => {
-          this.$message.error(this.$t('public_message_save_fail'))
-        })
-    },
-
-    getTimeRange(type) {
-      let result
-      const { status } = this.dataflow || {}
-      let endTimestamp = this.lastStopTime || Time.now()
-      if (status === 'running') {
-        endTimestamp = Time.now()
-      }
-      switch (type) {
-        case '6h':
-          result = [endTimestamp - 6 * 60 * 60 * 1000, endTimestamp]
-          break
-        case '1d':
-          result = [endTimestamp - 24 * 60 * 60 * 1000, endTimestamp]
-          break
-        case '3d':
-          result = [endTimestamp - 3 * 24 * 60 * 60 * 1000, endTimestamp]
-          break
-        case 'lastStart':
-          result = [this.dataflow.lastStartDate, endTimestamp]
-          break
-        case 'full':
-          result = [this.firstStartTime, endTimestamp]
-          break
-        default:
-          result = [endTimestamp - 5 * 60 * 1000, endTimestamp]
-          break
-      }
-      if (!result[0]) {
-        result[0] = endTimestamp - 5 * 60 * 1000
-      }
-      if (result[0] >= result[1]) {
-        result[1] = Time.now() + 5 * 1000
-      }
-      return result
-    },
-
-    resList() {
-      this.list = []
-    },
-
-    getTime() {
-      return Time.now()
-    },
-
-    handleCode(item = {}) {
-      const params = {
-        className: 'ErrorCodeService',
-        method: 'getErrorCodeWithDynamic',
-        args: [
-          item.errorCode,
-          i18n.locale === 'en' ? 'en' : 'cn',
-          item.dynamicDescriptionParameters,
-        ],
-      }
-
-      this.codeDialog.data.errorStack = item.errorStack
-      this.codeDialog.data.errorCode = item.errorCode
-      this.codeDialog.data.fullErrorCode = item.fullErrorCode
-      this.codeDialog.data.message = item.message
-      this.codeDialog.data.module = ''
-
-      callProxy(params)
-        .then((data) => {
-          Object.assign(this.codeDialog.data, data)
-
-          this.codeDialog.data.describe = data.describe || item.message
-          this.codeDialog.visible = true
-        })
-        .catch(() => {
-          this.codeDialog.visible = true
-        })
-    },
-
-    handleLink(val) {
-      openUrl(val)
-    },
-
-    command(command) {
-      const index = this.showCols.indexOf(command)
-      index !== -1
-        ? this.showCols.splice(index, 1)
-        : this.showCols.push(command)
-    },
-
-    handleCheckbox(flag, val) {
-      if (flag && val === 'DEBUG') {
-        this.handleSetting(val)
-      }
-    },
-
-    handleFullScreen() {
-      this.fullscreen = !this.fullscreen
-    },
-
-    handleLog(item, event) {
-      const domElement = event.currentTarget
-
-      // 检查内容是否被截断
-      const isContentTruncated =
-        domElement.scrollHeight > domElement.offsetHeight
-
-      // 如果内容没有被截断，不需要展开/收起操作
-      if (!isContentTruncated) return
-
-      // 设置hideContent标记
-      if (item.hideContent === undefined) {
-        item.hideContent = true
-      }
-
-      // 切换展开状态
-      item.expand = !item.expand
-    },
-
-    onCopy() {
-      this.showTooltip = true
-    },
-
-    async handleDownloadAnalysis() {
-      this.downloadAnalysis.progress = 0
-      this.downloadAnalysis.visible = true
-      this.analysisCancelSource = CancelToken.source()
-      this.initSteps()
-
-      const blogData = await downloadTaskAnalyze(this.dataflow.id, {
-        cancelToken: this.analysisCancelSource.token,
-      })
-
-      if (blogData.data.type === 'application/json') {
-        this.$message.error(
-          this.$t('packages_business_connections_test_xiazaishibai'),
-        )
-        this.countUp.reset()
-        this.downloadAnalysis.visible = false
-        return
-      }
-
-      downloadBlob(blogData)
-
-      this.completeSteps()
-    },
-
-    onClose() {
-      this.analysisCancelSource?.cancel()
-      this.countUp.reset()
-    },
-
-    updateProgress(temp, val) {
-      val = Number(val)
-
-      this.downloadAnalysis.currentStep = Math.min(
-        Math.floor(val / 9),
-        this.downloadAnalysis.steps.length - 1,
-      )
-      this.downloadAnalysis.progress = val
-    },
-
-    initSteps() {
-      this.downloadAnalysis.currentStep = 0
-      this.downloadAnalysis.progress = 0
-      this.countUp = new CountUp({}, 99, {
-        duration: 62,
-        plugin: {
-          render: this.updateProgress,
-        },
-        useEasing: false,
-        onCompleteCallback: () => {},
-      })
-      this.countUp.start()
-    },
-
-    completeSteps() {
-      this.countUp.pauseResume()
-      this.updateProgress({}, 100)
-      this.$message.success('public_message_download_ok')
-
-      setTimeout(() => {
-        this.downloadAnalysis.visible = false
-      }, 200)
-    },
-
-    handleCopyStack(stack) {
-      copyToClipboard(stack)
-      this.$message.success(this.$t('public_message_copy_success'))
-    },
-
-    openDataCapture() {
-      window.open(
-        this.$router.resolve({
-          name: 'DataCapture',
-          params: { id: this.dataflow.id },
-        }).href,
-        `DataCapture-${this.dataflow.id}`,
-      )
-    },
-    handleCreateTicket() {
-      const errorCode =
-        this.codeDialog.data.fullErrorCode || this.codeDialog.data.errorCode
-
-      window.open(
-        this.$router.resolve({
-          name: 'TicketSystem',
-          query: {
-            form: encodeURIComponent(
-              JSON.stringify({
-                jobId: this.dataflow.id,
-                subject: `${errorCode}-${this.codeDialog.data.message}`,
-                description: `Error Code: ${errorCode}
-Module: ${this.codeDialog.data.module || ''}
-Describe: ${this.codeDialog.data.describe ? `\n${this.codeDialog.data.describe}` : ''}
-Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.errorStack}` : ''}`,
-              }),
-            ),
-          },
-        }).href,
-      )
-    },
-
-    setupOverflowDetection() {
-      // 使用MutationObserver检测DOM变化
-      this.overflowObserver = new MutationObserver(() => {
-        this.$nextTick(() => {
-          // 在下一个tick处理，确保DOM已更新
-          this.checkOverflowForVisibleItems()
-        })
-      })
-
-      // 监控日志容器变化
-      const container = this.$refs.virtualScroller?.$el
-      if (container) {
-        this.overflowObserver.observe(container, {
-          childList: true,
-          subtree: true,
-        })
-      }
-    },
-
-    checkOverflowForVisibleItems() {
-      // 获取所有日志项
-      const logItems = document.querySelectorAll('.log-item')
-
-      // 检查每个日志项是否溢出
-      logItems.forEach((item) => {
-        const itemId = item.dataset.logId
-        if (itemId) {
-          const listItem = this.list.find((i) => i.id === itemId)
-          if (listItem) {
-            // 检查是否溢出
-            const isOverflowing = item.scrollHeight > item.offsetHeight
-
-            // 只在状态变化时更新，减少不必要的渲染
-            if (listItem.hideContent !== isOverflowing) {
-              listItem.hideContent = isOverflowing
-            }
-          }
-        }
-      })
-    },
-  },
+)
+
+const emit = defineEmits<{
+  (e: 'update:nodeId', val: string): void
+  (e: 'action', val: any): void
+}>()
+
+const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+const hideDownload = import.meta.env.VUE_APP_HIDE_ANALYSE_DOWNLOAD
+const hideSeeAlso =
+  import.meta.env.VUE_APP_PAGE_TITLE === 'IKAS' ||
+  import.meta.env.VUE_APP_HIDE_LOG_SEE_ALSO
+
+const activeNodeId = ref(props.nodeId)
+const keyword = ref('')
+const checkList = ref<string[]>([])
+const checkItems = [
+  { label: 'INFO', text: 'INFO' },
+  { label: 'WARN', text: 'WARN' },
+  { label: 'ERROR', text: 'ERROR' },
+]
+const timer = ref<ReturnType<typeof setInterval> | null>(null)
+const downloadLoading = ref(false)
+const loading = ref(false)
+const saveLoading = ref(false)
+const preLoading = ref(false)
+const resetDataTime = ref<number | null>(null)
+const list = ref<any[]>([])
+const colorMap: Record<string, string> = {
+  INFO: 'color-info',
+  WARN: 'color-warning',
+  ERROR: 'color-danger',
+  FATAL: 'color-danger',
+  DEBUG: 'color-disable',
 }
+const newPageObj = reactive({ page: 0, pageSize: 100, total: 0 })
+const oldPageObj = reactive({ page: 0, pageSize: 50, total: 0 })
+const isScrollBottom = ref(false)
+const form = reactive({
+  level: 'INFO',
+  intervalCeiling: 500,
+  recordCeiling: 500,
+})
+const dialog = ref(false)
+const timeOptions = ref([
+  { label: t('public_select_option_all'), value: 'full' },
+  { label: t('public_time_Last_six_hours'), value: '6h' },
+  { label: t('public_time_last_day'), value: '1d' },
+  { label: t('public_time_last_three_days'), value: '3d' },
+  { label: t('public_time_custom_time'), type: 'custom', value: 'custom' },
+])
+const quotaTimeType = ref('full')
+const quotaTime = ref<number[]>([])
+const newFilter = ref<Record<string, any>>({})
+const showNoMore = ref(false)
+const extraEnterCount = ref(0)
+const codeDialog = reactive({
+  visible: false,
+  data: {
+    errorStack: '',
+    errorCode: '',
+    fullErrorCode: '',
+    describe: '',
+    solution: '',
+    dynamicDescribe: '',
+    seeAlso: [] as string[],
+    module: '',
+    message: '',
+  },
+})
+const showCols = ref<string[]>([])
+const switchData = reactive({ timestamp: false })
+const fullscreen = ref(false)
+const showTooltip = ref(false)
+const downloadAnalysis = reactive({
+  visible: false,
+  progress: 0,
+  currentStep: 0,
+  steps: [
+    { label: t('packages_business_exporting_task') },
+    { label: t('packages_business_exporting_run_history') },
+    { label: t('packages_business_exporting_task_log') },
+    { label: t('packages_business_exporting_metrics') },
+    { label: t('packages_business_gen_engine_cpu_chart') },
+    { label: t('packages_business_gen_tm_cpu_chart') },
+    { label: t('packages_business_gen_engine_mem_chart') },
+    { label: t('packages_business_gen_tm_mem_chart') },
+    { label: t('packages_business_exporting_engine_thread') },
+    { label: t('packages_business_exporting_tm_thread') },
+    { label: t('packages_business_downloading_file') },
+  ],
+})
+const expandErrorMessage = ref(false)
+const downloadDialog = ref(false)
+let overflowObserver: MutationObserver | null = null
+let analysisCancelSource: any = null
+let countUp: any = null
+
+const virtualScroller = useTemplateRef<any>('virtualScroller')
+const timeSelect = useTemplateRef<any>('timeSelect')
+// --- Computed ---
+
+const allNodes = computed(() => dag?.value?.nodes ?? [])
+
+function nodeById(id: string) {
+  return allNodes.value.find((node: any) => node.id === id)
+}
+
+const nodeLogCountMap = computed(() => {
+  return props.logTotals
+    .filter((item: any) => item.nodeId)
+    .reduce((cur: Record<string, number>, next: any) => {
+      const count = cur[next.nodeId] || 0
+      return { ...cur, [next.nodeId]: count + next.count }
+    }, {})
+})
+
+const items = computed(() => {
+  return allNodes.value.filter((item: any) => !!nodeLogCountMap.value[item.id])
+})
+
+const firstStartTime = computed(() => {
+  const { startTime } = props.dataflow || {}
+  const { taskRecordId, start } = route.query || {}
+  if (taskRecordId) {
+    return Number(start)
+  }
+  return startTime ? new Date(startTime).getTime() : null
+})
+
+const lastStopTime = computed(() => {
+  const { stopTime } = props.dataflow || {}
+  const { taskRecordId, end } = route.query || {}
+  if (taskRecordId) {
+    return Number(end)
+  }
+  return stopTime ? new Date(stopTime).getTime() : null
+})
+
+const isNoMore = computed(() => {
+  const { page, pageSize, total } = oldPageObj
+  if (!page) return false
+  return page * pageSize > total
+})
+
+const isEnterTimer = computed(() => {
+  return (
+    quotaTimeType.value !== 'custom' &&
+    (props.dataflow?.status === 'running' ||
+      props.dataflow?.status === 'starting')
+  )
+})
+
+const logSetting = computed(() => {
+  return props.dataflow?.logSetting || {}
+})
+
+// --- Watch ---
+
+watch(
+  () => props.dataflow,
+  (v1, v2) => {
+    if (v1.status === 'edit') return
+    if (v1.taskRecordId + v1.startTime !== v2?.taskRecordId + v2?.startTime) {
+      init()
+    }
+  },
+  { deep: true },
+)
+
+watch(
+  () => props.nodeId,
+  (v) => {
+    activeNodeId.value = v
+  },
+)
+
+// --- Methods ---
+const init = debounce(() => {
+  if (route.name === 'MigrationMonitorViewer') {
+    timeOptions.value = [
+      { label: t('public_select_option_all'), value: 'full' },
+      { label: t('public_time_custom_time'), type: 'custom', value: 'custom' },
+    ]
+  }
+  extraEnterCount.value = 0
+  clearTimer()
+  resetData()
+}, 500)
+
+function resetData() {
+  preLoading.value = false
+  resList()
+  resetNewPage()
+  resetOldPage()
+  resetDataTime.value = Time.now()
+  loadOld(pollingData)
+}
+
+function resetOldPage() {
+  Object.assign(oldPageObj, { page: 0, pageSize: 20, total: 0 })
+}
+
+function resetNewPage() {
+  Object.assign(newPageObj, { page: 0, pageSize: 100, total: 0 })
+}
+
+function clearTimer() {
+  if (timer.value) clearInterval(timer.value)
+  timer.value = null
+}
+
+function pollingData() {
+  clearTimer()
+  timer.value = setInterval(() => {
+    if (
+      isEnterTimer.value ||
+      (['error', 'schedule_failed'].includes(props.dataflow.status) &&
+        ++extraEnterCount.value < 5)
+    ) {
+      loadNew()
+    }
+  }, 5000)
+  loadNew()
+}
+
+function changeItem(val: string) {
+  emit('update:nodeId', val)
+  init()
+}
+
+function changeTime(val: any, isTime: boolean, source: any) {
+  quotaTimeType.value = source?.type ?? val
+  quotaTime.value = isTime
+    ? val?.split(',')?.map((item: string) => Number(item))
+    : getTimeRange(val)
+  init()
+}
+
+function searchFnc() {
+  clearTimer()
+  init()
+}
+
+function scrollFnc(ev: Event) {
+  const target = ev.target as HTMLElement
+  if (list.value.length && target.scrollTop <= 0) {
+    loadOld()
+  }
+  isScrollBottom.value =
+    target.scrollHeight - target.scrollTop - target.clientHeight < 30
+}
+
+function loadOld(callback?: () => void) {
+  if (isNoMore.value || loading.value) {
+    return
+  }
+  const filter = getOldFilter()
+  if (!filter.start || !filter.end) {
+    return
+  }
+  filter.page++
+  if (list.value.length) {
+    preLoading.value = true
+  } else {
+    loading.value = true
+  }
+  queryMonitoringLogs(filter)
+    .then((data: any = {}) => {
+      const rows = getFormatRow(data.items?.reverse())
+      oldPageObj.total = data.total || 0
+      oldPageObj.page = filter.page
+
+      if (list.value.length && oldPageObj.page !== 1) {
+        const mergedList = uniqBy([...rows, ...list.value], 'id')
+        if (mergedList.length !== list.value.length) {
+          list.value = mergedList
+          scrollToItem(rows.length - 1)
+        }
+      } else {
+        list.value = rows
+        scrollToBottom()
+      }
+    })
+    .finally(() => {
+      preLoading.value = false
+      loading.value = false
+      callback?.()
+      showNoMore.value = oldPageObj.page > 1 ? isNoMore.value : false
+      if (showNoMore.value) {
+        setTimeout(() => {
+          showNoMore.value = false
+        }, 3000)
+      }
+    })
+}
+
+let loadNewLock = false
+
+async function loadNew() {
+  if (loadNewLock) return
+  loadNewLock = true
+
+  try {
+    resetNewPage()
+    const filter = getNewFilter()
+    filter.page = 1
+
+    if (!filter.start || !filter.end) return
+
+    // 第一次请求，获取 total
+    const d: any = await queryMonitoringLogs(filter)
+    const total = firstData.total || 0
+    let allRows = getFormatRow(firstData.items)
+
+    if (!allRows.length) return
+
+    // 如果还有更多页，并行请求剩余所有页（上限10页防止极端情况）
+    if (total > filter.pageSize) {
+      const totalPages = Math.min(Math.ceil(total / filter.pageSize), 10)
+      const promises = []
+      for (let p = 2; p <= totalPages; p++) {
+        promises.push(queryMonitoringLogs({ ...filter, page: p }))
+      }
+      const results = await Promise.all(promises)
+      for (const data of results) {
+        allRows = allRows.concat(getFormatRow((data as any).items))
+      }
+    }
+
+    const mergedList = uniqBy([...list.value, ...allRows], 'id')
+
+    if (mergedList.length !== list.value.length) {
+      list.value = mergedList
+
+      if (isScrollBottom.value) {
+        scrollToBottom()
+      }
+
+      if (isEnterTimer.value) {
+        extraEnterCount.value = 0
+      }
+    }
+  } finally {
+    loadNewLock = false
+  }
+}
+
+function getFormatRow(rowData: any[] = []) {
+  const result = cloneDeep(rowData)
+  result.forEach((row: any) => {
+    row.timestampLabel = formatTime(row.date)
+    row.expand = false
+    row.hideContent = false
+    row.message = escape(row.message)
+    if (row.fullErrorCode === 'Task.ScheduleLimit') {
+      row.message = t('packages_business_logs_nodelog_yinqingkeyibei')
+    }
+  })
+  return result
+}
+
+function getHighlightSpan(str = '') {
+  if (!keyword.value) {
+    return str
+  }
+  const reg = new RegExp(keyword.value.toLowerCase(), 'gi')
+  return str.replace(reg, `<span class="highlight-bg-color">$&</span>`)
+}
+
+function addLogTagsFilter(params: any) {
+  if (activeNodeId.value) {
+    const node = nodeById(activeNodeId.value)
+    if (
+      node &&
+      [
+        'custom_processor',
+        'js_processor',
+        'migrate_js_processor',
+        'standard_js_processor',
+        'standard_migrate_js_processor',
+      ].includes(node.type)
+    ) {
+      params.includeLogTags = ['src=user_script']
+    }
+  } else {
+    params.excludeLogTags = ['src=user_script']
+  }
+}
+
+function getOldFilter() {
+  const [start, end] = quotaTime.value.length
+    ? quotaTime.value
+    : getTimeRange(quotaTimeType.value)
+  let { id: taskId, taskRecordId } = props.dataflow || {}
+  const { query } = route
+  if (query?.taskRecordId) {
+    taskRecordId = query?.taskRecordId as string
+    taskId = route.params?.id as string
+  }
+  const params: any = {
+    start,
+    end,
+    page: oldPageObj.page,
+    pageSize: oldPageObj.pageSize,
+    order: 'desc',
+    taskId,
+    taskRecordId,
+    nodeId: activeNodeId.value === '' ? null : activeNodeId.value,
+    search: keyword.value,
+    levels: checkList.value,
+  }
+
+  addLogTagsFilter(params)
+
+  return params
+}
+
+function getNewFilter() {
+  const [start, end] = [
+    list.value.at(-1)?.timestamp || resetDataTime.value,
+    Time.now(),
+  ]
+  let { id: taskId, taskRecordId } = props.dataflow || {}
+  const { query } = route
+  if (query?.taskRecordId) {
+    taskRecordId = query?.taskRecordId as string
+    taskId = route.params?.id as string
+  }
+  const params: any = {
+    start,
+    end,
+    page: newPageObj.page,
+    pageSize: newPageObj.pageSize,
+    order: 'asc',
+    taskId,
+    taskRecordId,
+    nodeId: activeNodeId.value === '' ? null : activeNodeId.value,
+    search: keyword.value,
+    levels: checkList.value,
+  }
+
+  addLogTagsFilter(params)
+
+  newFilter.value = params
+  return params
+}
+
+function scrollToBottom() {
+  nextTick(() => {
+    virtualScroller.value?.scrollToBottom?.()
+    isScrollBottom.value = true
+  })
+}
+
+function scrollToItem(index: number) {
+  nextTick(() => {
+    virtualScroller.value?.scrollToItem?.(index)
+  })
+}
+
+function formatTime(date: any, type = 'YYYY-MM-DD HH:mm:ss.SSS') {
+  return dayjs(date).format(type)
+}
+
+function handleDownload() {
+  downloadDialog.value = true
+  const [start, end] = quotaTime.value.length
+    ? quotaTime.value
+    : getTimeRange(quotaTimeType.value)
+  let { id: taskId, taskRecordId } = props.dataflow || {}
+  const { query } = route
+  if (query?.taskRecordId) {
+    taskRecordId = query?.taskRecordId as string
+    taskId = route.params?.id as string
+  }
+  const filter = { start, end, taskId, taskRecordId }
+  downloadLoading.value = true
+  exportMonitoringLogs(filter)
+    .then((data: any) => {
+      downloadBlob(data)
+    })
+    .catch(() => {
+      ElMessage.error(t('packages_dag_components_log_xiazaishibai'))
+    })
+    .finally(() => {
+      downloadLoading.value = false
+    })
+}
+
+function handleSetting(val: string) {
+  const { level, intervalCeiling, recordCeiling } = logSetting.value
+  form.level = val
+  if (level) {
+    Object.assign(form, { level, intervalCeiling, recordCeiling })
+  }
+  dialog.value = true
+}
+
+function handleClose() {
+  const index = checkList.value.indexOf('DEBUG')
+  checkList.value.splice(index, 1)
+  searchFnc()
+  dialog.value = false
+}
+
+function handleSave() {
+  const params: any = { level: form.level }
+  if (form.level === 'DEBUG') {
+    params.intervalCeiling = form.intervalCeiling
+    params.recordCeiling = form.recordCeiling
+  }
+  saveLoading.value = true
+  putTaskLogSetting(props.dataflow.id, params)
+    .then(() => {
+      ElMessage.success(t('public_message_save_ok'))
+      dialog.value = false
+    })
+    .finally(() => {
+      saveLoading.value = false
+    })
+    .catch(() => {
+      ElMessage.error(t('public_message_save_fail'))
+    })
+}
+
+function getTimeRange(type: string) {
+  let result: any[]
+  const { status } = props.dataflow || {}
+  let endTimestamp = lastStopTime.value || Time.now()
+  if (status === 'running') {
+    endTimestamp = Time.now()
+  }
+  switch (type) {
+    case '6h':
+      result = [endTimestamp - 6 * 60 * 60 * 1000, endTimestamp]
+      break
+    case '1d':
+      result = [endTimestamp - 24 * 60 * 60 * 1000, endTimestamp]
+      break
+    case '3d':
+      result = [endTimestamp - 3 * 24 * 60 * 60 * 1000, endTimestamp]
+      break
+    case 'lastStart':
+      result = [props.dataflow.lastStartDate, endTimestamp]
+      break
+    case 'full':
+      result = [firstStartTime.value, endTimestamp]
+      break
+    default:
+      result = [endTimestamp - 5 * 60 * 1000, endTimestamp]
+      break
+  }
+  if (!result[0]) {
+    result[0] = endTimestamp - 5 * 60 * 1000
+  }
+  if (result[0] >= result[1]) {
+    result[1] = Time.now() + 5 * 1000
+  }
+  return result
+}
+
+function resList() {
+  list.value = []
+}
+
+function getTime() {
+  return Time.now()
+}
+
+function handleCode(item: any = {}) {
+  const params = {
+    className: 'ErrorCodeService',
+    method: 'getErrorCodeWithDynamic',
+    args: [
+      item.errorCode,
+      locale.value === 'en' ? 'en' : 'cn',
+      item.dynamicDescriptionParameters,
+    ],
+  }
+
+  codeDialog.data.errorStack = item.errorStack
+  codeDialog.data.errorCode = item.errorCode
+  codeDialog.data.fullErrorCode = item.fullErrorCode
+  codeDialog.data.message = item.message
+  codeDialog.data.module = ''
+
+  callProxy(params)
+    .then((data: any) => {
+      Object.assign(codeDialog.data, data)
+      codeDialog.data.describe = data.describe || item.message
+      codeDialog.visible = true
+    })
+    .catch(() => {
+      codeDialog.visible = true
+    })
+}
+
+function handleLink(val: string) {
+  openUrl(val)
+}
+
+function toggleCol(col: string) {
+  const index = showCols.value.indexOf(col)
+  index !== -1 ? showCols.value.splice(index, 1) : showCols.value.push(col)
+}
+
+function handleCheckbox(flag: boolean, val: string) {
+  if (flag && val === 'DEBUG') {
+    handleSetting(val)
+  }
+}
+
+function handleFullScreen() {
+  fullscreen.value = !fullscreen.value
+}
+
+function handleLog(item: any, event: Event) {
+  const domElement = event.currentTarget as HTMLElement
+
+  const isContentTruncated = domElement.scrollHeight > domElement.offsetHeight
+
+  if (!isContentTruncated) return
+
+  if (item.hideContent === undefined) {
+    item.hideContent = true
+  }
+
+  item.expand = !item.expand
+}
+
+function onCopy() {
+  showTooltip.value = true
+}
+
+async function handleDownloadAnalysis() {
+  downloadAnalysis.progress = 0
+  downloadAnalysis.visible = true
+  analysisCancelSource = CancelToken.source()
+  initSteps()
+
+  const blogData = await downloadTaskAnalyze(props.dataflow.id, {
+    cancelToken: analysisCancelSource.token,
+  })
+
+  if (blogData.data.type === 'application/json') {
+    ElMessage.error(t('packages_business_connections_test_xiazaishibai'))
+    countUp.reset()
+    downloadAnalysis.visible = false
+    return
+  }
+
+  downloadBlob(blogData)
+  completeSteps()
+}
+
+function onClose() {
+  analysisCancelSource?.cancel()
+  countUp?.reset()
+}
+
+function updateProgress(_temp: any, val: any) {
+  val = Number(val)
+  downloadAnalysis.currentStep = Math.min(
+    Math.floor(val / 9),
+    downloadAnalysis.steps.length - 1,
+  )
+  downloadAnalysis.progress = val
+}
+
+function initSteps() {
+  downloadAnalysis.currentStep = 0
+  downloadAnalysis.progress = 0
+  countUp = new CountUp({}, 99, {
+    duration: 62,
+    plugin: {
+      render: updateProgress,
+    },
+    useEasing: false,
+    onCompleteCallback: () => {},
+  })
+  countUp.start()
+}
+
+function completeSteps() {
+  countUp.pauseResume()
+  updateProgress({}, 100)
+  ElMessage.success('public_message_download_ok')
+
+  setTimeout(() => {
+    downloadAnalysis.visible = false
+  }, 200)
+}
+
+function handleCopyStack(stack: string) {
+  copyToClipboard(stack)
+  ElMessage.success(t('public_message_copy_success'))
+}
+
+function openDataCapture() {
+  window.open(
+    router.resolve({
+      name: 'DataCapture',
+      params: { id: props.dataflow.id },
+    }).href,
+    `DataCapture-${props.dataflow.id}`,
+  )
+}
+
+function handleCreateTicket() {
+  const errorCode = codeDialog.data.fullErrorCode || codeDialog.data.errorCode
+
+  window.open(
+    router.resolve({
+      name: 'TicketSystem',
+      query: {
+        form: encodeURIComponent(
+          JSON.stringify({
+            jobId: props.dataflow.id,
+            subject: `${errorCode}-${codeDialog.data.message}`,
+            description: `Error Code: ${errorCode}
+Module: ${codeDialog.data.module || ''}
+Describe: ${codeDialog.data.describe ? `\n${codeDialog.data.describe}` : ''}
+Stack Trace: ${codeDialog.data.errorStack ? `\n${codeDialog.data.errorStack}` : ''}`,
+          }),
+        ),
+      },
+    }).href,
+  )
+}
+
+function setupOverflowDetection() {
+  overflowObserver = new MutationObserver(() => {
+    nextTick(() => {
+      checkOverflowForVisibleItems()
+    })
+  })
+
+  const container = virtualScroller.value?.$el
+  if (container) {
+    overflowObserver.observe(container, {
+      childList: true,
+      subtree: true,
+    })
+  }
+}
+
+function checkOverflowForVisibleItems() {
+  const logItems = document.querySelectorAll('.log-item')
+
+  logItems.forEach((item) => {
+    const itemId = (item as HTMLElement).dataset.logId
+    if (itemId) {
+      const listItem = list.value.find((i: any) => i.id === itemId)
+      if (listItem) {
+        const isOverflowing =
+          item.scrollHeight > (item as HTMLElement).offsetHeight
+        if (listItem.hideContent !== isOverflowing) {
+          listItem.hideContent = isOverflowing
+        }
+      }
+    }
+  })
+}
+
+// --- Lifecycle ---
+
+// created
+checkList.value = ['error'].includes(props.dataflow.status)
+  ? ['WARN', 'ERROR']
+  : ['INFO', 'WARN', 'ERROR']
+
+onMounted(() => {
+  init()
+  setupOverflowDetection()
+})
+
+onUnmounted(() => {
+  clearTimer()
+  if (overflowObserver) {
+    overflowObserver.disconnect()
+  }
+})
 </script>
 
 <template>
@@ -1024,7 +908,7 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
             v-for="item in checkItems"
             :key="item.label"
             :label="item.label"
-            @change="handleCheckbox(arguments[0], item.label)"
+            @change="(val: any) => handleCheckbox(val, item.label)"
             >{{ item.text }}
           </ElCheckbox>
         </ElCheckboxGroup>
@@ -1033,7 +917,7 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
 
         <ElCheckbox
           v-model="switchData.timestamp"
-          @change="command('timestamp')"
+          @change="toggleCol('timestamp')"
           >{{
             $t('packages_business_logs_nodelog_xianshishijianchuo')
           }}</ElCheckbox
@@ -1055,9 +939,21 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
       </div>
       <div
         v-loading="loading"
-        class="log-list flex-1 rounded-2"
+        class="log-list flex-1 rounded-2 position-relative"
         style="height: 0"
       >
+        <Transition name="fade">
+          <el-button
+            v-show="!isScrollBottom && list.length"
+            class="jump-to-latest"
+            type="primary"
+            circle
+            size="small"
+            @click="scrollToBottom"
+          >
+            <VIcon>arrow-down</VIcon>
+          </el-button>
+        </Transition>
         <DynamicScroller
           ref="virtualScroller"
           :items="list"
@@ -1524,6 +1420,24 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
   :deep(.log__label) {
     white-space: nowrap;
   }
+}
+
+.jump-to-latest {
+  position: absolute;
+  bottom: 16px;
+  right: 24px;
+  z-index: 3;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
 .no-more__alert {

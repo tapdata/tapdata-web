@@ -3,6 +3,7 @@ import {
   ElDivider as Divider,
   ElLink as Link,
 } from 'element-plus'
+import { ArrayItems } from './array-items'
 import { FormCollapse, FormCollapseItem } from './form-collapse'
 import { FormTab } from './form-tab'
 import { Input } from './input'
@@ -15,6 +16,7 @@ import { Switch } from './switch'
 export { Alert, Divider, Link }
 // 覆盖 formily-element-plus
 export {
+  ArrayItems,
   FormCollapse,
   FormCollapseItem,
   FormTab,
@@ -47,6 +49,9 @@ export * from './json-editor'
 export * from './table-field-select'
 export * from './verify-fields-dialog'
 export * from './infinite-select'
+export * from './key-value-editor'
 // export * from './switch' // 为了扩展开关的二次确认
 
+export * from './aggregate'
+export * from './triggers'
 export * from './ElementPlus'

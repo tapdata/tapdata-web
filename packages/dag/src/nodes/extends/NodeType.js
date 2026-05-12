@@ -313,23 +313,21 @@ export class NodeType {
         }
       }
 
-      if (
-        !readonly &&
-        syncType === 'sync' &&
-        !formSchema.properties.tabs.properties.previewTab
-      ) {
-        formSchema.properties.tabs.properties.previewTab = {
-          type: 'void',
-          'x-component': 'FormTab.TabPane',
-          'x-component-props': {
-            label: i18n.t('public_data_preview'),
-          },
-          properties: {
-            preview: {
-              type: 'void',
-              'x-component': 'DataPreview',
+      if (!readonly && syncType === 'sync') {
+        if (!formSchema.properties.tabs.properties.previewTab) {
+          formSchema.properties.tabs.properties.previewTab = {
+            type: 'void',
+            'x-component': 'FormTab.TabPane',
+            'x-component-props': {
+              label: i18n.t('public_data_preview'),
             },
-          },
+            properties: {
+              preview: {
+                type: 'void',
+                'x-component': 'DataPreview',
+              },
+            },
+          }
         }
       } else {
         delete formSchema.properties.tabs.properties.previewTab

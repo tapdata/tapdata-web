@@ -121,9 +121,9 @@ const keyMapping = reactive({
   TASK_STATUS_ERROR: t(
     'packages_business_setting_alarmnotification_dangrenwuyudao',
   ),
-  TASK_INSPECT_ERROR: t(
-    'packages_business_setting_alarmnotification_dangrenwujiaoyan',
-  ),
+  // TASK_INSPECT_ERROR: t(
+  //   'packages_business_setting_alarmnotification_dangrenwujiaoyan',
+  // ),
   TASK_FULL_COMPLETE: t(
     'packages_business_setting_alarmnotification_dangrenwuquanliang',
   ),
@@ -136,9 +136,9 @@ const keyMapping = reactive({
   TASK_INCREMENT_DELAY: t(
     'packages_business_setting_alarmnotification_dangrenwudezeng',
   ),
-  DATANODE_CANNOT_CONNECT: t(
-    'packages_business_setting_alarmnotification_dangshujuwufa',
-  ),
+  // DATANODE_CANNOT_CONNECT: t(
+  //   'packages_business_setting_alarmnotification_dangshujuwufa',
+  // ),
   DATANODE_HTTP_CONNECT_CONSUME: t(
     'packages_business_setting_alarmnotification_dangshujuyuanwang',
   ),
@@ -160,9 +160,9 @@ const keyMapping = reactive({
   INSPECT_VALUE_ERROR: t(
     'packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu',
   ),
-  SYSTEM_FLOW_EGINGE_DOWN: t(
-    'packages_business_setting_alarmnotification_dangrenwustop',
-  ),
+  // SYSTEM_FLOW_EGINGE_DOWN: t(
+  //   'packages_business_setting_alarmnotification_dangrenwustop',
+  // ),
   SYSTEM_FLOW_EGINGE_UP: t(
     'packages_business_setting_alarmnotification_dangrenwuuP',
   ),
@@ -295,7 +295,6 @@ const formData = reactive<NotificationForm>({
     weChat: false,
   },
 })
-const userId = ref('')
 const currentData = ref<AlarmRule[]>([])
 const channels = ref<string[]>(['wechat', 'system', 'sms', 'email'])
 
@@ -312,7 +311,7 @@ const remoteMethod = async (type?: string) => {
       (item: AlarmRule) => item.key === 'SYSTEM_FLOW_EGINGE_DOWN',
     )
     tableData.value = tableData.value.filter(
-      (item: AlarmRule) => item.key !== 'SYSTEM_FLOW_EGINGE_DOWN',
+      (item: AlarmRule) => keyMapping[item.key],
     )
     initVariables()
   } catch (error) {

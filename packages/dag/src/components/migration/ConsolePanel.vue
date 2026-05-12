@@ -1,202 +1,200 @@
-<script>
+<script setup lang="ts">
 import { getTaskConsole } from '@tap/api/src/core/task'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import resize from '@tap/component/src/directives/resize'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
-
 import { cloneDeep } from 'lodash-es'
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { onBeforeUnmount, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
+import { useDataflowStore } from '../../stores/dataflow.store'
 import NodeIcon from '../NodeIcon.vue'
 import '@tap/component/src/directives/resize/index.scss'
 
-export default {
+defineOptions({
   name: 'ConsolePanel',
-  directives: {
-    resize,
-  },
-  components: { VEmpty, NodeIcon },
-  data() {
-    return {
-      levels: ['INFO', 'WARN', 'ERROR'],
-      logList: [],
-      nodeList: [],
-      nodeId: '',
-      ifAuto: false,
-      loading: false,
-      type: '',
-      over: false,
-      warnNum: 0,
-      errorNum: 0,
+  directives: { resize },
+})
+
+const emit = defineEmits<{
+  stopAuto: []
+}>()
+
+const store = useStore()
+const route = useRoute()
+const dataflowStore = useDataflowStore()
+
+// --- state ---
+const levels = ref<string[]>(['INFO', 'WARN', 'ERROR'])
+const logList = ref<any[]>([])
+const nodeList = ref<any[]>([])
+const nodeId = ref('')
+const ifAuto = ref(false)
+const loading = ref(false)
+const type = ref('')
+const over = ref(false)
+const warnNum = ref(0)
+const errorNum = ref(0)
+let timerId: ReturnType<typeof setTimeout> | undefined
+let timeout = 3000
+
+// --- methods ---
+function getResetList(data: any[]) {
+  const I18N_MAP: Record<string, string> = {
+    task_reset_start: 'packages_dag_task_reset_start',
+    task_reset_pdk_node_external_resource:
+      'packages_dag_task_reset_pdk_node_external_resource',
+    task_reset_pdk_node_state: 'packages_dag_task_reset_pdk_node_state',
+    task_reset_merge_node: 'packages_dag_task_reset_merge_node',
+    task_reset_aggregate_node: 'packages_dag_task_reset_aggregate_node',
+    task_reset_custom_node: 'packages_dag_task_reset_custom_node',
+    task_reset_join_node: 'packages_dag_task_reset_join_node',
+    task_reset_end: 'packages_dag_task_reset_end',
+    unknown_error: 'packages_dag_unknown_error',
+    SUCCEED: 'packages_dag_console_log_status_success',
+    TASK_SUCCEED: 'packages_dag_console_log_status_success',
+    FAILED: 'packages_dag_console_log_status_fail',
+    TASK_FAILED: 'packages_dag_console_log_status_fail',
+  }
+  const result: any[] = []
+  data.forEach((el) => {
+    el.st = el.status
+    el.status = i18n.global.t(I18N_MAP[el.describe])
+    const time = dayjs(el.time).format('YYYY-MM-DD HH:mm:ss')
+    const desc = i18n.global.t(I18N_MAP[el.describe], el)
+    const item: any = {}
+    item.id = el.id
+    item.grade = el.level
+    item.log = `${time} ${desc}`
+    if (['FAILED'].includes(el.st) && item.grade === 'ERROR') {
+      item.log += `\n${el.errorMsg}\n${el.errorStack}`
+    }
+    result.push(item)
+    if (
+      el.describe === 'task_reset_end' &&
+      ['FAILED', 'TASK_FAILED'].includes(el.st)
+    ) {
+      const { resetTimes = 0, resetAllTimes = 0 } = el
+      const rest = resetAllTimes - resetTimes
+      if (rest) {
+        const startItem = cloneDeep(item)
+        startItem.log = `${time} ${i18n.global.t('packages_dag_auto_reset_start', Object.assign({}, el, { rest }))}`
+        result.push(startItem)
+      }
+      if (resetTimes) {
+        const nthItem = cloneDeep(item)
+        nthItem.log = `${time} ${i18n.global.t('packages_dag_auto_reset_start_nth', el)}`
+        result.push(nthItem)
+      }
+      if (resetAllTimes && resetAllTimes === resetTimes) {
+        const resultItem = cloneDeep(item)
+        resultItem.log = `${time} ${i18n.global.t('packages_dag_auto_reset_start_result', el)}`
+        result.push(resultItem)
+      }
+    }
+  })
+  return result
+}
+
+async function loadData() {
+  loading.value = true
+  const data = await getTaskConsole({
+    taskId: dataflowStore.dataflow.id,
+    nodeId: nodeId.value,
+    type: type.value,
+    grade: levels.value.join(','),
+  })
+  const list = data.list?.filter((t: any) => !t.describe) || []
+  const resetList = data.list?.filter((t: any) => t.describe) || []
+  const modelList = data.modelList || []
+  loading.value = false
+  logList.value = list.concat(modelList).concat(getResetList(resetList)) || []
+  const { warnNum: w = 0, errorNum: e = 0 } = data || {}
+  warnNum.value = w
+  errorNum.value = e
+  over.value = data.over
+
+  const nodes: any[] = []
+  Object.keys(data.nodes).forEach((id) => {
+    const node = dataflowStore.findNodeById(id)
+    node && nodes.push(node)
+  })
+  nodeList.value = nodes
+  timeout = logList.value.length ? 3000 : 1000
+  if (data.over) stopAuto()
+}
+
+async function autoLoad() {
+  clearTimeout(timerId)
+  await loadData()
+  if (ifAuto.value) {
+    timerId = setTimeout(() => {
+      autoLoad()
+    }, timeout || 3000)
+  }
+}
+
+function startAuto(t: string) {
+  ifAuto.value = true
+  type.value = t
+  autoLoad()
+}
+
+function stopAuto() {
+  ifAuto.value = false
+  emit('stopAuto')
+  clearTimeout(timerId)
+}
+
+function toggleNode(id?: string) {
+  if (nodeId.value === id) return
+  nodeId.value = id || ''
+  autoLoad()
+}
+
+function getList() {
+  return logList.value
+}
+
+function getWarnAndError() {
+  return { warnNum: warnNum.value, errorNum: errorNum.value }
+}
+
+function getData() {
+  return {
+    warnNum: warnNum.value,
+    errorNum: errorNum.value,
+    over: over.value,
+    logList: logList.value,
+  }
+}
+
+// 响应 store 中的 consoleAutoLoadType 信号
+watch(
+  () => dataflowStore.consoleAutoLoadType,
+  (t) => {
+    if (t) {
+      startAuto(t)
+      dataflowStore.consoleAutoLoadType = ''
     }
   },
-  computed: {
-    ...mapGetters('dataflow', [
-      'activeType',
-      'activeNode',
-      'nodeById',
-      'stateIsReadonly',
-    ]),
-    ...mapState('dataflow', ['editVersion', 'showConsole', 'taskId']),
-  },
-  watch: {
-    showConsole(v) {
-      if (v) {
-        // this.loadData()
-      }
-    },
-  },
-  beforeUnmount() {
-    this.stopAuto()
-  },
-  methods: {
-    ...mapMutations('dataflow', [
-      'updateNodeProperties',
-      'setNodeError',
-      'clearNodeError',
-      'setActiveType',
-      'toggleConsole',
-    ]),
-    ...mapActions('dataflow', ['updateDag']),
+  { immediate: true },
+)
 
-    sleep(time) {
-      return new Promise((resolve) => {
-        setTimeout(() => resolve(), time)
-      })
-    },
+onBeforeUnmount(() => {
+  stopAuto()
+})
 
-    async loadData() {
-      const { taskId, nodeId } = this
-      this.loading = true
-      const data = await getTaskConsole({
-        taskId: taskId || this.$route.params.id,
-        nodeId,
-        type: this.type,
-        grade: this.levels.join(','),
-      })
-      const list = data.list?.filter((t) => !t.describe) || []
-      const resetList = data.list?.filter((t) => t.describe) || []
-      const modelList = data.modelList || []
-      this.loading = false
-      this.logList =
-        list.concat(modelList).concat(this.getResetList(resetList)) || []
-      const { warnNum = 0, errorNum = 0 } = data || {}
-      this.warnNum = warnNum
-      this.errorNum = errorNum
-      this.over = data.over
-
-      const nodeList = []
-      Object.keys(data.nodes).forEach((id) => {
-        const node = this.nodeById(id)
-        node && nodeList.push(node)
-      })
-      this.nodeList = nodeList
-      this.timeout = this.logList.length ? 3000 : 1000
-      if (data.over) this.stopAuto()
-    },
-
-    async autoLoad() {
-      clearTimeout(this.timerId)
-      await this.loadData()
-      if (this.ifAuto) {
-        this.timerId = setTimeout(() => {
-          this.autoLoad()
-        }, this.timeout || 3000)
-      }
-    },
-
-    startAuto(type) {
-      this.ifAuto = true
-      this.type = type
-      this.autoLoad()
-    },
-
-    stopAuto() {
-      this.ifAuto = false
-      this.$emit('stopAuto')
-      clearTimeout(this.timerId)
-    },
-
-    toggleNode(nodeId) {
-      if (this.nodeId === nodeId) return
-      this.nodeId = nodeId
-      this.autoLoad()
-    },
-
-    getResetList(data) {
-      const I18N_MAP = {
-        task_reset_start: 'packages_dag_task_reset_start',
-        task_reset_pdk_node_external_resource:
-          'packages_dag_task_reset_pdk_node_external_resource',
-        task_reset_pdk_node_state: 'packages_dag_task_reset_pdk_node_state',
-        task_reset_merge_node: 'packages_dag_task_reset_merge_node',
-        task_reset_aggregate_node: 'packages_dag_task_reset_aggregate_node',
-        task_reset_custom_node: 'packages_dag_task_reset_custom_node',
-        task_reset_join_node: 'packages_dag_task_reset_join_node',
-        task_reset_end: 'packages_dag_task_reset_end',
-        unknown_error: 'packages_dag_unknown_error',
-        SUCCEED: 'packages_dag_console_log_status_success',
-        TASK_SUCCEED: 'packages_dag_console_log_status_success',
-        FAILED: 'packages_dag_console_log_status_fail',
-        TASK_FAILED: 'packages_dag_console_log_status_fail',
-      }
-      const result = []
-      data.forEach((el) => {
-        el.st = el.status
-        console.log('I18N_MAP[el.status]', I18N_MAP[el.describe])
-        el.status = i18n.global.t(I18N_MAP[el.describe])
-        const time = dayjs(el.time).format('YYYY-MM-DD HH:mm:ss')
-        const desc = i18n.global.t(I18N_MAP[el.describe], el)
-        const item = {}
-        item.id = el.id
-        item.grade = el.level
-        item.log = `${time} ${desc}`
-        if (['FAILED'].includes(el.st) && item.grade === 'ERROR') {
-          item.log += `\n${el.errorMsg}\n${el.errorStack}`
-        }
-        result.push(item)
-        if (
-          el.describe === 'task_reset_end' &&
-          ['FAILED', 'TASK_FAILED'].includes(el.st)
-        ) {
-          const { resetTimes = 0, resetAllTimes = 0 } = el
-          const rest = resetAllTimes - resetTimes
-          if (rest) {
-            const startItem = cloneDeep(item)
-            startItem.log = `${time} ${i18n.global.t('packages_dag_auto_reset_start', Object.assign({}, el, { rest }))}`
-            result.push(startItem)
-          }
-          if (resetTimes) {
-            const nthItem = cloneDeep(item)
-            nthItem.log = `${time} ${i18n.global.t('packages_dag_auto_reset_start_nth', el)}`
-            result.push(nthItem)
-          }
-          if (resetAllTimes && resetAllTimes === resetTimes) {
-            const resultItem = cloneDeep(item)
-            resultItem.log = `${time} ${i18n.global.t('packages_dag_auto_reset_start_result', el)}`
-            result.push(resultItem)
-          }
-        }
-      })
-      return result
-    },
-
-    getList() {
-      return this.logList
-    },
-
-    getWarnAndError() {
-      const { warnNum = 0, errorNum = 0 } = this
-      return { warnNum, errorNum }
-    },
-
-    getData() {
-      const { warnNum = 0, errorNum = 0, over, logList } = this
-      return { warnNum, errorNum, over, logList }
-    },
-  },
-  emits: ['stopAuto'],
-}
+defineExpose({
+  loadData,
+  startAuto,
+  stopAuto,
+  autoLoad,
+  getList,
+  getWarnAndError,
+  getData,
+})
 </script>
 
 <template>
@@ -204,8 +202,8 @@ export default {
     v-resize.top="{
       minHeight: 40,
     }"
-    class="console-panel border-top"
-    :class="showConsole ? 'flex' : 'none'"
+    class="console-panel rounded-2xl shadow-canvas"
+    :class="dataflowStore.showConsole ? 'flex' : 'none'"
   >
     <div class="console-panel-side border-end overflow-auto py-2 flex-shrink-0">
       <!--<div class="console-panel-header p-4">日志</div>-->
@@ -243,12 +241,16 @@ export default {
           <ElCheckbox label="ERROR">ERROR</ElCheckbox>
         </ElCheckboxGroup>
 
-        <VIcon class="ml-3" size="16" @click="toggleConsole(false)"
-          >close</VIcon
-        >
+        <el-button class="ml-3" text @click="dataflowStore.showConsole = false">
+          <template #icon>
+            <i-lucide-x />
+          </template>
+        </el-button>
       </div>
       <div class="log-list-wrap flex-1 min-h-0 px-2 pb-2">
-        <code class="log-list block h-100 overflow-auto py-1 rounded-2">
+        <code
+          class="log-list bg-background-section block h-100 overflow-auto p-1 rounded-xl"
+        >
           <VEmpty v-if="!logList.length && !ifAuto && !loading" large />
           <pre
             v-for="(item, i) in logList"
@@ -297,7 +299,6 @@ export default {
   height: 40vh;
   overflow: auto;
   background-color: var(--el-bg-color);
-  //transition: height 0.24s;
   will-change: height;
 
   &-side {
@@ -310,7 +311,7 @@ export default {
 
   .step-item {
     line-height: 32px;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
 
     &:hover,
@@ -321,8 +322,6 @@ export default {
 
   .log-list-wrap {
     .log-list {
-      background-color: rgba(229, 236, 255, 0.3);
-
       &-item {
         white-space: pre-wrap;
         font-family:

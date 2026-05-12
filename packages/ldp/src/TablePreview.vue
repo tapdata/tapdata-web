@@ -1212,7 +1212,7 @@ export default {
                           v-model="scope.row.businessDesc"
                           @input="
                             handleChangeBusinessDesc(
-                              arguments[0],
+                              $event,
                               scope.row.id,
                               scope.row.name,
                             )
@@ -1571,9 +1571,9 @@ export default {
     }
   }
 
-  :deep(.table-preview-tabs > .el-tabs__content > .el-tab-pane) {
-    background-color: rgb(245, 248, 254);
-  }
+  // :deep(.table-preview-tabs > .el-tabs__content > .el-tab-pane) {
+  //   background-color: rgb(245, 248, 254);
+  // }
 
   :deep(th .cell) {
     white-space: nowrap;

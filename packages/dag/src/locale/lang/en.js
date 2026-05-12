@@ -643,6 +643,28 @@ export default {
   packages_dag_monitor_node_popover_targetWriteTime_title: 'Average write time',
   packages_dag_monitor_node_per_deal_need_time: 'Single processing time',
   packages_dag_api_docs: 'API Documentation',
+  packages_dag_ai_generate: 'AI Generate',
+  packages_dag_ai_code_dialog_title: 'AI Code Generator',
+  packages_dag_ai_code_dialog_subtitle:
+    'Describe the data processing logic you want to implement, and AI will generate code for you',
+  packages_dag_ai_code_dialog_placeholder:
+    'For example: Convert all field names to camelCase format...',
+  packages_dag_ai_code_dialog_quick_commands: 'Quick Commands',
+  packages_dag_ai_code_dialog_cmd_camel_case:
+    'Convert field names to camelCase',
+  packages_dag_ai_code_dialog_cmd_filter_empty: 'Filter out empty value fields',
+  packages_dag_ai_code_dialog_cmd_add_timestamp: 'Add timestamp field',
+  packages_dag_ai_code_dialog_cmd_round_numbers: 'Round numeric fields',
+  packages_dag_ai_code_dialog_cmd_merge_fields:
+    'Merge multiple fields into one',
+  packages_dag_ai_code_dialog_generate: 'Generate',
+  packages_dag_ai_code_dialog_cancel: 'Cancel',
+  packages_dag_ai_code_dialog_apply: 'Apply Code',
+  packages_dag_ai_code_dialog_generating: 'Generating...',
+  packages_dag_ai_code_dialog_preview: 'Generated Result',
+  packages_dag_ai_code_dialog_generate_success: 'Code generated successfully',
+  packages_dag_ai_code_dialog_generate_failed:
+    'Code generation failed, please try again later',
   packages_dag_js_declare_index_queding: 'OK',
   packages_dag_js_declare_index_shilidaima: 'Sample Code',
   packages_dag_js_declare_index_shiyongbangzhu: 'Use Help',
@@ -1215,4 +1237,29 @@ export default {
   packages_dag_fileLog: 'Database Log',
   packages_dag_fileLog_tip:
     'When enabled, database JDBC execution logs will be output in the engine background',
+  packages_dag_search_processor: 'Search Processor',
+  packages_dag_canvas_add_node: 'Add Node',
+  packages_dag_canvas_empty_title: 'Start Building Your Data Flow',
+  packages_dag_canvas_empty_desc:
+    'Add your first node to start creating a data processing pipeline',
+  packages_dag_canvas_empty_hint: 'Or right-click on the canvas to quickly add',
+  packages_dag_canvas_fit_view: 'Fit to View',
+  packages_dag_batch_edit: 'Batch Edit',
+  packages_dag_auto_layout: 'Auto Layout',
+  packages_dag_panning_mode: 'Panning Mode',
+  packages_dag_zoom_in: 'Zoom In',
+  packages_dag_zoom_out: 'Zoom Out',
+  packages_dag_zoom_reset: 'Reset to 100%',
+  packages_dag_undo: 'Undo',
+  packages_dag_redo: 'Redo',
+  packages_dag_src_editor_copy_success: 'Copied to clipboard',
+  packages_dag_hide_nodes_panel_tip:
+    'Collapse panel. Right-click on the canvas to quickly add nodes.',
+  packages_dag_handle_click: 'Click',
+  packages_dag_handle_click_add_node: 'to add node',
+  packages_dag_handle_drag: 'Drag',
+  packages_dag_handle_drag_connect_node: 'to connect nodes',
+  packages_dag_link_end_must_be_data_node:
+    'The end of the link must be a data node',
+  packages_dag_node_panel_desc_placeholder: 'Add description...',
 }

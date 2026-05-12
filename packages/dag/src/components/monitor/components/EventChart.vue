@@ -37,9 +37,13 @@ export default {
       },
       options: {
         tooltip: {
+          appendToBody: true,
+          borderRadius: 12,
           trigger: 'axis',
-          axisPointer: {
-            type: 'shadow', // 'shadow' as default; can also be 'line' or 'shadow'
+          backgroundColor: 'rgba(54, 66, 82, 0.9)',
+          textStyle: {
+            color: '#fff',
+            fontSize: 12,
           },
         },
         legend: {

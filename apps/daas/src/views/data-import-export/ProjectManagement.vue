@@ -663,13 +663,13 @@ const handleSelectAll = (checked: any) => {
                         <el-icon class="mr-2">
                           <i-lucide-edit />
                         </el-icon>
-                        编辑
+                        {{ t('public_button_edit') }}
                       </el-dropdown-item>
                       <el-dropdown-item command="delete" class="is-danger">
                         <el-icon class="mr-2">
                           <i-lucide-trash-2 />
                         </el-icon>
-                        删除
+                        {{ t('public_button_delete') }}
                       </el-dropdown-item>
                     </el-dropdown-menu>
                   </template>

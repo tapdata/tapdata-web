@@ -1,0 +1,201 @@
+.triggers-panel {
+  color: var(--el-text-color-regular, #606266);
+
+  &__source {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background-color: var(--el-fill-color-lighter, #fafafa);
+    border-radius: 8px;
+    border: 1px solid var(--el-border-color-extra-light, #f2f6fc);
+    margin-bottom: 16px;
+  }
+
+  &__source-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #22c55e;
+    flex-shrink: 0;
+  }
+
+  &__source-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--el-text-color-primary, #303133);
+  }
+
+  &__source-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--el-text-color-regular, #606266);
+    background-color: var(--el-fill-color, #f0f2f5);
+    border-radius: 4px;
+  }
+
+  &__section {
+    margin-bottom: 16px;
+  }
+
+  &__label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--el-text-color-primary, #303133);
+    margin-bottom: 6px;
+  }
+
+  &__required {
+    color: var(--el-color-danger, #f56c6c);
+    margin-right: 2px;
+  }
+
+  // Event Type Tabs
+  &__tabs {
+    display: flex;
+    border-bottom: 2px solid var(--el-border-color-lighter, #ebeef5);
+  }
+
+  &__tab {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--el-text-color-secondary, #909399);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+
+    &:hover {
+      color: var(--el-color-primary, #409eff);
+    }
+
+    &.is-active {
+      color: var(--el-color-primary, #409eff);
+      border-bottom-color: var(--el-color-primary, #409eff);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+
+  // Code Editor
+  &__editor-wrap {
+    border: 1px solid var(--el-border-color, #dcdfe6);
+    border-radius: var(--el-border-radius-base, 4px);
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  &__editor-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 8px 4px 12px;
+    background-color: #1e293b;
+    border-bottom: 1px solid #334155;
+  }
+
+  &__editor-type {
+    font-size: 11px;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &__editor-actions {
+    display: flex;
+    gap: 2px;
+
+    .el-button {
+      color: #94a3b8;
+      padding: 4px;
+
+      &:hover {
+        color: #e2e8f0;
+      }
+    }
+  }
+
+  &__editor {
+    display: flex;
+    background-color: #0f172a;
+    min-height: 300px;
+  }
+
+  &__line-numbers {
+    padding: 12px 0;
+    min-width: 40px;
+    text-align: right;
+    border-right: 1px solid #334155;
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  &__line-number {
+    padding: 0 8px;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #475569;
+  }
+
+  &__textarea {
+    flex: 1;
+    padding: 12px;
+    background: transparent;
+    border: none;
+    outline: none;
+    resize: none;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #e2e8f0;
+    tab-size: 2;
+    min-height: 300px;
+    width: 100%;
+  }
+
+  // Help Area
+  &__help {
+    display: flex;
+    gap: 10px;
+    padding: 12px 16px;
+    background-color: var(--el-color-primary-light-9, #ecf5ff);
+    border-radius: var(--el-border-radius-base, 4px);
+    border: 1px solid var(--el-color-primary-light-7, #c6e2ff);
+  }
+
+  &__help-icon {
+    font-size: 16px;
+    color: var(--el-color-primary, #409eff);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  &__help-content {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--el-text-color-regular, #606266);
+
+    p {
+      margin: 0;
+    }
+  }
+
+  &__help-title {
+    font-weight: 600;
+    color: var(--el-text-color-primary, #303133);
+    margin-bottom: 4px !important;
+  }
+}
+
