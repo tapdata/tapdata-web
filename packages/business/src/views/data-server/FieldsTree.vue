@@ -72,34 +72,19 @@ const emit = defineEmits<{
   updateFieldType: [fieldName: string, newType: string]
 }>()
 
-// ========= 展开状态保存/恢复 =========
-const getExpandedKeys = (): string[] => {
-  const keys: string[] = []
-  const store = (treeRef.value as any)?.store
-  if (!store) return keys
-  const walk = (nodes: any[]) => {
-    for (const node of nodes) {
-      if (node.expanded && node.data?.field_name) {
-        keys.push(node.data.field_name)
-      }
-      if (node.childNodes?.length) walk(node.childNodes)
-    }
-  }
-  walk(store.root.childNodes || [])
-  return keys
-}
+const expandedKeys = ref<string[]>(['root'])
 
-const restoreExpandedKeys = (keys: string[]) => {
-  for (const key of keys) {
-    const node = treeRef.value?.getNode(key)
-    if (node) node.expanded = true
+const updateExpandedKeys = (key: string, expanded: boolean) => {
+  if (expanded && !expandedKeys.value.includes(key)) {
+    expandedKeys.value = [...expandedKeys.value, key]
+  } else if (!expanded) {
+    expandedKeys.value = expandedKeys.value.filter((k) => k !== key)
   }
 }
 
 watch(
   () => props.fields,
   (newVal) => {
-    const expandedKeys = getExpandedKeys()
     const children = makeTree(newVal)
     treeData.value = children.length
       ? [
@@ -111,9 +96,6 @@ watch(
           },
         ]
       : []
-    nextTick(() => {
-      restoreExpandedKeys(expandedKeys)
-    })
   },
   {
     immediate: true,
@@ -339,8 +321,7 @@ const startAddField = (parentFieldName = 'root') => {
   // 新字段自动选中 + 展开父节点 + 聚焦输入框
   nextTick(() => {
     if (parentFieldName !== 'root') {
-      const parentNode = treeRef.value?.getNode(parentFieldName)
-      if (parentNode) parentNode.expanded = true
+      updateExpandedKeys(parentFieldName, true)
     }
     // 恢复之前的选中状态 + 新字段
     const newKeys = [...checkedKeys, fieldName]
@@ -452,10 +433,12 @@ defineExpose({
       :data="treeData"
       :show-checkbox="!readonly"
       node-key="field_name"
-      :default-expanded-keys="['root']"
+      :default-expanded-keys="expandedKeys"
       :default-checked-keys="[]"
       :filter-node-method="filterNode"
       @check="handleCheck"
+      @node-expand="(data: any) => updateExpandedKeys(data.field_name, true)"
+      @node-collapse="(data: any) => updateExpandedKeys(data.field_name, false)"
     >
       <template #default="{ node, data }">
         <template v-if="data.isRoot">
@@ -470,7 +453,7 @@ defineExpose({
           >
             <el-icon size="12"><i-lucide-plus /></el-icon>
             <span class="ml-0.5">{{
-              $t('packages_form_aggregate_op_addFields')
+              $t('packages_business_data_server_add_field')
             }}</span>
           </el-button>
         </template>

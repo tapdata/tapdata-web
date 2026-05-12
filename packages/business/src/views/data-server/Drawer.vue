@@ -302,7 +302,6 @@ const handleChangeConnection = (connection: any) => {
 }
 
 const getFields = async () => {
-  selectedFieldSize.value = 0
   fieldLoading.value = true
   const filter = {
     where: {
@@ -364,6 +363,7 @@ const open = (formData?: any, copy?: boolean) => {
     if (copy) {
       allFields.value = formData?.fields || []
     } else if (connectionId && tableName) {
+      selectedFieldSize.value = 0
       getFields()
     }
 
@@ -584,6 +584,7 @@ const edit = (copy?: boolean) => {
 const handleCancel = () => {
   isEdit.value = false
   form.value = initialFormData
+  selectedFieldSize.value = 0
   getFields()
 }
 
@@ -608,6 +609,7 @@ const handleChangeApiType = () => {
 const handleChangeTable = () => {
   form.value.fields = []
   allFields.value = []
+  selectedFieldSize.value = 0
   getFields()
   form_ref.value?.clearValidate('tableName')
 }
@@ -677,10 +679,23 @@ const handleReloadSchema = async () => {
   const { connectionId, tableName } = form.value
   if (!connectionId || !tableName) return
 
+  // 保存当前选中的字段
+  const checkedFields = fieldsTreeRef.value?.getCheckedFields(true) || []
+
   fieldLoading.value = true
   try {
     await reloadSchema(connectionId, tableName)
     await getFields()
+
+    // 恢复之前的选中状态
+    if (checkedFields.length) {
+      nextTick(() => {
+        fieldsTreeRef.value?.setCheckedFields(checkedFields)
+        selectedFieldSize.value = (
+          fieldsTreeRef.value?.getCheckedFields(false) || []
+        ).length
+      })
+    }
   } finally {
     fieldLoading.value = false
   }
