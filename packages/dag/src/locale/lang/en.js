@@ -1253,4 +1253,10 @@ export default {
   packages_dag_src_editor_copy_success: 'Copied to clipboard',
   packages_dag_hide_nodes_panel_tip:
     'Collapse panel. Right-click on the canvas to quickly add nodes.',
+  packages_dag_data_capture_keyword_placeholder: 'Enter keyword',
+  packages_dag_data_capture_source_table: 'Source Table',
+  packages_dag_data_capture_event_type: 'Event Type',
+  packages_dag_data_capture_event_time: 'Event Time',
+  packages_dag_data_capture_event_id: 'Event ID',
+  packages_dag_data_capture_original_data: 'Original Data',
 }

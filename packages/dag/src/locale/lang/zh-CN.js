@@ -1099,4 +1099,10 @@ export default {
   packages_dag_redo: '重做',
   packages_dag_src_editor_copy_success: '已复制到剪贴板',
   packages_dag_hide_nodes_panel_tip: '收起面板，可在画布上右键快速添加节点',
+  packages_dag_data_capture_keyword_placeholder: '请输入关键字',
+  packages_dag_data_capture_source_table: '原表名',
+  packages_dag_data_capture_event_type: '事件类型',
+  packages_dag_data_capture_event_time: '事件时间',
+  packages_dag_data_capture_event_id: '事件ID',
+  packages_dag_data_capture_original_data: '原始数据',
 }
