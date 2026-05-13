@@ -198,7 +198,7 @@ const getLicense = async () => {
   }
 
   getLicenseExpires().then((data: any) => {
-    const expires_on = data?.data?.expires_on
+    const expires_on = data?.expires_on
 
     if (!expires_on) {
       licenseExpireVisible.value = false
