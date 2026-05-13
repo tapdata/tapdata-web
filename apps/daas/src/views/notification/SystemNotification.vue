@@ -419,6 +419,22 @@ export default {
               <span>{{ item.createTime }}</span>
             </div>
           </div>
+          <div
+            v-else-if="item.msg === 'expired' || item.msg === 'expiring'"
+            class="list-item-content"
+          >
+            <div v-show="!item.read" class="unread-1zPaAXtSu" />
+            <div class="list-item-desc">
+              <span :style="`color: ${colorMap[item.level]};`"
+                >【{{ item.level }}】</span
+              >
+              <span>{{ systemMap[item.system] }}</span>
+              <span class="px-1">{{ item.title }}</span>
+            </div>
+            <div class="list-item-time">
+              <span>{{ item.createTime }}</span>
+            </div>
+          </div>
           <div v-else class="list-item-content">
             <div v-show="!item.read" class="unread-1zPaAXtSu" />
             <div class="list-item-desc">
