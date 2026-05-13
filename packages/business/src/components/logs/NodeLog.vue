@@ -363,7 +363,7 @@ async function loadNew() {
     if (!filter.start || !filter.end) return
 
     // 第一次请求，获取 total
-    const d: any = await queryMonitoringLogs(filter)
+    const firstData: any = await queryMonitoringLogs(filter)
     const total = firstData.total || 0
     let allRows = getFormatRow(firstData.items)
 
@@ -580,11 +580,8 @@ function handleSave() {
 
 function getTimeRange(type: string) {
   let result: any[]
-  const { status } = props.dataflow || {}
-  let endTimestamp = lastStopTime.value || Time.now()
-  if (status === 'running') {
-    endTimestamp = Time.now()
-  }
+  const endTimestamp = Time.now()
+
   switch (type) {
     case '6h':
       result = [endTimestamp - 6 * 60 * 60 * 1000, endTimestamp]
