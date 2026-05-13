@@ -1253,4 +1253,17 @@ export default {
   packages_dag_src_editor_copy_success: 'Copied to clipboard',
   packages_dag_hide_nodes_panel_tip:
     'Collapse panel. Right-click on the canvas to quickly add nodes.',
+  packages_dag_handle_click: 'Click',
+  packages_dag_handle_click_add_node: 'to add node',
+  packages_dag_handle_drag: 'Drag',
+  packages_dag_handle_drag_connect_node: 'to connect nodes',
+  packages_dag_link_end_must_be_data_node:
+    'The end of the link must be a data node',
+  packages_dag_node_panel_desc_placeholder: 'Add description...',
+  packages_dag_data_capture_keyword_placeholder: 'Enter keyword',
+  packages_dag_data_capture_source_table: 'Source Table',
+  packages_dag_data_capture_event_type: 'Event Type',
+  packages_dag_data_capture_event_time: 'Event Time',
+  packages_dag_data_capture_event_id: 'Event ID',
+  packages_dag_data_capture_original_data: 'Original Data',
 }
