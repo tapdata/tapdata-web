@@ -33,7 +33,7 @@ interface Connection {
     user?: string
     username?: string
     extParams?: string
-    addtionalString?: string
+    additionalString?: string
     timezone?: string
     uri?: string
     isUri?: boolean
@@ -63,7 +63,7 @@ interface Connection {
   database_name?: string
   database_owner?: string
   database_username?: string
-  addtionalString?: string
+  additionalString?: string
   database_datetype_without_timezone?: string
   sourceFrom?: string
   // Additional properties for source from
@@ -176,7 +176,7 @@ const configModel = {
       items: [
         {
           label: i18n.t('public_connection_form_other_connection_string'),
-          key: 'addtionalString',
+          key: 'additionalString',
         },
       ],
     },
@@ -220,7 +220,7 @@ const transformData = (row: Connection) => {
   row.database_name = row.config.database || row.config.sid
   row.database_owner = row.config.schema
   row.database_username = row.config.user || row.config.username
-  row.addtionalString = row.config.extParams || row.config.addtionalString
+  row.additionalString = row.config.extParams || row.config.additionalString
   row.database_datetype_without_timezone = row.config.timezone
   row.sourceFrom = getSourceFrom(row)
   row.loadSchemaTime = row.loadSchemaTime

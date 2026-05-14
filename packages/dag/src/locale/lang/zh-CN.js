@@ -1107,4 +1107,10 @@ export default {
   packages_dag_handle_drag_connect_node: '连接节点',
   packages_dag_link_end_must_be_data_node: '链路的末位需要是一个数据节点',
   packages_dag_node_panel_desc_placeholder: '添加描述...',
+  packages_dag_data_capture_keyword_placeholder: '请输入关键字',
+  packages_dag_data_capture_source_table: '原表名',
+  packages_dag_data_capture_event_type: '事件类型',
+  packages_dag_data_capture_event_time: '事件时间',
+  packages_dag_data_capture_event_id: '事件ID',
+  packages_dag_data_capture_original_data: '原始数据',
 }

@@ -2,13 +2,13 @@ import { callProxy } from '@tap/api/src/core/proxy'
 import { fetchSharedCache } from '@tap/api/src/core/shared-cache'
 import {
   batchStartTasks,
+  checkTaskMemoryHeap,
   deleteTask,
   fetchMergeTaskCache,
   forceStopTask,
   getNodeTableInfo,
   renameTask,
   resetTask,
-  saveAndStartTask,
   saveTask,
   stopTask,
 } from '@tap/api/src/core/task'
@@ -1451,6 +1451,44 @@ export function useCanvasOperation() {
       })
   }
 
+  const validateDropTableEnabled = async () => {
+    if (dataflow.value.type === 'cdc') return true
+
+    if (
+      dag.value.nodes.some(
+        (node) =>
+          node.existDataProcessMode === 'dropTable' && !node.$outputs.length,
+      )
+    ) {
+      return await Modal.confirm(
+        t('packages_dag_drop_table_enabled_confirm'),
+        t('packages_dag_existDataProcessMode_desc'),
+      )
+    }
+    return true
+  }
+
+  const validateMemoryHeap = async () => {
+    try {
+      const mongoNode = dag.value.nodes.find(
+        (node) => node.databaseType === 'MongoDB' && !node.$inputs.length,
+      )
+      if (!mongoNode) return true
+
+      const result = await checkTaskMemoryHeap(dataflow.value.id)
+      if (result?.isSafe) {
+        return true
+      }
+      return await Modal.confirm(
+        t('packages_dag_memory_heap_risk_title'),
+        t('packages_dag_memory_heap_risk_message'),
+      )
+    } catch (error) {
+      console.error('checkTaskMemoryHeap error:', error)
+      return true
+    }
+  }
+
   const handleSave = async (needStart?: boolean) => {
     isSaving.value = true
 
@@ -1478,9 +1516,27 @@ export function useCanvasOperation() {
     let isOk = false
 
     try {
-      const result = await (needStart ? saveAndStartTask : saveTask)(data)
+      const result = await saveTask(data)
       reformDataflow(result)
-      if (!needStart) ElMessage.success(t('public_message_save_ok'))
+
+      if (needStart) {
+        if (['edit', 'wait_start'].includes(result.status)) {
+          const dropTableEnabled = await validateDropTableEnabled()
+          if (!dropTableEnabled) {
+            isSaving.value = false
+            return
+          }
+        }
+
+        const memoryHeap = await validateMemoryHeap()
+        if (!memoryHeap) {
+          isSaving.value = false
+          return
+        }
+      } else {
+        ElMessage.success(t('public_message_save_ok'))
+      }
+
       dataflowStore.editVersion = result.editVersion
       isOk = true
     } catch (error: any) {
@@ -1502,29 +1558,6 @@ export function useCanvasOperation() {
 
   const handleStart = async (isDebug = false) => {
     buried('taskStart')
-    // this.unWatchStatus?.()
-    // this.unWatchStatus = this.$watch('dataflow.status', (v) => {
-    //   if (
-    //     ['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)
-    //   ) {
-    //     this.$refs.console?.loadData()
-    //     if (v !== 'running') {
-    //       this.$refs.console?.stopAuto()
-    //     } else {
-    //       this.toggleConsole(false)
-    //       this.gotoViewer()
-    //     }
-    //     // this.unWatchStatus()
-    //   }
-    //   if (['MigrateViewer', 'DataflowViewer'].includes(this.$route.name)) {
-    //     if (['renewing'].includes(v)) {
-    //       this.handleConsoleAutoLoad()
-    //     } else {
-    //       this.toggleConsole(false)
-    //     }
-    //   }
-    // })
-
     isSaving.value = true
 
     try {
@@ -1771,22 +1804,24 @@ export function useCanvasOperation() {
     connHeartbeat: 'heartbeatTable',
   }
 
-  const listRoute = computed(() => {
-    const name = route.name as string
-    const map = {
-      DataflowEditor: 'dataflowList',
-      TaskMonitor: 'dataflowList',
-      MigrateEditor: 'migrateList',
-      MigrationMonitor: 'migrateList',
-    }
-
-    return map[name]
-  })
+  const route2ListMap: Record<string, string> = {
+    DataflowNew: 'dataflowList',
+    DataflowEditor: 'dataflowList',
+    DataflowViewer: 'dataflowList',
+    TaskMonitor: 'dataflowList',
+    MigrateCreate: 'migrateList',
+    MigrateEditor: 'migrateList',
+    MigrateViewer: 'migrateList',
+    MigrationMonitor: 'migrateList',
+    MigrationMonitorViewer: 'migrateList',
+    SharedMiningMonitor: 'sharedMiningList',
+    HeartbeatMonitor: 'HeartbeatTableList',
+  }
 
   const handlePageReturn = () => {
-    const routeName = dataflow.value.syncType
+    const listRoute = dataflow.value.syncType
       ? listRouteMap[dataflow.value.syncType]
-      : listRoute.value
+      : route2ListMap[route.name]
 
     if (!dataflowStore.dag.nodes.length && dataflow.value.id) {
       Modal.confirm(
@@ -1801,13 +1836,13 @@ export function useCanvasOperation() {
           deleteTask(dataflow.value.id)
         }
         router.push({
-          name: routeName,
+          name: listRoute,
         })
         window.name = ''
       })
     } else {
       router.push({
-        name: routeName,
+        name: listRoute,
       })
       window.name = ''
     }

@@ -1074,4 +1074,10 @@ export default {
   packages_dag_handle_drag_connect_node: '連接節點',
   packages_dag_link_end_must_be_data_node: '鏈路的末位需要是一個數據節點',
   packages_dag_node_panel_desc_placeholder: '添加描述...',
+  packages_dag_data_capture_keyword_placeholder: '請輸入關鍵字',
+  packages_dag_data_capture_source_table: '原表名',
+  packages_dag_data_capture_event_type: '事件類型',
+  packages_dag_data_capture_event_time: '事件時間',
+  packages_dag_data_capture_event_id: '事件ID',
+  packages_dag_data_capture_original_data: '原始數據',
 }
