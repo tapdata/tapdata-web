@@ -540,7 +540,9 @@ onBeforeUnmount(() => {
               >
               <span class="dashboard__tag dashboard__tag--indigo"
                 >{{ t('dashboard_odh_data') }}
-                {{ calcUnit(throughput?.dataRate ?? 0, 'b') }}/s</span
+                {{
+                  calcUnit(Number((throughput?.dataRate ?? 0).toFixed(2)), 'b')
+                }}/s</span
               >
             </div>
             <p
