@@ -301,6 +301,7 @@ export default {
   public_api_threshold_equalsFlag: '对比符号',
   public_api_minute: '持续时间',
   public_api_alarmDate: '告警时间',
+  public_datasource_name: '数据源连接名称',
 
   // 任务
   public_task: '任务',

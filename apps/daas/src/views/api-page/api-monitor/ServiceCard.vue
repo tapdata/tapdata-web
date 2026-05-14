@@ -3,6 +3,7 @@ import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { computed } from 'vue'
 import MiniChart from './MiniChart.vue'
 import type { ServerItem } from '@tap/api/src/core/monitor-server'
+import i18n from "@/i18n";
 
 interface ServiceCardProps {
   data: ServerItem
@@ -15,20 +16,20 @@ const emit = defineEmits<{
 }>()
 
 const configs = {
-  running: { type: 'success' as const, text: 'Running' },
-  starting: { type: 'primary' as const, text: 'Starting' },
-  stopped: { type: 'danger' as const, text: 'Stopped' },
-  deploy_fail: { type: 'danger' as const, text: 'Deploy Fail' },
+  running: { type: 'success' as const, text: i18n.t('cluster_running') },
+  starting: { type: 'primary' as const, text: i18n.t('cluster_starting') },
+  stopped: { type: 'danger' as const, text: i18n.t('cluster_stopped') },
+  deploy_fail: { type: 'danger' as const, text: i18n.t('cluster_deploy_fail') },
 }
 
 const statusConfig = computed(() => {
-  const { serverPingTime, serverPingStatus } = props.data
+  //const { serverPingTime, serviceStatus } = props.data
   // serverPingTime（时间戳）距今超过 15s 则视为 stopped
-  if (serverPingTime && Date.now() - serverPingTime > 15_000) {
-    return configs.stopped
-  }
-
-  return configs[serverPingStatus as keyof typeof configs]
+  // if (serverPingTime && Date.now() - serverPingTime > 15_000) {
+  //   return configs.stopped
+  // }
+  const { serviceStatus } = props.data
+  return configs[serviceStatus as keyof typeof configs]
 })
 
 const cpuUsage = computed(() => {
@@ -136,6 +137,12 @@ const handleViewDetails = () => {
           </div>
           <div v-else class="stat-value">0</div>
         </div>
+        <div class="stat-item">
+          <div class="stat-label">
+            {{ $t('api_monitor_connection_pool_max') }}
+          </div>
+          <div class="stat-value">{{ data.poolMaxConnections ?? '--' }}</div>
+        </div>
       </div>
       <div class="stat-group">
         <div class="stat-item">
@@ -149,6 +156,12 @@ const handleViewDetails = () => {
             {{ $t('api_monitor_p99_response_time') }}
           </div>
           <div class="stat-value">{{ data.p99 ?? '--' }}</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">
+            {{ $t('api_monitor_connection_pool_used') }}
+          </div>
+          <div class="stat-value">{{ data.poolUsedConnections ?? '--' }}</div>
         </div>
       </div>
     </div>

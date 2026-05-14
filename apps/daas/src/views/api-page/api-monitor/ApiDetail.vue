@@ -82,7 +82,7 @@ onMounted(() => {
 })
 
 const apiName = computed(
-  () => route.query.name || apiDetail.value?.apiName || 'API 详情',
+  () => route.query.name || apiDetail.value?.apiName || t('api_monitor_api_detail_title'),
 )
 
 const getActualTimeRange = (): Params => {
@@ -317,6 +317,23 @@ const latencyChartOption = computed(() => {
         },
         itemStyle: {
           color: '#ef4444',
+          borderColor: '#fff',
+          borderWidth: 2,
+        },
+      },
+      {
+        name: 'Max',
+        type: 'line',
+        data: apiChart.value?.maxDelay || [],
+        smooth: true,
+        symbol: 'circle',
+        showSymbol: false,
+        lineStyle: {
+          color: '#8b5cf6',
+          width: 2,
+        },
+        itemStyle: {
+          color: '#8b5cf6',
           borderColor: '#fff',
           borderWidth: 2,
         },

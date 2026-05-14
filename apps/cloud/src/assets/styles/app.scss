@@ -72,7 +72,8 @@
   border-radius: 4px;
   box-sizing: border-box;
 }
-.status-running {
+.status-running,
+.status-starting {
   color: #178061;
   background-color: #c4f3cb;
 }
@@ -84,6 +85,7 @@
 }
 .status-renew_failed,
 .status-error,
+.status-deploy_fail,
 .status-rejected,
 .status-stopped {
   color: #d44d4d;

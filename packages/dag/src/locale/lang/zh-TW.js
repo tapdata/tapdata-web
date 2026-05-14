@@ -1002,6 +1002,7 @@ export default {
   //Api server
   public_api_name: 'API名稱',
   public_api_server_name: 'API服務名稱',
+  public_datasource_name: '數據源連接名稱',
   public_api_worker_name: 'API服務工作行程',
   public_api_threshold: '閾值',
   public_api_threshold_unit: '單位',

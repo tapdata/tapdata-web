@@ -3,9 +3,10 @@ import {
   fetchMonitorServerApi,
   fetchMonitorServerChart,
   fetchMonitorServerDetail,
+  fetchConnectionWithName,
   type ServerChart,
   type ServerDetail,
-  type ServerWorker,
+  type ServerWorker, type ConnectionWithName,
 } from '@tap/api/src/core/monitor-server'
 import { usePagination, useRequest } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
@@ -42,6 +43,7 @@ const router = useRouter()
 const { t } = useI18n()
 const serverId = route.params.id as string
 const serverDetail = ref<ServerDetail>()
+const connectionWithName = ref<ConnectionWithName>()
 const serverChart = ref<ServerChart>()
 const apiList = ref<any>()
 const workerData = ref<ServerWorker>()
@@ -156,6 +158,7 @@ const handleWorkerListSortChange = ({
 }
 
 // 时间周期选择 - 从 route.query 中恢复
+const connectionId = ref((route.query.connectionId as string) || '')
 const timeRange = ref((route.query.timeRange as string) || '1h')
 const customTimeRange = ref<[number, number] | null>(null)
 const timeRangeParams = ref<{ startAt: number; endAt: number } | null>(null)
@@ -261,8 +264,15 @@ const {
 
 const { run: runFetch } = useRequest(
   async () => {
+    if (!connectionWithName.value || connectionWithName.value.length <= 0) {
+      connectionWithName.value = await fetchConnectionWithName(serverId)
+      if (!connectionId.value) {
+        connectionId.value = connectionWithName.value[0].id
+      }
+    }
     const params = getActualTimeRange()
     params.serverId = serverId
+    params.connectionId = connectionId.value
     refreshApiList()
     serverDetail.value = await fetchMonitorServerDetail(params)
     timeRangeParams.value = {
@@ -377,6 +387,107 @@ const cpuChartOption = computed<EChartsOption>(() => ({
       },
       itemStyle: {
         color: '#10b981',
+      },
+    },
+  ],
+}))
+// Chart options
+const connectionPollChartOption = computed<EChartsOption>(() => ({
+  grid: {
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    outerBounds: {
+      left: 0,
+      top: 28,
+      right: 10,
+      bottom: 0,
+    },
+    outerBoundsMode: 'auto',
+    outerBoundsContain: 'auto',
+  },
+  xAxis: {
+    type: 'category',
+    boundaryGap: false,
+    data: serverChart.value?.usage.ts || [],
+    axisLabel: {
+      formatter: (value: number) => dayjs.unix(value).format('HH:mm'),
+    },
+  },
+  yAxis: {
+    type: 'value',
+  },
+  tooltip: {
+    borderRadius: 12,
+    borderColor: '#dee0e3',
+    extraCssText:
+      'box-shadow: 0px 4px 16px 4px rgba(31,35,41,0.03),0px 4px 8px 0px rgba(31,35,41,0.02),0px 2px 4px -4px rgba(31,35,41,0.02);',
+    padding: [8, 12],
+    trigger: 'axis',
+    formatter: (params: any) => {
+      const timestamp = params[0]?.axisValue
+      const timeStr = dayjs.unix(timestamp).format('MM-DD HH:mm:ss')
+      let result = `${timeStr}<br/>`
+      params.forEach((param: any) => {
+        result += `${param.marker}${param.seriesName}: ${isNumber(param.value) ? `${param.value}` : '--'}<br/>`
+      })
+      return result
+    },
+  },
+  legend: {
+    data: ['Max Connection ', 'Used Connection', 'Connection Pool Wait Queue'],
+    top: 0,
+    right: 0,
+    type: 'scroll',
+  },
+  series: [
+    {
+      name: t('api_monitor_connection_pool_max'),
+      type: 'line',
+      data: serverChart.value?.poolUsage.poolMaxConnections || [],
+      smooth: true,
+      showSymbol: false,
+      symbol: 'circle',
+      symbolSize: 6,
+      lineStyle: {
+        color: '#3b82f6',
+        width: 2,
+      },
+      itemStyle: {
+        color: '#3b82f6',
+      },
+    },
+    {
+      name: t('api_monitor_connection_pool_used'),
+      type: 'line',
+      data: serverChart.value?.poolUsage.poolUsedConnections || [],
+      smooth: true,
+      showSymbol: false,
+      symbol: 'circle',
+      symbolSize: 6,
+      lineStyle: {
+        color: '#10b981',
+        width: 1,
+      },
+      itemStyle: {
+        color: '#10b981',
+      },
+    },
+    {
+      name: t('api_monitor_connection_pool_wait_queue'),
+      type: 'line',
+      data: serverChart.value?.poolUsage.poolQueueSize || [],
+      smooth: true,
+      showSymbol: false,
+      symbol: 'circle',
+      symbolSize: 6,
+      lineStyle: {
+        color: '#ef4444',
+        width: 1,
+      },
+      itemStyle: {
+        color: '#ef4444',
       },
     },
   ],
@@ -893,6 +1004,10 @@ const handleBack = () => {
     },
   })
 }
+
+const handleChangeConnectionId = (value: string) => {
+  connectionId.value = value
+}
 </script>
 
 <template>
@@ -1071,6 +1186,36 @@ const handleBack = () => {
             <div class="chart-container">
               <VChart :option="latencyChartOption" :autoresize="true" />
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="charts-section">
+        <!-- connection pool Usage Trend -->
+        <div class="chart-card border">
+          <p class="chart-title">
+            <!-- <span class="chart-legend-dot chart-legend-blue" /> -->
+            {{ t('api_monitor_connection_pool') }}
+            <div class="flex align-center gap-4">
+              <el-select
+                  :model-value="connectionId"
+                  :placeholder="t('api_monitor_time_range_placeholder')"
+                  style="width: 160px"
+                  @update:model-value="handleChangeConnectionId"
+                  @change="refreshData"
+              >
+                <el-option
+                    v-for="option in connectionWithName"
+                    :key="option.id"
+                    :label="option.name"
+                    :value="option.id"
+                />
+              </el-select>
+            </div>
+          </p>
+          <div class="chart-container">
+            <VChart :option="connectionPollChartOption" :autoresize="true" />
           </div>
         </div>
       </div>

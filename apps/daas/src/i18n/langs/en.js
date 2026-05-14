@@ -879,6 +879,8 @@ export default {
   cluster_update: 'Update',
   cluster_running: 'running',
   cluster_stopped: 'stopped',
+  cluster_starting: 'starting',
+  cluster_deploy_fail: 'deploy failed',
   cluster_sync_gover: 'Flow Engine',
   cluster_manage_sys: 'Backend Admin',
   cluster_add_server_mon: 'Add service monitoring',
@@ -2398,6 +2400,10 @@ export default {
   api_monitor_db_cost_trend: 'Database Cost Trend',
 
   // Server Detail Page
+  api_monitor_connection_pool: 'Connection Pool Usage',
+  api_monitor_connection_pool_max: 'Maximum Connections',
+  api_monitor_connection_pool_used: 'Used Connections',
+  api_monitor_connection_pool_wait_queue: 'Blocked Waiting Connections',
   api_monitor_server_detail: 'Server Details',
   api_monitor_cpu_usage: 'CPU Usage',
   api_monitor_memory_usage: 'Memory',

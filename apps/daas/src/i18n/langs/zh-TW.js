@@ -824,6 +824,8 @@ export default {
   cluster_update: '更新',
   cluster_running: '運行中',
   cluster_stopped: '已停止',
+  cluster_starting: '啟動中',
+  cluster_deploy_fail: '部署失敗',
   cluster_sync_gover: '同步治理',
   cluster_manage_sys: '管理後台',
   instance_details_shujuyuanziyuan: '資料源資源下載',
@@ -2261,6 +2263,10 @@ export default {
   api_monitor_db_cost_trend: '資料庫耗時趨勢',
 
   // Server 詳情頁
+  api_monitor_connection_pool: '連接池使用情況',
+  api_monitor_connection_pool_max: '連接池最大連接數',
+  api_monitor_connection_pool_used: '已用連接數',
+  api_monitor_connection_pool_wait_queue: '阻塞等待連接數',
   api_monitor_server_detail: 'Server 詳情',
   api_monitor_cpu_usage: 'CPU 使用率',
   api_monitor_memory_usage: '記憶體使用率',

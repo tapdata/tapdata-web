@@ -65,7 +65,8 @@ export interface ServerItem {
   queryFrom: number
   queryEnd: number
   granularity: number
-  serverPingStatus: string
+  status: string //启动器服务状态
+  serviceStatus: string //api server进程状态
   serverPingTime: number
   serverName: string
   serverId: string
@@ -91,6 +92,11 @@ export interface ApiOverview {
   responseTimeAvg: number | string
   p95?: number | string
   p99?: number | string
+}
+
+export interface ConnectionWithName {
+  id: string,
+  name: string
 }
 
 export interface ServerDetail {
@@ -124,6 +130,15 @@ export interface ServerChart {
     minCpuUsage: number[]
     maxMemoryUsage: number[]
     minMemoryUsage: number[]
+    poolUsedConnections: number[]
+    poolMaxConnections: number[]
+    poolQueueSize: number[]
+    ts: number[]
+  }
+  poolUsage: {
+    poolUsedConnections: number[]
+    poolMaxConnections: number[]
+    poolQueueSize: number[]
     ts: number[]
   }
   request: {
@@ -285,6 +300,10 @@ export async function fetchMonitorServerList(params?: Params) {
   return data
 }
 
+export async function fetchConnectionWithName(serverId: string) {
+  return await requestClient.get<ConnectionWithName>(`api/Connections/allConnections/${serverId}`, {})
+}
+
 export async function fetchMonitorServerDetail(params?: Params) {
   const data = await requestClient.get<ServerDetail>(`${BASE_URL}/detail`, {
     params,
@@ -315,6 +334,9 @@ export function fetchMonitorServerChart(params?: Params) {
         maxCpuUsage: [],
         minCpuUsage: [],
         minMemoryUsage: [],
+        poolUsedConnections: [],
+        poolMaxConnections: [],
+        poolQueueSize: [],
         ts: [],
       },
       request: {

@@ -830,6 +830,8 @@ export default {
   cluster_update: '更新',
   cluster_running: '运行中',
   cluster_stopped: '已停止',
+  cluster_starting: '启动中',
+  cluster_deploy_fail: '部署失败',
   cluster_sync_gover: '同步治理',
   cluster_manage_sys: '管理后台',
   cluster_add_server_mon: '添加服务监控',
@@ -2279,6 +2281,10 @@ export default {
   api_monitor_db_cost_trend: '数据库耗时趋势',
 
   // Server 详情页
+  api_monitor_connection_pool: '连接池使用情况',
+  api_monitor_connection_pool_max: '连接池最大连接数',
+  api_monitor_connection_pool_used: '已用连接数',
+  api_monitor_connection_pool_wait_queue: '阻塞等待连接数',
   api_monitor_server_detail: 'Server 详情',
   api_monitor_cpu_usage: 'CPU 使用率',
   api_monitor_memory_usage: '内存使用率',
