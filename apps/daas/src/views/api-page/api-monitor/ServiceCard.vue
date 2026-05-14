@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
+import { useI18n } from '@tap/i18n'
 import { computed } from 'vue'
-import i18n from '@/i18n'
 import MiniChart from './MiniChart.vue'
 import type { ServerItem } from '@tap/api/src/core/monitor-server'
+
+const { t } = useI18n()
 
 interface ServiceCardProps {
   data: ServerItem
@@ -16,18 +18,13 @@ const emit = defineEmits<{
 }>()
 
 const configs = {
-  running: { type: 'success' as const, text: i18n.t('cluster_running') },
-  starting: { type: 'primary' as const, text: i18n.t('cluster_starting') },
-  stopped: { type: 'danger' as const, text: i18n.t('cluster_stopped') },
-  deploy_fail: { type: 'danger' as const, text: i18n.t('cluster_deploy_fail') },
+  running: { type: 'success' as const, text: t('cluster_running') },
+  starting: { type: 'primary' as const, text: t('cluster_starting') },
+  stopped: { type: 'danger' as const, text: t('cluster_stopped') },
+  deploy_fail: { type: 'danger' as const, text: t('cluster_deploy_fail') },
 }
 
 const statusConfig = computed(() => {
-  //const { serverPingTime, serviceStatus } = props.data
-  // serverPingTime（时间戳）距今超过 15s 则视为 stopped
-  // if (serverPingTime && Date.now() - serverPingTime > 15_000) {
-  //   return configs.stopped
-  // }
   const { serviceStatus } = props.data
   return configs[serviceStatus as keyof typeof configs]
 })
@@ -133,7 +130,8 @@ const handleViewDetails = () => {
         <div class="stat-item">
           <div class="stat-label">{{ $t('api_monitor_error_count') }}</div>
           <div v-if="data.errorCount > 0" class="stat-value">
-            {{ data.errorCount }} ({{ data.errorRate }})
+            {{ data.errorCount }}
+            <span class="error-rate">({{ data.errorRate }})</span>
           </div>
           <div v-else class="stat-value">0</div>
         </div>
@@ -308,6 +306,12 @@ const handleViewDetails = () => {
       font-size: 18px;
       font-weight: 600;
       color: var(--el-text-color-primary);
+      white-space: nowrap;
+
+      .error-rate {
+        font-size: 12px;
+        font-weight: 400;
+      }
     }
   }
 }
