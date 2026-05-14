@@ -450,11 +450,11 @@ export default {
   apiaudit_success: '成功',
   apiaudit_placeholder: '請輸入名稱/ID',
   apiaudit_client_name_placeholder: '請輸入客戶端名稱',
-  apiaudit_time_line:"時間線",
-  apiaudit_req_start_point: "請求開始",
-  apiaudit_req_end_point: "請求結束",
-  apiaudit_db_start_point: "資料庫響應開始",
-  apiaudit_db_end_point: "資料庫響應結束",
+  apiaudit_time_line: '時間線',
+  apiaudit_req_start_point: '請求開始',
+  apiaudit_req_end_point: '請求結束',
+  apiaudit_db_start_point: '資料庫響應開始',
+  apiaudit_db_end_point: '資料庫響應結束',
   // 連接
   connection_list_form_database_type: '數據庫類型',
   connection_list_name: '連接名',
@@ -2264,7 +2264,7 @@ export default {
 
   // Server 詳情頁
   api_monitor_connection_pool: '連接池使用情況',
-  api_monitor_connection_pool_max: '連接池最大連接數',
+  api_monitor_connection_pool_max: '連線池上限',
   api_monitor_connection_pool_used: '已用連接數',
   api_monitor_connection_pool_wait_queue: '阻塞等待連接數',
   api_monitor_server_detail: 'Server 詳情',

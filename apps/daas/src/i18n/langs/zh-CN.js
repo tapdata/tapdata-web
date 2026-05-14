@@ -2282,7 +2282,7 @@ export default {
 
   // Server 详情页
   api_monitor_connection_pool: '连接池使用情况',
-  api_monitor_connection_pool_max: '连接池最大连接数',
+  api_monitor_connection_pool_max: '连接池上限',
   api_monitor_connection_pool_used: '已用连接数',
   api_monitor_connection_pool_wait_queue: '阻塞等待连接数',
   api_monitor_server_detail: 'Server 详情',
