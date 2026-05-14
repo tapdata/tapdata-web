@@ -14,6 +14,7 @@ import Chart from '@tap/component/src/chart/Chart.vue'
 import CountUp from '@tap/component/src/CountUp.vue'
 import { useI18n } from '@tap/i18n'
 import { calcTimeUnit, calcUnit } from '@tap/shared/src/number'
+import { isNumber } from 'lodash-es'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { STATUS_MAP as DASHBOARD_STATUS_MAP } from './const'
@@ -438,6 +439,11 @@ function navigateToCluster() {
   router.push({ name: 'clusterManagement' })
 }
 
+function formatNum(val: any) {
+  if (isNumber(val)) return val.toFixed(2)
+  return val
+}
+
 // ── Refresh ────────────────────────────────────────────
 async function refreshAll() {
   await Promise.all([
@@ -623,11 +629,11 @@ onBeforeUnmount(() => {
               >
               <span class="dashboard__tag dashboard__tag--amber"
                 >{{ t('dashboard_odh_rate') }}
-                {{ apiRequests?.errorRate ?? 0 }}%</span
+                {{ formatNum(apiRequests?.errorRate ?? 0) }}%</span
               >
               <span class="dashboard__tag dashboard__tag--indigo"
                 >{{ t('dashboard_odh_avg_time') }}
-                {{ apiRequests?.avgTime ?? 0 }}ms</span
+                {{ calcTimeUnit(apiRequests?.avgTime ?? 0) }}</span
               >
             </div>
           </div>
