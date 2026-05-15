@@ -15,6 +15,7 @@ import {
   getCanUseDataTypes,
   getMatchedDataTypeLevel,
 } from '../../../util'
+import FieldRuleDialog from '../field-inference/Dialog.vue'
 import FieldList from '../field-inference/List.vue'
 import './style.scss'
 
@@ -38,6 +39,12 @@ export const SchemaPreview = defineComponent({
       props.disabled || dataflowStore?.stateIsReadonly || !isTarget,
     )
     let fieldChangeRules = form.values.fieldChangeRules || []
+    const visible = ref(false)
+
+    const handleOpen = () => {
+      visible.value = true
+    }
+
     const createTree = (data) => {
       const root = { children: [] }
 
@@ -404,17 +411,30 @@ export const SchemaPreview = defineComponent({
               </div>
             </div>
           ) : (
-            <FieldList
-              class="w-100 border rounded-lg overflow-hidden"
-              data={schemaData.value}
-              readonly={readonly.value}
-              dataTypesJson={dataTypesJson.value}
-              fieldChangeRules={fieldChangeRules}
-              type={isTarget ? 'target' : isSource ? 'source' : ''}
-              single-table
-              ignore-error={!isTarget}
-              onUpdateRules={handleUpdate}
-            ></FieldList>
+            <>
+              <FieldList
+                class="w-100 border rounded-lg overflow-hidden"
+                data={schemaData.value}
+                readonly={readonly.value}
+                dataTypesJson={dataTypesJson.value}
+                fieldChangeRules={fieldChangeRules}
+                type={isTarget ? 'target' : isSource ? 'source' : ''}
+                single-table
+                ignore-error={!isTarget}
+                onUpdateRules={handleUpdate}
+                onOpenUpdateRules={handleOpen}
+              ></FieldList>
+              <FieldRuleDialog
+                visible={visible.value}
+                onUpdate:visible={(val: boolean) => (visible.value = val)}
+                fieldChangeRules={fieldChangeRules}
+                onUpdate:fieldChangeRules={(val: any[]) => {
+                  fieldChangeRules = val
+                }}
+                form={form}
+                readonly={readonly.value}
+              />
+            </>
           )}
         </div>
       </div>
