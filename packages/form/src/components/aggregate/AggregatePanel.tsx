@@ -373,12 +373,9 @@ export const AggregatePanel = defineComponent({
                 </el-icon>
                 <div class="flex-1">
                   <div class="flex align-center gap-2">
-                    <span class="text-sm font-medium">
-                      {t('packages_form_aggregate_event_update_title')}
+                    <span class="text-sm">
+                      {t('packages_form_aggregate_event_update_desc')}
                     </span>
-                  </div>
-                  <div class="event-handling__desc">
-                    {t('packages_form_aggregate_event_update_desc')}
                   </div>
                 </div>
               </div>
@@ -408,8 +405,8 @@ export const AggregatePanel = defineComponent({
                 </el-icon>
                 <div class="flex-1">
                   <div class="flex align-center gap-2">
-                    <span class="text-sm font-medium">
-                      {t('packages_form_aggregate_event_group_change_title')}
+                    <span class="text-sm ">
+                      {t('packages_form_aggregate_event_group_change_desc')}
                     </span>
                     <ElTooltip placement="top">
                       {{
@@ -446,9 +443,6 @@ export const AggregatePanel = defineComponent({
                         ),
                       }}
                     </ElTooltip>
-                  </div>
-                  <div class="event-handling__desc">
-                    {t('packages_form_aggregate_event_group_change_desc')}
                   </div>
                 </div>
               </div>

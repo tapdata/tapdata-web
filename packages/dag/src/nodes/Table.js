@@ -1,7 +1,5 @@
 import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
-// TODO: 后端合并后删除
-const isHa = import.meta.env.MODE === 'ha'
 
 export class Table extends NodeType {
   type = 'table'

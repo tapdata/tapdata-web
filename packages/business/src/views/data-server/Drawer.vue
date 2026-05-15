@@ -86,7 +86,6 @@ const apiApplication = inject<Ref<any>>('apiApplication', ref(null))
 
 const {
   rules,
-  isHa,
   typeOptions,
   operatorOptions,
   conditionOptions,
@@ -1492,7 +1491,7 @@ provide('form', form)
                 <ElInput v-model="form.basePath" :disabled="!isEdit" />
               </ElFormItem>
             </div>
-            <ElFormItem v-if="isHa" class="flex-1" prop="limit">
+            <ElFormItem class="flex-1" prop="limit">
               <template #label>
                 <el-text>
                   <span>{{ $t('packages_business_request_speed_limit') }}</span>

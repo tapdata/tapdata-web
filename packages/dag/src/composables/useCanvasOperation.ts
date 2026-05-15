@@ -1804,8 +1804,24 @@ export function useCanvasOperation() {
     connHeartbeat: 'heartbeatTable',
   }
 
+  const route2ListMap: Record<string, string> = {
+    DataflowNew: 'dataflowList',
+    DataflowEditor: 'dataflowList',
+    DataflowViewer: 'dataflowList',
+    TaskMonitor: 'dataflowList',
+    MigrateCreate: 'migrateList',
+    MigrateEditor: 'migrateList',
+    MigrateViewer: 'migrateList',
+    MigrationMonitor: 'migrateList',
+    MigrationMonitorViewer: 'migrateList',
+    SharedMiningMonitor: 'sharedMiningList',
+    HeartbeatMonitor: 'HeartbeatTableList',
+  }
+
   const handlePageReturn = () => {
-    const listRoute = listRouteMap[dataflow.value.syncType]
+    const listRoute = dataflow.value.syncType
+      ? listRouteMap[dataflow.value.syncType]
+      : route2ListMap[route.name]
 
     if (!dataflowStore.dag.nodes.length && dataflow.value.id) {
       Modal.confirm(

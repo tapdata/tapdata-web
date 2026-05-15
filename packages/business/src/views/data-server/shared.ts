@@ -194,8 +194,6 @@ export const useDrawer = (t: any, apiApplication?: Ref<any>) => {
     ],
   }
 
-  // Constants
-  const isHa = import.meta.env.MODE === 'ha'
   const baseType = [
     {
       value: 'number',
@@ -317,7 +315,7 @@ export const useDrawer = (t: any, apiApplication?: Ref<any>) => {
             defaultvalue: t.defaultvalue,
             description: t.description,
             required: t.required,
-            textEncryptionRuleIds: t.textEncryptionRuleIds
+            textEncryptionRuleIds: t.textEncryptionRuleIds,
           }
         }) || getDefaultParams(formData.apiType)
     if (
@@ -426,7 +424,6 @@ export const useDrawer = (t: any, apiApplication?: Ref<any>) => {
 
   return {
     rules,
-    isHa,
     baseType,
     typeOptions,
     operatorOptions,

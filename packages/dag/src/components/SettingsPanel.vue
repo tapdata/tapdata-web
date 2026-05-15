@@ -2086,7 +2086,7 @@ defineExpose({
       <el-input
         v-model="dataflowDesc"
         class="desc-textarea"
-        placeholder="添加描述..."
+        :placeholder="$t('packages_dag_node_panel_desc_placeholder')"
         type="textarea"
         :autosize="{ minRows: 1 }"
         size="small"
