@@ -3,7 +3,10 @@ import { EditPen, InfoFilled } from '@element-plus/icons-vue'
 import { fetchConnections } from '@tap/api/src/core/connections'
 import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
 import { fetchEncryptionList } from '@tap/api/src/core/encryption'
-import { fetchMetadataInstances } from '@tap/api/src/core/metadata-instances'
+import {
+  fetchMetadataInstances,
+  reloadSchema,
+} from '@tap/api/src/core/metadata-instances'
 import {
   createApiModule,
   updateApiModule,
@@ -298,7 +301,6 @@ const handleChangeConnection = (connection: any) => {
 }
 
 const getFields = async () => {
-  selectedFieldSize.value = 0
   fieldLoading.value = true
   const filter = {
     where: {
@@ -312,7 +314,27 @@ const getFields = async () => {
   try {
     const data = await fetchMetadataInstances(filter)
 
-    allFields.value = data.items?.[0]?.fields || []
+    const metaFields = data.items?.[0]?.fields || []
+    const userCreatedFields = allFields.value.filter(
+      (f: any) => f.tag === 'USER_CREATE',
+    )
+    const metaFieldNames = new Set(metaFields.map((f: any) => f.field_name))
+    const userFieldsMap = userCreatedFields.reduce((acc: any, f: any) => {
+      acc[f.field_name] = f
+      return acc
+    }, {})
+    const mergedMetaFields = metaFields.map((f: any) => {
+      const userField = userFieldsMap[f.field_name]
+      if (userField?.textEncryptionRuleIds?.length) {
+        return { ...f, textEncryptionRuleIds: userField.textEncryptionRuleIds }
+      }
+      return f
+    })
+    // 只保留 metaFields 中不存在的用户字段
+    const remainingUserFields = userCreatedFields.filter(
+      (f: any) => !metaFieldNames.has(f.field_name),
+    )
+    allFields.value = [...mergedMetaFields, ...remainingUserFields]
 
     if (!form.value.id || !form.value.fields?.length) {
       nextTick(() => {
@@ -349,13 +371,16 @@ const open = (formData?: any, copy?: boolean) => {
   } else {
     formatData(cloneDeep(formData))
 
-    const { connectionId, tableName } = formData
-
-    if (copy) {
-      allFields.value = formData?.fields || []
-    } else if (connectionId && tableName) {
-      getFields()
-    }
+    // const { connectionId, tableName } = formData
+    allFields.value = formData?.fields || []
+    selectedFieldSize.value = 0
+    getFields()
+    // if (copy) {
+    //   // allFields.value = formData?.fields || []
+    // } else if (connectionId && tableName) {
+    //   selectedFieldSize.value = 0
+    //   getFields()
+    // }
 
     if (!formData.id) {
       edit(copy)
@@ -500,20 +525,21 @@ const save = async (type?: boolean) => {
       }
 
       if (!type && connectionId && tableName) {
-        const fieldList = await getAllFields()
+        formData.fields = allFields.value
+        // const fieldList = await getAllFields()
 
-        const map = fields.reduce((acc: any, field: any) => {
-          field.field_alias = field.field_alias?.trim() || ''
-          acc[field.id] = field
-          return acc
-        }, {})
+        // const map = fields.reduce((acc: any, field: any) => {
+        //   field.field_alias = field.field_alias?.trim() || ''
+        //   acc[field.id] = field
+        //   return acc
+        // }, {})
 
-        formData.fields = fieldList.map((f: any) => {
-          return {
-            ...f,
-            field_alias: map[f.id]?.field_alias,
-          }
-        })
+        // formData.fields = fieldList.map((f: any) => {
+        //   return {
+        //     ...f,
+        //     field_alias: map[f.id]?.field_alias,
+        //   }
+        // })
       }
 
       const func = id ? updateApiModule : createApiModule
@@ -574,6 +600,7 @@ const edit = (copy?: boolean) => {
 const handleCancel = () => {
   isEdit.value = false
   form.value = initialFormData
+  selectedFieldSize.value = 0
   getFields()
 }
 
@@ -598,6 +625,7 @@ const handleChangeApiType = () => {
 const handleChangeTable = () => {
   form.value.fields = []
   allFields.value = []
+  selectedFieldSize.value = 0
   getFields()
   form_ref.value?.clearValidate('tableName')
 }
@@ -661,6 +689,32 @@ const handleAddParameter = (index: number | string) => {
       })
     }
   })
+}
+
+const handleReloadSchema = async () => {
+  const { connectionId, tableName } = form.value
+  if (!connectionId || !tableName) return
+
+  // 保存当前选中的字段
+  const checkedFields = fieldsTreeRef.value?.getCheckedFields(true) || []
+
+  fieldLoading.value = true
+  try {
+    await reloadSchema(connectionId, tableName)
+    await getFields()
+
+    // 恢复之前的选中状态
+    if (checkedFields.length) {
+      nextTick(() => {
+        fieldsTreeRef.value?.setCheckedFields(checkedFields)
+        selectedFieldSize.value = (
+          fieldsTreeRef.value?.getCheckedFields(false) || []
+        ).length
+      })
+    }
+  } finally {
+    fieldLoading.value = false
+  }
 }
 
 // Expose key methods
@@ -861,6 +915,68 @@ function handleClearAlias() {
 
 function onFieldsTreeCheck(keys: string[]) {
   selectedFieldSize.value = keys.length
+}
+
+function onAddField(field: any) {
+  allFields.value = [...allFields.value, field]
+}
+
+function onDeleteField(field: any) {
+  const fieldName = field.field_name
+  const prefix = `${fieldName}.`
+  // 删除字段本身及其所有子字段
+  allFields.value = allFields.value.filter(
+    (f: any) => f.field_name !== fieldName && !f.field_name.startsWith(prefix),
+  )
+  // 重新触发 check 更新
+  nextTick(() => {
+    const keys = (fieldsTreeRef.value?.getCheckedFields(false) || [])
+      .map((f: any) => f.field_name)
+      .filter((k: string) => k !== fieldName && !k.startsWith(prefix))
+    selectedFieldSize.value = keys.length
+  })
+}
+
+function onUpdateFieldName(oldFieldName: string, newName: string) {
+  const parts = oldFieldName.split('.')
+  parts[parts.length - 1] = newName
+  const newFieldName = parts.join('.')
+
+  allFields.value = allFields.value.map((f: any) => {
+    if (f.field_name === oldFieldName) {
+      return { ...f, field_name: newFieldName }
+    }
+    // 同步更新子字段路径
+    if (f.field_name.startsWith(`${oldFieldName}.`)) {
+      return {
+        ...f,
+        field_name: newFieldName + f.field_name.slice(oldFieldName.length),
+      }
+    }
+    return f
+  })
+}
+
+const CONTAINER_TYPES = ['OBJECT', 'DOCUMENT', 'ARRAY', 'MAP']
+
+function onUpdateFieldType(fieldName: string, newType: string) {
+  const isContainer = CONTAINER_TYPES.includes(newType.toUpperCase())
+  const prefix = `${fieldName}.`
+
+  allFields.value = allFields.value
+    .filter((f: any) => {
+      // 改为非容器类型时，删除所有子字段
+      if (!isContainer && f.field_name.startsWith(prefix)) {
+        return false
+      }
+      return true
+    })
+    .map((f: any) => {
+      if (f.field_name === fieldName) {
+        return { ...f, data_type: newType, simpleTypeName: newType }
+      }
+      return f
+    })
 }
 
 function editable(
@@ -2158,7 +2274,10 @@ provide('form', form)
 
         <!-- 输出结果 -->
         <template v-if="tab === 'form'">
-          <div class="data-server-panel__title mt-7 mb-3 gap-2">
+          <div
+            class="data-server-panel__title mt-7 mb-3 gap-2"
+            style="--btn-space: 0"
+          >
             <span>{{
               $t('packages_business_data_server_drawer_shuchujieguo')
             }}</span>
@@ -2167,6 +2286,16 @@ provide('form', form)
             </el-tag>
             <div class="flex-1" />
             <template v-if="isEdit && selectedFieldSize">
+              <el-button
+                text
+                :loading="fieldLoading"
+                @click="handleReloadSchema"
+              >
+                <template #icon>
+                  <i-lucide-refresh-cw />
+                </template>
+                {{ $t('packages_business_data_server_drawer_refresh_fields') }}
+              </el-button>
               <el-dropdown placement="bottom" @command="handleAliasConversion">
                 <el-button text>
                   <el-icon class="mr-1"><i-lucide-wand-sparkles /></el-icon>
@@ -2209,6 +2338,10 @@ provide('form', form)
             ref="fieldsTreeRef"
             :fields="allFields"
             @check="onFieldsTreeCheck"
+            @add-field="onAddField"
+            @delete-field="onDeleteField"
+            @update-field-name="onUpdateFieldName"
+            @update-field-type="onUpdateFieldType"
           />
           <FieldsTreePreview v-else :fields="form.fields" />
         </template>

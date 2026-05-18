@@ -32,7 +32,8 @@ export const makeTree = (data: any[]) => {
         Object.assign(parent, item, {
           label: field_alias || name,
           name,
-          dataType: item.data_type.replace(/\(.+\)/, ''),
+          simpleTypeName:
+            item.simpleTypeName || item.data_type?.replace(/\(.+\)/, '') || '',
         })
       }
     }

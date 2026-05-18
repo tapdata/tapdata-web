@@ -94,7 +94,7 @@ const handleSearch = (value: string) => {
             </div>
           </el-button>
           <el-tag class="is-code font-mono" size="small" disable-transitions>{{
-            data.dataType
+            data.simpleTypeName
           }}</el-tag>
         </div>
       </template>
