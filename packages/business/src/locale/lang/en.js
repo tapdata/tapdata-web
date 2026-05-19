@@ -748,6 +748,8 @@ export default {
     'When the task encounters an error',
   packages_business_setting_alarmnotification_dangrenwustop:
     'When the Agent service stops',
+  packages_business_setting_alarmnotification_dangyinqinglixian: 'When the engine stops',
+  packages_business_setting_alarmnotification_dangyinqinghuifu: 'When the engine starts',
   packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn:
     'When APIServer worker P50 per minute exceeding threshold',
   packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn:
@@ -1659,6 +1661,9 @@ export default {
     'Click variable name to insert into template',
   packages_business_ignoreTimePrecision_round: 'Round',
   packages_business_ignoreTimePrecision_truncate: 'Truncate',
+  packages_business_treatEmptyStringAsNull: 'Treat empty string as NULL',
+  packages_business_treatEmptyStringAsNull_tip: `<p>When enabled, an empty string ("") on either side is considered equal to NULL during field comparison.</p>
+<p>Useful when the target is a database that automatically converts empty strings to NULL (e.g. Oracle), to avoid false-positive field inconsistencies caused by such semantic differences.</p>`,
   packages_business_validation_task_type: 'Validation Task Type',
   packages_business_select_task_to_be_verified: 'Select Task to be Verified',
   packages_business_drag_file_here:

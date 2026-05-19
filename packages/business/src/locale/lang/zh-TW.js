@@ -713,6 +713,8 @@ export default {
   packages_business_setting_alarmnotification_api_server_worker_memory_usage_alter:
     '當任一API Server的工作行程記憶體使用量超過通知閾值時',
   packages_business_setting_alarmnotification_dangrenwuuP: 'Agent服务啓動時',
+  packages_business_setting_alarmnotification_dangyinqinglixian: '當引擎停止時',
+  packages_business_setting_alarmnotification_dangyinqinghuifu: '當引擎啓動時',
   packages_business_setting_alarmnotification_msshigaojing: ' 時告警',
   packages_business_setting_alarmnotification_lianxu: '連續',
   packages_business_setting_alarmnotification_cichugaojinggui:
@@ -1474,6 +1476,9 @@ export default {
     '點擊變量名稱插入到模板中',
   packages_business_ignoreTimePrecision_round: '四捨五入',
   packages_business_ignoreTimePrecision_truncate: '截斷',
+  packages_business_treatEmptyStringAsNull: '空字符串視為 NULL',
+  packages_business_treatEmptyStringAsNull_tip: `<p>開啓後，源端和目標端在字段校驗時，空字符串（""）將被視為與 NULL 相等。</p>
+<p>適用於目標端為 Oracle 等會自動把空字符串轉換為 NULL 的數據庫，避免因數據庫語義差異導致的字段不一致誤報。</p>`,
   packages_business_validation_task_type: '校驗任務類型',
   packages_business_select_task_to_be_verified: '選擇被校驗的任務',
   packages_business_drag_file_here:
