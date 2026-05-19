@@ -464,6 +464,7 @@ const save = async (type?: boolean) => {
         readPreference: '',
         readPreferenceTag: '',
         limit,
+        connection: connectionId,
         datasource: connectionId,
         tablename: tableName,
         apiVersion,
