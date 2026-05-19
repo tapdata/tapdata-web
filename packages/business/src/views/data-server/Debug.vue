@@ -149,7 +149,7 @@ const debugData = async () => {
     })
     debugResult.value = markRaw(token.value)
     debugHttpInfo.value = {
-      httpCode: 200,
+      httpCode: token.value.code ? token.value.code : 200,
     }
     return
   }
