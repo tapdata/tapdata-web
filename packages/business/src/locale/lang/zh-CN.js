@@ -1486,6 +1486,9 @@ export default {
     '点击变量名称插入到模板中',
   packages_business_ignoreTimePrecision_round: '四舍五入',
   packages_business_ignoreTimePrecision_truncate: '截断',
+  packages_business_treatEmptyStringAsNull: '空字符串视为 NULL',
+  packages_business_treatEmptyStringAsNull_tip: `<p>开启后，源端和目标端在字段校验时，空字符串（""）将被视为与 NULL 相等。</p>
+<p>适用于目标端为 Oracle 等会自动把空字符串转换为 NULL 的数据库，避免因数据库语义差异导致的字段不一致误报。</p>`,
   packages_business_validation_task_type: '校验任务类型',
   packages_business_select_task_to_be_verified: '选择被校验的任务',
   packages_business_drag_file_here:
