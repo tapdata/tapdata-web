@@ -68,11 +68,6 @@ export default {
           key: 'dataQueryTotalTime',
           value: 0,
         },
-        {
-          label: this.$t('apiaudit_average_access_db_rate'),
-          key: 'dbRate',
-          value: 0,
-        },
       ],
     }
   },
@@ -825,7 +820,7 @@ export default {
               </div>
               <div
                 v-else-if="
-                  item.value > 0 && ['httpRate', 'dbRate'].includes(item.key)
+                  item.value > 0 && ['httpRate'].includes(item.key)
                 "
                 class="color-primary pt-4 din-font details-box-item-num"
               >
@@ -837,13 +832,13 @@ export default {
                 "
                 class="color-primary pt-4 din-font details-box-item-num"
               >
-                {{ item.value ? `${calcUnit(item.value, 'B')}` : '0B' }}
+                {{ item.value ? `${calcUnit(item.value, 'B')}` : '-' }}
               </div>
               <div
                 v-else
                 class="color-primary pt-4 din-font details-box-item-num"
               >
-                {{ item.value }}
+                {{ item.value ? item.value : '-' }}
               </div>
             </div>
             <div v-if="item.key !== 'averResponseTime'" class="line" />
