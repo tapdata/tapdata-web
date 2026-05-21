@@ -5,7 +5,6 @@ import {
   langMenu,
   setCurrentLanguage,
 } from '@tap/i18n/src/shared/util'
-import { getSettingByKey } from '@tap/shared/src/settings'
 import { useDark } from '@vueuse/core'
 import { computed, ref } from 'vue'
 
@@ -39,7 +38,7 @@ const langChange = (newLang: string) => {
 
     <div class="page-main">
       <div class="page-main-box">
-        <div v-if="getSettingByKey('SHOW_LANGUAGE')" class="switch-lang">
+        <div class="switch-lang">
           <span
             v-for="(value, key) in languages"
             :key="key"
