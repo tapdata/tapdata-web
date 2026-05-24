@@ -247,13 +247,13 @@ function getAgentStatus(node: AgentNode) {
 function getCpuUsage(node: AgentNode): number {
   const val = node.metricValues?.CpuUsage
   if (!val) return 0
-  return Math.round(Number.parseFloat(String(val)) || 0)
+  return Number((Number.parseFloat(String(val)) || 0).toFixed(2))
 }
 
 function getMemUsage(node: AgentNode): number {
   const val = node.metricValues?.HeapMemoryUsage
   if (!val) return 0
-  return Math.round(Number.parseFloat(String(val)) || 0)
+  return Number((Number.parseFloat(String(val)) || 0).toFixed(2))
 }
 
 function usageBarColor(pct: number) {
