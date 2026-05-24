@@ -41,7 +41,12 @@ const CompareSchema = defineComponent({
       compareResultStatistics.value = res
     }
 
-    fetchCompareResultStatistics()
+    if (applyCompareRule === undefined) {
+      // 旧任务 applyCompareRule === false, 不影响已有任务
+      handleChangeRules(['Different', 'Precision'])
+    } else {
+      fetchCompareResultStatistics()
+    }
 
     const openCompareResult = () => {
       dialogOpen.value = true
@@ -178,7 +183,7 @@ const CompareSchema = defineComponent({
       })
     }
 
-    const handleChangeRules = async (value: string[]) => {
+    async function handleChangeRules(value: string[]) {
       const handler = action.bound((applyCompareRule, applyCompareRules) => {
         form.setValuesIn('applyCompareRule', applyCompareRule)
         form.setValuesIn('applyCompareRules', applyCompareRules)
