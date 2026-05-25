@@ -1218,7 +1218,7 @@ const handleChangeConnectionId = (value: string) => {
             <div class="flex align-center gap-4">
               <el-select
                   :model-value="connectionId"
-                  :placeholder="t('api_monitor_time_range_placeholder')"
+                  :placeholder="t('api_monitor_connection_pool_placeholder')"
                   style="width: 160px"
                   @update:model-value="handleChangeConnectionId"
                   @change="refreshData"

@@ -2263,6 +2263,7 @@ export default {
   api_monitor_db_cost_trend: '資料庫耗時趨勢',
 
   // Server 詳情頁
+  api_monitor_connection_pool_placeholder: '請選擇資料來源連接',
   api_monitor_connection_pool: '連接池使用情況',
   api_monitor_connection_pool_max: '連線池上限',
   api_monitor_connection_pool_used: '已用連接數',

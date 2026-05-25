@@ -2400,6 +2400,7 @@ export default {
   api_monitor_db_cost_trend: 'Database Cost Trend',
 
   // Server Detail Page
+  api_monitor_connection_pool_placeholder: 'Select Data Source Connection',
   api_monitor_connection_pool: 'Connection Pool Usage',
   api_monitor_connection_pool_max: 'Maximum Connections',
   api_monitor_connection_pool_used: 'Used Connections',

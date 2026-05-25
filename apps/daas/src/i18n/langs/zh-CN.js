@@ -2281,6 +2281,7 @@ export default {
   api_monitor_db_cost_trend: '数据库耗时趋势',
 
   // Server 详情页
+  api_monitor_connection_pool_placeholder: '请选择数据源连接',
   api_monitor_connection_pool: '连接池使用情况',
   api_monitor_connection_pool_max: '连接池上限',
   api_monitor_connection_pool_used: '已用连接数',
