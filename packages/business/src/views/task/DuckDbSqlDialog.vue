@@ -344,7 +344,7 @@ const handleGenerate = async () => {
       id: uuid(),
       // customNodeId: '6a13981485d8acd034a94849',
       type: 'custom_processor',
-      name: 'DuckDB',
+      name: 'SQL',
       attrs: {
         key: 'duckdb',
       },

@@ -657,10 +657,10 @@ export default {
   public_duration: '时长',
 
   // DuckDB SQL
-  public_duckdb_build_with_sql: '使用 DuckDB SQL 构建',
+  public_duckdb_build_with_sql: '使用 SQL 构建',
   public_duckdb_dialog_title: '使用 SQL 构建任务',
   public_duckdb_dialog_subtitle: '自动提取源表并生成任务',
-  public_duckdb_sql_label: 'DuckDB SQL 语句',
+  public_duckdb_sql_label: 'SQL 语句',
   public_duckdb_insert_sample: '插入示例 SQL',
   public_duckdb_parse_tables: '解析表',
   public_duckdb_target_config: '目标配置',

@@ -665,11 +665,11 @@ export default {
   public_duration: 'Duration',
 
   // DuckDB SQL
-  public_duckdb_build_with_sql: 'Build with DuckDB SQL',
+  public_duckdb_build_with_sql: 'Build with SQL',
   public_duckdb_dialog_title: 'Build Task with SQL',
   public_duckdb_dialog_subtitle:
     'Extract source tables automatically and generate task',
-  public_duckdb_sql_label: 'DuckDB SQL Statement',
+  public_duckdb_sql_label: 'SQL Statement',
   public_duckdb_insert_sample: 'Insert Sample SQL',
   public_duckdb_parse_tables: 'Parse Tables',
   public_duckdb_target_config: 'Target Configuration',
