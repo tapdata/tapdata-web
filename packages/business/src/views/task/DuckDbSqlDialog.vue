@@ -651,30 +651,32 @@ const handleClose = () => {
     <template #footer>
       <div class="flex justify-between align-center">
         <div class="flex align-center gap-2">
-          <el-icon
-            v-if="statusReady"
-            style="color: var(--el-color-success)"
-            size="16"
-          >
-            <i-lucide-check-circle />
-          </el-icon>
-          <el-icon v-else style="color: var(--el-color-warning)" size="16">
-            <i-lucide-alert-circle />
-          </el-icon>
-          <span
-            class="text-sm"
-            :style="{
-              color: statusReady
-                ? 'var(--el-color-success)'
-                : 'var(--el-color-warning)',
-            }"
-          >
-            {{
-              statusReady
-                ? t('public_duckdb_ready')
-                : t('public_duckdb_resolve_ambiguous')
-            }}
-          </span>
+          <template v-if="parsedTables.length > 0">
+            <el-icon
+              v-if="statusReady"
+              style="color: var(--el-color-success)"
+              size="16"
+            >
+              <i-lucide-check-circle />
+            </el-icon>
+            <el-icon v-else style="color: var(--el-color-warning)" size="16">
+              <i-lucide-alert-circle />
+            </el-icon>
+            <span
+              class="text-sm"
+              :style="{
+                color: statusReady
+                  ? 'var(--el-color-success)'
+                  : 'var(--el-color-warning)',
+              }"
+            >
+              {{
+                statusReady
+                  ? t('public_duckdb_ready')
+                  : t('public_duckdb_resolve_ambiguous')
+              }}
+            </span>
+          </template>
         </div>
         <div class="flex gap-2">
           <ElButton @click="handleClose">{{
