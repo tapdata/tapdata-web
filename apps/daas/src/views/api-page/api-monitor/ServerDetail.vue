@@ -320,6 +320,12 @@ const cpuChartOption = computed<EChartsOption>(() => ({
   },
   yAxis: {
     type: 'value',
+    // 固定范围
+    min: 0,
+    max: 100,
+    axisLabel: {
+      formatter: '{value}%'
+    }
   },
   tooltip: {
     borderRadius: 12,
@@ -518,6 +524,12 @@ const memoryChartOption = computed<EChartsOption>(() => ({
   },
   yAxis: {
     type: 'value',
+    // 固定范围
+    min: 0,
+    max: 100,
+    axisLabel: {
+      formatter: '{value}%'
+    }
   },
   tooltip: {
     borderRadius: 12,
@@ -825,6 +837,9 @@ const workerCpuChartOption = computed<EChartsOption>(() => {
       axisLabel: {
         formatter: '{value}%',
       },
+      // 固定范围
+      min: 0,
+      max: 100
     },
     tooltip: {
       borderRadius: 12,
@@ -894,6 +909,9 @@ const workerMemoryChartOption = computed<EChartsOption>(() => {
       axisLabel: {
         formatter: '{value}%',
       },
+      // 固定范围
+      min: 0,
+      max: 100
     },
     tooltip: {
       borderRadius: 12,
