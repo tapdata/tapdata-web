@@ -1,3 +1,6 @@
+import { transformComponent } from '@formily/element-plus/lib/__builtins__/shared'
+import { connect, mapProps } from '@formily/vue'
+import _MonacoSqlEditor from '@tap/component/src/MonacoSqlEditor.vue'
 import {
   ElAlert as Alert,
   ElDivider as Divider,
@@ -12,6 +15,16 @@ import { Select } from './select'
 import { Space } from './space'
 import { Switch } from './switch'
 
+const MonacoSqlEditor = connect(
+  transformComponent(_MonacoSqlEditor, {
+    change: 'update:modelValue',
+  }),
+  mapProps({
+    value: 'modelValue',
+    readOnly: 'readonly',
+  }),
+)
+
 // element-plus
 export { Alert, Divider, Link }
 // 覆盖 formily-element-plus
@@ -21,6 +34,7 @@ export {
   FormCollapseItem,
   FormTab,
   Input,
+  MonacoSqlEditor,
   Radio,
   Select,
   Space,

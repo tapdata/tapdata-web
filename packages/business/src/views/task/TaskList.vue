@@ -1,12 +1,13 @@
 <script>
 import { ImportOutlined } from '@tap/component/src/icon'
 import PageContainer from '../../components/PageContainer.vue'
+import DuckDbSqlDialog from './DuckDbSqlDialog.vue'
 import List from './List.vue'
 
 export default {
   name: 'TaskList',
 
-  components: { PageContainer, List, ImportOutlined },
+  components: { PageContainer, List, ImportOutlined, DuckDbSqlDialog },
 
   inject: ['checkAgent', 'buried'],
 
@@ -27,6 +28,7 @@ export default {
 
       createLoading: false,
       materializedViewLoading: false,
+      duckDbDialogVisible: false,
     }
   },
 
@@ -53,6 +55,20 @@ export default {
   methods: {
     refFn(method) {
       this.$refs.list[method]?.()
+    },
+
+    handleCreateCommand(command) {
+      if (command === 'duckdb-sql') {
+        this.duckDbDialogVisible = true
+      }
+    },
+
+    handleDagGenerated({ taskId }) {
+      this.duckDbDialogVisible = false
+      this.$router.push({
+        name: this.route.editor,
+        params: { id: taskId },
+      })
     },
   },
 }
@@ -93,17 +109,25 @@ export default {
         <VIcon size="28">beta</VIcon>
         {{ $t('packages_dag_build_materialized_view') }}</ElButton
       >
-      <el-button
+      <ElDropdown
         v-if="buttonShowMap.create"
-        id="task-list-create"
-        v-readonlybtn="'SYNC_job_creation'"
-        class="btn btn-create"
+        split-button
         type="primary"
+        class="btn btn-create ml-3"
+        style="--btn-space: 0"
         :loading="createLoading"
         @click="refFn('create')"
+        @command="handleCreateCommand"
       >
         {{ $t('public_task_create') }}
-      </el-button>
+        <template #dropdown>
+          <ElDropdownMenu>
+            <ElDropdownItem command="duckdb-sql">
+              {{ $t('public_duckdb_build_with_sql') }}
+            </ElDropdownItem>
+          </ElDropdownMenu>
+        </template>
+      </ElDropdown>
     </template>
     <List
       ref="list"
@@ -112,6 +136,10 @@ export default {
       :route="route"
       :task-buried="taskBuried"
       :sync-type="syncType"
+    />
+    <DuckDbSqlDialog
+      v-model:visible="duckDbDialogVisible"
+      @generate="handleDagGenerated"
     />
   </PageContainer>
 </template>

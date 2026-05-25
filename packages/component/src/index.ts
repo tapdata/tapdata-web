@@ -27,6 +27,7 @@ import GitBook from './GitBook.vue'
 import InlineInput from './InlineInput.vue'
 // import MqTransfer from './mq-transfer'
 import JsEditor from './JsEditor.vue'
+import MonacoSqlEditor from './MonacoSqlEditor.vue'
 
 import langs from './locale'
 import OverflowTooltip from './overflow-tooltip'
@@ -46,6 +47,7 @@ export {
   Highlight,
   InlineInput,
   JsEditor,
+  MonacoSqlEditor,
   langs,
   OverflowTooltip,
   PythonEditor,

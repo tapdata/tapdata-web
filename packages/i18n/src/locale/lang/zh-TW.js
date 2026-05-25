@@ -652,4 +652,27 @@ export default {
   public_last_capture_time: '最近觀測時間',
   public_alarm_date: '告警時間',
   public_duration: '時長',
+
+  // DuckDB SQL
+  public_duckdb_build_with_sql: '使用 DuckDB SQL 建置',
+  public_duckdb_dialog_title: '使用 SQL 建置任務',
+  public_duckdb_dialog_subtitle: '自動提取來源表並產生任務',
+  public_duckdb_sql_label: 'DuckDB SQL 語句',
+  public_duckdb_insert_sample: '插入範例 SQL',
+  public_duckdb_parse_tables: '解析表',
+  public_duckdb_target_config: '目標設定',
+  public_duckdb_output_table_name: '輸出表名稱',
+  public_duckdb_target_connection: '目標連線',
+  public_duckdb_source_validation: '來源表驗證',
+  public_duckdb_empty_hint: '輸入 SQL 後自動解析...',
+  public_duckdb_select_connection: '-- 請選擇連線 --',
+  public_duckdb_not_found: '未找到',
+  public_duckdb_multiple_matches: '多個匹配',
+  public_duckdb_resolved: '已解析',
+  public_duckdb_ambiguous_hint:
+    '此表存在於 {count} 個連線中，請確認從哪個資料來源讀取。',
+  public_duckdb_ready: '已準備好產生任務',
+  public_duckdb_resolve_ambiguous: '請先解決有歧義的連線',
+  public_duckdb_generate_dag: '產生任務',
+  public_duckdb_cancel: '取消',
 }

@@ -113,6 +113,8 @@ const BASE_URL = import.meta.env.BASE_URL || '/'
 
 export function getNodeIconSrc(node) {
   if (!node) return
+  console.log('getNodeIconSrc', node.attrs?.key)
+  if (node.attrs?.key === 'duckdb') return getIcon('duckdb')
   const pdkHash = node.pdkHash || node.attrs?.pdkHash
   if (pdkHash) {
     return getConnectionIcon(pdkHash)

@@ -655,4 +655,27 @@ export default {
   public_last_capture_time: '最近观测时间',
   public_alarm_date: '告警时间',
   public_duration: '时长',
+
+  // DuckDB SQL
+  public_duckdb_build_with_sql: '使用 DuckDB SQL 构建',
+  public_duckdb_dialog_title: '使用 SQL 构建任务',
+  public_duckdb_dialog_subtitle: '自动提取源表并生成任务',
+  public_duckdb_sql_label: 'DuckDB SQL 语句',
+  public_duckdb_insert_sample: '插入示例 SQL',
+  public_duckdb_parse_tables: '解析表',
+  public_duckdb_target_config: '目标配置',
+  public_duckdb_output_table_name: '输出表名称',
+  public_duckdb_target_connection: '目标连接',
+  public_duckdb_source_validation: '源表验证',
+  public_duckdb_empty_hint: '输入 SQL 后自动解析...',
+  public_duckdb_select_connection: '-- 请选择连接 --',
+  public_duckdb_not_found: '未找到',
+  public_duckdb_multiple_matches: '多个匹配',
+  public_duckdb_resolved: '已解析',
+  public_duckdb_ambiguous_hint:
+    '此表存在于 {count} 个连接中，请确认从哪个数据源读取。',
+  public_duckdb_ready: '已准备好生成任务',
+  public_duckdb_resolve_ambiguous: '请先解决有歧义的连接',
+  public_duckdb_generate_dag: '生成任务',
+  public_duckdb_cancel: '取消',
 }

@@ -145,6 +145,7 @@ watch(
       props.node.__Ctor.getSchema(
         dataflowStore.dataflow.syncType,
         dataflowStore.stateIsReadonly,
+        props.node,
       ),
     )
 

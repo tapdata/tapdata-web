@@ -483,6 +483,7 @@ async function checkMaterializedView() {
   }, 120)
 }
 
+
 provide('dag', dag)
 provide('nodesPanelExpanded', nodesPanelExpanded)
 provide('buttonShowMap', buttonShowMap)

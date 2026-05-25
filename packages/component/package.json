@@ -41,6 +41,7 @@
     "highlight.js": "^11.0.1",
     "lodash": "catalog:",
     "markdown-it": "catalog:",
+    "monaco-editor": "catalog:",
     "tiny-emitter": "catalog:",
     "vue": "catalog:",
     "vue-echarts": "catalog:",

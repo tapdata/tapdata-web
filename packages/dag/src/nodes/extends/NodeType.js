@@ -37,7 +37,7 @@ export class NodeType {
     return node.type === this.type
   }
 
-  getSchema(syncType, readonly) {
+  getSchema(syncType, readonly, node) {
     const { formSchema } = this
 
     if (formSchema.properties.tabs) {
@@ -331,6 +331,24 @@ export class NodeType {
         }
       } else {
         delete formSchema.properties.tabs.properties.previewTab
+      }
+
+      if (node.attrs.key === 'duckdb') {
+        formSchema.properties.tabs.properties.tab1.properties.form = {
+          type: 'object',
+          properties: {
+            sql: {
+              // title: i18n.t('public_duckdb_sql_label'),
+              type: 'string',
+              // 'x-decorator': 'FormItem',
+              'x-component': 'MonacoSqlEditor',
+              'x-component-props': {
+                class: 'mt-2',
+                height: '520px',
+              },
+            },
+          },
+        }
       }
     }
 

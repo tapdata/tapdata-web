@@ -729,12 +729,16 @@ function selectNodes(nodeIds: string[]) {
 
 let isInitialized = false
 
+function hasNodesWithoutPosition() {
+  return nodes.value.some((n: any) => n.position.x === 0 && n.position.y === 0)
+}
+
 function onNodesInitialized() {
   if (isInitialized) return
   isInitialized = true
   nextTick(() => {
     setTimeout(() => {
-      if (dataflowStore.stateIsReadonly) {
+      if (dataflowStore.stateIsReadonly || hasNodesWithoutPosition()) {
         handleLayoutGraph()
       } else {
         fitViewWithOffset({ duration: 0, maxZoom: 1 })

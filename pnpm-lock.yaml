@@ -856,6 +856,9 @@ importers:
       markdown-it:
         specifier: 'catalog:'
         version: 13.0.2
+      monaco-editor:
+        specifier: 'catalog:'
+        version: 0.52.2
       tiny-emitter:
         specifier: 'catalog:'
         version: 2.1.0

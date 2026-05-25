@@ -663,4 +663,29 @@ export default {
   public_last_capture_time: 'Last Capture Time',
   public_alarm_date: 'Alarm Time',
   public_duration: 'Duration',
+
+  // DuckDB SQL
+  public_duckdb_build_with_sql: 'Build with DuckDB SQL',
+  public_duckdb_dialog_title: 'Build Task with SQL',
+  public_duckdb_dialog_subtitle:
+    'Extract source tables automatically and generate task',
+  public_duckdb_sql_label: 'DuckDB SQL Statement',
+  public_duckdb_insert_sample: 'Insert Sample SQL',
+  public_duckdb_parse_tables: 'Parse Tables',
+  public_duckdb_target_config: 'Target Configuration',
+  public_duckdb_output_table_name: 'Output Table Name',
+  public_duckdb_target_connection: 'Target Connection',
+  public_duckdb_source_validation: 'Source Table Validation',
+  public_duckdb_empty_hint: 'Input your SQL and click Parse...',
+  public_duckdb_select_connection: '-- Select Connection --',
+  public_duckdb_not_found: 'Not Found',
+  public_duckdb_multiple_matches: 'Multiple Matches',
+  public_duckdb_resolved: 'Resolved',
+  public_duckdb_ambiguous_hint:
+    'This table physically exists in {count} connections. Please confirm which data source to pull from.',
+  public_duckdb_ready: 'Ready to generate task',
+  public_duckdb_resolve_ambiguous:
+    'Resolve ambiguous connections before continuing',
+  public_duckdb_generate_dag: 'Generate Task',
+  public_duckdb_cancel: 'Cancel',
 }
