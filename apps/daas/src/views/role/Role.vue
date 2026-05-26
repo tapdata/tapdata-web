@@ -248,8 +248,8 @@ const pageSort = [
       { name: 'v2_function_management' },
       { name: 'v2_custom_node' },
       { name: 'v2_shared_cache' },
-      { name: 'v2_project_management' },
-      { name: 'v2_project_import_and_export' },
+      // { name: 'v2_project_management' },
+      // { name: 'v2_project_import_and_export' },
     ],
   },
   {
