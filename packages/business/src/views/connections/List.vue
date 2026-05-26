@@ -988,7 +988,7 @@ onUnmounted(() => {
               :loading="row.copyLoading"
               :disabled="row.agentType === 'Cloud'"
               @click="copy(row)"
-              >{{ $t('public_button_copy') }}
+              >{{ $t('public_button_duplicate') }}
             </ElButton>
             <ElButton
               v-if="

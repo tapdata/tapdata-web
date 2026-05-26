@@ -1393,7 +1393,7 @@ export default {
               data-testid="copy-task"
               @click="copy([row.id], row)"
             >
-              {{ $t('public_button_copy') }}
+              {{ $t('public_button_duplicate') }}
             </ElButton>
             <ElButton
               v-if="havePermission(row, 'Delete')"

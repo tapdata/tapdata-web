@@ -113,6 +113,7 @@ export default {
   public_button_setting: '設置',
   public_button_reduction: '還原',
   public_button_copy: '複製',
+  public_button_duplicate: '複製',
   public_button_details: '詳情',
   public_button_preview: '預覽',
   public_button_reload: '重新加載',

@@ -113,6 +113,7 @@ export default {
   public_button_setting: '设置',
   public_button_reduction: '还原',
   public_button_copy: '复制',
+  public_button_duplicate: '复制',
   public_button_details: '详情',
   public_button_preview: '预览',
   public_button_reload: '重新加载',
