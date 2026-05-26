@@ -878,7 +878,7 @@ defineExpose({
                 text
                 type="primary"
                 @click="showDrawer(row, true)"
-                >{{ $t('public_button_copy') }}</ElButton
+                >{{ $t('public_button_duplicate') }}</ElButton
               >
               <ElButton
                 v-if="row.permissionActions?.includes('Delete')"

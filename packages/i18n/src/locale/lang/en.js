@@ -113,6 +113,7 @@ export default {
   public_button_setting: 'Settings',
   public_button_reduction: 'Reduction',
   public_button_copy: 'Copy',
+  public_button_duplicate: 'Duplicate',
   public_button_details: 'Details',
   public_button_preview: 'Preview',
   public_button_reload: 'Reload',
