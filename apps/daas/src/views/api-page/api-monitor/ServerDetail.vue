@@ -836,10 +836,7 @@ const workerCpuChartOption = computed<EChartsOption>(() => {
       // name: 'CPU Usage (%)',
       axisLabel: {
         formatter: '{value}%',
-      },
-      // 固定范围
-      min: 0,
-      max: 100
+      }
     },
     tooltip: {
       borderRadius: 12,
@@ -909,9 +906,6 @@ const workerMemoryChartOption = computed<EChartsOption>(() => {
       axisLabel: {
         formatter: '{value}%',
       },
-      // 固定范围
-      min: 0,
-      max: 100
     },
     tooltip: {
       borderRadius: 12,
