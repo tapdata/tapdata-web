@@ -1124,6 +1124,7 @@ const OplogTreeNode = defineComponent({
                 <div v-if="!isTargetTraceNode" class="trace-json-panel__header">
                   <span>Current ({{ selectedNode?.data?.table }})</span>
                   <el-button
+                    v-if="currentNodeData"
                     size="small"
                     text
                     @click="handleCopyJson(currentNodeData)"
@@ -1132,7 +1133,12 @@ const OplogTreeNode = defineComponent({
                     {{ t('packages_ldp_trace_copy') }}
                   </el-button>
                 </div>
+                <div v-if="!currentNodeData" class="trace-data-missing">
+                  <el-icon size="20"><i-lucide-circle-x /></el-icon>
+                  {{ t('packages_ldp_trace_no_data') }}
+                </div>
                 <VueJsonPretty
+                  v-else
                   :data="currentNodeData"
                   show-icon
                   :show-line="false"
@@ -1141,7 +1147,7 @@ const OplogTreeNode = defineComponent({
                 />
               </div>
               <!-- Downstream Node (non-target only) -->
-              <template v-if="!isTargetTraceNode && downstreamNodeData">
+              <template v-if="!isTargetTraceNode">
                 <div class="trace-data-divider">
                   <el-icon size="16"><i-lucide-arrow-right /></el-icon>
                 </div>
@@ -1149,6 +1155,7 @@ const OplogTreeNode = defineComponent({
                   <div class="trace-json-panel__header">
                     <span>Downstream ({{ tableName }})</span>
                     <el-button
+                      v-if="downstreamNodeData"
                       size="small"
                       text
                       @click="handleCopyJson(downstreamNodeData)"
@@ -1159,8 +1166,12 @@ const OplogTreeNode = defineComponent({
                       {{ t('packages_ldp_trace_copy') }}
                     </el-button>
                   </div>
+                  <div v-if="!downstreamNodeData" class="trace-data-missing">
+                    <el-icon size="20"><i-lucide-circle-x /></el-icon>
+                    {{ t('packages_ldp_trace_no_data') }}
+                  </div>
                   <VueJsonPretty
-                    v-if="downstreamNodeData"
+                    v-else
                     :data="downstreamNodeData"
                     show-icon
                     :show-line="false"
@@ -1288,6 +1299,7 @@ const OplogTreeNode = defineComponent({
                 :shortcuts="changeLogShortcuts"
                 :disabled-date="disabledChangeLogDate"
                 class="changelog__picker"
+                popper-class="changelog__picker-popper"
                 @change="handleChangeLogTimeChange"
               />
               <el-button
@@ -2102,5 +2114,31 @@ const OplogTreeNode = defineComponent({
 }
 .ml-1 {
   margin-left: 4px;
+}
+</style>
+
+<style lang="scss">
+.changelog__picker-popper {
+  .el-picker-panel.el-picker-panel {
+    [slot='sidebar'],
+    .el-picker-panel__sidebar {
+      position: relative;
+      width: auto;
+      white-space: nowrap;
+    }
+
+    .el-picker-panel__body-wrapper {
+      display: flex;
+    }
+
+    .el-picker-panel__body {
+      width: 646px;
+      margin-left: 0;
+    }
+
+    &.el-date-range-picker.has-sidebar {
+      width: auto;
+    }
+  }
 }
 </style>
