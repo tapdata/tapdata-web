@@ -58,6 +58,7 @@ export default {
   emits: ['createSingleTask', 'handleShowUpgrade', 'createApi'],
   data() {
     return {
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       visible: false,
       activeName: 'overView',
       activeNameItems: 'columnsPreview',
@@ -516,6 +517,16 @@ export default {
       this.$emit('createSingleTask', this.selected, this.swimType)
     },
 
+    handleDataTrace() {
+      this.openRoute({
+        name: 'DataTrace',
+        query: {
+          connectionId: this.connectionId,
+          tableName: this.selected.name,
+        },
+      })
+    },
+
     getTaskType(type) {
       return TASK_TYPE_MAP[type] || ''
     },
@@ -717,6 +728,12 @@ export default {
       })
     }, 300),
 
+    handleHeaderCommand(command) {
+      if (command === 'delete') {
+        this.handleDelete()
+      }
+    },
+
     handleDelete() {
       if (this.taskData.length) {
         this.activeName = 'tasks'
@@ -806,32 +823,39 @@ export default {
             >
           </ElTooltip>
           <div class="flex-grow-1" />
-          <ElButton
-            class="flex-shrink-0"
-            type="primary"
-            @click="handleCreateTask"
-          >
-            {{ $t('packages_business_swimlane_tablepreview_chuangjianrenwu') }}
-          </ElButton>
-          <ElButton
-            v-if="apiSupportTypes.includes(connectionType) && isDaas"
-            class="flex-shrink-0"
-            type="primary"
-            plain
-            @click="handleCreateAPI"
-          >
-            {{ $t('packages_business_publish_api') }}
-          </ElButton>
-          <ElButton
-            v-if="swimType === 'mdm'"
-            class="flex-shrink-0"
-            type="danger"
-            plain
-            @click="handleDelete"
-          >
-            <VIcon class="mr-1">delete</VIcon>
-            {{ $t('public_button_delete') }}
-          </ElButton>
+          <ElButtonGroup class="flex-shrink-0" style="--btn-space: 0">
+            <ElButton @click="handleCreateTask">
+              {{
+                $t('packages_business_swimlane_tablepreview_chuangjianrenwu')
+              }}
+            </ElButton>
+            <ElButton
+              v-if="apiSupportTypes.includes(connectionType) && isDaas"
+              @click="handleCreateAPI"
+            >
+              {{ $t('packages_business_publish_api') }}
+            </ElButton>
+            <ElButton @click="handleDataTrace">{{
+              $t('packages_ldp_trace_flow')
+            }}</ElButton>
+            <ElDropdown
+              v-if="swimType === 'mdm'"
+              trigger="click"
+              @command="handleHeaderCommand"
+            >
+              <ElButton style="border-color: var(--el-border-color)">
+                <VIcon size="16">more</VIcon>
+              </ElButton>
+              <template #dropdown>
+                <ElDropdownMenu>
+                  <ElDropdownItem command="delete" class="is-danger">
+                    <VIcon class="mr-1" size="14">delete</VIcon>
+                    {{ $t('public_button_delete') }}
+                  </ElDropdownItem>
+                </ElDropdownMenu>
+              </template>
+            </ElDropdown>
+          </ElButtonGroup>
         </div>
         <div class="flex align-center gap-8">
           <span class="inline-flex align-center text-uppercase text-nowrap">

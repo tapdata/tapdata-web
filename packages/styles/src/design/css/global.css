@@ -87,3 +87,49 @@ html.dark::view-transition-new(root) {
     }
   }
 }
+
+
+.task-status-block {
+  display: inline-block;
+  min-width: 72px;
+  padding: 2px 8px;
+  text-align: center;
+  border-radius: 8px;
+  box-sizing: border-box;
+  word-break: keep-all;
+  line-height: 22px;
+}
+.task-status-running {
+  color: #178061;
+  background-color: #c4f3cb;
+}
+.task-status-complete {
+  color: #008b58;
+  background-color: #b4edd8;
+}
+.task-status-renew_failed,
+.task-status-error,
+.task-status-deleting,
+.task-status-delete_failed,
+.task-status-deleted {
+  color: #d44d4d;
+  background-color: #ffecec;
+}
+.task-status-edit {
+  color: #0083c7;
+  background-color: #d1eefd;
+}
+.task-status-starting {
+  color: #2c65ff;
+  background-color: #ddebff;
+}
+.task-status-stop {
+  color: #c88500;
+  background-color: #ffe4ae;
+}
+.task-status-renewing,
+.task-status-wait_start,
+.task-status-stopping {
+  color: #c39700;
+  background-color: #fdf1c8;
+}

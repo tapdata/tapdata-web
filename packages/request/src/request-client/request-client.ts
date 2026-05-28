@@ -86,6 +86,10 @@ class RequestClient {
     this.download = fileDownloader.download.bind(fileDownloader)
   }
 
+  public getBaseURL(): string {
+    return this.instance.defaults.baseURL || ''
+  }
+
   public setBaseURL(baseURL: string) {
     this.instance.defaults.baseURL = baseURL
   }

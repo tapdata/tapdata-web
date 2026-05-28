@@ -199,6 +199,14 @@ export const routes = [
     component: DataCapture,
   },
   {
+    path: '/data-trace',
+    name: 'DataTrace',
+    component: () => import('@tap/ldp/src/DataTracePage.vue'),
+    meta: {
+      title: 'Data Trace',
+    },
+  },
+  {
     path: '/shared-mining/monitor/:id',
     name: 'SharedMiningMonitor',
     component: DagMonitorView,
