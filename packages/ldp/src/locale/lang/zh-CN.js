@@ -100,4 +100,10 @@ export default {
   packages_ldp_trace_join: '{0} 个关联',
   packages_ldp_trace_filter_field: '字段',
   packages_ldp_trace_filter_value: '输入值...',
+  packages_ldp_trace_page_title: '数据追溯',
+  packages_ldp_trace_qc_title: '查询条件',
+  packages_ldp_trace_qc_edit: '编辑条件',
+  packages_ldp_trace_qc_cancel: '取消',
+  packages_ldp_trace_qc_save: '保存并重新追溯',
+  packages_ldp_trace_qc_invalid_json: 'JSON 格式无效',
 }

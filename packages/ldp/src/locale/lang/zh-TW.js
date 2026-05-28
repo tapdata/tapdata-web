@@ -100,4 +100,10 @@ export default {
   packages_ldp_trace_join: '{0} 個關聯',
   packages_ldp_trace_filter_field: '欄位',
   packages_ldp_trace_filter_value: '輸入值...',
+  packages_ldp_trace_page_title: '資料追溯',
+  packages_ldp_trace_qc_title: '查詢條件',
+  packages_ldp_trace_qc_edit: '編輯條件',
+  packages_ldp_trace_qc_cancel: '取消',
+  packages_ldp_trace_qc_save: '儲存並重新追溯',
+  packages_ldp_trace_qc_invalid_json: 'JSON 格式無效',
 }

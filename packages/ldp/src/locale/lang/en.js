@@ -110,4 +110,10 @@ export default {
   packages_ldp_trace_join: '{0} join | {0} joins',
   packages_ldp_trace_filter_field: 'Field',
   packages_ldp_trace_filter_value: 'Enter value...',
+  packages_ldp_trace_page_title: 'Data Trace',
+  packages_ldp_trace_qc_title: 'Query Conditions',
+  packages_ldp_trace_qc_edit: 'Edit Conditions',
+  packages_ldp_trace_qc_cancel: 'Cancel',
+  packages_ldp_trace_qc_save: 'Save & Retrace',
+  packages_ldp_trace_qc_invalid_json: 'Invalid JSON',
 }

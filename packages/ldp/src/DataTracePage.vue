@@ -27,6 +27,7 @@ import {
 } from 'vue'
 import VueJsonPretty from 'vue-json-pretty'
 import { useRoute, useRouter } from 'vue-router'
+import NodeQueryConditions from './components/NodeQueryConditions.vue'
 import PillFilterBuilder, {
   type FilterRow,
 } from './components/PillFilterBuilder.vue'
@@ -191,6 +192,13 @@ const isTargetTraceNode = computed(() => {
   return d?.connectionId === connectionId.value && d?.table === tableName.value
 })
 
+const selectedNodeQueryConditions = computed(() => {
+  if (!selectedNodeId.value || !traceData.value) return '[]'
+  const nodeTrace = traceData.value[selectedNodeId.value]
+  const qc = nodeTrace?.traceValue?.queryConditions || []
+  return JSON.stringify(qc, null, 2)
+})
+
 const currentNodeData = computed(() => {
   if (!selectedNodeId.value || !traceData.value) return null
   const nodeTrace = traceData.value[selectedNodeId.value]
@@ -326,9 +334,7 @@ async function fetchBloodline() {
     })
     const prevSelectedId = selectedNodeId.value
 
-    // Reset cached state from previous diagram
-    traceData.value = null
-    nodeStatus.value = {}
+    // Reset layout positions for new diagram
     flowNodePositions.value = {}
 
     // Set new source data — flowNodes/flowEdges are computed from this
@@ -478,6 +484,96 @@ function handleTrace() {
         }
         nodeStatus.value = updated
         ElMessage.error(error || 'Trace failed')
+      },
+    },
+  )
+}
+
+// ─── Partial Retrace (current + upstream nodes only) ───
+function getUpstreamNodeIds(nodeId: string): Set<string> {
+  const ids = new Set<string>()
+  if (!bloodlineData.value) return ids
+  const edges = bloodlineData.value.dag.edges
+  const queue = [nodeId]
+  while (queue.length) {
+    const current = queue.shift()!
+    for (const edge of edges) {
+      // edge.target is downstream of edge.source — walk backwards
+      if (edge.target === current && !ids.has(edge.source)) {
+        ids.add(edge.source)
+        queue.push(edge.source)
+      }
+    }
+  }
+  return ids
+}
+
+function handlePartialRetrace(queryConditionsJson: string) {
+  if (!selectedNode.value || !selectedNodeId.value) return
+
+  let queryConditions: Record<string, any>[]
+  try {
+    queryConditions = JSON.parse(queryConditionsJson)
+  } catch {
+    ElMessage.error(t('packages_ldp_trace_qc_invalid_json'))
+    return
+  }
+
+  if (traceAbortController) {
+    traceAbortController.abort()
+  }
+
+  const currentId = selectedNodeId.value
+  const upstreamIds = getUpstreamNodeIds(currentId)
+  const affectedIds = new Set([currentId, ...upstreamIds])
+
+  tracing.value = true
+
+  // Set only affected nodes to loading, keep others unchanged
+  const statuses = { ...nodeStatus.value }
+  for (const id of affectedIds) {
+    statuses[id] = 'loading'
+  }
+  nodeStatus.value = statuses
+
+  // Convert queryConditions [{key: val}] to filter format [{key, value}]
+  const custom = queryConditions.flatMap((cond) =>
+    Object.entries(cond).map(([key, value]) => ({ key, value })),
+  )
+
+  const node = selectedNode.value.data
+  traceAbortController = getTraceData(
+    {
+      connectionId: node.connectionId,
+      table: node.table,
+      filters: custom.length ? { custom } : undefined,
+    },
+    {
+      onNodeData: (nodeId, data) => {
+        if (!affectedIds.has(nodeId)) return
+        traceData.value = { ...traceData.value, [nodeId]: data }
+        const hasData = !!data?.traceValue?.currentRecords?.length
+        nodeStatus.value = {
+          ...nodeStatus.value,
+          [nodeId]: hasData ? 'ok' : 'error',
+        }
+      },
+      onDone: () => {
+        tracing.value = false
+        const updated = { ...nodeStatus.value }
+        for (const id of affectedIds) {
+          if (updated[id] === 'loading') updated[id] = 'error'
+        }
+        nodeStatus.value = updated
+      },
+      onError: (error) => {
+        tracing.value = false
+        const updated = { ...nodeStatus.value }
+        for (const id of affectedIds) {
+          if (updated[id] === 'loading') updated[id] = 'error'
+        }
+        nodeStatus.value = updated
+        ElMessage.error(error || 'Retrace failed')
       },
     },
   )
@@ -783,7 +879,7 @@ const OplogTreeNode = defineComponent({
         <button class="trace-back-btn" @click="handleBack">
           <el-icon size="18"><i-lucide-arrow-left /></el-icon>
         </button>
-        <h1 class="trace-title">Data Trace</h1>
+        <h1 class="trace-title">{{ t('packages_ldp_trace_page_title') }}</h1>
         <!-- Breadcrumb: connection / table -->
         <nav class="trace-breadcrumb">
           <span class="trace-breadcrumb__item">
@@ -984,8 +1080,15 @@ const OplogTreeNode = defineComponent({
           </div>
 
           <!-- ─── JSON TAB ─── -->
-          <div v-if="rightTab === 'json'" class="trace-result__body">
+          <div v-if="rightTab !== 'changelog'" class="trace-result__body">
+            <!-- Query Conditions (JSON / Table modes) -->
+            <NodeQueryConditions
+              v-if="!isTargetTraceNode"
+              :conditions="selectedNodeQueryConditions"
+              @save="handlePartialRetrace"
+            />
             <div
+              v-if="rightTab === 'json'"
               :class="[
                 'trace-data-pane',
                 {
@@ -1008,7 +1111,6 @@ const OplogTreeNode = defineComponent({
                   </el-button>
                 </div>
                 <VueJsonPretty
-                  v-if="currentNodeData"
                   :data="currentNodeData"
                   show-icon
                   :show-line="false"
@@ -1049,11 +1151,8 @@ const OplogTreeNode = defineComponent({
                 </div>
               </template>
             </div>
-          </div>
-
-          <!-- ─── TABLE TAB ─── -->
-          <div v-else-if="rightTab === 'table'" class="trace-result__body">
             <div
+              v-else-if="rightTab === 'table'"
               :class="[
                 'trace-data-pane',
                 {
@@ -1418,7 +1517,7 @@ const OplogTreeNode = defineComponent({
 .trace-control {
   padding: 16px 24px;
   flex-shrink: 0;
-  background: rgb(252, 252, 252);
+  background: var(--el-bg-color);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid #e4e4e7;
   &__title {
