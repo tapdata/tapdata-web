@@ -89,6 +89,8 @@ export default {
   packages_ldp_trace_changelog_empty: '选择时间范围并点击查询以查看变更日志。',
   packages_ldp_trace_changelog_no_more: '没有更多日志',
   packages_ldp_trace_changelog_max_range: '时间范围不能超过 7 天',
+  packages_ldp_trace_changelog_shortcut_5m: '最近 5 分钟',
+  packages_ldp_trace_changelog_shortcut_30m: '最近 30 分钟',
   packages_ldp_trace_changelog_shortcut_1h: '最近 1 小时',
   packages_ldp_trace_changelog_shortcut_1d: '最近 1 天',
   packages_ldp_trace_changelog_shortcut_3d: '最近 3 天',

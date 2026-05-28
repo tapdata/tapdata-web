@@ -99,6 +99,8 @@ export default {
   packages_ldp_trace_changelog_empty: 'Select a time range and click Query to view change logs.',
   packages_ldp_trace_changelog_no_more: 'No more logs',
   packages_ldp_trace_changelog_max_range: 'Time range cannot exceed 7 days',
+  packages_ldp_trace_changelog_shortcut_5m: 'Last 5 minutes',
+  packages_ldp_trace_changelog_shortcut_30m: 'Last 30 minutes',
   packages_ldp_trace_changelog_shortcut_1h: 'Last 1 hour',
   packages_ldp_trace_changelog_shortcut_1d: 'Last 1 day',
   packages_ldp_trace_changelog_shortcut_3d: 'Last 3 days',

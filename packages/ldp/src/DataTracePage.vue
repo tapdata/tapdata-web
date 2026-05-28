@@ -124,6 +124,22 @@ const changeLogTimeRange = ref<[number, number] | null>([
 
 const changeLogShortcuts = computed(() => [
   {
+    text: t('packages_ldp_trace_changelog_shortcut_5m'),
+    value: (): [Date, Date] => {
+      const end = new Date()
+      const start = new Date(end.getTime() - 5 * 60 * 1000)
+      return [start, end]
+    },
+  },
+  {
+    text: t('packages_ldp_trace_changelog_shortcut_30m'),
+    value: (): [Date, Date] => {
+      const end = new Date()
+      const start = new Date(end.getTime() - 30 * 60 * 1000)
+      return [start, end]
+    },
+  },
+  {
     text: t('packages_ldp_trace_changelog_shortcut_1h'),
     value: (): [Date, Date] => {
       const end = new Date()
@@ -161,8 +177,11 @@ function handleChangeLogTimeChange(val: [number, number] | null) {
   const [start, end] = val
   if (end - start > CHANGELOG_MAX_RANGE_MS) {
     ElMessage.warning(t('packages_ldp_trace_changelog_max_range'))
-    // Clamp end to start + 7 days
     changeLogTimeRange.value = [start, start + CHANGELOG_MAX_RANGE_MS]
+  }
+  // Auto-fetch when date changes
+  if (rightTab.value === 'changelog') {
+    nextTick(() => fetchChangeLogs(true))
   }
 }
 const changeLogs = ref<Record<string, any>[]>([])
@@ -340,8 +359,9 @@ async function fetchBloodline() {
     // Set new source data — flowNodes/flowEdges are computed from this
     bloodlineData.value = data
 
-    // Prefill filter rows with targetTableUpdateFields
-    if (data.targetTableUpdateFields?.length) {
+    // Prefill filter rows with targetTableUpdateFields (only if user hasn't filled any)
+    const hasUserInput = filterRows.value.some((r) => r.field || r.value)
+    if (!hasUserInput && data.targetTableUpdateFields?.length) {
       filterRows.value = data.targetTableUpdateFields.map((field) => ({
         field,
         operator: '=',
