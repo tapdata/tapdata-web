@@ -324,10 +324,11 @@ async function fetchBloodline() {
         ? trackedFields.value
         : undefined,
     })
+    const prevSelectedId = selectedNodeId.value
+
     // Reset cached state from previous diagram
     traceData.value = null
     nodeStatus.value = {}
-    selectedNodeId.value = null
     flowNodePositions.value = {}
 
     // Set new source data — flowNodes/flowEdges are computed from this
@@ -342,13 +343,17 @@ async function fetchBloodline() {
       }))
     }
 
-    // Auto-select the current trace table node
-    const currentNode = data.dag.nodes.find(
-      (n) =>
-        n.connectionId === connectionId.value && n.table === tableName.value,
-    )
-    if (currentNode) {
-      selectedNodeId.value = currentNode.id
+    // Re-select: keep previous selection if it still exists, otherwise auto-select current trace node
+    const stillExists =
+      prevSelectedId && data.dag.nodes.some((n) => n.id === prevSelectedId)
+    if (stillExists) {
+      selectedNodeId.value = prevSelectedId
+    } else {
+      const currentNode = data.dag.nodes.find(
+        (n) =>
+          n.connectionId === connectionId.value && n.table === tableName.value,
+      )
+      selectedNodeId.value = currentNode?.id ?? null
     }
 
     nextTick(() => handleLayoutGraph())
@@ -1010,9 +1015,6 @@ const OplogTreeNode = defineComponent({
                   :deep="3"
                   class="trace-json-pretty"
                 />
-                <pre v-else class="trace-json-code trace-json-code--null">
-null</pre
-                >
               </div>
               <!-- Downstream Node (non-target only) -->
               <template v-if="!isTargetTraceNode && downstreamNodeData">
@@ -1041,9 +1043,9 @@ null</pre
                     :deep="3"
                     class="trace-json-pretty"
                   />
-                  <pre v-else class="trace-json-code trace-json-code--null">{{
+                  <!-- <pre v-else class="trace-json-code trace-json-code--null">{{
                     t('packages_ldp_trace_no_data_comment')
-                  }}</pre>
+                  }}</pre> -->
                 </div>
               </template>
             </div>
