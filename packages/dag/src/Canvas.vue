@@ -72,8 +72,7 @@ const dataflowStore = useDataflowStore()
 const { controlKeyText } = useDeviceSupport()
 const dag = inject('dag')
 const nodesPanelExpanded = inject<Ref<boolean>>('nodesPanelExpanded', ref(true))
-const isInitialized = inject<Ref<boolean>>('isInitialized')
-
+const needsFitView = inject<Ref<boolean>>('needsFitView', ref(true))
 // Bottom bar dynamic positioning
 const RIGHT_PANEL_WIDTH = 600
 const PANEL_MARGIN = 12
@@ -787,16 +786,17 @@ function selectNodes(nodeIds: string[]) {
 }
 
 function onNodesInitialized() {
-  if (isInitialized.value) return
-  nextTick(() => {
-    setTimeout(() => {
-      if (dataflowStore.stateIsReadonly) {
-        handleLayoutGraph()
-      } else {
-        fitViewWithOffset({ duration: 0, maxZoom: 1 })
-      }
-    }, 0)
-  })
+  if (!needsFitView.value) return
+
+  needsFitView.value = false
+  setTimeout(() => {
+    if (dataflowStore.stateIsReadonly || dataflowStore.needsAutoLayout) {
+      handleLayoutGraph()
+      dataflowStore.needsAutoLayout = false
+    } else {
+      fitViewWithOffset({ duration: 0, maxZoom: 1 })
+    }
+  }, 0)
 }
 
 defineExpose({

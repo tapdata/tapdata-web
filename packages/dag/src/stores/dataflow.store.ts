@@ -104,6 +104,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
   const taskLoading = ref(true)
   const schemaRefreshing = ref(false)
   const materializedViewVisible = ref(false)
+  const needsAutoLayout = ref(false)
 
   const buttonShowMap = reactive({
     View: true,
@@ -263,6 +264,11 @@ export const useDataflowStore = defineStore('dataflow', () => {
 
       setDataflow(dataflowData)
       getTaskPermissions()
+
+      // 检测是否有节点缺少 attrs.position，需要自动布局
+      needsAutoLayout.value = dagData.nodes?.some(
+        (node: any) => !node.attrs?.position,
+      )
 
       const { nodes, edges } = initialDag(dagData)
 
@@ -867,6 +873,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     taskLoading.value = true
     taskSaving.value = false
     materializedViewVisible.value = false
+    needsAutoLayout.value = false
 
     processorNodeTypes.value = []
 
@@ -910,6 +917,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     taskLoading,
     schemaRefreshing,
     materializedViewVisible,
+    needsAutoLayout,
     buttonShowMap,
     showBottom,
     editVersion,

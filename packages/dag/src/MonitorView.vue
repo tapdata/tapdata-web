@@ -87,7 +87,6 @@ const {
   reformDataflow,
 } = useCanvasOperation()
 
-const isInitialized = ref(false)
 const timer = ref()
 const quotaTimeType = ref('5m')
 const quotaTime = ref([])
@@ -612,9 +611,6 @@ const init = async () => {
   initMonitor()
   initWS()
   pollingTimer = setTimeout(pollTaskDetail, 10000)
-  setTimeout(() => {
-    isInitialized.value = true
-  }, 300)
 }
 
 init()
@@ -622,8 +618,8 @@ init()
 // 状态变化时重新加载监控数据，如 stop → running
 watch(
   () => dataflow.value?.status,
-  () => {
-    if (isInitialized.value) {
+  (v) => {
+    if (v) {
       initMonitor()
     }
   },
@@ -645,7 +641,6 @@ provide('dataflowDesc', dataflowDesc)
 provide('onNameInputChange', onNameInputChange)
 provide('formScope', formScope)
 provide('isSaving', isSaving)
-provide('isInitialized', isInitialized)
 </script>
 
 <template>

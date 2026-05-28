@@ -76,6 +76,7 @@ const {
 const clipboard = useClipboard({ onPaste: onClipboardPaste })
 
 const isInitialized = ref(false)
+const needsFitView = ref(false)
 const init = async () => {
   dataflowStore.$reset()
   const taskId = route.params.id as string
@@ -90,6 +91,8 @@ const init = async () => {
       handlePageReturn()
       return
     }
+
+    needsFitView.value = dag.value.nodes.length > 0
   } else {
     let syncType
     let targetRoute
@@ -112,10 +115,6 @@ const init = async () => {
   }
 
   initWS()
-
-  setTimeout(() => {
-    isInitialized.value = true
-  }, 300)
 
   dataflowStore.taskLoading = false
   // Check route query for auto-opening materialized view
@@ -500,6 +499,7 @@ provide('previewData', previewData)
 provide('previewLoading', previewLoading)
 provide('handlePreview', handlePreview)
 provide('isInitialized', isInitialized)
+provide('needsFitView', needsFitView)
 provide('isSyncTask', isSyncTask)
 </script>
 
