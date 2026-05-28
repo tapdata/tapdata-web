@@ -271,7 +271,7 @@ function selectNode(id: string) {
 const flowNodes = computed<Node[]>(() => {
   if (!bloodlineData.value) return []
   return bloodlineData.value.dag.nodes.map((node) => {
-    const task = Object.values(node.attrs)[0] || {}
+    const task = node.attrs ? Object.values(node.attrs)[0] : {}
     const pos = flowNodePositions.value[node.id]
     return {
       id: node.id,
@@ -537,16 +537,16 @@ function handlePartialRetrace(queryConditionsJson: string) {
   nodeStatus.value = statuses
 
   // Convert queryConditions [{key: val}] to filter format [{key, value}]
-  const custom = queryConditions.flatMap((cond) =>
-    Object.entries(cond).map(([key, value]) => ({ key, value })),
-  )
+  // const custom = queryConditions.flatMap((cond) =>
+  //   Object.entries(cond).map(([key, value]) => ({ key, value })),
+  // )
 
   const node = selectedNode.value.data
   traceAbortController = getTraceData(
     {
       connectionId: node.connectionId,
       table: node.table,
-      filters: custom.length ? { custom } : undefined,
+      filters: { conditions: queryConditions },
     },
     {
       onNodeData: (nodeId, data) => {
@@ -1017,7 +1017,9 @@ const OplogTreeNode = defineComponent({
             :nodes="flowNodes"
             :edges="flowEdges"
             :apply-changes="false"
+            :delete-key-code="null"
             class="trace-vue-flow"
+            :max-zoom="1.2"
             @nodes-initialized="handleLayoutGraph"
           >
             <Background />
