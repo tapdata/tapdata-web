@@ -746,18 +746,8 @@ export default {
     },
 
     async getApiServerHost() {
-      const showError = () => {
-        this.$message.error(
-          this.$t('packages_business_data_server_list_huoqufuwuyu'),
-        )
-      }
-      const data = await fetchApiServers().catch(() => {
-        showError()
-      })
+      const data = await fetchApiServers()
       this.apiServerHost = data?.items?.[0]?.clientURI || ''
-      if (!this.apiServerHost) {
-        showError()
-      }
     },
 
     handlePreviewApi(row = {}) {
