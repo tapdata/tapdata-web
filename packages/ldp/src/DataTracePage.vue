@@ -194,7 +194,7 @@ const filterModeOptions = computed(() => [
   { label: t('packages_ldp_trace_mql_json'), value: 'mql' },
 ])
 const rightTabOptions = computed(() => [
-  { label: t('packages_ldp_trace_tab_table'), value: 'table' },
+  // { label: t('packages_ldp_trace_tab_table'), value: 'table' },
   { label: t('packages_ldp_trace_tab_json'), value: 'json' },
   { label: t('packages_ldp_trace_tab_changelog'), value: 'changelog' },
 ])
@@ -205,6 +205,11 @@ const selectedNode = computed(() =>
 )
 
 // Whether the selected node is the target trace table (the one user entered from)
+const isSelectedNodeLoading = computed(() => {
+  if (!selectedNodeId.value) return false
+  return nodeStatus.value[selectedNodeId.value] === 'loading'
+})
+
 const isTargetTraceNode = computed(() => {
   if (!selectedNode.value) return false
   const d = selectedNode.value.data
@@ -1097,7 +1102,20 @@ const OplogTreeNode = defineComponent({
               <strong>{{ selectedNode?.data?.table }}</strong>
             </div>
             <div class="trace-result__actions">
-              <el-segmented v-model="rightTab" :options="rightTabOptions" />
+              <el-segmented v-model="rightTab" :options="rightTabOptions">
+                <template #default="{ item }">
+                  <div class="flex align-center gap-1">
+                    <el-icon size="14">
+                      <i-lucide-braces v-if="item.value === 'json'" />
+                      <i-lucide-table2 v-else-if="item.value === 'table'" />
+                      <i-lucide-history
+                        v-else-if="item.value === 'changelog'"
+                      />
+                    </el-icon>
+                    <span>{{ item.label }}</span>
+                  </div>
+                </template>
+              </el-segmented>
             </div>
           </div>
 
@@ -1133,7 +1151,16 @@ const OplogTreeNode = defineComponent({
                     {{ t('packages_ldp_trace_copy') }}
                   </el-button>
                 </div>
-                <div v-if="!currentNodeData" class="trace-data-missing">
+                <div
+                  v-if="isSelectedNodeLoading"
+                  class="trace-data-missing trace-data-missing--loading"
+                >
+                  <el-icon class="is-loading" size="20"
+                    ><i-lucide-loader-2
+                  /></el-icon>
+                  {{ t('packages_ldp_trace_status_loading') }}
+                </div>
+                <div v-else-if="!currentNodeData" class="trace-data-missing">
                   <el-icon size="20"><i-lucide-circle-x /></el-icon>
                   {{ t('packages_ldp_trace_no_data') }}
                 </div>
@@ -1166,7 +1193,19 @@ const OplogTreeNode = defineComponent({
                       {{ t('packages_ldp_trace_copy') }}
                     </el-button>
                   </div>
-                  <div v-if="!downstreamNodeData" class="trace-data-missing">
+                  <div
+                    v-if="isSelectedNodeLoading"
+                    class="trace-data-missing trace-data-missing--loading"
+                  >
+                    <el-icon class="is-loading" size="20"
+                      ><i-lucide-loader-2
+                    /></el-icon>
+                    {{ t('packages_ldp_trace_status_loading') }}
+                  </div>
+                  <div
+                    v-else-if="!downstreamNodeData"
+                    class="trace-data-missing"
+                  >
                     <el-icon size="20"><i-lucide-circle-x /></el-icon>
                     {{ t('packages_ldp_trace_no_data') }}
                   </div>
@@ -1199,7 +1238,16 @@ const OplogTreeNode = defineComponent({
                 <div v-if="!isTargetTraceNode" class="trace-data-panel__header">
                   {{ selectedNode?.data?.table }}
                 </div>
-                <div v-if="!currentNodeData" class="trace-data-missing">
+                <div
+                  v-if="isSelectedNodeLoading"
+                  class="trace-data-missing trace-data-missing--loading"
+                >
+                  <el-icon class="is-loading" size="20"
+                    ><i-lucide-loader-2
+                  /></el-icon>
+                  {{ t('packages_ldp_trace_status_loading') }}
+                </div>
+                <div v-else-if="!currentNodeData" class="trace-data-missing">
                   <el-icon size="20"><i-lucide-circle-x /></el-icon>
                   {{ t('packages_ldp_trace_no_data') }}
                 </div>
@@ -1308,9 +1356,9 @@ const OplogTreeNode = defineComponent({
                 :disabled="!changeLogTimeRange"
                 @click="fetchChangeLogs(true)"
               >
-                <el-icon v-if="!changeLogLoading" class="mr-1"
-                  ><i-lucide-search
-                /></el-icon>
+                <template #icon>
+                  <i-lucide-search />
+                </template>
                 {{ t('packages_ldp_trace_changelog_query') }}
               </el-button>
             </div>
@@ -1913,6 +1961,16 @@ const OplogTreeNode = defineComponent({
   background: #fafafa;
   border: 1px solid #e4e4e7;
   font-size: 12px;
+}
+
+.vjs-tree {
+  :deep(.vjs-tree-node.vjs-tree-node.vjs-tree-node) {
+    border-radius: 6px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  }
 }
 
 // ─── VueJsonPretty diff highlight (whole-row via :has) ───
