@@ -7,9 +7,9 @@ import {
   useVueFlow,
   VueFlow,
   type Connection,
-  type ConnectStartEvent,
   type GraphNode,
   type NodeChange,
+  type OnConnectStartParams,
 } from '@vue-flow/core'
 import { useDark } from '@vueuse/core'
 import {
@@ -488,14 +488,49 @@ function onUpdateEdgeLabelHovered(id: string, hovered: boolean) {
 }
 
 const connectionCreated = ref(false)
-const connectingHandle = ref<ConnectStartEvent>()
+const connectingHandle = ref<OnConnectStartParams>()
 const connectedHandle = ref<Connection>()
+
+function onConnectStart(params: { event?: MouseEvent } & OnConnectStartParams) {
+  connectingHandle.value = params
+  connectionCreated.value = false
+}
 
 function onConnect(connection: Connection) {
   emit('create:connection', connection)
 
   connectedHandle.value = connection
   connectionCreated.value = true
+}
+
+// 在节点本体（非 Handle）上松开连线时，仍尝试建立连接
+function onConnectEnd(event?: MouseEvent | TouchEvent) {
+  const start = connectingHandle.value
+  connectingHandle.value = undefined
+
+  // 已命中 Handle 完成连线，或缺少起始节点/事件信息，无需补充处理
+  if (connectionCreated.value || !start?.nodeId || !event) return
+
+  const point = 'changedTouches' in event ? event.changedTouches[0] : event
+  if (!point) return
+
+  const el = document.elementFromPoint(point.clientX, point.clientY)
+  const targetNodeId = el?.closest('.vue-flow__node')?.getAttribute('data-id')
+  if (!targetNodeId || targetNodeId === start.nodeId) return
+
+  // 根据起始 Handle 类型确定连线方向：target 起始则落点节点为 source，反之为 target
+  const connection =
+    start.handleType === 'target'
+      ? { source: targetNodeId, target: start.nodeId }
+      : { source: start.nodeId, target: targetNodeId }
+
+  if (!dataflowStore.isValidConnection(connection as any)) return
+
+  emit('create:connection', {
+    ...connection,
+    sourceHandle: null,
+    targetHandle: null,
+  })
 }
 
 function onCreateConnection(connection: any) {
@@ -1026,7 +1061,9 @@ defineExpose({
       :apply-changes="false"
       @mousedown="clearTextSelection"
       @node-drag-stop="onNodeDragStop"
+      @connect-start="onConnectStart"
       @connect="onConnect"
+      @connect-end="onConnectEnd"
       @node-click="onNodeClick"
       @pane-click="onPaneClick"
       @selection-end="onSelectionEnd"
