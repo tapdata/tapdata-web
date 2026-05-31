@@ -39,7 +39,7 @@ import { useKeybindings, type KeyMap } from './composables/useKeybindings'
 import { useLayout } from './composables/useLayout'
 import { useDataflowStore } from './stores/dataflow.store'
 import { useUiStore } from './stores/ui.store'
-import { getHelperLines } from './utils/helperLines'
+import { getHelperLines, getHelperLinesForPosition } from './utils/helperLines'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
 
@@ -690,6 +690,29 @@ provide('onCreateConnection', onCreateConnection)
 provide('onDeleteConnection', onDeleteConnection)
 provide('onMoveNodePosition', onMoveNodePosition)
 provide('handleDisableNode', handleDisableNode)
+
+// Expose helper-line updaters so that NodesPanel drag can show guide lines
+provide(
+  'updateDragHelperLines',
+  (
+    position: { x: number; y: number },
+    dimensions: { width: number; height: number },
+  ) => {
+    const lines = getHelperLinesForPosition(
+      position,
+      dimensions,
+      getNodes.value,
+    )
+    helperLineHorizontal.value = lines.horizontal
+    helperLineVertical.value = lines.vertical
+    // 返回吸附位置（flow 坐标），供拖拽元素对齐到引导线
+    return lines.snapPosition
+  },
+)
+provide('clearDragHelperLines', () => {
+  helperLineHorizontal.value = undefined
+  helperLineVertical.value = undefined
+})
 
 function locateNode(nodeId: string) {
   const node = vueFlow.findNode(nodeId)
