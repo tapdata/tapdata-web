@@ -12,7 +12,7 @@ import { useI18n } from '@tap/i18n'
 import Time from '@tap/shared/src/time'
 import { useDark } from '@vueuse/core'
 import { debounce } from 'lodash-es'
-import { computed, onUnmounted, provide, ref } from 'vue'
+import { computed, onUnmounted, provide, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Canvas from './Canvas.vue'
 import ConsolePanel from './components/migration/ConsolePanel.vue'
@@ -43,7 +43,6 @@ const taskRecord = ref({ total: 0, items: [] as any[] })
 const timeFormat = ref('HH:mm:ss')
 const nodeDetailDialog = ref(false)
 const nodeDetailDialogId = ref('')
-const noNeedRefresh = ref(false)
 const canvasRef = ref<any>(null)
 const { t } = useI18n()
 
@@ -103,12 +102,19 @@ const lastStopTime = computed(() => {
   return stopTime ? new Date(stopTime).getTime() : null
 })
 
-const isEnterTimer = computed(() => {
-  return (
-    quotaTimeType.value !== 'custom' &&
-    !nodeDetailDialog.value &&
-    ['running', 'stopping'].includes(dataflow.value?.status)
-  )
+const TERMINAL_STATUSES = [
+  'error',
+  'schedule_failed',
+  'stop',
+  'complete',
+  'wait_start',
+]
+
+const shouldPoll = computed(() => {
+  if (quotaTimeType.value === 'custom' || nodeDetailDialog.value) {
+    return false
+  }
+  return !TERMINAL_STATUSES.includes(dataflow.value?.status)
 })
 
 const timeSelectRange = computed(() => {
@@ -466,13 +472,12 @@ function getParams() {
 }
 
 function polling() {
-  if (
-    isEnterTimer.value ||
-    (!noNeedRefresh.value &&
-      ['error', 'schedule_failed', 'stop', 'complete'].includes(
-        dataflow.value.status,
-      ) &&
-      ++extraEnterCount.value < 4)
+  if (shouldPoll.value) {
+    // 非终态（running、stopping 等）持续轮询
+    startLoadData()
+  } else if (
+    TERMINAL_STATUSES.includes(dataflow.value?.status) &&
+    ++extraEnterCount.value < 4
   ) {
     startLoadData()
   }
@@ -561,8 +566,9 @@ const startLoadData = async () => {
 
 const initMonitor = debounce(() => {
   timer.value && clearTimeout(timer.value)
+  extraEnterCount.value = 0
   startLoadData()
-}, 200)
+}, 300)
 
 function handleOpenDetail(node: any) {
   if (['mem_cache'].includes(node.type)) return
@@ -606,10 +612,22 @@ const init = async () => {
   initMonitor()
   initWS()
   pollingTimer = setTimeout(pollTaskDetail, 10000)
-  isInitialized.value = true
+  setTimeout(() => {
+    isInitialized.value = true
+  }, 300)
 }
 
 init()
+
+// 状态变化时重新加载监控数据，如 stop → running
+watch(
+  () => dataflow.value?.status,
+  () => {
+    if (isInitialized.value) {
+      initMonitor()
+    }
+  },
+)
 
 onUnmounted(() => {
   if (pollingTimer) {

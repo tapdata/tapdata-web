@@ -72,6 +72,7 @@ const dataflowStore = useDataflowStore()
 const { controlKeyText } = useDeviceSupport()
 const dag = inject('dag')
 const nodesPanelExpanded = inject<Ref<boolean>>('nodesPanelExpanded', ref(true))
+const isInitialized = inject<Ref<boolean>>('isInitialized')
 
 // Bottom bar dynamic positioning
 const RIGHT_PANEL_WIDTH = 600
@@ -727,11 +728,8 @@ function selectNodes(nodeIds: string[]) {
   )
 }
 
-let isInitialized = false
-
 function onNodesInitialized() {
-  if (isInitialized) return
-  isInitialized = true
+  if (isInitialized.value) return
   nextTick(() => {
     setTimeout(() => {
       if (dataflowStore.stateIsReadonly) {

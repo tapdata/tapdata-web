@@ -112,7 +112,11 @@ const init = async () => {
   }
 
   initWS()
-  isInitialized.value = true
+
+  setTimeout(() => {
+    isInitialized.value = true
+  }, 300)
+
   dataflowStore.taskLoading = false
   // Check route query for auto-opening materialized view
   checkMaterializedView()

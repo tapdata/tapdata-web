@@ -54,7 +54,9 @@ const init = async () => {
     await dataflowStore.fetchDataflow(taskId, taskRecordId)
     await initNodeType(dataflowStore.dataflow.syncType)
   }
-  isInitialized.value = true
+  setTimeout(() => {
+    isInitialized.value = true
+  }, 300)
 }
 
 init()
