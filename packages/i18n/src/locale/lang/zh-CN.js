@@ -666,6 +666,7 @@ export default {
   public_duckdb_target_config: '目标配置',
   public_duckdb_output_table_name: '输出表名称',
   public_duckdb_target_connection: '目标连接',
+  public_duckdb_main_table: '主表',
   public_duckdb_source_validation: '源表验证',
   public_duckdb_empty_hint: '输入 SQL 后自动解析...',
   public_duckdb_select_connection: '-- 请选择连接 --',

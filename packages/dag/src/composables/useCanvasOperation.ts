@@ -142,6 +142,10 @@ export function useCanvasOperation() {
 
   const syncProcessor = [
     {
+      name: 'SQL',
+      type: 'duckdb_sql_processor',
+    },
+    {
       name: t('packages_dag_src_editor_zhuconghebing'),
       type: 'merge_table_processor',
       hidden: !hasFeature('masterSlaveMergeProcessor'),

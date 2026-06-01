@@ -663,6 +663,7 @@ export default {
   public_duckdb_target_config: '目標設定',
   public_duckdb_output_table_name: '輸出表名稱',
   public_duckdb_target_connection: '目標連線',
+  public_duckdb_main_table: '主表',
   public_duckdb_source_validation: '來源表驗證',
   public_duckdb_empty_hint: '輸入 SQL 後自動解析...',
   public_duckdb_select_connection: '-- 請選擇連線 --',

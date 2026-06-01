@@ -675,6 +675,7 @@ export default {
   public_duckdb_target_config: 'Target Configuration',
   public_duckdb_output_table_name: 'Output Table Name',
   public_duckdb_target_connection: 'Target Connection',
+  public_duckdb_main_table: 'Main Table',
   public_duckdb_source_validation: 'Source Table Validation',
   public_duckdb_empty_hint: 'Input your SQL and click Parse...',
   public_duckdb_select_connection: '-- Select Connection --',

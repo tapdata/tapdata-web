@@ -21,6 +21,8 @@ const generating = ref(false)
 const sqlText = ref('')
 const outputTableName = ref('New_Materialized_View')
 const parsedTables = ref([])
+const tableRefs = ref([])
+const mainTableName = ref('')
 const parsing = ref(false)
 const targetConnectionId = ref('')
 const connections = ref([])
@@ -68,8 +70,9 @@ const targetConnections = computed(() => {
     }))
 })
 
-// Parse SQL to extract table names
-const extractTableNames = (sql) => {
+// Parse SQL to extract table references with optional aliases.
+// Returns [{ tableName, alias, isFrom }] in order of appearance.
+const extractTableRefs = (sql) => {
   if (!sql || !sql.trim()) return []
   const cleaned = sql
     .replaceAll(/--.*$/gm, '')
@@ -78,7 +81,7 @@ const extractTableNames = (sql) => {
     .trim()
 
   const tablePattern =
-    /\b(?:FROM|JOIN|INNER\s+JOIN|LEFT\s+(?:OUTER\s+)?JOIN|RIGHT\s+(?:OUTER\s+)?JOIN|FULL\s+(?:OUTER\s+)?JOIN|CROSS\s+JOIN|NATURAL\s+JOIN)\s+(["'`]?)(\w+)\1/gi
+    /\b(FROM|JOIN|INNER\s+JOIN|LEFT\s+(?:OUTER\s+)?JOIN|RIGHT\s+(?:OUTER\s+)?JOIN|FULL\s+(?:OUTER\s+)?JOIN|CROSS\s+JOIN|NATURAL\s+JOIN)\s+(["'`]?)(\w+)\2(?:\s+(?:AS\s+)?(["'`]?)(\w+)\4)?/gi
   const sqlKeywords = new Set([
     'select',
     'where',
@@ -89,19 +92,45 @@ const extractTableNames = (sql) => {
     'values',
     'set',
     'into',
+    'on',
+    'using',
+    'order',
+    'left',
+    'right',
+    'inner',
+    'outer',
+    'full',
+    'cross',
+    'natural',
+    'join',
+    'as',
   ])
-  const tables = new Set()
+  const refs = []
   let match
   while ((match = tablePattern.exec(cleaned)) !== null) {
-    const quoted = match[1] // quote character, empty if unquoted
-    const tableName = match[2]
-    // If the name is quoted, it's always a table name (e.g. "Order")
-    // If unquoted, skip SQL keywords
-    if (quoted || !sqlKeywords.has(tableName.toLowerCase())) {
-      tables.add(tableName)
+    const keyword = match[1]
+    const tableQuoted = match[2]
+    const tableName = match[3]
+    const aliasQuoted = match[4]
+    const aliasName = match[5]
+    // If the name is unquoted, skip SQL keywords
+    if (!tableQuoted && sqlKeywords.has(tableName.toLowerCase())) {
+      continue
     }
+    let alias = ''
+    if (
+      aliasName &&
+      (aliasQuoted || !sqlKeywords.has(aliasName.toLowerCase()))
+    ) {
+      alias = aliasName
+    }
+    refs.push({
+      tableName,
+      alias,
+      isFrom: keyword.toUpperCase() === 'FROM',
+    })
   }
-  return [...tables]
+  return refs
 }
 
 // Search which connections contain a given table name
@@ -146,14 +175,22 @@ const searchTableInConnections = async (tableName) => {
 
 // Real-time parse tables from SQL
 const parseTables = async () => {
-  const tableNames = extractTableNames(sqlText.value)
-  if (!tableNames.length) {
+  const refs = extractTableRefs(sqlText.value)
+  tableRefs.value = refs
+  if (!refs.length) {
     parsedTables.value = []
+    mainTableName.value = ''
     return
+  }
+  const uniqueNames = [...new Set(refs.map((r) => r.tableName))]
+  // Default mainTableName to first FROM match; keep existing if still valid
+  const firstFrom = refs.find((r) => r.isFrom)
+  if (!mainTableName.value || !uniqueNames.includes(mainTableName.value)) {
+    mainTableName.value = firstFrom ? firstFrom.tableName : uniqueNames[0]
   }
   parsing.value = true
   const results = await Promise.all(
-    tableNames.map(async (name) => {
+    uniqueNames.map(async (name) => {
       const matchedConnections = await searchTableInConnections(name)
       let selectedConnectionId = ''
       let status = 'not_found'
@@ -201,6 +238,11 @@ const allResolved = computed(() => {
 // Status text
 const statusReady = computed(() => {
   return allResolved.value && targetConnectionId.value && outputTableName.value
+})
+
+// Main table options for the right-side selector
+const mainTableOptions = computed(() => {
+  return parsedTables.value.map((t) => ({ label: t.name, value: t.name }))
 })
 
 // Get connection options for a table card
@@ -339,18 +381,22 @@ const handleGenerate = async () => {
       }
     })
 
+    // Build fromTables mapping (SQL alias -> source node id)
+    const sourceNodeByTable = new Map(sourceNodes.map((n) => [n.tableName, n]))
+    const fromTables = tableRefs.value.map((ref) => ({
+      preNodeId: sourceNodeByTable.get(ref.tableName)?.id,
+      tableNameInSql: /* ref.alias ||  */ ref.tableName,
+    }))
+
     // Build DuckDB processor node
     const duckDbNode = {
       id: uuid(),
       // customNodeId: '6a13981485d8acd034a94849',
-      type: 'custom_processor',
+      type: 'duckdb_sql_processor',
       name: 'SQL',
-      attrs: {
-        key: 'duckdb',
-      },
-      form: {
-        sql: sqlText.value,
-      },
+      mainTableName: mainTableName.value,
+      fromTables,
+      querySql: sqlText.value,
     }
 
     // Build target node
@@ -416,6 +462,8 @@ watch(
     } else {
       sqlText.value = ''
       parsedTables.value = []
+      tableRefs.value = []
+      mainTableName.value = ''
       outputTableName.value = 'New_Materialized_View'
       targetConnectionId.value = mdmConnectionId.value
     }
@@ -506,7 +554,7 @@ const handleClose = () => {
             </div>
             <ElInput v-model="outputTableName" size="default" />
           </div>
-          <div>
+          <div class="mb-3">
             <div
               class="text-xs mb-1"
               style="color: var(--el-text-color-regular)"
@@ -516,6 +564,28 @@ const handleClose = () => {
             <ElSelect v-model="targetConnectionId" class="w-100" size="default">
               <ElOption
                 v-for="opt in targetConnections"
+                :key="opt.value"
+                :label="opt.label"
+                :value="opt.value"
+              />
+            </ElSelect>
+          </div>
+          <div>
+            <div
+              class="text-xs mb-1"
+              style="color: var(--el-text-color-regular)"
+            >
+              {{ t('public_duckdb_main_table') }}
+            </div>
+            <ElSelect
+              v-model="mainTableName"
+              class="w-100"
+              size="default"
+              :disabled="!mainTableOptions.length"
+              :placeholder="t('public_duckdb_empty_hint')"
+            >
+              <ElOption
+                v-for="opt in mainTableOptions"
                 :key="opt.value"
                 :label="opt.label"
                 :value="opt.value"
