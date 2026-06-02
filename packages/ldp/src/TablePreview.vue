@@ -835,9 +835,9 @@ export default {
             >
               {{ $t('packages_business_publish_api') }}
             </ElButton>
-            <ElButton @click="handleDataTrace">{{
+            <!-- <ElButton @click="handleDataTrace">{{
               $t('packages_ldp_trace_flow')
-            }}</ElButton>
+            }}</ElButton> -->
             <ElDropdown
               v-if="swimType === 'mdm'"
               trigger="click"
