@@ -310,113 +310,22 @@ provide('taskReplicateLagMap', taskReplicateLagMap)
   <div id="table-lineage-graph" ref="root" class="table-lineage-graph h-100">
     <svg style="position: absolute; left: -1000px; top: 0">
       <defs>
-        <!-- Figma 标准箭头 -->
         <marker
-          id="figma-arrow"
-          viewBox="0 0 24 24"
-          refX="16"
-          refY="12"
-          markerWidth="10"
-          markerHeight="10"
-          orient="auto"
+          id="marker-arrow"
+          viewBox="-10 -10 20 20"
+          refX="0"
+          refY="0"
+          markerWidth="12.5"
+          markerHeight="12.5"
+          markerUnits="strokeWidth"
+          orient="auto-start-reverse"
         >
           <polyline
-            stroke-width="3"
-            points="7,4 17,12 7,20"
-            fill="none"
-            stroke="#b1b1b7"
             stroke-linecap="round"
             stroke-linejoin="round"
-          />
-        </marker>
-        <marker
-          id="figma-arrow-wide"
-          viewBox="0 0 24 24"
-          refX="16"
-          refY="12"
-          markerWidth="10"
-          markerHeight="10"
-          orient="auto"
-        >
-          <polyline
-            points="7,4 15,12 7,20"
             fill="none"
-            stroke="#b1b1b7"
-            stroke-width="3"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </marker>
-        <marker
-          id="figma-arrow-widest"
-          viewBox="0 0 24 24"
-          refX="17"
-          refY="12"
-          markerWidth="12"
-          markerHeight="12"
-          orient="auto"
-        >
-          <polyline
-            points="5,2 17,12 5,22"
-            fill="none"
-            stroke="#b1b1b7"
-            stroke-width="3"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </marker>
-        <marker
-          id="custom-arrow"
-          viewBox="0 0 10 16"
-          refX="9"
-          refY="8"
-          markerWidth="10"
-          markerHeight="16"
-          orient="auto"
-        >
-          <polyline
-            points="2,2 8,8 2,14"
-            fill="none"
-            stroke="#b1b1b7"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </marker>
-        <marker
-          id="custom-arrow-wide"
-          viewBox="0 0 12 18"
-          refX="10"
-          refY="9"
-          markerWidth="12"
-          markerHeight="18"
-          orient="auto"
-        >
-          <polyline
-            points="3,2 10,9 3,16"
-            fill="none"
-            stroke="#b1b1b7"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </marker>
-        <marker
-          id="custom-arrow-filled"
-          viewBox="0 0 16 16"
-          refX="14"
-          refY="8"
-          markerWidth="12"
-          markerHeight="12"
-          orient="auto"
-        >
-          <path
-            d="M12 2L4 8L12 14"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            points="-5,-4 0,0 -5,4"
+            style="stroke: context-stroke; stroke-width: 2"
           />
         </marker>
       </defs>
