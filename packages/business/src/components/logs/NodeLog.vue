@@ -197,9 +197,13 @@ const isNoMore = computed(() => {
   return page * pageSize > total
 })
 
+const isCustomTime = computed(() => {
+  return quotaTimeType.value === 'custom' || quotaTimeType.value.includes(',')
+})
+
 const isEnterTimer = computed(() => {
   return (
-    quotaTimeType.value !== 'custom' &&
+    !isCustomTime.value &&
     (props.dataflow?.status === 'running' ||
       props.dataflow?.status === 'starting')
   )
@@ -275,7 +279,7 @@ function pollingData() {
       loadNew()
     }
   }, 5000)
-  loadNew()
+  !isCustomTime.value && loadNew()
 }
 
 function changeItem(val: string) {
