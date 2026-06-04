@@ -761,6 +761,7 @@ export default {
   setting_share_cdc_persistence_rocksdb_path: 'RocksDB存儲的本地路徑',
   setting_share_cdc_persistence_rocksdb_path_doc:
     '該項配置只有模式選擇RocksDB時生效，RocksDB存儲的本地路徑',
+  setting_task_start_transform_wait_seconds: '任務啓動推演等待時長(秒)',
   setting_task_log_file_save_time: '任務日誌留存時長(天)',
   setting_task_log_file_save_size: '任務日誌留存大小(MB)',
   setting_task_log_file_save_count: '任務日誌留存份數',
