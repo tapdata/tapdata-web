@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { fetchClusterStates } from '@tap/api/src/core/cluster'
 import {
   cancelTaskRebalance,
   cancelTaskRebalanceJob,
@@ -7,12 +8,14 @@ import {
   type JobStatus,
   type TaskRebalanceVo,
 } from '@tap/api/src/core/task-rebalance'
+import { fetchWorkers } from '@tap/api/src/core/workers'
 import { useRequest } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { dayjs } from '@tap/business/src/shared'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import { computed, onUnmounted, ref, watch } from 'vue'
+import TaskRebalanceDrawer from '../cluster/TaskRebalanceDrawer.vue'
 
 const { t } = useI18n()
 
@@ -22,6 +25,91 @@ const selectedId = ref<string | null>(null)
 const statusFilter = ref<JobCategory | null>(null)
 const cancellingAll = ref(false)
 const cancellingJobId = ref<string | null>(null)
+const showRebalanceDrawer = ref(false)
+
+// ── Agent data ────────────────────────────────────────────────────────────────
+// Two separate requests:
+//   1. clusterStates  — fetched once; gives us node identity (id, name, online).
+//   2. workerMetrics  — polled every 5 s; gives us live CPU / Mem ratios.
+//
+// Splitting them avoids re-fetching the whole cluster list on every metric tick.
+
+/** Convert raw 0-1 ratio from Workers API → percentage number (0-100) */
+function toPercent(val?: number | string | null): number {
+  if (val == null) return 0
+  const n = Number(val) * 100
+  return Number.isNaN(n) ? 0 : Math.min(100, Math.max(0, Number(n.toFixed(2))))
+}
+
+// 1. Node list — runs once on mount, no polling needed.
+const { data: clusterStates } = useRequest(
+  () => fetchClusterStates({ limit: 200 }),
+  { initialData: null },
+)
+
+/** Process IDs derived from the cluster list — used by the metrics poller. */
+const processIds = computed<string[]>(() =>
+  ((clusterStates.value as any)?.items || [])
+    .map((it: any) => it?.systemInfo?.process_id)
+    .filter(Boolean),
+)
+
+// 2. Metric values — polled every 5 s independently of the node list.
+type MetricMap = Record<string, { cpuUsage: number; memUsage: number }>
+const emptyMetricMap: MetricMap = {}
+
+const { data: workerMetrics } = useRequest(
+  async (): Promise<MetricMap> => {
+    const ids = processIds.value
+    if (!ids.length) return emptyMetricMap
+    const res = await fetchWorkers({
+      where: { process_id: { inq: ids }, worker_type: 'connector' },
+    })
+    const map: MetricMap = {}
+    for (const w of res?.items || []) {
+      if (w.process_id && w.metricValues) {
+        map[w.process_id] = {
+          cpuUsage: toPercent(w.metricValues.CpuUsage),
+          memUsage: toPercent(w.metricValues.HeapMemoryUsage),
+        }
+      }
+    }
+    return map
+  },
+  { initialData: emptyMetricMap, pollingInterval: 10000 },
+)
+
+/** Merged agent list: identity from clusterStates, metrics from workerMetrics. */
+const rebalanceAgents = computed(() =>
+  ((clusterStates.value as any)?.items || []).map((item: any) => {
+    const pid: string = item.systemInfo?.process_id
+    const metrics = (pid && workerMetrics.value?.[pid]) || {
+      cpuUsage: 0,
+      memUsage: 0,
+    }
+    return {
+      agentId: pid,
+      name: item.agentName || item.systemInfo?.hostname || pid || '',
+      online: item.status === 'running',
+      cpuUsage: metrics.cpuUsage,
+      memUsage: metrics.memUsage,
+    }
+  }),
+)
+
+/** agentId → display name, for the jobs table */
+const agentNameMap = computed<Map<string, string>>(() => {
+  const m = new Map<string, string>()
+  for (const a of rebalanceAgents.value) {
+    if (a.agentId) m.set(a.agentId, a.name)
+  }
+  return m
+})
+
+function agentName(id?: string | null): string {
+  if (!id) return '-'
+  return agentNameMap.value.get(id) || id
+}
 
 const JOB_CATEGORY_MAP: Record<JobStatus, JobCategory> = {
   OK: 'success',
@@ -163,7 +251,6 @@ function getRecordStatus(record: TaskRebalanceVo): RecordStatus {
       key: 'running',
       label: 'daas_task_rebalance_history_record_running',
       type: 'primary',
-      icon: IconLucideFileText,
     }
   }
   if (record.status === 'FAILED') {
@@ -299,6 +386,11 @@ onUnmounted(stopDetailPolling)
       <span class="fs-5 font-color-dark lh-8">{{
         t('daas_task_rebalance_history_title')
       }}</span>
+    </template>
+    <template #actions>
+      <el-button type="primary" @click="showRebalanceDrawer = true">
+        {{ $t('daas_task_rebalance_button') }}
+      </el-button>
     </template>
 
     <div class="flex w-100 h-100 gap-4">
@@ -451,16 +543,22 @@ onUnmounted(stopDetailPolling)
                   />
                   <el-table-column
                     :label="t('daas_task_rebalance_history_col_source')"
-                    prop="sourceAgentId"
                     min-width="140"
                     show-overflow-tooltip
-                  />
+                  >
+                    <template #default="{ row }">{{
+                      agentName(row.sourceAgentId)
+                    }}</template>
+                  </el-table-column>
                   <el-table-column
                     :label="t('daas_task_rebalance_history_col_target')"
-                    prop="targetAgentId"
                     min-width="140"
                     show-overflow-tooltip
-                  />
+                  >
+                    <template #default="{ row }">{{
+                      agentName(row.targetAgentId)
+                    }}</template>
+                  </el-table-column>
                   <el-table-column
                     :label="t('daas_task_rebalance_history_col_status')"
                     width="120"
@@ -499,7 +597,7 @@ onUnmounted(stopDetailPolling)
                   </el-table-column>
                   <el-table-column
                     :label="t('daas_task_rebalance_history_col_action')"
-                    width="90"
+                    width="100"
                     align="right"
                   >
                     <template #default="{ row }">
@@ -527,6 +625,11 @@ onUnmounted(stopDetailPolling)
         </div>
       </div>
     </div>
+
+    <TaskRebalanceDrawer
+      v-model="showRebalanceDrawer"
+      :agents="rebalanceAgents"
+    />
   </PageContainer>
 </template>
 

@@ -274,6 +274,9 @@ const init = async () => {
   await getDataApi(true)
   await loadTags()
   handleFilterAgent()
+  // Start polling usage rates independently so CPU/Mem stay fresh
+  // without re-fetching the full cluster list every time.
+  timer.value = setInterval(refreshUsageRate, 10000) as unknown as null
 }
 
 const submitForm = async () => {
@@ -444,6 +447,45 @@ const getUsageRate = (processId: string[]) => {
       worker_type: 'connector',
     },
   })
+}
+
+/**
+ * Poll only the metric values (CPU / Mem) and patch them onto the existing
+ * waterfallData items so the rest of the page state is not disturbed.
+ */
+const refreshUsageRate = async () => {
+  const data = waterfallData.value as any[]
+  if (!data.length) return
+  const processIds = data
+    .map((it) => it?.systemInfo?.process_id)
+    .filter(Boolean)
+  if (!processIds.length) return
+
+  try {
+    const workerResponse = await getUsageRate(processIds)
+    const metricValuesData: Record<
+      string,
+      { CpuUsage: string; HeapMemoryUsage: string }
+    > = {}
+    for (const w of workerResponse?.items || []) {
+      if (w.process_id && w.metricValues) {
+        metricValuesData[w.process_id] = {
+          CpuUsage: `${(Number(w.metricValues.CpuUsage) * 100).toFixed(2)}%`,
+          HeapMemoryUsage: `${(Number(w.metricValues.HeapMemoryUsage) * 100).toFixed(2)}%`,
+        }
+      }
+    }
+    for (const item of data) {
+      const pid = item.systemInfo?.process_id
+      if (item?.engine?.status === 'running' && pid && metricValuesData[pid]) {
+        item.metricValues = metricValuesData[pid]
+      }
+    }
+    // Re-assign to trigger Vue reactivity on nested metricValues changes
+    waterfallData.value = [...data] as never[]
+  } catch {
+    // ignore refresh errors silently
+  }
 }
 
 const getAllBindWorker = async () => {
