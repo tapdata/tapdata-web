@@ -35,11 +35,20 @@ import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import { downloadJson } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
-import { nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import {
+  computed,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  reactive,
+  ref,
+  watch,
+} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import SetTag from '@/views/cluster/SetTag.vue'
 import AddServe from './AddServe.vue'
 import { STATUS_MAP } from './const'
+import TaskRebalanceDrawer from './TaskRebalanceDrawer.vue'
 import UpdateLicense from './UpdateLicense.vue'
 
 const { t } = useI18n()
@@ -169,6 +178,7 @@ const filterItems = ref([
 ])
 const bindWorkerMap = ref({})
 const viewType = ref('cluster')
+const showRebalanceDrawer = ref(false)
 const netStatDialog = reactive<NetStatDialog>({
   visible: false,
   data: [],
@@ -629,6 +639,24 @@ const editNameRest = () => {
 const getStatus = (type: string) => {
   return STATUS_MAP[type] || '-'
 }
+
+const parseUsage = (val?: string) => {
+  if (!val || val === '-') return 0
+  const num = Number.parseFloat(val)
+  return Number.isNaN(num)
+    ? 0
+    : Math.min(100, Math.max(0, Number(num.toFixed(2))))
+}
+
+const rebalanceAgents = computed(() =>
+  (waterfallData.value as any[]).map((item) => ({
+    agentId: item.systemInfo?.process_id,
+    name: item.agentName || item.systemInfo?.hostname,
+    online: item.status === 'running',
+    cpuUsage: parseUsage(item.metricValues?.CpuUsage),
+    memUsage: parseUsage(item.metricValues?.HeapMemoryUsage),
+  })),
+)
 
 const navigateToTaskList = (item: any, syncType: 'migrate' | 'sync') => {
   const processId = item.systemInfo?.process_id
@@ -1133,11 +1161,16 @@ const onUpdateLicenseSuccess = () => {
     <section class="clusterManagement-container">
       <div class="section-wrap-box">
         <div v-if="viewType !== 'logMining'" class="search-bar mb-4">
-          <FilterBar
-            v-model:value="searchParams"
-            :items="filterItems"
-            @fetch="getDataApi()"
-          />
+          <div class="flex align-center justify-content-between">
+            <FilterBar
+              v-model:value="searchParams"
+              :items="filterItems"
+              @fetch="getDataApi()"
+            />
+            <el-button type="primary" @click="showRebalanceDrawer = true">
+              {{ $t('daas_task_rebalance_button') }}
+            </el-button>
+          </div>
         </div>
       </div>
 
@@ -2292,6 +2325,11 @@ const onUpdateLicenseSuccess = () => {
       v-model="updateLicenseDialog.visible"
       :service-id="updateLicenseDialog.serviceId"
       @success="onUpdateLicenseSuccess"
+    />
+
+    <TaskRebalanceDrawer
+      v-model="showRebalanceDrawer"
+      :agents="rebalanceAgents"
     />
   </PageContainer>
 </template>

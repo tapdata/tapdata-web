@@ -1,0 +1,571 @@
+<script setup lang="ts">
+import {
+  cancelTaskRebalance,
+  cancelTaskRebalanceJob,
+  fetchTaskRebalances,
+  getTaskRebalanceDetail,
+  type JobStatus,
+  type TaskRebalanceVo,
+} from '@tap/api/src/core/task-rebalance'
+import { useRequest } from '@tap/api/src/request'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import { dayjs } from '@tap/business/src/shared'
+import { Modal } from '@tap/component/src/modal'
+import { useI18n } from '@tap/i18n'
+import { computed, onUnmounted, ref, watch } from 'vue'
+
+const { t } = useI18n()
+
+type JobCategory = 'running' | 'pending' | 'failed' | 'skipped' | 'success'
+
+const selectedId = ref<string | null>(null)
+const statusFilter = ref<JobCategory | null>(null)
+const cancellingAll = ref(false)
+const cancellingJobId = ref<string | null>(null)
+
+const JOB_CATEGORY_MAP: Record<JobStatus, JobCategory> = {
+  OK: 'success',
+  PENDING: 'pending',
+  STARTING: 'running',
+  STOPPING: 'running',
+  CANCELLED: 'skipped',
+  INVALID_AGENT: 'failed',
+  STATUS_ERROR: 'failed',
+  STOP_TIMEOUT: 'failed',
+  START_TIMEOUT: 'failed',
+  FAILED: 'failed',
+}
+
+const CATEGORY_ORDER: Record<JobCategory, number> = {
+  running: 0,
+  pending: 1,
+  failed: 2,
+  skipped: 3,
+  success: 4,
+}
+
+const CATEGORY_LABEL: Record<JobCategory, string> = {
+  success: 'daas_task_rebalance_history_stat_success',
+  failed: 'daas_task_rebalance_history_stat_failed',
+  skipped: 'daas_task_rebalance_history_stat_skipped',
+  running: 'daas_task_rebalance_history_stat_running',
+  pending: 'daas_task_rebalance_history_stat_pending',
+}
+
+const CATEGORY_ICON = {
+  running: IconLucideLoaderCircle,
+  pending: IconLucideClock,
+  success: IconLucideCircleCheck,
+  skipped: IconLucideTriangleAlert,
+  failed: IconLucideCircleX,
+}
+
+const STAT_ITEMS: JobCategory[] = [
+  'success',
+  'failed',
+  'skipped',
+  'running',
+  'pending',
+]
+
+const { data: records, loading: listLoading } = useRequest(
+  async () => {
+    const res = await fetchTaskRebalances({
+      order: 'createTime DESC',
+      limit: 100,
+    })
+    const items = res.items || []
+    const first = items[0]
+    if (!selectedId.value && first) {
+      selectedId.value = first.id
+    }
+    return items
+  },
+  { initialData: [], pollingInterval: 10000 },
+)
+
+const {
+  data: detail,
+  loading: detailLoading,
+  run: runFetchDetail,
+  runAsync: runFetchDetailAsync,
+} = useRequest(
+  async () => {
+    if (!selectedId.value) return null
+    return await getTaskRebalanceDetail(selectedId.value)
+  },
+  { manual: true, initialData: null },
+)
+
+const rebalance = computed(() => detail.value?.rebalance || null)
+
+const jobs = computed(() =>
+  (detail.value?.jobs || []).map((job) => ({
+    ...job,
+    category: JOB_CATEGORY_MAP[job.status] || ('pending' as JobCategory),
+  })),
+)
+
+const stats = computed(() => {
+  const r = rebalance.value
+  return {
+    success: r?.okCount || 0,
+    failed: r?.failedCount || 0,
+    skipped: r?.cancelledCount || 0,
+    running: (r?.startingCount || 0) + (r?.stoppingCount || 0),
+    pending: r?.pendingCount || 0,
+  }
+})
+
+const progress = computed(() => {
+  const r = rebalance.value
+  if (!r || !r.totalCount) return 0
+  const finished =
+    (r.okCount || 0) + (r.failedCount || 0) + (r.cancelledCount || 0)
+  return Math.round((finished / r.totalCount) * 100)
+})
+
+const filteredJobs = computed(() => {
+  const list = statusFilter.value
+    ? jobs.value.filter((j) => j.category === statusFilter.value)
+    : [...jobs.value]
+  return list.sort(
+    (a, b) => CATEGORY_ORDER[a.category] - CATEGORY_ORDER[b.category],
+  )
+})
+
+function formatTime(time?: string | null) {
+  return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+}
+
+function formatDuration(start?: string | null, end?: string | null): string {
+  if (!start) return '-'
+  // end 为 null/undefined 时取当前时间（运行中场景）
+  const totalSeconds = dayjs(end ?? undefined).diff(dayjs(start), 'second')
+  if (totalSeconds < 0) return '-'
+  if (totalSeconds < 60) return `${totalSeconds}s`
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+  if (minutes < 60) return `${minutes}m ${seconds}s`
+  const hours = Math.floor(minutes / 60)
+  return `${hours}h ${minutes % 60}m`
+}
+
+interface RecordStatus {
+  key: 'running' | 'done' | 'partial' | 'cancelled' | 'failed'
+  label: string
+  type: 'primary' | 'success' | 'warning' | 'info' | 'danger'
+}
+
+function getRecordStatus(record: TaskRebalanceVo): RecordStatus {
+  if (record.status === 'RUNNING') {
+    return {
+      key: 'running',
+      label: 'daas_task_rebalance_history_record_running',
+      type: 'primary',
+      icon: IconLucideFileText,
+    }
+  }
+  if (record.status === 'FAILED') {
+    return {
+      key: 'failed',
+      label: 'daas_task_rebalance_history_record_failed',
+      type: 'danger',
+    }
+  }
+  if (record.failedCount > 0) {
+    return {
+      key: 'partial',
+      label: 'daas_task_rebalance_history_record_partial',
+      type: 'warning',
+    }
+  }
+  if (record.cancelledCount > 0 && record.okCount === 0) {
+    return {
+      key: 'cancelled',
+      label: 'daas_task_rebalance_history_record_cancelled',
+      type: 'info',
+    }
+  }
+  return {
+    key: 'done',
+    label: 'daas_task_rebalance_history_record_done',
+    type: 'success',
+  }
+}
+
+const CATEGORY_TAG_TYPE: Record<
+  JobCategory,
+  'primary' | 'success' | 'warning' | 'info' | 'danger'
+> = {
+  success: 'success',
+  failed: 'danger',
+  skipped: 'info',
+  running: 'primary',
+  pending: 'warning',
+}
+
+const pendingCount = computed(
+  () => jobs.value.filter((j) => j.category === 'pending').length,
+)
+
+function handleSelect(id: string) {
+  if (id === selectedId.value) return
+  selectedId.value = id
+}
+
+function toggleFilter(category: JobCategory) {
+  statusFilter.value = statusFilter.value === category ? null : category
+}
+
+async function handleCancelJob(taskId: string) {
+  if (!selectedId.value) return
+  cancellingJobId.value = taskId
+  try {
+    await cancelTaskRebalanceJob(selectedId.value, taskId)
+    ElMessage.success(t('daas_task_rebalance_history_cancel_success'))
+    await runFetchDetailAsync()
+  } finally {
+    cancellingJobId.value = null
+  }
+}
+
+async function handleCancelAll() {
+  if (!selectedId.value || !pendingCount.value) return
+  const ok = await Modal.confirm(
+    t('daas_task_rebalance_history_cancel_remaining'),
+    t('daas_task_rebalance_history_cancel_remaining_confirm', {
+      count: pendingCount.value,
+    }),
+  )
+  if (!ok) return
+  cancellingAll.value = true
+  const count = pendingCount.value
+  try {
+    await cancelTaskRebalance(selectedId.value)
+    ElMessage.success(
+      t('daas_task_rebalance_history_cancel_remaining_success', { count }),
+    )
+    await runFetchDetailAsync()
+  } finally {
+    cancellingAll.value = false
+  }
+}
+
+let detailTimer: ReturnType<typeof setInterval> | null = null
+
+function stopDetailPolling() {
+  if (detailTimer) {
+    clearInterval(detailTimer)
+    detailTimer = null
+  }
+}
+
+function startDetailPolling() {
+  stopDetailPolling()
+  detailTimer = setInterval(() => {
+    if (rebalance.value?.status === 'RUNNING' && selectedId.value) {
+      runFetchDetail()
+    } else {
+      stopDetailPolling()
+    }
+  }, 3000)
+}
+
+watch(selectedId, (id) => {
+  statusFilter.value = null
+  if (id) {
+    runFetchDetail()
+  }
+})
+
+watch(
+  () => rebalance.value?.status,
+  (status) => {
+    if (status === 'RUNNING') {
+      startDetailPolling()
+    } else {
+      stopDetailPolling()
+    }
+  },
+)
+
+onUnmounted(stopDetailPolling)
+</script>
+
+<template>
+  <PageContainer>
+    <template #title>
+      <span class="fs-5 font-color-dark lh-8">{{
+        t('daas_task_rebalance_history_title')
+      }}</span>
+    </template>
+
+    <div class="flex w-100 h-100 gap-4">
+      <div
+        class="bg-light dark:bg-white/5 rounded-xl flex flex-column h-100"
+        style="width: 280px"
+      >
+        <div class="px-4 py-2 fs-6 lh-8">
+          {{ t('daas_task_rebalance_history_list_title') }}
+        </div>
+        <el-scrollbar
+          v-loading="listLoading && !records?.length"
+          class="flex-1 min-h-0"
+          wrap-class="p-2 pt-0"
+        >
+          <div
+            v-if="!records?.length"
+            class="text-center py-8 text-disabled flex flex-column align-center gap-1"
+          >
+            <el-icon size="24" class="mb-1">
+              <i-lucide-inbox />
+            </el-icon>
+            <div>{{ t('daas_task_rebalance_history_empty') }}</div>
+            <div class="fs-8">
+              {{ t('daas_task_rebalance_history_empty_desc') }}
+            </div>
+          </div>
+          <div v-else class="flex flex-column gap-1">
+            <div
+              v-for="record in records"
+              :key="record.id"
+              class="list-item-hover rounded-lg p-2 flex flex-column gap-1 cursor-pointer font-color-light"
+              :class="{
+                'bg-card shadow-sm font-color-dark': record.id === selectedId,
+              }"
+              @click="handleSelect(record.id)"
+            >
+              <div class="flex align-center gap-2">
+                <!-- <span class="ellipsis lh-6 flex-1">{{ record.name }}</span> -->
+                <span class="ellipsis lh-6 flex-1">{{
+                  formatTime(record.createTime)
+                }}</span>
+                <el-tag
+                  size="small"
+                  :type="getRecordStatus(record).type"
+                  disable-transitions
+                >
+                  {{ t(getRecordStatus(record).label) }}
+                </el-tag>
+              </div>
+              <div class="flex align-center gap-2 text-caption fs-8">
+                <span>{{
+                  t('daas_task_rebalance_history_task_total', {
+                    count: record.totalCount,
+                  })
+                }}</span>
+                <el-divider direction="vertical" class="mx-0" />
+                <span class="flex align-center gap-1">
+                  <el-icon
+                    v-if="record.status === 'RUNNING'"
+                    class="is-loading"
+                  >
+                    <i-lucide-loader-circle />
+                  </el-icon>
+                  <template v-else>
+                    <el-icon>
+                      <i-lucide-clock />
+                    </el-icon>
+                    {{ formatDuration(record.createTime, record.finishAt) }}
+                  </template>
+                </span>
+              </div>
+            </div>
+          </div>
+        </el-scrollbar>
+      </div>
+
+      <div class="flex-1 flex flex-column gap-4 min-w-0">
+        <template v-if="rebalance">
+          <div
+            class="bg-light dark:bg-white/5 rounded-xl p-4 flex flex-column gap-4"
+          >
+            <div class="flex align-center gap-2">
+              <span class="fs-6 fw-sub flex-1 ellipsis">{{
+                t('daas_task_rebalance_history_progress')
+              }}</span>
+              <el-button
+                v-if="pendingCount"
+                type="danger"
+                plain
+                :loading="cancellingAll"
+                @click="handleCancelAll"
+              >
+                {{ t('daas_task_rebalance_history_cancel_remaining') }}
+              </el-button>
+            </div>
+            <div>
+              <el-progress
+                :stroke-width="8"
+                :percentage="progress"
+                :status="
+                  rebalance.status === 'FAILED'
+                    ? 'exception'
+                    : progress === 100
+                      ? 'success'
+                      : ''
+                "
+              />
+            </div>
+
+            <div class="flex gap-3">
+              <div
+                v-for="item in STAT_ITEMS"
+                :key="item"
+                class="stat-card flex-1 rounded-lg p-3 cursor-pointer"
+                :class="[
+                  `stat-${item}`,
+                  { 'is-active': statusFilter === item },
+                ]"
+                @click="toggleFilter(item)"
+              >
+                <div class="fs-5 fw-sub">{{ stats[item] }}</div>
+                <div class="text-caption flex align-center gap-1">
+                  <span class="stat-dot mr-1" :class="`stat-dot-${item}`" />
+                  {{ t(CATEGORY_LABEL[item]) }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-light dark:bg-white/5 rounded-xl min-h-0 flex-1 flex flex-column"
+          >
+            <div class="p-2 flex-1 min-h-0">
+              <div
+                class="bg-card rounded-xl p-2 h-100"
+                style="border: 1px solid #f2f4f7"
+              >
+                <el-table
+                  v-loading="detailLoading && !jobs.length"
+                  :data="filteredJobs"
+                  height="100%"
+                  class="w-100"
+                >
+                  <el-table-column
+                    :label="t('daas_task_rebalance_history_col_task')"
+                    prop="taskName"
+                    min-width="180"
+                    show-overflow-tooltip
+                  />
+                  <el-table-column
+                    :label="t('daas_task_rebalance_history_col_source')"
+                    prop="sourceAgentId"
+                    min-width="140"
+                    show-overflow-tooltip
+                  />
+                  <el-table-column
+                    :label="t('daas_task_rebalance_history_col_target')"
+                    prop="targetAgentId"
+                    min-width="140"
+                    show-overflow-tooltip
+                  />
+                  <el-table-column
+                    :label="t('daas_task_rebalance_history_col_status')"
+                    width="120"
+                  >
+                    <template #default="{ row }">
+                      <el-tag
+                        size="small"
+                        :type="CATEGORY_TAG_TYPE[row.category as JobCategory]"
+                        disable-transitions
+                        effect="plain"
+                      >
+                        <div class="flex align-center gap-1">
+                          <el-icon
+                            :class="{
+                              'is-loading': row.category === 'running',
+                            }"
+                          >
+                            <component
+                              :is="CATEGORY_ICON[row.category as JobCategory]"
+                            />
+                          </el-icon>
+                          {{ t(CATEGORY_LABEL[row.category as JobCategory]) }}
+                        </div>
+                      </el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    :label="t('daas_task_rebalance_history_col_error')"
+                    prop="errorMesg"
+                    min-width="160"
+                    show-overflow-tooltip
+                  >
+                    <template #default="{ row }">{{
+                      row.errorMesg || '-'
+                    }}</template>
+                  </el-table-column>
+                  <el-table-column
+                    :label="t('daas_task_rebalance_history_col_action')"
+                    width="90"
+                    align="right"
+                  >
+                    <template #default="{ row }">
+                      <el-button
+                        v-if="row.category === 'pending'"
+                        text
+                        type="danger"
+                        :loading="cancellingJobId === row.taskId"
+                        @click="handleCancelJob(row.taskId)"
+                      >
+                        {{ t('daas_task_rebalance_history_cancel') }}
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+            </div>
+          </div>
+        </template>
+        <div
+          v-else
+          class="flex-1 flex align-center justify-center text-disabled bg-light dark:bg-white/5 rounded-xl"
+        >
+          {{ t('daas_task_rebalance_history_detail_empty') }}
+        </div>
+      </div>
+    </div>
+  </PageContainer>
+</template>
+
+<style lang="scss" scoped>
+.stat-card {
+  border: 1px solid var(--el-border-color-lighter);
+  background-color: var(--el-bg-color);
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: var(--el-color-primary-light-5);
+  }
+
+  &.is-active {
+    border-color: var(--el-color-primary);
+    box-shadow: 0 0 0 1px var(--el-color-primary);
+  }
+}
+
+.stat-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+
+  &-success {
+    background-color: var(--el-color-success);
+  }
+  &-failed {
+    background-color: var(--el-color-danger);
+  }
+  &-skipped {
+    background-color: var(--el-color-info);
+  }
+  &-running {
+    background-color: var(--el-color-primary);
+  }
+  &-pending {
+    background-color: var(--el-color-warning);
+  }
+}
+</style>
