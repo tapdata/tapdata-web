@@ -270,6 +270,8 @@ watch(visible, (val) => {
     :show-close="false"
     modal-class="bg-transparent"
     class="task-rebalance-drawer"
+    :destroy-on-close="true"
+    :close-on-press-escape="false"
   >
     <div class="rb-wrap flex flex-column h-100 bg-white">
       <header

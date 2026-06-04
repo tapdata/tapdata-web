@@ -54,11 +54,11 @@ const processIds = computed<string[]>(() =>
     .filter(Boolean),
 )
 
-// 2. Metric values — polled every 5 s independently of the node list.
+// 2. Metric values — polled every 10 s independently of the node list.
 type MetricMap = Record<string, { cpuUsage: number; memUsage: number }>
 const emptyMetricMap: MetricMap = {}
 
-const { data: workerMetrics } = useRequest(
+const { data: workerMetrics, run: runWorkerMetrics } = useRequest(
   async (): Promise<MetricMap> => {
     const ids = processIds.value
     if (!ids.length) return emptyMetricMap
@@ -78,6 +78,15 @@ const { data: workerMetrics } = useRequest(
   },
   { initialData: emptyMetricMap, pollingInterval: 10000 },
 )
+
+// Kick off an immediate metrics fetch as soon as clusterStates resolves and
+// process IDs are available — without waiting for the first polling tick.
+const stopMetricsWatch = watch(processIds, (ids) => {
+  if (ids.length) {
+    runWorkerMetrics()
+    stopMetricsWatch()
+  }
+})
 
 /** Merged agent list: identity from clusterStates, metrics from workerMetrics. */
 const rebalanceAgents = computed(() =>
