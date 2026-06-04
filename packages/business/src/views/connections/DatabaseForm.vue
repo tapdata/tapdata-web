@@ -11,6 +11,7 @@ import { fetchDatabaseTypeByPdkHash } from '@tap/api/src/core/database-types'
 import {
   fetchExternalStorageList,
   getExternalStorage,
+  getSharedCdcEnable,
 } from '@tap/api/src/core/external-storage'
 import {
   commandProxy,
@@ -426,6 +427,18 @@ export default {
           (t) => t.id === 'stream_read_function',
         )
       ) {
+        !this.id &&
+          getSharedCdcEnable()
+            .then((sharedCdc) => {
+              if (sharedCdc?.enabled) {
+                this.schemaFormInstance.setValuesIn(
+                  '__TAPDATA.shareCdcEnable',
+                  true,
+                )
+              }
+            })
+            .catch(() => null)
+
         Object.assign(endProperties, {
           shareCdcEnable: {
             type: 'boolean',
@@ -1795,7 +1808,7 @@ export default {
         <div class="flex-1 overflow-x-hidden bg-white rounded-xl">
           <ConnectorDoc
             :pdk-hash="$route.query.pdkHash"
-            :pdk-id="$route.query.pdkId"
+            :pdk-id="$route.query.pdkId || pdkOptions.pdkId"
           />
         </div>
       </div>

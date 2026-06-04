@@ -79,6 +79,18 @@ export const FieldModType = observer(
             value: 'Long',
           },
           {
+            label: 'Integer',
+            value: 'Integer',
+          },
+          {
+            label: 'Boolean',
+            value: 'Boolean',
+          },
+          {
+            label: 'Binary',
+            value: 'Binary',
+          },
+          {
             label: 'Map',
             value: 'Map',
           },

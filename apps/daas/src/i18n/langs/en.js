@@ -809,6 +809,7 @@ export default {
     'The local path to the RocksDB store',
   setting_share_cdc_persistence_rocksdb_path_doc:
     'This configuration takes effect only when RocksDB is selected as the mode, and the local path stored by RocksDB',
+  setting_task_start_transform_wait_seconds: 'Task start transform wait time (seconds)',
   setting_task_log_file_save_time: 'Task log retention time (days)',
   setting_task_log_file_save_size: 'Task log retention size (MB)',
   setting_task_log_file_save_count: 'Task log retention total count',
