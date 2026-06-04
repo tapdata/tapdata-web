@@ -664,4 +664,5 @@ export default {
   public_last_capture_time: 'Last Capture Time',
   public_alarm_date: 'Alarm Time',
   public_duration: 'Duration',
+  packages_dag_validate_shared_cdc_title: 'The following connections have not enabled Shared Mining. Running the task will cause errors.',
 }

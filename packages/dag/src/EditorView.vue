@@ -115,7 +115,7 @@ const init = async () => {
   }
 
   initWS()
-
+  isInitialized.value = true
   dataflowStore.taskLoading = false
   // Check route query for auto-opening materialized view
   checkMaterializedView()
@@ -498,7 +498,6 @@ provide('isSaving', isSaving)
 provide('previewData', previewData)
 provide('previewLoading', previewLoading)
 provide('handlePreview', handlePreview)
-provide('isInitialized', isInitialized)
 provide('needsFitView', needsFitView)
 provide('isSyncTask', isSyncTask)
 </script>

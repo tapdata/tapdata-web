@@ -2,6 +2,7 @@ import { observable } from '@formily/reactive'
 import { fetchCustomNodes } from '@tap/api/src/core/custom-node'
 import { getDataActions } from '@tap/api/src/core/data-permission'
 import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
+import { getSharedCdcEnable } from '@tap/api/src/core/external-storage'
 import {
   createTask,
   fetchTasks,
@@ -287,6 +288,11 @@ export const useDataflowStore = defineStore('dataflow', () => {
     const name = await makeTaskName(`${t('public_task')} `)
     dataflow.name = name
     dataflow.syncType = syncType
+
+    const sharedCdc = await getSharedCdcEnable().catch(() => null)
+    if (sharedCdc?.enabled) {
+      dataflow.shareCdcEnable = true
+    }
 
     const data = await createTask({
       ...dataflow,
