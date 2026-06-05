@@ -1,4 +1,5 @@
-<script>
+<script setup lang="ts">
+import { fetchClusterStates } from '@tap/api/src/core/cluster'
 import {
   checkLogcollector,
   fetchLogcollector,
@@ -14,393 +15,387 @@ import {
   forceStopTask,
   taskConsoleRelations,
 } from '@tap/api/src/core/task'
+import { requestClient } from '@tap/api/src/request'
 import { VTable } from '@tap/component/src/base/v-table'
 import { FilterBar } from '@tap/component/src/filter-bar'
-import i18n from '@tap/i18n'
+import { useI18n } from '@tap/i18n'
 import { calcTimeUnit, openUrl } from '@tap/shared'
 import dayjs from 'dayjs'
-import { escapeRegExp } from 'lodash-es'
-
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { escapeRegExp, uniqBy } from 'lodash-es'
+import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
 import TaskStatus from '../../components/TaskStatus.vue'
 import { makeStatusAndDisabled } from '../../shared'
 import Editor from './Editor.vue'
 
-export default {
-  components: {
-    PageContainer,
-    TablePage,
-    FilterBar,
-    TaskStatus,
-    Editor,
-    VTable,
-  },
-  inject: ['buried'],
-  data() {
-    return {
-      searchParams: {
-        taskName: '',
-        connectionName: '',
-      },
-      filterItems: [
-        {
-          placeholder: this.$t(
-            'packages_business_shared_cdc_placeholder_task_name',
-          ),
-          key: 'taskName',
-          type: 'input',
-          width: 220,
-        },
-        {
-          placeholder: this.$t(
-            'packages_business_shared_cdc_placeholder_connection_name',
-          ),
-          key: 'connectionName',
-          type: 'input',
-        },
-      ],
-      order: 'createTime DESC',
-      list: null,
-      settingDialogVisible: false,
-      loadingConfig: false,
-      digSettingForm: {
-        persistenceMode: 'Mem', // 存储模式
-        persistenceMongodb_uri_db: '', // mongodb uri
-        persistenceMongodb_collection: '', // mongodb tablename
-        persistenceRocksdb_path: '', // rocksdb路径
-        share_cdc_ttl_day: 3,
-      },
-      enumsItems: ['Mem', 'MongoDB', 'RocksDB'],
-      logSaveList: [1, 2, 3, 4, 5, 6, 7],
-      showEditSettingBtn: false, //禁用
-      rules: {
-        persistenceMongodb_uri_db: [
-          {
-            required: true,
-            message: this.$t(
-              'packages_business_shared_cdc_setting_select_mongodb_tip',
-            ),
-            trigger: 'blur',
-          },
-        ],
-        persistenceMongodb_collection: [
-          {
-            required: true,
-            message: this.$t(
-              'packages_business_shared_cdc_setting_select_table_tip',
-            ),
-            trigger: 'blur',
-          },
-        ],
-      },
-      taskBuried: {
-        start: 'sharedMiningStart',
-      },
-      showUsingTaskDialog: {
-        visible: false,
-        list: [],
-      },
-      taskColumns: [
-        {
-          label: i18n.t('public_task_name'),
-          prop: 'name',
-          slotName: 'name',
-        },
-      ],
-    }
-  },
-  computed: {
-    table() {
-      return this.$refs.table
-    },
+const { t } = useI18n()
+const route = useRoute()
+const router = useRouter()
+const buried =
+  inject<(name: string, extra?: string, params?: object) => void>('buried')
+const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 
-    systemTimeZone() {
-      const timeZone = new Date().getTimezoneOffset() / 60
-      let systemTimeZone = ''
-      if (timeZone > 0) {
-        systemTimeZone = 0 - timeZone
-      } else {
-        systemTimeZone = `+${-timeZone}`
-      }
-      return systemTimeZone
-    },
-  },
-  watch: {
-    '$route.query': function () {
-      this.table.fetch(1)
-    },
-  },
-  mounted() {
-    //定时轮询
-    this.timeout = setInterval(() => {
-      this.table.fetch(null, 0, true)
-    }, 8000)
-    this.searchParams = Object.assign(this.searchParams, {
-      taskName: this.$route.query?.keyword || '',
-    })
-  },
-  beforeUnmount() {
-    clearInterval(this.timeout)
-  },
-  methods: {
-    // 获取列表数据
-    getData({ page }) {
-      const { current, size } = page
-      const { taskName, connectionName } = this.searchParams
-      const where = {}
+// ── Refs ──────────────────────────────────────────────────────────────────────
 
-      if (taskName) {
-        where.name = { like: escapeRegExp(taskName), options: 'i' }
-      }
-      if (connectionName) {
-        where.connectionName = connectionName
-      }
+const table = ref<any>()
+const editor = ref<any>()
+const digSettingFormRef = ref<any>()
 
-      const filter = {
-        order: this.order,
-        limit: size,
-        skip: (current - 1) * size,
-        where,
-      }
-      return fetchLogcollector(filter).then((data) => {
-        const list = data?.items || []
-        const pointTime = new Date()
-        return {
-          total: data?.total || 0,
-          data: list.map((item) => {
-            item.pointTime = pointTime
-            if (item.syncTimePoint === 'current') {
-              item.pointTime = dayjs(pointTime).format('YYYY-MM-DD HH:mm:ss')
-            } else {
-              item.pointTime = item.syncTimeZone
-            }
-            item.createTime = dayjs(item.createTime).format(
-              'YYYY-MM-DD HH:mm:ss',
-            )
-            item.logTime = item.logTime
-              ? dayjs(item.logTime).format('YYYY-MM-DD HH:mm:ss')
-              : '-'
-            item.delayTime =
-              item.delayTime < 0 || typeof item.delayTime !== 'number'
-                ? '-'
-                : calcTimeUnit(item.delayTime, 2, {
-                    autoHideMs: true,
-                  })
-            makeStatusAndDisabled(item)
-            if (item.status === 'edit') {
-              item.btnDisabled.start = false
-            }
-            return item
-          }),
-        }
-      })
-    },
+const searchParams = ref({
+  taskName: '',
+  connectionName: '',
+  status: '',
+  agentId: '',
+})
 
-    handleSetting() {
-      //是否可以全局设置
-      this.loadingConfig = true
-      checkLogcollector()
-        .then((data) => {
-          this.showEditSettingBtn = data?.data //true是可用，false是禁用 数据结构本身多了一层
-          this.settingDialogVisible = true
-          getSystemConfig()
-            .then((data) => {
-              if (data) {
-                this.digSettingForm = data
-              }
-            })
-            .finally(() => {
-              this.loadingConfig = false
-            })
-        })
-        .catch(() => {
-          this.loadingConfig = false
-        })
-    },
-    //保存全局挖掘设置
-    saveSetting() {
-      this.$refs.digSettingForm.validate((valid) => {
-        if (valid) {
-          if (this.digSettingForm?.persistenceMode === 'Mem') {
-            this.digSettingForm.persistenceMongodb_uri_db = ''
-            this.digSettingForm.persistenceMongodb_collection = ''
-            this.digSettingForm.persistenceRocksdb_path = ''
-          } else if (this.digSettingForm?.persistenceMode === 'MongoDB') {
-            this.digSettingForm.persistenceRocksdb_path = ''
-          } else if (this.digSettingForm?.persistenceMode === 'RocksDB') {
-            this.digSettingForm.persistenceMongodb_uri_db = ''
-            this.digSettingForm.persistenceMongodb_collection = ''
-          }
-          patchSystemConfig(this.digSettingForm).then(() => {
-            this.settingDialogVisible = false
-            this.$message.success(this.$t('public_message_save_ok'))
-          })
-        }
-      })
-    },
+const order = ref('createTime DESC')
+let timer: ReturnType<typeof setInterval> | null = null
+const taskBuried = { start: 'sharedMiningStart' }
 
-    start(ids) {
-      this.buried(this.taskBuried.start)
-      const filter = {
-        where: {
-          id: ids[0],
-        },
-      }
-      fetchTasks(filter).then(() => {
-        batchStartTasks(ids)
-          .then((data) => {
-            this.buried(this.taskBuried.start, '', { result: true })
-            this.$message.success(
-              data?.message || this.$t('public_message_operation_success'),
-            )
-            this.table.fetch()
-          })
-          .catch(() => {
-            this.buried(this.taskBuried.start, '', { result: false })
-          })
-      })
-    },
+const settingDialogVisible = ref(false)
+const loadingConfig = ref(false)
+const showEditSettingBtn = ref(false)
+const digSettingForm = ref({
+  persistenceMode: 'Mem',
+  persistenceMongodb_uri_db: '',
+  persistenceMongodb_collection: '',
+  persistenceRocksdb_path: '',
+  share_cdc_ttl_day: 3,
+})
+const enumsItems = ['Mem', 'MongoDB', 'RocksDB']
+const logSaveList = [1, 2, 3, 4, 5, 6, 7]
+const showUsingTaskDialog = ref({ visible: false, list: [] as any[] })
 
-    forceStop(ids, row) {
-      const msgObj = this.getConfirmMessage('force_stop', row)
-      this.$confirm(this.$t('public_message_title_prompt'), msgObj.msg, {
-        dangerouslyUseHTMLString: true,
-      }).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        forceStopTask(ids).then((data) => {
-          this.$message.success(
-            data?.message || this.$t('public_message_operation_success'),
-          )
-          this.table.fetch()
-        })
-      })
+const rules = {
+  persistenceMongodb_uri_db: [
+    {
+      required: true,
+      message: t('packages_business_shared_cdc_setting_select_mongodb_tip'),
+      trigger: 'blur',
     },
-
-    stop(ids) {
-      this.$confirm(
-        this.$t('packages_business_important_reminder'),
-        this.$t('packages_business_stop_confirm_message'),
-      ).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        batchStopTasks(ids).then((data) => {
-          this.$message.success(
-            data?.message || this.$t('public_message_operation_success'),
-          )
-          this.table.fetch()
-        })
-      })
+  ],
+  persistenceMongodb_collection: [
+    {
+      required: true,
+      message: t('packages_business_shared_cdc_setting_select_table_tip'),
+      trigger: 'blur',
     },
-
-    handleEditor(task = {}) {
-      this.$refs.editor.open(task.id)
-    },
-
-    openRoute(route, newTab = true) {
-      if (newTab) {
-        window.open(this.$router.resolve(route).href)
-      } else {
-        this.$router.push(route)
-      }
-    },
-
-    handleDetails(task = {}) {
-      this.openRoute({
-        name: 'SharedMiningMonitor',
-        params: {
-          id: task.id,
-        },
-      })
-    },
-
-    getConfirmMessage(operateStr, task) {
-      const title = `${operateStr}_confirm_title`
-      const message = `${operateStr}_confirm_message`
-      const strArr = this.$t(`dataFlow_${message}`).split('xxx')
-      const msg = `
-        <p>
-          ${strArr[0]}
-          <span class="color-primary">${task.name}</span>
-          ${strArr[1]}
-        </p>`
-      return {
-        msg,
-        title: this.$t(`dataFlow_${title}`),
-      }
-    },
-
-    handleReset(row) {
-      const id = row.id
-      const msgObj = this.getConfirmMessage('initialize', row)
-      this.$confirm(msgObj.title, msgObj.msg, {
-        dangerouslyUseHTMLString: true,
-      }).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        batchRenewTasks([id]).then((data) => {
-          this.$message.success(
-            data?.message || this.$t('public_message_operation_success'),
-          )
-          this.table.fetch()
-        })
-      })
-    },
-
-    async handleDelete(row) {
-      const filter = {
-        type: 'task_by_collector',
-        taskId: row.id,
-      }
-      this.showUsingTaskDialog.list = await taskConsoleRelations(filter)
-
-      this.$confirm(
-        this.$t('packages_ldp_src_tablepreview_querenshanchu'),
-        this.$t('packages_business_shared_mining_list_shanchurenwus', {
-          val1: row.name,
-        }),
-        {
-          dangerouslyUseHTMLString: true,
-        },
-      ).then((flag) => {
-        if (!flag) {
-          return
-        }
-        if (this.showUsingTaskDialog.list.length) {
-          this.showUsingTaskDialog.visible = true
-          return
-        }
-        batchDeleteTasks([row.id]).then((data) => {
-          this.$message.success(
-            data?.message || this.$t('public_message_operation_success'),
-          )
-          this.table.fetch()
-        })
-      })
-    },
-
-    handleName({ syncType, name, type }) {
-      const MAP = {
-        migrate: 'migrateList',
-        sync: 'dataflowList',
-        logCollector: 'sharedMiningList',
-        mem_cache: 'sharedCacheList',
-        connHeartbeat: 'HeartbeatTableList',
-      }
-      const routeUrl = this.$router.resolve({
-        name: MAP[type] || MAP[syncType],
-        query: {
-          keyword: name,
-        },
-      })
-      openUrl(routeUrl.href)
-    },
-  },
+  ],
 }
+
+const taskColumns = [
+  { label: t('public_task_name'), prop: 'name', slotName: 'name' },
+]
+
+// ── Computed ──────────────────────────────────────────────────────────────────
+
+const filterItems = computed(() => [
+  {
+    label: t('public_status'),
+    key: 'status',
+    type: 'select-inner',
+    items: [
+      { label: t('public_status_running'), value: 'running' },
+      { label: t('public_status_stop'), value: 'stop' },
+      { label: t('public_status_error'), value: 'error' },
+    ],
+  },
+  {
+    label: t('public_agent_name'),
+    key: 'agentId',
+    type: 'select-inner',
+    menuMinWidth: '250px',
+    items: async () => {
+      if (isDaas) {
+        const clusterData = await fetchClusterStates()
+        const options = (clusterData?.items || [])
+          .filter((item) => item.systemInfo?.process_id)
+          .map((item) => ({
+            label: (item as any).agentName || item.systemInfo.hostname,
+            value: item.systemInfo.process_id,
+          }))
+        return uniqBy(options, 'value')
+      }
+      // Cloud mode
+      const filter = { where: { status: { $in: ['Running'] } }, size: 100 }
+      const data = await requestClient.get<any>(
+        `api/tcm/agent?filter=${encodeURIComponent(JSON.stringify(filter))}`,
+      )
+      return (data?.items || []).map((item: any) => ({
+        label: item.name,
+        value: item.tmInfo.agentId,
+      }))
+    },
+  },
+  {
+    placeholder: t('packages_business_shared_cdc_placeholder_task_name'),
+    key: 'taskName',
+    type: 'input',
+    width: '220px',
+  },
+  {
+    placeholder: t('packages_business_shared_cdc_placeholder_connection_name'),
+    key: 'connectionName',
+    type: 'input',
+  },
+])
+
+// ── Data fetching ─────────────────────────────────────────────────────────────
+
+const getData = async ({
+  page,
+}: {
+  page: { current: number; size: number }
+}) => {
+  const { current, size } = page
+  const { taskName, connectionName, status, agentId } = searchParams.value
+  const where: Record<string, any> = {}
+
+  if (taskName) {
+    where.name = { like: escapeRegExp(taskName), options: 'i' }
+  }
+  if (connectionName) {
+    where.connectionName = connectionName
+  }
+  if (status) {
+    where.status = status
+  }
+  if (agentId) {
+    where.agentId = agentId
+  }
+
+  const filter = {
+    order: order.value,
+    limit: size,
+    skip: (current - 1) * size,
+    where,
+  }
+  const data = await fetchLogcollector(filter)
+  const list: any[] = data?.items || []
+  const pointTime = new Date()
+  return {
+    total: data?.total || 0,
+    data: list.map((item) => {
+      if (item.syncTimePoint === 'current') {
+        item.pointTime = dayjs(pointTime).format('YYYY-MM-DD HH:mm:ss')
+      } else {
+        item.pointTime = item.syncTimeZone
+      }
+      item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+      item.logTime = item.logTime
+        ? dayjs(item.logTime).format('YYYY-MM-DD HH:mm:ss')
+        : '-'
+      item.delayTime =
+        item.delayTime < 0 || typeof item.delayTime !== 'number'
+          ? '-'
+          : calcTimeUnit(item.delayTime, 2, { autoHideMs: true })
+      makeStatusAndDisabled(item)
+      if (item.status === 'edit') {
+        item.btnDisabled.start = false
+      }
+      return item
+    }),
+  }
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+const getConfirmMessage = (operateStr: string, task: { name: string }) => {
+  const strArr = t(`dataFlow_${operateStr}_confirm_message`).split('xxx')
+  const msg = `<p>${strArr[0]}<span class="color-primary">${task.name}</span>${strArr[1]}</p>`
+  return { msg, title: t(`dataFlow_${operateStr}_confirm_title`) }
+}
+
+const openRoute = (routeObj: any, newTab = true) => {
+  if (newTab) {
+    window.open(router.resolve(routeObj).href)
+  } else {
+    router.push(routeObj)
+  }
+}
+
+// ── Actions ───────────────────────────────────────────────────────────────────
+
+const handleSetting = () => {
+  loadingConfig.value = true
+  checkLogcollector()
+    .then((data: any) => {
+      showEditSettingBtn.value = data?.data
+      settingDialogVisible.value = true
+      getSystemConfig({})
+        .then((data: any) => {
+          if (data) digSettingForm.value = data
+        })
+        .finally(() => {
+          loadingConfig.value = false
+        })
+    })
+    .catch(() => {
+      loadingConfig.value = false
+    })
+}
+
+const saveSetting = () => {
+  digSettingFormRef.value?.validate((valid: boolean) => {
+    if (!valid) return
+    const form = digSettingForm.value
+    if (form.persistenceMode === 'Mem') {
+      form.persistenceMongodb_uri_db = ''
+      form.persistenceMongodb_collection = ''
+      form.persistenceRocksdb_path = ''
+    } else if (form.persistenceMode === 'MongoDB') {
+      form.persistenceRocksdb_path = ''
+    } else if (form.persistenceMode === 'RocksDB') {
+      form.persistenceMongodb_uri_db = ''
+      form.persistenceMongodb_collection = ''
+    }
+    patchSystemConfig(form).then(() => {
+      settingDialogVisible.value = false
+      ElMessage.success(t('public_message_save_ok'))
+    })
+  })
+}
+
+const start = (ids: string[]) => {
+  buried?.(taskBuried.start)
+  fetchTasks({ where: { id: ids[0] } }).then(() => {
+    batchStartTasks(ids)
+      .then((data: any) => {
+        buried?.(taskBuried.start, '', { result: true })
+        ElMessage.success(
+          data?.message || t('public_message_operation_success'),
+        )
+        table.value?.fetch()
+      })
+      .catch(() => {
+        buried?.(taskBuried.start, '', { result: false })
+      })
+  })
+}
+
+const forceStop = async (ids: string[], row: any) => {
+  const { msg, title } = getConfirmMessage('force_stop', row)
+  try {
+    await ElMessageBox.confirm(msg, title, { dangerouslyUseHTMLString: true })
+    const data: any = await forceStopTask(ids[0]!)
+    ElMessage.success(data?.message || t('public_message_operation_success'))
+    table.value?.fetch()
+  } catch {
+    // dismissed
+  }
+}
+
+const stop = async (ids: string[]) => {
+  try {
+    await ElMessageBox.confirm(
+      t('packages_business_stop_confirm_message'),
+      t('packages_business_important_reminder'),
+    )
+    const data: any = await batchStopTasks(ids)
+    ElMessage.success(data?.message || t('public_message_operation_success'))
+    table.value?.fetch()
+  } catch {
+    // dismissed
+  }
+}
+
+const handleEditor = (task: any = {}) => {
+  editor.value?.open(task.id)
+}
+
+const handleDetails = (task: any = {}) => {
+  openRoute({ name: 'SharedMiningMonitor', params: { id: task.id } })
+}
+
+const handleReset = async (row: any) => {
+  const { msg, title } = getConfirmMessage('initialize', row)
+  try {
+    await ElMessageBox.confirm(msg, title, { dangerouslyUseHTMLString: true })
+    const data: any = await batchRenewTasks([row.id])
+    ElMessage.success(data?.message || t('public_message_operation_success'))
+    table.value?.fetch()
+  } catch {
+    // dismissed
+  }
+}
+
+const handleDelete = async (row: any) => {
+  showUsingTaskDialog.value.list = await taskConsoleRelations({
+    type: 'task_by_collector',
+    taskId: row.id,
+  })
+  try {
+    await ElMessageBox.confirm(
+      t('packages_business_shared_mining_list_shanchurenwus', {
+        val1: row.name,
+      }),
+      t('packages_ldp_src_tablepreview_querenshanchu'),
+      { dangerouslyUseHTMLString: true },
+    )
+    if (showUsingTaskDialog.value.list.length) {
+      showUsingTaskDialog.value.visible = true
+      return
+    }
+    const data: any = await batchDeleteTasks([row.id])
+    ElMessage.success(data?.message || t('public_message_operation_success'))
+    table.value?.fetch()
+  } catch {
+    // dismissed
+  }
+}
+
+const handleName = ({
+  syncType,
+  name,
+  type,
+}: {
+  syncType: string
+  name: string
+  type: string
+}) => {
+  const MAP: Record<string, string> = {
+    migrate: 'migrateList',
+    sync: 'dataflowList',
+    logCollector: 'sharedMiningList',
+    mem_cache: 'sharedCacheList',
+    connHeartbeat: 'HeartbeatTableList',
+  }
+  const routeUrl = router.resolve({
+    name: MAP[type] || MAP[syncType],
+    query: { keyword: name },
+  })
+  openUrl(routeUrl.href)
+}
+
+// ── Lifecycle & Watchers ──────────────────────────────────────────────────────
+
+watch(
+  () => route.query,
+  () => {
+    searchParams.value = {
+      ...searchParams.value,
+      taskName: (route.query?.keyword as string) || '',
+    }
+    table.value?.fetch(1)
+  },
+)
+
+onMounted(() => {
+  timer = setInterval(() => {
+    table.value?.fetch(null, 0, true)
+  }, 8000)
+  Object.assign(searchParams.value, { taskName: route.query?.keyword || '' })
+})
+
+onUnmounted(() => {
+  if (timer) {
+    clearInterval(timer)
+    timer = null
+  }
+})
 </script>
 
 <template>
@@ -415,7 +410,7 @@ export default {
         <FilterBar
           v-model:value="searchParams"
           :items="filterItems"
-          @fetch="table.fetch(1)"
+          @fetch="table?.fetch(1)"
         />
       </template>
       <!--外存配置已上，这里关闭，稳定后相关注释代码可去掉-->
@@ -597,7 +592,7 @@ export default {
       :close-on-click-modal="false"
     >
       <el-form
-        ref="digSettingForm"
+        ref="digSettingFormRef"
         label-position="left"
         label-width="180px"
         :model="digSettingForm"
@@ -681,7 +676,7 @@ export default {
       </template>
     </el-dialog>
 
-    <Editor ref="editor" @success="table.fetch(1)" />
+    <Editor ref="editor" @success="table?.fetch(1)" />
 
     <!-- 挖掘关联的任务 -->
     <ElDialog

@@ -700,12 +700,26 @@ const rebalanceAgents = computed(() =>
   })),
 )
 
-const navigateToTaskList = (item: any, syncType: 'migrate' | 'sync') => {
+type TaskType =
+  | 'migrate'
+  | 'sync'
+  | 'logCollector'
+  | 'mem_cache'
+  | 'connHeartbeat'
+
+const TASK_TYPE_ROUTE_MAP: Record<TaskType, string> = {
+  migrate: 'migrateList',
+  sync: 'dataflowList',
+  logCollector: 'HeartbeatTableList',
+  mem_cache: 'sharedCacheList',
+  connHeartbeat: 'HeartbeatTableList',
+}
+
+const navigateToTaskList = (item: any, syncType: TaskType) => {
   const processId = item.systemInfo?.process_id
   if (!processId) return
-  const routeName = syncType === 'migrate' ? 'migrateList' : 'dataflowList'
   router.push({
-    name: routeName,
+    name: TASK_TYPE_ROUTE_MAP[syncType],
     query: { agentId: processId, status: 'running' },
   })
 }
@@ -1574,16 +1588,19 @@ const onUpdateLicenseSuccess = () => {
                       :class="item.status !== 'running' ? 'bgred' : 'bggreen'"
                     />
                     <div class="list-box-header-main">
-                      <h2 class="name fs-6">
+                      <h2 class="name fs-6 flex align-center gap-2">
                         {{ item.agentName || item.systemInfo.hostname }}
+                        <span class="ip text-xs">{{
+                          item.custIP ? item.custIP : item.systemInfo.ip
+                        }}</span>
                       </h2>
                       <div class="uuid fs-8 my-2">
                         {{ item.systemInfo.uuid }}
                       </div>
-                      <div class="flex gap-2">
-                        <span class="ip">{{
-                          item.custIP ? item.custIP : item.systemInfo.ip
-                        }}</span>
+                      <div
+                        class="flex gap-2 flex-wrap"
+                        style="min-height: 20px"
+                      >
                         <el-tag
                           v-if="item.runningTaskNum?.migrate > 0"
                           type="primary"
@@ -1606,6 +1623,44 @@ const onUpdateLicenseSuccess = () => {
                           {{ $t('public_task_type_sync')
                           }}<span class="ml-1 fw-bold">{{
                             item.runningTaskNum?.sync || 0
+                          }}</span>
+                        </el-tag>
+                        <el-tag
+                          v-if="item.runningTaskNum?.logCollector > 0"
+                          type="primary"
+                          size="small"
+                          class="cursor-pointer"
+                          @click.stop="navigateToTaskList(item, 'logCollector')"
+                        >
+                          {{ $t('public_task_type_log_collector')
+                          }}<span class="ml-1 fw-bold">{{
+                            item.runningTaskNum?.logCollector || 0
+                          }}</span>
+                        </el-tag>
+                        <el-tag
+                          v-if="item.runningTaskNum?.mem_cache > 0"
+                          type="primary"
+                          size="small"
+                          class="cursor-pointer"
+                          @click.stop="navigateToTaskList(item, 'mem_cache')"
+                        >
+                          {{ $t('page_title_shared_cache')
+                          }}<span class="ml-1 fw-bold">{{
+                            item.runningTaskNum?.mem_cache || 0
+                          }}</span>
+                        </el-tag>
+                        <el-tag
+                          v-if="item.runningTaskNum?.connHeartbeat > 0"
+                          type="primary"
+                          size="small"
+                          class="cursor-pointer"
+                          @click.stop="
+                            navigateToTaskList(item, 'connHeartbeat')
+                          "
+                        >
+                          {{ $t('public_task_type_heartbeat')
+                          }}<span class="ml-1 fw-bold">{{
+                            item.runningTaskNum?.connHeartbeat || 0
                           }}</span>
                         </el-tag>
                       </div>
