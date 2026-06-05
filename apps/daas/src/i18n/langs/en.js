@@ -810,6 +810,7 @@ export default {
   setting_share_cdc_persistence_rocksdb_path_doc:
     'This configuration takes effect only when RocksDB is selected as the mode, and the local path stored by RocksDB',
   setting_task_start_transform_wait_seconds: 'Task start transform wait time (seconds)',
+  setting_task_start_transform_wait_seconds_doc: 'After clicking to start the task, it will proceed with simulation or trial operation. If the set waiting duration is exceeded, the start will fail, requiring another click to initiate or increasing the simulation waiting duration. The default waiting duration is 60 seconds',
   setting_task_log_file_save_time: 'Task log retention time (days)',
   setting_task_log_file_save_size: 'Task log retention size (MB)',
   setting_task_log_file_save_count: 'Task log retention total count',
