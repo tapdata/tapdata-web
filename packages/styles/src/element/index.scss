@@ -314,6 +314,22 @@
   .is-drop-inner > .el-tree-node__content {
     background-color: var(--el-color-primary-light-8);
   }
+
+  .el-tree__drop-indicator {
+    height: 2px;
+    background-color: var(--el-color-primary);
+    &:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      display: block;
+      padding: 2px;
+      border-radius: 100%;
+      border: 2px solid var(--el-color-primary);
+      transform: translate(-100%, -50%);
+    }
+  }
 }
 .el-tree-node__content.el-tree-node__content {
   border-radius: 8px;
@@ -609,6 +625,12 @@
       --el-fill-color-light: rgba(var(--primary-raw), 0.1);
       --el-fill-color: rgba(var(--primary-raw), 0.2);
       --el-button-text-color: var(--el-color-primary);
+    }
+
+    &.el-button--warning {
+      --el-fill-color-light: rgba(var(--warning-raw), 0.1);
+      --el-fill-color: rgba(var(--warning-raw), 0.2);
+      --el-button-text-color: var(--el-color-warning);
     }
 
     &.el-button--danger {

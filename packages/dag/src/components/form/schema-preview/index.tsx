@@ -5,6 +5,7 @@ import { refreshTaskSchema } from '@tap/api/src/core/task'
 import { IconButton } from '@tap/component/src/icon-button'
 import { mapFieldsData, useField, useForm } from '@tap/form'
 import { getUpdateConditionFields } from '@tap/form/src/components/field-select/FieldSelect'
+import { computed as reactiveComputed } from '@tap/form/src/shared/reactive'
 import i18n from '@tap/i18n'
 import { debounce, isEqual } from 'lodash-es'
 import { defineComponent, ref } from 'vue'
@@ -32,11 +33,12 @@ export const SchemaPreview = defineComponent({
     const isMultiIndex = ref(false)
     const isMultiUniqueIndex = ref(false)
     const isMultiForeignKey = ref(false)
-    const isTarget =
-      form.values.type === 'table' && !!form.values.$inputs.length
+    const isTarget = reactiveComputed(() => {
+      return form.values.type === 'table' && !!form.values.$inputs.length
+    })
     const isSource = form.values.type === 'table' && !form.values.$inputs.length
     const readonly = ref(
-      props.disabled || dataflowStore?.stateIsReadonly || !isTarget,
+      props.disabled || dataflowStore?.stateIsReadonly || !isTarget.value,
     )
     let fieldChangeRules = form.values.fieldChangeRules || []
     const visible = ref(false)
@@ -118,7 +120,7 @@ export const SchemaPreview = defineComponent({
         schemaData.value = mapSchema(schema)
         treeData.value = createTree(fields)
 
-        if (isTarget && !form.values.attrs?.hasCreated) {
+        if (isTarget.value && !form.values.attrs?.hasCreated) {
           // 自动设置更新条件字段为主键/唯一索引
           const updateConditionFields = getUpdateConditionFields(fields)
           if (
@@ -162,7 +164,7 @@ export const SchemaPreview = defineComponent({
       const { fields = [], findPossibleDataTypes = {} } = schema
       fields.sort((a, b) => a.columnPosition - b.columnPosition)
       //如果findPossibleDataTypes = {}，不做类型校验
-      if (isTarget) {
+      if (isTarget.value) {
         fields.forEach((field) => {
           const { dataTypes = [], lastMatchedDataType = '' } =
             findPossibleDataTypes[field.field_name] || {}
@@ -277,6 +279,11 @@ export const SchemaPreview = defineComponent({
 
       return (
         <div class="flex flex-1 min-w-0 justify-content-between align-center gap-2 pr-2 position-relative">
+          {isTarget.value && (
+            <el-icon class="field-grip-icon position-absolute">
+              <i-lucide-grip-vertical />
+            </el-icon>
+          )}
           {icon}
           <span class="ellipsis">
             <span
@@ -327,6 +334,34 @@ export const SchemaPreview = defineComponent({
       if (formRef.value.values.type !== 'table') {
         loadSchema()
       }
+    }
+
+    const allowDrop = (draggingNode, dropNode, type) => {
+      return type !== 'inner'
+    }
+
+    const handleNodeDrop = () => {
+      const fields: { fieldName: string; columnPosition: number }[] = []
+      const walk = (nodes: any[]) => {
+        for (const node of nodes) {
+          if (node.field_name) {
+            fields.push({
+              fieldName: node.original_field_name,
+              columnPosition: fields.length + 1,
+            })
+          }
+          if (node.children?.length) {
+            walk(node.children)
+          }
+        }
+      }
+      walk(treeData.value)
+      form.setValuesIn('fieldsAfter', [
+        {
+          // tableName: tableName.value,
+          fields,
+        },
+      ])
     }
 
     return () => (
@@ -405,8 +440,11 @@ export const SchemaPreview = defineComponent({
               >
                 <ElTree
                   indent={8}
+                  draggable={isTarget.value}
+                  allow-drop={allowDrop}
                   data={treeData.value}
                   render-content={renderContent}
+                  onNode-drop={handleNodeDrop}
                 ></ElTree>
               </div>
             </div>
@@ -418,9 +456,9 @@ export const SchemaPreview = defineComponent({
                 readonly={readonly.value}
                 dataTypesJson={dataTypesJson.value}
                 fieldChangeRules={fieldChangeRules}
-                type={isTarget ? 'target' : isSource ? 'source' : ''}
+                type={isTarget.value ? 'target' : isSource ? 'source' : ''}
                 single-table
-                ignore-error={!isTarget}
+                ignore-error={!isTarget.value}
                 onUpdateRules={handleUpdate}
                 onOpenUpdateRules={handleOpen}
               ></FieldList>
