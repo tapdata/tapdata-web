@@ -233,7 +233,7 @@ export default {
   packages_form_field_inference_list_geshicuowu:
     'Please check the length and precision of the field',
   packages_form_field_inference_list_ziduanzhushi: 'Field Notes',
-  packages_form_field_inference_list_feikong: 'Should Not be empty',
+  packages_form_field_inference_list_feikong: 'Not Null',
   packages_form_field_inference_list_piliangyingyonghui:
     'The Batch application will overwrite with existing batch application rules',
   packages_form_field_inference_list_duidangqiantuiyan:

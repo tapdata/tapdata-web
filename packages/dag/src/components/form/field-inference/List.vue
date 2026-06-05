@@ -5,7 +5,7 @@ import {
 } from '@tap/api/src/core/metadata-instances'
 import { VTable } from '@tap/component/src/base/v-table'
 import { Modal } from '@tap/component/src/modal'
-import i18n from '@tap/i18n'
+import { useI18n } from '@tap/i18n'
 import { uuid } from '@tap/shared'
 import { ElMessage } from 'element-plus'
 import { cloneDeep } from 'lodash-es'
@@ -13,6 +13,8 @@ import { computed, onMounted, reactive, ref, useTemplateRef, watch } from 'vue'
 import { useDataflowStore } from '../../../stores/dataflow.store'
 
 defineOptions({ name: 'List' })
+
+const { t } = useI18n()
 
 const props = withDefaults(
   defineProps<{
@@ -63,44 +65,40 @@ const columns = [
     label: '#',
     type: 'index',
     prop: 'index',
-    minWidth: 40,
+    width: 40,
   },
   {
-    label: i18n.t('packages_form_field_add_del_index_ziduanmingcheng'),
+    label: t('packages_form_field_add_del_index_ziduanmingcheng'),
     prop: 'field_name',
     slotName: 'field_name',
-    'min-width': '90px',
+    'min-width': '130px',
     'show-overflow-tooltip': true,
   },
   {
-    label: i18n.t('packages_form_dag_dialog_field_mapping_type'),
+    label: t('packages_form_dag_dialog_field_mapping_type'),
     prop: 'data_type',
     slotName: 'data_type',
     'min-width': '126px',
+    'show-overflow-tooltip': true,
   },
   {
-    label: i18n.t('packages_form_field_inference_list_feikong'),
+    label: t('packages_form_field_inference_list_feikong'),
     prop: 'is_nullable',
     slotName: 'is_nullable',
-    width: '60px',
+    width: '80px',
   },
+  // {
+  //   label: t('packages_form_field_inference_list_ziduanzhushi'),
+  //   prop: 'comment',
+  // },
   {
-    label: i18n.t('packages_form_field_inference_list_ziduanzhushi'),
-    prop: 'comment',
-  },
-  {
-    label: i18n.t('public_operation'),
+    label: t('public_operation'),
     prop: 'operation',
     slotName: 'operation',
     headerSlot: 'operationHeader',
-    minWidth: 70,
+    width: 70,
   },
 ]
-
-const nullableMap: Record<string, string> = {
-  true: i18n.t('packages_dag_meta_table_true'),
-  false: i18n.t('packages_dag_meta_table_false'),
-}
 
 const editDataTypeVisible = ref(false)
 const currentData = reactive({
@@ -120,10 +118,10 @@ const currentData = reactive({
 })
 const customInputDataValue = ref('')
 const customInputLabelMap: Record<string, string> = {
-  precision: i18n.t('packages_dag_meta_table_precision'),
-  scale: i18n.t('packages_dag_meta_table_scale'),
-  byte: i18n.t('packages_dag_meta_table_precision'),
-  fraction: i18n.t('packages_dag_meta_table_precision'),
+  precision: t('packages_dag_meta_table_precision'),
+  scale: t('packages_dag_meta_table_scale'),
+  byte: t('packages_dag_meta_table_precision'),
+  fraction: t('packages_dag_meta_table_precision'),
 }
 const editBtnLoading = ref(false)
 const rules = ref<any[]>([])
@@ -161,7 +159,7 @@ const revokeTableDisabled = computed(() => {
 const computedDataTypes = computed(() => {
   return [
     {
-      label: i18n.t('packages_dag_field_inference_list_zidingyileixing'),
+      label: t('packages_dag_field_inference_list_zidingyileixing'),
       value: '',
     },
     ...currentData.canUseDataTypes,
@@ -336,7 +334,7 @@ function submitEdit() {
       ? emit('updateFields', updater)
       : updater(props.data.fields)
     handleUpdate()
-    ElMessage.success(i18n.t('public_message_operation_success'))
+    ElMessage.success(t('public_message_operation_success'))
     editDataTypeVisible.value = false
     return
   }
@@ -348,7 +346,7 @@ function submitEdit() {
       const val = data[newDataType]
       const tapType = val && val.type !== 7 ? JSON.stringify(val) : null
       if (!tapType) {
-        currentData.errorMessage = i18n.t(
+        currentData.errorMessage = t(
           'packages_form_field_inference_list_geshicuowu',
         )
         editBtnLoading.value = false
@@ -427,7 +425,7 @@ function submitEdit() {
           })
       handleUpdate()
       editBtnLoading.value = false
-      ElMessage.success(i18n.t('public_message_operation_success'))
+      ElMessage.success(t('public_message_operation_success'))
       editDataTypeVisible.value = false
     })
     .catch(() => {
@@ -456,23 +454,23 @@ function revokeAll() {
   if (revokeTableDisabled.value) {
     return
   }
-  Modal.confirm(
-    i18n.t('packages_form_field_inference_list_ninquerenyaohui'),
-  ).then((resFlag: boolean) => {
-    if (resFlag) {
-      const { qualified_name } = props.data
-      if (props.singleTable) {
-        rules.value = [] // 清空数据
-        handleUpdate()
-      } else {
-        rules.value = rules.value.filter(
-          (t) => t.namespace?.[1] !== qualified_name,
-        ) // 清空当前表的数据
-        handleUpdate()
+  Modal.confirm(t('packages_form_field_inference_list_ninquerenyaohui')).then(
+    (resFlag: boolean) => {
+      if (resFlag) {
+        const { qualified_name } = props.data
+        if (props.singleTable) {
+          rules.value = [] // 清空数据
+          handleUpdate()
+        } else {
+          rules.value = rules.value.filter(
+            (t) => t.namespace?.[1] !== qualified_name,
+          ) // 清空当前表的数据
+          handleUpdate()
+        }
+        ElMessage.success(t('public_message_operation_success'))
       }
-      ElMessage.success(i18n.t('public_message_operation_success'))
-    }
-  })
+    },
+  )
 }
 
 function doLayout() {
@@ -494,6 +492,11 @@ function getFieldScope(row: any = {}) {
   return props.fieldChangeRules.find((t) => t.id === row.changeRuleId)?.scope
 }
 
+const scopeBtnTypeMap = {
+  Node: 'warning',
+  Field: 'primary',
+}
+
 function getRevokeColorClass(row: any = {}) {
   const map: Record<string, string> = {
     Node: 'color-warning',
@@ -512,8 +515,8 @@ function getCanUseDataTypesTooltip(matchedDataTypeLevel: string) {
   const map: Record<string, string> = {
     error:
       props.type === 'target'
-        ? i18n.t('packages_dag_field_inference_list_gaiziduanshuju')
-        : i18n.t('packages_dag_field_inference_list_gaiziduanwufa'),
+        ? t('packages_dag_field_inference_list_gaiziduanshuju')
+        : t('packages_dag_field_inference_list_gaiziduanwufa'),
   }
   return map[matchedDataTypeLevel]
 }
@@ -622,9 +625,26 @@ defineExpose({ setRules, doLayout })
       :row-class-name="tableRowClassName"
     >
       <template #field_name="{ row: field }">
-        <template v-if="field.isPrimaryKey">
+        <div class="flex align-center">
+          <template v-if="field.isPrimaryKey">
+            <ElTooltip
+              v-if="field.isForeignKey"
+              placement="top"
+              :content="
+                $t('public_foreign_key_tip', {
+                  name: field.constraints[0],
+                  val: field.constraints[2],
+                })
+              "
+            >
+              <VIcon size="12" class="text-warning align-middle">key</VIcon>
+            </ElTooltip>
+            <VIcon v-else size="12" class="text-warning align-middle"
+              >key</VIcon
+            >
+          </template>
           <ElTooltip
-            v-if="field.isForeignKey"
+            v-else-if="field.isForeignKey"
             placement="top"
             :content="
               $t('public_foreign_key_tip', {
@@ -632,74 +652,76 @@ defineExpose({ setRules, doLayout })
                 val: field.constraints[2],
               })
             "
+            :open-delay="200"
+            transition="none"
           >
-            <VIcon size="12" class="text-warning align-middle">key</VIcon>
+            <span class="inline-flex align-center align-middle">
+              <VIcon size="14">share</VIcon>
+              <span
+                v-if="field.isMultiForeignKey"
+                :style="`--index: '${field.constraints[1]}';`"
+                class="fingerprint-sub foreign-sub"
+              />
+            </span>
           </ElTooltip>
-          <VIcon v-else size="12" class="text-warning align-middle">key</VIcon>
-        </template>
-        <ElTooltip
-          v-else-if="field.isForeignKey"
-          placement="top"
-          :content="
-            $t('public_foreign_key_tip', {
-              name: field.constraints[0],
-              val: field.constraints[2],
-            })
-          "
-          :open-delay="200"
-          transition="none"
-        >
-          <span class="inline-flex align-center align-middle">
-            <VIcon size="14">share</VIcon>
-            <span
-              v-if="field.isMultiForeignKey"
-              :style="`--index: '${field.constraints[1]}';`"
-              class="fingerprint-sub foreign-sub"
-            />
-          </span>
-        </ElTooltip>
-        <ElTooltip
-          v-else-if="field.indicesUnique"
-          placement="top"
-          :content="`${$t(field.indicesUnique[2] ? 'public_unique_index' : 'public_normal_index')}: ${field.indicesUnique[0]}`"
-          :open-delay="200"
-          transition="none"
-        >
-          <span
-            v-if="field.indicesUnique[2]"
-            class="inline-flex align-center align-middle"
-            :class="{ 'text-primary': field.indicesUnique[3] }"
+          <ElTooltip
+            v-else-if="field.indicesUnique"
+            placement="top"
+            :content="`${$t(field.indicesUnique[2] ? 'public_unique_index' : 'public_normal_index')}: ${field.indicesUnique[0]}`"
+            :open-delay="200"
+            transition="none"
           >
-            <VIcon size="14">fingerprint</VIcon>
             <span
-              v-if="field.isMultiUniqueIndex"
-              :style="`--index: '${field.indicesUnique[1]}';`"
-              class="fingerprint-sub unique-sub"
-            />
-          </span>
-          <span v-else class="inline-flex align-center align-middle">
-            <VIcon size="14">sort-descending</VIcon>
-            <span
-              v-if="field.isMultiIndex"
-              :style="`--index: '${field.indicesUnique[1]}';`"
-              class="fingerprint-sub index-sub"
-            />
-          </span>
-        </ElTooltip>
-        <VIcon
-          v-else-if="field.isPartitionKey"
-          size="14"
-          class="ml-1 align-middle"
-          >circle-dashed-letter-p</VIcon
-        >
-        <VIcon v-else-if="field.source === 'virtual_hash'" size="14"
-          >file-hash</VIcon
-        >
-        <span
-          class="ellipsis ml-1 align-middle"
-          :style="field.source === 'virtual_hash' ? 'font-style:italic' : ''"
-          >{{ field.field_name }}</span
-        >
+              v-if="field.indicesUnique[2]"
+              class="inline-flex align-center align-middle"
+              :class="{ 'text-primary': field.indicesUnique[3] }"
+            >
+              <VIcon size="14">fingerprint</VIcon>
+              <span
+                v-if="field.isMultiUniqueIndex"
+                :style="`--index: '${field.indicesUnique[1]}';`"
+                class="fingerprint-sub unique-sub"
+              />
+            </span>
+            <span v-else class="inline-flex align-center align-middle">
+              <VIcon size="14">sort-descending</VIcon>
+              <span
+                v-if="field.isMultiIndex"
+                :style="`--index: '${field.indicesUnique[1]}';`"
+                class="fingerprint-sub index-sub"
+              />
+            </span>
+          </ElTooltip>
+          <VIcon
+            v-else-if="field.isPartitionKey"
+            size="14"
+            class="ml-1 align-middle"
+            >circle-dashed-letter-p</VIcon
+          >
+          <VIcon v-else-if="field.source === 'virtual_hash'" size="14"
+            >file-hash</VIcon
+          >
+          <span
+            class="ellipsis ml-1 align-middle"
+            :style="field.source === 'virtual_hash' ? 'font-style:italic' : ''"
+            >{{ field.field_name }}</span
+          >
+          <el-popover
+            v-if="field.comment"
+            placement="top"
+            :hide-after="0"
+            :content="field.comment"
+            popper-style="width: auto;max-width: 448px"
+          >
+            <template #reference>
+              <el-button size="small" text>
+                <template #icon>
+                  <el-icon><i-lucide-file-text /></el-icon>
+                </template>
+              </el-button>
+            </template>
+          </el-popover>
+        </div>
       </template>
       <template #dataTypeHeader>
         <span class="pl-4">
@@ -708,7 +730,7 @@ defineExpose({ setRules, doLayout })
       </template>
       <template #data_type="scope">
         <div
-          class="position-relative"
+          class="position-relative flex align-center"
           :class="{
             'pl-5':
               !ignoreError &&
@@ -729,25 +751,34 @@ defineExpose({ setRules, doLayout })
               >warning</VIcon
             >
           </ElTooltip>
-          <span v-if="readonly">{{ getDataType(scope.row) }}</span>
+          <span v-if="readonly" class="ellipsis">{{
+            getDataType(scope.row)
+          }}</span>
           <div
             v-else
-            class="cursor-pointer inline-block"
+            class="cursor-pointer min-w-0 flex align-center"
             @click="openEditDataTypeVisible(scope.row)"
           >
-            <span>{{ getDataType(scope.row) }}</span>
+            <span class="ellipsis">{{ getDataType(scope.row) }}</span>
             <VIcon class="ml-2">edit-outline</VIcon>
           </div>
         </div>
       </template>
       <template #is_nullable="scope">
-        {{ nullableMap[!scope.row.is_nullable] }}
+        <el-icon
+          v-if="!scope.row.is_nullable"
+          class="color-success align-middle"
+          size="16"
+        >
+          <i-lucide-check />
+        </el-icon>
+        <span v-else class="font-color-slight">-</span>
       </template>
       <template #operationHeader>
         <ElButton
           text
-          type="primary"
-          :class="!revokeTableDisabled ? 'color-primary' : 'color-disable'"
+          :type="!revokeTableDisabled ? 'primary' : undefined"
+          :disabled="revokeTableDisabled"
           @click="revokeAll()"
           >{{ $t('public_button_revoke') }}</ElButton
         >
@@ -760,8 +791,8 @@ defineExpose({ setRules, doLayout })
         >
           <ElButton
             text
-            type="primary"
-            :class="getRevokeColorClass(scope.row)"
+            :type="scopeBtnTypeMap[getFieldScope(scope.row)]"
+            :disabled="!getFieldScope(scope.row)"
             @click="revoke(scope.row)"
             >{{ $t('public_button_revoke') }}</ElButton
           >
