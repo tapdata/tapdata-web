@@ -316,10 +316,15 @@ defineExpose({
 
 <template>
   <div class="field-inference">
-    <div class="field-inference__main rounded-xl bg-light flex">
+    <div class="field-inference__main rounded-xl flex">
       <div class="field-inference__nav flex flex-column">
-        <div class="p-2 flex flex-column gap-3">
-          <ElSelect v-model="activeClassification" @change="loadData">
+        <div class="p-2 py-1 flex flex-column gap-3 border-bottom">
+          <ElSelect
+            v-model="activeClassification"
+            class="select-box-shadow-none"
+            :empty-values="[null, undefined]"
+            @change="loadData"
+          >
             <ElOption
               v-for="(item, index) in tableClassification"
               :key="index"
@@ -581,6 +586,11 @@ defineExpose({
     :deep(.el-input__inner) {
       border-color: #f54a45;
     }
+  }
+}
+.select-box-shadow-none {
+  :deep(.el-select__wrapper) {
+    box-shadow: none !important;
   }
 }
 </style>

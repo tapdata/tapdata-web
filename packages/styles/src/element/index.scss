@@ -696,6 +696,12 @@
       // --el-fill-color: var(--el-color-primary-light-8);
     }
 
+    &.el-button--warning {
+      --el-button-text-color: var(--el-color-warning);
+      --el-fill-color-light: var(--el-color-warning-light-9);
+      --el-fill-color: var(--el-color-warning-light-8);
+    }
+
     &.el-button--danger {
       --el-button-text-color: var(--el-color-danger);
       --el-fill-color-light: var(--el-color-danger-light-9);

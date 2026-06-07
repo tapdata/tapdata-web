@@ -6,7 +6,7 @@ import { IconButton } from '@tap/component/src/icon-button'
 import { mapFieldsData, useField, useForm } from '@tap/form'
 import { getUpdateConditionFields } from '@tap/form/src/components/field-select/FieldSelect'
 import { computed as reactiveComputed } from '@tap/form/src/shared/reactive'
-import i18n from '@tap/i18n'
+import { useI18n } from '@tap/i18n'
 import { debounce, isEqual } from 'lodash-es'
 import { defineComponent, ref } from 'vue'
 import { useSchemaEffect } from '../../../hooks/useAfterTaskSaved'
@@ -23,6 +23,7 @@ import './style.scss'
 export const SchemaPreview = defineComponent({
   props: ['ignoreError', 'disabled'],
   setup(props) {
+    const { t } = useI18n()
     const dataflowStore = useDataflowStore()
     const formRef = useForm()
     const fieldRef = useField()
@@ -203,7 +204,7 @@ export const SchemaPreview = defineComponent({
         ) : (
           <ElTooltip
             placement="top"
-            content={i18n.t('public_foreign_key_tip', {
+            content={t('public_foreign_key_tip', {
               name: data.constraints[0],
               val: data.constraints[2],
             })}
@@ -220,7 +221,7 @@ export const SchemaPreview = defineComponent({
         icon = (
           <ElTooltip
             placement="top"
-            content={i18n.t('public_foreign_key_tip', {
+            content={t('public_foreign_key_tip', {
               name: data.constraints[0],
               val: data.constraints[2],
             })}
@@ -241,7 +242,7 @@ export const SchemaPreview = defineComponent({
         icon = (
           <ElTooltip
             placement="top"
-            content={`${i18n.t(data.indicesUnique[2] ? 'public_unique_index' : 'public_normal_index')}: ${
+            content={`${t(data.indicesUnique[2] ? 'public_unique_index' : 'public_normal_index')}: ${
               data.indicesUnique[0]
             }`}
             open-delay={200}
@@ -368,10 +369,10 @@ export const SchemaPreview = defineComponent({
       <div class="schema-preview pb-6">
         <ElDivider class="mt-8">
           <span class="inline-flex align-center gap-1">
-            {i18n.t('public_schema')}
+            {t('public_schema')}
             <el-divider direction="vertical" class="mr-1" />
             <el-tooltip
-              content={i18n.t('packages_dag_refresh_schema')}
+              content={t('packages_dag_refresh_schema')}
               placement="top"
               hide-after={0}
               enterable={false}
@@ -386,7 +387,7 @@ export const SchemaPreview = defineComponent({
               </IconButton>
             </el-tooltip>
             <el-tooltip
-              content={i18n.t(
+              content={t(
                 isTreeView.value
                   ? 'packages_dag_switch_to_table_view'
                   : 'packages_dag_switch_to_tree_view',
@@ -451,7 +452,7 @@ export const SchemaPreview = defineComponent({
           ) : (
             <>
               <FieldList
-                class="w-100 border rounded-lg overflow-hidden"
+                class="w-100 overflow-hidden"
                 data={schemaData.value}
                 readonly={readonly.value}
                 dataTypesJson={dataTypesJson.value}
