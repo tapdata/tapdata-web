@@ -762,6 +762,7 @@ export default {
   setting_share_cdc_persistence_rocksdb_path_doc:
     '該項配置只有模式選擇RocksDB時生效，RocksDB存儲的本地路徑',
   setting_task_start_transform_wait_seconds: '任務啓動推演等待時長(秒)',
+  setting_task_start_transform_wait_seconds_doc: '任務點擊啓動後會進行推演或試運行，當超出設置的等待時長後，此次啓動會失敗，需要再次點擊啓動，或者調大推演等待時長即可，默認等待時長爲60s',
   setting_task_log_file_save_time: '任務日誌留存時長(天)',
   setting_task_log_file_save_size: '任務日誌留存大小(MB)',
   setting_task_log_file_save_count: '任務日誌留存份數',
