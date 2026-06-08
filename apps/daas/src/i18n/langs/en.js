@@ -790,6 +790,8 @@ export default {
   setting_Switch_to_batch_insert_mode_interval__s__in_cdc_:
     'Switch to batch insert mode interval in cdc. ',
   setting_share_cdc: 'Share cdc',
+  setting_global_share_cdc_enable: 'Default global enable share cdc',
+  setting_global_share_cdc_enable_doc: 'When enabled by default, use the default external storage specified in the external storage list and apply it as the default setting to subsequent newly created connections and tasks',
   setting_share_cdc_persistence_mode: 'Share cdc persistence mode',
   setting_share_cdc_persistence_memory_size:
     'Shared incremental memory cache line count',
