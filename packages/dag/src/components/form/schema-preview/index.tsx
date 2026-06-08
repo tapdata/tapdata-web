@@ -357,6 +357,18 @@ export const SchemaPreview = defineComponent({
         }
       }
       walk(treeData.value)
+
+      // Sync columnPosition back to schemaData.fields
+      const schemaFields = schemaData.value.fields || []
+      for (const item of fields) {
+        const target = schemaFields.find(
+          (f: any) => f.field_name === item.fieldName,
+        )
+        if (target) {
+          target.columnPosition = item.columnPosition
+        }
+      }
+
       form.setValuesIn('fieldsAfter', [
         {
           // tableName: tableName.value,
