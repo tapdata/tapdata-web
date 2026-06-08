@@ -75,11 +75,6 @@ const updateExNum = ref(0)
 const dataTypesJson = ref<any>({})
 const fieldOptions = ref<any[]>([])
 
-// Computed
-const batchRuleCounts = computed(
-  () => fieldChangeRules.value.filter((t: any) => t.scope === 'Node').length,
-)
-
 const readonly = computed(() => stateIsReadonly.value)
 
 const isErrorSelect = computed(() => {
@@ -474,7 +469,7 @@ defineExpose({
           </div>
           <List
             ref="list"
-            v-model:field-change-rules="fieldChangeRules"
+            :field-change-rules="fieldChangeRules"
             :data="selected"
             :show-columns="['index', 'field_name', 'data_type', 'operation']"
             :data-types-json="dataTypesJson"

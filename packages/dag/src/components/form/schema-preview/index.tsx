@@ -41,7 +41,7 @@ export const SchemaPreview = defineComponent({
     const readonly = ref(
       props.disabled || dataflowStore?.stateIsReadonly || !isTarget.value,
     )
-    let fieldChangeRules = form.values.fieldChangeRules || []
+    const fieldChangeRules = ref(form.values.fieldChangeRules || [])
     const visible = ref(false)
 
     const handleOpen = () => {
@@ -174,7 +174,7 @@ export const SchemaPreview = defineComponent({
           field.matchedDataTypeLevel = getMatchedDataTypeLevel(
             field,
             field.canUseDataTypes,
-            fieldChangeRules,
+            fieldChangeRules.value,
             findPossibleDataTypes,
           )
           // mapField(field)
@@ -314,9 +314,9 @@ export const SchemaPreview = defineComponent({
 
     loadDatatypesjson()
 
-    const handleUpdate = (rules) => {
+    const handleUpdate = (rules: any[]) => {
       form.setValuesIn('fieldChangeRules', rules)
-      fieldChangeRules = rules
+      fieldChangeRules.value = rules
     }
 
     const taskId = dataflowStore.dataflow.id
@@ -468,7 +468,7 @@ export const SchemaPreview = defineComponent({
                 data={schemaData.value}
                 readonly={readonly.value}
                 dataTypesJson={dataTypesJson.value}
-                fieldChangeRules={fieldChangeRules}
+                fieldChangeRules={fieldChangeRules.value}
                 type={isTarget.value ? 'target' : isSource ? 'source' : ''}
                 single-table
                 ignore-error={!isTarget.value}
@@ -478,10 +478,7 @@ export const SchemaPreview = defineComponent({
               <FieldRuleDialog
                 visible={visible.value}
                 onUpdate:visible={(val: boolean) => (visible.value = val)}
-                fieldChangeRules={fieldChangeRules}
-                onUpdate:fieldChangeRules={(val: any[]) => {
-                  fieldChangeRules = val
-                }}
+                v-model:fieldChangeRules={fieldChangeRules.value}
                 form={form}
                 readonly={readonly.value}
               />
