@@ -749,6 +749,8 @@ export default {
   setting_Switch_to_batch_insert_mode_interval__s__in_cdc_:
     '切换到cdc中的批量插入模式间隔。',
   setting_share_cdc: '共享增量',
+  setting_global_share_cdc_enable_doc: '默认开启时，使用外存列表中指定的默认外存，并且作为默认设置应用于后续新建的连接和任务',
+  setting_global_share_cdc_enable: '默认全局开启共享增量',
   setting_share_cdc_persistence_mode: '共享增量存储模式',
   setting_share_cdc_persistence_memory_size: '共享增量内存缓存行数',
   setting_share_cdc_persistence_memory_size_doc:
