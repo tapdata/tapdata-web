@@ -144,7 +144,7 @@ const CATEGORY_ORDER: Record<JobCategory, number> = {
 const CATEGORY_LABEL: Record<JobCategory, string> = {
   success: 'daas_task_rebalance_history_stat_success',
   failed: 'daas_task_rebalance_history_stat_failed',
-  skipped: 'daas_task_rebalance_history_stat_skipped',
+  skipped: 'daas_task_rebalance_history_record_cancelled',
   running: 'daas_task_rebalance_history_stat_running',
   pending: 'daas_task_rebalance_history_stat_pending',
 }
@@ -267,6 +267,13 @@ function getRecordStatus(record: TaskRebalanceVo): RecordStatus {
       key: 'failed',
       label: 'daas_task_rebalance_history_record_failed',
       type: 'danger',
+    }
+  }
+  if (record.status === 'CANCELLED') {
+    return {
+      key: 'cancelled',
+      label: 'daas_task_rebalance_history_record_cancelled',
+      type: 'info',
     }
   }
   if (record.failedCount > 0) {
@@ -439,7 +446,7 @@ onUnmounted(stopDetailPolling)
             >
               <div class="flex align-center gap-2">
                 <!-- <span class="ellipsis lh-6 flex-1">{{ record.name }}</span> -->
-                <span class="ellipsis lh-6 flex-1">{{
+                <span class="ellipsis lh-6 flex-1 font-color-dark">{{
                   formatTime(record.createTime)
                 }}</span>
                 <el-tag
@@ -449,6 +456,12 @@ onUnmounted(stopDetailPolling)
                 >
                   {{ t(getRecordStatus(record).label) }}
                 </el-tag>
+              </div>
+              <div class="flex align-center gap-1 text-caption">
+                <el-icon>
+                  <i-lucide-user-round />
+                </el-icon>
+                {{ record.createUser }}
               </div>
               <div class="flex align-center gap-2 text-caption fs-8">
                 <span>{{
@@ -600,11 +613,23 @@ onUnmounted(stopDetailPolling)
                     min-width="160"
                     show-overflow-tooltip
                   >
-                    <template #default="{ row }">{{
-                      row.errorMesg || '-'
-                    }}</template>
+                    <template #default="{ row }">
+                      <div class="flex align-center">
+                        <span class="ellipsis">{{ row.errorMesg || '-' }}</span>
+                        <el-button
+                          v-if="row.category === 'pending'"
+                          text
+                          type="danger"
+                          class="ml-auto"
+                          :loading="cancellingJobId === row.taskId"
+                          @click="handleCancelJob(row.taskId)"
+                        >
+                          {{ t('daas_task_rebalance_history_cancel') }}
+                        </el-button>
+                      </div>
+                    </template>
                   </el-table-column>
-                  <el-table-column
+                  <!-- <el-table-column
                     :label="t('daas_task_rebalance_history_col_action')"
                     width="100"
                     align="right"
@@ -620,7 +645,7 @@ onUnmounted(stopDetailPolling)
                         {{ t('daas_task_rebalance_history_cancel') }}
                       </el-button>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
                 </el-table>
               </div>
             </div>

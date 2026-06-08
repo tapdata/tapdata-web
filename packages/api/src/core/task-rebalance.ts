@@ -2,7 +2,7 @@ import { requestClient, type Filter, type PageFetchResult } from '../request'
 
 const BASE_URL = '/api/task/rebalance'
 
-export type RebalanceStatus = 'RUNNING' | 'OK' | 'FAILED'
+export type RebalanceStatus = 'RUNNING' | 'OK' | 'FAILED' | 'CANCELLED'
 
 export type JobStatus =
   | 'PENDING'
