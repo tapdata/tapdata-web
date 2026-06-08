@@ -191,7 +191,14 @@ const {
     if (!selectedId.value) return null
     return await getTaskRebalanceDetail(selectedId.value)
   },
-  { manual: true, initialData: null },
+  {
+    manual: true,
+    initialData: null,
+    onSuccess(data) {
+      const rebalance = records.value?.find((r) => r.id === data?.rebalance.id)
+      rebalance && Object.assign(rebalance, data?.rebalance)
+    },
+  },
 )
 
 const rebalance = computed(() => detail.value?.rebalance || null)
