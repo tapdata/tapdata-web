@@ -619,6 +619,7 @@ onUnmounted(stopDetailPolling)
                     prop="errorMesg"
                     min-width="160"
                     show-overflow-tooltip
+                    class-name="p-0"
                   >
                     <template #default="{ row }">
                       <div class="flex align-center">
@@ -636,23 +637,6 @@ onUnmounted(stopDetailPolling)
                       </div>
                     </template>
                   </el-table-column>
-                  <!-- <el-table-column
-                    :label="t('daas_task_rebalance_history_col_action')"
-                    width="100"
-                    align="right"
-                  >
-                    <template #default="{ row }">
-                      <el-button
-                        v-if="row.category === 'pending'"
-                        text
-                        type="danger"
-                        :loading="cancellingJobId === row.taskId"
-                        @click="handleCancelJob(row.taskId)"
-                      >
-                        {{ t('daas_task_rebalance_history_cancel') }}
-                      </el-button>
-                    </template>
-                  </el-table-column> -->
                 </el-table>
               </div>
             </div>
