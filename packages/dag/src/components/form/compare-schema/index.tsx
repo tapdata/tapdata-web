@@ -168,7 +168,7 @@ const CompareSchema = defineComponent({
       }
     })
 
-    const afterTaskSaved = () => {
+    function afterTaskSaved() {
       return new Promise((resolve) => {
         setTimeout(() => {
           if (taskSaving.value) {

@@ -6,6 +6,7 @@ import {
 import { Modal } from '@tap/component/src/modal'
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { useForm } from '@tap/form'
+import { computed as reactiveComputed } from '@tap/form/src/shared/reactive'
 import { useI18n } from '@tap/i18n'
 import { uuid } from '@tap/shared'
 import { ElMessage } from 'element-plus'
@@ -33,6 +34,7 @@ const props = withDefaults(
     type?: string
     ignoreError?: boolean
     dataTypesJson?: Record<string, any>
+    draggable?: boolean
   }>(),
   {
     data: () => ({ qualified_name: '', fields: [] }),
@@ -490,6 +492,27 @@ function handleNodeDrop() {
   }
 }
 
+const hasColumnPositionConfig = reactiveComputed(() => {
+  if (!props.draggable) return false
+  const fieldsAfter = formRef.value.values.fieldsAfter || []
+  if (isDatabaseNode.value) {
+    const tableName = props.data.ancestorsName
+    return fieldsAfter.some((t: any) => t.tableName === tableName)
+  }
+  return (fieldsAfter[0]?.fields?.length ?? 0) > 0
+})
+
+function resetColumnPosition() {
+  const fieldsAfter = formRef.value?.getValuesIn('fieldsAfter') || []
+  if (isDatabaseNode.value) {
+    const tableName = props.data.ancestorsName
+    const updated = fieldsAfter.filter((t: any) => t.tableName !== tableName)
+    formRef.value?.setValuesIn('fieldsAfter', updated)
+  } else {
+    formRef.value?.setValuesIn('fieldsAfter', [])
+  }
+}
+
 function getCanUseDataTypesTooltip(matchedDataTypeLevel: string) {
   const map: Record<string, string> = {
     error:
@@ -599,7 +622,26 @@ defineExpose({ setRules, doLayout })
     <div
       class="field-tree-header flex align-center gap-2 pr-2 py-1 fs-7 font-color-light"
     >
-      <span v-if="showCol('index')" class="field-index" />
+      <span
+        v-if="showCol('index')"
+        class="field-index flex align-center justify-center"
+      >
+        <el-tooltip
+          v-if="hasColumnPositionConfig"
+          :content="
+            $t('packages_form_field_inference_list_reset_column_position')
+          "
+          :enterable="false"
+          :hide-after="0"
+          placement="top"
+        >
+          <el-button text size="small" @click="resetColumnPosition">
+            <template #icon>
+              <i-lucide-rotate-ccw />
+            </template>
+          </el-button>
+        </el-tooltip>
+      </span>
       <div class="flex-1 min-w-0">
         {{ $t('packages_form_field_add_del_index_ziduanmingcheng') }}
       </div>
@@ -628,7 +670,7 @@ defineExpose({ setRules, doLayout })
       ref="treeRef"
       :data="tableList"
       node-key="field_name"
-      :draggable="!readonly"
+      :draggable="draggable"
       :allow-drop="allowDrop"
       :expand-on-click-node="false"
       :indent="0"
@@ -650,7 +692,7 @@ defineExpose({ setRules, doLayout })
             <span class="field-index-text">
               {{ getFieldIndex(field) }}
             </span>
-            <el-icon class="field-grip-icon">
+            <el-icon v-if="draggable" class="field-grip-icon">
               <i-lucide-grip-vertical />
             </el-icon>
           </span>

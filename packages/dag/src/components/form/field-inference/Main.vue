@@ -7,7 +7,8 @@ import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import { FieldSelect, mapFieldsData } from '@tap/form'
 import { useI18n } from '@tap/i18n'
 import { cloneDeep, debounce } from 'lodash-es'
-import { computed, onMounted, ref, useTemplateRef, watch } from 'vue'
+import { computed, ref, useTemplateRef, watch } from 'vue'
+import { useSchemaEffect } from '../../../hooks/useAfterTaskSaved'
 import { useDataflowStore } from '../../../stores/dataflow.store'
 import { getCanUseDataTypes, getMatchedDataTypeLevel } from '../../../util'
 import Dialog from './Dialog.vue'
@@ -31,6 +32,12 @@ const listRef = useTemplateRef<any>('list')
 const activeNode = computed(() => dataflowStore.selectedNode)
 const stateIsReadonly = computed(() => dataflowStore.stateIsReadonly)
 
+const draggable = computed(() => {
+  return (
+    !stateIsReadonly.value && !dataflowStore.isSchemaFree(props.form.values)
+  )
+})
+
 // Data
 const navLoading = ref(false)
 const fieldsLoading = ref(false)
@@ -49,7 +56,6 @@ const visible = ref(false)
 const fieldChangeRules = ref<any[]>([])
 const updateList = ref<any[]>([])
 const updateConditionFieldMap = ref<Record<string, any>>({})
-const activeClassification = ref('')
 const tableClassification = ref([
   {
     type: '',
@@ -70,6 +76,7 @@ const tableClassification = ref([
     label: '',
   },
 ])
+const activeClassification = ref(tableClassification.value[0]!.type)
 const transformExNum = ref(0)
 const updateExNum = ref(0)
 const dataTypesJson = ref<any>({})
@@ -296,10 +303,16 @@ watch(updateExNum, (newVal, oldVal) => {
 })
 
 // Mounted
-onMounted(() => {
-  activeClassification.value = tableClassification.value[0].type
+// onMounted(() => {
+//   activeClassification.value = tableClassification.value[0].type
+//   loadData()
+// })
+
+useSchemaEffect(() => [], loadData)
+
+if (!dataflowStore.taskSaving) {
   loadData()
-})
+}
 
 defineExpose({
   refresh,
@@ -474,6 +487,7 @@ defineExpose({
             :show-columns="['index', 'field_name', 'data_type', 'operation']"
             :data-types-json="dataTypesJson"
             :readonly="readonly"
+            :draggable="draggable"
             ignore-error
             class="content__list flex-fill"
             @update-rules="handleUpdateRules"

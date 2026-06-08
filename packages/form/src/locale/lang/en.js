@@ -257,6 +257,7 @@ export default {
     'Target type batch modification rules',
   packages_form_field_inference_list_ninquerenyaohui:
     'Are you absolutely sure that you wish to restore the current table?',
+  packages_form_field_inference_list_reset_column_position: 'Reset Field Order',
   packages_form_field_inference_main_ninquerenyaoquan:
     'Are you sure that you want to restore all settings to their default values?',
   packages_form_field_inference_main_ge: '',

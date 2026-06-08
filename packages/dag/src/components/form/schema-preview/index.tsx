@@ -8,7 +8,7 @@ import { getUpdateConditionFields } from '@tap/form/src/components/field-select/
 import { computed as reactiveComputed } from '@tap/form/src/shared/reactive'
 import { useI18n } from '@tap/i18n'
 import { debounce, isEqual } from 'lodash-es'
-import { defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref } from 'vue'
 import { useSchemaEffect } from '../../../hooks/useAfterTaskSaved'
 import { useDataflowStore } from '../../../stores/dataflow.store'
 import {
@@ -43,6 +43,16 @@ export const SchemaPreview = defineComponent({
     )
     const fieldChangeRules = ref(form.values.fieldChangeRules || [])
     const visible = ref(false)
+
+    const draggable = computed(() => {
+      return !readonly.value && !dataflowStore.isSchemaFree(form.values)
+    })
+
+    const hasColumnPositionConfig = reactiveComputed(() => {
+      if (!draggable.value) return false
+      const fieldsAfter = form.values.fieldsAfter || []
+      return (fieldsAfter[0]?.fields?.length ?? 0) > 0
+    })
 
     const handleOpen = () => {
       visible.value = true
@@ -280,7 +290,7 @@ export const SchemaPreview = defineComponent({
 
       return (
         <div class="flex flex-1 min-w-0 justify-content-between align-center gap-2 pr-2 position-relative">
-          {isTarget.value && (
+          {draggable.value && (
             <el-icon class="field-grip-icon position-absolute">
               <i-lucide-grip-vertical />
             </el-icon>
@@ -377,6 +387,10 @@ export const SchemaPreview = defineComponent({
       ])
     }
 
+    function resetColumnPosition() {
+      form.setValuesIn('fieldsAfter', [])
+    }
+
     return () => (
       <div class="schema-preview pb-6">
         <ElDivider class="mt-8">
@@ -431,7 +445,25 @@ export const SchemaPreview = defineComponent({
         >
           {isTreeView.value ? (
             <div class="schema-card rounded-xl inline-block overflow-hidden shadow-sm border border-light">
-              <div class="schema-card-header border-bottom px-3 py-2 fs-7 lh-base text-center">
+              <div class="schema-card-header text-center border-bottom px-3 py-2 fs-7 lh-base position-relative">
+                {hasColumnPositionConfig.value && (
+                  <el-tooltip
+                    content={t(
+                      'packages_form_field_inference_list_reset_column_position',
+                    )}
+                    placement="top"
+                    enterable={false}
+                    hide-after={0}
+                  >
+                    <el-button
+                      class="position-absolute translate-middle-y top-50 start-1"
+                      text
+                      size="small"
+                      onClick={resetColumnPosition}
+                      icon={IconLucideRotateCcw}
+                    ></el-button>
+                  </el-tooltip>
+                )}
                 {tableName.value}
               </div>
               <div
@@ -453,7 +485,7 @@ export const SchemaPreview = defineComponent({
               >
                 <ElTree
                   indent={8}
-                  draggable={isTarget.value}
+                  draggable={draggable.value}
                   allow-drop={allowDrop}
                   data={treeData.value}
                   render-content={renderContent}
@@ -466,6 +498,7 @@ export const SchemaPreview = defineComponent({
               <FieldList
                 class="w-100 overflow-hidden"
                 data={schemaData.value}
+                draggable={draggable.value}
                 readonly={readonly.value}
                 dataTypesJson={dataTypesJson.value}
                 fieldChangeRules={fieldChangeRules.value}
