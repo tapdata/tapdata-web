@@ -113,6 +113,7 @@ export default {
   public_button_setting: '設置',
   public_button_reduction: '還原',
   public_button_copy: '複製',
+  public_button_duplicate: '複製',
   public_button_details: '詳情',
   public_button_preview: '預覽',
   public_button_reload: '重新加載',
@@ -652,4 +653,5 @@ export default {
   public_last_capture_time: '最近觀測時間',
   public_alarm_date: '告警時間',
   public_duration: '時長',
+  packages_dag_validate_shared_cdc_title: '以下連接尚未開啟共享挖掘，運行任務將會出錯',
 }

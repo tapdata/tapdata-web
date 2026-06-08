@@ -110,6 +110,38 @@ const handleFetchConnections = () => {
 
 handleFetchConnections()
 
+// 搜索范围：表 / 连接，控制搜索框查询的目标
+const searchScope = ref<'table' | 'connection'>('table')
+
+const tableSearchQuery = computed({
+  get: () =>
+    searchScope.value === 'connection'
+      ? connectionQuery.value
+      : tableState.query,
+  set: (val: string) => {
+    if (searchScope.value === 'connection') {
+      connectionQuery.value = val
+    } else {
+      tableState.query = val
+    }
+  },
+})
+
+const handleSearchInput = () => {
+  if (searchScope.value === 'connection') {
+    handleFetchConnections()
+  } else {
+    runFetchTables()
+  }
+}
+
+const handleSearchScopeChange = () => {
+  // 切换搜索范围时清空两侧查询并刷新对应列表
+  connectionQuery.value = ''
+  tableState.query = ''
+  handleSearchInput()
+}
+
 // 根据添加位置决定哪些 tab 被禁用
 const disabledTabs = computed(() => {
   const { nextNodeId, prevNodeId } = props.params || {}
@@ -152,7 +184,10 @@ const handleMouseDown = (event: MouseEvent) => {
   if (!show.value) return
 
   const popperElement = popoverRef.value?.popperRef?.contentRef
-  const target = event.target as Node
+  const target = event.target as HTMLElement
+
+  // 忽略搜索范围下拉浮层内部的点击（已 teleport 到 body）
+  if (target.closest?.('.el-select-dropdown')) return
 
   // 检查点击是否在 popover 外部
   if (popperElement && !popperElement.contains(target)) {
@@ -513,13 +548,34 @@ defineExpose({
           </el-input>
           <el-input
             v-else
-            v-model="tableState.query"
-            :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
+            v-model="tableSearchQuery"
+            :placeholder="
+              searchScope === 'connection'
+                ? $t('packages_dag_search_connection')
+                : $t('packages_form_table_rename_index_sousuobiaoming')
+            "
             clearable
-            @input="runFetchTables"
+            @input="handleSearchInput"
           >
             <template #prefix>
               <el-icon><i-lucide-search /></el-icon>
+            </template>
+            <template #prepend>
+              <el-select
+                v-model="searchScope"
+                class="search-scope-select"
+                :teleported="false"
+                @change="handleSearchScopeChange"
+              >
+                <el-option
+                  :label="$t('packages_dag_dag_table')"
+                  value="table"
+                />
+                <el-option
+                  :label="$t('packages_dag_dag_connection')"
+                  value="connection"
+                />
+              </el-select>
             </template>
           </el-input>
         </div>
@@ -761,5 +817,17 @@ defineExpose({
   min-width: 400px;
   max-width: 480px;
   border-color: var(--el-border-color-extra-light) !important;
+}
+.search-scope-select {
+  width: auto;
+
+  :deep(.el-select__selected-item.el-select__placeholder) {
+    position: relative;
+    transform: none !important;
+  }
+
+  :deep(.el-select__caret) {
+    font-size: 10px;
+  }
 }
 </style>

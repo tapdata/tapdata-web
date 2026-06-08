@@ -30,6 +30,7 @@
     "dayjs": "catalog:",
     "tiny-emitter": "catalog:",
     "vue": "catalog:",
+    "vue-json-pretty": "catalog:",
     "vue-virtual-scroller": "catalog:",
     "vuex": "catalog:"
   }

@@ -7,9 +7,9 @@ import {
   useVueFlow,
   VueFlow,
   type Connection,
-  type ConnectStartEvent,
   type GraphNode,
   type NodeChange,
+  type OnConnectStartParams,
 } from '@vue-flow/core'
 import { useDark } from '@vueuse/core'
 import {
@@ -39,7 +39,7 @@ import { useKeybindings, type KeyMap } from './composables/useKeybindings'
 import { useLayout } from './composables/useLayout'
 import { useDataflowStore } from './stores/dataflow.store'
 import { useUiStore } from './stores/ui.store'
-import { getHelperLines } from './utils/helperLines'
+import { getHelperLines, getHelperLinesForPosition } from './utils/helperLines'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
 
@@ -72,7 +72,7 @@ const dataflowStore = useDataflowStore()
 const { controlKeyText } = useDeviceSupport()
 const dag = inject('dag')
 const nodesPanelExpanded = inject<Ref<boolean>>('nodesPanelExpanded', ref(true))
-
+const needsFitView = inject<Ref<boolean>>('needsFitView', ref(true))
 // Bottom bar dynamic positioning
 const RIGHT_PANEL_WIDTH = 600
 const PANEL_MARGIN = 12
@@ -487,14 +487,49 @@ function onUpdateEdgeLabelHovered(id: string, hovered: boolean) {
 }
 
 const connectionCreated = ref(false)
-const connectingHandle = ref<ConnectStartEvent>()
+const connectingHandle = ref<OnConnectStartParams>()
 const connectedHandle = ref<Connection>()
+
+function onConnectStart(params: { event?: MouseEvent } & OnConnectStartParams) {
+  connectingHandle.value = params
+  connectionCreated.value = false
+}
 
 function onConnect(connection: Connection) {
   emit('create:connection', connection)
 
   connectedHandle.value = connection
   connectionCreated.value = true
+}
+
+// 在节点本体（非 Handle）上松开连线时，仍尝试建立连接
+function onConnectEnd(event?: MouseEvent | TouchEvent) {
+  const start = connectingHandle.value
+  connectingHandle.value = undefined
+
+  // 已命中 Handle 完成连线，或缺少起始节点/事件信息，无需补充处理
+  if (connectionCreated.value || !start?.nodeId || !event) return
+
+  const point = 'changedTouches' in event ? event.changedTouches[0] : event
+  if (!point) return
+
+  const el = document.elementFromPoint(point.clientX, point.clientY)
+  const targetNodeId = el?.closest('.vue-flow__node')?.getAttribute('data-id')
+  if (!targetNodeId || targetNodeId === start.nodeId) return
+
+  // 根据起始 Handle 类型确定连线方向：target 起始则落点节点为 source，反之为 target
+  const connection =
+    start.handleType === 'target'
+      ? { source: targetNodeId, target: start.nodeId }
+      : { source: start.nodeId, target: targetNodeId }
+
+  if (!dataflowStore.isValidConnection(connection as any)) return
+
+  emit('create:connection', {
+    ...connection,
+    sourceHandle: null,
+    targetHandle: null,
+  })
 }
 
 function onCreateConnection(connection: any) {
@@ -690,6 +725,29 @@ provide('onDeleteConnection', onDeleteConnection)
 provide('onMoveNodePosition', onMoveNodePosition)
 provide('handleDisableNode', handleDisableNode)
 
+// Expose helper-line updaters so that NodesPanel drag can show guide lines
+provide(
+  'updateDragHelperLines',
+  (
+    position: { x: number; y: number },
+    dimensions: { width: number; height: number },
+  ) => {
+    const lines = getHelperLinesForPosition(
+      position,
+      dimensions,
+      getNodes.value,
+    )
+    helperLineHorizontal.value = lines.horizontal
+    helperLineVertical.value = lines.vertical
+    // 返回吸附位置（flow 坐标），供拖拽元素对齐到引导线
+    return lines.snapPosition
+  },
+)
+provide('clearDragHelperLines', () => {
+  helperLineHorizontal.value = undefined
+  helperLineVertical.value = undefined
+})
+
 function locateNode(nodeId: string) {
   const node = vueFlow.findNode(nodeId)
   if (!node) return
@@ -727,20 +785,18 @@ function selectNodes(nodeIds: string[]) {
   )
 }
 
-let isInitialized = false
-
 function onNodesInitialized() {
-  if (isInitialized) return
-  isInitialized = true
-  nextTick(() => {
-    setTimeout(() => {
-      if (dataflowStore.stateIsReadonly) {
-        handleLayoutGraph()
-      } else {
-        fitViewWithOffset({ duration: 0, maxZoom: 1 })
-      }
-    }, 0)
-  })
+  if (!needsFitView.value) return
+
+  needsFitView.value = false
+  setTimeout(() => {
+    if (dataflowStore.stateIsReadonly || dataflowStore.needsAutoLayout) {
+      handleLayoutGraph()
+      dataflowStore.needsAutoLayout = false
+    } else {
+      fitViewWithOffset({ duration: 0, maxZoom: 1 })
+    }
+  }, 0)
 }
 
 defineExpose({
@@ -1005,7 +1061,9 @@ defineExpose({
       :apply-changes="false"
       @mousedown="clearTextSelection"
       @node-drag-stop="onNodeDragStop"
+      @connect-start="onConnectStart"
       @connect="onConnect"
+      @connect-end="onConnectEnd"
       @node-click="onNodeClick"
       @pane-click="onPaneClick"
       @selection-end="onSelectionEnd"

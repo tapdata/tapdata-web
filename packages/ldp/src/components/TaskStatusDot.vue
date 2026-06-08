@@ -7,6 +7,7 @@ defineProps<{
 
 <template>
   <el-tooltip
+    v-if="STATUS_MAP[status]"
     :content="$t(STATUS_MAP[status].i18n)"
     :hide-after="0"
     :enterable="false"

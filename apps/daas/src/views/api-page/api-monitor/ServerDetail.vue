@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import {
+  fetchConnectionWithName,
   fetchMonitorServerApi,
   fetchMonitorServerChart,
   fetchMonitorServerDetail,
-  fetchConnectionWithName,
+  type ConnectionWithName,
   type ServerChart,
-  type ServerDetail,
-  type ServerWorker, type ConnectionWithName,
+  type ServerDetail, type ServerWorker,
 } from '@tap/api/src/core/monitor-server'
 import { usePagination, useRequest } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
@@ -266,7 +266,7 @@ const { run: runFetch } = useRequest(
   async () => {
     if (!connectionWithName.value || connectionWithName.value.length <= 0) {
       connectionWithName.value = await fetchConnectionWithName(serverId)
-      if (!connectionId.value) {
+      if (!connectionId.value && connectionWithName.value?.[0]) {
         connectionId.value = connectionWithName.value[0].id
       }
     }
@@ -436,7 +436,7 @@ const connectionPollChartOption = computed<EChartsOption>(() => ({
       const timeStr = dayjs.unix(timestamp).format('MM-DD HH:mm:ss')
       let result = `${timeStr}<br/>`
       params.forEach((param: any) => {
-        result += `${param.marker}${param.seriesName}: ${isNumber(param.value) ? `${param.value}` : '--'}<br/>`
+        result += `${param.marker}${param.seriesName}: ${isNumber(param.value) ? String(param.value) : '--'}<br/>`
       })
       return result
     },
@@ -836,10 +836,7 @@ const workerCpuChartOption = computed<EChartsOption>(() => {
       // name: 'CPU Usage (%)',
       axisLabel: {
         formatter: '{value}%',
-      },
-      // 固定范围
-      min: 0,
-      max: 100
+      }
     },
     tooltip: {
       borderRadius: 12,
@@ -909,9 +906,6 @@ const workerMemoryChartOption = computed<EChartsOption>(() => {
       axisLabel: {
         formatter: '{value}%',
       },
-      // 固定范围
-      min: 0,
-      max: 100
     },
     tooltip: {
       borderRadius: 12,

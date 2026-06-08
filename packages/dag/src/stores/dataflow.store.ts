@@ -2,6 +2,7 @@ import { observable } from '@formily/reactive'
 import { fetchCustomNodes } from '@tap/api/src/core/custom-node'
 import { getDataActions } from '@tap/api/src/core/data-permission'
 import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
+import { getSharedCdcEnable } from '@tap/api/src/core/external-storage'
 import {
   createTask,
   fetchTasks,
@@ -104,6 +105,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
   const taskLoading = ref(true)
   const schemaRefreshing = ref(false)
   const materializedViewVisible = ref(false)
+  const needsAutoLayout = ref(false)
 
   const buttonShowMap = reactive({
     View: true,
@@ -264,6 +266,11 @@ export const useDataflowStore = defineStore('dataflow', () => {
       setDataflow(dataflowData)
       getTaskPermissions()
 
+      // 检测是否有节点缺少 attrs.position，需要自动布局
+      needsAutoLayout.value = dagData.nodes?.some(
+        (node: any) => !node.attrs?.position,
+      )
+
       const { nodes, edges } = initialDag(dagData)
 
       dag.value.nodes = nodes
@@ -281,6 +288,11 @@ export const useDataflowStore = defineStore('dataflow', () => {
     const name = await makeTaskName(`${t('public_task')} `)
     dataflow.name = name
     dataflow.syncType = syncType
+
+    const sharedCdc = await getSharedCdcEnable().catch(() => null)
+    if (sharedCdc?.enabled) {
+      dataflow.shareCdcEnable = true
+    }
 
     const data = await createTask({
       ...dataflow,
@@ -867,6 +879,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     taskLoading.value = true
     taskSaving.value = false
     materializedViewVisible.value = false
+    needsAutoLayout.value = false
 
     processorNodeTypes.value = []
 
@@ -910,6 +923,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     taskLoading,
     schemaRefreshing,
     materializedViewVisible,
+    needsAutoLayout,
     buttonShowMap,
     showBottom,
     editVersion,

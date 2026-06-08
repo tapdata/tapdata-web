@@ -60,10 +60,37 @@ export function createExternalStorage(params: any) {
   return requestClient.post(BASE_URL, params)
 }
 
-// delete(id: string) {
-//   return this.axios.delete(`${this.url}/${id}`)
-// }
-
 export function deleteExternalStorage(id: string) {
   return requestClient.delete(`${BASE_URL}/${id}`)
+}
+
+export interface SharedCdcEnableData {
+  category: string
+  enabled: boolean
+  externalId: string
+  externalName: string
+  externalType: string
+  settingKey: string
+  [property: string]: any
+}
+
+export function getSharedCdcEnable() {
+  return requestClient.get<SharedCdcEnableData>(`${BASE_URL}/shared-cdc-enable`)
+}
+
+export interface ConnectionSharedCdcStatus {
+  connections: {
+    id: string
+    name: string
+    [property: string]: any
+  }[]
+}
+
+export function getConnectionSharedCdcStatus(connectionIds: string[]) {
+  return requestClient.post<ConnectionSharedCdcStatus>(
+    `${BASE_URL}/ds-shared-cdc-status`,
+    {
+      connectionIds,
+    },
+  )
 }

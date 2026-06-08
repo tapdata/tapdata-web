@@ -1,3 +1,7 @@
+import {
+  getConnectionSharedCdcStatus,
+  getSharedCdcEnable,
+} from '@tap/api/src/core/external-storage'
 import { callProxy } from '@tap/api/src/core/proxy'
 import { fetchSharedCache } from '@tap/api/src/core/shared-cache'
 import {
@@ -14,6 +18,7 @@ import {
 } from '@tap/api/src/core/task'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
 import { makeStatusAndDisabled } from '@tap/business/src/shared/task'
+import { getConnectionIcon } from '@tap/business/src/views/connections/util'
 import { Modal } from '@tap/component/src/modal'
 import { computed as reactiveComputed } from '@tap/form/src/shared/reactive'
 import {
@@ -963,15 +968,7 @@ export function useCanvasOperation() {
     let hasEnableDDL: boolean | undefined
     let hasEnableDDLAndIncreasesql: boolean | undefined
     let inBlacklist = false
-    const blacklist = [
-      'js_processor',
-      'custom_processor',
-      'migrate_js_processor',
-      'union_processor',
-      'migrate_union_processor',
-      'standard_js_processor',
-      'standard_migrate_js_processor',
-    ]
+    const blacklist = ['union_processor', 'migrate_union_processor']
     allNodes.value.forEach((node: any) => {
       if (node.ddlConfiguration === 'SYNCHRONIZATION') {
         hasEnableDDL = true
@@ -1232,6 +1229,103 @@ export function useCanvasOperation() {
       }
 
       ;(target as any).dmlPolicy = dmlPolicy
+    }
+  }
+
+  const validateSharedCdc = async () => {
+    if (
+      dataflowStore.dataflow.shareCdcEnable &&
+      dataflowStore.dataflow.enforceShareCdc
+    ) {
+      const sharedCdc = await getSharedCdcEnable().catch(() => null)
+      if (!sharedCdc?.enabled) return
+
+      // 收集所有源节点的 connectionId
+      const sourceNodes = allNodes.value.filter(
+        (node: any) => !node.$inputs?.length && node.connectionId,
+      )
+      const connectionIds = sourceNodes.map((node: any) => node.connectionId)
+      if (!connectionIds.length) return
+
+      // connectionId -> pdkHash 映射，用于展示图标
+      const connPdkHashMap: Record<string, string> = {}
+      sourceNodes.forEach((node: any) => {
+        if (node.connectionId && node.attrs?.pdkHash) {
+          connPdkHashMap[node.connectionId] = node.attrs.pdkHash
+        }
+      })
+
+      const result = await getConnectionSharedCdcStatus(connectionIds).catch(
+        () => null,
+      )
+      const unenabledConnections = result?.connections
+      if (!unenabledConnections?.length) return
+
+      const connList = unenabledConnections.map((conn: any) => ({
+        ...conn,
+        pdkHash: connPdkHashMap[conn.id],
+      }))
+
+      const openConnEdit = (id: string, pdkHash: string) => {
+        const { href } = router.resolve({
+          name: 'connectionsEdit',
+          params: { id },
+          query: { pdkHash },
+        })
+        window.open(href, '_blank')
+      }
+
+      return await Modal.confirm(
+        t('packages_dag_validate_shared_cdc_title'),
+        h(
+          'ul',
+          { class: 'list-style-none p-0 m-0' },
+          connList.map((conn: any) =>
+            h(
+              'li',
+              {
+                class:
+                  'flex align-items-center gap-2 px-2 py-1 rounded-lg hover:bg-fill-color-light',
+              },
+              [
+                // 左：图标容器
+                h('img', {
+                  class: 'connection-img',
+                  src: getConnectionIcon(conn.pdkHash),
+                  alt: '',
+                  style: 'width: 16px; height: 16px; object-fit: contain;',
+                }),
+                // 中：连接名称
+                h(
+                  'span',
+                  {
+                    class: 'flex-1 text-truncate',
+                    style: 'min-width: 0;',
+                    title: conn.name,
+                  },
+                  conn.name,
+                ),
+                // 右：编辑按钮
+                h(ElButton, {
+                  class: 'flex-shrink-0',
+                  text: true,
+                  icon: IconLucidePencilLine,
+                  size: 'small',
+                  onClick: (e: MouseEvent) => {
+                    e.stopPropagation()
+                    openConnEdit(conn.id, conn.pdkHash)
+                  },
+                }),
+              ],
+            ),
+          ),
+        ),
+        {
+          customStyle: {
+            maxWidth: '500px',
+          },
+        },
+      )
     }
   }
 
@@ -1505,6 +1599,13 @@ export function useCanvasOperation() {
     const result = await taskOperationsRef.value.validateDataValidation()
 
     if (!result) {
+      isSaving.value = false
+      return
+    }
+
+    const enableSharedCdc = await validateSharedCdc()
+
+    if (enableSharedCdc === false) {
       isSaving.value = false
       return
     }

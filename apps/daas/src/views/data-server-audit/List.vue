@@ -7,7 +7,7 @@ import { FilterBar } from '@tap/component/src/filter-bar'
 import { useI18n } from '@tap/i18n'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
-import { reactive, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const { t } = useI18n()
@@ -16,7 +16,7 @@ const router = useRouter()
 
 const tableRef = ref<InstanceType<typeof TablePage>>()
 
-const searchParams = reactive({
+const searchParams = ref({
   keyword: '',
   clientName: '',
   method: '',
@@ -47,16 +47,16 @@ const defaultSort = ref<{
 // 从 route.query 初始化参数
 function initFromQuery(query: Record<string, any>) {
   if (query.keyword) {
-    searchParams.keyword = query.keyword
+    searchParams.value.keyword = query.keyword
   }
   if (query.code) {
-    searchParams.code = query.code
+    searchParams.value.code = query.code
   }
   if (query.start) {
-    searchParams.start = Number(query.start)
+    searchParams.value.start = Number(query.start)
   }
   if (query.end) {
-    searchParams.end = Number(query.end)
+    searchParams.value.end = Number(query.end)
   }
   if (query.sortBy && query.sortOrder) {
     order.value = `${query.sortBy} ${query.sortOrder}`
@@ -78,7 +78,7 @@ function toDetails(item: any) {
 function getData({ page }: { page: { current: number; size: number } }) {
   const { current, size } = page
   const { method, code, start, end, clientId, keyword, options } =
-    searchParams as any
+    searchParams.value as any
   const where: Record<string, any> = {}
   if (method) {
     where.method = method

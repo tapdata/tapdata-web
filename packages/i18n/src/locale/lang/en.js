@@ -113,6 +113,7 @@ export default {
   public_button_setting: 'Settings',
   public_button_reduction: 'Reduction',
   public_button_copy: 'Copy',
+  public_button_duplicate: 'Duplicate',
   public_button_details: 'Details',
   public_button_preview: 'Preview',
   public_button_reload: 'Reload',
@@ -663,4 +664,5 @@ export default {
   public_last_capture_time: 'Last Capture Time',
   public_alarm_date: 'Alarm Time',
   public_duration: 'Duration',
+  packages_dag_validate_shared_cdc_title: 'The following connections have not enabled Shared Mining. Running the task will cause errors.',
 }
