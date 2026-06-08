@@ -6,4 +6,5 @@ export const STATUS_MAP = {
 
   starting: i18n.t('cluster_starting'),
   deploy_fail: i18n.t('cluster_deploy_fail'),
+  not_deploy: i18n.t('cluster_deploy_not'),
 }

@@ -4,6 +4,7 @@ import { useI18n } from '@tap/i18n'
 import { computed } from 'vue'
 import MiniChart from './MiniChart.vue'
 import type { ServerItem } from '@tap/api/src/core/monitor-server'
+import i18n from "@/i18n";
 
 const { t } = useI18n()
 
@@ -22,6 +23,7 @@ const configs = {
   starting: { type: 'primary' as const, text: t('cluster_starting') },
   stopped: { type: 'danger' as const, text: t('cluster_stopped') },
   deploy_fail: { type: 'danger' as const, text: t('cluster_deploy_fail') },
+  not_deploy: { type: 'warning' as const, text: t('cluster_deploy_not') },
 }
 
 const statusConfig = computed(() => {

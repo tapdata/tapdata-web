@@ -851,6 +851,7 @@ export default {
   cluster_stopped: '已停止',
   cluster_starting: '启动中',
   cluster_deploy_fail: '部署失败',
+  cluster_deploy_not: '未部署',
   cluster_sync_gover: '同步治理',
   cluster_manage_sys: '管理后台',
   cluster_add_server_mon: '添加服务监控',

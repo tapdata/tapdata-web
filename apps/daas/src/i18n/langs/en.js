@@ -900,6 +900,7 @@ export default {
   cluster_stopped: 'Stopped',
   cluster_starting: 'Starting',
   cluster_deploy_fail: 'Deploy Failed',
+  cluster_deploy_not: 'Not Deploy',
   cluster_sync_gover: 'Flow Engine',
   cluster_manage_sys: 'Tapdata Manager',
   cluster_add_server_mon: 'Add Service Monitor',
