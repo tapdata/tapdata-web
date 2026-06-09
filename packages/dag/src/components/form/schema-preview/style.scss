@@ -24,7 +24,7 @@
         transform: translateY(-50%);
       } 
       .field-icon {
-        display: none;
+        display: none !important;
       }
     }
   }
