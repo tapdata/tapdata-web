@@ -2,6 +2,7 @@ import { action } from '@formily/reactive'
 import { fetchDatabaseTypeByPdkHash } from '@tap/api/src/core/database-types'
 import { getNodeSchemaPage } from '@tap/api/src/core/metadata-instances'
 import { refreshTaskSchema } from '@tap/api/src/core/task'
+import VIcon from '@tap/component/src/base/VIcon.vue'
 import { IconButton } from '@tap/component/src/icon-button'
 import { mapFieldsData, useField, useForm } from '@tap/form'
 import { getUpdateConditionFields } from '@tap/form/src/components/field-select/FieldSelect'
@@ -31,6 +32,10 @@ export const SchemaPreview = defineComponent({
     const treeData = ref([])
     const loading = ref(false)
     const isTreeView = ref(true)
+    const viewOptions = [
+      { value: true, icon: IconLucideListTree },
+      { value: false, icon: IconLucideTable2 },
+    ]
     const isMultiIndex = ref(false)
     const isMultiUniqueIndex = ref(false)
     const isMultiForeignKey = ref(false)
@@ -412,25 +417,17 @@ export const SchemaPreview = defineComponent({
                 refresh
               </IconButton>
             </el-tooltip>
-            <el-tooltip
-              content={t(
-                isTreeView.value
-                  ? 'packages_dag_switch_to_table_view'
-                  : 'packages_dag_switch_to_tree_view',
-              )}
-              placement="top"
-              hide-after={0}
-              enterable={false}
-              transition="none"
-            >
-              <IconButton
-                onClick={() => {
-                  isTreeView.value = !isTreeView.value
-                }}
-              >
-                {isTreeView.value ? 'table-grid' : 'tree-view'}
-              </IconButton>
-            </el-tooltip>
+            <ElSegmented v-model={isTreeView.value} options={viewOptions}>
+              {{
+                default: ({ item }) => (
+                  <div class="flex align-center justify-center">
+                    <el-icon size={16}>
+                      <item.icon />
+                    </el-icon>
+                  </div>
+                ),
+              }}
+            </ElSegmented>
           </span>
         </ElDivider>
         <div
