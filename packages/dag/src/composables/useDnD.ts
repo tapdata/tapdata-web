@@ -9,6 +9,7 @@ export const makeNode = (
 ) => {
   const nodeConfig = {}
   const attrs = {
+    position: [0, 0],
     connectionName: connection.name,
     connectionType: connection.connection_type,
     accessNodeProcessId: connection.accessNodeProcessId,

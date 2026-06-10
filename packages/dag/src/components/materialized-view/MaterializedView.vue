@@ -6,6 +6,7 @@ import {
 import VDivider from '@tap/component/src/base/VDivider.vue'
 import { IconButton } from '@tap/component/src/icon-button'
 import { mapFieldsData } from '@tap/form'
+import { Background } from '@vue-flow/background'
 import { useVueFlow, VueFlow } from '@vue-flow/core'
 import dagre from 'dagre'
 import Mousetrap from 'mousetrap'
@@ -212,7 +213,7 @@ function handleUpdateVisible(val) {
 }
 
 function handleCenterContent() {
-  fitView({ duration: 300, padding: 0.1 })
+  fitView({ duration: 300, padding: 0.1, maxZoom: 1 })
 }
 
 async function handleDelete() {
@@ -458,7 +459,7 @@ function handleAutoLayout() {
   })
 
   nextTick(() => {
-    fitView({ duration: 300, padding: 0.1 })
+    fitView({ duration: 300, padding: 0.1, maxZoom: 1 })
   })
 }
 
@@ -894,7 +895,7 @@ defineExpose({
           {{ $t('public_button_start') }}
         </ElButton>
       </header>
-      <div class="flex-1 min-h-0 position-relative">
+      <div class="flex-1 min-h-0 position-relative p-4 pt-0">
         <VueFlow
           v-if="showPaper"
           id="materialized-view-flow"
@@ -905,7 +906,7 @@ defineExpose({
           :min-zoom="0.1"
           :delete-key-code="null"
           :apply-changes="false"
-          class="materialized-view-flow"
+          class="materialized-view-flow rounded-xxl"
         >
           <template #node-mv-node="nodeProps">
             <Node
@@ -947,6 +948,8 @@ defineExpose({
               @load-schema="onLoadTargetSchema"
             />
           </template>
+
+          <Background class="bg-dataflow-canvas" />
         </VueFlow>
         <TransformLoading :show="transformLoading" />
       </div>
@@ -989,6 +992,10 @@ $hoverBg: #eef3ff;
 $radius: 6px;
 $baseHeight: 26px;
 $sidebarBg: #fff;
+
+.bg-dataflow-canvas {
+  background-color: var(--color-dataflow-canvas-bg, #f2f4f7);
+}
 
 .icon-btn {
   display: flex;

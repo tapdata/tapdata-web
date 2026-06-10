@@ -786,7 +786,7 @@ function selectNodes(nodeIds: string[]) {
 }
 
 function onNodesInitialized() {
-  if (!needsFitView.value) return
+  if (!needsFitView.value && !dataflowStore.needsAutoLayout) return
 
   needsFitView.value = false
   setTimeout(() => {
