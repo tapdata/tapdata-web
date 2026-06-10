@@ -127,8 +127,25 @@ const paramsTableRef = ref<TableInstance>()
 const parameterSelectRef = ref<SelectInstance[]>([])
 const fieldsTreeRef =
   useTemplateRef<InstanceType<typeof FieldsTree>>('fieldsTreeRef')
+const fieldsTreePreviewRef = useTemplateRef<
+  InstanceType<typeof FieldsTreePreview>
+>('fieldsTreePreviewRef')
 const selectedFieldSize = ref(0)
 const helpVisible = ref(false)
+const previewFieldMode = ref<'selected' | 'unselected'>('selected')
+
+const unselectedFields = computed(() => {
+  const selectedNames = new Set(
+    (form.value.fields || []).map((f: any) => f.field_name),
+  )
+  return allFields.value.filter((f: any) => !selectedNames.has(f.field_name))
+})
+
+const previewFields = computed(() => {
+  return previewFieldMode.value === 'unselected'
+    ? unselectedFields.value
+    : form.value.fields || []
+})
 
 // Template refs
 const form_ref = ref()
@@ -361,6 +378,7 @@ const open = (formData?: any, copy?: boolean) => {
   debugParams.value = null
   allFields.value = []
   selectedFieldSize.value = 0
+  previewFieldMode.value = 'selected'
   permissionActions.value = formData?.permissionActions || []
 
   if (isEmpty(formData)) {
@@ -602,6 +620,7 @@ const handleCancel = () => {
   isEdit.value = false
   form.value = initialFormData
   selectedFieldSize.value = 0
+  previewFieldMode.value = 'selected'
   getFields()
 }
 
@@ -859,6 +878,10 @@ const saveEdit = (index: number) => {
 
 const handleFormat = () => {
   mqlEditor.value?.format()
+}
+
+const handlePreviewMode = () => {
+  fieldsTreePreviewRef.value?.clearSearch()
 }
 
 watch(
@@ -2285,6 +2308,34 @@ provide('form', form)
             <el-tag v-if="isEdit && selectedFieldSize" type="info" size="small">
               {{ $t('public_selected_fields', { val: selectedFieldSize }) }}
             </el-tag>
+            <el-segmented
+              v-if="!isEdit && unselectedFields.length"
+              v-model="previewFieldMode"
+              :options="[
+                {
+                  label: $t('public_field_view_selected'),
+                  value: 'selected',
+                },
+                {
+                  label: $t('public_field_view_unselected'),
+                  value: 'unselected',
+                },
+              ]"
+              @change="handlePreviewMode"
+            >
+              <template #default="{ item }">
+                <span v-if="item.value === 'selected'">
+                  {{ $t('public_field_view_selected') }}({{
+                    form.fields.length
+                  }})
+                </span>
+                <span v-else>
+                  {{ $t('public_field_view_unselected') }}({{
+                    unselectedFields.length
+                  }})
+                </span>
+              </template>
+            </el-segmented>
             <div class="flex-1" />
             <template v-if="isEdit && selectedFieldSize">
               <el-button
@@ -2344,7 +2395,11 @@ provide('form', form)
             @update-field-name="onUpdateFieldName"
             @update-field-type="onUpdateFieldType"
           />
-          <FieldsTreePreview v-else :fields="form.fields" />
+          <FieldsTreePreview
+            v-else
+            ref="fieldsTreePreviewRef"
+            :fields="previewFields"
+          />
         </template>
 
         <template v-if="tab === 'debug'">

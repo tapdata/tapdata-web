@@ -596,6 +596,8 @@ export default {
   public_select_encryption_rule: '选择加密规则',
   public_clear_alias_confirm: '确定清空所有字段别名吗?',
   public_selected_fields: '已选择 {val} 个字段',
+  public_field_view_selected: '已选字段',
+  public_field_view_unselected: '未选字段',
   public_selected_tables: '已选择 {val} 个表',
   public_quick_convert_alias: '快速转换别名',
   public_clear_alias: '清空别名',
