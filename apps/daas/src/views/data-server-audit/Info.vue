@@ -531,7 +531,8 @@ getData()
                 {{ $t('apiaudit_execution_window') }}
               </div>
               <div class="apiaudit-timing__window-value">
-                {{ executionWindow.start }} → {{ executionWindow.end }}
+                <span class="text-nowrap">{{ executionWindow.start }}</span> →
+                <span class="text-nowrap">{{ executionWindow.end }}</span>
               </div>
             </div>
           </div>
@@ -1107,9 +1108,6 @@ $code-null: #c586c0;
     'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   color: var(--text-normal, #374151);
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 @media (max-width: 1200px) {
