@@ -11,6 +11,7 @@ import {
 import { fetchWorkers } from '@tap/api/src/core/workers'
 import { useRequest } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import { useHas } from '@tap/business/src/composables'
 import { dayjs } from '@tap/business/src/shared'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
@@ -18,6 +19,11 @@ import { computed, onUnmounted, ref, watch } from 'vue'
 import TaskRebalanceDrawer from '../cluster/TaskRebalanceDrawer.vue'
 
 const { t } = useI18n()
+const $has = useHas()
+
+const hasEditPermission = computed(() => {
+  return $has('v2_task_rebalance_Edit')
+})
 
 type JobCategory = 'running' | 'pending' | 'failed' | 'skipped' | 'success'
 
@@ -149,6 +155,19 @@ const CATEGORY_LABEL: Record<JobCategory, string> = {
   pending: 'daas_task_rebalance_history_stat_pending',
 }
 
+const JOB_STATUS_LABEL: Record<JobStatus, string> = {
+  PENDING: 'daas_task_rebalance_history_job_pending',
+  STARTING: 'daas_task_rebalance_history_job_starting',
+  STOPPING: 'daas_task_rebalance_history_job_stopping',
+  OK: 'daas_task_rebalance_history_job_ok',
+  CANCELLED: 'daas_task_rebalance_history_job_cancelled',
+  INVALID_AGENT: 'daas_task_rebalance_history_job_invalid_agent',
+  STATUS_ERROR: 'daas_task_rebalance_history_job_status_error',
+  STOP_TIMEOUT: 'daas_task_rebalance_history_job_stop_timeout',
+  START_TIMEOUT: 'daas_task_rebalance_history_job_start_timeout',
+  FAILED: 'daas_task_rebalance_history_job_failed',
+}
+
 const CATEGORY_ICON = {
   running: IconLucideLoaderCircle,
   pending: IconLucideClock,
@@ -255,47 +274,78 @@ function formatDuration(start?: string | null, end?: string | null): string {
   return `${hours}h ${minutes % 60}m`
 }
 
+type RebalanceStatus = 'CREATING' | 'RUNNING' | 'OK' | 'FAILED' | 'CANCELLED'
+
 interface RecordStatus {
-  key: 'running' | 'done' | 'partial' | 'cancelled' | 'failed'
+  key: 'creating' | 'running' | 'done' | 'partial' | 'cancelled' | 'failed'
   label: string
   type: 'primary' | 'success' | 'warning' | 'info' | 'danger'
 }
 
-function getRecordStatus(record: TaskRebalanceVo): RecordStatus {
-  if (record.status === 'RUNNING') {
-    return {
+const RECORD_STATUS_MAP = new Map<RebalanceStatus, RecordStatus>([
+  [
+    'CREATING',
+    {
+      key: 'creating',
+      label: 'daas_task_rebalance_history_record_creating',
+      type: 'info',
+    },
+  ],
+  [
+    'RUNNING',
+    {
       key: 'running',
       label: 'daas_task_rebalance_history_record_running',
       type: 'primary',
-    }
-  }
-  if (record.status === 'FAILED') {
-    return {
+    },
+  ],
+  [
+    'OK',
+    {
+      key: 'done',
+      label: 'daas_task_rebalance_history_record_done',
+      type: 'success',
+    },
+  ],
+  [
+    'FAILED',
+    {
       key: 'failed',
       label: 'daas_task_rebalance_history_record_failed',
       type: 'danger',
-    }
-  }
-  if (record.status === 'CANCELLED') {
-    return {
+    },
+  ],
+  [
+    'CANCELLED',
+    {
       key: 'cancelled',
       label: 'daas_task_rebalance_history_record_cancelled',
       type: 'info',
+    },
+  ],
+])
+
+function getRecordStatus(record: TaskRebalanceVo): RecordStatus {
+  const mapped = RECORD_STATUS_MAP.get(record.status as RebalanceStatus)
+  if (mapped) {
+    // For OK status, check for partial success or full cancellation
+    if (record.status === 'OK') {
+      if (record.failedCount > 0) {
+        return {
+          key: 'partial',
+          label: 'daas_task_rebalance_history_record_partial',
+          type: 'warning',
+        }
+      }
+      if (record.cancelledCount > 0 && record.okCount === 0) {
+        return {
+          key: 'cancelled',
+          label: 'daas_task_rebalance_history_record_cancelled',
+          type: 'info',
+        }
+      }
     }
-  }
-  if (record.failedCount > 0) {
-    return {
-      key: 'partial',
-      label: 'daas_task_rebalance_history_record_partial',
-      type: 'warning',
-    }
-  }
-  if (record.cancelledCount > 0 && record.okCount === 0) {
-    return {
-      key: 'cancelled',
-      label: 'daas_task_rebalance_history_record_cancelled',
-      type: 'info',
-    }
+    return mapped
   }
   return {
     key: 'done',
@@ -411,7 +461,11 @@ onUnmounted(stopDetailPolling)
       }}</span>
     </template>
     <template #actions>
-      <el-button type="primary" @click="showRebalanceDrawer = true">
+      <el-button
+        v-if="hasEditPermission"
+        type="primary"
+        @click="showRebalanceDrawer = true"
+      >
         {{ $t('daas_task_rebalance_button') }}
       </el-button>
     </template>
@@ -507,7 +561,7 @@ onUnmounted(stopDetailPolling)
                 t('daas_task_rebalance_history_progress')
               }}</span>
               <el-button
-                v-if="pendingCount"
+                v-if="pendingCount && hasEditPermission"
                 type="danger"
                 plain
                 :loading="cancellingAll"
@@ -609,7 +663,7 @@ onUnmounted(stopDetailPolling)
                               :is="CATEGORY_ICON[row.category as JobCategory]"
                             />
                           </el-icon>
-                          {{ t(CATEGORY_LABEL[row.category as JobCategory]) }}
+                          {{ t(JOB_STATUS_LABEL[row.status as JobStatus] ?? CATEGORY_LABEL[row.category as JobCategory]) }}
                         </div>
                       </el-tag>
                     </template>
@@ -625,7 +679,7 @@ onUnmounted(stopDetailPolling)
                       <div class="flex align-center">
                         <span class="ellipsis">{{ row.errorMesg || '-' }}</span>
                         <el-button
-                          v-if="row.category === 'pending'"
+                          v-if="row.category === 'pending' && hasEditPermission"
                           text
                           type="danger"
                           class="ml-auto"

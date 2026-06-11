@@ -249,7 +249,16 @@ const pageSort = [
       { name: 'v2_shared_cache' },
       { name: 'v2_project_management' },
       { name: 'v2_project_import_and_export' },
-      { name: 'v2_task_rebalance' },
+      {
+        name: 'v2_task_rebalance',
+        buttons: [
+          {
+            label: t('daas_task_rebalance_create'),
+            name: 'v2_task_rebalance_Edit',
+            checked: false,
+          },
+        ],
+      },
     ],
   },
   {
@@ -737,7 +746,13 @@ onMounted(() => {
 
       <!-- 空状态 -->
       <div v-else class="role-empty">
-        <el-empty :description="t('public_data_no_data') || '没有匹配的模块'" />
+        <el-empty
+          :description="
+            searchKeyword
+              ? t('daas_role_role_no_matching_module')
+              : t('public_data_no_data')
+          "
+        />
       </div>
     </div>
   </PageContainer>

@@ -28,6 +28,7 @@ import {
 } from '@tap/api/src/core/workers'
 import { useRequest } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import { useHas } from '@tap/business/src/composables'
 import { dayjs, makeDragNodeImage } from '@tap/business/src/shared'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import { IconButton } from '@tap/component/src/icon-button'
@@ -52,6 +53,11 @@ import TaskRebalanceDrawer from './TaskRebalanceDrawer.vue'
 import UpdateLicense from './UpdateLicense.vue'
 
 const { t } = useI18n()
+const $has = useHas()
+
+const hasRebalancePermission = computed(() => {
+  return $has('v2_task_rebalance_Edit')
+})
 
 // Types
 interface TagDialog {
@@ -1223,7 +1229,11 @@ const onUpdateLicenseSuccess = () => {
               :items="filterItems"
               @fetch="getDataApi()"
             />
-            <el-button type="primary" @click="showRebalanceDrawer = true">
+            <el-button
+              v-if="hasRebalancePermission"
+              type="primary"
+              @click="showRebalanceDrawer = true"
+            >
               {{ $t('daas_task_rebalance_button') }}
             </el-button>
           </div>
