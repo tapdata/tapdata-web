@@ -250,6 +250,32 @@ const canConnect = (sourceNode: any, targetNode: any): boolean => {
   return dataflowStore.checkAllowTargetOrSource(sourceNode, targetNode, true)
 }
 
+const getBeforeNodesInSameBranch = (nodeId: string) => {
+  const list: any[] = []
+  const visited = new Set<string>()
+
+  const traverse = (id: string) => {
+    if (visited.has(id)) return
+    visited.add(id)
+
+    const currentNode = dataflowStore.findNodeById(id)
+    if (!currentNode) return
+
+    list.push(currentNode)
+
+    currentNode.$inputs?.forEach((inputId: string) => {
+      traverse(inputId)
+    })
+  }
+
+  traverse(nodeId)
+
+  return list
+}
+
+const hasMultiInputNode = (nodes: any[]) =>
+  nodes.some((n) => (n?.$inputs?.length || 0) > 1)
+
 const handleAddNode = (node: any) => {
   const { nextNodeId, prevNodeId } = props.params || {}
   let connection = null
@@ -274,18 +300,28 @@ const handleAddNode = (node: any) => {
 
     const afterNodes = dataflowStore.getAfterNodesInSameBranch(nextNodeId)
     const nextNode = findNode(nextNodeId)!
-    const offset = nextNode.dimensions.width + X_OFFSET
+    const prevCanvasNode = findNode(prevNodeId)!
+    const hasMultiInputDownstream = hasMultiInputNode(afterNodes)
+    const offset = hasMultiInputDownstream
+      ? prevCanvasNode.dimensions.width + X_OFFSET
+      : nextNode.dimensions.width + X_OFFSET
 
-    node.attrs.position = [nextNode.position.x, nextNode.position.y]
+    node.attrs.position = hasMultiInputDownstream
+      ? [prevCanvasNode.position.x, prevCanvasNode.position.y]
+      : [nextNode.position.x, nextNode.position.y]
 
     // 先收集所有节点的原始位置，避免循环中位置引用被修改
-    const positionsToMove = afterNodes.map((n) => ({
+    const positionsToMove = (
+      hasMultiInputDownstream
+        ? getBeforeNodesInSameBranch(prevNodeId)
+        : afterNodes
+    ).map((n) => ({
       id: n.id,
       oldPosition: [...n.attrs.position] as [number, number],
-      newPosition: [n.attrs.position[0] + offset, n.attrs.position[1]] as [
-        number,
-        number,
-      ],
+      newPosition: [
+        n.attrs.position[0] + (hasMultiInputDownstream ? -offset : offset),
+        n.attrs.position[1],
+      ] as [number, number],
     }))
 
     // 移动后续节点的位置（使用 tracking）

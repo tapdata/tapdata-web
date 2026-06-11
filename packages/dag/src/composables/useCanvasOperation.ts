@@ -59,6 +59,8 @@ import {
 import { useFormScope } from './useFormScope'
 
 export function useCanvasOperation() {
+  const X_OFFSET = 100
+  const NODE_WIDTH = 242
   const instance = getCurrentInstance()
   const $ws = (instance?.proxy as any).$ws
   const dataflowStore = useDataflowStore()
@@ -416,6 +418,92 @@ export function useCanvasOperation() {
     }
   }
 
+  const getBeforeNodesInSameBranch = (nodeId: string) => {
+    const list: any[] = []
+    const visited = new Set<string>()
+
+    const traverse = (id: string) => {
+      if (visited.has(id)) return
+      visited.add(id)
+
+      const currentNode = dataflowStore.getNodeById(id) as any
+      if (!currentNode) return
+
+      list.push(currentNode)
+
+      currentNode.$inputs?.forEach((inputId: string) => {
+        traverse(inputId)
+      })
+    }
+
+    traverse(nodeId)
+
+    return list
+  }
+
+  const moveDownstreamNodesForward = (
+    node: any,
+    { trackHistory = true } = {},
+  ) => {
+    const outputs = node?.$outputs || []
+    if (!outputs.length) return
+
+    const movedNodeIds = new Set<string>()
+    const offset =
+      (node?.dimensions?.width || node?.width || NODE_WIDTH) + X_OFFSET
+
+    const hasMultiInputOutput = outputs.some((outputId: string) =>
+      dataflowStore
+        .getAfterNodesInSameBranch(outputId)
+        .some((outputNode: any) => (outputNode?.$inputs?.length || 0) > 1),
+    )
+
+    if (hasMultiInputOutput) {
+      node.$inputs?.forEach((inputId: string) => {
+        const inputNode = dataflowStore.getNodeById(inputId) as any
+        const [deletedX, deletedY] = node.attrs?.position || [0, 0]
+        const [inputX, inputY] = inputNode?.attrs?.position || [0, 0]
+        const deltaX = deletedX - inputX
+        const deltaY = deletedY - inputY
+
+        getBeforeNodesInSameBranch(inputId).forEach((beforeNode) => {
+          if (
+            !beforeNode ||
+            beforeNode.id === node.id ||
+            movedNodeIds.has(beforeNode.id)
+          ) {
+            return
+          }
+
+          movedNodeIds.add(beforeNode.id)
+          const [x, y] = beforeNode.attrs?.position || [0, 0]
+          onMoveNodePosition(beforeNode.id, [x + deltaX, y + deltaY], {
+            trackHistory,
+          })
+        })
+      })
+      return
+    }
+
+    outputs.forEach((outputId: string) => {
+      const afterNodes = dataflowStore.getAfterNodesInSameBranch(outputId)
+
+      afterNodes.forEach((afterNode: any) => {
+        if (
+          !afterNode ||
+          afterNode.id === node.id ||
+          movedNodeIds.has(afterNode.id)
+        ) {
+          return
+        }
+
+        movedNodeIds.add(afterNode.id)
+        const [x, y] = afterNode.attrs?.position || [0, 0]
+        onMoveNodePosition(afterNode.id, [x - offset, y], { trackHistory })
+      })
+    })
+  }
+
   const onDeleteNode = (
     node: any,
     { trackHistory = true, trackBulk = true } = {},
@@ -425,6 +513,7 @@ export function useCanvasOperation() {
     }
 
     connectAdjacentNodes(node.id, { trackHistory })
+    moveDownstreamNodesForward(node, { trackHistory })
     deleteConnectionsByNodeId(node.id, { trackHistory, trackBulk: false })
 
     dataflowStore.deleteNode(node)
