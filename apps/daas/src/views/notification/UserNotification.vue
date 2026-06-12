@@ -219,7 +219,7 @@ export default {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      line-height: 50px;
+      min-height: 50px;
       border-bottom: 1px solid var(--border-light);
       font-size: var(--font-base-title);
       color: #202d40;
