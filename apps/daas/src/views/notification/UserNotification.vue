@@ -150,9 +150,9 @@ export default {
         </el-input>
       </div>
       <ul class="list">
-        <li v-for="record in list" :key="record._id" class="item">
+        <li v-for="record in list" :key="record._id" class="item gap-2">
           <UserOperation :record="record" />
-          <span class="item-time">{{ record.createTimeFmt }}</span>
+          <span class="item-time text-nowrap">{{ record.createTimeFmt }}</span>
         </li>
       </ul>
       <el-pagination

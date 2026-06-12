@@ -84,7 +84,7 @@ function renderMessage() {
 }
 
 function renderPlaceholder(key: string, text: string, replaced: boolean) {
-  if (key === 'sourceName' && replaced && canOpenSource.value) {
+  if (key === 'parameter1' && replaced && canOpenSource.value) {
     return h(
       ElLink,
       {
@@ -123,10 +123,6 @@ function getPlaceholderText(key: string) {
     return toText(props.record.username) || toText(props.record.email)
   }
 
-  if (key === 'sourceName') {
-    return toText(props.record.parameter1)
-  }
-
   return toText(props.record[key])
 }
 
@@ -146,7 +142,7 @@ function openSource() {
 
 <template>
   <div
-    class="user-operation-wrap flex flex-wrap align-center text-prewrap lh-bae"
+    class="user-operation-wrap flex flex-wrap align-center text-prewrap lh-bae min-w-0 break-all"
   >
     <UserOperationContent />
   </div>

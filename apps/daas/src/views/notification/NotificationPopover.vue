@@ -503,7 +503,7 @@ export default {
           border-radius: 50%;
         }
         &:hover {
-          background-color: #ecf5ff;
+          background-color: var(--el-fill-color-light);
         }
         &:last-child {
           border: none;
