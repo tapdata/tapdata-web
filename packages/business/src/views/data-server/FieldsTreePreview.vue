@@ -44,6 +44,13 @@ watch(
 const handleSearch = (value: string) => {
   treeRef.value?.filter(value)
 }
+
+const clearSearch = () => {
+  search.value = ''
+  treeRef.value?.filter('')
+}
+
+defineExpose({ clearSearch })
 </script>
 
 <template>

@@ -113,6 +113,7 @@ export default {
   public_button_setting: '設置',
   public_button_reduction: '還原',
   public_button_copy: '複製',
+  public_button_duplicate: '複製',
   public_button_details: '詳情',
   public_button_preview: '預覽',
   public_button_reload: '重新加載',
@@ -592,6 +593,8 @@ export default {
   public_select_encryption_rule: '選擇加密規則',
   public_clear_alias_confirm: '確定清空所有字段別名嗎?',
   public_selected_fields: '已選擇 {val} 個字段',
+  public_field_view_selected: '已選字段',
+  public_field_view_unselected: '未選字段',
   public_selected_tables: '已選擇 {val} 個表',
   public_quick_convert_alias: '快速轉換別名',
   public_clear_alias: '清空別名',
@@ -652,6 +655,8 @@ export default {
   public_last_capture_time: '最近觀測時間',
   public_alarm_date: '告警時間',
   public_duration: '時長',
+  packages_dag_validate_shared_cdc_title:
+    '以下連接尚未開啟共享挖掘，運行任務將會出錯',
 
   // DuckDB SQL
   public_duckdb_build_with_sql: '使用 SQL 建置',

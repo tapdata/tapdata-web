@@ -1609,14 +1609,14 @@ const onUpdateLicenseSuccess = () => {
                     <div class="fs-5 pb-1 fw-bolder">
                       {{ item.metricValues.CpuUsage }}
                     </div>
-                    {{ $t('cluster_cpu_usage') }}
+                    {{ $t('dashboard_odh_cpu_usage') }}
                   </div>
                   <div class="line dark:bg-white/15" />
                   <div class="usageRate">
                     <div class="fs-5 pb-1 fw-bolder">
                       {{ item.metricValues.HeapMemoryUsage }}
                     </div>
-                    {{ $t('cluster_heap_memory_usage') }}
+                    {{ $t('dashboard_odh_memory_usage') }}
                   </div>
                 </div>
                 <!-- 监控数据 -->

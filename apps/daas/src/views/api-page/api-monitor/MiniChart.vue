@@ -43,8 +43,8 @@ const chartOption = computed<EChartsOption>(() => ({
   yAxis: {
     type: 'value',
     show: false,
-    // min: 0,
-    // max: 100,
+    min: 0,
+    max: 100,
   },
   tooltip: {
     trigger: 'axis',

@@ -6,38 +6,33 @@ interface GetHelperLinesResult {
   snapPosition: Partial<XYPosition>
 }
 
-// this utility function can be called with a position change (inside onNodesChange)
-// it checks all other nodes and calculated the helper line positions and the position where the current node should snap to
-export function getHelperLines(
-  change: NodePositionChange,
-  nodes: GraphNode[],
-  distance = 5,
-): GetHelperLinesResult {
-  const defaultResult = {
+// 每次调用都返回全新对象，避免 snapPosition 被跨调用复用导致状态污染
+function createDefaultResult(): GetHelperLinesResult {
+  return {
     horizontal: undefined,
     vertical: undefined,
     snapPosition: { x: undefined, y: undefined },
   }
-  const nodeA = nodes.find((node) => node.id === change.id)
+}
 
-  if (!nodeA || !change.position) {
-    return defaultResult
-  }
-
-  const nodeABounds = {
-    left: change.position.x,
-    right: change.position.x + ((nodeA.dimensions.width as number) ?? 0),
-    top: change.position.y,
-    bottom: change.position.y + ((nodeA.dimensions.height as number) ?? 0),
-    width: (nodeA.dimensions.width as number) ?? 0,
-    height: (nodeA.dimensions.height as number) ?? 0,
-  }
-
+function computeHelperLines(
+  nodeABounds: {
+    left: number
+    right: number
+    top: number
+    bottom: number
+    width: number
+    height: number
+  },
+  nodes: GraphNode[],
+  excludeId?: string,
+  distance = 5,
+): GetHelperLinesResult {
   let horizontalDistance = distance
   let verticalDistance = distance
 
   return nodes
-    .filter((node) => node.id !== nodeA.id)
+    .filter((node) => node.id !== excludeId)
     .reduce<GetHelperLinesResult>((result, nodeB) => {
       const nodeBBounds = {
         left: nodeB.position.x,
@@ -165,5 +160,52 @@ export function getHelperLines(
       }
 
       return result
-    }, defaultResult)
+    }, createDefaultResult())
+}
+
+// this utility function can be called with a position change (inside onNodesChange)
+// it checks all other nodes and calculated the helper line positions and the position where the current node should snap to
+export function getHelperLines(
+  change: NodePositionChange,
+  nodes: GraphNode[],
+  distance = 5,
+): GetHelperLinesResult {
+  const nodeA = nodes.find((node) => node.id === change.id)
+
+  if (!nodeA || !change.position) {
+    return createDefaultResult()
+  }
+
+  const nodeABounds = {
+    left: change.position.x,
+    right: change.position.x + ((nodeA.dimensions.width as number) ?? 0),
+    top: change.position.y,
+    bottom: change.position.y + ((nodeA.dimensions.height as number) ?? 0),
+    width: (nodeA.dimensions.width as number) ?? 0,
+    height: (nodeA.dimensions.height as number) ?? 0,
+  }
+
+  return computeHelperLines(nodeABounds, nodes, nodeA.id, distance)
+}
+
+/**
+ * Compute helper lines for a virtual node (e.g. one being dragged from the NodesPanel)
+ * that does not yet exist in the VueFlow graph.
+ */
+export function getHelperLinesForPosition(
+  position: XYPosition,
+  dimensions: { width: number; height: number },
+  nodes: GraphNode[],
+  distance = 5,
+): GetHelperLinesResult {
+  const nodeABounds = {
+    left: position.x,
+    right: position.x + dimensions.width,
+    top: position.y,
+    bottom: position.y + dimensions.height,
+    width: dimensions.width,
+    height: dimensions.height,
+  }
+
+  return computeHelperLines(nodeABounds, nodes, undefined, distance)
 }

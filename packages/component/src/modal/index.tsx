@@ -41,7 +41,7 @@ const renderContent = (options: ExtendedMessageBoxOptions) => {
       >
         {IconComponent && h(IconComponent)}
       </ElIcon>
-      <div class="modal-confirm-paragraph flex flex-column gap-2 lh-base">
+      <div class="modal-confirm-paragraph flex flex-column gap-2 lh-base min-w-0">
         {options.title && (
           <div class="modal-confirm-title fs-6 fw-sub">
             {isFunction(options.title) ? options.title() : options.title}

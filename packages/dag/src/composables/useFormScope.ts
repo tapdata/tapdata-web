@@ -336,8 +336,9 @@ export function useFormScope({ canvasRef }) {
 
     clearNodeError,
 
-    findParentNode: (id) => {
+    findParentNode: (id: string) => {
       const node = findNodeById(id)
+      if (!node) return
       let parentId = node.$inputs?.[0]
       let parent
       while (parentId) {

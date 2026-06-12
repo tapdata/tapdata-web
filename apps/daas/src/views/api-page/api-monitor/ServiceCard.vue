@@ -38,14 +38,14 @@ const memoryUsage = computed(() => {
 })
 
 const cpuColor = computed(() => {
-  if (cpuUsage.value >= 80) return '#F56C6C'
-  if (cpuUsage.value >= 60) return '#E6A23C'
+  // if (cpuUsage.value >= 80) return '#F56C6C'
+  // if (cpuUsage.value >= 60) return '#E6A23C'
   return '#409EFF'
 })
 
 const memoryColor = computed(() => {
-  if (memoryUsage.value >= 80) return '#F56C6C'
-  if (memoryUsage.value >= 60) return '#E6A23C'
+  // if (memoryUsage.value >= 80) return '#F56C6C'
+  // if (memoryUsage.value >= 60) return '#E6A23C'
   return '#409EFF'
 })
 

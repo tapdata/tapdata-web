@@ -1674,13 +1674,8 @@ export default {
       let hasEnableDDLAndIncreasesql
       let inBlacklist = false
       const blacklist = [
-        'js_processor',
-        'custom_processor',
-        'migrate_js_processor',
         'union_processor',
         'migrate_union_processor',
-        'standard_js_processor',
-        'standard_migrate_js_processor',
       ]
       this.allNodes.forEach((node) => {
         // 开启了DDL

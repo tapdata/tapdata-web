@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import {
+  fetchConnectionWithName,
   fetchMonitorServerApi,
   fetchMonitorServerChart,
   fetchMonitorServerDetail,
-  fetchConnectionWithName,
+  type ConnectionWithName,
   type ServerChart,
-  type ServerDetail,
-  type ServerWorker, type ConnectionWithName,
+  type ServerDetail, type ServerWorker,
 } from '@tap/api/src/core/monitor-server'
 import { usePagination, useRequest } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
@@ -266,7 +266,7 @@ const { run: runFetch } = useRequest(
   async () => {
     if (!connectionWithName.value || connectionWithName.value.length <= 0) {
       connectionWithName.value = await fetchConnectionWithName(serverId)
-      if (!connectionId.value) {
+      if (!connectionId.value && connectionWithName.value?.[0]) {
         connectionId.value = connectionWithName.value[0].id
       }
     }
@@ -320,6 +320,12 @@ const cpuChartOption = computed<EChartsOption>(() => ({
   },
   yAxis: {
     type: 'value',
+    // 固定范围
+    min: 0,
+    max: 100,
+    axisLabel: {
+      formatter: '{value}%'
+    }
   },
   tooltip: {
     borderRadius: 12,
@@ -430,7 +436,7 @@ const connectionPollChartOption = computed<EChartsOption>(() => ({
       const timeStr = dayjs.unix(timestamp).format('MM-DD HH:mm:ss')
       let result = `${timeStr}<br/>`
       params.forEach((param: any) => {
-        result += `${param.marker}${param.seriesName}: ${isNumber(param.value) ? `${param.value}` : '--'}<br/>`
+        result += `${param.marker}${param.seriesName}: ${isNumber(param.value) ? String(param.value) : '--'}<br/>`
       })
       return result
     },
@@ -518,6 +524,12 @@ const memoryChartOption = computed<EChartsOption>(() => ({
   },
   yAxis: {
     type: 'value',
+    // 固定范围
+    min: 0,
+    max: 100,
+    axisLabel: {
+      formatter: '{value}%'
+    }
   },
   tooltip: {
     borderRadius: 12,
@@ -824,7 +836,7 @@ const workerCpuChartOption = computed<EChartsOption>(() => {
       // name: 'CPU Usage (%)',
       axisLabel: {
         formatter: '{value}%',
-      },
+      }
     },
     tooltip: {
       borderRadius: 12,
@@ -1200,7 +1212,7 @@ const handleChangeConnectionId = (value: string) => {
             <div class="flex align-center gap-4">
               <el-select
                   :model-value="connectionId"
-                  :placeholder="t('api_monitor_time_range_placeholder')"
+                  :placeholder="t('api_monitor_connection_pool_placeholder')"
                   style="width: 160px"
                   @update:model-value="handleChangeConnectionId"
                   @change="refreshData"

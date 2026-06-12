@@ -113,6 +113,7 @@ export default {
   public_button_setting: 'Settings',
   public_button_reduction: 'Reduction',
   public_button_copy: 'Copy',
+  public_button_duplicate: 'Duplicate',
   public_button_details: 'Details',
   public_button_preview: 'Preview',
   public_button_reload: 'Reload',
@@ -601,6 +602,8 @@ export default {
   public_select_encryption_rule: 'Select Encryption Rule',
   public_clear_alias_confirm: 'Are you sure to clear all field aliases?',
   public_selected_fields: 'Selected {val} fields',
+  public_field_view_selected: 'Selected',
+  public_field_view_unselected: 'Unselected',
   public_selected_tables: 'Selected {val} tables',
   public_quick_convert_alias: 'Convert Alias',
   public_clear_alias: 'Clear Alias',
@@ -663,6 +666,8 @@ export default {
   public_last_capture_time: 'Last Capture Time',
   public_alarm_date: 'Alarm Time',
   public_duration: 'Duration',
+  packages_dag_validate_shared_cdc_title:
+    'The following connections have not enabled Shared Mining. Running the task will cause errors.',
 
   // DuckDB SQL
   public_duckdb_build_with_sql: 'Build with SQL',
