@@ -148,6 +148,10 @@ export default {
             <VIcon>magnify</VIcon>
           </template>
         </el-input>
+
+        <ElButton plain circle class="rounded-lg" @click="getData">
+          <VIcon>refresh</VIcon>
+        </ElButton>
       </div>
       <ul class="list">
         <li v-for="record in list" :key="record._id" class="item gap-2">
@@ -207,8 +211,7 @@ export default {
     display: flex;
     align-items: center;
     .search-item {
-      margin-right: 15px;
-      width: 200px;
+      width: 300px;
     }
   }
   .list {
