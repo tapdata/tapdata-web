@@ -461,7 +461,11 @@ onUnmounted(stopDetailPolling)
       }}</span>
     </template>
     <template #actions>
-      <el-button type="primary" @click="showRebalanceDrawer = true">
+      <el-button
+        v-if="hasEditPermission"
+        type="primary"
+        @click="showRebalanceDrawer = true"
+      >
         {{ $t('daas_task_rebalance_button') }}
       </el-button>
     </template>

@@ -1229,7 +1229,11 @@ const onUpdateLicenseSuccess = () => {
               :items="filterItems"
               @fetch="getDataApi()"
             />
-            <el-button type="primary" @click="showRebalanceDrawer = true">
+            <el-button
+              v-if="hasRebalancePermission"
+              type="primary"
+              @click="showRebalanceDrawer = true"
+            >
               {{ $t('daas_task_rebalance_button') }}
             </el-button>
           </div>
