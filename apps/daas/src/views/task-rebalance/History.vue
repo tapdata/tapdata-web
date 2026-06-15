@@ -461,11 +461,7 @@ onUnmounted(stopDetailPolling)
       }}</span>
     </template>
     <template #actions>
-      <el-button
-        v-if="hasEditPermission"
-        type="primary"
-        @click="showRebalanceDrawer = true"
-      >
+      <el-button type="primary" @click="showRebalanceDrawer = true">
         {{ $t('daas_task_rebalance_button') }}
       </el-button>
     </template>
@@ -663,7 +659,12 @@ onUnmounted(stopDetailPolling)
                               :is="CATEGORY_ICON[row.category as JobCategory]"
                             />
                           </el-icon>
-                          {{ t(JOB_STATUS_LABEL[row.status as JobStatus] ?? CATEGORY_LABEL[row.category as JobCategory]) }}
+                          {{
+                            t(
+                              JOB_STATUS_LABEL[row.status as JobStatus] ??
+                                CATEGORY_LABEL[row.category as JobCategory],
+                            )
+                          }}
                         </div>
                       </el-tag>
                     </template>
