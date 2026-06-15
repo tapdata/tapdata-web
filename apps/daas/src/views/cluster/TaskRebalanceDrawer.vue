@@ -11,10 +11,6 @@ import { useI18n } from '@tap/i18n'
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
-const emit = defineEmits<{
-  (e: 'success'): void
-}>()
-
 const { t } = useI18n()
 const router = useRouter()
 

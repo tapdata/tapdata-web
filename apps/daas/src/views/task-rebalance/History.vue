@@ -16,10 +16,27 @@ import { dayjs } from '@tap/business/src/shared'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import { computed, onUnmounted, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import TaskRebalanceDrawer from '../cluster/TaskRebalanceDrawer.vue'
 
 const { t } = useI18n()
 const $has = useHas()
+const router = useRouter()
+
+const SYNC_TYPE_ROUTE_MAP: Record<string, string> = {
+  sync: 'TaskMonitor',
+  migrate: 'MigrationMonitor',
+  logCollector: 'SharedMiningMonitor',
+  mem_cache: 'SharedCacheMonitor',
+  connHeartbeat: 'HeartbeatMonitor',
+}
+
+function openTaskMonitor(taskId: string, syncType: string) {
+  const name = SYNC_TYPE_ROUTE_MAP[syncType]
+  if (!name) return
+  const { href } = router.resolve({ name, params: { id: taskId } })
+  window.open(href, '_blank')
+}
 
 const hasEditPermission = computed(() => {
   return $has('v2_task_rebalance_Edit')
@@ -620,10 +637,24 @@ onUnmounted(stopDetailPolling)
                 >
                   <el-table-column
                     :label="t('daas_task_rebalance_history_col_task')"
-                    prop="taskName"
                     min-width="180"
-                    show-overflow-tooltip
-                  />
+                  >
+                    <template #default="{ row }">
+                      <el-link
+                        v-if="row.syncType"
+                        class="task-name-link"
+                        :underline="false"
+                        type="primary"
+                        @click="openTaskMonitor(row.taskId, row.syncType)"
+                      >
+                        <span class="ellipsis">{{ row.taskName }}</span>
+                        <el-icon class="task-name-link__icon ml-1">
+                          <i-lucide-external-link />
+                        </el-icon>
+                      </el-link>
+                      <span v-else class="ellipsis">{{ row.taskName }}</span>
+                    </template>
+                  </el-table-column>
                   <el-table-column
                     :label="t('daas_task_rebalance_history_col_source')"
                     min-width="140"
@@ -718,6 +749,22 @@ onUnmounted(stopDetailPolling)
 </template>
 
 <style lang="scss" scoped>
+.task-name-link {
+  max-width: 100%;
+  display: inline-flex;
+  align-items: center;
+
+  &__icon {
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  &:hover .task-name-link__icon {
+    opacity: 1;
+  }
+}
+
 .stat-card {
   border: 1px solid var(--el-border-color-lighter);
   background-color: var(--el-bg-color);
