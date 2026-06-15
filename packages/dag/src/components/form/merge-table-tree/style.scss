@@ -22,9 +22,6 @@
           display: flex;
           justify-content: center;
           align-items: center;
-          //width: 30px;
-          //height: 30px;
-          //margin-left: -4px;
         }
 
         .el-image {
@@ -40,23 +37,6 @@
 
       &.is-drop-inner > .el-tree-node__content {
         background-color: var(--el-color-primary-light-8);
-      }
-      //rgba(47, 46, 63, 0.05)
-    }
-
-    &__drop-indicator {
-      height: 2px;
-      background-color: #2c65ff;
-      &:before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 50%;
-        display: block;
-        padding: 2px;
-        border-radius: 100%;
-        border: 2px solid #2c65ff;
-        transform: translate(-100%, -50%);
       }
     }
   }

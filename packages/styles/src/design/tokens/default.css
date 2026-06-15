@@ -196,6 +196,7 @@
   --primary-hover: rgba(var(--primary-raw), 0.2);
   --primary-dark: #0c1cc3;
   --danger-raw: 245, 74, 69;
+  --warning-raw: 255, 125, 0;
   --info-fill: #f1f3fe;
   --collapse-padding-primary: 16px;
   --collapse-padding-sm: 12px;

@@ -233,7 +233,7 @@ export default {
   packages_form_field_inference_list_geshicuowu:
     'Please check the length and precision of the field',
   packages_form_field_inference_list_ziduanzhushi: 'Field Notes',
-  packages_form_field_inference_list_feikong: 'Should Not be empty',
+  packages_form_field_inference_list_feikong: 'Not Null',
   packages_form_field_inference_list_piliangyingyonghui:
     'The Batch application will overwrite with existing batch application rules',
   packages_form_field_inference_list_duidangqiantuiyan:
@@ -257,6 +257,7 @@ export default {
     'Target type batch modification rules',
   packages_form_field_inference_list_ninquerenyaohui:
     'Are you absolutely sure that you wish to restore the current table?',
+  packages_form_field_inference_list_reset_column_position: 'Reset Field Order',
   packages_form_field_inference_main_ninquerenyaoquan:
     'Are you sure that you want to restore all settings to their default values?',
   packages_form_field_inference_main_ge: '',
