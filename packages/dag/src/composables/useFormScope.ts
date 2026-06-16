@@ -865,7 +865,7 @@ export function useFormScope({ canvasRef }) {
 
     findParentNodeByType,
 
-    useSyncConnection: async (field) => {
+    useSyncConnection: async (field: any) => {
       const id = field.value
       const form = field.form
       const connection = await getConnectionNoSchema(id)
@@ -875,39 +875,18 @@ export function useFormScope({ canvasRef }) {
         return
       }
 
-      const connectionType = form.getValuesIn('attrs.connectionType') || ''
-      const accessNodeProcessId =
-        form.getValuesIn('attrs.accessNodeProcessId') || ''
-      const accessNodeType = form.getValuesIn('attrs.accessNodeType') || ''
-      const priorityProcessId =
-        form.getValuesIn('attrs.priorityProcessId') || ''
-      const connectionName = form.getValuesIn('attrs.connectionName')
-      const pdkType = form.getValuesIn('attrs.pdkType')
-      const pdkHash = form.getValuesIn('attrs.pdkHash')
-      const db_version = form.getValuesIn('attrs.db_version')
-
-      pdkType !== connection.pdkType &&
-        form.setValuesIn('attrs.pdkType', connection.pdkType)
-      pdkHash !== connection.pdkHash &&
-        form.setValuesIn('attrs.pdkHash', connection.pdkHash)
-      connectionType !== connection.connection_type &&
-        form.setValuesIn('attrs.connectionType', connection.connection_type)
-      accessNodeProcessId !== connection.accessNodeProcessId &&
-        form.setValuesIn(
-          'attrs.accessNodeProcessId',
-          connection.accessNodeProcessId,
-        )
-      accessNodeType !== connection.accessNodeType &&
-        form.setValuesIn('attrs.accessNodeType', connection.accessNodeType)
-      priorityProcessId !== connection.priorityProcessId &&
-        form.setValuesIn(
-          'attrs.priorityProcessId',
-          connection.priorityProcessId,
-        )
-      connectionName !== connection.name &&
-        form.setValuesIn('attrs.connectionName', connection.name)
-      db_version !== connection.db_version &&
-        form.setValuesIn('attrs.db_version', connection.db_version)
+      form.setFieldState('connectionConfig', { data: connection.config })
+      form.setValuesIn('attrs.pdkType', connection.pdkType)
+      form.setValuesIn('attrs.pdkHash', connection.pdkHash)
+      form.setValuesIn('attrs.connectionType', connection.connection_type)
+      form.setValuesIn(
+        'attrs.accessNodeProcessId',
+        connection.accessNodeProcessId,
+      )
+      form.setValuesIn('attrs.accessNodeType', connection.accessNodeType)
+      form.setValuesIn('attrs.priorityProcessId', connection.priorityProcessId)
+      form.setValuesIn('attrs.connectionName', connection.name)
+      form.setValuesIn('attrs.db_version', connection.db_version)
     },
 
     getPdkProperties: (node) => {
