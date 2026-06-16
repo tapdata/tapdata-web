@@ -482,6 +482,29 @@ export const routes = [
       },
     ],
   },
+  /* ---------- 任务均衡  ----------*/
+  {
+    path: '/task-rebalance',
+    name: 'taskRebalance',
+    component: Layout,
+    redirect: {
+      name: 'taskRebalanceHistory',
+    },
+    meta: {
+      title: 'page_title_task_rebalance',
+    },
+    children: [
+      {
+        path: '',
+        name: 'taskRebalanceHistory',
+        component: () => import('@/views/task-rebalance/History.vue'),
+        meta: {
+          hideTitle: true,
+          title: 'page_title_task_rebalance',
+        },
+      },
+    ],
+  },
   /* ---------- 函数管理  ----------*/
   {
     path: '/function',
