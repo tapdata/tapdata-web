@@ -33,7 +33,9 @@ export class Database extends NodeType {
         'x-display': 'hidden',
         'x-reactions': '{{useSyncConnection}}',
       },
-
+      connectionConfig: {
+        type: 'void',
+      },
       type: {
         type: 'string',
         'x-display': 'hidden',

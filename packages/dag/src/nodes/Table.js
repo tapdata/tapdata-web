@@ -40,6 +40,9 @@ export class Table extends NodeType {
         'x-reactions':
           '{{useAsyncDataSourceByConfig({service: useSyncConnection})}}',
       },
+      connectionConfig: {
+        type: 'void',
+      },
       tabs: {
         type: 'void',
         'x-decorator': 'FormItem',
