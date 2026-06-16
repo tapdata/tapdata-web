@@ -148,11 +148,15 @@ export default {
             <VIcon>magnify</VIcon>
           </template>
         </el-input>
+
+        <ElButton plain circle class="rounded-lg" @click="getData">
+          <VIcon>refresh</VIcon>
+        </ElButton>
       </div>
       <ul class="list">
-        <li v-for="record in list" :key="record._id" class="item">
+        <li v-for="record in list" :key="record._id" class="item gap-2">
           <UserOperation :record="record" />
-          <span class="item-time">{{ record.createTimeFmt }}</span>
+          <span class="item-time text-nowrap">{{ record.createTimeFmt }}</span>
         </li>
       </ul>
       <el-pagination
@@ -207,8 +211,7 @@ export default {
     display: flex;
     align-items: center;
     .search-item {
-      margin-right: 15px;
-      width: 200px;
+      width: 300px;
     }
   }
   .list {
@@ -219,7 +222,7 @@ export default {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      line-height: 50px;
+      min-height: 50px;
       border-bottom: 1px solid var(--border-light);
       font-size: var(--font-base-title);
       color: #202d40;

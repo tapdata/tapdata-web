@@ -375,8 +375,16 @@ export default {
     },
     async getPdkForm() {
       const pdkHash = this.$route.query?.pdkHash
-      const data = await fetchDatabaseTypeByPdkHash(pdkHash)
       const id = this.id || this.$route.params.id
+
+      if (id) {
+        await this.getPdkData(id)
+      }
+
+      const data = await fetchDatabaseTypeByPdkHash(
+        pdkHash || this.model.pdkHash,
+      )
+
       this.pdkOptions = data || {}
 
       if (
@@ -1286,7 +1294,6 @@ export default {
       }
 
       if (id) {
-        await this.getPdkData(id)
         // 开启了共享挖掘
         const { shareCdcEnable, shareCDCExternalStorageId } = this.model
         if (shareCdcEnable && shareCDCExternalStorageId) {
@@ -1688,7 +1695,7 @@ export default {
               <div class="flex align-center overflow-hidden gap-2">
                 <DatabaseIcon
                   class="flex-shrink-0"
-                  :item="$route.query"
+                  :pdk-hash="$route.query.pdkHash || pdkOptions.pdkHash"
                   :size="20"
                 />
                 <template v-if="!$route.params.id">
