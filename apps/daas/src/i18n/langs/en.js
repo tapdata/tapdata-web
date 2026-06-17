@@ -884,6 +884,9 @@ export default {
     'The length of the password cannot be less than 5 and greater than 32',
   user_form_password_not_cn:
     'Password only allows English, numbers and English punctuation',
+  user_password_strength_weak: 'Weak',
+  user_password_strength_medium: 'Medium',
+  user_password_strength_strong: 'Strong',
   user_form_activation_code: 'Access Code',
   user_form_status: 'Status',
   cluster_name: 'Monitor Name',
