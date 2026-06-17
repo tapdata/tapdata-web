@@ -193,14 +193,19 @@ export default {
 
 <template>
   <PageContainer
+    class="overflow-hidden"
     mode="auto"
-    content-class="flex-1 gap-6 min-h-0 overflow-auto px-6 position-relative"
+    content-class="flex-1 gap-6 min-h-0 overflow-auto px-0 position-relative"
   >
     <div v-loading="loading" class="system-notification">
       <div
         class="position-sticky top-0 z-10 bg-white dark:bg-transparent dark:backdrop-blur-md"
       >
-        <el-tabs v-model="activeName" @tab-change="handleClick">
+        <el-tabs
+          v-model="activeName"
+          style="--el-tabs-padding-left: 24px"
+          @tab-change="handleClick"
+        >
           <el-tab-pane
             :label="$t('packages_business_notify_user_all_notice')"
             name="first"
@@ -210,7 +215,7 @@ export default {
             name="second"
           />
         </el-tabs>
-        <div class="position-absolute top-0 end-0 z-10">
+        <div class="position-absolute top-0 end-6 z-10">
           <ElButton type="primary" @click="handlePageRead()">{{
             $t('packages_business_notify_mask_read')
           }}</ElButton>
@@ -227,7 +232,7 @@ export default {
         </div>
       </div>
 
-      <div class="mb-2">
+      <div class="mb-2 px-6">
         <SelectList
           v-if="options.length"
           v-model="searchParams.search"
@@ -240,7 +245,7 @@ export default {
       </div>
       <ul
         v-if="listData && listData.length"
-        class="cuk-list clearfix cuk-list-type-block"
+        class="cuk-list clearfix cuk-list-type-block px-6"
       >
         <li
           v-for="item in listData"
@@ -262,7 +267,7 @@ export default {
       </ul>
       <div
         v-else
-        class="notification-no-data flex h-100 justify-content-center align-items-center"
+        class="notification-no-data flex h-100 justify-content-center align-items-center px-6"
       >
         <div>
           <VIcon size="140">no-notice</VIcon>
@@ -274,7 +279,7 @@ export default {
 
       <el-pagination
         v-model:current-page="currentPage"
-        class="position-sticky py-6 bottom-0 z-10 bg-white dark:bg-transparent dark:backdrop-blur-md"
+        class="position-sticky py-6 bottom-0 z-10 bg-white dark:bg-transparent dark:backdrop-blur-md px-6"
         background
         layout="->,total,prev, pager, next,sizes"
         :page-sizes="[20, 30, 50, 100]"
