@@ -583,6 +583,17 @@ defineExpose({
             </template>
           </el-input>
           <el-input
+            v-else-if="currentConnection"
+            v-model="tableState.query"
+            :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
+            clearable
+            @input="runFetchTables"
+          >
+            <template #prefix>
+              <el-icon><i-lucide-search /></el-icon>
+            </template>
+          </el-input>
+          <el-input
             v-else
             v-model="tableSearchQuery"
             :placeholder="

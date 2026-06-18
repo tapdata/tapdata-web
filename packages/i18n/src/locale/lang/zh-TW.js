@@ -116,6 +116,8 @@ export default {
   public_button_duplicate: '複製',
   public_button_details: '詳情',
   public_button_preview: '預覽',
+  public_button_enable: '啟用',
+  public_button_disable: '停用',
   public_button_reload: '重新加載',
   public_button_restart: '重啟',
   public_button_start: '啟動',

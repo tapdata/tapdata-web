@@ -31,6 +31,8 @@ export function useFetchConnections() {
   const currentConnectionId = ref('')
   const currentConnection = shallowRef(null)
   const connectionWhere = shallowRef({})
+  let fetchConnectionsAbortController: AbortController | null = null
+  let fetchTablesAbortController: AbortController | null = null
   const tableState = reactive({
     query: '',
     currentPage: 1,
@@ -50,6 +52,9 @@ export function useFetchConnections() {
   )
 
   const handleFetchConnections = async () => {
+    fetchConnectionsAbortController?.abort()
+    fetchConnectionsAbortController = new AbortController()
+
     connectionsLoading.value = true
     const params = {
       page: connectionsCurrentPage.value,
@@ -68,7 +73,9 @@ export function useFetchConnections() {
       params.where.name = { like: query, options: 'i' }
     }
 
-    const data = await fetchConnections(params).finally(() => {
+    const data = await fetchConnections(params, {
+      signal: fetchConnectionsAbortController.signal,
+    }).finally(() => {
       connectionsLoading.value = false
     })
 
@@ -108,7 +115,8 @@ export function useFetchConnections() {
   const runFetchMoreConnections = async (direction: ScrollbarDirection) => {
     if (
       direction !== 'bottom' ||
-      connectionsCurrentPage.value >= connectionsTotalPage.value
+      connectionsCurrentPage.value >= connectionsTotalPage.value ||
+      connectionsLoading.value
     )
       return
 
@@ -152,9 +160,14 @@ export function useFetchConnections() {
       params.fields.source = !sourceId
     }
 
+    fetchTablesAbortController?.abort()
+    fetchTablesAbortController = new AbortController()
+
     tableState.loading = true
 
-    const data = await fetchMetadataInstances(params).finally(() => {
+    const data = await fetchMetadataInstances(params, {
+      signal: fetchTablesAbortController.signal,
+    }).finally(() => {
       tableState.loading = false
     })
 
@@ -181,16 +194,22 @@ export function useFetchConnections() {
       }))
   }
 
-  const runFetchTables = debounce(async () => {
+  const _fetchTablesDebounced = debounce(async () => {
     tableState.currentPage = 1
     const items = await handleFetchTables()
     tables.value = items
   }, 200)
 
+  const runFetchTables = () => {
+    fetchTablesAbortController?.abort()
+    _fetchTablesDebounced()
+  }
+
   const runFetchMoreTables = async (direction: ScrollbarDirection) => {
     if (
       direction !== 'bottom' ||
-      tableState.currentPage >= tableTotalPage.value
+      tableState.currentPage >= tableTotalPage.value ||
+      tableState.loading
     )
       return
 
