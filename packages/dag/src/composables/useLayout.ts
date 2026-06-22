@@ -12,11 +12,61 @@ import { ref, unref, type Ref } from 'vue'
 
 export type LayoutDirection = 'LR' | 'TB' | 'RL' | 'BT'
 
-export interface FitViewWithOffsetOptions {
-  duration?: number
-  minZoom?: number
-  maxZoom?: number
-  padding?: number
+// Same shape as FitViewParams – re-exported for callers that want explicit typing
+export type FitViewWithOffsetOptions = FitViewParams
+
+type PaddingScalar = string | number | undefined
+
+/** Parse a single padding value to pixels. Numbers are treated as px; '48px' → 48; '10%' is not supported here. */
+function parsePaddingPx(val: PaddingScalar): number {
+  if (val === undefined) return 0
+  if (typeof val === 'number') return val
+  if (val.endsWith('px')) return Number.parseFloat(val)
+  return 0
+}
+
+/**
+ * Resolve FitViewParams['padding'] into:
+ *  - `ratio`  – fractional padding passed to getTransformForBounds (when padding is a plain number / %-string)
+ *  - pixel insets for each side (when padding is an object or px-string)
+ */
+function resolvePadding(padding: FitViewParams['padding']): {
+  ratio: number
+  top: number
+  right: number
+  bottom: number
+  left: number
+} {
+  if (padding === undefined) {
+    return { ratio: 0.1, top: 0, right: 0, bottom: 0, left: 0 }
+  }
+  if (typeof padding === 'number') {
+    return { ratio: padding, top: 0, right: 0, bottom: 0, left: 0 }
+  }
+  if (typeof padding === 'string') {
+    if (padding.endsWith('%')) {
+      return {
+        ratio: Number.parseFloat(padding) / 100,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+      }
+    }
+    // px string – apply uniformly as pixel insets
+    const px = parsePaddingPx(padding)
+    return { ratio: 0, top: px, right: px, bottom: px, left: px }
+  }
+  // Object form: { top?, right?, bottom?, left?, x?, y? }
+  const xPx = parsePaddingPx((padding as any).x)
+  const yPx = parsePaddingPx((padding as any).y)
+  return {
+    ratio: 0,
+    top: parsePaddingPx((padding as any).top) || yPx,
+    right: parsePaddingPx((padding as any).right) || xPx,
+    bottom: parsePaddingPx((padding as any).bottom) || yPx,
+    left: parsePaddingPx((padding as any).left) || xPx,
+  }
 }
 
 /**
@@ -26,6 +76,8 @@ export interface FitViewWithOffsetOptions {
 export function useLayout(options?: {
   nodesPanelExpanded?: Ref<boolean>
   nodesPanelWidth?: Ref<number> | number
+  rightPanelExpanded?: Ref<boolean>
+  rightPanelWidth?: Ref<number> | number
   bottomPanelHeight?: Ref<number> | number
   canvasSelector?: string
 }) {
@@ -33,6 +85,8 @@ export function useLayout(options?: {
 
   const nodesPanelExpanded = options?.nodesPanelExpanded
   const nodesPanelWidth = options?.nodesPanelWidth ?? 260
+  const rightPanelExpanded = options?.rightPanelExpanded
+  const rightPanelWidth = options?.rightPanelWidth ?? 0
   const bottomPanelHeight = options?.bottomPanelHeight ?? 0
   const canvasSelector = options?.canvasSelector ?? '#node-canvas'
 
@@ -91,38 +145,62 @@ export function useLayout(options?: {
   }
 
   /**
-   * Fit view with panel offset - avoids left NodesPanel overlap
+   * Fit view with panel offset - avoids left/right panel overlap.
+   * Supports the same options as VueFlow's fitView: nodes, includeHiddenNodes, padding, minZoom, maxZoom, duration.
    */
   function fitViewWithOffset(opts: FitViewParams = {}) {
-    const { duration = 200, minZoom = 0.1, maxZoom = 10, padding = 0.1 } = opts
+    const {
+      duration = 200,
+      minZoom = 0.1,
+      maxZoom = 10,
+      nodes: nodeIds,
+      includeHiddenNodes = false,
+    } = opts
 
     // Get canvas container dimensions
     const container = document.querySelector(canvasSelector)
     if (!container) {
-      fitView({ duration, padding })
+      fitView(opts)
       return
     }
 
     const containerWidth = container.clientWidth
     const containerHeight = container.clientHeight
 
-    // Calculate offsets for panels
+    // Calculate panel offsets
     const leftOffset = nodesPanelExpanded?.value ? unref(nodesPanelWidth) : 0
-    const bottomOffset = unref(bottomPanelHeight) - 44 // 减去 bar 的高度
+    const rightOffset = rightPanelExpanded.value ? unref(rightPanelWidth) : 0
+    const bottomOffset = unref(bottomPanelHeight) - 44 // 减去 toolbar 的高度
 
-    // Get bounds of all nodes using VueFlow's internal GraphNodes
-    const graphNodes = getNodes.value
+    // Resolve padding into ratio + per-side pixel insets
+    const {
+      ratio,
+      top: padTop,
+      right: padRight,
+      bottom: padBottom,
+      left: padLeft,
+    } = resolvePadding(opts.padding)
+
+    // Filter nodes: optionally by ID list and visibility
+    let graphNodes = getNodes.value
+    if (nodeIds?.length) {
+      const idSet = new Set(nodeIds)
+      graphNodes = graphNodes.filter((n) => idSet.has(n.id))
+    }
+    if (!includeHiddenNodes) {
+      graphNodes = graphNodes.filter((n) => !n.hidden)
+    }
+
     if (graphNodes.length === 0) {
-      fitView({ duration, padding })
+      fitView(opts)
       return
     }
 
-    // Calculate viewport for the adjusted container area
-    // Subtract left panel width from available width, bottom panel height from available height
-    const availableWidth = containerWidth - leftOffset
-    const availableHeight = containerHeight - bottomOffset
+    // Available viewport area after subtracting panels and pixel padding
+    const availableWidth =
+      containerWidth - leftOffset - rightOffset - padLeft - padRight
+    const availableHeight = containerHeight - bottomOffset - padTop - padBottom
 
-    // Use VueFlow's utility functions
     const bounds = getRectOfNodes(graphNodes)
     const newViewport = getTransformForBounds(
       bounds,
@@ -130,14 +208,14 @@ export function useLayout(options?: {
       availableHeight,
       minZoom,
       maxZoom,
-      padding,
+      ratio,
     )
 
-    // Offset the x position to account for the left panel
+    // Shift origin to account for left panel + left pixel padding (and top pixel padding)
     setViewport(
       {
-        x: newViewport.x + leftOffset,
-        y: newViewport.y,
+        x: newViewport.x + leftOffset + padLeft,
+        y: newViewport.y + padTop,
         zoom: newViewport.zoom,
       },
       { duration },

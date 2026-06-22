@@ -27,6 +27,7 @@ import {
 } from '@tap/form/src/shared/validate'
 import { useI18n } from '@tap/i18n'
 import { setPageTitle, uuid } from '@tap/shared'
+import { useVueFlow } from '@vue-flow/core'
 import { cloneDeep, isEmpty } from 'lodash-es'
 import {
   computed,
@@ -60,7 +61,7 @@ import { useFormScope } from './useFormScope'
 
 export function useCanvasOperation() {
   const X_OFFSET = 100
-  const NODE_WIDTH = 242
+  const NODE_WIDTH = 244
   const instance = getCurrentInstance()
   const $ws = (instance?.proxy as any).$ws
   const dataflowStore = useDataflowStore()
@@ -84,6 +85,7 @@ export function useCanvasOperation() {
   const formScope = useFormScope({
     canvasRef,
   })
+  const { findNode, getOutgoers, viewport } = useVueFlow()
 
   const buttonShowMap = reactive({
     View: true,
@@ -372,6 +374,12 @@ export function useCanvasOperation() {
 
   const onClickNode = (node: any) => {
     dataflowStore.selectNode(node.data)
+    // canvasRef.value.fitViewWithOffset({
+    //   nodes: [node.data.id],
+    //   duration: 300,
+    //   maxZoom: viewport.value.zoom,
+    //   padding: 0.2,
+    // })
   }
 
   const deleteConnectionsByNodeId = (
@@ -448,15 +456,15 @@ export function useCanvasOperation() {
     const outputs = node?.$outputs || []
     if (!outputs.length) return
 
+    const canvasNode = findNode(node.id)
     const movedNodeIds = new Set<string>()
-    const offset =
-      (node?.dimensions?.width || node?.width || NODE_WIDTH) + X_OFFSET
+    const offset = (canvasNode?.dimensions?.width || NODE_WIDTH) + X_OFFSET
 
-    const hasMultiInputOutput = outputs.some((outputId: string) =>
-      dataflowStore
+    const hasMultiInputOutput = outputs.some((outputId: string) => {
+      return dataflowStore
         .getAfterNodesInSameBranch(outputId)
-        .some((outputNode: any) => (outputNode?.$inputs?.length || 0) > 1),
-    )
+        .some((outputNode: any) => (outputNode?.$inputs?.length || 0) > 1)
+    })
 
     if (hasMultiInputOutput) {
       node.$inputs?.forEach((inputId: string) => {
@@ -512,8 +520,8 @@ export function useCanvasOperation() {
       historyStore.startRecordingUndo()
     }
 
-    connectAdjacentNodes(node.id, { trackHistory })
     moveDownstreamNodesForward(node, { trackHistory })
+    connectAdjacentNodes(node.id, { trackHistory })
     deleteConnectionsByNodeId(node.id, { trackHistory, trackBulk: false })
 
     dataflowStore.deleteNode(node)

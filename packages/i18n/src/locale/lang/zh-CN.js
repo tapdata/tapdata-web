@@ -116,6 +116,8 @@ export default {
   public_button_duplicate: '复制',
   public_button_details: '详情',
   public_button_preview: '预览',
+  public_button_enable: '启用',
+  public_button_disable: '禁用',
   public_button_reload: '重新加载',
   public_button_restart: '重启',
   public_button_start: '启动',

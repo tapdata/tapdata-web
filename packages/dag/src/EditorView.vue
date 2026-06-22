@@ -484,6 +484,11 @@ async function checkMaterializedView() {
   }, 120)
 }
 
+function locateSelectedNode() {
+  const node = dataflowStore.selectedNode as any
+  if (node?.id) canvasRef.value?.locateNode(node.id)
+}
+
 provide('dag', dag)
 provide('nodesPanelExpanded', nodesPanelExpanded)
 provide('buttonShowMap', buttonShowMap)
@@ -554,6 +559,17 @@ provide('isSyncTask', isSyncTask)
     </div>
     <div class="w-100 h-0 position-absolute header z-10 flex align-center px-3">
       <div class="flex-1" />
+
+      <Transition name="locate-node-fade">
+        <div
+          v-if="dataflowStore.selectedNode"
+          class="position-absolute start-50 top-50 translate-middle flex h-6 text-xs cursor-pointer items-center justify-center rounded-lg px-3 shadow-lg hover:color-primary bg-overlay fw-sub font-color-light"
+          @click="locateSelectedNode"
+        >
+          {{ $t('packages_dag_locate_selected_node') }}
+        </div>
+      </Transition>
+
       <TaskOperations
         v-if="dataflow.id"
         ref="taskOperationsRef"
@@ -606,6 +622,19 @@ provide('isSyncTask', isSyncTask)
 <style scoped lang="scss">
 .header {
   top: 28px;
+}
+
+.locate-node-fade-enter-active,
+.locate-node-fade-leave-active {
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+.locate-node-fade-enter-from,
+.locate-node-fade-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-4px);
 }
 :deep(.btn-shadow) {
   box-shadow:

@@ -25,22 +25,59 @@ const handleToggleDisable = () => {
       class="node-toolbar-actions rounded-lg p-0.5 cursor-pointer"
       style="--btn-space: 2px"
     >
-      <el-button text size="xs" @click.stop="handlePreview?.(node.id)">
-        <template #icon>
-          <i-lucide-play />
-        </template>
-      </el-button>
-      <el-button text size="xs" @click.stop="handleToggleDisable">
-        <template #icon>
-          <i-lucide-power-off v-if="node.disabled" />
-          <i-lucide-power v-else />
-        </template>
-      </el-button>
-      <el-button text type="danger" size="xs" @click="handleDelete">
-        <template #icon>
-          <i-lucide-trash-2 />
-        </template>
-      </el-button>
+      <el-tooltip
+        effect="light"
+        placement="top"
+        :show-arrow="false"
+        :show-after="300"
+        :hide-after="0"
+        :enterable="false"
+        :offset="4"
+        :content="$t('public_button_preview')"
+      >
+        <el-button text size="xs" @click.stop="handlePreview?.(node.id)">
+          <template #icon>
+            <i-lucide-play />
+          </template>
+        </el-button>
+      </el-tooltip>
+      <el-tooltip
+        effect="light"
+        placement="top"
+        :show-arrow="false"
+        :show-after="300"
+        :hide-after="0"
+        :enterable="false"
+        :offset="4"
+        :content="
+          node.disabled
+            ? $t('public_button_enable')
+            : $t('public_button_disable')
+        "
+      >
+        <el-button text size="xs" @click.stop="handleToggleDisable">
+          <template #icon>
+            <i-lucide-power-off v-if="node.disabled" />
+            <i-lucide-power v-else />
+          </template>
+        </el-button>
+      </el-tooltip>
+      <el-tooltip
+        effect="light"
+        placement="top"
+        :show-arrow="false"
+        :show-after="300"
+        :hide-after="0"
+        :enterable="false"
+        :offset="4"
+        :content="$t('public_button_delete')"
+      >
+        <el-button text type="danger" size="xs" @click="handleDelete">
+          <template #icon>
+            <i-lucide-trash-2 />
+          </template>
+        </el-button>
+      </el-tooltip>
     </div>
   </div>
 </template>
