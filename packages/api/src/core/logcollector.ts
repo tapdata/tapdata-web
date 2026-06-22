@@ -2,9 +2,10 @@ import { requestClient } from '../request'
 
 const BASE_URL = '/api/logcollector'
 
-export function fetchLogcollector(filter?: any) {
+export function fetchLogcollector(filter?: any, config?: any) {
   return requestClient.get(BASE_URL, {
     params: { filter: filter ? JSON.stringify(filter) : undefined },
+    ...config,
   })
 }
 
@@ -85,12 +86,12 @@ export function addTables(taskId: string, params: any) {
   return requestClient.post(`${BASE_URL}/addTables/${taskId}`, params)
 }
 
-export function getTableInfos(params: any) {
-  return requestClient.get(`${BASE_URL}/tableInfos`, { params })
+export function getTableInfos(params: any, config?: any) {
+  return requestClient.get(`${BASE_URL}/tableInfos`, { params, ...config })
 }
 
-export function getExcludeTableInfos(params: any) {
-  return requestClient.get(`${BASE_URL}/excludeTableInfos`, { params })
+export function getExcludeTableInfos(params: any, config?: any) {
+  return requestClient.get(`${BASE_URL}/excludeTableInfos`, { params, ...config })
 }
 
 export function getConnectionIdsByTaskId(taskId: string) {

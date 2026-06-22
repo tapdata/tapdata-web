@@ -1,6 +1,7 @@
 <script>
 import { fetchApiCallPercentile } from '@tap/api/src/core/api-calls'
 import { fetchApiDetail } from '@tap/api/src/core/api-monitor'
+import { withPassive } from '@tap/api/src/request'
 import { Chart } from '@tap/component/src/chart'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import { calcUnit } from '@tap/shared'
@@ -132,7 +133,7 @@ export default {
   mounted() {
     this.getDetail()
     this.timer = setInterval(() => {
-      this.getDetail(true)
+      withPassive(() => this.getDetail(true))
     }, 60000) //一分钟一次
     this.allElectionFun()
     this.handleCheckAllChange(true) //默认全选

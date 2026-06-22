@@ -218,6 +218,7 @@ export default defineComponent({
           page: Page
           tags: any[]
           isSelectedNoTag: boolean
+          passive?: boolean
         }) => Promise<{ data: any[]; total: number }>
       >,
     },
@@ -309,6 +310,7 @@ export default defineComponent({
       debounce = 0,
       hideLoading?: boolean,
       callback?: Function,
+      passive?: boolean,
     ) => {
       if (isUnmounted.value) return
 
@@ -333,6 +335,7 @@ export default defineComponent({
           page: page.value,
           tags: tags.value,
           isSelectedNoTag: isSelectedNoTag.value,
+          passive,
         })
         .then(({ data, total }: { data: any[]; total: number }) => {
           page.value.total = total

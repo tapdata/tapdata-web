@@ -178,9 +178,11 @@ const handleSortTable = ({
 const getData = ({
   page,
   tags,
+  passive,
 }: {
   page: { current: number; size: number }
   tags: string[]
+  passive?: boolean
 }) => {
   const { current, size } = page
   let {
@@ -232,7 +234,7 @@ const getData = ({
     skip: (current - 1) * size,
     where,
   }
-  return fetchInspects(filter).then((data: any) => {
+  return fetchInspects(filter, { passive }).then((data: any) => {
     const list = data?.items || []
     return {
       total: data?.total,
@@ -519,7 +521,7 @@ watch(
 // Lifecycle
 onBeforeMount(() => {
   timer = setInterval(() => {
-    table.value?.fetch(null, 0, true)
+    table.value?.fetch(null, 0, true, undefined, true)
   }, 8000)
   getFilterItems()
   Object.assign(searchParams.value, route.query)

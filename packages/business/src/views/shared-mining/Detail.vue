@@ -186,7 +186,7 @@ export default {
       this.tableDialogVisible = true
       getTableNames(id)
     },
-    getMeasurement() {
+    getMeasurement(passive = false) {
       const params = {
         samples: [
           {
@@ -228,7 +228,7 @@ export default {
       const diff = (end || Date.now()) - start
       params.samples[0].guanluary = this.getGuanluary(diff)
       const guanluaryFormat = this.getGuanluary(diff, true)
-      queryMeasurements(params).then((data) => {
+      queryMeasurements(params, { passive }).then((data) => {
         const { samples } = data || {}
         samples.forEach((el) => {
           for (const key in el) {
@@ -302,7 +302,7 @@ export default {
       const ms = 60 * 1000
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
-        this.getMeasurement()
+        this.getMeasurement(true)
       }, ms)
     },
     goDetail(row) {

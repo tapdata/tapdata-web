@@ -20,9 +20,10 @@ export interface App {
  * 获取应用列表 - 支持多种查询方式，主要用于获取 API 应用列表
  * 支持按类型、只读状态等过滤
  */
-export function fetchApps(filter?: Filter) {
+export function fetchApps(filter?: Filter, config?: any) {
   return requestClient.get<PageFetchResult<App>>(BASE_URL, {
     params: { filter: filter ? JSON.stringify(filter) : undefined },
+    ...config,
   })
 }
 

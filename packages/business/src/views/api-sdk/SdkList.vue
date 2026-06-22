@@ -22,8 +22,10 @@ const tableRef = useTemplateRef<InstanceType<typeof TablePage>>('tableRef')
 
 const getData = async ({
   page,
+  passive,
 }: {
   page: { current: number; size: number }
+  passive?: boolean
 }) => {
   const { current, size } = page
   const filter = {
@@ -53,7 +55,7 @@ const getData = async ({
     ]
   }
 
-  const { items, total } = await fetchSdkList(filter)
+  const { items, total } = await fetchSdkList(filter, { passive })
 
   return {
     data: items.map((item) => {
@@ -157,7 +159,7 @@ const handleSortTable = ({ order, prop }: { order: string; prop: string }) => {
 }
 
 const interval = setInterval(() => {
-  fetch(null, 0, true)
+  fetch(null, 0, true, undefined, true)
 }, 8000)
 
 onBeforeUnmount(() => {

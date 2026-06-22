@@ -214,7 +214,7 @@ export default {
   created() {
     //定时轮询
     this.timeout = setInterval(() => {
-      this.table.fetch(null, 0, true)
+      this.table.fetch(null, 0, true, undefined, true)
     }, 8000)
     this.getFilterItems()
     this.searchParams = Object.assign(this.searchParams, this.$route.query)
@@ -230,7 +230,7 @@ export default {
     formatTimeUnit(val) {
       return isNumber(val) ? calcTimeUnit(val) : '-'
     },
-    getData({ page, tags, isSelectedNoTag }) {
+    getData({ page, tags, isSelectedNoTag, passive }) {
       const { current, size } = page
       const { syncType } = this
       const { keyword, status, type, agentId, syncStatus, id } =
@@ -319,7 +319,7 @@ export default {
         skip: (current - 1) * size,
         where,
       }
-      return fetchTasks(filter).then((data) => {
+      return fetchTasks(filter, { passive }).then((data) => {
         const errorTaskIds = []
         const list = (data?.items || []).map((item) => {
           if (item.errorEvents?.length) {

@@ -30,6 +30,11 @@ type ExtendOptions<T = any> = {
    * 是否跳过错误提示
    */
   skipErrorHandler?: boolean
+  /**
+   * 是否为被动请求（如前端定时轮询、看板自动刷新等非用户主动操作发起的请求）。
+   * 为 true 时拦截器会附加 X-User-Activity: 0，后端据此跳过滑动会话顺延，避免用户实际未操作时会话被持续延期。
+   */
+  passive?: boolean
 }
 type RequestClientConfig<T = any> = AxiosRequestConfig<T> & ExtendOptions<T>
 
@@ -52,6 +57,11 @@ interface RequestInterceptorConfig {
     | (ExtendOptions & InternalAxiosRequestConfig<any>)
     | Promise<ExtendOptions & InternalAxiosRequestConfig<any>>
   rejected?: (error: any) => any
+  /**
+   * 是否以同步方式执行 request 拦截器（要求所有 request 拦截器都开启）。
+   * 开启后 axios 会在调用方同步栈内执行拦截器，可配合调用方"作用域计数器"识别是否处于被动轮询调用链中。
+   */
+  synchronous?: boolean
 }
 
 interface ResponseInterceptorConfig<T = any> {

@@ -71,7 +71,7 @@ export default {
     this.timeout = setInterval(() => {
       this.getCheckingStatus((flag) => {
         if (!flag) {
-          this.$refs.table.fetch?.(null, 0, true)
+          this.$refs.table.fetch?.(null, 0, true, undefined, true)
         }
       })
     }, 5000)
@@ -103,7 +103,7 @@ export default {
       })
     },
 
-    remoteMethod({ page }) {
+    remoteMethod({ page, passive }) {
       const { current, size } = page
       const filter = {
         id: this.$route.params.id,
@@ -111,7 +111,7 @@ export default {
         skip: size * (current - 1),
         filter: this.keyword,
       }
-      return autoInspectResultsGroupByTable(filter).then((data) => {
+      return autoInspectResultsGroupByTable(filter, { passive }).then((data) => {
         const list =
           data.items?.map((t) => {
             t.counts = t.counts.toLocaleString()

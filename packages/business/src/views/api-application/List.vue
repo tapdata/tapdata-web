@@ -110,7 +110,7 @@ export default {
   mounted() {
     //定时轮询
     timeout = setInterval(() => {
-      this.table.fetch(null, 0, true)
+      this.table.fetch(null, 0, true, undefined, true)
     }, 8000)
   },
   unmounted() {
@@ -118,7 +118,7 @@ export default {
   },
   methods: {
     // 获取列表数据
-    getData({ page }) {
+    getData({ page, passive }) {
       const { current, size } = page
       const { name, connectionName } = this.searchParams
       const where = {
@@ -136,7 +136,7 @@ export default {
         skip: (current - 1) * size,
         where,
       }
-      return fetchApps(filter).then((data) => {
+      return fetchApps(filter, { passive }).then((data) => {
         const list = data?.items || []
         return {
           total: data?.total || 0,

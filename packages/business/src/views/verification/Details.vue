@@ -111,7 +111,7 @@ export default {
     this.getData()
     this.interval = setInterval(() => {
       if (['running', 'scheduling'].includes(this.inspect?.status)) {
-        this.getData(false)
+        this.getData(false, true)
       }
     }, 10000)
   },
@@ -133,26 +133,32 @@ export default {
         }
       })
     },
-    getData(showLoading = true) {
+    getData(showLoading = true, passive = false) {
       if (showLoading) {
         this.loading = true
       }
-      fetchInspects({
-        where: {
-          id: this.$route.params.id,
+      fetchInspects(
+        {
+          where: {
+            id: this.$route.params.id,
+          },
         },
-      }).then((data) => {
+        { passive },
+      ).then((data) => {
         const inspect = data?.items?.[0] || {}
         const inspectResult = inspect.InspectResult
         inspect.lastStartTime = dayjs(inspect.lastStartTime).format(
           'YYYY-MM-DD HH:mm:ss',
         )
         this.inspect = inspect
-        fetchInspectResults({
-          where: {
-            id: inspectResult.id,
+        fetchInspectResults(
+          {
+            where: {
+              id: inspectResult.id,
+            },
           },
-        })
+          { passive },
+        )
           .then((data) => {
             const result = data?.items?.[0]
             if (result) {

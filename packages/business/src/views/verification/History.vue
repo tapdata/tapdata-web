@@ -28,7 +28,7 @@ export default {
   created() {
     this.search(1)
     timeout = setInterval(() => {
-      this.search(this.page.current, true)
+      this.search(this.page.current, true, true)
     }, 8000)
   },
   unmounted() {
@@ -38,7 +38,7 @@ export default {
     formatTime(time) {
       return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
-    searchRequest(filter) {
+    searchRequest(filter, passive) {
       if (filter?.where?.inspect_id?.regexp) {
         filter.where.inspect_id = filter.where.inspect_id.regexp.replace(
           /^\^(.*)\$$/,
@@ -54,11 +54,11 @@ export default {
       if (filter?.where?.parentId?.eq === null) {
         delete filter.where.parentId
       }
-      return fetchInspectResults(filter).then((data) => {
+      return fetchInspectResults(filter, { passive }).then((data) => {
         return [{ count: data.total }, data.items]
       })
     },
-    search(pageNum, hideLoading = false) {
+    search(pageNum, hideLoading = false, passive = false) {
       if (!hideLoading) {
         this.loading = true
       }
@@ -83,7 +83,7 @@ export default {
         delete filter.inspectGroupByFirstCheckId
       }
       filter.where = where
-      this.searchRequest(filter, where)
+      this.searchRequest(filter, passive)
         .then(([countData, data]) => {
           if (data) {
             this.page.data = data?.map((item) => {

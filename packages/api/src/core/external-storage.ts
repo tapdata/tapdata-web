@@ -15,15 +15,23 @@ export function changeExternalStorage(id: string) {
   return requestClient.patch(`${BASE_URL}/${id}/default`)
 }
 
-export function fetchExternalStorageList(params: unknown, filter: unknown) {
-  return getExternalStorage(params, filter)
+export function fetchExternalStorageList(
+  params: unknown,
+  filter?: unknown,
+  config?: any,
+) {
+  return getExternalStorage(params, filter, config)
 }
 
 export function getUsingTask(id: string) {
   return requestClient.get(`${BASE_URL}/${id}/usingTask`)
 }
 
-export async function getExternalStorage(params: unknown, filter: unknown) {
+export async function getExternalStorage(
+  params: unknown,
+  filter?: unknown,
+  config?: any,
+) {
   if (Array.isArray(params)) {
     let queryStr = ''
     if (typeof filter === 'object') {
@@ -32,11 +40,15 @@ export async function getExternalStorage(params: unknown, filter: unknown) {
       queryStr = filter
     }
     const qs = queryStr ? `?filter=${encodeURIComponent(queryStr)}` : ''
-    const data = await requestClient.get(`${BASE_URL}/${params.join('/')}${qs}`)
+    const data = await requestClient.get(
+      `${BASE_URL}/${params.join('/')}${qs}`,
+      config,
+    )
     return mapData(data)
   } else if (typeof params === 'string') {
     const data = await requestClient.get(`${BASE_URL}/${params}`, {
       params: filter,
+      ...config,
     })
 
     if (data?.name) {
@@ -47,7 +59,7 @@ export async function getExternalStorage(params: unknown, filter: unknown) {
   }
 
   params = params || {}
-  const data = await requestClient.get(BASE_URL, { params })
+  const data = await requestClient.get(BASE_URL, { params, ...config })
 
   return mapData(data)
 }

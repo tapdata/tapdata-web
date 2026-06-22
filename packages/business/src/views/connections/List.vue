@@ -209,9 +209,11 @@ const handleSortTable = ({
 const getData = async ({
   page,
   tags,
+  passive,
 }: {
   page: { current: number; size: number }
   tags?: string[]
+  passive?: boolean
 }) => {
   const { current, size } = page
   const { keyword, pdkHash, databaseModel, status, sourceType } =
@@ -251,7 +253,7 @@ const getData = async ({
   }
 
   try {
-    const data = await fetchConnections(filter)
+    const data = await fetchConnections(filter, { passive })
     let list = data?.items || []
 
     if (multipleSelection.value.length && list.length) {
@@ -690,7 +692,7 @@ onMounted(async () => {
   }
 
   timeout = setInterval(() => {
-    table.value?.fetch(null, 0, true)
+    table.value?.fetch(null, 0, true, undefined, true)
   }, 10000)
 
   getFilterItems()

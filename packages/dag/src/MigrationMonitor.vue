@@ -783,7 +783,7 @@ function loadData() {
     loadResetQuotaData()
     return
   }
-  batchMeasurements(getParams())
+  batchMeasurements(getParams(), { passive: true })
     .then((data: any) => {
       const map: any = {
         verifyTotals: loadVerifyTotals,

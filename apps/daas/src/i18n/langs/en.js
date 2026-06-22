@@ -828,6 +828,8 @@ export default {
   setting_Login_Brief_Tips: 'Login brief tips',
   setting_Login_Brief_Tips_doc:
     'Once enabled, the login prompt will be simplified',
+  setting_Access_Token_Idle_Timeout_Minutes: 'Session idle timeout (in minutes)',
+  setting_Access_Token_Idle_Timeout_Minutes_doc: 'When the session is inactive for more than the set value, the session becomes invalid and needs to be logged in again',
   setting_LDAP: 'LDAP Authentication',
   setting_Ldap_Login_Enable: 'Use LDAP Login',
   setting_Ldap_Server_Host: 'LDAP Server Address',

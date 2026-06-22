@@ -780,6 +780,8 @@ export default {
   setting_Login_Single_Session_doc: '开启后，同一账号只允许单个会话登录',
   setting_Login_Brief_Tips: '登录简要提示',
   setting_Login_Brief_Tips_doc: '开启后，登录提示将简化',
+  setting_Access_Token_Idle_Timeout_Minutes: '会话空闲超时时间（单位：分钟）',
+  setting_Access_Token_Idle_Timeout_Minutes_doc: '当会话不活跃时间超过设置的值时，会话失效需重新登录',
   setting_LDAP: 'LDAP登录设置',
   setting_Ldap_Login_Enable: '使用LDAP登录',
   setting_Ldap_Server_Host: 'LDAP服务器地址',

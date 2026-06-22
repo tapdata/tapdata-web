@@ -477,7 +477,7 @@ function loadQuotaData(showLoading = false) {
       param: getFilter('batchReadData'),
     },
   }
-  batchMeasurements(params)
+  batchMeasurements(params, { passive: true })
     .then((data: any) => {
       const q: any = { samples: {}, time: [], interval: 5000 }
       const arr = [

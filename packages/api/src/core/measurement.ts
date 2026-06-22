@@ -1,3 +1,4 @@
+import type { RequestClientConfig } from '@tap/request'
 import { requestClient } from '../request'
 
 const BASE_URL = '/api/measurement'
@@ -5,8 +6,8 @@ const BASE_URL = '/api/measurement'
 /**
  * Query measurements
  */
-export function queryMeasurements(params: any) {
-  return requestClient.post(`${BASE_URL}/query`, params)
+export function queryMeasurements(params: any, config?: RequestClientConfig) {
+  return requestClient.post(`${BASE_URL}/query`, params, config)
 }
 
 /**
@@ -26,8 +27,8 @@ export function queryMeasurementsV2(params: any) {
 /**
  * Batch measurements
  */
-export function batchMeasurements(params: any) {
-  return requestClient.post(`${BASE_URL}/batch`, params)
+export function batchMeasurements(params: any, config?: RequestClientConfig) {
+  return requestClient.post(`${BASE_URL}/batch`, params, config)
 }
 
 /**

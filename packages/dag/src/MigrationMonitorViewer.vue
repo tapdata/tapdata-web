@@ -579,7 +579,7 @@ export default {
       if (!this.dataflow?.id) {
         return
       }
-      batchMeasurements(this.getParams()).then((data) => {
+      batchMeasurements(this.getParams(), { passive: true }).then((data) => {
         const map = {
           quota: this.loadQuotaData,
         }

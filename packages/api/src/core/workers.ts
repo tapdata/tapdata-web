@@ -63,9 +63,10 @@ export function getProcessInfo(processIds: string[]) {
 }
 
 // Base Http methods that are used in the codebase
-export function fetchWorkers(filter?: object) {
+export function fetchWorkers(filter?: object, config?: any) {
   return requestClient.get<PageFetchResult<Worker>>(BASE_URL, {
     params: { filter: filter ? JSON.stringify(filter) : undefined },
+    ...config,
   })
 }
 

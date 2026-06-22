@@ -2,9 +2,10 @@ import { requestClient } from '../request'
 
 const BASE_URL = '/api/shareCache'
 
-export function fetchSharedCache(filter?: any) {
+export function fetchSharedCache(filter?: any, config?: any) {
   return requestClient.get(BASE_URL, {
     params: { filter: filter ? JSON.stringify(filter) : undefined },
+    ...config,
   })
 }
 

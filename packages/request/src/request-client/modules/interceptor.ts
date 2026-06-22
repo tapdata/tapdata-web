@@ -25,8 +25,13 @@ class InterceptorManager {
   addRequestInterceptor({
     fulfilled,
     rejected,
+    synchronous,
   }: RequestInterceptorConfig = defaultRequestInterceptorConfig) {
-    this.axiosInstance.interceptors.request.use(fulfilled, rejected)
+    this.axiosInstance.interceptors.request.use(
+      fulfilled,
+      rejected,
+      synchronous ? { synchronous: true } : undefined,
+    )
   }
 
   addResponseInterceptor<T = any>({

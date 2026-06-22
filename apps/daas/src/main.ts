@@ -153,6 +153,7 @@ bootstrap()
   .catch((error) => {
     // eslint-disable-next-line
     console.log(i18n.global.t('daas_src_main_qingqiuquanjupei') + error)
+    init()
   })
   .finally(() => {
     loading.close()

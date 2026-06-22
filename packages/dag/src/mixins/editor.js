@@ -2,6 +2,7 @@ import { observable } from '@formily/reactive'
 import { getDataActions } from '@tap/api/src/core/data-permission'
 import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
 import { fetchSharedCache } from '@tap/api/src/core/shared-cache'
+import { withPassive } from '@tap/api/src/request'
 import {
   batchStartTasks,
   checkTaskMemoryHeap,
@@ -2702,7 +2703,9 @@ export default {
       if (!id) return
       this.startLoopTaskTimer = setTimeout(async () => {
         const { parent_task_sign } = this.$route.query || {}
-        const data = await getTaskById(id, {}, { parent_task_sign })
+        const data = await withPassive(() =>
+          getTaskById(id, {}, { parent_task_sign }),
+        )
         if (this.destory) return
         if (data) {
           if (data.errorEvents?.length) {

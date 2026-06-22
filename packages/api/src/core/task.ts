@@ -241,10 +241,11 @@ export function getTaskRecords(id: string, params: any) {
   return requestClient.get(`${BASE_URL}/records/${id}`, { params })
 }
 
-export function autoInspectResultsGroupByTable(params: any) {
+export function autoInspectResultsGroupByTable(params: any, config?: any) {
   return requestClient.post(
     `${BASE_URL}/auto-inspect-results-group-by-table`,
     params,
+    config,
   )
 }
 

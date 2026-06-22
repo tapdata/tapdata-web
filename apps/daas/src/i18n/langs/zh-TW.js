@@ -777,6 +777,8 @@ export default {
   setting_Login_Single_Session_doc: '開啟後，同一賬號只允許單個會話登入',
   setting_Login_Brief_Tips: '登錄簡要提示',
   setting_Login_Brief_Tips_doc: '開啟後，登錄提示將簡化',
+  setting_Access_Token_Idle_Timeout_Minutes: '會話空閑超時時間（單位：分鍾）',
+  setting_Access_Token_Idle_Timeout_Minutes_doc: '當會話不活躍時間超過設置的值時，會話失效需重新登錄',
   setting_LDAP: 'LDAP登入設置',
   setting_Ldap_Login_Enable: '使用LDAP登入',
   setting_Ldap_Server_Host: 'LDAP伺服器地址',

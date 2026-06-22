@@ -1271,7 +1271,7 @@ export default {
         this.loadResetQuotaData()
         return
       }
-      batchMeasurements(this.getParams())
+      batchMeasurements(this.getParams(), { passive: true })
         .then((data) => {
           const map = {
             verifyTotals: this.loadVerifyTotals,

@@ -45,5 +45,29 @@ export interface Filter {
   fields?: any
 }
 
+/**
+ * 被动请求作用域计数器。仅在同步执行栈内有效：
+ * 调用 withPassive(fn) 期间发起的请求（拦截器以同步方式执行时）会被标记为被动。
+ */
+let passiveDepth = 0
+
+export function isPassiveScope(): boolean {
+  return passiveDepth > 0
+}
+
+/**
+ * 在同步作用域内将其中发起的请求标记为被动（不顺延会话）。
+ * 注意：fn 内若在调用 API 之前先 await，作用域已退出，标记将失效；
+ * 建议把 API 调用直接放在 fn 内同步发起，例如 withPassive(() => fetchXxx(...))。
+ */
+export function withPassive<T>(fn: () => T): T {
+  passiveDepth++
+  try {
+    return fn()
+  } finally {
+    passiveDepth--
+  }
+}
+
 export { usePagination, useRequest } from 'vue-request'
 export { CancelToken, isCancel }

@@ -2,9 +2,10 @@ import { requestClient } from '../request'
 
 const BASE_URL = '/api/Inspects'
 
-export function fetchInspects(filter: any) {
+export function fetchInspects(filter: any, config?: any) {
   return requestClient.get(BASE_URL, {
     params: { filter: filter ? JSON.stringify(filter) : undefined },
+    ...config,
   })
 }
 

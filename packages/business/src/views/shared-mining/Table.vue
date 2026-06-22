@@ -142,7 +142,7 @@ export default {
 
     //定时轮询
     this.timeout = setInterval(() => {
-      this.fetch(null, 0, true)
+      this.fetch(null, 0, true, undefined, true)
     }, 5000)
   },
 
@@ -151,7 +151,7 @@ export default {
   },
 
   methods: {
-    remoteMethod({ page }) {
+    remoteMethod({ page, passive }) {
       const { taskId, keyword } = this
       const { current, size } = page || { current: 1, size: 20 }
       const filter = {
@@ -164,7 +164,7 @@ export default {
       }
       const method =
         this.currentTab === 'running' ? getTableInfos : getExcludeTableInfos
-      return method(filter).then((data) => {
+      return method(filter, { passive }).then((data) => {
         const total = data.total || 0
         if (!keyword) {
           this.listTotal = total

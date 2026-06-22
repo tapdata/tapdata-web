@@ -174,7 +174,7 @@ export default {
 
     //定时轮询
     timeout = setInterval(() => {
-      this.table.fetch(null, 0, true)
+      this.table.fetch(null, 0, true, undefined, true)
     }, 10000)
   },
   unmounted() {
@@ -206,7 +206,7 @@ export default {
         },
       ]
     },
-    getData({ page }) {
+    getData({ page, passive }) {
       const { current, size } = page
       const { type, keyword } = this.searchParams
       const where = {}
@@ -222,9 +222,13 @@ export default {
         skip: (current - 1) * size,
         where,
       }
-      return fetchExternalStorageList({
-        filter: JSON.stringify(filter),
-      }).then((data) => {
+      return fetchExternalStorageList(
+        {
+          filter: JSON.stringify(filter),
+        },
+        undefined,
+        { passive },
+      ).then((data) => {
         const list = (data?.items || []).map((item) => {
           item.typeFmt = EXTERNAL_STORAGE_TYPE_MAP[item.type] || '-'
           item.createTimeFmt =

@@ -107,7 +107,7 @@ const reflshToken = () => {
   })
 }
 
-const getWorkers = () => {
+const getWorkers = (passive = false) => {
   const where = {
     worker_type: 'api-server',
     ping_time: {
@@ -123,7 +123,7 @@ const getWorkers = () => {
     },
     where,
   }
-  fetchWorkers(filter)
+  fetchWorkers(filter, { passive })
     .then((data) => {
       if (data?.items?.length) {
         const record: Record<string, any> = data.items[0] || {}
@@ -134,7 +134,7 @@ const getWorkers = () => {
       }
     })
     .finally(() => {
-      intervalId.value = setTimeout(getWorkers, 2000)
+      intervalId.value = setTimeout(() => getWorkers(true), 2000)
     })
 }
 

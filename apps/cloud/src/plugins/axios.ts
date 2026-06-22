@@ -1,4 +1,4 @@
-import { requestClient } from '@tap/api/src/request'
+import { isPassiveScope, requestClient } from '@tap/api/src/request'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
 import {
   defaultResponseInterceptor,
@@ -220,6 +220,7 @@ export function initRequestClient() {
   requestClient.setBaseURL('./tm')
 
   requestClient.addRequestInterceptor({
+    synchronous: true,
     fulfilled: (config) => {
       if (!config.params) config.params = {}
 
@@ -231,6 +232,10 @@ export function initRequestClient() {
       // headers里面注入用户token，并开启鉴权
       if (TAP_USER_ID) {
         config.headers.user_id = TAP_USER_ID
+      }
+
+      if (config.passive === true || isPassiveScope()) {
+        config.headers['X-User-Activity'] = '0'
       }
 
       return config
