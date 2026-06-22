@@ -85,7 +85,7 @@ export function useCanvasOperation() {
   const formScope = useFormScope({
     canvasRef,
   })
-  const { findNode, getOutgoers } = useVueFlow()
+  const { findNode, getOutgoers, viewport } = useVueFlow()
 
   const buttonShowMap = reactive({
     View: true,
@@ -374,6 +374,12 @@ export function useCanvasOperation() {
 
   const onClickNode = (node: any) => {
     dataflowStore.selectNode(node.data)
+    // canvasRef.value.fitViewWithOffset({
+    //   nodes: [node.data.id],
+    //   duration: 300,
+    //   maxZoom: viewport.value.zoom,
+    //   padding: 0.2,
+    // })
   }
 
   const deleteConnectionsByNodeId = (

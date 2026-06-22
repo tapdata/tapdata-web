@@ -74,7 +74,6 @@ const dag = inject('dag')
 const nodesPanelExpanded = inject<Ref<boolean>>('nodesPanelExpanded', ref(true))
 const needsFitView = inject<Ref<boolean>>('needsFitView', ref(true))
 // Bottom bar dynamic positioning
-const RIGHT_PANEL_WIDTH = 600
 const PANEL_MARGIN = 12
 
 // Observe actual width of the left panel slot content
@@ -126,9 +125,33 @@ function observeBottomBar() {
   bottomBarResizeObserver.observe(bottomBarRef.value)
 }
 
+// Observe actual width of the right panel
+const rightPanelRef =
+  useTemplateRef<InstanceType<typeof RightPanel>>('rightPanel')
+const rightPanelWidth = ref(0)
+let rightPanelResizeObserver: ResizeObserver | null = null
+
+function observeRightPanel() {
+  const el = rightPanelRef.value?.$el as HTMLElement | undefined
+  if (!el) return
+  rightPanelResizeObserver?.disconnect()
+  rightPanelResizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      rightPanelWidth.value = entry.contentRect.width
+    }
+  })
+  rightPanelResizeObserver.observe(el)
+}
+
+const rightPanelExpanded = computed(() => {
+  return dataflowStore.selectedNode || dataflowStore.showSettings
+})
+
 const { layout, fitViewWithOffset } = useLayout({
   nodesPanelExpanded,
   nodesPanelWidth: leftPanelWidth,
+  rightPanelExpanded,
+  rightPanelWidth,
   bottomPanelHeight: bottomBarHeight,
 })
 
@@ -232,6 +255,9 @@ onMounted(() => {
     }
   }
 
+  // Start observing the right panel width
+  observeRightPanel()
+
   // Start observing the bottom bar height
   observeBottomBar()
 
@@ -247,6 +273,7 @@ onUnmounted(() => {
   dataflowStore.unregisterVueFlowUpdateCallback()
   leftPanelResizeObserver?.disconnect()
   leftPanelMutationObserver?.disconnect()
+  rightPanelResizeObserver?.disconnect()
   bottomBarResizeObserver?.disconnect()
 })
 
@@ -256,8 +283,8 @@ const bottomBarStyle = computed(() => {
       ? `${leftPanelWidth.value + 20}px`
       : `${PANEL_MARGIN}px`
   const right =
-    dataflowStore.selectedNode || dataflowStore.showSettings
-      ? `${RIGHT_PANEL_WIDTH + 20}px`
+    rightPanelWidth.value > 0
+      ? `${rightPanelWidth.value + 20}px`
       : `${PANEL_MARGIN}px`
   return { left, right }
 })
@@ -630,10 +657,47 @@ function clearTextSelection() {
   window.getSelection()?.removeAllRanges()
 }
 
+/**
+ * Returns true if any visible node is entirely outside the current viewport.
+ * Uses the full container width (right panel excluded – it's closing after deselect).
+ */
+function hasNodesOutsideView(): boolean {
+  const visibleNodes = getNodes.value.filter((n) => !n.hidden)
+  if (!visibleNodes.length) return false
+
+  const container = document.querySelector('#node-canvas') as HTMLElement | null
+  if (!container) return false
+
+  const { x: vx, y: vy, zoom } = viewport.value
+  const cw = container.clientWidth
+  const ch = container.clientHeight
+  const leftOffset = nodesPanelExpanded.value ? leftPanelWidth.value : 0
+  const bottomOffset = Math.max(0, bottomBarHeight.value - 44)
+
+  return visibleNodes.some((node) => {
+    const w = node.dimensions?.width ?? 150
+    const h = node.dimensions?.height ?? 50
+    const sl = node.position.x * zoom + vx
+    const st = node.position.y * zoom + vy
+    const sr = sl + w * zoom
+    const sb = st + h * zoom
+    // Trigger if node is not fully contained within the visible area
+    return sl < leftOffset || sr > cw || st < 0 || sb > ch - bottomOffset
+  })
+}
+
 function onPaneClick(event: MouseEvent) {
+  const readyFit = rightPanelExpanded.value
   const pos = screenToFlowCoordinate({ x: event.clientX, y: event.clientY })
   dataflowStore.lastClickPosition = [pos.x, pos.y]
   dataflowStore.selectNode(null)
+
+  if (readyFit && hasNodesOutsideView()) {
+    fitViewWithOffset({
+      duration: 300,
+      maxZoom: 1,
+    })
+  }
 }
 
 function onSelectionEnd(event: MouseEvent) {
@@ -707,14 +771,6 @@ function handleLayoutGraph() {
   })
 }
 
-// const hasInit = ref(false)
-// function onInitialized() {
-//   if (hasInit.value) return
-//   console.log('fitViewWithOffset', bottomBarHeight.value)
-//   fitViewWithOffset({ duration: 0, maxZoom: 1 })
-//   hasInit.value = true
-// }
-
 provide('popoverTarget', popoverTarget)
 provide('showPopover', showPopover)
 provide('popoverTargetKey', popoverTargetKey)
@@ -724,6 +780,7 @@ provide('onCreateConnection', onCreateConnection)
 provide('onDeleteConnection', onDeleteConnection)
 provide('onMoveNodePosition', onMoveNodePosition)
 provide('handleDisableNode', handleDisableNode)
+provide('fitViewWithOffset', fitViewWithOffset)
 
 // Expose helper-line updaters so that NodesPanel drag can show guide lines
 provide(
@@ -751,11 +808,10 @@ provide('clearDragHelperLines', () => {
 function locateNode(nodeId: string) {
   const node = vueFlow.findNode(nodeId)
   if (!node) return
-  vueFlow.fitView({
+  fitViewWithOffset({
     nodes: [nodeId],
     duration: 300,
-    maxZoom: 1,
-    padding: 0.5,
+    maxZoom: viewport.value.zoom,
   })
 }
 
@@ -766,11 +822,10 @@ function ensureNodesVisible(nodeIds: string[]) {
   if (!nodeIds.length) return
   const existingIds = nodeIds.filter((id) => vueFlow.findNode(id))
   if (!existingIds.length) return
-  vueFlow.fitView({
+  fitViewWithOffset({
     nodes: existingIds,
-    duration: 200,
-    maxZoom: viewport.value.zoom, // 不放大，保持当前缩放
-    padding: 0.2,
+    duration: 300,
+    maxZoom: viewport.value.zoom,
   })
 }
 
@@ -818,7 +873,7 @@ defineExpose({
       </slot>
     </div>
 
-    <RightPanel />
+    <RightPanel ref="rightPanel" />
 
     <!-- Empty state overlay -->
     <Transition name="empty-state">

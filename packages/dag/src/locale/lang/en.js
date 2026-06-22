@@ -1268,4 +1268,5 @@ export default {
   packages_dag_data_capture_event_time: 'Event Time',
   packages_dag_data_capture_event_id: 'Event ID',
   packages_dag_data_capture_original_data: 'Original Data',
+  packages_dag_locate_selected_node: 'Locate Selected Node',
 }
