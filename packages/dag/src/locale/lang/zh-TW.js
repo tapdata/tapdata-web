@@ -1080,4 +1080,5 @@ export default {
   packages_dag_data_capture_event_time: '事件時間',
   packages_dag_data_capture_event_id: '事件ID',
   packages_dag_data_capture_original_data: '原始數據',
+  packages_dag_locate_selected_node: '捲動至選取節點',
 }

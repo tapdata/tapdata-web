@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { useStore } from 'vuex'
 import Wrapper from './Wrapper.vue'
 
-const store = useStore()
 const router = useRouter()
 const route = useRoute()
 

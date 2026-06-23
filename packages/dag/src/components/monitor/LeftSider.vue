@@ -7,7 +7,7 @@ import { IconButton } from '@tap/component/src/icon-button'
 import TimeSelect from '@tap/component/src/TimeSelect.vue'
 
 import { useI18n } from '@tap/i18n'
-import { calcTimeUnit, calcUnit } from '@tap/shared'
+import { calcTimeUnit, calcUnit, getSettingByKey } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash-es'
@@ -322,6 +322,11 @@ const replicateLagData = computed(() => {
     yAxisMax: Math.max(delay, max),
     serieOptions: Array.from({ length: 3 }).fill({ areaStyle: undefined }, 1),
   }
+})
+
+const showCpuUsageChart = computed(() => {
+  const flag = getSettingByKey('cpu_mem_collector')
+  return flag && flag !== 'false'
 })
 
 const cpuUsageData = computed(() => {
@@ -1118,7 +1123,7 @@ onMounted(() => {
           </div>
         </div>
       </div>
-      <div class="py-2 px-4 info-box">
+      <div v-if="showCpuUsageChart" class="py-2 px-4 info-box">
         <div class="line-chart__box mb-2">
           <div class="flex align-center gap-2">
             <span class="inline-flex align-items-center">

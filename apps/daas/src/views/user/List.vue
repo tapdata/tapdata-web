@@ -191,6 +191,30 @@ export default {
               message: this.$t('account_user_null'),
             },
           ],
+          password: [
+            {
+              required: true,
+              validator: (rule, v, callback) => {
+                if (
+                  this.createForm.id && // 编辑时密码选填，但填了就要校验
+                  !v
+                )
+                  return callback()
+                if (!v || !v.trim()) {
+                  return callback(new Error(this.$t('user_form_password_null')))
+                } else if (v.length < 5 || v.length > 32) {
+                  return callback(new Error(this.$t('user_form_pass_hint')))
+                } else if (/[\s\u4E00-\u9FA5]/.test(v)) {
+                  return callback(
+                    new Error(this.$t('user_form_password_not_cn')),
+                  )
+                } else {
+                  return callback()
+                }
+              },
+              trigger: ['blur', 'change'],
+            },
+          ],
           email: [
             {
               required: true,
@@ -219,6 +243,19 @@ export default {
   computed: {
     table() {
       return this.$refs.table
+    },
+    passwordStrength() {
+      const v = this.createForm.password
+      if (!v) return 0
+      let score = 0
+      if (v.length >= 5) score++
+      if (v.length >= 8) score++
+      if (/[A-Z]/.test(v)) score++
+      if (/\d/.test(v)) score++
+      if (/[^A-Z0-9]/i.test(v)) score++
+      if (score <= 1) return 1 // 弱
+      if (score <= 3) return 2 // 中
+      return 3 // 强
     },
   },
   watch: {
@@ -1092,6 +1129,28 @@ export default {
             maxlength="32"
             show-password
           />
+          <div v-if="createForm.password" class="password-strength mt-1">
+            <div class="password-strength__bars">
+              <span
+                v-for="i in 3"
+                :key="i"
+                class="password-strength__bar"
+                :class="`password-strength__bar--${passwordStrength >= i ? ['weak', 'medium', 'strong'][passwordStrength - 1] : 'empty'}`"
+              />
+            </div>
+            <span
+              class="password-strength__label"
+              :class="`password-strength__label--${['weak', 'medium', 'strong'][passwordStrength - 1]}`"
+            >
+              {{
+                [
+                  $t('user_password_strength_weak'),
+                  $t('user_password_strength_medium'),
+                  $t('user_password_strength_strong'),
+                ][passwordStrength - 1]
+              }}
+            </span>
+          </div>
         </el-form-item>
 
         <!-- 角色 -->
@@ -1237,6 +1296,56 @@ export default {
       .parent {
         color: var(--color-disable);
       }
+    }
+  }
+}
+
+.password-strength {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  line-height: 20px;
+
+  &__bars {
+    display: flex;
+    gap: 4px;
+    flex: 1;
+  }
+
+  &__bar {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    transition: background-color 0.3s;
+
+    &--empty {
+      background-color: var(--el-border-color);
+    }
+    &--weak {
+      background-color: #f56c6c;
+    }
+    &--medium {
+      background-color: #e6a23c;
+    }
+    &--strong {
+      background-color: #67c23a;
+    }
+  }
+
+  &__label {
+    font-size: 12px;
+    min-width: 16px;
+    text-align: right;
+
+    &--weak {
+      color: #f56c6c;
+    }
+    &--medium {
+      color: #e6a23c;
+    }
+    &--strong {
+      color: #67c23a;
     }
   }
 }

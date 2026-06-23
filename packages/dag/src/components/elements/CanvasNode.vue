@@ -110,13 +110,15 @@ const canBeTarget = computed(() => {
 
       <template #extra>
         <NodeSourceHandle
-          v-if="canBeSource"
+          v-show="canBeSource"
+          :connectable="canBeSource"
           v-bind="$attrs"
           :node="props.data"
           class="canvas-node-handle z-1"
         />
         <NodeTargetHandle
-          v-if="canBeTarget"
+          v-show="canBeTarget"
+          :connectable="canBeTarget"
           v-bind="$attrs"
           :node="props.data"
           class="canvas-node-handle z-1"

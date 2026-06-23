@@ -195,9 +195,27 @@ const handleMouseDown = (event: MouseEvent) => {
   }
 }
 
+/**
+ * 立即隐藏 popper（同步设置 visibility:hidden），再设 show=false。
+ * 目的：防止图结构变化（如删除连线）导致 Popper.js 在 DOM 移除前重算位置产生漂移。
+ */
+function hideImmediately() {
+  const popperEl = popoverRef.value?.popperRef?.contentRef as
+    | HTMLElement
+    | undefined
+  if (popperEl) popperEl.style.visibility = 'hidden'
+  show.value = false
+}
+
 // 监听 show 的变化，添加或移除事件监听器
 watch(show, (newValue) => {
   if (newValue) {
+    // 清除 hideImmediately 留下的 visibility 覆盖
+    const popperEl = popoverRef.value?.popperRef?.contentRef as
+      | HTMLElement
+      | undefined
+    if (popperEl) popperEl.style.visibility = ''
+
     // 使用 mousedown 而不是 click
     document.addEventListener('mousedown', handleMouseDown, true)
 
@@ -441,9 +459,8 @@ const onClickConnection = (item: any) => {
     handleSelectConnection(item)
   } else {
     const node = makeNode(item!)
+    hideImmediately()
     handleAddNode(node)
-
-    show.value = false
   }
 }
 
@@ -464,15 +481,13 @@ const onClickTable = async (item: any) => {
   }
 
   const node = makeNode(connection!, item.name)
+  hideImmediately()
   handleAddNode(node)
-
-  show.value = false
 }
 
 const onClickProcessor = (item: any) => {
+  hideImmediately()
   handleAddNode(makeProcessorNode(item))
-
-  show.value = false
 }
 
 defineExpose({
@@ -577,6 +592,17 @@ defineExpose({
             :placeholder="$t('packages_dag_search_connection')"
             clearable
             @input="handleFetchConnections"
+          >
+            <template #prefix>
+              <el-icon><i-lucide-search /></el-icon>
+            </template>
+          </el-input>
+          <el-input
+            v-else-if="currentConnection"
+            v-model="tableState.query"
+            :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
+            clearable
+            @input="runFetchTables"
           >
             <template #prefix>
               <el-icon><i-lucide-search /></el-icon>

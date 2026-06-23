@@ -83,6 +83,11 @@ export const MENU = [
       { name: 'dataEncryption' },
       { name: 'projectManagement' },
       { name: 'dataImportExport' },
+      {
+        name: 'taskRebalanceHistory',
+        parent: 'taskRebalance',
+        code: 'v2_task_rebalance',
+      },
     ],
   },
   {

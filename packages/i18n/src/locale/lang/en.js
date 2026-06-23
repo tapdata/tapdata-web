@@ -116,6 +116,8 @@ export default {
   public_button_duplicate: 'Duplicate',
   public_button_details: 'Details',
   public_button_preview: 'Preview',
+  public_button_enable: 'Enable',
+  public_button_disable: 'Disable',
   public_button_reload: 'Reload',
   public_button_restart: 'Restart',
   public_button_start: 'Start',

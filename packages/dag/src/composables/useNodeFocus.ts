@@ -1,5 +1,5 @@
 import { useVueFlow } from '@vue-flow/core'
-import { watch } from 'vue'
+import { inject, nextTick, watch } from 'vue'
 import { useDataflowStore } from '../stores/dataflow.store'
 
 /**
@@ -18,6 +18,8 @@ export function useNodeFocus() {
     viewport,
   } = useVueFlow()
 
+  const fitViewWithOffset = inject('fitViewWithOffset')!
+
   const dataflowStore = useDataflowStore()
 
   /**
@@ -34,12 +36,15 @@ export function useNodeFocus() {
     if (graphNode && graphNode.dimensions?.width > 0) {
       removeSelectedNodes(getNodes.value)
       addSelectedNodes([graphNode])
-      fitView({
-        nodes: [nodeId],
-        duration: 200,
-        maxZoom: viewport.value.zoom,
-        padding: 0.2,
+      nextTick(() => {
+        fitViewWithOffset({
+          nodes: [nodeId],
+          duration: 200,
+          maxZoom: viewport.value.zoom,
+          padding: 0.2,
+        })
       })
+
       return
     }
 
@@ -54,11 +59,13 @@ export function useNodeFocus() {
             removeSelectedNodes(getNodes.value)
             addSelectedNodes([node])
           }
-          fitView({
-            nodes: [nodeId],
-            duration: 200,
-            maxZoom: viewport.value.zoom,
-            padding: 0.2,
+          nextTick(() => {
+            fitViewWithOffset({
+              nodes: [nodeId],
+              duration: 200,
+              maxZoom: viewport.value.zoom,
+              padding: 0.2,
+            })
           })
         }
       },
@@ -68,4 +75,3 @@ export function useNodeFocus() {
 
   return { focusNode }
 }
-
