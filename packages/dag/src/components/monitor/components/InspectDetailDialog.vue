@@ -10,7 +10,7 @@ import {
   type DiffRow,
   type InspectionRow,
 } from '@tap/api/src/core/task-inspect'
-import { useRequest } from '@tap/api/src/request'
+import { usePollingRequest, useRequest } from '@tap/api/src/request'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 import { CloseIcon } from '@tap/component/src/CloseIcon'
 import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
@@ -446,7 +446,7 @@ const { run: runExportRecoverSql, loading: exportRecoverSqlLoading } =
     },
   )
 
-const { run: startPolling, cancel: stopPolling } = useRequest(
+const { run: startPolling, cancel: stopPolling } = usePollingRequest(
   async () => {
     await loadLastOp()
     await fetchDiffList()

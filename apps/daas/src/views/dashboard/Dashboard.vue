@@ -9,6 +9,7 @@ import {
   type TaskDashboardVo,
 } from '@tap/api/src/core/task'
 import { fetchWorkers, getProcessInfo } from '@tap/api/src/core/workers'
+import { withPassive } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import Chart from '@tap/component/src/chart/Chart.vue'
 import CountUp from '@tap/component/src/CountUp.vue'
@@ -459,7 +460,7 @@ async function refreshAll() {
 // ── Lifecycle ──────────────────────────────────────────
 onMounted(() => {
   fetchDashboardData()
-  refreshTimer = setInterval(refreshAll, 60_000)
+  refreshTimer = setInterval(() => withPassive(refreshAll), 60_000)
 })
 
 onBeforeUnmount(() => {

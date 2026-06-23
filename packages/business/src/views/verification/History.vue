@@ -1,5 +1,6 @@
 <script>
 import { fetchInspectResults } from '@tap/api/src/core/inspect-results'
+import { withPassive } from '@tap/api/src/request'
 import dayjs from 'dayjs'
 import PageContainer from '../../components/PageContainer.vue'
 import { inspectMethod, statusMap } from './const'
@@ -28,7 +29,7 @@ export default {
   created() {
     this.search(1)
     timeout = setInterval(() => {
-      this.search(this.page.current, true)
+      withPassive(() => this.search(this.page.current, true))
     }, 8000)
   },
   unmounted() {

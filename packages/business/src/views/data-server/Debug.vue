@@ -2,6 +2,7 @@
 import { debug } from '@tap/api/src/core/api-calls'
 import { fetchApiServerToken } from '@tap/api/src/core/api-client'
 import { fetchWorkers } from '@tap/api/src/core/workers'
+import { withPassive } from '@tap/api/src/request'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import { IconButton } from '@tap/component/src/icon-button'
 import { useI18n } from '@tap/i18n'
@@ -134,7 +135,7 @@ const getWorkers = () => {
       }
     })
     .finally(() => {
-      intervalId.value = setTimeout(getWorkers, 2000)
+      intervalId.value = setTimeout(() => withPassive(getWorkers), 2000)
     })
 }
 

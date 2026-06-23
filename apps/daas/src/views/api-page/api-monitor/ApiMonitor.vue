@@ -6,7 +6,7 @@ import {
   type MonitorServer,
   type ServerItem,
 } from '@tap/api/src/core/monitor-server'
-import { usePagination, useRequest } from '@tap/api/src/request'
+import { usePagination, usePollingRequest } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 import CountUp from '@tap/component/src/CountUp.vue'
@@ -211,7 +211,7 @@ const {
   },
 )
 
-const { run: runFetch, cancel: cancelFetch } = useRequest(
+const { run: runFetch, cancel: cancelFetch } = usePollingRequest(
   async () => {
     const params = getActualTimeRange()
 

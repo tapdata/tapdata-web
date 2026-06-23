@@ -7,7 +7,7 @@ import {
   saveCompareApply,
   type ItemDifferenceFieldList,
 } from '@tap/api/src/core/metadata-instances'
-import { useRequest } from '@tap/api/src/request'
+import { usePollingRequest } from '@tap/api/src/request'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 import { CloseIcon } from '@tap/component/src/CloseIcon'
 
@@ -160,7 +160,7 @@ const {
   runAsync: fetchCompareResultAsync,
   refresh: refreshCompareResult,
   cancel: cancelFetchCompareResult,
-} = useRequest(
+} = usePollingRequest(
   async (page?: number) => {
     if (page) {
       currentPage.value = page

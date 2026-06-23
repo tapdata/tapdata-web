@@ -1,4 +1,4 @@
-import { requestClient } from '@tap/api/src/request'
+import { isPassiveScope, requestClient } from '@tap/api/src/request'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
 import { Modal } from '@tap/component/src/modal'
 import {
@@ -168,6 +168,7 @@ export function initRequestClient() {
   requestClient.setBaseURL(import.meta.env.BASE_URL || './')
 
   requestClient.addRequestInterceptor({
+    synchronous: true,
     fulfilled: (config) => {
       const accessToken = Cookie.get('access_token')
       if (accessToken) {
@@ -178,6 +179,10 @@ export function initRequestClient() {
         } else {
           config.url = `${config.url}?access_token=${accessToken}`
         }
+      }
+      if (isPassiveScope()) {
+        config.headers = config.headers || {}
+        config.headers['X-User-Activity'] = '0'
       }
       return config
     },

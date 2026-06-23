@@ -57,10 +57,6 @@ const SharedCacheList = () =>
 const SharedCacheForm = () =>
   import('@tap/business/src/views/shared-cache/Form.vue')
 
-// 应用管理
-const ApiApplicationList = () =>
-  import('@tap/business/src/views/api-application/List.vue')
-
 // 外存管理
 const ExternalStorageList = () =>
   import('@tap/business/src/views/external-storage/List.vue')
@@ -808,17 +804,6 @@ export const routes = [
         meta: {
           title: 'page_title_data_server_list',
           code: 'v2_data-server-list',
-          hideTitle: true,
-        },
-      },
-      /* ---------- 应用管理  ----------*/
-      {
-        path: '/api-application',
-        name: 'apiApplication',
-        component: ApiApplicationList,
-        meta: {
-          title: 'page_title_api_application',
-          code: 'v2_api-application',
           hideTitle: true,
         },
       },

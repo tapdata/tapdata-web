@@ -3,6 +3,7 @@ import {
   getTaskInspectConfig,
   getTaskInspectHistories,
 } from '@tap/api/src/core/task-inspect'
+import { withPassive } from '@tap/api/src/request'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import { useI18n } from '@tap/i18n'
 import dayjs from 'dayjs'
@@ -153,9 +154,9 @@ const checkEnabled = async () => {
 
 const startLoop = () => {
   timeout = window.setInterval(async () => {
-    await fetch()
+    await withPassive(fetch)
     if (!inspectList.value.length) {
-      const enabled = await checkEnabled()
+      const enabled = await withPassive(() => checkEnabled())
       if (!enabled) {
         showEnabled.value = true
       }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { batchMeasurements } from '@tap/api/src/core/measurement'
 import { getTaskById, getTaskRecords } from '@tap/api/src/core/task'
+import { withPassive, withPassiveAsync } from '@tap/api/src/request'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import { ALARM_LEVEL_SORT } from '@tap/business/src/shared/const'
 import SharedCacheDetails from '@tap/business/src/views/shared-cache/Details.vue'
@@ -470,16 +471,17 @@ function getParams() {
   }
 }
 
-function polling() {
+function polling(): Promise<void> {
   if (shouldPoll.value) {
     // 非终态（running、stopping 等）持续轮询
-    startLoadData()
+    return startLoadData()
   } else if (
     TERMINAL_STATUSES.includes(dataflow.value?.status) &&
     ++extraEnterCount.value < 4
   ) {
-    startLoadData()
+    return startLoadData()
   }
+  return Promise.resolve()
 }
 
 const loadData = () => {
@@ -508,9 +510,10 @@ const loadData = () => {
     })
     .finally(() => {
       timer.value && clearTimeout(timer.value)
-      timer.value = setTimeout(() => {
-        polling()
-      }, refreshRate.value)
+      timer.value = setTimeout(
+        () => withPassiveAsync(polling),
+        refreshRate.value,
+      )
     })
 }
 
@@ -582,7 +585,7 @@ async function pollTaskDetail() {
   if (!taskId) return
 
   try {
-    const task = await getTaskById(taskId)
+    const task = await withPassive(() => getTaskById(taskId))
     if (task) {
       reformDataflow(task)
     }
