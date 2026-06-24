@@ -1,6 +1,11 @@
 <script>
-import { getLogcollectorDetail, getTableNames, getNewTableNames } from '@tap/api/src/core/logcollector'
+import {
+  getLogcollectorDetail,
+  getNewTableNames,
+  getTableNames,
+} from '@tap/api/src/core/logcollector'
 import { queryMeasurements } from '@tap/api/src/core/measurement'
+import { withPassive } from '@tap/api/src/request'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import { makeStatusAndDisabled } from '@tap/business/src/shared'
 import { VTable } from '@tap/component/src/base/v-table'
@@ -301,9 +306,10 @@ export default {
     resetTimer() {
       const ms = 60 * 1000
       this.timer && clearInterval(this.timer)
-      this.timer = setInterval(() => {
-        this.getMeasurement()
-      }, ms)
+      this.timer = setInterval(
+        () => withPassive(() => this.getMeasurement()),
+        ms,
+      )
     },
     goDetail(row) {
       if (row?.syncType === 'migrate') {
@@ -364,11 +370,10 @@ export default {
         limit: this.pageSize,
         skip: (this.currentPage - 1) * this.pageSize,
       }
-      getNewTableNames(this.detailData.id, callSubId, filter)
-        .then((data) => {
-          this.tableNameList = data?.items || []
-          this.tableNameTotal = data?.total || 0
-        })
+      getNewTableNames(this.detailData.id, callSubId, filter).then((data) => {
+        this.tableNameList = data?.items || []
+        this.tableNameTotal = data?.total || 0
+      })
     },
   },
 }

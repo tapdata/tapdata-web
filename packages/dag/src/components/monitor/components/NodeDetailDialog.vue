@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { batchMeasurements } from '@tap/api/src/core/measurement'
+import { withPassive } from '@tap/api/src/request'
 import { IconButton } from '@tap/component/src/icon-button'
 import TimeSelect from '@tap/component/src/TimeSelect.vue'
 import { useI18n } from '@tap/i18n'
@@ -344,7 +345,7 @@ function init() {
   timer = setInterval(() => {
     quotaTimeType.value !== 'custom' &&
       props.dataflow?.status === 'running' &&
-      loadQuotaData()
+      withPassive(loadQuotaData)
   }, refreshRate.value)
   loadQuotaData(true)
   nextTick(() => {

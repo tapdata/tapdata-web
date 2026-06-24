@@ -9,7 +9,11 @@ import {
   type TaskRebalanceVo,
 } from '@tap/api/src/core/task-rebalance'
 import { fetchWorkers } from '@tap/api/src/core/workers'
-import { useRequest } from '@tap/api/src/request'
+import {
+  usePollingRequest,
+  useRequest,
+  withPassive,
+} from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { useHas } from '@tap/business/src/composables'
 import { dayjs } from '@tap/business/src/shared'
@@ -81,7 +85,7 @@ const processIds = computed<string[]>(() =>
 type MetricMap = Record<string, { cpuUsage: number; memUsage: number }>
 const emptyMetricMap: MetricMap = {}
 
-const { data: workerMetrics, run: runWorkerMetrics } = useRequest(
+const { data: workerMetrics, run: runWorkerMetrics } = usePollingRequest(
   async (): Promise<MetricMap> => {
     const ids = processIds.value
     if (!ids.length) return emptyMetricMap
@@ -201,7 +205,7 @@ const STAT_ITEMS: JobCategory[] = [
   'pending',
 ]
 
-const { data: records, loading: listLoading } = useRequest(
+const { data: records, loading: listLoading } = usePollingRequest(
   async () => {
     const res = await fetchTaskRebalances({
       order: 'createTime DESC',
@@ -442,7 +446,7 @@ function startDetailPolling() {
   stopDetailPolling()
   detailTimer = setInterval(() => {
     if (rebalance.value?.status === 'RUNNING' && selectedId.value) {
-      runFetchDetail()
+      withPassive(runFetchDetail)
     } else {
       stopDetailPolling()
     }

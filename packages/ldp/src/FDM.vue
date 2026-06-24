@@ -8,7 +8,7 @@ import {
 import { getDiscoveryDirectoryData } from '@tap/api/src/core/discovery'
 import { batchStartFDMTasks, getLDPTaskByTag } from '@tap/api/src/core/ldp'
 import { checkTaskName } from '@tap/api/src/core/task'
-import { CancelToken } from '@tap/api/src/request'
+import { CancelToken, withPassive } from '@tap/api/src/request'
 import {
   makeDragNodeImage,
   makeStatusAndDisabled,
@@ -220,9 +220,9 @@ function autoUpdateObjects() {
   autoUpdateObjectsTimer.value = setInterval(() => {
     if (showSearch.value) return
     expandedKeys.value.forEach((id) => {
-      updateObject(id)
+      withPassive(() => updateObject(id))
     })
-    loadTask()
+    withPassive(loadTask)
   }, 5000)
 }
 

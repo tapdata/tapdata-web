@@ -15,7 +15,7 @@ import {
   forceStopTask,
   taskConsoleRelations,
 } from '@tap/api/src/core/task'
-import { requestClient } from '@tap/api/src/request'
+import { requestClient, withPassive } from '@tap/api/src/request'
 import { VTable } from '@tap/component/src/base/v-table'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import { useI18n } from '@tap/i18n'
@@ -385,7 +385,7 @@ watch(
 
 onMounted(() => {
   timer = setInterval(() => {
-    table.value?.fetch(null, 0, true)
+    withPassive(() => table.value?.fetch(null, 0, true))
   }, 8000)
   Object.assign(searchParams.value, { taskName: route.query?.keyword || '' })
 })

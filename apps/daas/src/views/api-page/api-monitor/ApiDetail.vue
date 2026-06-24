@@ -6,7 +6,7 @@ import {
   type ApiChart,
   type Params,
 } from '@tap/api/src/core/monitor-server'
-import { useRequest } from '@tap/api/src/request'
+import { usePollingRequest } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 import CountUp from '@tap/component/src/CountUp.vue'
@@ -82,7 +82,10 @@ onMounted(() => {
 })
 
 const apiName = computed(
-  () => route.query.name || apiDetail.value?.apiName || t('api_monitor_api_detail_title'),
+  () =>
+    route.query.name ||
+    apiDetail.value?.apiName ||
+    t('api_monitor_api_detail_title'),
 )
 
 const getActualTimeRange = (): Params => {
@@ -135,7 +138,7 @@ const getActualTimeRange = (): Params => {
   return rangeMap[timeRange.value] || rangeMap['1h']
 }
 
-const { run: runFetch } = useRequest(
+const { run: runFetch } = usePollingRequest(
   async () => {
     const params = getActualTimeRange()
     params.apiId = apiId

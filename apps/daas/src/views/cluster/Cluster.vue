@@ -26,7 +26,7 @@ import {
   queryAllBindWorker,
   unbindByProcessId,
 } from '@tap/api/src/core/workers'
-import { useRequest } from '@tap/api/src/request'
+import { usePollingRequest, withPassive } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { useHas } from '@tap/business/src/composables'
 import { dayjs, makeDragNodeImage } from '@tap/business/src/shared'
@@ -282,7 +282,10 @@ const init = async () => {
   handleFilterAgent()
   // Start polling usage rates independently so CPU/Mem stay fresh
   // without re-fetching the full cluster list every time.
-  timer.value = setInterval(refreshUsageRate, 10000) as unknown as null
+  timer.value = setInterval(
+    () => withPassive(refreshUsageRate),
+    10000,
+  ) as unknown as null
 }
 
 const submitForm = async () => {
@@ -1000,7 +1003,7 @@ const {
   runAsync: fetchLogMiningData,
   cancel: cancelFetchLogMiningData,
   loading: logMiningLoading,
-} = useRequest<LogMiningMonitor[]>(
+} = usePollingRequest<LogMiningMonitor[]>(
   async () => {
     const data = await findRawServerInfo()
     const result = data.items

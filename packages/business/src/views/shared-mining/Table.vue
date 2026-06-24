@@ -7,6 +7,7 @@ import {
   getTableInfos,
 } from '@tap/api/src/core/logcollector'
 import { taskConsoleRelations } from '@tap/api/src/core/task'
+import { withPassive } from '@tap/api/src/request'
 import { VTable } from '@tap/component/src/base/v-table'
 import i18n from '@tap/i18n'
 import { openUrl } from '@tap/shared'
@@ -141,9 +142,13 @@ export default {
     // this.selectedConnectionId = this.connectionsList[0]?.id
 
     //定时轮询
-    this.timeout = setInterval(() => {
-      this.fetch(null, 0, true)
-    }, 5000)
+    this.timeout = setInterval(
+      () =>
+        withPassive(() => {
+          this.fetch(null, 0, true)
+        }),
+      5000,
+    )
   },
 
   beforeUnmount() {

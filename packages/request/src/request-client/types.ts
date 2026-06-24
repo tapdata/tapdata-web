@@ -52,6 +52,11 @@ interface RequestInterceptorConfig {
     | (ExtendOptions & InternalAxiosRequestConfig<any>)
     | Promise<ExtendOptions & InternalAxiosRequestConfig<any>>
   rejected?: (error: any) => any
+  /**
+   * 是否以同步方式执行 request 拦截器（要求所有 request 拦截器都开启）。
+   * 开启后 axios 会在调用方同步栈内执行拦截器，可配合调用方"作用域计数器"识别是否处于被动轮询调用链中。
+   */
+  synchronous?: boolean
 }
 
 interface ResponseInterceptorConfig<T = any> {

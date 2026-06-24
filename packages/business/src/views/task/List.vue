@@ -14,6 +14,7 @@ import {
   updateTask,
 } from '@tap/api/src/core/task'
 import { getTaskUsedAgent } from '@tap/api/src/core/workers'
+import { withPassive } from '@tap/api/src/request'
 import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import FilterBar from '@tap/component/src/filter-bar/Main.vue'
@@ -214,7 +215,7 @@ export default {
   created() {
     //定时轮询
     this.timeout = setInterval(() => {
-      this.table.fetch(null, 0, true)
+      withPassive(() => this.table.fetch(null, 0, true))
     }, 8000)
     this.getFilterItems()
     this.searchParams = Object.assign(this.searchParams, this.$route.query)
