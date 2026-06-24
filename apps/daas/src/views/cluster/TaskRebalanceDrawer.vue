@@ -13,6 +13,9 @@ import { useRouter } from 'vue-router'
 
 const { t } = useI18n()
 const router = useRouter()
+const emit = defineEmits<{
+  success: [id: string]
+}>()
 
 interface AgentInfo {
   agentId: string
@@ -231,9 +234,10 @@ function buildPayload(): TaskRebalancePreviewVo {
 async function handleConfirm() {
   submitting.value = true
   try {
-    await createTaskRebalance(buildPayload())
+    const result = await createTaskRebalance(buildPayload())
     ElMessage.success(t('daas_task_rebalance_create_success'))
     visible.value = false
+    emit('success', result.id)
     router.push({
       name: 'taskRebalanceHistory',
     })
