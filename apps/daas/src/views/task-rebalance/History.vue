@@ -201,7 +201,11 @@ const STAT_ITEMS: JobCategory[] = [
   'pending',
 ]
 
-const { data: records, loading: listLoading } = useRequest(
+const {
+  data: records,
+  loading: listLoading,
+  runAsync: fetchRecords,
+} = useRequest(
   async () => {
     const res = await fetchTaskRebalances({
       order: 'createTime DESC',
@@ -388,6 +392,11 @@ const pendingCount = computed(
 
 function handleSelect(id: string) {
   if (id === selectedId.value) return
+  selectedId.value = id
+}
+
+async function handleRebalanceSuccess(id: string) {
+  await fetchRecords()
   selectedId.value = id
 }
 
@@ -744,6 +753,7 @@ onUnmounted(stopDetailPolling)
     <TaskRebalanceDrawer
       v-model="showRebalanceDrawer"
       :agents="rebalanceAgents"
+      @success="handleRebalanceSuccess"
     />
   </PageContainer>
 </template>
