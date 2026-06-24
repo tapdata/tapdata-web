@@ -1,4 +1,3 @@
-import ApiApplicationList from './api-application/List.vue'
 import ConnectionForm from './connections/DatabaseForm.vue'
 import ConnectionList from './connections/List.vue'
 import ConnectionTest from './connections/Test.vue'
@@ -25,7 +24,6 @@ import VerifyDetails from './verify/Details.vue'
 export {
   AlarmNotification,
   AlarmSetting,
-  ApiApplicationList,
   ConnectionForm,
   ConnectionList,
   ConnectionTest,

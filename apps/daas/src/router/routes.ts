@@ -3,11 +3,9 @@ import NotifyLayout from '@/layouts/NotifyLayout.vue'
 import SettingLayout from '@/layouts/SettingLayout.vue'
 
 const FunctionForm = () => import('@/views/function/Form.vue')
-const DagEditor = () => import('@tap/dag/src/Editor.vue')
 const DagEditorView = () => import('@tap/dag/src/EditorView.vue')
 const DagMonitorView = () => import('@tap/dag/src/MonitorView.vue')
 const TaskRecordView = () => import('@tap/dag/src/RecordView.vue')
-const MigrationEditor = () => import('@tap/dag/src/MigrationEditor.vue')
 const DataCapture = () => import('@tap/dag/src/data-capture/DataCapture.vue')
 const CustomNodeList = () =>
   import('@tap/business/src/views/custom-node/List.vue')
@@ -121,15 +119,6 @@ export const routes = [
     },
   },
   {
-    path: '/dataflow/viewer/:id',
-    name: 'DataflowViewer',
-    component: DagEditor,
-    meta: {
-      title: 'page_title_data_develop',
-      code: 'v2_data_flow_details',
-    },
-  },
-  {
     path: '/dataflow/monitor/:id',
     name: 'TaskMonitor',
     component: DagMonitorView,
@@ -155,15 +144,6 @@ export const routes = [
     meta: {
       title: 'page_title_data_copy',
       code: 'v2_data_replication_dag_edit',
-    },
-  },
-  {
-    path: '/migrate/viewer/:id',
-    name: 'MigrateViewer',
-    component: MigrationEditor,
-    meta: {
-      title: 'page_title_data_copy',
-      code: 'v2_data_replication_details',
     },
   },
   {
