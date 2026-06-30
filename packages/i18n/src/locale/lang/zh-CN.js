@@ -686,4 +686,13 @@ export default {
   public_duckdb_resolve_ambiguous: '请先解决有歧义的连接',
   public_duckdb_generate_dag: '生成任务',
   public_duckdb_cancel: '取消',
+  public_duckdb_batch_size: '批处理大小',
+  public_duckdb_batch_size_tooltip: '批处理大小，默认2000',
+  public_duckdb_db_path: 'DuckDB 本地文件目录',
+  public_duckdb_db_path_tooltip: 'DuckDB 本地文件目录，为空时表示使用内存模式。',
+  public_duckdb_threads: 'DuckDB 工作线程数',
+  public_duckdb_threads_tooltip: 'DuckDB 工作线程数，未设置时DuckDB会默认按CPU逻辑核心数启动',
+  public_duckdb_memory_limit_gb: 'DuckDB 内存上限',
+  public_duckdb_memory_limit_gb_tooltip:
+    'DuckDB 内存使用上限（GB），大任务建议设置。当超出上限后DuckDB会自动溢出到磁盘放在内存消耗不可控，与此同时写入速率也会变低。未设置时DuckDB会默认按系统可见物理内存的约 80% 来启动',
 }

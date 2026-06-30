@@ -696,4 +696,15 @@ export default {
     'Resolve ambiguous connections before continuing',
   public_duckdb_generate_dag: 'Generate Task',
   public_duckdb_cancel: 'Cancel',
+  public_duckdb_batch_size: 'Batch Size',
+  public_duckdb_batch_size_tooltip: 'Batch size, default 2000',
+  public_duckdb_db_path: 'DuckDB Local File Directory',
+  public_duckdb_db_path_tooltip:
+    'DuckDB local file directory. Leave empty to use in-memory mode.',
+  public_duckdb_threads: 'DuckDB Worker Threads',
+  public_duckdb_threads_tooltip:
+    'DuckDB worker thread count. When not set, DuckDB defaults to the number of CPU logical cores.',
+  public_duckdb_memory_limit_gb: 'DuckDB Memory Limit',
+  public_duckdb_memory_limit_gb_tooltip:
+    'DuckDB memory usage limit (GB). Recommended for large tasks. When exceeded, DuckDB spills to disk which may slow write throughput. When not set, DuckDB defaults to ~80% of system visible physical memory.',
 }

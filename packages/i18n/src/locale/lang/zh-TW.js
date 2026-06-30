@@ -683,4 +683,13 @@ export default {
   public_duckdb_resolve_ambiguous: '請先解決有歧義的連線',
   public_duckdb_generate_dag: '產生任務',
   public_duckdb_cancel: '取消',
+  public_duckdb_batch_size: '批次處理大小',
+  public_duckdb_batch_size_tooltip: '批次處理大小，預設2000',
+  public_duckdb_db_path: 'DuckDB 本機檔案目錄',
+  public_duckdb_db_path_tooltip: 'DuckDB 本機檔案目錄，為空時表示使用記憶體模式。',
+  public_duckdb_threads: 'DuckDB 工作執行緒數',
+  public_duckdb_threads_tooltip: 'DuckDB 工作執行緒數，未設定時DuckDB會預設按CPU邏輯核心數啟動',
+  public_duckdb_memory_limit_gb: 'DuckDB 記憶體上限',
+  public_duckdb_memory_limit_gb_tooltip:
+    'DuckDB 記憶體使用上限（GB），大型任務建議設定。當超出上限後DuckDB會自動溢出至磁碟，記憶體消耗將不可控，寫入速率也會降低。未設定時DuckDB會預設按系統可見實體記憶體的約 80% 來啟動',
 }

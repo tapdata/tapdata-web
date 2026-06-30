@@ -3,6 +3,7 @@ import {
   ElDialog,
   ElDrawer,
   ElDropdown,
+  ElInputNumber,
   ElLoading,
   ElMessage,
   ElMessageBox,
@@ -50,4 +51,5 @@ export const installElement = (app) => {
   ElSelectV2.props.suffixIcon.default = DownBoldOutlined
   ElDropdown.props.popperOptions.default = getDefault
   ElCollapseItem.props.icon.default = RightBoldOutlined
+  ElInputNumber.props.align.default = 'left'
 }
