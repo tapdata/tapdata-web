@@ -747,7 +747,7 @@ export default {
     '切換到cdc中的批量插入模式間隔。 ',
   setting_share_cdc: '共享增量',
   setting_global_share_cdc_enable: '默認全域開啟共亯增量',
-  setting_global_share_cdc_enable_doc: '默認開啟時，使用外存清單中指定的默認外存，並且作為默認設置應用於後續新建的連接和任務',
+  setting_global_share_cdc_enable_doc: '默認開啟時，使用外存清單中指定的默認外存，並且作為默認設置應用於後續新建的連接和任務。（開啟後才能在數據追溯中査詢變更日誌）',
   setting_share_cdc_persistence_mode: '共享增量存儲模式',
   setting_share_cdc_persistence_memory_size: '共享增量內存緩存行數',
   setting_share_cdc_persistence_memory_size_doc:
