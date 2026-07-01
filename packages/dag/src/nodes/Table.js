@@ -42,6 +42,7 @@ export class Table extends NodeType {
       },
       connectionConfig: {
         type: 'void',
+        'x-data': '{{{}}}',
       },
       tabs: {
         type: 'void',

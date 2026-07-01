@@ -35,6 +35,7 @@ export class Database extends NodeType {
       },
       connectionConfig: {
         type: 'void',
+        'x-data': '{{{}}}',
       },
       type: {
         type: 'string',
