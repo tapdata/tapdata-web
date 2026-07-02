@@ -1,9 +1,7 @@
 import { observer } from '@formily/reactive-vue'
-import { connect, mapProps } from '@formily/vue'
 import { getCurrentEngineTime } from '@tap/api/src/core/task'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
-import { useField, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { computed, defineComponent, reactive, ref, watch } from 'vue'
 
@@ -14,29 +12,25 @@ const RelativeTimePickerComponent = defineComponent({
       type: Number,
       default: 0,
     },
+    number: {
+      type: Number,
+      default: 1,
+    },
+    unit: {
+      type: String,
+      default: 'DAY',
+    },
+    form: {
+      type: String,
+      default: 'BEFORE',
+    },
   },
-  setup(props) {
-    const formRef = useForm()
-    const fieldRef = useField()
-    const recordField = formRef.value
-      .query(`conditions.${fieldRef.value.index}`)
-      .take()
-    const record = recordField.value
-
-    if (!('number' in record)) {
-      record.number = 1
-    }
-    if (!('unit' in record)) {
-      record.unit = 'DAY'
-    }
-    if (!('form' in record)) {
-      record.form = 'BEFORE'
-    }
-
+  emits: ['change'],
+  setup(props, { emit, attrs }) {
     const state = reactive({
-      number: record.number || 1,
-      form: record.form || 'BEFORE',
-      unit: record.unit || 'DAY',
+      number: props.number || 1,
+      form: props.form || 'BEFORE',
+      unit: props.unit || 'DAY',
     })
     const engineDate = ref(dayjs())
     const loadCurrentEngineTime = async () => {
@@ -86,8 +80,8 @@ const RelativeTimePickerComponent = defineComponent({
       return `${start.format(formatStr)} - ${end.format(formatStr)}`
     })
 
-    watch(state, (val) => {
-      Object.assign(record, state)
+    watch(state, () => {
+      emit('change', { ...state })
     })
 
     const unitOptions = [
@@ -178,6 +172,7 @@ const RelativeTimePickerComponent = defineComponent({
           {{
             reference: () => (
               <ElButton
+                {...attrs}
                 class="py-2 px-3 align-self-start"
                 disabled={props.disabled}
               >
@@ -246,7 +241,4 @@ const RelativeTimePickerComponent = defineComponent({
   },
 })
 
-export const RelativeTimePicker = connect(
-  observer(RelativeTimePickerComponent),
-  mapProps({ disabled: true }),
-)
+export const RelativeTimePicker = observer(RelativeTimePickerComponent)

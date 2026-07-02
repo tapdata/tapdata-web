@@ -1159,7 +1159,7 @@ export class Table extends NodeType {
                                 loading: '{{$deps[1]}}',
                               },
                               // 不设置字段的 loading，体验不好
-                              run: `{{$form.setFieldState('*(conditions.*.key,cdcPollingFields.*.field)', {dataSource: $self.dataSource})}}`,
+                              run: `{{$form.setFieldState('cdcPollingFields.*.field', {dataSource: $self.dataSource})}}`,
                             },
                           },
                         ],
@@ -1175,194 +1175,26 @@ export class Table extends NodeType {
                             key: '',
                             value: '',
                             operator: 5,
+                            fastQuery: false,
                             number: 1,
                             form: 'BEFORE',
                             unit: 'DAY',
                           },
                         ],
                         'x-decorator': 'FormItem',
-                        'x-component': 'ArrayItems',
-                        items: {
-                          type: 'object',
-                          properties: {
-                            space: {
-                              type: 'void',
-                              'x-component': 'Space',
-                              'x-component-props': {
-                                class: 'w-100',
-                                align: 'start',
-                              },
-                              properties: {
-                                key: {
-                                  type: 'string',
-                                  required: 'true',
-                                  'x-decorator': 'FormItem',
-                                  'x-decorator-props': {
-                                    className: 'flex-1',
-                                  },
-                                  'x-component': 'FieldSelect',
-                                  'x-component-props': {
-                                    filterable: true,
-                                  },
-                                  'x-reactions': {
-                                    effects: ['onFieldInputValueChange'],
-                                    fulfill: {
-                                      run: '{{$record.value = undefined}}',
-                                    },
-                                  },
-                                },
-                                timeFilter: {
-                                  type: 'void',
-                                  'x-component': 'Space',
-                                  'x-reactions': {
-                                    dependencies: [
-                                      'nodeSchema#dataSource',
-                                      '.key',
-                                    ],
-                                    fulfill: {
-                                      state: {
-                                        display: `{{Boolean($deps[0] && $deps[1] && $deps[0].find(field=>field.value===$deps[1]&&/timestamp|date|DATE_TIME|datetime/i.test(field.type))) ? "visible" :"hidden"}}`,
-                                      },
-                                    },
-                                  },
-                                  properties: {
-                                    fastQuery: {
-                                      type: 'boolean',
-                                      default: false,
-                                      enum: [
-                                        {
-                                          label: i18n.t('public_date_specific'),
-                                          value: false,
-                                        },
-                                        {
-                                          label: i18n.t('public_date_relative'),
-                                          value: true,
-                                        },
-                                      ],
-                                      'x-decorator': 'FormItem',
-                                      'x-decorator-props': {
-                                        wrapperWidth: 140,
-                                      },
-                                      'x-component': 'Select',
-                                    },
-                                    RelativeTimePicker: {
-                                      type: 'void',
-                                      'x-component': 'RelativeTimePicker',
-                                      'x-component-props': {
-                                        offsetHours: '{{$values.offsetHours}}',
-                                      },
-                                      'x-reactions': {
-                                        dependencies: ['.fastQuery'],
-                                        fulfill: {
-                                          state: {
-                                            display: `{{!!$deps[0] ? "visible" :"hidden"}}`,
-                                          },
-                                        },
-                                      },
-                                    },
-                                  },
-                                },
-                                valueWrapper: {
-                                  type: 'void',
-                                  'x-reactions': {
-                                    dependencies: [
-                                      'nodeSchema#dataSource',
-                                      '.key',
-                                      '.fastQuery',
-                                    ],
-                                    fulfill: {
-                                      state: {
-                                        display: `{{!$deps[2] || !(field=$deps[0] && $deps[0].find(item=>item.value===$deps[1]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.type)) ? "visible" :"hidden"}}`,
-                                      },
-                                    },
-                                  },
-                                  properties: {
-                                    operator: {
-                                      type: 'number',
-                                      required: 'true',
-                                      default: 5,
-                                      enum: [
-                                        {
-                                          label: '>',
-                                          value: 1,
-                                        },
-                                        {
-                                          label: '>=',
-                                          value: 2,
-                                        },
-                                        {
-                                          label: '<',
-                                          value: 3,
-                                        },
-                                        {
-                                          label: '<=',
-                                          value: 4,
-                                        },
-                                        {
-                                          label: '=',
-                                          value: 5,
-                                        },
-                                      ],
-                                      'x-decorator': 'FormItem',
-                                      'x-decorator-props': {
-                                        wrapperWidth: 66,
-                                      },
-                                      'x-component': 'Select',
-                                    },
-                                    value: {
-                                      type: 'string',
-                                      required: 'true',
-                                      'x-decorator': 'FormItem',
-                                      'x-decorator-props': {
-                                        wrapperWidth: 208,
-                                      },
-                                      'x-component': 'Input',
-                                      'x-component-props': {
-                                        type: 'datetime',
-                                        align: 'right',
-                                        format: 'YYYY-MM-DD HH:mm:ss',
-                                      },
-                                      'x-reactions': {
-                                        dependencies: [
-                                          'nodeSchema#dataSource',
-                                          '.key',
-                                        ],
-                                        fulfill: {
-                                          schema: {
-                                            'x-component':
-                                              '{{field=$deps[0] && $deps[0].find(item=>item.value===$deps[1]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.type)?"DatePicker":"Input"}}',
-                                          },
-                                        },
-                                      },
-                                    },
-                                  },
-                                },
-                                remove: {
-                                  type: 'void',
-                                  'x-decorator': 'FormItem',
-                                  'x-component': 'ArrayItems.Remove',
-                                  'x-component-props': {
-                                    disabled: '{{$values.conditions.length<2}}',
-                                  },
-                                },
-                              },
-                            },
-                          },
+                        'x-component': 'ConditionsEditor',
+                        'x-component-props': {
+                          offsetHours: '{{$values.offsetHours}}',
                         },
-                        properties: {
-                          add: {
-                            type: 'void',
-                            title: i18n.t('packages_dag_nodes_table_tianjia'),
-                            'x-component': 'ArrayItems.Addition',
-                            'x-component-props': {
-                              defaultValue: {
-                                key: '',
-                                value: '',
-                                operator: 5,
-                                number: 1,
-                                form: 'BEFORE',
-                                unit: 'DAY',
-                              },
+                        'x-reactions': {
+                          dependencies: [
+                            'nodeSchema#dataSource',
+                            'nodeSchema#loading',
+                          ],
+                          fulfill: {
+                            schema: {
+                              'x-component-props.fields': '{{$deps[0]}}',
+                              // 'x-component-props.fieldsLoading': '{{$deps[1]}}',
                             },
                           },
                         },
