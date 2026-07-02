@@ -229,6 +229,15 @@ export default {
                   'TASK_STATUS_ERROR.notify': this.getCheckboxGroup(
                     'TASK_STATUS_ERROR.open',
                   ),
+                  'TASK_DDL_WARNING.open': this.getSwitch(
+                    i18n.t(
+                      'packages_dag_migration_alarmpanel_renwufengxianddl',
+                    ),
+                    'TASK_DDL_WARNING.notify',
+                  ),
+                  'TASK_DDL_WARNING.notify': this.getCheckboxGroup(
+                    'TASK_DDL_WARNING.open',
+                  ),
                   // 'TASK_INSPECT_ERROR.open': this.getSwitch(
                   //   i18n.t('packages_dag_migration_alarmpanel_renwujiaoyanchu'),
                   //   'TASK_INSPECT_ERROR.notify'

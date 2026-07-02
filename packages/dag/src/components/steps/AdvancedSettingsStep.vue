@@ -36,6 +36,52 @@ export default defineComponent({
     const store = useStore()
     const router = useRouter()
     const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+    const getTaskDdlWarningAlarmSetting = () => ({
+      type: 'TASK',
+      open: isDaas,
+      key: 'TASK_DDL_WARNING',
+      sort: 5,
+      notify: ['SYSTEM', 'EMAIL'],
+      interval: 300,
+      unit: 'SECOND',
+    })
+    const ensureTaskDdlWarningAlarmSetting = (task) => {
+      const alarmSettings = task?.alarmSettings
+      const alarmSettingOrder = [
+        'TASK_STATUS_ERROR',
+        'TASK_FULL_COMPLETE',
+        'TASK_INCREMENT_START',
+        'TASK_INCREMENT_DELAY',
+        'TASK_DDL_WARNING',
+        'TASK_INSPECT_DIFFERENCE',
+        'TASK_RETRY_WARN',
+      ]
+
+      if (
+        Array.isArray(alarmSettings) &&
+        !alarmSettings.some((item) => item?.key === 'TASK_DDL_WARNING')
+      ) {
+        const delayIndex = alarmSettings.findIndex(
+          (item) => item?.key === 'TASK_INCREMENT_DELAY',
+        )
+        alarmSettings.splice(
+          delayIndex === -1 ? alarmSettings.length : delayIndex + 1,
+          0,
+          getTaskDdlWarningAlarmSetting(),
+        )
+      }
+
+      if (Array.isArray(alarmSettings)) {
+        alarmSettings.sort((a, b) => {
+          const aIndex = alarmSettingOrder.indexOf(a?.key)
+          const bIndex = alarmSettingOrder.indexOf(b?.key)
+          return (
+            (aIndex === -1 ? alarmSettingOrder.length : aIndex) -
+            (bIndex === -1 ? alarmSettingOrder.length : bIndex)
+          )
+        })
+      }
+    }
     const taskRef = inject('task')
     const pageVersionRef = inject('pageVersion')
     const lockedFeature = inject('lockedFeature')
@@ -1680,6 +1726,15 @@ export default defineComponent({
                   interval: 300,
                   unit: 'SECOND',
                 },
+                {
+                  type: 'TASK',
+                  open: isDaas,
+                  key: 'TASK_DDL_WARNING',
+                  sort: 5,
+                  notify: ['SYSTEM', 'EMAIL'],
+                  interval: 300,
+                  unit: 'SECOND',
+                },
               ],
             },
             alarmRules: {
@@ -1793,6 +1848,30 @@ export default defineComponent({
               'x-component': 'Checkbox.Group',
               'x-component-props': {
                 onChange: `{{val=>(!val.length && ($values.alarmSettings[3].open=false))}}`,
+              },
+              default: ['SYSTEM', 'EMAIL'],
+              'x-editable': true,
+              'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
+            },
+            'alarmSettings.4.open': {
+              title: i18n.t(
+                'packages_dag_migration_alarmpanel_renwufengxianddl',
+              ),
+              type: 'boolean',
+              default: true,
+              'x-editable': true,
+              'x-decorator': 'FormItem',
+              'x-component': 'Switch',
+              'x-component-props': {
+                onChange: `{{val=>(val && !$values.alarmSettings[4].notify.length && ($values.alarmSettings[4].notify=["SYSTEM"]))}}`,
+              },
+            },
+            'alarmSettings.4.notify': {
+              type: 'array',
+              'x-decorator': 'FormItem',
+              'x-component': 'Checkbox.Group',
+              'x-component-props': {
+                onChange: `{{val=>(!val.length && ($values.alarmSettings[4].open=false))}}`,
               },
               default: ['SYSTEM', 'EMAIL'],
               'x-editable': true,
@@ -1971,6 +2050,7 @@ export default defineComponent({
     const initForm = async () => {
       await loadAccessNode()
       const task = taskRef.value
+      ensureTaskDdlWarningAlarmSetting(task)
 
       const timeZone = systemTimeZone.value
       const oldPoints = task.syncPoints

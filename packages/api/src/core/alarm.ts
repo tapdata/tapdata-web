@@ -31,6 +31,7 @@ export enum Key {
   TaskFullComplete = 'TASK_FULL_COMPLETE',
   TaskIncrementDelay = 'TASK_INCREMENT_DELAY',
   TaskIncrementStart = 'TASK_INCREMENT_START',
+  TaskDdlWarning = 'TASK_DDL_WARNING',
   TaskInspectError = 'TASK_INSPECT_ERROR',
   TaskStatusError = 'TASK_STATUS_ERROR',
   TaskStatusStop = 'TASK_STATUS_STOP',

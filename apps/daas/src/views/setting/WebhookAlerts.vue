@@ -162,6 +162,7 @@ const keyMap: Record<string, string> = {
   TASK_INCREMENT_DELAY: t(
     'packages_business_setting_alarmnotification_dangrenwudezeng',
   ),
+  TASK_DDL_WARNING: t('packages_business_task_ddl_warning'),
   DATANODE_CANNOT_CONNECT: t(
     'packages_business_setting_alarmnotification_dangshujuwufa',
   ),
@@ -307,8 +308,8 @@ const mapHistory = (item: any): HistoryItem => {
 
     if (item['x-event']) {
       item['x-event'] = item['x-event']
-        .replace(/^当|When the?|當/, '')
-        .replace(/时|時$/, '')
+        .replace(/^当|When the?|當/, '') // i18n-ignore
+        .replace(/时|時$/, '') // i18n-ignore
     } else {
       item['x-event'] = event || '--'
     }
