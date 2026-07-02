@@ -232,6 +232,7 @@ const keyMapping = reactive({
     'packages_business_setting_alarmnotification_api_server_worker_memory_usage_alter',
   ),
   DATASOURCE_MONITOR_ALTER: t('packages_business_datasource_monitor_alter'),
+  TASK_DDL_WARNING: t('packages_business_task_ddl_warning'),
   API_SERVER_P95_WARN: t('packages_business_api_server_p95_warn'),
   API_SERVER_P99_WARN: t('packages_business_api_server_p99_warn'),
   API_SERVER_ERROR_RATE_WARN: t('packages_business_api_server_error_rate_warn'),

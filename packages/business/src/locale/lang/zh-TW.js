@@ -1544,6 +1544,7 @@ export default {
   packages_business_monitor_cron: '監控周期',
   packages_business_monitor_cron_tip: `語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 ? 年 *\n舉例：0 */1 * * * ? 每分鐘運行一次 0 0 2 * * ? 每天2點運行`,
   packages_business_datasource_monitor_alter: '數據源監控告警',
+  packages_business_task_ddl_warning: '任務風險DDL告警',
   packages_business_import_mode: '同名處理方式',
   packages_business_import_as_copy: '以副本導入',
   packages_business_import_replace: '覆蓋導入',

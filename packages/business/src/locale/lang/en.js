@@ -1750,6 +1750,7 @@ export default {
   packages_business_monitor_cron: 'Monitor Period',
   packages_business_monitor_cron_tip: `Syntax: seconds * minutes * hours * days * months * weeks ? years *\nExample: 0 */1 * * * ? Run every minute 0 0 2 * * ? Run every day at 2am`,
   packages_business_datasource_monitor_alter: 'Data Source Monitor Alert',
+  packages_business_task_ddl_warning: 'Task Dangerous DDL Alert',
   packages_business_import_mode: 'Handling for Name Conflicts',
   packages_business_import_as_copy: 'Import as Copy',
   packages_business_import_replace: 'Replace Existing',
