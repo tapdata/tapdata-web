@@ -946,7 +946,7 @@ onUnmounted(() => {
           </div>
         </template>
         <template #default="{ row }">
-          <el-space :spacer="spacer" :size="0">
+          <el-space :spacer="spacer" :size="0" class="flex-wrap">
             <ElButton
               data-testid="test-connection"
               text
