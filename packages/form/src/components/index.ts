@@ -3,7 +3,7 @@ import {
   ElDivider as Divider,
   ElLink as Link,
 } from 'element-plus'
-import { ArrayItems } from './array-items'
+// import { ArrayItems } from './array-items'
 import { FormCollapse, FormCollapseItem } from './form-collapse'
 import { FormTab } from './form-tab'
 import { Input } from './input'
@@ -16,7 +16,7 @@ import { Switch } from './switch'
 export { Alert, Divider, Link }
 // 覆盖 formily-element-plus
 export {
-  ArrayItems,
+  // ArrayItems,
   FormCollapse,
   FormCollapseItem,
   FormTab,
