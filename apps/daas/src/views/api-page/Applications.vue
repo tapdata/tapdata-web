@@ -276,7 +276,7 @@ const handleSortTable = ({
         fixed="right"
       >
         <template #default="{ row }">
-          <el-space :spacer="spacer" :size="0" class="lh-1">
+          <el-space :spacer="spacer" :size="0" class="lh-1 flex-wrap">
             <ElButton
               v-if="row.permissionActions?.includes('Edit')"
               v-readonlybtn="'API_clients_amangement'"

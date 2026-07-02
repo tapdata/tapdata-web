@@ -1392,7 +1392,7 @@ export default {
         <template #default="{ row }">
           <!-- 经过不停的快照比对，发现如果多个按钮带有 v-readonlybtn 
           则会影响 vnode 的 patch 导致内存泄露，每次列表刷新就会增加很多 vnode -->
-          <el-space :spacer="spacer" :size="0">
+          <el-space :spacer="spacer" :size="0" class="flex-wrap">
             <ElButton
               v-if="
                 row.btnDisabled.stop &&
