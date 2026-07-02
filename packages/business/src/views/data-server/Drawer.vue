@@ -46,7 +46,7 @@ import FieldsTree from './FieldsTree.vue'
 import FieldsTreePreview from './FieldsTreePreview.vue'
 import MqlEditor from './MqlEditor.vue'
 
-import { getTableOptions, useDrawer } from './shared'
+import { getTableOptions, PARAM_NAME_PATTERN, useDrawer } from './shared'
 import type { InputInstance, SelectInstance, TableInstance } from 'element-plus'
 
 // Types
@@ -640,6 +640,45 @@ const tabChanged = (tab: string | number) => {
 
 const handleChangeApiType = () => {
   form.value.params = getDefaultParams(form.value.apiType)
+  focusedParamNameIndex.value = null
+  hoveredParamNameIndex.value = null
+}
+
+const focusedParamNameIndex = ref<number | null>(null)
+const hoveredParamNameIndex = ref<number | null>(null)
+
+const getParamNameError = (index: number) => {
+  const paramName = form.value.params?.[index]?.name || ''
+
+  if (!paramName.trim()) {
+    return t('packages_business_data_server_drawer_qingshurucanshu')
+  }
+
+  if (!PARAM_NAME_PATTERN.test(paramName)) {
+    return t('packages_business_data_server_drawer_geshicuowu')
+  }
+
+  return ''
+}
+
+const isParamNameTipVisible = (index: number) => {
+  return (
+    !!getParamNameError(index) &&
+    (focusedParamNameIndex.value === index ||
+      hoveredParamNameIndex.value === index)
+  )
+}
+
+const hideFocusedParamNameTip = (index: number) => {
+  if (focusedParamNameIndex.value === index) {
+    focusedParamNameIndex.value = null
+  }
+}
+
+const hideHoveredParamNameTip = (index: number) => {
+  if (hoveredParamNameIndex.value === index) {
+    hoveredParamNameIndex.value = null
+  }
 }
 
 const handleChangeTable = () => {
@@ -1747,16 +1786,33 @@ provide('form', form)
             min-width="80"
           >
             <template #default="{ row, $index }">
-              <div v-if="editable(row, form)">
-                <ElFormItem
-                  :prop="`params.${$index}.name`"
-                  :error="!form.params[$index].name ? 'true' : ''"
-                  :show-message="false"
-                  :rules="rules.param"
-                  class="mb-0"
+              <div
+                v-if="editable(row, form)"
+                @mouseenter="hoveredParamNameIndex = $index"
+                @mouseleave="hideHoveredParamNameTip($index)"
+              >
+                <ElTooltip
+                  :disabled="!getParamNameError($index)"
+                  :content="getParamNameError($index)"
+                  :hide-after="0"
+                  transition="none"
+                  :visible="isParamNameTipVisible($index)"
+                  placement="top"
                 >
-                  <ElInput v-model="form.params[$index].name" />
-                </ElFormItem>
+                  <ElFormItem
+                    :prop="`params.${$index}.name`"
+                    :error="getParamNameError($index)"
+                    :show-message="false"
+                    :rules="rules.param"
+                    class="mb-0"
+                  >
+                    <ElInput
+                      v-model="form.params[$index].name"
+                      @focus="focusedParamNameIndex = $index"
+                      @blur="hideFocusedParamNameTip($index)"
+                    />
+                  </ElFormItem>
+                </ElTooltip>
               </div>
               <div v-else>{{ row.name }}</div>
             </template>
@@ -1800,7 +1856,7 @@ provide('form', form)
           <ElTableColumn
             :label="$t('packages_business_data_server_drawer_required')"
             prop="required"
-            min-width="60"
+            min-width="80"
             align="center"
           >
             <template #default="{ row, $index }">
