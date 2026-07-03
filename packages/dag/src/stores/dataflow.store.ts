@@ -21,7 +21,7 @@ import { isObject } from '@tap/shared'
 import { debounce, isString } from 'lodash-es'
 import { defineStore } from 'pinia'
 import { markRaw, reactive, ref, shallowRef } from 'vue'
-import { DEFAULT_SETTINGS } from '../constants'
+import { alarmSettingKeys, DEFAULT_SETTINGS } from '../constants'
 import { CustomProcessor } from '../nodes/extends/CustomProcessor'
 import { allResourceIns as resourceIns } from '../nodes/loader'
 
@@ -72,6 +72,20 @@ function hasCycle(
     if (flag || hasCycle(id, target, map)) return true
   }
   return flag
+}
+
+function sortAlarmSettings<T extends { key?: string }>(alarmSettings?: T[]) {
+  if (!Array.isArray(alarmSettings)) return alarmSettings
+
+  return [...alarmSettings].sort((a, b) => {
+    const aIndex = (alarmSettingKeys as readonly string[]).indexOf(a.key || '')
+    const bIndex = (alarmSettingKeys as readonly string[]).indexOf(b.key || '')
+
+    return (
+      (aIndex === -1 ? Number.MAX_SAFE_INTEGER : aIndex) -
+      (bIndex === -1 ? Number.MAX_SAFE_INTEGER : bIndex)
+    )
+  })
 }
 
 export const useDataflowStore = defineStore('dataflow', () => {
@@ -262,6 +276,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
       dataflowData.syncType = dataflowData.shareCache
         ? 'shareCache'
         : dataflowData.syncType
+      dataflowData.alarmSettings = sortAlarmSettings(dataflowData.alarmSettings)
 
       setDataflow(dataflowData)
       getTaskPermissions()
