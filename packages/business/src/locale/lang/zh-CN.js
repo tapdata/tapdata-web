@@ -1559,6 +1559,7 @@ export default {
   packages_business_monitor_cron: '监控周期',
   packages_business_monitor_cron_tip: `语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 ? 年 *\n举例：0 */1 * * * ? 每分钟运行一次 0 0 2 * * ? 每天2点运行`,
   packages_business_datasource_monitor_alter: '数据源监控告警',
+  packages_business_task_ddl_warning: '任务风险DDL告警',
   packages_business_import_mode: '同名处理方式',
   packages_business_import_as_copy: '以副本导入',
   packages_business_import_replace: '覆盖导入',
