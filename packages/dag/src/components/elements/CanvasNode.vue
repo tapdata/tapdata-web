@@ -123,7 +123,7 @@ const canBeTarget = computed(() => {
           :node="props.data"
           class="canvas-node-handle z-1"
         />
-        <NodeToolbar :node="props.data" />
+        <NodeToolbar v-if="!dataflowStore.stateIsReadonly" :node="props.data" />
         <div
           v-if="props.data.attrs.desc"
           class="text-preline text-break px-3 pb-2 pt-1 text-xs font-color-light"

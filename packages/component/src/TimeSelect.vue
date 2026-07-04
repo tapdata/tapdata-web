@@ -167,7 +167,7 @@ function getPeriod(value?: string) {
   return items.value.find((item) => item.value === (value || period.value))
 }
 
-defineExpose({ setPeriod, getPeriod, openPicker })
+defineExpose({ setPeriod, getPeriod, openPicker, changeTime })
 </script>
 
 <template>

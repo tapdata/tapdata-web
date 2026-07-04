@@ -836,6 +836,13 @@ onUnmounted(() => {
     overflowObserver.disconnect()
   }
 })
+
+defineExpose({
+  changeItem,
+  changePickerTime(val: number[]) {
+    timeSelect.value?.changeTime?.(val)
+  },
+})
 </script>
 
 <template>

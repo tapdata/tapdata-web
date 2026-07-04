@@ -129,6 +129,11 @@ function observeBottomBar() {
 const rightPanelRef =
   useTemplateRef<InstanceType<typeof RightPanel>>('rightPanel')
 const rightPanelWidth = ref(0)
+
+const rightPanelExpanded = computed(() => {
+  return dataflowStore.selectedNode || dataflowStore.showSettings
+})
+
 let rightPanelResizeObserver: ResizeObserver | null = null
 
 function observeRightPanel() {
@@ -142,10 +147,6 @@ function observeRightPanel() {
   })
   rightPanelResizeObserver.observe(el)
 }
-
-const rightPanelExpanded = computed(() => {
-  return dataflowStore.selectedNode || dataflowStore.showSettings
-})
 
 const { layout, fitViewWithOffset } = useLayout({
   nodesPanelExpanded,
@@ -280,11 +281,11 @@ onUnmounted(() => {
 const bottomBarStyle = computed(() => {
   const left =
     leftPanelWidth.value > 0
-      ? `${leftPanelWidth.value + 20}px`
+      ? `${leftPanelWidth.value + PANEL_MARGIN * 2}px`
       : `${PANEL_MARGIN}px`
   const right =
-    rightPanelWidth.value > 0
-      ? `${rightPanelWidth.value + 20}px`
+    rightPanelWidth.value > 0 && rightPanelExpanded.value
+      ? `${rightPanelWidth.value + PANEL_MARGIN}px`
       : `${PANEL_MARGIN}px`
   return { left, right }
 })

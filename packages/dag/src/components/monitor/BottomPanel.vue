@@ -4,7 +4,7 @@ import NodeLog from '@tap/business/src/components/logs/NodeLog'
 import MilestoneList from '@tap/business/src/components/milestone/List'
 import RelationList from '@tap/business/src/views/task/relation/List.vue'
 import vResize from '@tap/component/src/directives/resize'
-import { computed, nextTick, onMounted, ref, useAttrs } from 'vue'
+import { computed, nextTick, onMounted, ref, useAttrs, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useDataflowStore } from '../../stores/dataflow.store'
 import Alert from './components/Alert'
@@ -18,10 +18,32 @@ defineOptions({
   // directives: { resize, focusSelect },
 })
 
+type BottomPanelTab =
+  | 'milestone'
+  | 'log'
+  | 'record'
+  | 'alert'
+  | 'relation'
+  | 'inspect'
+  | 'skipErrorTable'
+
+const defaultTabs: BottomPanelTab[] = [
+  'milestone',
+  'log',
+  'record',
+  'alert',
+  'relation',
+  'inspect',
+  'skipErrorTable',
+]
+
 const props = defineProps<{
   onlyLog?: boolean
   hideLog?: boolean
+  tabs?: BottomPanelTab[]
 }>()
+
+const tabs = computed(() => props.tabs ?? defaultTabs)
 
 const emit = defineEmits<{
   action: [any]
@@ -46,11 +68,42 @@ const showAlert = computed(() => {
   return !['SharedCacheMonitor'].includes(route.name as string)
 })
 
+const hasSkipErrorTable = computed(() => {
+  return (
+    attrs.dataflow?.skipErrorEvent?.errorMode === 'SkipTableForMigrateSnapshot'
+  )
+})
+
+const enabledTabs = computed(() => new Set(tabs.value))
+const visibleTabs = computed(() => {
+  return defaultTabs.filter((tab) => {
+    if (!enabledTabs.value.has(tab)) return false
+    if (tab === 'log') return !props.hideLog
+    if (tab === 'alert') return showAlert.value
+    if (tab === 'relation') return !!relationCount.value
+    if (tab === 'inspect') return isDaas && !isCommunity
+    if (tab === 'skipErrorTable') return hasSkipErrorTable.value
+    return true
+  })
+})
+
+function hasTab(tab: BottomPanelTab) {
+  return visibleTabs.value.includes(tab)
+}
+
+function setCurrentTab(tab: string) {
+  if (visibleTabs.value.includes(tab as BottomPanelTab)) {
+    currentTab.value = tab
+    return
+  }
+
+  currentTab.value = visibleTabs.value[0] || tab
+}
+
 onMounted(() => {
-  if (['MigrationMonitorViewer'].includes(route.name as string)) {
-    currentTab.value = 'log'
+  if (route.name === 'MigrationMonitorViewer') {
     const { start, end } = route.query
-    changeTab(currentTab.value, {
+    changeTab('log', {
       start: Number(start),
       end: Number(end),
     })
@@ -63,24 +116,26 @@ function getLogRef() {
 }
 
 function changeAlertTab(tab: string) {
-  currentTab.value = tab
+  setCurrentTab(tab)
 }
 
 function changeTab(tab: string, data: any) {
-  currentTab.value = tab
+  setCurrentTab(tab)
   nextTick(() => {
-    if (tab === 'log') {
-      data.nodeId && getLogRef()?.changeItem(data.nodeId)
+    if (currentTab.value === 'log') {
+      data.nodeId && logRef.value?.changeItem(data.nodeId)
       const t = new Date(data.start).getTime()
       const len = 10 * 1000
       const start = t - len
       const end = data.end ? data.end + len : t + len
-      data.start && getLogRef()?.$refs.timeSelect.changeTime([start, end])
+      data.start && logRef.value?.changePickerTime([start, end])
     }
   })
 }
 
 function getRelationData() {
+  if (!tabs.value.includes('relation')) return
+
   const { id, syncType } = attrs.dataflow || {}
   const { taskRecordId } = route.query || {}
   const filter: any = {
@@ -94,6 +149,10 @@ function getRelationData() {
     relationCount.value = data?.length || 0
   })
 }
+
+watch(visibleTabs, () => {
+  setCurrentTab(currentTab.value)
+})
 
 defineExpose({
   changeTab,
@@ -120,10 +179,13 @@ defineExpose({
       <ElTabs
         key="bottomPanel"
         v-model="currentTab"
+        :default-value="
+          $route.name === 'MigrationMonitorViewer' ? 'log' : defaultTabs[0]
+        "
         style="--el-tabs-padding-left: 1rem; --el-tabs-header-height: 44px"
         class="setting-tabs h-100 flex-1 flex w-100 monitor-bottom-tabs"
       >
-        <ElTabPane name="milestone">
+        <ElTabPane v-if="hasTab('milestone')" name="milestone">
           <template #label>
             <span>
               {{ $t('packages_dag_monitor_bottompanel_renwujindu') }}
@@ -137,7 +199,7 @@ defineExpose({
             :current-tab="currentTab"
           />
         </ElTabPane>
-        <ElTabPane v-if="!hideLog" name="log" class="monitor-log-pane">
+        <ElTabPane v-if="hasTab('log')" name="log" class="monitor-log-pane">
           <template #label>
             <span>
               {{ $t('public_task_log') }}
@@ -152,7 +214,7 @@ defineExpose({
             @action="emit('action', $event)"
           />
         </ElTabPane>
-        <ElTabPane name="record">
+        <ElTabPane v-if="hasTab('record')" name="record">
           <template #label>
             <span>
               {{ $t('packages_dag_monitor_bottompanel_yunxingjilu') }}
@@ -164,7 +226,7 @@ defineExpose({
             :current-tab="currentTab"
           />
         </ElTabPane>
-        <ElTabPane v-if="showAlert" name="alert">
+        <ElTabPane v-if="hasTab('alert')" name="alert">
           <template #label>
             <span>
               {{ $t('packages_dag_monitor_bottompanel_gaojingliebiao') }}
@@ -178,7 +240,7 @@ defineExpose({
             @load-data="emit('load-data')"
           />
         </ElTabPane>
-        <ElTabPane v-if="relationCount" name="relation">
+        <ElTabPane v-if="hasTab('relation')" name="relation">
           <template #label>
             <span>
               {{ $t('packages_dag_monitor_bottompanel_guanlianrenwu') }}
@@ -192,7 +254,7 @@ defineExpose({
             @load-data="emit('load-data')"
           />
         </ElTabPane>
-        <ElTabPane v-if="isDaas && !isCommunity" name="inspect">
+        <ElTabPane v-if="hasTab('inspect')" name="inspect">
           <template #label>
             <span>
               {{ $t('public_validation_record') }}
@@ -207,12 +269,7 @@ defineExpose({
           />
         </ElTabPane>
         <SkipErrorTable
-          v-if="
-            $attrs.dataflow &&
-            $attrs.dataflow.skipErrorEvent &&
-            $attrs.dataflow.skipErrorEvent.errorMode ===
-              'SkipTableForMigrateSnapshot'
-          "
+          v-if="hasTab('skipErrorTable')"
           name="skipErrorTable"
           :current-tab="currentTab"
           v-bind="$attrs"
