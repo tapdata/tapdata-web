@@ -140,7 +140,7 @@ provide('isSaving', isSaving)
           :log-totals="logTotals"
           :task-record="taskRecord"
           :quota="quota"
-          class="tabs-header__hidden"
+          :tabs="['milestone', 'log']"
           @open-inspect="handleOpenInspect"
           @start="handleStart(false, false)"
         />
