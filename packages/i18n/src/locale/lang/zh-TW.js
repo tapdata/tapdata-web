@@ -306,6 +306,7 @@ export default {
 
   // 任務
   public_task: '任務',
+  public_task_desc: '任務描述',
   public_task_name: '任務名稱',
   public_task_type: '任務類型',
   public_task_sync_type: '同步類型',
