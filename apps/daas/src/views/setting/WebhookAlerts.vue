@@ -12,6 +12,7 @@ import {
   updateWebhook,
 } from '@tap/api/src/core/webhook'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import { getAlarmKeyMap } from '@tap/business/src/shared/alarm'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import { CloseIcon } from '@tap/component/src/CloseIcon'
@@ -143,57 +144,7 @@ const eventData = ref<EventDataItem[]>([
   },
 ])
 
-const keyMap: Record<string, string> = {
-  TASK_STATUS_ERROR: t(
-    'packages_business_setting_alarmnotification_dangrenwuyudao',
-  ),
-  TASK_INSPECT_ERROR: t(
-    'packages_business_setting_alarmnotification_dangrenwujiaoyan',
-  ),
-  TASK_FULL_COMPLETE: t(
-    'packages_business_setting_alarmnotification_dangrenwuquanliang',
-  ),
-  TASK_INCREMENT_START: t(
-    'packages_business_setting_alarmnotification_dangrenwuzengliang',
-  ),
-  TASK_STATUS_STOP: t(
-    'packages_business_setting_alarmnotification_dangrenwutingzhi',
-  ),
-  TASK_INCREMENT_DELAY: t(
-    'packages_business_setting_alarmnotification_dangrenwudezeng',
-  ),
-  TASK_DDL_WARNING: t('packages_business_task_ddl_warning'),
-  DATANODE_CANNOT_CONNECT: t(
-    'packages_business_setting_alarmnotification_dangshujuwufa',
-  ),
-  DATANODE_HTTP_CONNECT_CONSUME: t(
-    'packages_business_setting_alarmnotification_dangshujuyuanwang',
-  ),
-  DATANODE_TCP_CONNECT_CONSUME: t(
-    'packages_business_setting_alarmnotification_dangshujuyuanxie',
-  ),
-  DATANODE_AVERAGE_HANDLE_CONSUME: t(
-    'packages_business_setting_alarmnotification_dangshujuyuanjie',
-  ),
-  PROCESSNODE_AVERAGE_HANDLE_CONSUME: t(
-    'packages_business_setting_alarmnotification_dangjiediandeping',
-  ),
-  INSPECT_TASK_ERROR: t(
-    'packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu',
-  ),
-  INSPECT_COUNT_ERROR: t(
-    'packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu',
-  ),
-  INSPECT_VALUE_ERROR: t(
-    'packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu',
-  ),
-  SYSTEM_FLOW_EGINGE_DOWN: t(
-    'packages_business_setting_alarmnotification_dangrenwustop',
-  ),
-  SYSTEM_FLOW_EGINGE_UP: t(
-    'packages_business_setting_alarmnotification_dangrenwuuP',
-  ),
-}
+const keyMap: Record<string, string> = getAlarmKeyMap()
 
 const historyState = reactive({
   visible: false,
@@ -237,7 +188,7 @@ const loadData = async () => {
 const loadEventType = async () => {
   const data = await findAlarm()
   eventData.value[0].children = data
-    .filter((item: any) => item.type !== 'API_SERVER')
+    .filter((item: any) => item.type !== 'API_SERVER' && keyMap[item.key])
     .map((item: any) => ({
       label: keyMap[item.key],
       value: item.key,
@@ -542,6 +493,7 @@ onMounted(() => {
                 multiple
                 show-checkbox
                 :data="eventData"
+                default-expand-all
                 class="w-100"
               />
             </ElFormItem>
