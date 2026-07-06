@@ -304,10 +304,34 @@ const totalData = computed(() => {
 })
 
 const totalDataPercentage = computed(() => {
-  const { snapshotTableTotal, tableTotal } = totalData.value
-  return snapshotTableTotal && tableTotal
-    ? (snapshotTableTotal / tableTotal) * 100
-    : 0
+  const {
+    snapshotTableTotal,
+    tableTotal,
+    snapshotRowTotal,
+    snapshotInsertRowTotal,
+  } = totalData.value
+
+  if (props.dataflow.syncType === 'migrate')
+    return tableTotal
+      ? {
+          val: Math.round((snapshotTableTotal / tableTotal) * 100),
+          text: `${snapshotTableTotal}/${tableTotal}`,
+        }
+      : { val: 0, text: '' }
+  if (snapshotTableTotal === tableTotal)
+    return {
+      val: 100,
+      text: '',
+    }
+  return snapshotRowTotal
+    ? {
+        val: Math.round((snapshotInsertRowTotal / snapshotRowTotal) * 100),
+        text: `${snapshotInsertRowTotal} / ${snapshotRowTotal}`,
+      }
+    : {
+        val: 0,
+        text: '',
+      }
 })
 
 const currentTotalDataPercentage = computed(() => {
@@ -581,6 +605,7 @@ function onClose() {
           v-model="selected"
           class="ml-2 dark"
           filterable
+          style="width: 200px"
           @change="init()"
         >
           <ElOption
@@ -664,11 +689,9 @@ function onClose() {
                   <ElProgress
                     class="flex-1"
                     :show-text="false"
-                    :percentage="totalDataPercentage"
+                    :percentage="totalDataPercentage.val"
                   />
-                  <span class="ml-2">{{
-                    `${totalData.snapshotTableTotal}/${totalData.tableTotal}`
-                  }}</span>
+                  <span class="ml-2">{{ totalDataPercentage.text }}</span>
                 </div>
               </div>
               <div

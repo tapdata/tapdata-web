@@ -165,6 +165,7 @@ const initialSyncProcess = computed(() => {
   } = props.sample || {}
   if (props.syncType === 'migrate')
     return tableTotal ? Math.round((snapshotTableTotal / tableTotal) * 100) : 0
+  if (snapshotTableTotal === tableTotal) return 100
   return snapshotRowTotal
     ? Math.round((snapshotInsertRowTotal / snapshotRowTotal) * 100)
     : 0
