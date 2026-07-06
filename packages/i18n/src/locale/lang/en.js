@@ -307,6 +307,7 @@ export default {
   public_api_alarmDate: 'Alarm Date',
   // Task
   public_task: 'Task',
+  public_task_desc: 'Task Description',
   public_task_name: 'Task Name',
   public_task_type: 'Task Type',
   public_task_sync_type: 'Sync Type',
