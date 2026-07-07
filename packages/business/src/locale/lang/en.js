@@ -752,8 +752,10 @@ export default {
     'When the task encounters an error',
   packages_business_setting_alarmnotification_dangrenwustop:
     'When the Agent service stops',
-  packages_business_setting_alarmnotification_dangyinqinglixian: 'When the engine stops',
-  packages_business_setting_alarmnotification_dangyinqinghuifu: 'When the engine starts',
+  packages_business_setting_alarmnotification_dangyinqinglixian:
+    'When the engine stops',
+  packages_business_setting_alarmnotification_dangyinqinghuifu:
+    'When the engine starts',
   packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn:
     'When APIServer worker P50 per minute exceeding threshold',
   packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn:
@@ -1453,6 +1455,30 @@ export default {
   packages_business_components_conditionbox_mubiaobiaoshuju: 'Target Filter',
   packages_business_components_conditionbox_enableCustomCommand_tip:
     'Ensure that the query conditions have indexes; without indexes, it may result in a full table scan, causing increased database pressure.',
+  packages_business_components_conditionbox_advanced_verification_doc: `##### Advanced Verification Instructions
+**The first step** The function input parameter is the source table data, you can call the **built-in function** according to the source table data to query the target data<br>
+**Step 2** Custom verification logic<br>
+**Step 3** The function returns the result<br>
+
+- **result**: whether the verification is passed (passed: verification passed, failed: verification failed), if no or other characters are filled in, the verification fails, required <br>
+- **message**: verification exception information, it is recommended to return if verification fails, optional<br>
+- **data**: current verification target data, it is recommended to return if verification fails, optional<br>
+
+
+Full Example: This is an example MongoDB query
+\`\`\`\`javascript
+function validate(sourceRow){'{'}
+  // step 1
+  var targetRow = target.executeQuery({'{'}database: "target",collection: "USER",filter: {'{'}USER_ID: sourceRow.USER_ID{'}}'});
+  // step 2
+  if(sourceRow.USER_ID === targetRow[0].USER_ID){'{'}
+    // step 3
+    return {'{'}result: 'passed',message: "",data: ""{'}'}
+  {'}'}else{'{'}
+    return {'{'}result: 'failed', message: "Inconsistent records", data: targetRow{'}'}
+  {'}'}
+{'}'}
+\`\`\`\``,
   packages_business_data_server_list_apIwendang: 'API Document Export',
   packages_business_verification_form_gaojipeizhi: 'Advanced Configuration',
   packages_business_verification_form_validate_table_is_empty:
@@ -1769,6 +1795,8 @@ export default {
     'Under active development. Some features may still be incomplete.',
   packages_business_column_setting: 'Display Settings',
   packages_business_column_reset: 'Reset',
-  packages_business_api_server_connection_pool_deficiency_warn: 'When any API Server connection pool resource is tight and triggers the alarm threshold',
-  packages_business_api_server_connection_pool_idle_warn: 'When the number of connections in the connection pool of any API Server falls below the alarm threshold',
+  packages_business_api_server_connection_pool_deficiency_warn:
+    'When any API Server connection pool resource is tight and triggers the alarm threshold',
+  packages_business_api_server_connection_pool_idle_warn:
+    'When the number of connections in the connection pool of any API Server falls below the alarm threshold',
 }
