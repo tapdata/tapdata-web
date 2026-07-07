@@ -716,10 +716,14 @@ export default {
     '當任一API Server的工作行程記憶體使用量超過告警閾值時',
   packages_business_setting_alarmnotification_api_server_worker_memory_usage_alter:
     '當任一API Server的工作行程記憶體使用量超過通知閾值時',
-  packages_business_api_server_p95_warn: '當任一API Server請求耗時P95超過告警閾值時',
-  packages_business_api_server_p99_warn: '當任一API Server請求耗時P99超過告警閾值時',
-  packages_business_api_server_error_rate_warn: '當任一API Server請求錯誤率超過告警閾值時',
-  packages_business_task_source_no_incremental_event: '當源端已開啟心跳表，連續 60 秒未接收到增量事件時',
+  packages_business_api_server_p95_warn:
+    '當任一API Server請求耗時P95超過告警閾值時',
+  packages_business_api_server_p99_warn:
+    '當任一API Server請求耗時P99超過告警閾值時',
+  packages_business_api_server_error_rate_warn:
+    '當任一API Server請求錯誤率超過告警閾值時',
+  packages_business_task_source_no_incremental_event:
+    '當源端已開啟心跳表，連續 60 秒未接收到增量事件時',
   packages_business_setting_alarmnotification_dangrenwuuP: 'Agent服务啓動時',
   packages_business_setting_alarmnotification_dangyinqinglixian: '當引擎停止時',
   packages_business_setting_alarmnotification_dangyinqinghuifu: '當引擎啓動時',
@@ -1303,6 +1307,30 @@ export default {
   packages_business_components_conditionbox_mubiaobiaoshuju: '目標表數據過濾',
   packages_business_components_conditionbox_enableCustomCommand_tip:
     '需要保證查詢條件有索引，如果沒索引會產生全表掃描導致數據庫壓力變大',
+  packages_business_components_conditionbox_advanced_verification_doc: `##### 高級校驗說明
+**第一步** 函數入參為源表數據，可以根據源表數據調用**內置函數**查詢出目標數據<br>
+**第二步** 自定義校驗邏輯<br>
+**第三步** 函數返回結果<br>
+
+- **result**：是否通過校驗（passed：校驗通過，failed：校驗失敗），如果不填或填其它字符則校驗失敗，必填項<br>
+- **message**：校驗異常信息，建議校驗失敗返回，選填項<br>
+- **data**：當前校驗目標數據，建議校驗失敗返回，選填項<br>
+
+
+完整示例：此為MongoDB查詢示例
+\`\`\`javascript
+function validate(sourceRow){'{'}
+  // 第1步
+  var targetRow = target.executeQuery({'{'}database: "target",collection: "USER",filter: {'{'}USER_ID: sourceRow.USER_ID{'}}'});
+  // 第2步
+  if(sourceRow.USER_ID === targetRow[0].USER_ID){'{'}
+    // 第3步
+    return {'{'}result: 'passed',message: "",data: ""{'}'}
+  {'}'}else{'{'}
+    return {'{'}result: 'failed',message: "記錄不一致",data: targetRow{'}'}
+  {'}'}
+{'}'}
+\`\`\``,
   packages_business_data_server_list_apIwendang: 'API文檔導出',
   packages_business_verification_form_gaojipeizhi: '高級配置',
   packages_business_verification_form_validate_table_is_empty:
@@ -1562,6 +1590,8 @@ export default {
   public_connector_alpha_tip: '正在持續開發中，部分功能可能還在完善',
   packages_business_column_setting: '顯示設定',
   packages_business_column_reset: '重置',
-  packages_business_api_server_connection_pool_deficiency_warn: '當任一API Server 連接池資源緊張触发告警閾值時',
-  packages_business_api_server_connection_pool_idle_warn: '當任一API Server 連接池連接數低於告警閾值時',
+  packages_business_api_server_connection_pool_deficiency_warn:
+    '當任一API Server 連接池資源緊張触发告警閾值時',
+  packages_business_api_server_connection_pool_idle_warn:
+    '當任一API Server 連接池連接數低於告警閾值時',
 }
