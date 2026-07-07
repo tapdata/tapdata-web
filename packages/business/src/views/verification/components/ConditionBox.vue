@@ -170,7 +170,9 @@ const dialogAddScriptVisible = ref(false)
 const formIndex = ref('')
 const webScript = ref('')
 const jsEngineName = ref('graal.js')
-const doc = ref('')
+const doc = computed(() =>
+  i18n.t('packages_business_components_conditionbox_advanced_verification_doc'),
+)
 const currentPage = ref(1)
 const pageSize = ref(5)
 const autoSuggestJoinFields = ref(true)
@@ -259,15 +261,12 @@ const getConnectionsListMethod = async (
 
     const response: ApiResponse<ConnectionResponse> = {
       items: result.items.map((item: ConnectionItem) => {
-        const findDynamicSchema = item.capabilities.find(
-          (t: any) => t.id === 'dynamic_schema',
-        )
-        if (findDynamicSchema) {
-          dynamicSchemaMap[item.id] = true
-        }
         const connectionId = item.id
         const connectionName = item.name
         const databaseType = item.database_type
+        if (hasCapability(databaseType, 'dynamic_schema')) {
+          dynamicSchemaMap[connectionId] = true
+        }
         return {
           attrs: {
             nodeId: '',
@@ -427,10 +426,7 @@ const getConnectionsInTask = async (
       const connectionId = t.connectionId
       const connectionName = t.attrs?.connectionName
       const databaseType = t.databaseType
-      const findDynamicSchema = t.attrs?.capabilities.find(
-        (t: any) => t.id === 'dynamic_schema',
-      )
-      if (findDynamicSchema) {
+      if (hasCapability(databaseType, 'dynamic_schema')) {
         dynamicSchemaMap[t.connectionId] = true
       }
       return {
@@ -1223,86 +1219,6 @@ const validateCapabilities = (tasks: any[], capability: string) => {
   return message
 }
 
-const loadDoc = () => {
-  if (i18n.locale === 'en') {
-    doc.value = `##### Advanced Verification Instructions
-**The first step** The function input parameter is the source table data, you can call the **built-in function** according to the source table data to query the target data<br>
-**Step 2** Custom verification logic<br>
-**Step 3** The function returns the result<br>
-
-- **result**: whether the verification is passed (passed: verification passed, failed: verification failed), if no or other characters are filled in, the verification fails, required <br>
-- **message**: verification exception information, it is recommended to return if verification fails, optional<br>
-- **data**: current verification target data, it is recommended to return if verification fails, optional<br>
-
-
-Full Example: This is an example MongoDB query
-\`\`\`\`javascript
-function validate(sourceRow){
-// step 1
-var targetRow = target.executeQuery({database: "target",collection: "USER",filter: {USER_ID: sourceRow.USER_ID}});
-// step 2
-if(sourceRow.USER_ID === targetRow[0].USER_ID){
-// step 3
-return {result: 'passed',message: "",data: ""}
-}else{
-return {result: 'failed', message: "Inconsistent records", data: targetRow}
-}
-}
-\`\`\`\``
-  } else if (i18n.locale === 'zh-TW') {
-    doc.value = `##### 高級校驗說明
-**第一步** 函數入參為源表數據，可以根據源表數據調用**內置函數**查詢出目標數據<br>
-**第二步** 自定義校驗邏輯<br>
-**第三步** 函數返回結果<br>
-
-- **result**：是否通過校驗（passed：校驗通過，failed：校驗失敗），如果不填或填其它字符則校驗失敗，必填項<br>
-- **message**：校驗異常信息，建議校驗失敗返回，選填項<br>
-- **data**：當前校驗目標數據，建議校驗失敗返回，選填項<br>
-
-
-完整示例：此為MongoDB查詢示例
-\`\`\`javascript
-function validate(sourceRow){
-// 第1步
-var targetRow = target.executeQuery({database: "target",collection: "USER",filter: {USER_ID: sourceRow.USER_ID}});
-// 第2步
-if(sourceRow.USER_ID === targetRow[0].USER_ID){
-// 第3步
-return {result: 'passed',message: "",data: ""}
-}else{
-return {result: 'failed',message: "記錄不一致",data: targetRow}
-}
-}
-\`\`\``
-  } else {
-    doc.value = `##### 高级校验说明
-**第一步** 函数入参为源表数据，可以根据源表数据调用**内置函数**查询出目标数据<br>
-**第二步** 自定义校验逻辑<br>
-**第三步** 函数返回结果<br>
-
-- **result**：是否通过校验（passed：校验通过，failed：校验失败），如果不填或填其它字符则校验失败，必填项<br>
-- **message**：校验异常信息，建议校验失败返回，选填项<br>
-- **data**：当前校验目标数据，建议校验失败返回，选填项<br>
-
-
-完整示例：此为MongoDB查询示例
-\`\`\`javascript
-function validate(sourceRow){
-// 第1步
-var targetRow = target.executeQuery({database: "target",collection: "USER",filter: {USER_ID: sourceRow.USER_ID}});
-// 第2步
-if(sourceRow.USER_ID === targetRow[0].USER_ID){
-// 第3步
-return {result: 'passed',message: "",data: ""}
-}else{
-return {result: 'failed',message: "记录不一致",data: targetRow}
-}
-}
-\`\`\`
-`
-  }
-}
-
 const getModeTypeDisabled = (item: any) => {
   return (
     !item.source.connectionId ||
@@ -1455,7 +1371,6 @@ const isNullsLast = (item: any) => {
 
 // Lifecycle Hooks
 onMounted(() => {
-  loadDoc()
   handleSearch('')
 })
 
