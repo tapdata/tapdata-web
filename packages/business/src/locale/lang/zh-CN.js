@@ -1317,6 +1317,31 @@ export default {
   packages_business_components_conditionbox_mubiaobiaoshuju: '目标表数据过滤',
   packages_business_components_conditionbox_enableCustomCommand_tip:
     '需要保证查询条件有索引，如果没索引会产生全表扫描导致数据库压力变大',
+  packages_business_components_conditionbox_advanced_verification_doc: `##### 高级校验说明
+**第一步** 函数入参为源表数据，可以根据源表数据调用**内置函数**查询出目标数据<br>
+**第二步** 自定义校验逻辑<br>
+**第三步** 函数返回结果<br>
+
+- **result**：是否通过校验（passed：校验通过，failed：校验失败），如果不填或填其它字符则校验失败，必填项<br>
+- **message**：校验异常信息，建议校验失败返回，选填项<br>
+- **data**：当前校验目标数据，建议校验失败返回，选填项<br>
+
+
+完整示例：此为MongoDB查询示例
+\`\`\`javascript
+function validate(sourceRow){'{'}
+  // 第1步
+  var targetRow = target.executeQuery({'{'}database: "target",collection: "USER",filter: {'{'}USER_ID: sourceRow.USER_ID{'}}'});
+  // 第2步
+  if(sourceRow.USER_ID === targetRow[0].USER_ID){'{'}
+    // 第3步
+    return {'{'}result: 'passed',message: "",data: ""{'}'}
+  {'}'}else{'{'}
+    return {'{'}result: 'failed',message: "记录不一致",data: targetRow{'}'}
+  {'}'}
+{'}'}
+\`\`\`
+`,
   packages_business_data_server_list_apIwendang: 'API文档导出',
   packages_business_verification_form_gaojipeizhi: '高级配置',
   packages_business_verification_form_validate_table_is_empty:
@@ -1576,6 +1601,8 @@ export default {
   public_connector_alpha_tip: '正在持续开发中，部分功能可能还在完善',
   packages_business_column_setting: '显示设置',
   packages_business_column_reset: '重置',
-  packages_business_api_server_connection_pool_deficiency_warn: '当任一API Server 连接池资源紧张触发告警阈值时',
-  packages_business_api_server_connection_pool_idle_warn: '当任一API Server 连接池连接数低于告警阈值时',
+  packages_business_api_server_connection_pool_deficiency_warn:
+    '当任一API Server 连接池资源紧张触发告警阈值时',
+  packages_business_api_server_connection_pool_idle_warn:
+    '当任一API Server 连接池连接数低于告警阈值时',
 }
