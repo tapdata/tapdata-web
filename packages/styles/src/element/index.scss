@@ -830,13 +830,53 @@
   .el-input-number__increase,
   .el-input-number__decrease {
     opacity: 0;
-    transition: opacity 0.2s linear 0.2s;
+    width: 0;
+    transition: all 0.2s;
+    overflow: hidden;
+    height: auto !important;
+  }
+
+  .el-input-number__increase {
+    bottom: 50% !important;
+    top: 1px;
+    &:hover {
+      bottom: 40% !important;
+    }
+  }
+
+  .el-input-number__decrease {
+    top: 50% !important;
+    bottom: 1px;
+    &:hover {
+      top: 40% !important;
+    }
+  }
+
+  &:has(.el-input-number__decrease:hover) .el-input-number__increase {
+    bottom: 60% !important;
+  }
+
+  &:has(.el-input-number__increase:hover) .el-input-number__decrease {
+    top: 60% !important;
   }
 
   &:hover {
     .el-input-number__increase,
     .el-input-number__decrease {
       opacity: 1;
+      width: 22px;
+    }
+  }
+
+  &.is-controls-right:has(.el-input__suffix) {
+    .el-input__wrapper {
+      padding-right: 10px;
+      transition: var(--el-transition-box-shadow), padding .2s;
+    }
+    &:hover {
+      .el-input__wrapper {
+        padding-right: 32px;
+      }
     }
   }
 }
