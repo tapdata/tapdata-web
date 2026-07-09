@@ -2,6 +2,7 @@ const isCommunity = import.meta.env.VUE_APP_MODE === 'community'
 
 export const MENU = [
   { name: 'dashboard', icon: 'gongzuotai', alias: 'page_title_dashboard' },
+  { name: 'aiAssistant', icon: 'wenda', alias: 'page_title_ai_assistant' },
   {
     name: 'dataConsole',
     icon: 'process-platform',

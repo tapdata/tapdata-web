@@ -775,6 +775,15 @@ export const routes = [
           title: 'page_title_overview',
         },
       },
+      {
+        path: '/ai-assistant',
+        name: 'aiAssistant',
+        component: () => import('@/views/ai-assistant/Index.vue'),
+        meta: {
+          title: 'page_title_ai_assistant',
+          hideTitle: true,
+        },
+      },
 
       /* ---------- 数据服务管理  ----------*/
       {

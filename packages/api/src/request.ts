@@ -12,7 +12,7 @@ import {
 const CancelToken = axios.CancelToken
 const isCancel = axios.isCancel
 
-const apiURL = import.meta.env.BASE_URL
+const apiURL = import.meta.env?.BASE_URL
 
 export const requestClient = new RequestClient({
   baseURL: apiURL,
