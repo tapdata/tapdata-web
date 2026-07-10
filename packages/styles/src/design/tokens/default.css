@@ -15,7 +15,7 @@
   --layout-bl-gradient-stops:
     rgba(219, 234, 254, 0.2), rgba(243, 232, 255, 0.2);
 
-  --color-primary: #3b47e5;
+  --color-primary: #2563FF;
   --color-dprimary: #0e42d2;
   --color-lprimary: #4080ff;
   --color-disprimary: #94bfff;
@@ -97,7 +97,7 @@
 }
 
 :root {
-  --el-color-primary: #3b47e5;
+  --el-color-primary: #2563FF;
   --el-color-primary-light-3: rgb(117.8, 126.2, 236.8);
   --el-color-primary-light-5: #9da3f2;
   --el-color-primary-light-7: rgb(196.2, 199.8, 247.2);
@@ -191,7 +191,7 @@
   --el-button-hover-bg-color: #3b47e51a;
   --el-font-weight-primary: 400;
 
-  --primary-raw: 59, 71, 229;
+  --primary-raw: 37, 99, 255;
   --primary-hover-light: rgba(var(--primary-raw), 0.1);
   --primary-hover: rgba(var(--primary-raw), 0.2);
   --primary-dark: #0c1cc3;

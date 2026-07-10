@@ -19,6 +19,7 @@ import {
   onMounted,
   reactive,
   ref,
+  watch,
 } from 'vue'
 import { useRouter } from 'vue-router'
 import {
@@ -34,6 +35,7 @@ import {
   type AssistantConfig,
   type AssistantMessage,
   type AssistantResult,
+  type AssistantTableAlignment,
   type AssistantToolCall,
 } from './logic'
 
@@ -45,6 +47,7 @@ const composer = ref('')
 const sending = ref(false)
 const configVisible = ref(false)
 const conversationRef = ref<HTMLElement>()
+const composerRef = ref<HTMLTextAreaElement>()
 const connectionPreviewRef = ref<any>()
 const tablePreviewRef = ref<any>()
 const sampleTablePreviewVisible = ref(false)
@@ -85,6 +88,27 @@ function scrollToBottom() {
   nextTick(() => {
     if (!conversationRef.value) return
     conversationRef.value.scrollTop = conversationRef.value.scrollHeight
+  })
+}
+
+function adjustComposerHeight() {
+  nextTick(() => {
+    const textarea = composerRef.value
+    if (!textarea) return
+
+    textarea.style.height = 'auto'
+    const maxHeight = Number.parseFloat(
+      window.getComputedStyle(textarea).maxHeight,
+    )
+    const nextHeight = Number.isFinite(maxHeight)
+      ? Math.min(textarea.scrollHeight, maxHeight)
+      : textarea.scrollHeight
+
+    textarea.style.height = `${nextHeight}px`
+    textarea.style.overflowY =
+      Number.isFinite(maxHeight) && textarea.scrollHeight > maxHeight
+        ? 'auto'
+        : 'hidden'
   })
 }
 
@@ -277,6 +301,10 @@ function getContentBlocks(message: AssistantMessage) {
   return buildAssistantContentBlocks(message.content, message.results)
 }
 
+function getTableAlignClass(alignment: AssistantTableAlignment) {
+  return alignment ? `is-${alignment}` : ''
+}
+
 function pushAssistantMessage(message: AssistantMessage) {
   messages.value.push(message)
   return messages.value.at(-1)
@@ -332,6 +360,7 @@ async function streamRemoteResponse() {
   const appendMessageDelta = (content: string) => {
     if (!content) return
     assistant.content += content
+    assistant.content = assistant.content.replaceAll(/tapdata/gi, 'Tapstate')
     scrollToBottom()
   }
 
@@ -419,13 +448,16 @@ function handleComposerKeydown(event: KeyboardEvent) {
 onMounted(() => {
   activeConfig.value = loadAssistantConfig(window.localStorage)
   Object.assign(configForm, activeConfig.value)
-  resetConversation(true)
+  resetConversation()
+  adjustComposerHeight()
 })
 
 onBeforeUnmount(() => {
   demoRunId += 1
   abortController?.abort()
 })
+
+watch(composer, adjustComposerHeight)
 </script>
 
 <template>
@@ -578,7 +610,146 @@ onBeforeUnmount(() => {
                     </span>
                   </template>
                 </p>
-                <ul v-else class="assistant-rich-list">
+                <figure
+                  v-else-if="block.type === 'code'"
+                  class="assistant-code-block"
+                  :class="{ 'is-streaming': !block.closed }"
+                >
+                  <figcaption v-if="block.language || !block.closed">
+                    <span>{{ block.language || 'text' }}</span>
+                  </figcaption>
+                  <pre><code>{{ block.content }}</code></pre>
+                </figure>
+                <div
+                  v-else-if="block.type === 'table'"
+                  class="assistant-table-wrap"
+                >
+                  <table class="assistant-markdown-table">
+                    <thead>
+                      <tr>
+                        <th
+                          v-for="(header, headerIndex) in block.headers"
+                          :key="`${message.id}-${block.id}-header-${headerIndex}`"
+                          :class="
+                            getTableAlignClass(block.alignments[headerIndex])
+                          "
+                        >
+                          <template
+                            v-for="(part, partIndex) in header.parts"
+                            :key="`${message.id}-${block.id}-header-${headerIndex}-${partIndex}`"
+                          >
+                            <span v-if="part.type === 'text'">{{
+                              part.text
+                            }}</span>
+                            <span
+                              v-else
+                              class="assistant-inline-result-token"
+                              :class="{
+                                'is-actionable': canOpenResultToken(
+                                  part.result,
+                                ),
+                              }"
+                            >
+                              <button
+                                class="assistant-inline-result-token__main"
+                                type="button"
+                                :disabled="!canOpenResultToken(part.result)"
+                                @click="handleResultTokenClick(part.result)"
+                              >
+                                <span
+                                  class="assistant-inline-result-token__icon"
+                                >
+                                  <i-lucide-database
+                                    v-if="part.result.type === 'connection'"
+                                  />
+                                  <i-lucide-git-branch
+                                    v-else-if="part.result.type === 'task'"
+                                  />
+                                  <i-lucide-table-2 v-else />
+                                </span>
+                                <span>{{ part.result.label }}</span>
+                              </button>
+                              <button
+                                v-if="part.result.route"
+                                class="assistant-inline-result-token__open"
+                                type="button"
+                                aria-label="Open in new tab"
+                                @click.stop="openResultInNewTab(part.result)"
+                              >
+                                <i-lucide-external-link />
+                              </button>
+                            </span>
+                          </template>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody v-if="block.rows.length">
+                      <tr
+                        v-for="(row, rowIndex) in block.rows"
+                        :key="`${message.id}-${block.id}-row-${rowIndex}`"
+                      >
+                        <td
+                          v-for="(cell, cellIndex) in row"
+                          :key="`${message.id}-${block.id}-row-${rowIndex}-${cellIndex}`"
+                          :class="
+                            getTableAlignClass(block.alignments[cellIndex])
+                          "
+                        >
+                          <template
+                            v-for="(part, partIndex) in cell.parts"
+                            :key="`${message.id}-${block.id}-row-${rowIndex}-${cellIndex}-${partIndex}`"
+                          >
+                            <span v-if="part.type === 'text'">{{
+                              part.text
+                            }}</span>
+                            <span
+                              v-else
+                              class="assistant-inline-result-token"
+                              :class="{
+                                'is-actionable': canOpenResultToken(
+                                  part.result,
+                                ),
+                              }"
+                            >
+                              <button
+                                class="assistant-inline-result-token__main"
+                                type="button"
+                                :disabled="!canOpenResultToken(part.result)"
+                                @click="handleResultTokenClick(part.result)"
+                              >
+                                <span
+                                  class="assistant-inline-result-token__icon"
+                                >
+                                  <i-lucide-database
+                                    v-if="part.result.type === 'connection'"
+                                  />
+                                  <i-lucide-git-branch
+                                    v-else-if="part.result.type === 'task'"
+                                  />
+                                  <i-lucide-table-2 v-else />
+                                </span>
+                                <span>{{ part.result.label }}</span>
+                              </button>
+                              <button
+                                v-if="part.result.route"
+                                class="assistant-inline-result-token__open"
+                                type="button"
+                                aria-label="Open in new tab"
+                                @click.stop="openResultInNewTab(part.result)"
+                              >
+                                <i-lucide-external-link />
+                              </button>
+                            </span>
+                          </template>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <ul
+                  v-else-if="block.type === 'list-item'"
+                  class="assistant-rich-list"
+                >
                   <li>
                     <template
                       v-for="(part, partIndex) in block.parts"
@@ -632,9 +803,11 @@ onBeforeUnmount(() => {
       <footer class="assistant-composer-wrap">
         <div class="assistant-composer">
           <textarea
+            ref="composerRef"
             v-model="composer"
             :placeholder="t('ai_assistant_reply_placeholder')"
             rows="2"
+            @input="adjustComposerHeight"
             @keydown="handleComposerKeydown"
           />
           <div class="assistant-composer__footer">
@@ -738,13 +911,15 @@ onBeforeUnmount(() => {
   --assistant-bg: #f5f5f6;
   --assistant-border: #dedfe3;
   --assistant-border-soft: #ececef;
+  --assistant-composer-min-height: 42px;
+  --assistant-composer-max-height: 180px;
   --assistant-text: #25262b;
   --assistant-muted: #7c8089;
   --assistant-muted-light: #a0a3aa;
   --assistant-link: #5b62d6;
 
   display: grid;
-  grid-template-rows: minmax(0, 1fr) 118px;
+  grid-template-rows: minmax(0, 1fr) auto;
   width: 100%;
   min-height: 0;
   color: var(--assistant-text);
@@ -869,6 +1044,114 @@ onBeforeUnmount(() => {
 .assistant-rich-list li {
   margin: 0 0 8px;
   padding-left: 2px;
+}
+
+.assistant-table-wrap {
+  max-width: 100%;
+  margin: 14px 0;
+  border: 1px solid #e4e7ed;
+  border-radius: 8px;
+  overflow-x: auto;
+  background: #fff;
+}
+
+.assistant-markdown-table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: separate;
+  border-spacing: 0;
+  color: #2f333b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.assistant-markdown-table th,
+.assistant-markdown-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #ebeef5;
+  text-align: left;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.assistant-markdown-table th:not(:last-child),
+.assistant-markdown-table td:not(:last-child) {
+  border-right: 1px solid #f0f2f5;
+}
+
+.assistant-markdown-table th {
+  background: #f7f8fa;
+  color: #60646f;
+  font-weight: 600;
+}
+
+.assistant-markdown-table td {
+  background: #fff;
+}
+
+.assistant-markdown-table tbody tr:hover td {
+  background: #fafbfc;
+}
+
+.assistant-markdown-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.assistant-markdown-table .is-center {
+  text-align: center;
+}
+
+.assistant-markdown-table .is-right {
+  text-align: right;
+}
+
+.assistant-code-block {
+  margin: 14px 0;
+  border-radius: 12px;
+  background: #f3f3f3;
+  color: #0d0d0d;
+  overflow: hidden;
+}
+
+.assistant-code-block figcaption {
+  display: flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 14px;
+  color: #6f737b;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    monospace;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.assistant-code-block pre {
+  margin: 0;
+  padding: 14px;
+  overflow: auto;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    monospace;
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre;
+}
+
+.assistant-code-block code {
+  font: inherit;
+}
+
+.assistant-code-block.is-streaming pre::after {
+  display: inline-block;
+  width: 7px;
+  height: 14px;
+  margin-left: 2px;
+  border-radius: 999px;
+  background: #373a42;
+  content: '';
+  vertical-align: -2px;
+  animation: assistant-caret 1s infinite;
 }
 
 .assistant-inline-result-token {
@@ -1105,7 +1388,8 @@ onBeforeUnmount(() => {
 .assistant-composer textarea {
   display: block;
   width: 100%;
-  min-height: 42px;
+  min-height: var(--assistant-composer-min-height);
+  max-height: var(--assistant-composer-max-height);
   padding: 0;
   border: 0;
   outline: none;
@@ -1113,6 +1397,7 @@ onBeforeUnmount(() => {
   color: var(--assistant-text);
   font-size: 15px;
   line-height: 1.6;
+  overflow-y: hidden;
 }
 
 .assistant-composer textarea::placeholder {

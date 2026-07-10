@@ -58,11 +58,38 @@ export type AssistantContentPart =
       result: AssistantResult
     }
 
-export interface AssistantContentBlock {
+export interface AssistantTextContentBlock {
   id: string
   type: 'paragraph' | 'list-item'
   parts: AssistantContentPart[]
 }
+
+export interface AssistantCodeContentBlock {
+  id: string
+  type: 'code'
+  language: string
+  content: string
+  closed: boolean
+}
+
+export type AssistantTableAlignment = 'left' | 'center' | 'right' | ''
+
+export interface AssistantTableCell {
+  parts: AssistantContentPart[]
+}
+
+export interface AssistantTableContentBlock {
+  id: string
+  type: 'table'
+  headers: AssistantTableCell[]
+  alignments: AssistantTableAlignment[]
+  rows: AssistantTableCell[][]
+}
+
+export type AssistantContentBlock =
+  | AssistantTextContentBlock
+  | AssistantCodeContentBlock
+  | AssistantTableContentBlock
 
 interface StorageLike {
   getItem: (key: string) => string | null
@@ -588,19 +615,192 @@ function buildAssistantContentParts(
   return parts
 }
 
+function splitMarkdownTableRow(line: string): string[] {
+  const trimmed = line.trim()
+  let source = trimmed
+  if (source.startsWith('|')) source = source.slice(1)
+  if (source.endsWith('|') && source.at(-2) !== '\\') {
+    source = source.slice(0, -1)
+  }
+  const cells: string[] = []
+  let cell = ''
+  let escaped = false
+
+  for (const char of source) {
+    if (escaped) {
+      cell += char
+      escaped = false
+      continue
+    }
+
+    if (char === '\\') {
+      escaped = true
+      continue
+    }
+
+    if (char === '|') {
+      cells.push(cell.trim())
+      cell = ''
+      continue
+    }
+
+    cell += char
+  }
+
+  if (escaped) cell += '\\'
+  cells.push(cell.trim())
+  return cells
+}
+
+function tableAlignment(cell: string): AssistantTableAlignment | null {
+  const normalized = cell.trim()
+  if (!/^:?-{3,}:?$/.test(normalized)) return null
+  const startsWithColon = normalized.startsWith(':')
+  const endsWithColon = normalized.endsWith(':')
+  if (startsWithColon && endsWithColon) return 'center'
+  if (endsWithColon) return 'right'
+  if (startsWithColon) return 'left'
+  return ''
+}
+
+function parseMarkdownTableDelimiter(line: string, columnCount: number) {
+  if (!line.includes('|')) return null
+  const alignments = splitMarkdownTableRow(line).map(tableAlignment)
+  if (
+    alignments.length !== columnCount ||
+    alignments.includes(null)
+  ) {
+    return null
+  }
+  return alignments as AssistantTableAlignment[]
+}
+
+function isMarkdownTableRow(line: string) {
+  return line.includes('|') && splitMarkdownTableRow(line).length > 1
+}
+
+function createMarkdownTableCell(
+  text: string,
+  results: AssistantResult[],
+): AssistantTableCell {
+  return {
+    parts: buildAssistantContentParts(text, results),
+  }
+}
+
 export function buildAssistantContentBlocks(
   content: string,
   results: AssistantResult[] = [],
 ): AssistantContentBlock[] {
-  return content.split('\n').map((line, index) => {
+  const blocks: AssistantContentBlock[] = []
+  const lines = content.split(/\r?\n/)
+  let index = 0
+
+  const pushTextBlock = (line: string) => {
     const match = /^(\s*)[-*•]\s+(.*)$/.exec(line)
     const text = match ? match[2] : line
-    return {
-      id: `content-block-${index}`,
+    blocks.push({
+      id: `content-block-${blocks.length}`,
       type: match ? 'list-item' : 'paragraph',
       parts: buildAssistantContentParts(text, results),
+    })
+  }
+
+  while (index < lines.length) {
+    const line = lines[index]
+
+    if (isMarkdownTableRow(line)) {
+      let delimiterIndex = index + 1
+      while (delimiterIndex < lines.length && !lines[delimiterIndex].trim()) {
+        delimiterIndex += 1
+      }
+
+      const headerCells = splitMarkdownTableRow(line)
+      const alignments =
+        delimiterIndex < lines.length
+          ? parseMarkdownTableDelimiter(
+              lines[delimiterIndex],
+              headerCells.length,
+            )
+          : null
+
+      if (alignments) {
+        const rows: AssistantTableCell[][] = []
+        index = delimiterIndex + 1
+
+        while (index < lines.length && isMarkdownTableRow(lines[index])) {
+          const rowCells = splitMarkdownTableRow(lines[index])
+          rows.push(
+            headerCells.map((_, cellIndex) =>
+              createMarkdownTableCell(rowCells[cellIndex] || '', results),
+            ),
+          )
+          index += 1
+        }
+
+        blocks.push({
+          id: `content-block-${blocks.length}`,
+          type: 'table',
+          headers: headerCells.map((cell) =>
+            createMarkdownTableCell(cell, results),
+          ),
+          alignments,
+          rows,
+        })
+        continue
+      }
     }
-  })
+
+    const openingFence = /^( {0,3})(`{3,}|~{3,})(.*)$/.exec(line)
+
+    if (!openingFence) {
+      pushTextBlock(line)
+      index += 1
+      continue
+    }
+
+    const fence = openingFence[2]
+    const fenceChar = fence[0]
+    const info = openingFence[3].trim()
+    if (fenceChar === '`' && info.includes('`')) {
+      pushTextBlock(line)
+      index += 1
+      continue
+    }
+
+    const codeLines: string[] = []
+    let closed = false
+    index += 1
+
+    while (index < lines.length) {
+      const nextLine = lines[index]
+      const closingFence = /^( {0,3})(`{3,}|~{3,})[ \t]*$/.exec(nextLine)
+      const closingMarker = closingFence?.[2] || ''
+
+      if (
+        closingMarker &&
+        closingMarker[0] === fenceChar &&
+        closingMarker.length >= fence.length
+      ) {
+        closed = true
+        index += 1
+        break
+      }
+
+      codeLines.push(nextLine)
+      index += 1
+    }
+
+    blocks.push({
+      id: `content-block-${blocks.length}`,
+      type: 'code',
+      language: info.split(/\s+/)[0] || '',
+      content: codeLines.join('\n'),
+      closed,
+    })
+  }
+
+  return blocks
 }
 
 export function applyAssistantToolCallResult(

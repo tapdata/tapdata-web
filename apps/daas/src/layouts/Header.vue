@@ -19,7 +19,7 @@ import Time from '@tap/shared/src/time'
 import { computed, inject, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import logoImg from '@/assets/images/logo.svg'
+import logoImg from '@/assets/images/tapstate-logo.svg'
 import { DropdownList as OriginalDropdownList } from '@/router/menu'
 import { signOut as utilSignOut } from '@/utils/util'
 import NotificationPopover from '@/views/notification/NotificationPopover.vue'
@@ -261,8 +261,8 @@ defineExpose({
       href="/"
     >
       <img :src="logoImg" style="width: auto; height: 32px" />
-      <el-divider direction="vertical" />
-      <span class="fw-sub text-lg color-primary">{{ versionName }}</span>
+      <!-- <el-divider direction="vertical" />
+      <span class="fw-sub text-lg color-primary">{{ versionName }}</span> -->
     </a>
     <a v-else class="logo" href="/" :style="logoStyle">
       <img :src="logoUrl" />

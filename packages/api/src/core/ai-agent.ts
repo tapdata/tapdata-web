@@ -194,11 +194,10 @@ export function streamAiAgentChat(
   }
 
   const processText = async (text: string) => {
-    console.log('text', text)
     buffer += text
 
     const parsed = parseAiAgentSseText(buffer)
-    buffer = parsed.rest
+    buffer = parsed.rest.replaceAll(/tapdata/gi, 'Tapstate')
 
     for (const event of parsed.events) {
       if (event.eventName === 'error') {

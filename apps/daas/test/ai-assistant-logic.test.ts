@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import {
   ASSISTANT_CONFIG_STORAGE_KEY,
   appendAssistantResults,
@@ -14,6 +15,30 @@ import {
   normalizeAssistantConfig,
   takeAssistantDeltaFrame,
 } from '../src/views/ai-assistant/logic.ts'
+
+const assistantPageSource = readFileSync(
+  new URL('../src/views/ai-assistant/Index.vue', import.meta.url),
+  'utf8',
+)
+
+assert.equal(
+  assistantPageSource.includes('resetConversation(true)'),
+  false,
+  'AI assistant should mount with an empty conversation instead of seeded demo messages',
+)
+
+assert.equal(
+  assistantPageSource.includes('adjustComposerHeight'),
+  true,
+  'AI assistant composer textarea should autoresize while typing',
+)
+
+assert.equal(
+  assistantPageSource.includes('--assistant-composer-min-height') &&
+    assistantPageSource.includes('--assistant-composer-max-height'),
+  true,
+  'AI assistant composer textarea should define min and max heights',
+)
 
 assert.equal(
   ASSISTANT_CONFIG_STORAGE_KEY,
@@ -80,7 +105,7 @@ assert.notEqual(firstMessage.id, secondMessage.id)
 
 const demo = createDemoAssistantMessage('创建连接并查看表')
 assert.equal(demo.role, 'assistant')
-assert.ok(demo.content.includes('已创建'))
+assert.ok(demo.content.includes('connection has been created'))
 assert.equal(demo.results.length, 3)
 assert.equal(demo.results[0].type, 'connection')
 assert.equal(demo.results[1].type, 'task')
@@ -248,5 +273,67 @@ assert.equal(
   richBlocks[2].parts.find((part) => part.type === 'result')?.result.label,
   'users',
 )
+
+const codeBlocks = buildAssistantContentBlocks(
+  ['Before', '```json', '{ "id": 1 }', '```', 'After'].join('\n'),
+)
+assert.equal(codeBlocks.length, 3)
+assert.equal(codeBlocks[0].type, 'paragraph')
+assert.equal(codeBlocks[1].type, 'code')
+assert.equal(codeBlocks[1].language, 'json')
+assert.equal(codeBlocks[1].content, '{ "id": 1 }')
+assert.equal(codeBlocks[1].closed, true)
+assert.equal(codeBlocks[2].type, 'paragraph')
+
+const streamingCodeBlocks = buildAssistantContentBlocks(
+  ['```json', '{ "streaming": true }'].join('\n'),
+)
+assert.equal(streamingCodeBlocks.length, 1)
+assert.equal(streamingCodeBlocks[0].type, 'code')
+assert.equal(streamingCodeBlocks[0].language, 'json')
+assert.equal(streamingCodeBlocks[0].content, '{ "streaming": true }')
+assert.equal(streamingCodeBlocks[0].closed, false)
+
+const nestedFenceBlocks = buildAssistantContentBlocks(
+  ['````markdown', '```json', '{ "nested": true }', '```', '````'].join('\n'),
+)
+assert.equal(nestedFenceBlocks.length, 1)
+assert.equal(nestedFenceBlocks[0].type, 'code')
+assert.equal(nestedFenceBlocks[0].language, 'markdown')
+assert.equal(
+  nestedFenceBlocks[0].content,
+  ['```json', '{ "nested": true }', '```'].join('\n'),
+)
+assert.equal(nestedFenceBlocks[0].closed, true)
+
+const orderTableBlocks = buildAssistantContentBlocks(
+  [
+    '| 订单号 | 客户 | 城市 | 仓库 | 金额 | 超时多久 | 建议处理动作 |',
+    '',
+    '|---|---|---|---|---:|---|---|',
+  ].join('\n'),
+)
+assert.equal(orderTableBlocks.length, 1)
+assert.equal(orderTableBlocks[0].type, 'table')
+assert.equal(orderTableBlocks[0].headers.length, 7)
+assert.equal(orderTableBlocks[0].headers[0].parts[0].type, 'text')
+assert.equal(orderTableBlocks[0].headers[0].parts[0].text, '订单号')
+assert.equal(orderTableBlocks[0].alignments[4], 'right')
+assert.equal(orderTableBlocks[0].rows.length, 0)
+
+const populatedTableBlocks = buildAssistantContentBlocks(
+  [
+    '| 订单号 | 金额 |',
+    '|---|---:|',
+    '| A001 | 120.50 |',
+    '| A002 | 80 |',
+  ].join('\n'),
+)
+assert.equal(populatedTableBlocks.length, 1)
+assert.equal(populatedTableBlocks[0].type, 'table')
+assert.equal(populatedTableBlocks[0].rows.length, 2)
+assert.equal(populatedTableBlocks[0].rows[0][0].parts[0].type, 'text')
+assert.equal(populatedTableBlocks[0].rows[0][0].parts[0].text, 'A001')
+assert.equal(populatedTableBlocks[0].alignments[1], 'right')
 
 console.log('ai-assistant logic tests passed')

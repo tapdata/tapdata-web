@@ -69,9 +69,10 @@ export default {
   ai_assistant_remote: 'Connected',
   ai_assistant_demo: 'Demo mode',
   ai_assistant_llm_config: 'LLM Config',
-  ai_assistant_empty_title: 'What should TapData do today?',
+  ai_assistant_empty_title: 'What should Tapstate do today?',
   ai_assistant_prompt_create_connection: 'Create a MySQL connection',
-  ai_assistant_prompt_create_task: 'Create a replication task from a connection',
+  ai_assistant_prompt_create_task:
+    'Create a replication task from a connection',
   ai_assistant_prompt_preview_table: 'Preview the user table',
   ai_assistant_sample_user:
     'Create a MySQL connection named demo_mysql, then preview the user table.',
@@ -95,7 +96,8 @@ export default {
   ai_assistant_tool_status_success: 'Completed',
   ai_assistant_tool_status_error: 'Failed',
   ai_assistant_tool_result_count: '{0} results',
-  ai_assistant_error_no_stream: 'The response does not contain a readable stream',
+  ai_assistant_error_no_stream:
+    'The response does not contain a readable stream',
   ai_assistant_empty_response: 'The request completed without content.',
   ai_assistant_error_response: 'Request failed: {0}',
   ai_assistant_error_send: 'Failed to send',
@@ -826,7 +828,8 @@ export default {
     'Switch to batch insert mode interval in cdc. ',
   setting_share_cdc: 'Share cdc',
   setting_global_share_cdc_enable: 'Default global enable share cdc',
-  setting_global_share_cdc_enable_doc: 'When enabled by default, use the default external storage specified in the external storage list and apply it as the default setting to subsequent newly created connections and tasks. (Only after enabling can change logs be queried in Data trace)',
+  setting_global_share_cdc_enable_doc:
+    'When enabled by default, use the default external storage specified in the external storage list and apply it as the default setting to subsequent newly created connections and tasks. (Only after enabling can change logs be queried in Data trace)',
   setting_share_cdc_persistence_mode: 'Share cdc persistence mode',
   setting_share_cdc_persistence_memory_size:
     'Shared incremental memory cache line count',
@@ -846,8 +849,10 @@ export default {
     'The local path to the RocksDB store',
   setting_share_cdc_persistence_rocksdb_path_doc:
     'This configuration takes effect only when RocksDB is selected as the mode, and the local path stored by RocksDB',
-  setting_task_start_transform_wait_seconds: 'Task start transform wait time (seconds)',
-  setting_task_start_transform_wait_seconds_doc: 'After clicking to start the task, it will proceed with simulation or trial operation. If the set waiting duration is exceeded, the start will fail, requiring another click to initiate or increasing the simulation waiting duration. The default waiting duration is 60 seconds',
+  setting_task_start_transform_wait_seconds:
+    'Task start transform wait time (seconds)',
+  setting_task_start_transform_wait_seconds_doc:
+    'After clicking to start the task, it will proceed with simulation or trial operation. If the set waiting duration is exceeded, the start will fail, requiring another click to initiate or increasing the simulation waiting duration. The default waiting duration is 60 seconds',
   setting_task_log_file_save_time: 'Task log retention time (days)',
   setting_task_log_file_save_size: 'Task log retention size (MB)',
   setting_task_log_file_save_count: 'Task log retention total count',
@@ -863,8 +868,10 @@ export default {
   setting_Login_Brief_Tips: 'Login brief tips',
   setting_Login_Brief_Tips_doc:
     'Once enabled, the login prompt will be simplified',
-  setting_Access_Token_Idle_Timeout_Minutes: 'Session idle timeout (in minutes)',
-  setting_Access_Token_Idle_Timeout_Minutes_doc: 'When the session is inactive for more than the set value, the session becomes invalid and needs to be logged in again',
+  setting_Access_Token_Idle_Timeout_Minutes:
+    'Session idle timeout (in minutes)',
+  setting_Access_Token_Idle_Timeout_Minutes_doc:
+    'When the session is inactive for more than the set value, the session becomes invalid and needs to be logged in again',
   setting_LDAP: 'LDAP Authentication',
   setting_Ldap_Login_Enable: 'Use LDAP Login',
   setting_Ldap_Server_Host: 'LDAP Server Address',
@@ -2335,7 +2342,8 @@ export default {
   daas_task_rebalance_confirm: 'Confirm Rebalance',
   daas_task_rebalance_create: 'Create Rebalance',
   daas_task_rebalance_empty: 'No tasks available for rebalancing',
-  daas_task_rebalance_create_success: 'Rebalance plan created, migration started',
+  daas_task_rebalance_create_success:
+    'Rebalance plan created, migration started',
   daas_task_rebalance_type_initial_sync: 'Full',
   daas_task_rebalance_type_cdc: 'Incremental',
   daas_task_rebalance_type_full_cdc: 'Full + Incremental',
