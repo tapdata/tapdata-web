@@ -1101,6 +1101,7 @@ export default {
     'You have not enabled data validation',
   packages_dag_only_include_pk: 'Only Include Primary Key',
   packages_dag_only_include_uk: 'Only Include Unique Index',
+  packages_dag_only_include_views: 'Views Only',
   packages_dag_auto_repair: 'Auto Repair',
   packages_dag_auto_repair_tips: 'Enable auto repair',
   packages_dag_auto_repair_disabled_tips:

@@ -158,7 +158,7 @@ const handleFetchTables = async () => {
     size: tableState.pageSize,
     where: {
       meta_type: {
-        in: ['collection', 'table'],
+        in: ['collection', 'table', 'view'],
       },
       is_deleted: false,
       sourceType: 'SOURCE',

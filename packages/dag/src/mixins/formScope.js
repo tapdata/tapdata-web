@@ -363,7 +363,7 @@ export default {
           filter.where &&
             Object.assign(filter.where, {
               meta_type: {
-                in: ['collection', 'table'],
+                in: ['collection', 'table', 'view'],
               },
               is_deleted: false,
               sourceType: 'SOURCE',

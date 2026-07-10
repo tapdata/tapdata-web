@@ -29,6 +29,15 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+
+      .table-list-view-icon {
+        color: color-mix(
+          in srgb,
+          var(--el-text-color-secondary) 72%,
+          var(--color-primary)
+        );
+      }
+
       &:hover {
         background-color: var(--fill-hover);
       }

@@ -143,6 +143,9 @@ export function getPrimaryKeyTablesByType(
     case 'NoKeys':
       list = result.filter((t) => !t.primaryKeyCounts && !t.uniqueIndexCounts)
       break
+    case 'View':
+      list = result.filter((t) => t.meta_type === 'view')
+      break
     default:
       list = result
   }
