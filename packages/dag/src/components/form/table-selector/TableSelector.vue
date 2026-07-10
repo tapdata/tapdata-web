@@ -18,6 +18,13 @@ import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 const dataflowStore = useDataflowStore()
 const { t } = useI18n()
 
+interface TableMetadata {
+  tableComment?: string
+  primaryKeyCounts?: number
+  uniqueIndexCounts?: number
+  meta_type?: string
+}
+
 // Props
 const props = defineProps({
   connectionId: {
@@ -51,7 +58,7 @@ const isOpenClipMode = ref(false)
 const isFocus = ref(false)
 const clipboardValue = ref('')
 const errorTables = ref({})
-const tableMap = ref({})
+const tableMap = ref<Record<string, TableMetadata>>({})
 const table = ref({
   tables: [] as string[],
   checked: [] as string[],
@@ -162,16 +169,20 @@ const getTables = () => {
   fn.then((res = {}) => {
     const data = res.items || []
     const tables = data.map((it) => it.tableName)
-    const map = {}
+    const map: Record<string, TableMetadata> = {}
     data.forEach((el = {}) => {
       const {
         tableName,
         tableComment,
         primaryKeyCounts = 0,
         uniqueIndexCounts = 0,
+        meta_type,
       } = el
-      if (tableComment || primaryKeyCounts || uniqueIndexCounts) {
-        map[tableName] = { tableComment, primaryKeyCounts, uniqueIndexCounts }
+      map[tableName] = {
+        tableComment,
+        primaryKeyCounts,
+        uniqueIndexCounts,
+        meta_type,
       }
     })
     tableMap.value = map
@@ -416,6 +427,13 @@ getTables()
                   :enterable="false"
                 >
                   <span>
+                    <ElIcon
+                      v-if="getTableInfo(item).meta_type === 'view'"
+                      class="align-icon-text mr-1 color-primary"
+                      :size="14"
+                    >
+                      <i-lucide-eye />
+                    </ElIcon>
                     <VIcon
                       v-if="!!getTableInfo(item).primaryKeyCounts"
                       size="12"
@@ -592,6 +610,13 @@ getTables()
                   :enterable="false"
                 >
                   <span>
+                    <ElIcon
+                      v-if="getTableInfo(item).meta_type === 'view'"
+                      class="align-icon-text mr-1 color-primary"
+                      :size="14"
+                    >
+                      <i-lucide-eye />
+                    </ElIcon>
                     <VIcon
                       v-if="!!getTableInfo(item).primaryKeyCounts"
                       size="12"
@@ -622,6 +647,13 @@ getTables()
                   :content="errorTables[item]"
                 >
                   <div :class="{ 'color-danger': errorTables[item] }">
+                    <ElIcon
+                      v-if="getTableInfo(item).meta_type === 'view'"
+                      class="align-icon-text mr-1 color-primary"
+                      :size="14"
+                    >
+                      <i-lucide-eye />
+                    </ElIcon>
                     <VIcon
                       v-if="!!getTableInfo(item).primaryKeyCounts"
                       size="12"
@@ -788,6 +820,7 @@ getTables()
     overflow: hidden;
     line-height: normal; // 微软雅黑下字符会溢出
   }
+
 }
 .selector-center {
   width: 46px;

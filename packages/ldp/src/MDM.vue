@@ -994,7 +994,7 @@ async function loadFields() {
     size: 1,
     where: {
       'source.id': taskDialogConfig.value.from.id,
-      meta_type: { in: ['collection', 'table'] },
+      meta_type: { in: ['collection', 'table', 'view'] },
       is_deleted: false,
       sourceType: 'SOURCE',
       original_name: taskDialogConfig.value.tableName,

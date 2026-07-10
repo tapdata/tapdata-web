@@ -18,6 +18,15 @@ function calcMatchScore(name, keyword) {
   return 0
 }
 
+interface TableListItem {
+  id: string
+  name: string
+  comment?: string
+  meta_type?: string
+  sourceName?: string
+  sourceId?: string
+}
+
 export function useFetchConnections() {
   const pageSize = 20
 
@@ -41,7 +50,7 @@ export function useFetchConnections() {
     items: [],
     loading: false,
   })
-  const tables = ref([])
+  const tables = ref<TableListItem[]>([])
 
   const connectionsTotalPage = computed(() =>
     Math.ceil(connectionsTotal.value / pageSize),
@@ -135,7 +144,7 @@ export function useFetchConnections() {
       size: tableState.pageSize,
       where: {
         meta_type: {
-          in: ['collection', 'table'],
+          in: ['collection', 'table', 'view'],
         },
         is_deleted: false,
         sourceType: 'SOURCE',
@@ -149,6 +158,7 @@ export function useFetchConnections() {
         id: true,
         source: true,
         original_name: true,
+        meta_type: true,
       },
       // order: ['original_name ASC'],
     }
@@ -189,6 +199,7 @@ export function useFetchConnections() {
         id: tb.id,
         name: tb.original_name,
         comment: tb.comment,
+        meta_type: tb.meta_type,
         sourceName: tb.source?.name,
         sourceId: tb.source?.id,
       }))

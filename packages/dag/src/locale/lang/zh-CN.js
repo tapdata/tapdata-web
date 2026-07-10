@@ -893,6 +893,7 @@ export default {
     '主从合并后不支持将 {val} 作为写入目标',
   packages_dag_only_include_pk: '仅包含主键',
   packages_dag_only_include_uk: '仅包含唯一索引',
+  packages_dag_only_include_views: '仅包含视图',
   packages_dag_full_validation: '全量校验',
   packages_dag_incremental_validation: '增量校验',
   packages_dag_incremental_validation_tips: '仅校验新增和修改的数据',

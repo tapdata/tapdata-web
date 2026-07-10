@@ -13,6 +13,18 @@ import { getPrimaryKeyTablesByType } from '../../../util'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import './style.scss'
 
+interface TableMetadata {
+  tableName: string
+  tableComment?: string
+  primaryKeyCounts?: number
+  uniqueIndexCounts?: number
+  meta_type?: string
+}
+
+interface TableListItem {
+  tableName: string
+}
+
 export const TableListCard = observer(
   defineComponent({
     props: [
@@ -26,9 +38,10 @@ export const TableListCard = observer(
     ],
     setup(props) {
       const loading = ref(false)
-      const list = ref([])
+      const list = ref<TableListItem[]>([])
       const total = ref(0)
-      const tableMap = ref({})
+      const tableNames = ref<string[]>([])
+      const tableMap = ref<Record<string, TableMetadata>>({})
 
       const loadData = () => {
         loading.value = true
@@ -42,16 +55,15 @@ export const TableListCard = observer(
           : getPageTables(params)
 
         fn.then((data) => {
-          const map = {}
-          const items = data?.items || []
+          const map: Record<string, TableMetadata> = {}
+          const items: TableMetadata[] = data?.items || []
           items.forEach((t) => {
-            if (t.uniqueIndexCounts || t.primaryKeyCounts) {
-              map[t.tableName] = t
-            }
+            map[t.tableName] = t
           })
           tableMap.value = map
+          tableNames.value = items.map((t) => t.tableName)
           list.value = getPrimaryKeyTablesByType(
-            items.map((t) => t.tableName) || [],
+            tableNames.value,
             props.filterType,
             tableMap.value,
           ).map((tableName) => ({ tableName }))
@@ -65,7 +77,7 @@ export const TableListCard = observer(
         () => props.filterType,
         () => {
           list.value = getPrimaryKeyTablesByType(
-            list.value.map((t) => t.tableName) || [],
+            tableNames.value,
             props.filterType,
             tableMap.value,
           ).map((tableName) => ({ tableName }))
@@ -93,8 +105,13 @@ export const TableListCard = observer(
                     placement="right"
                     open-delay={400}
                   >
-                    <span>
-                      <span class="align-middle">{name}</span>
+                    <span class="flex align-center">
+                      {tableMap.value[name]?.meta_type === 'view' && (
+                        <el-icon size={14} class="mr-1 color-primary">
+                          <ILucideEye />
+                        </el-icon>
+                      )}
+                      <span>{name}</span>
                       {tableMap.value[name]?.tableComment && (
                         <span class="font-color-sslight align-middle">{`(${tableMap.value[name].tableComment})`}</span>
                       )}

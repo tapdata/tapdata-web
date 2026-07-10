@@ -240,6 +240,10 @@ export class Database extends NodeType {
                             ),
                             value: 'NoKeys',
                           },
+                          {
+                            label: i18n.t('packages_dag_only_include_views'),
+                            value: 'View',
+                          },
                         ],
                       },
                       syncSourcePartitionTableEnable: {
