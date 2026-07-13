@@ -1,4 +1,5 @@
-<script>
+<script setup lang="ts">
+import { fetchClusterStates } from '@tap/api/src/core/cluster'
 import { getExternalStorage } from '@tap/api/src/core/external-storage'
 import {
   deleteSharedCache,
@@ -12,10 +13,14 @@ import {
   fetchTasks,
   forceStopTask,
 } from '@tap/api/src/core/task'
+import { requestClient, withPassive } from '@tap/api/src/request'
 import { FilterBar } from '@tap/component/src/filter-bar'
-import i18n from '@tap/i18n'
+import { useI18n } from '@tap/i18n'
 import dayjs from 'dayjs'
-import { escapeRegExp } from 'lodash-es'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { escapeRegExp, uniqBy } from 'lodash-es'
+import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
 import TaskStatus from '../../components/TaskStatus.vue'
@@ -24,261 +29,288 @@ import { makeStatusAndDisabled } from '../../shared'
 import Details from './Details.vue'
 import Editor from './Editor.vue'
 
-export default {
-  components: {
-    PageContainer,
-    TablePage,
-    FilterBar,
-    TaskStatus,
-    Editor,
-    Details,
-    Upload,
-  },
-  inject: ['buried'],
-  data() {
-    return {
-      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
-      searchParams: {
-        name: '',
-        connectionName: '',
-      },
-      filterItems: [
-        {
-          placeholder: this.$t(
-            'packages_business_shared_cache_placeholder_task_name',
-          ),
-          key: 'name',
-          type: 'input',
-        },
-        {
-          placeholder: this.$t(
-            'packages_business_shared_cache_placeholder_connection_name',
-          ),
-          key: 'connectionName',
-          type: 'input',
-        },
-      ],
-      order: 'cacheTimeAt DESC',
-      taskBuried: {
-        start: 'sharedMiningStart',
-      },
-      multipleSelection: [],
-    }
-  },
-  computed: {
-    table() {
-      return this.$refs.table
-    },
-  },
-  watch: {
-    '$route.query': function () {
-      this.table.fetch(1)
-    },
-  },
-  mounted() {
-    //定时轮询
-    this.timeout = setInterval(() => {
-      this.table.fetch(null, 0, true)
-    }, 8000)
-    this.searchParams = Object.assign(this.searchParams, {
-      name: this.$route.query?.keyword || '',
-    })
-  },
-  beforeUnmount() {
-    clearInterval(this.timeout)
-  },
-  methods: {
-    getData({ page }) {
-      const { current, size } = page
-      const { name, connectionName } = this.searchParams
-      const where = {}
-      name && (where.name = { like: escapeRegExp(name), options: 'i' })
-      connectionName &&
-        (where.connectionName = {
-          like: escapeRegExp(connectionName),
-          options: 'i',
-        })
+const { t } = useI18n()
+const route = useRoute()
+const router = useRouter()
+const buried =
+  inject<(name: string, extra?: string, params?: object) => void>('buried')
+const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 
-      const filter = {
-        order: this.order,
-        limit: size,
-        skip: (current - 1) * size,
-        where,
+// ── Refs ──────────────────────────────────────────────────────────────────────
+
+const table = ref<any>()
+const editor = ref<any>()
+const details = ref<any>()
+const upload = ref<any>()
+
+const searchParams = ref({
+  name: '',
+  connectionName: '',
+  status: '',
+  agentId: '',
+})
+
+const order = ref('cacheTimeAt DESC')
+let timer: ReturnType<typeof setInterval> | null = null
+const taskBuried = { start: 'sharedMiningStart' }
+const multipleSelection = ref<any[]>([])
+
+// ── Computed ──────────────────────────────────────────────────────────────────
+
+const filterItems = computed(() => [
+  {
+    label: t('public_status'),
+    key: 'status',
+    type: 'select-inner',
+    items: [
+      { label: t('public_status_running'), value: 'running' },
+      { label: t('public_status_stop'), value: 'stop' },
+      { label: t('public_status_error'), value: 'error' },
+    ],
+  },
+  {
+    label: t('public_agent_name'),
+    key: 'agentId',
+    type: 'select-inner',
+    menuMinWidth: '250px',
+    items: async () => {
+      if (isDaas) {
+        const clusterData = await fetchClusterStates()
+        const options = (clusterData?.items || [])
+          .filter((item) => item.systemInfo?.process_id)
+          .map((item) => ({
+            label: (item as any).agentName || item.systemInfo.hostname,
+            value: item.systemInfo.process_id,
+          }))
+        return uniqBy(options, 'value')
       }
-      return fetchSharedCache(filter).then((data) => {
-        const list = data?.items || []
-        return {
-          total: data?.total,
-          data: list.map((item) => {
-            item.createTimeFmt = item.createTime
-              ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-              : '-'
-
-            makeStatusAndDisabled(item)
-            return item
-          }),
-        }
-      })
-    },
-    create() {
-      this.handleEditor({
-        id: '',
-      })
-    },
-    checkDetails(row) {
-      this.$refs.details.getData(row.id)
-    },
-    del(row = {}) {
-      this.$confirm(
-        this.$t('public_message_title_prompt'),
-        this.$t('public_message_delete_confirm'),
-      ).then((flag) => {
-        if (flag) {
-          deleteSharedCache(row.id).then(() => {
-            this.$message.success(this.$t('public_message_delete_ok'))
-            this.table.fetch()
-          })
-        }
-      })
-    },
-    //筛选条件
-    handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'cacheTimeAt'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
-      this.table.fetch(1)
-    },
-
-    handleSelectionChange(val) {
-      this.multipleSelection = val
-    },
-
-    async start(ids, row) {
-      const externalStorage = await getExternalStorage(row.externalStorageId)
-      if (!externalStorage?.id) {
-        this.$message.error(
-          i18n.t('packages_business_shared_cache_list_qingxianxiugaiwai'),
-        )
-        return
-      }
-      this.buried(this.taskBuried.start)
-      const filter = {
-        where: {
-          id: ids[0],
-        },
-      }
-      fetchTasks(filter).then(() => {
-        batchStartTasks(ids)
-          .then((data) => {
-            this.buried(this.taskBuried.start, '', { result: true })
-            this.$message.success(
-              data?.message || this.$t('public_message_operation_success'),
-            )
-            this.table.fetch()
-          })
-          .catch(() => {
-            this.buried(this.taskBuried.start, '', { result: false })
-          })
-      })
-    },
-
-    forceStop(ids, row) {
-      const msgObj = this.getConfirmMessage('force_stop', row)
-      this.$confirm(this.$t('public_message_title_prompt'), msgObj.msg, {
-        dangerouslyUseHTMLString: true,
-      }).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        forceStopTask(ids).then((data) => {
-          this.$message.success(
-            data?.message || this.$t('public_message_operation_success'),
-          )
-          this.table.fetch()
-        })
-      })
-    },
-
-    stop(ids) {
-      this.$confirm(
-        this.$t('packages_business_important_reminder'),
-        this.$t('packages_business_stop_confirm_message'),
-      ).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        batchStopTasks(ids).then((data) => {
-          this.$message.success(
-            data?.message || this.$t('public_message_operation_success'),
-          )
-          this.table.fetch()
-        })
-      })
-    },
-
-    handleEditor(row = {}) {
-      this.$refs.editor.open(row.id)
-    },
-
-    openRoute(route, newTab = true) {
-      if (newTab) {
-        window.open(this.$router.resolve(route).href)
-      } else {
-        this.$router.push(route)
-      }
-    },
-
-    handleDetails(task = {}) {
-      this.openRoute({
-        name: 'SharedCacheMonitor',
-        params: {
-          id: task.id,
-        },
-      })
-    },
-
-    getConfirmMessage(operateStr, task) {
-      const title = `${operateStr}_confirm_title`
-      const message = `${operateStr}_confirm_message`
-      const strArr = this.$t(`dataFlow_${message}`).split('xxx')
-      const msg = `
-        <p>
-          ${strArr[0]}
-          <span class="color-primary">${task.name}</span>
-          ${strArr[1]}
-        </p>`
-      return {
-        msg,
-        title: this.$t(`dataFlow_${title}`),
-      }
-    },
-
-    handleReset(row) {
-      const id = row.id
-      const msgObj = this.getConfirmMessage('initialize', row)
-      this.$confirm(msgObj.title, msgObj.msg, {
-        dangerouslyUseHTMLString: true,
-      }).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        batchRenewTasks([id]).then((data) => {
-          this.$message.success(
-            data?.message || this.$t('public_message_operation_success'),
-          )
-          this.table.fetch()
-        })
-      })
-    },
-
-    handleExport() {
-      const ids = this.multipleSelection.map((t) => t.id)
-      exportTasks(ids)
-    },
-
-    handleImport() {
-      this.$refs.upload.show()
+      // Cloud mode
+      const filter = { where: { status: { $in: ['Running'] } }, size: 100 }
+      const data = await requestClient.get<any>(
+        `api/tcm/agent?filter=${encodeURIComponent(JSON.stringify(filter))}`,
+      )
+      return (data?.items || []).map((item: any) => ({
+        label: item.name,
+        value: item.tmInfo.agentId,
+      }))
     },
   },
+  {
+    placeholder: t('public_task_name'),
+    key: 'name',
+    type: 'input',
+  },
+  {
+    placeholder: t('public_connectionName'),
+    key: 'connectionName',
+    type: 'input',
+  },
+])
+
+// ── Data fetching ─────────────────────────────────────────────────────────────
+
+const getData = async ({
+  page,
+}: {
+  page: { current: number; size: number }
+}) => {
+  const { current, size } = page
+  const { name, connectionName, status, agentId } = searchParams.value
+  const where: Record<string, any> = {}
+
+  if (name) {
+    where.name = { like: escapeRegExp(name), options: 'i' }
+  }
+  if (connectionName) {
+    where.connectionName = { like: escapeRegExp(connectionName), options: 'i' }
+  }
+  if (status) {
+    where.status = status
+  }
+  if (agentId) {
+    where.agentId = agentId
+  }
+
+  const filter = {
+    order: order.value,
+    limit: size,
+    skip: (current - 1) * size,
+    where,
+  }
+  const data = await fetchSharedCache(filter)
+  const list: any[] = data?.items || []
+  return {
+    total: data?.total,
+    data: list.map((item) => {
+      item.createTimeFmt = item.createTime
+        ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+        : '-'
+      makeStatusAndDisabled(item)
+      return item
+    }),
+  }
 }
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+const getConfirmMessage = (operateStr: string, task: { name: string }) => {
+  const strArr = t(`dataFlow_${operateStr}_confirm_message`).split('xxx')
+  const msg = `<p>${strArr[0]}<span class="color-primary">${task.name}</span>${strArr[1]}</p>`
+  return { msg, title: t(`dataFlow_${operateStr}_confirm_title`) }
+}
+
+const openRoute = (routeObj: any, newTab = true) => {
+  if (newTab) {
+    window.open(router.resolve(routeObj).href)
+  } else {
+    router.push(routeObj)
+  }
+}
+
+// ── Actions ───────────────────────────────────────────────────────────────────
+
+const handleEditor = (row: any = {}) => {
+  editor.value?.open(row.id)
+}
+
+const create = () => {
+  handleEditor({ id: '' })
+}
+
+const checkDetails = (row: any) => {
+  details.value?.getData(row.id)
+}
+
+const del = async (row: any = {}) => {
+  try {
+    await ElMessageBox.confirm(
+      t('public_message_delete_confirm_with_name', { val: row.name }),
+    )
+    await deleteSharedCache(row.id)
+    ElMessage.success(t('public_message_delete_ok'))
+    table.value?.fetch()
+  } catch {
+    // dismissed
+  }
+}
+
+const handleSortTable = ({
+  order: sortOrder,
+  prop,
+}: {
+  order: string
+  prop: string
+}) => {
+  order.value = `${sortOrder ? prop : 'cacheTimeAt'} ${sortOrder === 'ascending' ? 'ASC' : 'DESC'}`
+  table.value?.fetch(1)
+}
+
+const handleSelectionChange = (val: any[]) => {
+  multipleSelection.value = val
+}
+
+const start = async (ids: string[], row: any) => {
+  const externalStorage = await getExternalStorage(
+    row.externalStorageId,
+    undefined,
+  )
+  if (!externalStorage?.id) {
+    ElMessage.error(t('packages_business_shared_cache_list_qingxianxiugaiwai'))
+    return
+  }
+  buried?.(taskBuried.start)
+  fetchTasks({ where: { id: ids[0] } }).then(() => {
+    batchStartTasks(ids)
+      .then((data: any) => {
+        buried?.(taskBuried.start, '', { result: true })
+        ElMessage.success(
+          data?.message || t('public_message_operation_success'),
+        )
+        table.value?.fetch()
+      })
+      .catch(() => {
+        buried?.(taskBuried.start, '', { result: false })
+      })
+  })
+}
+
+const forceStop = async (ids: string[], row: any) => {
+  const { msg, title } = getConfirmMessage('force_stop', row)
+  try {
+    await ElMessageBox.confirm(msg, title, { dangerouslyUseHTMLString: true })
+    const data: any = await forceStopTask(ids[0]!)
+    ElMessage.success(data?.message || t('public_message_operation_success'))
+    table.value?.fetch()
+  } catch {
+    // dismissed
+  }
+}
+
+const stop = async (ids: string[]) => {
+  try {
+    await ElMessageBox.confirm(
+      t('packages_business_stop_confirm_message'),
+      t('packages_business_important_reminder'),
+    )
+    const data: any = await batchStopTasks(ids)
+    ElMessage.success(data?.message || t('public_message_operation_success'))
+    table.value?.fetch()
+  } catch {
+    // dismissed
+  }
+}
+
+const handleDetails = (task: any = {}) => {
+  openRoute({ name: 'SharedCacheMonitor', params: { id: task.id } })
+}
+
+const handleReset = async (row: any) => {
+  const { msg, title } = getConfirmMessage('initialize', row)
+  try {
+    await ElMessageBox.confirm(msg, title, { dangerouslyUseHTMLString: true })
+    const data: any = await batchRenewTasks([row.id])
+    ElMessage.success(data?.message || t('public_message_operation_success'))
+    table.value?.fetch()
+  } catch {
+    // dismissed
+  }
+}
+
+const handleExport = () => {
+  const ids = multipleSelection.value.map((t) => t.id)
+  exportTasks(ids)
+}
+
+const handleImport = () => {
+  upload.value?.show()
+}
+
+// ── Lifecycle & Watchers ──────────────────────────────────────────────────────
+
+watch(
+  () => route.query,
+  () => {
+    searchParams.value = {
+      ...searchParams.value,
+      name: (route.query?.keyword as string) || '',
+    }
+    table.value?.fetch(1)
+  },
+)
+
+onMounted(() => {
+  timer = setInterval(() => {
+    withPassive(() => table.value?.fetch(null, 0, true))
+  }, 8000)
+  Object.assign(searchParams.value, { name: route.query?.keyword || '' })
+})
+
+onUnmounted(() => {
+  if (timer) {
+    clearInterval(timer)
+    timer = null
+  }
+})
 </script>
 
 <template>
@@ -316,7 +348,7 @@ export default {
         <FilterBar
           v-model:value="searchParams"
           :items="filterItems"
-          @fetch="table.fetch(1)"
+          @fetch="table?.fetch(1)"
         />
       </template>
       <el-table-column
@@ -474,7 +506,7 @@ export default {
         </template>
       </ElTableColumn>
     </TablePage>
-    <Editor ref="editor" @success="table.fetch(1)" />
+    <Editor ref="editor" @success="table?.fetch(1)" />
     <Details ref="details" width="380px" />
     <!-- 导入 -->
     <Upload
@@ -482,7 +514,7 @@ export default {
       ref="upload"
       type="dataflow"
       :show-tag="false"
-      @success="table.fetch()"
+      @success="table?.fetch()"
     />
   </PageContainer>
 </template>

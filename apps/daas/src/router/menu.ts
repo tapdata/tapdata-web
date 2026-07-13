@@ -44,7 +44,7 @@ export const MENU = [
         code: 'v2_data_server_audit',
         parent: 'dataServerAudit',
       },
-      { name: 'apiMonitor', code: 'v2_api_monitor', parent: 'apiMonitor' },
+      { name: 'apiMonitorList', code: 'v2_api_monitor', parent: 'apiMonitor' },
       { name: 'apiClient', code: 'v2_api-client', parent: 'apiClient' },
       { name: 'apiServer', code: 'v2_api-servers', parent: 'apiServer' },
     ],
@@ -81,6 +81,13 @@ export const MENU = [
       },
       { name: 'HeartbeatTableList', code: '', parent: 'heartbeatTable' },
       { name: 'dataEncryption' },
+      { name: 'projectManagement' },
+      { name: 'dataImportExport' },
+      {
+        name: 'taskRebalanceHistory',
+        parent: 'taskRebalance',
+        code: 'v2_task_rebalance',
+      },
     ],
   },
   {

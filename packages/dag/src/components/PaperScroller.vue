@@ -99,7 +99,7 @@ export default {
     scrollerBgStyle() {
       const paper = this.paperStyle
       const scale = this.paperScale
-      const girdSize = scale * 10
+      const girdSize = scale * 14
       const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="v-4" width="100%" height="100%"><defs id="v-3"><pattern id="pattern_0" patternUnits="userSpaceOnUse" x="0" y="0" width="${girdSize}" height="${girdSize}"><rect id="v-5" width="${scale}" height="${scale}" fill="rgb(170 170 170 / 80%)"/></pattern></defs><rect id="v-7" width="100%" height="100%" fill="url(#pattern_0)"/></svg>`
       return {
         width: `${Math.max(
@@ -812,7 +812,8 @@ export default {
   outline: none;
   .paper-scroller-background {
     position: relative;
-    background-color: rgba(245, 248, 254, 1);
+    // background-color: rgba(245, 248, 254, 1);
+    background-color: #f2f4f7;
     &:where(html.dark *) {
       background-color: var(--el-fill-color);
     }

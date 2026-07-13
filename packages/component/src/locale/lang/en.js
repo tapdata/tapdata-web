@@ -19,6 +19,7 @@ export default {
   packages_component_classification_nameExist: 'Category name already existed.',
   packages_component_classification_addNode: 'Add Tag',
   packages_component_classification_addChildernNode: 'Add Child Tag',
+  packages_component_classification_noTag: 'No Tag',
   packages_component_classification_nodeName: 'Please enter tag name',
   packages_component_classification_deteleMessage:
     'This operation will remove all sub-categories currently present in this category. Are you sure you want to proceed with the deletion?',
@@ -78,4 +79,13 @@ export default {
   packages_component_src_upgradefee_jichuban: 'Basic Plan',
   packages_component_src_upgradefee_dingyueshengji: 'Professional Plan',
   packages_component_data_already_exists: 'Data already exists',
+
+  // Sort dropdown
+  packages_component_sort_by: 'Sort By',
+  packages_component_sort_by_name: 'Name',
+  packages_component_sort_by_priority: 'Priority',
+  packages_component_sort_by_created_time: 'Created Time',
+  packages_component_sort_order: 'Sort Order',
+  packages_component_sort_order_asc: 'Ascending',
+  packages_component_sort_order_desc: 'Descending',
 }

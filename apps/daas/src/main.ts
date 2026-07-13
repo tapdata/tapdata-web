@@ -12,6 +12,7 @@ import Cookie from '@tap/shared/src/cookie'
 import { setSettings } from '@tap/shared/src/settings'
 import Time from '@tap/shared/src/time'
 import { ElLoading } from 'element-plus'
+import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 import App from '@/App.vue'
 import { installOEM } from '@/oem'
@@ -19,7 +20,6 @@ import { installAllPlugins } from '@/plugins'
 import { initRequestClient } from '@/plugins/axios'
 import { configUser, getUrlSearch } from '@/utils/util'
 import store from '@/vuex' // 引入全局数据控制
-
 import { installDirectives } from './directives'
 import i18n from './i18n'
 import router from './router'
@@ -92,6 +92,8 @@ const init = () => {
 
   const app = createApp(App)
 
+  const pinia = createPinia()
+
   installAllPlugins(app)
   installDirectives(app)
   installElement(app)
@@ -108,6 +110,7 @@ const init = () => {
   app.config.globalProperties.routerAppend = (path, pathToAppend) => {
     return path + (path.endsWith('/') ? '' : '/') + pathToAppend
   }
+  app.use(pinia)
   app.use(i18n)
   app.use(store)
   app.use(router)
@@ -116,37 +119,37 @@ const init = () => {
 
 const loading = ElLoading.service({ fullscreen: true })
 
-fetchSettings()
-  .then(async (data) => {
-    const initData = data || []
-    setSettings(initData)
+const bootstrap = async () => {
+  if (token) {
+    //无权限，说明是首次进入页面，重新请求后台获取
+    const user = await getUserInfoByToken().catch(() => {
+      init()
+      return null
+    })
 
-    if (initData.length) {
-      localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(initData))
-    }
-    if (token) {
-      //无权限，说明是首次进入页面，重新请求后台获取
-      const user = await getUserInfoByToken().catch(() => {
-        init()
-        return null
-      })
+    if (user) {
+      configUser(user)
 
-      if (!user) {
-        return
-      }
+      const settings = await fetchSettings()
+      setSettings(settings)
 
       await store.dispatch('feature/getFeatures')
 
-      //权限存在则存入缓存并继续向下走
-      configUser(user)
+      if (settings.length) {
+        localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(settings))
+        store.commit('setAppearanceBySetting', settings)
+      }
     }
+  }
 
-    init()
-    // 设置服务器时间
-    fetchTimestamp().then((t) => {
-      Time.setTime(t)
-    })
+  init()
+  // 设置服务器时间
+  fetchTimestamp().then((t) => {
+    Time.setTime(t)
   })
+}
+
+bootstrap()
   .catch((error) => {
     // eslint-disable-next-line
     console.log(i18n.global.t('daas_src_main_qingqiuquanjupei') + error)
@@ -154,15 +157,6 @@ fetchSettings()
   .finally(() => {
     loading.close()
   })
-//获取全局项目设置（OEM信息）
-
-//解决浏览器tab切换时，element ui 组件tooltip气泡不消失的问题  #7752
-document.addEventListener('visibilitychange', () => {
-  setTimeout(() => {
-    const ele = document.querySelector(':focus')
-    ele && ele.blur()
-  }, 50)
-})
 
 // community add jira issue collector
 if (import.meta.env.VUE_APP_MODE === 'community') {

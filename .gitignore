@@ -26,8 +26,10 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
-# 屏蔽VueCli 的webpack配置
-output.js
-webpack.confi.production.js
-
 build/deploy.sh
+
+cloud-auto-imports.d.ts
+cloud-components.d.ts
+daas-auto-imports.d.ts
+daas-components.d.ts
+

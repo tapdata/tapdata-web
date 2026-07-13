@@ -4,12 +4,15 @@ import {
   checkConnectionTask,
   copyConnection,
   deleteConnection,
+  exportConnections,
   fetchConnections,
   getConnectionDatabaseTypes,
   updateConnectionById,
 } from '@tap/api/src/core/connections'
+import { withPassive } from '@tap/api/src/request'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import FilterBar from '@tap/component/src/filter-bar/Main.vue'
+import { ImportOutlined } from '@tap/component/src/icon'
 import { Modal } from '@tap/component/src/modal'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
@@ -32,6 +35,7 @@ import PageContainer from '../../components/PageContainer.vue'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create.vue'
 import SchemaProgress from '../../components/SchemaProgress.vue'
 import TablePage from '../../components/TablePage.vue'
+import UploadDialog from '../../components/UploadDialog.vue'
 import { useHas } from '../../composables'
 import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '../../shared'
 import Preview from './Preview.vue'
@@ -46,9 +50,9 @@ interface ConnectionTaskData {
 }
 
 interface SearchParams {
-  databaseType: string | null
+  pdkHash: string | null
   keyword: string
-  databaseModel: string
+  databaseModel: string | undefined
   status: string
   panelFlag: boolean
   sourceType: string
@@ -91,7 +95,7 @@ let timeout: NodeJS.Timeout | null = null
 const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 const showInstanceInfo = import.meta.env.VUE_APP_LICENSE_TYPE === 'PIPELINE'
 
-const filterItems = ref([])
+const filterItems = ref<Record<string, any>[]>([])
 const dialogDatabaseTypeVisible = ref(false)
 const multipleSelection = ref([])
 const order = ref('last_updated DESC')
@@ -132,7 +136,7 @@ const connectionTypeOptions = [
 ]
 
 const searchParams = ref<SearchParams>({
-  databaseType: null,
+  pdkHash: null,
   keyword: '',
   databaseModel: undefined,
   status: '',
@@ -211,7 +215,7 @@ const getData = async ({
   tags?: string[]
 }) => {
   const { current, size } = page
-  const { keyword, databaseType, databaseModel, status, sourceType } =
+  const { keyword, pdkHash, databaseModel, status, sourceType } =
     searchParams.value
   const where: any = {
     createType: {
@@ -222,7 +226,8 @@ const getData = async ({
   if (keyword && keyword.trim()) {
     where.name = { like: verify(keyword), options: 'i' }
   }
-  databaseType && (where.database_type = databaseType)
+
+  pdkHash && (where.pdkHash = pdkHash)
 
   if (databaseModel) {
     where.connection_type = {
@@ -575,28 +580,10 @@ const getFilterItems = () => {
     {
       slotName: 'databaseType',
       label: i18n.t('packages_business_connection_list_form_database_type'),
-      key: 'databaseType',
+      key: 'pdkHash',
       type: 'select-inner',
       width: 250,
       filterable: true,
-      items: async () => {
-        const data = await getConnectionDatabaseTypes()
-
-        if (!data?.length) {
-          return []
-        }
-
-        data.sort((t1: any, t2: any) =>
-          t1.databaseType.localeCompare(t2.databaseType),
-        )
-
-        return data.map((item: any) => {
-          return {
-            label: item.databaseType,
-            value: item.databaseType,
-          }
-        })
-      },
     },
     {
       placeholder: i18n.t('packages_business_connection_list_name'),
@@ -628,6 +615,7 @@ const handlePermissionsSettings = () => {
   permissionseSettingsCreate.value?.open(multipleSelection.value)
 }
 
+const PREFIX = '→ '
 const fetchDatabaseTypeOptions = async () => {
   const data = await getConnectionDatabaseTypes()
 
@@ -639,9 +627,20 @@ const fetchDatabaseTypeOptions = async () => {
     t1.databaseType.localeCompare(t2.databaseType),
   )
 
-  databaseTypeOptions.value = data.map((item: any) => {
-    return { label: item.databaseType, value: item.databaseType }
-  })
+  databaseTypeOptions.value = data.map(
+    ({ databaseType: label, pdkHash }: any) => {
+      return {
+        fakeLabel: `${PREFIX}${label}`,
+        label,
+        value: pdkHash,
+        pdkHash,
+      }
+    },
+  )
+}
+
+const getRealLabel = (label: string) => {
+  return label.replace(PREFIX, '')
 }
 
 const handleChangeDatabaseType = (value: string) => {
@@ -654,7 +653,7 @@ const handleChangeDatabaseType = (value: string) => {
   })
 
   if (value) {
-    query.databaseType = value
+    query.pdkHash = value
   }
 
   router.replace({
@@ -662,8 +661,25 @@ const handleChangeDatabaseType = (value: string) => {
   })
 }
 
+const handleExport = () => {
+  const ids = multipleSelection.value.map((t) => t.id)
+  exportConnections(ids)
+}
+
+const uploadRef = ref()
+const handleImport = () => {
+  uploadRef.value.show()
+}
+
+Object.keys(searchParams.value).forEach((key) => {
+  if (key in route.query) {
+    searchParams.value[key] = route.query[key] as string
+  }
+})
+
 // Lifecycle hooks
-onMounted(() => {
+onMounted(async () => {
+  await fetchDatabaseTypeOptions()
   const { action, create } = route.query || {}
 
   if (create) {
@@ -674,15 +690,10 @@ onMounted(() => {
     checkTestConnectionAvailable()
   }
 
-  Object.keys(searchParams.value).forEach((key) => {
-    if (key in route.query) {
-      searchParams.value[key as keyof SearchParams] = route.query[key] as string
-    }
-  })
-
   timeout = setInterval(() => {
-    table.value?.fetch(null, 0, true)
+    withPassive(() => table.value?.fetch(null, 0, true))
   }, 10000)
+
   getFilterItems()
 })
 
@@ -696,6 +707,10 @@ onUnmounted(() => {
 <template>
   <PageContainer>
     <template #actions>
+      <ElButton @click="handleImport">
+        <el-icon><ImportOutlined /></el-icon>
+        <span> {{ $t('packages_business_button_bulk_import') }}</span>
+      </ElButton>
       <ElButton
         v-if="buttonShowMap.create"
         id="connection-list-create"
@@ -742,16 +757,32 @@ onUnmounted(() => {
 
           <template #databaseType>
             <SelectList
-              v-model="searchParams.databaseType"
+              v-model="searchParams.pdkHash"
               :label="
                 $t('packages_business_connection_list_form_database_type')
               "
               :items="databaseTypeOptions"
+              :props="{
+                label: 'fakeLabel',
+              }"
               filterable
               clearable
               @change="handleChangeDatabaseType"
               @visible-change="fetchDatabaseTypeOptions"
-            />
+            >
+              <template #label="{ label }">{{ getRealLabel(label) }}</template>
+              <template #default="{ item }">
+                <div class="flex align-center gap-2">
+                  <img
+                    :src="getConnectionIcon(item.pdkHash)"
+                    alt=""
+                    width="16"
+                    height="16"
+                  />
+                  <span>{{ item.label }}</span>
+                </div>
+              </template>
+            </SelectList>
           </template>
         </FilterBar>
       </template>
@@ -767,6 +798,10 @@ onUnmounted(() => {
           @click="$refs.table.showClassify(handleSelectTag())"
         >
           <span> {{ $t('public_button_bulk_tag') }}</span>
+        </ElButton>
+        <ElButton @click="handleExport">
+          <el-icon><i-lucide-download /></el-icon>
+          <span> {{ $t('public_button_export') }}</span>
         </ElButton>
       </template>
       <ElTableColumn
@@ -840,8 +875,8 @@ onUnmounted(() => {
         :label="$t('public_connection_information')"
         min-width="160"
       >
-        <template #default="scope">
-          {{ scope.row.connectionUrl }}
+        <template #default="{ row }">
+          {{ row.connectionUrl || '-' }}
         </template>
       </ElTableColumn>
       <ElTableColumn
@@ -863,8 +898,8 @@ onUnmounted(() => {
         min-width="135"
         :label="$t('public_connection_type')"
       >
-        <template #default="scope">
-          {{ getType(scope.row.connection_type) }}
+        <template #default="{ row }">
+          {{ getType(row.connection_type) }}
         </template>
       </ElTableColumn>
       <ElTableColumn min-width="125">
@@ -880,9 +915,9 @@ onUnmounted(() => {
             </ElTooltip>
           </div>
         </template>
-        <template #default="scope">
-          <div v-if="isFileSource(scope.row)">-</div>
-          <SchemaProgress :data="scope.row" />
+        <template #default="{ row }">
+          <div v-if="isFileSource(row)">-</div>
+          <SchemaProgress :data="row" />
         </template>
       </ElTableColumn>
       <ElTableColumn
@@ -910,17 +945,17 @@ onUnmounted(() => {
             </ElTooltip>
           </div>
         </template>
-        <template #default="scope">
-          <el-space :spacer="spacer" :size="0">
+        <template #default="{ row }">
+          <el-space :spacer="spacer" :size="0" class="flex-wrap">
             <ElButton
               data-testid="test-connection"
               text
               type="primary"
-              @click="testConnection(scope.row)"
+              @click="testConnection(row)"
               >{{ $t('public_connection_button_test') }}
             </ElButton>
             <ElTooltip
-              :disabled="!isFileSource(scope.row)"
+              :disabled="!isFileSource(row)"
               :content="
                 $t('packages_business_connections_list_wenjianleixingde')
               "
@@ -931,56 +966,40 @@ onUnmounted(() => {
                   text
                   type="primary"
                   data-testid="load-schema"
-                  :disabled="
-                    isFileSource(scope.row) || scope.row.disabledLoadSchema
-                  "
-                  @click="handleLoadSchema(scope.row)"
+                  :disabled="isFileSource(row) || row.disabledLoadSchema"
+                  @click="handleLoadSchema(row)"
                   >{{ $t('public_connection_button_load_schema') }}
                 </ElButton>
               </span>
             </ElTooltip>
             <ElButton
-              v-if="havePermission(scope.row.permissionActions, 'Edit')"
-              v-readonlybtn="'datasource_edition'"
+              v-if="havePermission(row.permissionActions, 'Edit')"
               text
               type="primary"
               data-testid="edit-connection"
-              :disabled="
-                $disabledByPermission(
-                  'datasource_edition_all_data',
-                  scope.row.user_id,
-                ) || scope.row.agentType === 'Cloud'
-              "
-              @click="edit(scope.row.id, scope.row)"
+              :disabled="row.agentType === 'Cloud'"
+              @click="edit(row.id, row)"
               >{{ $t('public_button_edit') }}
             </ElButton>
             <ElButton
               v-if="buttonShowMap.copy"
-              v-readonlybtn="'datasource_creation'"
               text
               type="primary"
               data-testid="copy-connection"
-              :loading="scope.row.copyLoading"
-              :disabled="scope.row.agentType === 'Cloud'"
-              @click="copy(scope.row)"
-              >{{ $t('public_button_copy') }}
+              :loading="row.copyLoading"
+              :disabled="row.agentType === 'Cloud'"
+              @click="copy(row)"
+              >{{ $t('public_button_duplicate') }}
             </ElButton>
             <ElButton
               v-if="
-                havePermission(scope.row.permissionActions, 'Delete') &&
-                !scope.row.isInit
+                havePermission(row.permissionActions, 'Delete') && !row.isInit
               "
-              v-readonlybtn="'datasource_delete'"
               text
               type="primary"
               data-testid="delete-connection"
-              :disabled="
-                $disabledByPermission(
-                  'datasource_delete_all_data',
-                  scope.row.user_id,
-                ) || scope.row.agentType === 'Cloud'
-              "
-              @click="remove(scope.row)"
+              :disabled="row.agentType === 'Cloud'"
+              @click="remove(row)"
               >{{ $t('public_button_delete') }}
             </ElButton>
           </el-space>
@@ -1007,6 +1026,12 @@ onUnmounted(() => {
     />
     <UsedTaskDialog v-model="connectionTaskDialog" :data="connectionTaskData" />
     <PermissionseSettingsCreate ref="permissionseSettingsCreate" />
+    <UploadDialog
+      ref="uploadRef"
+      type="database"
+      :show-tag="false"
+      @success="table.fetch(1)"
+    />
   </PageContainer>
 </template>
 

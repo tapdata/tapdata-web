@@ -340,6 +340,25 @@ export class MergeTable extends NodeType {
               },
             },
           },
+          cacheTab: {
+            type: 'void',
+            'x-index': 6,
+            'x-component': 'FormTab.TabPane',
+            'x-component-props': {
+              label: i18n.t('packages_dag_cache'),
+            },
+            properties: {
+              cacheConfig: {
+                type: 'void',
+                'x-component': 'MergeTableCache',
+                'x-component-props': {
+                  value: '{{$values.mergeProperties}}',
+                  findNodeById: '{{findNodeById}}',
+                  '@center-node': '{{centerNode}}',
+                },
+              },
+            },
+          },
         },
       },
     },

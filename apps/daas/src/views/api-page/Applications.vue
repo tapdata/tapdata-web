@@ -1,4 +1,4 @@
-<script>
+<script setup lang="ts">
 import {
   createApiClient,
   deleteApiClient,
@@ -8,193 +8,180 @@ import {
 import { fetchRoles } from '@tap/api/src/core/roles'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
-import { FilterBar } from '@tap/component/src/filter-bar'
+import { useHas } from '@tap/business/src/composables'
+import i18n from '@tap/i18n'
 import { cloneDeep, escapeRegExp } from 'lodash-es'
-import { h } from 'vue'
+import { h, nextTick, reactive, ref } from 'vue'
 
-export default {
-  name: 'Applications',
-  components: {
-    PageContainer,
-    TablePage,
-    FilterBar,
-  },
-  data() {
-    return {
-      searchParams: {
-        keyword: '',
-      },
-      filterItems: [],
-      order: 'clientName DESC',
-      createDialogVisible: false,
-      roles: [],
-      createForm: {
-        clientName: '',
-        clientId: '',
-        grantTypes: [],
-        clientSecret: '',
-        scopes: [],
-        redirectUris: [],
-        redirectUrisStr: '',
-        showMenu: true,
-      },
+const { t } = i18n.global
+
+interface CreateForm {
+  id?: string
+  clientName: string
+  clientId: string
+  grantTypes: string[]
+  clientSecret: string
+  scopes: string[]
+  redirectUris: string[]
+  redirectUrisStr: string
+  showMenu: boolean
+  [key: string]: any
+}
+
+const spacer = h(ElDivider, { direction: 'vertical', class: 'mx-1' })
+
+const table = ref()
+const formRef = ref()
+const searchParams = ref({
+  keyword: '',
+})
+const order = ref('clientName DESC')
+const createDialogVisible = ref(false)
+const roles = ref<any[]>([])
+const createForm = reactive<CreateForm>({
+  clientName: '',
+  clientId: '',
+  grantTypes: [],
+  clientSecret: '',
+  scopes: [],
+  redirectUris: [],
+  redirectUrisStr: '',
+  showMenu: true,
+})
+const $has = useHas()
+
+// 获取角色
+const getRoles = () => {
+  const filter = {
+    limit: 500,
+    skip: 0,
+  }
+  fetchRoles(filter).then((data) => {
+    roles.value = data?.items || []
+  })
+}
+
+getRoles()
+
+// 创建
+const openCreateDialog = () => {
+  createDialogVisible.value = true
+  Object.assign(createForm, {
+    id: undefined as string | undefined,
+    clientName: '',
+    clientId: '',
+    grantTypes: ['implicit', 'client_credentials'],
+    clientSecret: '',
+    scopes: [],
+    redirectUris: [],
+    redirectUrisStr: '',
+    showMenu: true,
+  })
+  nextTick(() => {
+    setTimeout(() => {
+      formRef.value?.clearValidate()
+    }, 50)
+  })
+}
+
+// 编辑
+const edit = (item: Record<string, any>) => {
+  createDialogVisible.value = true
+  nextTick(() => {
+    formRef.value?.clearValidate()
+  })
+  Object.assign(createForm, item)
+}
+
+// 移除
+const remove = (item: Record<string, any>) => {
+  const message = h('p', [`${t('public_message_delete_confirm')} ${item.name}`])
+  ElMessageBox.confirm(message, t('public_message_title_prompt')).then(() => {
+    deleteApiClient(item.id).then(() => {
+      ElMessage.success(t('public_message_delete_ok'))
+      table.value?.fetch()
+    })
+  })
+}
+
+// 保存
+const createApplication = () => {
+  const method = createForm.id ? updateApiClient : createApiClient
+  const params: Record<string, any> = cloneDeep(createForm)
+  params.name = createForm.clientName
+  params.tokenType = 'jwt'
+  params.clientType = 'public'
+  params.responseTypes = ['token']
+  params.redirectUris = params.redirectUrisStr?.split(',') || []
+  delete params.redirectUrisStr
+
+  // 如果clientId为空，则不传递该字段
+  if (!params.clientId || params.clientId.trim() === '') {
+    delete params.clientId
+  }
+
+  formRef.value?.validate((valid: boolean) => {
+    if (valid) {
+      method(params).then(() => {
+        table.value?.fetch()
+        createDialogVisible.value = false
+        ElMessage.success(t('public_message_save_ok'))
+      })
     }
-  },
-  computed: {
-    table() {
-      return this.$refs.table
-    },
-  },
-  created() {
-    this.getFilterItems()
-    this.getRoles()
-  },
-  methods: {
-    // 重置查询条件
-    reset(name) {
-      if (name === 'reset') {
-        this.searchParams = {
-          keyword: '',
-        }
-      }
-      this.table.fetch(1)
-    },
-    // 创建
-    openCreateDialog() {
-      this.createDialogVisible = true
-      this.createForm = {
-        clientName: '',
-        clientId: '',
-        grantTypes: ['implicit', 'client_credentials'],
-        clientSecret: '',
-        scopes: [],
-        redirectUris: [],
-        redirectUrisStr: '',
-        showMenu: true,
-      }
-      this.$nextTick(() => {
-        setTimeout(() => {
-          this.$refs.form.clearValidate()
-        }, 50)
-      })
-    },
-    // 编辑
-    edit(item) {
-      this.createDialogVisible = true
-      this.$nextTick(() => {
-        this.$refs.form.clearValidate()
-      })
-      Object.assign(this.createForm, item)
-    },
-    // 移除
-    remove(item) {
-      const message = h('p', [
-        `${this.$t('public_message_delete_confirm')} ${item.name}`,
-      ])
-      this.$confirm(this.$t('public_message_title_prompt'), message).then(
-        (resFlag) => {
-          if (!resFlag) {
-            return
-          }
-          deleteApiClient(item.id).then(() => {
-            this.$message.success(this.$t('public_message_delete_ok'))
-            this.table.fetch()
-          })
-        },
-      )
-    },
-    // 保存
-    createApplication() {
-      const method = this.createForm.id ? updateApiClient : createApiClient
-      const params = cloneDeep(this.createForm)
-      params.name = this.createForm.clientName
-      params.tokenType = 'jwt'
-      params.clientType = 'public'
-      params.responseTypes = ['token']
-      params.redirectUris = params.redirectUrisStr?.split(',') || []
-      delete params.redirectUrisStr
+  })
+}
 
-      // 如果clientId为空，则不传递该字段
-      if (!params.clientId || params.clientId.trim() === '') {
-        delete params['clientId']
-      }
+// 获取密钥
+const generatorSecret = () => {
+  const S4 = () => {
+    return (((1 + Math.random()) * 0x40000) | 0).toString(16).slice(1)
+  }
+  const NewGuid = () => {
+    return S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4()
+  }
+  createForm.clientSecret = NewGuid()
+}
 
-      this.$refs.form.validate((valid) => {
-        if (valid) {
-          method(params).then(() => {
-            this.table.fetch()
-            this.createDialogVisible = false
-            this.$message.success(this.$t('public_message_save_ok'))
-          })
-        }
-      })
-    },
-    // 获取密钥
-    generatorSecret() {
-      const S4 = function () {
-        return (((1 + Math.random()) * 0x40000) | 0).toString(16).slice(1)
-      }
-      const NewGuid = function () {
-        return S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4()
-      }
-      this.createForm.clientSecret = NewGuid()
-      // return NewGuid()
-    },
-    // 获取数据
-    getData({ page }) {
-      const { current, size } = page
-      const { keyword } = this.searchParams
-      const where = {}
-      if (keyword && keyword.trim()) {
-        const filterObj = { like: escapeRegExp(keyword), options: 'i' }
-        where.or = [{ clientName: filterObj }]
-      }
+// 获取数据
+const getData = ({ page }: { page: { current: number; size: number } }) => {
+  const { current, size } = page
+  const { keyword } = searchParams.value
+  const where: Record<string, any> = {}
+  if (keyword && keyword.trim()) {
+    const filterObj = { like: escapeRegExp(keyword), options: 'i' }
+    where.or = [{ clientName: filterObj }]
+  }
 
-      const filter = {
-        order: this.order,
-        limit: size,
-        skip: (current - 1) * size,
-        where,
-      }
-      return fetchApiClients(filter).then((data) => {
-        return {
-          total: data?.total || 0,
-          data:
-            data?.items.map((item) => {
-              item.redirectUrisStr = item.redirectUris
-                ? item.redirectUris.join(',')
-                : ''
-              return item
-            }) || [],
-        }
-      })
-    },
-    // 获取角色
-    getRoles() {
-      const filter = {
-        limit: 500,
-        skip: 0,
-      }
-      fetchRoles(filter).then((data) => {
-        this.roles = data?.items || []
-      })
-    },
+  const filter = {
+    order: order.value,
+    limit: size,
+    skip: (current - 1) * size,
+    where,
+  }
+  return fetchApiClients(filter).then((data) => {
+    return {
+      total: data?.total || 0,
+      data:
+        data?.items.map((item) => {
+          item.redirectUrisStr = item.redirectUris
+            ? item.redirectUris.join(',')
+            : ''
+          return item
+        }) || [],
+    }
+  })
+}
 
-    // 表格排序
-    handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
-      this.table.fetch(1)
-    },
-    getFilterItems() {
-      this.filterItems = [
-        {
-          placeholder: this.$t('modules_name_placeholder'),
-          key: 'keyword',
-          type: 'input',
-        },
-      ]
-    },
-  },
+// 表格排序
+const handleSortTable = ({
+  order: sortOrder,
+  prop,
+}: {
+  order: string
+  prop: string
+}) => {
+  order.value = `${sortOrder ? prop : 'last_updated'} ${sortOrder === 'ascending' ? 'ASC' : 'DESC'}`
+  table.value?.fetch(1)
 }
 </script>
 
@@ -202,7 +189,7 @@ export default {
   <PageContainer>
     <template #actions>
       <ElButton
-        v-readonlybtn="'API_creation'"
+        v-if="$has('v2_api-client_creation')"
         class="btn btn-create"
         type="primary"
         @click="openCreateDialog"
@@ -218,16 +205,6 @@ export default {
       :remote-method="getData"
       @sort-change="handleSortTable"
     >
-      <template #search>
-        <div class="search-bar">
-          <FilterBar
-            v-model:value="searchParams"
-            :items="filterItems"
-            @fetch="table.fetch(1)"
-          />
-        </div>
-      </template>
-
       <el-table-column
         :label="$t('application_header_id')"
         :show-overflow-tooltip="true"
@@ -298,25 +275,29 @@ export default {
         min-width="120"
         fixed="right"
       >
-        <template #default="scope">
-          <ElButton
-            v-readonlybtn="'API_clients_amangement'"
-            text
-            type="primary"
-            @click="edit(scope.row)"
-          >
-            {{ $t('public_button_edit') }}
-          </ElButton>
-          <template v-if="scope.row.id !== '5c0e750b7a5cd42464a5099d'">
-            <ElDivider class="mx-1" direction="vertical" />
+        <template #default="{ row }">
+          <el-space :spacer="spacer" :size="0" class="lh-1 flex-wrap">
             <ElButton
+              v-if="row.permissionActions?.includes('Edit')"
               v-readonlybtn="'API_clients_amangement'"
               text
               type="primary"
-              @click="remove(scope.row)"
+              @click="edit(row)"
+            >
+              {{ $t('public_button_edit') }}
+            </ElButton>
+            <ElButton
+              v-if="
+                row.id !== '5c0e750b7a5cd42464a5099d' &&
+                row.permissionActions?.includes('Delete')
+              "
+              v-readonlybtn="'API_clients_amangement'"
+              text
+              type="primary"
+              @click="remove(row)"
               >{{ $t('public_button_delete') }}</ElButton
             >
-          </template>
+          </el-space>
         </template>
       </el-table-column>
     </TablePage>
@@ -329,7 +310,7 @@ export default {
       :close-on-click-modal="false"
     >
       <ElForm
-        ref="form"
+        ref="formRef"
         :model="createForm"
         class="applications-form"
         label-width="100px"
@@ -343,7 +324,10 @@ export default {
           <ElInput v-model="createForm.clientName" />
         </ElFormItem>
         <ElFormItem :label="$t('application_header_id')" prop="clientId">
-          <ElInput v-model="createForm.clientId" :placeholder="$t('application_client_id_placeholder')"></ElInput>
+          <ElInput
+            v-model="createForm.clientId"
+            :placeholder="$t('application_client_id_placeholder')"
+          />
         </ElFormItem>
         <ElFormItem
           :label="$t('application_header_grant_type')"

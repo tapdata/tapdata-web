@@ -9,7 +9,6 @@ import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 import { mapGetters, mapMutations, mapState } from 'vuex'
-import { $emit } from '../../../utils/gogocodeTransfer'
 import DataCaptureDebug from '../DataCaptureDebug.vue'
 import DataValidationDialog from '../DataValidationDialog.vue'
 
@@ -27,6 +26,7 @@ export default {
   mixins: [syncTaskAgent],
   props: {
     loading: Boolean,
+    isSaving: Boolean,
     dataflowName: String,
     dataflow: Object,
     scale: Number,
@@ -147,7 +147,7 @@ export default {
       if (!this.name) {
         this.name = this.dataflowName
       } else {
-        $emit(this, 'change-name', this.name)
+        this.$emit('change-name', this.name)
       }
     },
 
@@ -402,6 +402,11 @@ export default {
             !(dataflow.disabledData && dataflow.disabledData.start) &&
             buttonShowMap.Start
           "
+          :disabled="
+            isSaving ||
+            (dataflow.disabledData && dataflow.disabledData.start) ||
+            transformLoading
+          "
           class="ml-3"
           type="primary"
           @click="$emit('start')"
@@ -438,7 +443,11 @@ export default {
       @start="$emit('debug-start')"
     />
 
-    <DataValidationDialog v-model="openValidation" :task-id="dataflow.id" />
+    <DataValidationDialog
+      v-model="openValidation"
+      :task-id="dataflow.id"
+      :sync-type="dataflow.syncType"
+    />
   </header>
 </template>
 

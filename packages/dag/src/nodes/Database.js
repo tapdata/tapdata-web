@@ -33,7 +33,10 @@ export class Database extends NodeType {
         'x-display': 'hidden',
         'x-reactions': '{{useSyncConnection}}',
       },
-
+      connectionConfig: {
+        type: 'void',
+        'x-data': '{{{}}}',
+      },
       type: {
         type: 'string',
         'x-display': 'hidden',
@@ -257,7 +260,7 @@ export class Database extends NodeType {
                           fulfill: {
                             state: {
                               visible:
-                                '{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}',
+                                '{{hasCapability($values, "source_support_partition")}}',
                             },
                           },
                         },
@@ -298,7 +301,7 @@ export class Database extends NodeType {
                           connectionId: '{{$values.connectionId}}',
                           syncPartitionTableEnable:
                             '{{$values.syncSourcePartitionTableEnable}}',
-                          hasPartition: `{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}`,
+                          hasPartition: `{{hasCapability($values, "source_support_partition")}}`,
                           style: {
                             height: 'calc((100vh - 120px) * 0.618)',
                           },
@@ -353,7 +356,7 @@ export class Database extends NodeType {
                           params:
                             '{{ {regex: $values.tableExpression,limit:0, syncPartitionTableEnable: $values.syncSourcePartitionTableEnable} }}',
                           filterType: `{{ $values.noPrimaryKeyTableSelectType }}`,
-                          hasPartition: `{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}`,
+                          hasPartition: `{{hasCapability($values, "source_support_partition")}}`,
                         },
                         'x-reactions': {
                           dependencies: ['migrateTableSelectType'],
@@ -394,7 +397,7 @@ export class Database extends NodeType {
                       fulfill: {
                         state: {
                           visible:
-                            '{{!$form.disabled && !$deps[1].length && $deps[2].length > 0 && $deps[1].length === 0 && $deps[0] !== "dropTable" && !!$values.attrs.connectionTags && !$values.attrs.connectionTags.includes("schema-free")}}',
+                            '{{!$form.disabled && !$deps[1].length && $deps[2].length > 0 && $deps[1].length === 0 && $deps[0] !== "dropTable" && !isSchemaFree($values)}}',
                         },
                       },
                     },
@@ -463,7 +466,7 @@ export class Database extends NodeType {
                         },
                         schema: {
                           // ⚠️👇表达式依赖enum的顺序
-                          'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`,
+                          'x-component-props.options': `{{options=[$self.dataSource[0]],hasCapability($values, "drop_table_function") && options.push($self.dataSource[1]),hasCapability($values, "clear_table_function") && options.push($self.dataSource[2]),options}}`,
                         },
                       },
                     },
@@ -579,11 +582,6 @@ export class Database extends NodeType {
                       },
                     },
                   },
-                  'attrs.capabilities': {
-                    type: 'array',
-                    'x-display': 'hidden',
-                    'x-reactions': '{{useDmlPolicy}}',
-                  },
                 },
               },
             },
@@ -649,7 +647,7 @@ export class Database extends NodeType {
                             },
                           },
                           {
-                            when: `{{!$values.attrs.capabilities.filter(item => item.type === 10).length}}`,
+                            when: `{{!getCapabilitiesByType($values, 10).length}}`,
                             fulfill: {
                               state: {
                                 disabled: true,
@@ -800,7 +798,7 @@ export class Database extends NodeType {
                       fulfill: {
                         state: {
                           display:
-                            '{{hasFeature("resume") && $values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? "visible":"hidden"}}',
+                            '{{hasFeature("resume") && hasCapability($values, "get_read_partitions_function") && ($settings.type !== "cdc") ? "visible":"hidden"}}',
                         },
                       },
                     },
@@ -827,7 +825,7 @@ export class Database extends NodeType {
                               fulfill: {
                                 state: {
                                   display:
-                                    '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") ? "visible" :"hidden"}}',
+                                    '{{hasCapability($values, "get_read_partitions_function") ? "visible" :"hidden"}}',
                                 },
                               },
                             },
@@ -857,12 +855,12 @@ export class Database extends NodeType {
                             'x-reactions': {
                               dependencies: ['.enable'],
                               fulfill: {
-                                run: `{{ $values.splitTyp !== 10 && $values.attrs.capabilities.some(t => t.id === 'count_by_partition_filter_function') && $self.setValue(1) }}`,
+                                run: `{{ $values.splitTyp !== 10 && hasCapability($values, "count_by_partition_filter_function") && $self.setValue(1) }}`,
                                 state: {
                                   display: '{{$deps[0] ? "visible" :"hidden"}}',
                                 },
                                 schema: {
-                                  'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.some(item => item.id ==='count_by_partition_filter_function') && options.push($self.dataSource[1]),options}}`,
+                                  'x-component-props.options': `{{options=[$self.dataSource[0]],hasCapability($values, "count_by_partition_filter_function") && options.push($self.dataSource[1]),options}}`,
                                 },
                               },
                             },
@@ -983,26 +981,6 @@ export class Database extends NodeType {
                       },
                     },
                   },
-                  tab6: {
-                    type: 'void',
-                    'x-component': 'FormCollapse.Item',
-                    'x-component-props': {
-                      title: i18n.t('packages_dag_config_datasource'),
-                    },
-                    'x-reactions': {
-                      fulfill: {
-                        schema: {
-                          'x-component-props.className':
-                            '{{$hasPdkConfig($values.attrs.pdkHash) && $self.query("nodeConfig.*").map(field => field.visible).includes(true) ? "":"none"}}',
-                        },
-                      },
-                    },
-                    properties: {
-                      nodeConfig: {
-                        type: 'object',
-                      },
-                    },
-                  },
                 },
               },
               targetCollapse: {
@@ -1110,6 +1088,7 @@ export class Database extends NodeType {
                           colon: false,
                           feedbackLayout: 'none',
                         },
+                        'x-reactions': '{{useDmlPolicy}}',
                         properties: {
                           insertPolicy: {
                             type: 'string',
@@ -1220,6 +1199,59 @@ export class Database extends NodeType {
                           },
                         },
                       },
+                      incrementExactlyOnceObject: {
+                        type: 'void',
+                        'x-component': 'Space',
+                        properties: {
+                          incrementExactlyOnceEnable: {
+                            title: i18n.t(
+                              'packages_dag_nodes_database_increment_exactly_once_enable_title',
+                            ),
+                            type: 'boolean',
+                            default: false,
+                            'x-component': 'Switch',
+                            'x-decorator': 'FormItem',
+                            'x-decorator-props': {
+                              className: 'item-control-horizontal',
+                              layout: 'horizontal',
+                              tooltip: i18n.t(
+                                'packages_dag_nodes_database_increment_exactly_once_enable_tips',
+                              ),
+                            },
+                          },
+                          incrementExactlyOnceEnableTimeWindowDay: {
+                            title: i18n.t(
+                              'packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_title',
+                            ),
+                            type: 'number',
+                            'x-decorator': 'FormItem',
+                            'x-decorator-props': {
+                              className: 'item-control-horizontal ml-3',
+                              layout: 'horizontal',
+                              tooltip: i18n.t(
+                                'packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_tips',
+                              ),
+                            },
+                            'x-component': 'Select',
+                            'x-component-props': {
+                              style: {
+                                width: '100px',
+                              },
+                            },
+                            enum: [1, 3, 5, 7],
+                            default: 3,
+                          },
+                        },
+                        'x-reactions': [
+                          {
+                            fulfill: {
+                              state: {
+                                display: `{{hasCapabilities($values, ["transaction_begin_function", "transaction_commit_function", "transaction_rollback_function"]) ? 'visible' : 'hidden'}}`,
+                              },
+                            },
+                          },
+                        ],
+                      },
                       syncIndexEnable: {
                         title: i18n.t('packages_dag_syncIndex'),
                         type: 'boolean',
@@ -1237,7 +1269,7 @@ export class Database extends NodeType {
                           fulfill: {
                             state: {
                               visible:
-                                '{{hasFeature("syncIndex") && $settings.type !== "cdc" && $values.attrs.capabilities.filter(item => ["get_table_info_function", "create_index_function", "query_indexes_function"].includes(item.id)).length === 3}}',
+                                '{{hasFeature("syncIndex") && $settings.type !== "cdc" && hasCapabilities($values, ["get_table_info_function", "create_index_function", "query_indexes_function"])}}',
                               description: `{{$self.value ? '${i18n.t('packages_dag_syncIndex_desc')}' : ''}}`,
                             },
                           },
@@ -1255,7 +1287,7 @@ export class Database extends NodeType {
                           fulfill: {
                             state: {
                               visible:
-                                '{{hasFeature("syncPartitionTable") && $values.attrs.capabilities.some(item => item.id==="target_support_partition")}}',
+                                '{{hasFeature("syncPartitionTable") && hasCapability($values, "target_support_partition")}}',
                             },
                           },
                         },
@@ -1273,7 +1305,7 @@ export class Database extends NodeType {
                           fulfill: {
                             state: {
                               visible:
-                                '{{$values.attrs.capabilities.some(item => item.id==="create_constraint_function")}}',
+                                '{{hasCapability($values, "create_constraint_function")}}',
                             },
                           },
                         },
@@ -1311,25 +1343,22 @@ export class Database extends NodeType {
                       },
                     },
                   },
-                  tab3: {
-                    type: 'void',
-                    'x-component': 'FormCollapse.Item',
-                    'x-component-props': {
-                      title: i18n.t('packages_dag_config_datasource'),
+                },
+              },
+              pdkCollapse: {
+                type: 'void',
+                'x-component': 'PdkNodeConfig',
+                'x-reactions': {
+                  fulfill: {
+                    state: {
+                      visible:
+                        '{{!["CSV","EXCEL","JSON","XML"].includes($values.databaseType) && $hasPdkConfig($values.attrs.pdkHash)}}',
                     },
-                    'x-reactions': {
-                      fulfill: {
-                        schema: {
-                          'x-component-props.className':
-                            '{{$hasPdkConfig($values.attrs.pdkHash) && $self.query("nodeConfig.*").map(field => field.visible).includes(true) ? "":"none"}}',
-                        },
-                      },
-                    },
-                    properties: {
-                      nodeConfig: {
-                        type: 'object',
-                      },
-                    },
+                  },
+                },
+                properties: {
+                  nodeConfig: {
+                    type: 'object',
                   },
                 },
               },
@@ -1527,28 +1556,6 @@ export class Database extends NodeType {
                     ],
                   },
                   ms: {
-                    type: 'number',
-                    'x-reactions': [
-                      {
-                        dependencies: ['._ms'],
-                        fulfill: {
-                          state: {
-                            value: `{{Math.ceil($deps[0] * 1000) < 1 ? 1 : Math.ceil($deps[0] * 1000)}}`,
-                          },
-                        },
-                      },
-                      {
-                        target: 'alarmRules.0._ms',
-                        effects: ['onFieldInit'],
-                        fulfill: {
-                          state: {
-                            value: `{{Math.ceil($self.value / 1000) < 1 ? 1 : Math.ceil($self.value / 1000)}}`,
-                          },
-                        },
-                      },
-                    ],
-                  },
-                  _ms: {
                     title: '',
                     type: 'number',
                     'x-editable': true,
@@ -1566,7 +1573,7 @@ export class Database extends NodeType {
                     },
                   },
                   unit: {
-                    title: 's',
+                    title: 'ms',
                     type: 'void',
                     default: 0,
                     'x-decorator': 'FormItem',

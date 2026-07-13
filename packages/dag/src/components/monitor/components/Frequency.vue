@@ -1,6 +1,5 @@
 <script>
 import i18n from '@tap/i18n'
-import { $emit } from '../../../../utils/gogocodeTransfer'
 
 export default {
   name: 'Frequency',
@@ -71,7 +70,7 @@ export default {
   },
   methods: {
     changeFnc(value) {
-      $emit(this, 'change', value)
+      this.$emit('change', value)
     },
 
     openSelect() {
@@ -136,7 +135,7 @@ export default {
 }
 
 .picker__item {
-  padding: 0 8px;
+  padding-right: 8px;
   border-radius: 4px;
 }
 </style>

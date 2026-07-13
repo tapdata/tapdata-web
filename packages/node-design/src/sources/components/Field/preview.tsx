@@ -1,5 +1,5 @@
 import { FormPath } from '@formily/core'
-import { raw, toJS } from '@formily/reactive'
+import { toJS } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
 import { each, reduce } from '@formily/shared'
 import {
@@ -77,7 +77,12 @@ const filterExpression = (val) => {
   return val
 }
 
-const toDesignableFieldProps = (schema, components, nodeIdAttrName, id) => {
+export const toDesignableFieldProps = (
+  schema,
+  components,
+  nodeIdAttrName,
+  id,
+) => {
   const props = {}
   each(SchemaStateMap, (fieldKey, schemaKey) => {
     const value = schema[schemaKey]
@@ -91,7 +96,7 @@ const toDesignableFieldProps = (schema, components, nodeIdAttrName, id) => {
       props[fieldKey] = filterExpression(value)
     }
   })
-  console.log('raw', raw(components), toJS(components))
+
   if (!components.FormItem) {
     components.FormItem = FormItem
   }
@@ -143,6 +148,10 @@ export const Field = observer(
         )
 
         if (attrs.type === 'object') {
+          // 如果组件声明了 droppable: false，直接用 InternalField 渲染，不包 Container
+          if (node.designerProps?.droppable === false) {
+            return <InternalField {...fieldProps} name={node.id} />
+          }
           return (
             <Container>
               <ObjectField {...fieldProps} name={node.id}>

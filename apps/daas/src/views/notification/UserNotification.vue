@@ -112,11 +112,12 @@ export default {
 <template>
   <PageContainer
     mode="auto"
-    content-class="flex-1 gap-6 min-h-0 overflow-auto px-6 position-relative"
+    class="overflow-hidden"
+    content-class="flex-1 gap-6 min-h-0 overflow-auto px-0 position-relative"
   >
     <div v-loading="loading" class="user-notification">
       <div
-        class="search-bar flex gap-3 position-sticky top-0 bg-white z-10 pb-2 dark:bg-transparent dark:backdrop-blur-md"
+        class="search-bar flex gap-3 position-sticky top-0 bg-white z-10 pb-2 dark:bg-transparent dark:backdrop-blur-md px-6"
       >
         <DatetimeRange
           v-model="search.range"
@@ -148,17 +149,21 @@ export default {
             <VIcon>magnify</VIcon>
           </template>
         </el-input>
+
+        <ElButton plain circle class="rounded-lg" @click="getData">
+          <VIcon>refresh</VIcon>
+        </ElButton>
       </div>
-      <ul class="list">
-        <li v-for="record in list" :key="record._id" class="item">
+      <ul class="list px-6">
+        <li v-for="record in list" :key="record._id" class="item gap-2">
           <UserOperation :record="record" />
-          <span class="item-time">{{ record.createTimeFmt }}</span>
+          <span class="item-time text-nowrap">{{ record.createTimeFmt }}</span>
         </li>
       </ul>
       <el-pagination
         v-model:page-size="page.size"
         v-model:current-page="page.index"
-        class="position-sticky py-6 bottom-0 z-10 bg-white dark:bg-transparent dark:backdrop-blur-md"
+        class="position-sticky py-6 bottom-0 z-10 bg-white dark:bg-transparent dark:backdrop-blur-md px-6"
         background
         layout="->,total,prev, pager, next,sizes"
         :page-sizes="[20, 30, 50, 100]"
@@ -207,8 +212,7 @@ export default {
     display: flex;
     align-items: center;
     .search-item {
-      margin-right: 15px;
-      width: 200px;
+      width: 300px;
     }
   }
   .list {
@@ -219,7 +223,7 @@ export default {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      line-height: 50px;
+      min-height: 50px;
       border-bottom: 1px solid var(--border-light);
       font-size: var(--font-base-title);
       color: #202d40;

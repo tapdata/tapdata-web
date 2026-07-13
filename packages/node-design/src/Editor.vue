@@ -39,6 +39,7 @@ import {
 import { GlobalRegistry } from './core'
 import * as icons from './icons'
 import {
+  AggregatePanel,
   Checkbox,
   Field,
   FieldSelect,
@@ -48,6 +49,7 @@ import {
   InputNumber,
   Radio,
   Select,
+  TriggersPanel,
 } from './sources'
 import './locales'
 import './theme.scss'
@@ -98,7 +100,7 @@ export default {
   data() {
     return {
       sources: [Input, Select, InputNumber, Checkbox, Radio],
-      businessSources: [FieldSelect],
+      businessSources: [FieldSelect, AggregatePanel, TriggersPanel],
       components: markRaw({
         Field,
         Input,
@@ -109,6 +111,8 @@ export default {
         Checkbox,
         Radio,
         FieldSelect,
+        AggregatePanel,
+        TriggersPanel,
       }),
       settingsFormComponents: markRaw({
         SizeInput,

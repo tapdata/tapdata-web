@@ -1,0 +1,389 @@
+openapi: 3.0.3
+info:
+  title: Tapdata Task Rebalance API
+  version: 1.0.0
+  description: |
+    任务均衡 (Task Rebalance) 模块对外接口。云版会直接拒绝所有调用并返回 `task.rebalance.disabled`。
+
+    **统一响应包装**：所有接口均返回 `ResponseMessage<T>`，结构为：
+    ```json
+    { "reqId": "uuid", "ts": 1700000000000, "code": "ok", "message": null, "data": <T> }
+    ```
+    业务异常时 `code` 为错误 key（如 `task.rebalance.disabled`），`message` 为已按请求 `Accept-Language` 解析的本地化文案，`data` 为 null。HTTP 状态码默认 200；仅 `NotLogin`/`NotAuthorized` 返回 401。
+servers:
+  - url: /
+    description: 当前部署的 TM 实例（同源调用）
+security:
+  - userIdHeader: []
+  - accessToken: []
+  - basicAuth: []
+tags:
+  - name: TaskRebalance
+    description: 任务均衡 (创建 / 查询 / 取消)
+paths:
+  /api/task/rebalance/preview:
+    post:
+      tags: [TaskRebalance]
+      summary: 生成均衡预览
+      description: |
+        基于当前在线 agent 与运行中任务，模拟一次均衡分配，返回每个任务的可调走状态与评分，但不落库、不执行。
+        前端可按 `data.tasks[].priorityScore` 降序展示，根据 `movable` / `schedulableStatus` 渲染状态。
+        当可用 agent 不足 2 个时返回 `data.reason = "task.rebalance.onlyOneAgent"` 且 `data.tasks` 为空。
+      operationId: previewTaskRebalance
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseOfPreview'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        default: { $ref: '#/components/responses/BusinessError' }
+  /api/task/rebalance:
+    post:
+      tags: [TaskRebalance]
+      summary: 创建并启动均衡
+      description: |
+        以最新预览为依据落库 `TaskRebalance` 记录及一组 `TaskRebalanceJob` 子任务，并异步开始执行。
+        若当前已有 `RUNNING` 均衡，返回 `task.rebalance.alreadyRunning`；
+        若没有可调走的任务，返回 `task.rebalance.noTask`；
+        若预览本身有阻断原因（如仅一个 agent），返回该 key。
+      operationId: createTaskRebalance
+      responses:
+        '200':
+          description: 成功创建
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseOfRebalance'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        default: { $ref: '#/components/responses/BusinessError' }
+    get:
+      tags: [TaskRebalance]
+      summary: 历史列表 (分页)
+      description: |
+        通过项目通用 `Filter` JSON 进行分页/排序/过滤。例：
+        `?filter={"limit":20,"skip":0,"order":"createTime DESC","where":{"status":"OK"}}`
+      operationId: listTaskRebalance
+      parameters:
+        - in: query
+          name: filter
+          required: false
+          schema:
+            type: string
+          description: Filter JSON 字符串，URL encode 后传入
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseOfPageRebalance'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        default: { $ref: '#/components/responses/BusinessError' }
+  /api/task/rebalance/active:
+    get:
+      tags: [TaskRebalance]
+      summary: 是否有正在运行的均衡
+      operationId: hasActiveTaskRebalance
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseOfActive'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        default: { $ref: '#/components/responses/BusinessError' }
+  /api/task/rebalance/{id}:
+    get:
+      tags: [TaskRebalance]
+      summary: 均衡详情 (含子任务)
+      operationId: getTaskRebalanceDetail
+      parameters:
+        - $ref: '#/components/parameters/RebalanceId'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseOfDetail'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        default: { $ref: '#/components/responses/BusinessError' }
+  /api/task/rebalance/{id}/cancel:
+    post:
+      tags: [TaskRebalance]
+      summary: 取消该均衡下所有 PENDING 子任务
+      description: 已进入 `STOPPING / STARTING` 的子任务会继续跑完自己的周期，不会被打断。
+      operationId: cancelTaskRebalance
+      parameters:
+        - $ref: '#/components/parameters/RebalanceId'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseOfVoid'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        default: { $ref: '#/components/responses/BusinessError' }
+  /api/task/rebalance/{id}/cancel/{taskId}:
+    post:
+      tags: [TaskRebalance]
+      summary: 取消单个 PENDING 子任务
+      operationId: cancelTaskRebalanceJob
+      parameters:
+        - $ref: '#/components/parameters/RebalanceId'
+        - in: path
+          name: taskId
+          required: true
+          schema: { type: string }
+          description: 子任务对应的业务 task id
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseOfVoid'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        default: { $ref: '#/components/responses/BusinessError' }
+components:
+  securitySchemes:
+    userIdHeader:
+      type: apiKey
+      in: header
+      name: user_id
+      description: 网关/反向代理透传的用户 id 头，TM 由此查用户
+    accessToken:
+      type: apiKey
+      in: query
+      name: access_token
+      description: 个人 access token，可作为查询参数
+    basicAuth:
+      type: http
+      scheme: basic
+      description: HTTP Basic（仅运维/工具链使用）
+  parameters:
+    RebalanceId:
+      in: path
+      name: id
+      required: true
+      schema: { type: string }
+      description: TaskRebalance 主键 (ObjectId hex)
+  responses:
+    Unauthorized:
+      description: 未登录 / 登录态失效
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiErrorResponse'
+          examples:
+            notLogin:
+              value:
+                reqId: 5a2c-...
+                ts: 1700000000000
+                code: NotLogin
+                message: Not login
+                data: null
+    BusinessError:
+      description: 业务异常 (HTTP 200，code 为 i18n key)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiErrorResponse'
+          examples:
+            disabled:
+              summary: 云版禁用
+              value: { reqId: "...", ts: 1700000000000, code: task.rebalance.disabled, message: "Task rebalance is disabled.", data: null }
+            alreadyRunning:
+              summary: 已有运行中均衡
+              value: { reqId: "...", ts: 1700000000000, code: task.rebalance.alreadyRunning, message: "A task rebalance is already running.", data: null }
+            noTask:
+              summary: 没有可调走任务
+              value: { reqId: "...", ts: 1700000000000, code: task.rebalance.noTask, message: "No task needs to be rebalanced.", data: null }
+            onlyOneAgent:
+              summary: 可用 agent 不足 2 个
+              value: { reqId: "...", ts: 1700000000000, code: task.rebalance.onlyOneAgent, message: "At least two available agents are required for task rebalance.", data: null }
+            taskRebalancing:
+              summary: 调用任务 start/pause 时该任务正被均衡
+              value: { reqId: "...", ts: 1700000000000, code: task.rebalance.taskRebalancing, message: "The task is being rebalanced. Please try again later.", data: null }
+            notAuthorized:
+              summary: 无 v2_task_rebalance 菜单权限
+              value: { reqId: "...", ts: 1700000000000, code: NotAuthorized, message: "No permission", data: null }
+  schemas:
+    ApiResponseBase:
+      type: object
+      required: [reqId, ts, code]
+      properties:
+        reqId: { type: string, description: 请求 trace id, example: "5a2c-...-ff" }
+        ts:    { type: integer, format: int64, description: 服务端时间戳 ms, example: 1700000000000 }
+        code:  { type: string, description: "成功为 \"ok\"，失败为 i18n key", example: ok }
+        message: { type: string, nullable: true, description: 业务异常时的本地化文案 }
+        stack: { type: string, nullable: true, description: 服务端堆栈（调试用，可忽略） }
+    ApiErrorResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponseBase'
+        - type: object
+          properties:
+            code: { type: string, enum: [task.rebalance.disabled, task.rebalance.taskRebalancing, task.rebalance.alreadyRunning, task.rebalance.noTask, task.rebalance.onlyOneAgent, task.rebalance.offlineTaskOnAgent, NotLogin, NotAuthorized, SystemError, IllegalArgument, IllegalState] }
+            data: { nullable: true }
+    ApiResponseOfPreview:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponseBase'
+        - type: object
+          properties: { data: { $ref: '#/components/schemas/TaskRebalancePreviewVo' } }
+    ApiResponseOfRebalance:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponseBase'
+        - type: object
+          properties: { data: { $ref: '#/components/schemas/TaskRebalanceVo' } }
+    ApiResponseOfPageRebalance:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponseBase'
+        - type: object
+          properties: { data: { $ref: '#/components/schemas/PageOfTaskRebalanceVo' } }
+    ApiResponseOfActive:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponseBase'
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [active]
+              properties: { active: { type: boolean, example: true } }
+    ApiResponseOfDetail:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponseBase'
+        - type: object
+          properties: { data: { $ref: '#/components/schemas/TaskRebalanceDetailVo' } }
+    ApiResponseOfVoid:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponseBase'
+        - type: object
+          properties: { data: { nullable: true } }
+    PageOfTaskRebalanceVo:
+      type: object
+      required: [total, items]
+      properties:
+        total: { type: integer, format: int64, example: 12 }
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/TaskRebalanceVo' }
+
+
+    TaskRebalancePreviewVo:
+      type: object
+      description: 预览结果，整体阻断时只填 reason，否则 tasks 包含全部统计任务（含不可调走的）
+      properties:
+        tasks:
+          type: array
+          items: { $ref: '#/components/schemas/TaskPreview' }
+        moveCount: { type: integer, description: 将被实际迁移的任务数 (changed=true 的计数), example: 3 }
+        reason:
+          type: string
+          nullable: true
+          description: 整体阻断原因（i18n key），有值则忽略 tasks
+          example: task.rebalance.onlyOneAgent
+    TaskPreview:
+      type: object
+      properties:
+        taskId:   { type: string, example: 6630e9c8a2c5b80012a1b2c3 }
+        taskName: { type: string, example: 订单同步 }
+        type:     { type: string, enum: [initial_sync, cdc, "initial_sync+cdc"] }
+        syncType: { type: string, enum: [sync, migrate, logCollector, mem_cache, connHeartbeat] }
+        status:   { type: string, example: running, description: 来自 TaskDto.status }
+        sourceAgentId: { type: string, example: agent-01 }
+        targetAgentId: { type: string, description: 算法建议迁移到的 agent；不可调走时等于 sourceAgentId, example: agent-02 }
+        movable:  { type: boolean }
+        schedulableStatus: { $ref: '#/components/schemas/SchedulableStatus' }
+        changed:  { type: boolean, description: 本次是否被规划迁移 }
+        reason:   { type: string, nullable: true, description: 不可调走的中文/英文说明 }
+        priorityScore: { type: integer, description: 值越大越优先迁移, example: 5230 }
+        priorityScoreItems:
+          type: object
+          description: 评分明细（前端可做 tooltip）
+          properties:
+            syncType:   { type: integer }
+            nodeCount:  { type: integer }
+            startTime:  { type: integer }
+        nodeCount: { type: integer, description: DAG 节点数 }
+        startTime: { type: integer, format: int64, nullable: true, description: 任务启动毫秒时间戳 }
+    TaskRebalanceVo:
+      type: object
+      properties:
+        id:          { type: string }
+        name:        { type: string, example: Task rebalance 1700000000000 }
+        status:      { $ref: '#/components/schemas/RebalanceStatus' }
+        createTime:  { type: string, format: date-time }
+        lastUpdated: { type: string, format: date-time }
+        finishAt:    { type: string, format: date-time, nullable: true }
+        totalCount:    { type: integer }
+        pendingCount:  { type: integer }
+        stoppingCount: { type: integer }
+        startingCount: { type: integer }
+        okCount:       { type: integer }
+        failedCount:   { type: integer }
+        cancelledCount: { type: integer }
+        errorMesg:     { type: string, nullable: true, description: 整体中止原因（例如目标 agent 离线导致 abort） }
+        userId:     { type: string }
+        createUser: { type: string }
+        lastUpdBy:  { type: string }
+        customId:   { type: string }
+    TaskRebalanceDetailVo:
+      type: object
+      required: [rebalance, jobs]
+      properties:
+        rebalance: { $ref: '#/components/schemas/TaskRebalanceVo' }
+        jobs:
+          type: array
+          items: { $ref: '#/components/schemas/TaskRebalanceJobVo' }
+    TaskRebalanceJobVo:
+      type: object
+      properties:
+        id:          { type: string }
+        rebalanceId: { type: string }
+        taskId:      { type: string }
+        taskName:    { type: string }
+        status:      { $ref: '#/components/schemas/JobStatus' }
+        errorMesg:   { type: string, nullable: true }
+        sourceAgentId: { type: string }
+        targetAgentId: { type: string }
+        beginAt:     { type: string, format: date-time, nullable: true }
+        finishAt:    { type: string, format: date-time, nullable: true }
+        createTime:  { type: string, format: date-time }
+        lastUpdated: { type: string, format: date-time }
+        userId:     { type: string }
+        createUser: { type: string }
+        lastUpdBy:  { type: string }
+        customId:   { type: string }
+    RebalanceStatus:
+      type: string
+      enum: [RUNNING, OK, FAILED]
+      description: |
+        - RUNNING：调度中
+        - OK：全部子任务成功
+        - FAILED：存在失败或取消的子任务
+    JobStatus:
+      type: string
+      enum: [PENDING, STOPPING, STARTING, OK, CANCELLED, INVALID_AGENT, STATUS_ERROR, STOP_TIMEOUT, START_TIMEOUT]
+      description: |
+        - PENDING：等待调度
+        - STOPPING：已下发暂停
+        - STARTING：暂停完成，已切换 agentId，下发启动
+        - OK：成功
+        - CANCELLED：用户取消，或被目标 agent 离线中止兜底
+        - INVALID_AGENT：目标 agent 离线（触发整次均衡 abort）
+        - STATUS_ERROR：执行期任务状态/agent 已变化，不能迁移
+        - STOP_TIMEOUT：等 STATUS_STOP 超时；任务可能滞留在源 agent
+        - START_TIMEOUT：等 STATUS_RUNNING 超时；agentId 已切到 target，需人工确认
+    SchedulableStatus:
+      type: string
+      enum: [OK, AGENT_OFFLINE, STATUS_ERROR, MANUAL_AGENT, INCREMENTAL_NOT_STARTED]
+      description: |
+        - OK：可调走
+        - AGENT_OFFLINE：当前 agent 已离线
+        - STATUS_ERROR：任务非 running
+        - MANUAL_AGENT：accessNodeType 为手动指定 agent 或 agent 组
+        - INCREMENTAL_NOT_STARTED：initial_sync+cdc 任务还未进入增量阶段

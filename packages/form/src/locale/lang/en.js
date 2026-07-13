@@ -160,6 +160,53 @@ export default {
     'The request has timed out, please try again',
   packages_form_js_processor_index_rengzaipinmingjia:
     'Please be patient, the page is still loading',
+  packages_form_js_processor_mock_title: 'Mock Data Test Run',
+  packages_form_js_processor_mock_input: 'Input',
+  packages_form_js_processor_mock_output: 'Output',
+  packages_form_js_processor_mock_log: 'Log',
+  packages_form_js_processor_mock_log_clear: 'Clear',
+  packages_form_js_processor_mock_sql_query: 'SQL Query',
+  packages_form_js_processor_mock_get_sample: 'Get Sample',
+  packages_form_js_processor_mock_sql_dialog_title: 'SQL Query Data',
+  packages_form_js_processor_mock_sql_preview: 'Preview',
+  packages_form_js_processor_mock_sql_use_data: 'Use This Data',
+  packages_form_js_processor_mock_json_valid: 'Valid',
+  packages_form_js_processor_mock_json_invalid: 'Invalid',
+  packages_form_js_processor_mock_no_output: 'No Output',
+  packages_form_js_processor_mock_no_output_tip: 'Run code to see output',
+  packages_form_js_processor_mock_no_log: 'No Logs',
+  packages_form_js_processor_mock_no_log_tip:
+    'Click "Test Run" to see log output',
+  packages_form_js_processor_mock_items: '{val1} items',
+  packages_form_js_processor_mock_run_time: '{val1}ms',
+  packages_form_js_processor_mock_json_placeholder:
+    'Enter test data in JSON array format, e.g.:\n[\n  {\n    "id": 1,\n    "name": "John"\n  }\n]',
+  packages_form_js_processor_mock_js_editor: 'JS Node Editor',
+  packages_form_js_processor_mock_js_code: 'JS Code',
+  packages_form_js_processor_mock_log_start: 'Start executing JS code...',
+  packages_form_js_processor_mock_log_success:
+    'Execution completed in {val1}ms',
+  packages_form_js_processor_mock_log_fail:
+    'Execution failed ({val1}ms): {val2}',
+  packages_form_js_processor_mock_log_getting_sample:
+    'Fetching sample data from preceding node...',
+  packages_form_js_processor_mock_log_sample_count:
+    'Fetched {val1} sample records',
+  packages_form_js_processor_mock_log_sample_empty: 'No sample data available',
+  packages_form_js_processor_mock_log_sample_fail:
+    'Failed to get sample: {val1}',
+  packages_form_js_processor_mock_log_loading_more: 'Loading more logs...',
+  packages_form_js_processor_mock_log_no_more: 'No more logs',
+  packages_form_js_processor_mock_log_sql_import:
+    'Imported {val1} records from SQL query',
+  packages_form_js_processor_mock_sql_query_fail: 'SQL query failed',
+  packages_form_js_processor_mock_unknown_error: 'Unknown error',
+  packages_form_js_processor_mock_event_insert: 'Insert',
+  packages_form_js_processor_mock_event_update: 'Update',
+  packages_form_js_processor_mock_event_delete: 'Delete',
+  packages_form_js_processor_mock_event_custom: 'Custom Event',
+  packages_form_js_processor_mock_before_data: 'Before',
+  packages_form_js_processor_mock_after_data: 'After',
   packages_form_table_rename_index_qingkong: 'Clear',
   packages_form_table_rename_search_text: 'Search Text',
   packages_form_table_rename_replace_with: 'Replace With',
@@ -186,7 +233,7 @@ export default {
   packages_form_field_inference_list_geshicuowu:
     'Please check the length and precision of the field',
   packages_form_field_inference_list_ziduanzhushi: 'Field Notes',
-  packages_form_field_inference_list_feikong: 'Should Not be empty',
+  packages_form_field_inference_list_feikong: 'Not Null',
   packages_form_field_inference_list_piliangyingyonghui:
     'The Batch application will overwrite with existing batch application rules',
   packages_form_field_inference_list_duidangqiantuiyan:
@@ -210,6 +257,7 @@ export default {
     'Target type batch modification rules',
   packages_form_field_inference_list_ninquerenyaohui:
     'Are you absolutely sure that you wish to restore the current table?',
+  packages_form_field_inference_list_reset_column_position: 'Reset Field Order',
   packages_form_field_inference_main_ninquerenyaoquan:
     'Are you sure that you want to restore all settings to their default values?',
   packages_form_field_inference_main_ge: '',
@@ -222,4 +270,161 @@ export default {
   packages_form_batch_add_field_type: 'Type',
   packages_form_batch_add_field_count: 'Count',
   packages_form_batch_add_field_start: 'Start Number',
+
+  // AggregatePanel
+  packages_form_aggregate_mode: 'Aggregate Mode',
+  packages_form_aggregate_mode_tip:
+    'Switch to raw pipeline mode to directly edit MongoDB aggregation pipeline JSON',
+  packages_form_aggregate_raw_pipeline: 'Raw Pipeline',
+  packages_form_aggregate_visual: 'Visual Config',
+  packages_form_aggregate_match_title: '$match Filter',
+  packages_form_aggregate_match_tip:
+    'Filter documents, only pass matching documents to the next stage',
+  packages_form_aggregate_group_title: '$group Fields',
+  packages_form_aggregate_group_tip:
+    'Specify fields for grouping, similar to SQL GROUP BY',
+  packages_form_aggregate_fields_title: 'Aggregate Fields',
+  packages_form_aggregate_fields_tip:
+    'Configure aggregate expressions, such as $sum, $avg, etc.',
+  packages_form_aggregate_add_condition: 'Add Condition',
+  packages_form_aggregate_add_group_field: 'Add Group Field',
+  packages_form_aggregate_add_agg_field: 'Add Aggregate Field',
+  packages_form_aggregate_select_field: 'Select Field',
+  packages_form_aggregate_select_group_field: 'Select Group Field',
+  packages_form_aggregate_select_source_field: 'Select Source Field',
+  packages_form_aggregate_input_value: 'Enter Value',
+  packages_form_aggregate_alias_optional: 'Alias (optional)',
+  packages_form_aggregate_output_field: 'Output Field Name',
+  packages_form_aggregate_pipeline_preview: 'Pipeline Preview',
+  packages_form_aggregate_format: 'Format (Alt+Shift+F)',
+  packages_form_aggregate_fullscreen: 'Fullscreen',
+  packages_form_aggregate_exit_fullscreen: 'Exit Fullscreen (Esc)',
+
+  // PipelineEditor operators
+  packages_form_aggregate_op_match: 'Filter Documents',
+  packages_form_aggregate_op_group: 'Group',
+  packages_form_aggregate_op_project: 'Projection',
+  packages_form_aggregate_op_sort: 'Sort',
+  packages_form_aggregate_op_limit: 'Limit',
+  packages_form_aggregate_op_skip: 'Skip',
+  packages_form_aggregate_op_unwind: 'Unwind Array',
+  packages_form_aggregate_op_lookup: 'Lookup',
+  packages_form_aggregate_op_addFields: 'Add Fields',
+  packages_form_aggregate_op_set: 'Set Fields ($addFields alias)',
+  packages_form_aggregate_op_unset: 'Remove Fields',
+  packages_form_aggregate_op_replaceRoot: 'Replace Root',
+  packages_form_aggregate_op_count: 'Count',
+  packages_form_aggregate_op_out: 'Output to Collection',
+  packages_form_aggregate_op_merge: 'Merge to Collection',
+  packages_form_aggregate_op_sum: 'Sum',
+  packages_form_aggregate_op_avg: 'Average',
+  packages_form_aggregate_op_min: 'Min',
+  packages_form_aggregate_op_max: 'Max',
+  packages_form_aggregate_op_first: 'First Value',
+  packages_form_aggregate_op_last: 'Last Value',
+  packages_form_aggregate_op_push: 'Push to Array',
+  packages_form_aggregate_op_addToSet: 'Add to Set (deduplicate)',
+  packages_form_aggregate_op_eq: 'Equal',
+  packages_form_aggregate_op_ne: 'Not Equal',
+  packages_form_aggregate_op_gt: 'Greater Than',
+  packages_form_aggregate_op_gte: 'Greater Than or Equal',
+  packages_form_aggregate_op_lt: 'Less Than',
+  packages_form_aggregate_op_lte: 'Less Than or Equal',
+  packages_form_aggregate_op_in: 'In',
+  packages_form_aggregate_op_nin: 'Not In',
+  packages_form_aggregate_op_and: 'Logical AND',
+  packages_form_aggregate_op_or: 'Logical OR',
+  packages_form_aggregate_op_not: 'Logical NOT',
+  packages_form_aggregate_op_nor: 'Logical NOR',
+  packages_form_aggregate_op_exists: 'Exists',
+  packages_form_aggregate_op_type: 'Type Check',
+  packages_form_aggregate_op_regex: 'Regex Match',
+  packages_form_aggregate_op_all: 'Array Contains All',
+  packages_form_aggregate_op_elemMatch: 'Element Match',
+  packages_form_aggregate_op_size: 'Array Size',
+
+  // AggregatePanel AI
+  packages_form_aggregate_ai_btn: 'AI Generate',
+  packages_form_aggregate_ai_title: 'AI Generate Aggregation Pipeline',
+  packages_form_aggregate_ai_placeholder:
+    'Describe the aggregation you want, e.g.: group by status, count each group and calculate average amount',
+  packages_form_aggregate_ai_generating: 'Generating...',
+  packages_form_aggregate_ai_apply: 'Apply',
+  packages_form_aggregate_ai_retry: 'Regenerate',
+  packages_form_aggregate_ai_stop: 'Stop',
+  packages_form_aggregate_ai_error: 'Generation failed, please retry',
+
+  // AggregatePanel Event Handling
+  packages_form_aggregate_event_title: 'Event Handling',
+  packages_form_aggregate_event_configured: 'Configured',
+  packages_form_aggregate_event_tip:
+    'Configure how delete and update events are handled in the aggregation node',
+  packages_form_aggregate_event_delete_title: 'Delete Event Handling',
+  packages_form_aggregate_event_delete_desc:
+    'How the aggregation node handles downstream data when a delete event is received',
+  packages_form_aggregate_event_delete_desc_highlight: 'delete event',
+  packages_form_aggregate_event_delete_switch:
+    'Delete downstream records when aggregation result is empty',
+  packages_form_aggregate_event_delete_switch_tip:
+    'On: Automatically delete downstream records when the aggregation result becomes empty after a delete event. Off: Keep downstream records and only update aggregated values.',
+  packages_form_aggregate_event_delete_warning:
+    'When enabled, if all source records are deleted and the aggregation result becomes empty, downstream records will be automatically deleted. Please confirm this is the expected behavior.',
+  packages_form_aggregate_event_update_title: 'Effective Update Fields',
+  packages_form_aggregate_event_update_desc:
+    'Only recalculate aggregation when the following fields change. Changes to other fields will be ignored',
+  packages_form_aggregate_event_update_tip_intro:
+    'When update events involve these fields, a dual aggregation calculation is triggered:',
+  packages_form_aggregate_event_update_tip_step1:
+    'Reverse calculate using the pre-update value to undo the old aggregation contribution',
+  packages_form_aggregate_event_update_tip_step2:
+    'Forward calculate using the post-update value to apply the new aggregation contribution',
+  packages_form_aggregate_event_update_tip_note:
+    'It is recommended to select group fields to ensure aggregation results are correctly updated when groups change.',
+  packages_form_aggregate_event_update_placeholder: 'Select Fields',
+  packages_form_aggregate_event_update_hint:
+    'Group fields detected. It is recommended to add group fields as effective update fields to ensure aggregation results are correctly updated when groups change.',
+
+  // AggregatePanel Group Change Double Aggregation
+  packages_form_aggregate_event_group_change_title:
+    'Group Change Double Aggregation',
+  packages_form_aggregate_event_group_change_desc:
+    'When a group field value changes, both the old and new group aggregation values need to be updated.',
+  packages_form_aggregate_event_group_change_tip_intro:
+    'When the fields below change, the system performs the following steps in order:',
+  packages_form_aggregate_event_group_change_tip_step1:
+    "Calculate aggregation using the pre-change value to remove the record's contribution from the old group",
+  packages_form_aggregate_event_group_change_tip_step2:
+    'Calculate aggregation using the post-change value to add the record to the new group',
+  packages_form_aggregate_event_group_change_placeholder:
+    'Select grouping fields',
+  packages_form_aggregate_event_group_change_hint:
+    'It is recommended to select only group fields',
+
+  // Triggers
+  packages_form_triggers_source: 'Data Source',
+  packages_form_triggers_source_collection: 'Source Collection',
+  packages_form_triggers_loading: 'Loading...',
+  packages_form_triggers_no_source: 'No source table detected',
+  packages_form_triggers_operation_type: 'Operation Type',
+  packages_form_triggers_op_insert: 'Insert Document',
+  packages_form_triggers_op_update: 'Update Document',
+  packages_form_triggers_op_delete: 'Delete Document',
+  packages_form_triggers_op_replace: 'Replace Document',
+  packages_form_triggers_event_type: 'Function Type',
+  packages_form_triggers_copy: 'Copy Code',
+  packages_form_triggers_copied: 'Copied',
+  packages_form_triggers_test_run: 'Test Run',
+  packages_form_triggers_tpl_tapdata_title: 'TapData JS Handler',
+  packages_form_triggers_tpl_tapdata_record: 'Current data record',
+  packages_form_triggers_tpl_tapdata_context: 'Context information',
+  packages_form_triggers_tpl_tapdata_return: 'Return the processed record',
+  packages_form_triggers_tpl_write_logic: 'Write your processing logic here',
+  packages_form_triggers_tpl_mongo_title: 'MongoDB Trigger Function',
+  packages_form_triggers_tpl_mongo_change_event: 'Change event object',
+  packages_form_triggers_help_tapdata_title: 'TapData JS Function',
+  packages_form_triggers_help_tapdata_desc:
+    'Supports record (current data record) and context (context info) parameters. The function should return the processed record object.',
+  packages_form_triggers_help_mongo_title: 'Mongo Function',
+  packages_form_triggers_help_mongo_desc:
+    'Supports changeEvent object containing documentKey, updateDescription, fullDocument and other change event information.',
 }

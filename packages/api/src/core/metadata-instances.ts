@@ -345,6 +345,7 @@ export interface CompareResultStatistics {
     MissingApply: 0
     DifferentApply: 0
     Different: 0
+    PrimaryKeyInconsistency: 0
   }
 }
 
@@ -352,5 +353,83 @@ export function getCompareResultStatistics(params: any) {
   return requestClient.get<CompareResultStatistics>(
     `${BASE_URL}/compareAndGetMetadataInstancesCompareResult`,
     { params },
+  )
+}
+
+export interface Field {
+  autoincrement: string
+  columnPosition: number
+  dataType: string
+  deleted: boolean
+  fieldName: string
+  id: string
+  isAutoAllowed: boolean
+  isNullable: boolean
+  originalDataType: string
+  originalFieldName: string
+  previousDataType: string
+  previousFieldName: string
+  primaryKey: boolean
+  primaryKeyPosition?: number
+  simpleTypeName: string
+  source: string
+  sourceDbType: string
+  tapType: string
+  unique: boolean
+  useDefaultValue: boolean
+  [property: string]: any
+}
+
+export interface Column {
+  columnIsAsc: boolean
+  columnName: string
+  columnPosition: number
+  [property: string]: any
+}
+
+export interface FieldIndex {
+  columns: Column[]
+  coreUnique: boolean
+  indexName: string
+  primaryKey: string
+  unique: boolean
+  [property: string]: any
+}
+export interface SchemaData {
+  ancestorsName: string
+  comment: string
+  constraints: string[]
+  createAt: number
+  createSource: string
+  createUser: string
+  databaseId: string
+  deleted: boolean
+  fields: Field[]
+  hasPrimaryKey: boolean
+  hasTransformEx: boolean
+  hasUnionIndex: boolean
+  hasUpdateField: boolean
+  id: string
+  indices: FieldIndex[]
+  lastUpdAt: number
+  lastUpdate: number
+  lastUpdBy: string
+  lastUserName: string
+  metaType: string
+  name: string
+  originalName: string
+  partitionSet: string[]
+  qualifiedName: string
+  source: any
+  sourceType: string
+  tableAttr: any
+  userId: string
+  username: string
+  [property: string]: any
+}
+
+export function reloadSchema(connectionId: string, tableName: string) {
+  return requestClient.post<SchemaData>(
+    `/api/schema/reload?connectionId=${connectionId}&tableName=${tableName}`,
   )
 }

@@ -101,11 +101,13 @@ const handleBack = () => {
       :style="ui.header"
     >
       <div class="flex align-items-center rounded-lg">
-        <el-button v-if="showBackBtn" text class="mr-1" @click="handleBack">
-          <template #icon>
-            <VIcon>left</VIcon>
-          </template>
-        </el-button>
+        <slot name="back">
+          <el-button v-if="showBackBtn" text class="mr-1" @click="handleBack">
+            <template #icon>
+              <VIcon>left</VIcon>
+            </template>
+          </el-button>
+        </slot>
 
         <slot name="title">
           <span class="fs-5 font-color-dark lh-8 ellipsis">{{

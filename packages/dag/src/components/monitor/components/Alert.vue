@@ -122,7 +122,7 @@ export default {
       const alarmList = this.alarmData?.alarmList || []
       const totals = alarmList.length
       alarmList.forEach((el) => {
-        if (el.nodeId) {
+        if (el.nodeId && nodeMap[el.nodeId]) {
           nodeMap[el.nodeId].num++
         }
       })
@@ -161,9 +161,11 @@ export default {
       }
       return (
         data.map((t) => {
-          t.levelLabel = ALARM_LEVEL_MAP[t.level].text
-          t.levelType = ALARM_LEVEL_MAP[t.level].type
-          t.statusLabel = ALARM_STATUS_MAP[t.status].text
+          const level = ALARM_LEVEL_MAP[t.level] || {}
+          const status = ALARM_STATUS_MAP[t.status] || {}
+          t.levelLabel = level.text || t.level
+          t.levelType = level.type
+          t.statusLabel = status.text || t.status
           return t
         }) || []
       )
@@ -185,9 +187,11 @@ export default {
       }
       this.list =
         data.map((t) => {
-          t.levelLabel = ALARM_LEVEL_MAP[t.level].text
-          t.levelType = ALARM_LEVEL_MAP[t.level].type
-          t.statusLabel = ALARM_STATUS_MAP[t.status].text
+          const level = ALARM_LEVEL_MAP[t.level] || {}
+          const status = ALARM_STATUS_MAP[t.status] || {}
+          t.levelLabel = level.text || t.level
+          t.levelType = level.type
+          t.statusLabel = status.text || t.status
           return t
         }) || []
     },

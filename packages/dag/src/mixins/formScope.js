@@ -17,6 +17,7 @@ import {
 import { commandProxy } from '@tap/api/src/core/proxy'
 import { getNodeTableInfo } from '@tap/api/src/core/task'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
+import { mapFieldsData } from '@tap/form/src/components/field-select'
 import { FormTab } from '@tap/form/src/components/form-tab'
 import i18n from '@tap/i18n'
 import { Cookie, isPlainObj } from '@tap/shared'
@@ -362,7 +363,7 @@ export default {
           filter.where &&
             Object.assign(filter.where, {
               meta_type: {
-                in: ['collection', 'table', 'view'], //,
+                in: ['collection', 'table'],
               },
               is_deleted: false,
               sourceType: 'SOURCE',
@@ -493,6 +494,37 @@ export default {
               tapType: item.tapType,
               source: item.source,
             }))
+        },
+
+        /**
+         * 根据 nodeId 和 tableFilter 查询字段选项列表
+         * @param nodeId
+         * @param tableFilter
+         * @returns {Promise<Array>}
+         */
+        loadNodeTableFields: async (nodeId, tableFilter) => {
+          if (!nodeId) return []
+          try {
+            await this.afterTaskSaved()
+            const data = await getNodeSchemaPage({
+              nodeId,
+              tableFilter,
+              fields: [
+                'original_name',
+                'fields',
+                'qualified_name',
+                'name',
+                'indices',
+              ],
+              page: 1,
+              pageSize: 1,
+            })
+            const { fields } = mapFieldsData(data?.items?.[0])
+            return fields
+          } catch (error) {
+            console.error('loadNodeFieldOptionsByPage error', error)
+            return []
+          }
         },
 
         loadDateFieldOptions: async (nodeId) => {

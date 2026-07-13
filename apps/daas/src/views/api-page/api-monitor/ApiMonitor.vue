@@ -1,490 +1,342 @@
 <script setup lang="ts">
-import { fetchApiClientNames } from '@tap/api/src/core/api-calls'
 import {
-  fetchApiList,
-  fetchApiMonitorPreview,
-  fetchApiRankLists,
-} from '@tap/api/src/core/api-monitor'
-import {
-  fetchApiServerCpuMem,
-  type ApiServerCpuMem,
-} from '@tap/api/src/core/api-server'
-import { useRequest } from '@tap/api/src/request'
+  fetchMonitorApiList,
+  fetchMonitorServer,
+  fetchMonitorServerList,
+  type MonitorServer,
+  type ServerItem,
+} from '@tap/api/src/core/monitor-server'
+import { usePagination, usePollingRequest } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { dayjs } from '@tap/business/src/shared/dayjs'
-import { VTable } from '@tap/component/src/base/v-table'
-import { Chart } from '@tap/component/src/chart'
-import { FilterBar } from '@tap/component/src/filter-bar'
+import CountUp from '@tap/component/src/CountUp.vue'
 import { useI18n } from '@tap/i18n'
-import { calcTimeUnit, calcUnit } from '@tap/shared'
-import { escapeRegExp } from 'lodash-es'
-import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
-import Detail from './Detail.vue'
-import ServerDetails from './ServerDetails.vue'
-
+import { isString } from 'lodash-es'
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import TimeRangeSelector from './components/TimeRangeSelector.vue'
+import ServiceCard from './ServiceCard.vue'
 import type { TableInstance } from 'element-plus'
-
-// Types
-interface Column {
-  label: string
-  prop?: string
-  slotName?: string
-}
-
-interface PreviewData {
-  totalCount?: number
-  warningApiCount?: number
-  warningVisitTotalCount?: number
-  visitTotalCount?: number
-  visitTotalLine?: number
-  transmitTotal?: number
-  lastUpdAt?: string
-}
-
-interface ChartDataItem {
-  itemStyle: {
-    color: string
-  }
-  name: string
-  value: number
-}
-
-interface FailRateItem {
-  name: string
-  failed: number
-}
-
-interface ApiItem {
-  id: string
-  name: string
-  status: string
-  visitLine: number
-  visitCount: number
-  transitQuantity: number
-}
-
-interface PageInfo {
-  size: number
-  failRateCurrent: number
-  failRateTotal: number
-  failRateOrder: 'ASC' | 'DESC'
-  consumingTimeCurrent: number
-  consumingTimeTotal: number
-  consumingTimeOrder: 'ASC' | 'DESC'
-  apiListCurrent: number
-  apiListTotal: number
-}
-
-interface SearchParams {
-  keyword: string
-  clientName: string
-  status: string
-}
-
-interface StatusOption {
-  label: string
-  value: string
-}
-
-interface ClientNameItem {
-  label: string
-  value: string
-}
-
-interface FilterItem {
-  label?: string
-  placeholder?: string
-  key: string
-  type: string
-  items?: StatusOption[] | ClientNameItem[]
-  selectedWidth?: string
-}
 
 // Composables
 const { t } = useI18n()
 const route = useRoute()
+const router = useRouter()
 
 // Refs
-const loadingTimeList = ref(false)
-const loadingApiList = ref(false)
-const loadingFailRateList = ref(false)
-const loadingTotal = ref(false)
-const silenceLoading = ref(false)
 const isDestroyed = ref(false)
 const timer = ref<number | null>(null)
-const table = ref<TableInstance>()
-const serverDetailsVisible = ref(false)
-const serverDetails = ref<Partial<ApiServerCpuMem>>({})
 
 // Reactive data
-const previewData = reactive<PreviewData>({})
-const chartData = ref<ChartDataItem[]>([])
-const failRateList = ref<FailRateItem[]>([])
-const consumingTimeList = ref<FailRateItem[]>([])
-const apiList = ref<ApiItem[]>([])
-const filterItems = ref<FilterItem[]>([])
-const clientNameList = ref<ClientNameItem[]>([])
+const serverData = ref<MonitorServer | {}>({})
+const serverList = ref<ServerItem[]>([])
+const apiListDefaultSort = { prop: 'requestCount', order: 'descending' }
+const apiListSortBy = ref(apiListDefaultSort.prop)
+const apiListSortOrder = ref<'ASC' | 'DESC'>('DESC')
+const tableRef = ref<TableInstance>()
 
-const page = reactive<PageInfo>({
-  size: 5,
-  failRateCurrent: 1,
-  failRateTotal: 0,
-  failRateOrder: 'DESC',
-  consumingTimeCurrent: 1,
-  consumingTimeTotal: 0,
-  consumingTimeOrder: 'DESC',
-  apiListCurrent: 1,
-  apiListTotal: 0,
-})
-
-const searchParams = ref<SearchParams>({
-  keyword: '',
-  clientName: '',
-  status: '',
-})
-
-const statusOptions = computed<StatusOption[]>(() => [
-  { label: t('task_list_status_all'), value: '' },
-  {
-    label: t('api_monitor_total_api_list_status_active'),
-    value: 'active',
-  },
-  {
-    label: t('api_monitor_total_api_list_status_pending'),
-    value: 'pending',
-  },
-  {
-    label: t('api_monitor_total_api_list_status_generating'),
-    value: 'generating',
-  },
-])
-
-const columns = computed<Column[]>(() => [
-  {
-    label: t('api_monitor_total_api_list_name'),
-    prop: 'name',
-  },
-  {
-    label: t('api_monitor_total_columns_failed'),
-    slotName: 'failed',
-    prop: 'failed',
-    sortable: 'custom',
-  },
-])
-
-const columnsRT = computed<Column[]>(() => [
-  {
-    label: t('api_monitor_total_api_list_name'),
-    prop: 'name',
-  },
-  {
-    label: t('api_monitor_total_rTime'),
-    slotName: 'failed',
-    prop: 'failed',
-    sortable: 'custom',
-  },
-])
-
-// Computed
-
-// Watchers
-watch(
-  () => route.query,
-  () => {
-    // 只有api list 条件筛选才更新
-    const { status, clientName } = route.query
-    if (status || clientName) {
-      getApiList(1)
-    }
-  },
-)
-
-// Methods
-const initData = () => {
-  if (isDestroyed.value) return
-
-  Promise.all([
-    getPreview(),
-    getClientName(),
-    remoteFailedMethod(),
-    consumingMethod(),
-    getApiList(),
-  ]).finally(() => {
-    silenceLoading.value = true
-    timer.value = setTimeout(() => {
-      initData()
-    }, 10000)
-  })
-}
-
-const formatMs = (time: number): string | number => {
-  if (time === 0 || !time) return 0
-  if (time < 1000) return `${time} ms`
-  return calcTimeUnit(time, 'ms', 2)
-}
-
-// 获取统计数据
-const getPreview = () => {
-  loadingTotal.value = !silenceLoading.value
-  return fetchApiMonitorPreview()
-    .then((data) => {
-      data.lastUpdAt = data.lastUpdAt
-        ? dayjs(data.lastUpdAt).format('YYYY-MM-DD HH:mm:ss')
-        : '-'
-      Object.assign(previewData, data)
-    })
-    .finally(() => {
-      loadingTotal.value = false
-    })
-}
-
-// 获取所有客户端
-const getClientName = () => {
-  return fetchApiClientNames().then((data) => {
-    clientNameList.value = data.map((item: any) => ({
-      label: item.name,
-      value: item.id,
-    }))
-    getFilterItems()
-  })
-}
-
-// 图表数据组装
-const getPieOption = () => {
-  const data: ChartDataItem[] = [
-    {
-      itemStyle: {
-        color: '#8FD8C0',
-      },
-      name: t('api_monitor_total_successCount'),
-      value: (previewData.totalCount || 0) - (previewData.warningApiCount || 0),
-    },
-    {
-      itemStyle: {
-        color: '#f7d762',
-      },
-      name: t('api_monitor_total_warningCount'),
-      value: previewData.warningApiCount || 0,
-    },
-  ]
-  chartData.value = data
-  return {
-    backgroundColor: 'transparent',
-    tooltip: {
-      confine: true,
-      borderRadius: 12,
-    },
-    series: [
-      {
-        type: 'pie',
-        data,
-        radius: ['60%', '90%'],
-        label: {
-          show: false,
-        },
-        labelLine: {
-          show: false,
-        },
-      },
-    ],
+// 排序处理函数
+const handleSortChange = ({
+  prop,
+  order,
+}: {
+  prop: string
+  order: string | null
+}) => {
+  if (!order) {
+    // 取消排序，恢复默认排序
+    apiListSortBy.value = apiListDefaultSort.prop
+    apiListSortOrder.value = 'DESC'
+  } else {
+    apiListSortBy.value = prop
+    apiListSortOrder.value = order === 'ascending' ? 'ASC' : 'DESC'
   }
+  apiListPage.value = 1 // 排序时重置到第一页
 }
 
-// 失败率排行榜
-const remoteFailedMethod = () => {
-  const { failRateCurrent, size, failRateOrder } = page
-  const filter = {
-    where: {
-      type: 'failRate',
-    },
-    limit: size,
-    order: failRateOrder,
-    skip: size * (failRateCurrent - 1),
-  }
-  loadingFailRateList.value = !silenceLoading.value
-  return fetchApiRankLists(filter)
-    .then((data) => {
-      const items = data?.items?.map((item: any) => {
-        const abj: FailRateItem = { name: '', failed: 0 }
-        Object.keys(item).forEach((key) => {
-          abj.name = key
-          abj.failed = item[key]
-        })
-        return abj
-      })
-      page.failRateTotal = data?.total || 0
-      failRateList.value = items || []
-    })
-    .finally(() => {
-      loadingFailRateList.value = false
-    })
-}
+const currentTab = ref('server')
 
-// 处理失败率排序
-const handleFDOrder = () => {
-  const time = JSON.parse(JSON.stringify(page.failRateOrder))
-  page.failRateOrder = time === 'DESC' ? 'ASC' : 'DESC'
-  remoteFailedMethod()
-}
-
-const handleFailRateOrder = ({ order }: { order: string }) => {
-  page.failRateOrder = order === 'ascending' ? 'ASC' : 'DESC'
-  remoteFailedMethod()
-}
-
-const handleConsumingTimeOrder = ({ order }: { order: string }) => {
-  page.consumingTimeOrder = order === 'ascending' ? 'ASC' : 'DESC'
-  consumingMethod()
-}
-
-// 响应时间排行榜
-const consumingMethod = () => {
-  const { consumingTimeCurrent, size, consumingTimeOrder } = page
-  const filter = {
-    where: {
-      type: 'responseTime',
-    },
-    limit: size,
-    order: consumingTimeOrder,
-    skip: size * (consumingTimeCurrent - 1),
-  }
-  loadingTimeList.value = !silenceLoading.value
-  return fetchApiRankLists(filter)
-    .then((data) => {
-      // map
-      const items = data?.items?.map((item: any) => {
-        const abj: FailRateItem = { name: '', failed: 0 }
-        Object.keys(item).forEach((key) => {
-          abj.name = key
-          abj.failed = item[key]
-        })
-        return abj
-      })
-      page.consumingTimeTotal = data?.total || 0
-      consumingTimeList.value = items || []
-    })
-    .finally(() => {
-      loadingTimeList.value = false
-    })
-}
-
-// 获取api列表数据
-const getApiList = (pageNum?: number) => {
-  if (pageNum) {
-    page.apiListCurrent = pageNum
-  }
-  const { apiListCurrent } = page
-  const { keyword, status, clientName } = searchParams.value
-
-  const where: any = {}
-  if (keyword && keyword.trim()) {
-    where.name = { like: escapeRegExp(keyword), options: 'i' }
-  }
-  if (status) {
-    where.status = status
-  }
-  if (clientName) {
-    where.clientId = clientName
-  }
-  const filter = {
-    order: 'createTime DESC',
-    limit: 5,
-    skip: (apiListCurrent - 1) * 5,
-    where,
-  }
-  loadingApiList.value = !silenceLoading.value
-  return fetchApiList(filter)
-    .then((data) => {
-      apiList.value = data.items
-      page.apiListTotal = data.total
-    })
-    .finally(() => {
-      loadingApiList.value = false
-    })
-}
-
-// api 列表筛选
-const getFilterItems = () => {
-  filterItems.value = [
-    {
-      label: t('api_monitor_total_api_list_status'),
-      key: 'status',
-      type: 'select-inner',
-      items: statusOptions.value,
-      selectedWidth: '200px',
-    },
-    {
-      label: t('api_monitor_total_clientName'),
-      key: 'clientName',
-      type: 'select-inner',
-      items: clientNameList.value,
-      selectedWidth: '200px',
-    },
-    {
-      placeholder: t('api_monitor_total_api_list_name'),
-      key: 'keyword',
-      type: 'input',
-    },
-  ]
-}
-
-// 控制手风琴（只展示一行)
-const expandChange = (row: ApiItem, expandRows: ApiItem[]) => {
-  if (expandRows.length > 1) {
-    apiList.value.forEach((expandrow) => {
-      if (row.id !== expandrow.id) {
-        // 这里需要判断一下展开行的length>1
-        // toggleRowExpansion 设置是否展开，true则展开
-        table.value?.toggleRowExpansion(expandrow, false)
-      }
-    })
-  }
-}
-
-const getStatusLabel = (status: string) => {
-  return statusOptions.value.find((t) => t.value === status)?.label
-}
-
-const { data: apiServerList, loading: loadingApiServerList } = useRequest(
-  async () => {
-    const data = await fetchApiServerCpuMem()
-    return data.map((item) => {
+const matchValueUnit = (value: any) => {
+  if (isString(value)) {
+    const match = value.match(/(\d+(?:\.\d*)?)([a-z%/]+)?/i)
+    if (match) {
       return {
-        ...item,
-        pingWarning:
-          Date.now() - item.pingTime > 10000
-            ? dayjs(item.pingTime).fromNow(true)
-            : '',
-        metricValues: item.metricValues
-          ? {
-              cpuUsage: item.metricValues.cpuUsage
-                ? `${Number(item.metricValues.cpuUsage.toFixed(2))}%`
-                : '--',
-              heapMemoryUsage: item.metricValues.heapMemoryUsage
-                ? calcUnit(item.metricValues.heapMemoryUsage, 'b', 2)
-                : '--',
-            }
-          : {
-              cpuUsage: '--',
-              heapMemoryUsage: '--',
-            },
+        value: Number(match[1]),
+        unit: match[2] || '',
       }
-    })
+    }
+  }
+  return {
+    value,
+    unit: '',
+  }
+}
+
+const requestCount = computed(() => {
+  return {
+    value: serverData.value?.totalRequestCount,
+  }
+})
+
+const errorCount = computed(() => {
+  return {
+    value: serverData.value?.errorCount,
+    errorRate: serverData.value?.totalErrorRate,
+    queryFrom: serverData.value?.queryFrom,
+    queryEnd: serverData.value?.queryEnd,
+  }
+})
+
+const responseTimeAvg = computed(() => {
+  const { value, unit } = matchValueUnit(serverData.value?.responseTimeAvg)
+  return {
+    value,
+    unit,
+    minDelay: serverData.value?.minDelay,
+    maxDelay: serverData.value?.maxDelay,
+    queryFrom: serverData.value?.queryFrom,
+    queryEnd: serverData.value?.queryEnd,
+  }
+})
+
+const p95 = computed(() => {
+  const { value, unit } = matchValueUnit(serverData.value?.p95)
+  return {
+    value,
+    unit,
+  }
+})
+
+const p99 = computed(() => {
+  const { value, unit } = matchValueUnit(serverData.value?.p99)
+  return {
+    value,
+    unit,
+  }
+})
+
+const notHealthyApiCount = computed(() => {
+  return {
+    value: serverData.value?.notHealthyApiCount,
+  }
+})
+
+// 时间周期选择 - 从 route.query 中恢复
+const timeRange = ref((route.query.timeRange as string) || '1h')
+const customTimeRange = ref<[Date, Date] | null>(null)
+const timeRangeParams = ref<{ startAt: number; endAt: number } | null>(null)
+
+// 获取实际的时间范围（返回10位时间戳，单位：秒）
+const getActualTimeRange = () => {
+  if (timeRange.value === 'custom' && customTimeRange.value) {
+    return {
+      type: 'range',
+      startAt: dayjs(customTimeRange.value[0]).unix(),
+      endAt: dayjs(customTimeRange.value[1]).unix(),
+    }
+  }
+  const rangeMap: Record<string, Record<string, string | number>> = {
+    '5m': {
+      step: 5,
+      type: 'minute',
+    },
+    '15m': {
+      step: 15,
+      type: 'minute',
+    },
+    '1h': {
+      step: 1,
+      type: 'hours',
+    },
+    '6h': {
+      step: 6,
+      type: 'hours',
+    },
+    '12h': {
+      step: 12,
+      type: 'hours',
+    },
+    '24h': {
+      step: 24,
+      type: 'hours',
+    },
+    '7d': {
+      step: 7,
+      type: 'days',
+    },
+    '14d': {
+      step: 14,
+      type: 'days',
+    },
+    '30d': {
+      step: 30,
+      type: 'days',
+    },
+  }
+
+  return rangeMap[timeRange.value] || rangeMap['1h']
+}
+
+const defaultApiListParams = {
+  current: 1,
+  pageSize: 10,
+}
+
+const {
+  data: apiListData,
+  current: apiListPage,
+  pageSize: apiListPageSize,
+  total: apiListTotal,
+  refresh: refreshApiList,
+} = usePagination(
+  ({
+    current = defaultApiListParams.current,
+    pageSize = defaultApiListParams.pageSize,
+  } = {}) => {
+    const params = {
+      ...getActualTimeRange(),
+      orderBy: `${apiListSortBy.value} ${apiListSortOrder.value}`,
+      skip: (current - 1) * pageSize,
+      limit: pageSize,
+    }
+    return fetchMonitorApiList(params)
   },
   {
-    pollingInterval: 10000,
+    manual: true,
+    defaultParams: [defaultApiListParams],
+    initialData: {
+      total: 0,
+      items: [],
+    },
   },
 )
 
-const handleServerClick = (item: Partial<ApiServerCpuMem>) => {
-  serverDetails.value = item
-  serverDetailsVisible.value = true
+const { run: runFetch, cancel: cancelFetch } = usePollingRequest(
+  async () => {
+    const params = getActualTimeRange()
+
+    serverData.value = await fetchMonitorServer(params)
+
+    timeRangeParams.value = {
+      startAt: serverData.value.queryFrom,
+      endAt: serverData.value.queryEnd,
+    }
+
+    if (currentTab.value === 'api') {
+      refreshApiList()
+      return
+    }
+
+    serverList.value = await fetchMonitorServerList(params)
+  },
+  {
+    pollingInterval: 6000,
+    manual: true,
+  },
+)
+
+// 刷新数据
+const refreshData = () => {
+  runFetch()
 }
 
-// Lifecycle
+const handleViewServiceDetails = (data: any) => {
+  router.push({
+    name: 'apiMonitorServerDetail',
+    params: { id: data.serverId },
+    query: {
+      name: data.serverName,
+      timeRange: timeRange.value,
+      ...(timeRange.value === 'custom' && customTimeRange.value
+        ? {
+            customStart: customTimeRange.value[0],
+            customEnd: customTimeRange.value[1],
+          }
+        : {}),
+    },
+  })
+}
+
+const onClickApi = (row: any) => {
+  router.push({
+    name: 'apiMonitorDetail',
+    params: {
+      id: row.apiId,
+    },
+    query: {
+      name: row.apiName,
+      timeRange: timeRange.value,
+      ...(timeRange.value === 'custom' && customTimeRange.value
+        ? {
+            customStart: customTimeRange.value[0],
+            customEnd: customTimeRange.value[1],
+          }
+        : {}),
+    },
+  })
+}
+
+const handleSortApi = (sortKey: string) => {
+  currentTab.value = 'api'
+  nextTick(() => {
+    setTimeout(() => {
+      tableRef.value?.clearSort()
+      tableRef.value?.sort(sortKey, 'descending')
+    }, 50)
+  })
+}
+
+// 跳转到审计页面 - 错误率
+const handleNavigateToAuditWithError = (row?: Record<string, any>) => {
+  const query: any = {
+    code: '500', // 失败的状态码
+    start: row.queryFrom * 1000, // 转换为毫秒
+    end: row.queryEnd * 1000, // 转换为毫秒
+  }
+
+  if (row.apiPath) {
+    query.keyword = row.apiPath
+    query.options = '-'
+  }
+
+  const href = router.resolve({
+    name: 'dataServerAuditList',
+    query,
+  }).href
+  window.open(href, `Audit-${encodeURI(row.apiPath)}`)
+}
+
+// 跳转到审计页面 - 响应时间排序
+const handleNavigateToAuditWithResponseTime = (
+  row?: Record<string, any>,
+  sortOrder: 'ASC' | 'DESC' = 'DESC',
+) => {
+  const query: any = {
+    start: row.queryFrom * 1000, // 转换为毫秒
+    end: row.queryEnd * 1000, // 转换为毫秒
+    sortBy: 'latency',
+    sortOrder,
+  }
+
+  if (row.apiPath) {
+    query.keyword = row.apiPath
+    query.options = '-'
+  }
+
+  const href = router.resolve({
+    name: 'dataServerAuditList',
+    query,
+  }).href
+  window.open(href, `Audit-${encodeURI(row.apiPath)}`)
+}
+
+// 从 query 中恢复自定义时间范围
 onMounted(() => {
-  initData()
+  if (route.query.customStart && route.query.customEnd) {
+    customTimeRange.value = [+route.query.customStart, +route.query.customEnd]
+    timeRange.value = 'custom'
+  }
+  runFetch()
 })
 
 onUnmounted(() => {
@@ -496,378 +348,366 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <PageContainer mode="blank" hide-header>
-    <section class="api-monitor-wrap isCardBox">
-      <main class="api-monitor-main">
-        <div class="flex gap-5 mb-5">
-          <section
-            v-loading="loadingTotal"
-            class="bg-card api-monitor-card rounded-xl flex-1"
-          >
-            <div class="p-6">
-              <span class="fs-6">{{ t(route.meta.title as string) }}</span
-              ><span class="fs-7 ml-3 font-color-sslight">
-                {{ t('public_data_update_time') }}:
-                {{ previewData.lastUpdAt }}</span
-              >
-            </div>
-
-            <div class="flex">
-              <div class="flex-1 text-center">
-                <header class="api-monitor-total__tittle">
-                  {{ t('api_monitor_total_totalCount') }}
-                </header>
-                <div class="api-monitor-total__text din-font">
-                  {{ previewData.totalCount || 0 }}
-                </div>
-              </div>
-              <div class="flex-1 text-center">
-                <header class="api-monitor-total__tittle">
-                  {{ t('api_monitor_total_warningVisitCount') }}
-                </header>
-                <div class="api-monitor-total__text din-font">
-                  <el-tooltip
-                    :open-delay="400"
-                    :disabled="
-                      !previewData.warningVisitTotalCount ||
-                      previewData.warningVisitTotalCount < 1000
-                    "
-                    :content="`${previewData.warningVisitTotalCount}`"
-                    placement="bottom"
-                  >
-                    <span>{{
-                      calcUnit(previewData.warningVisitTotalCount || 0)
-                    }}</span>
-                  </el-tooltip>
-                </div>
-              </div>
-              <div class="flex-1 text-center">
-                <header class="api-monitor-total__tittle">
-                  {{ t('api_monitor_total_warningApiCount') }}
-                </header>
-                <div class="api-monitor-total__text din-font">
-                  <el-tooltip
-                    :open-delay="400"
-                    :disabled="
-                      !previewData.visitTotalCount ||
-                      previewData.visitTotalCount < 1000
-                    "
-                    :content="`${previewData.visitTotalCount}`"
-                    placement="bottom"
-                  >
-                    <span>{{
-                      calcUnit(previewData.visitTotalCount || 0)
-                    }}</span>
-                  </el-tooltip>
-                </div>
-              </div>
-              <div class="flex-1 text-center">
-                <header class="api-monitor-total__tittle">
-                  {{ t('api_monitor_total_visitTotalLine') }}
-                </header>
-                <el-tooltip
-                  :open-delay="400"
-                  :disabled="
-                    !previewData.visitTotalLine ||
-                    previewData.visitTotalLine < 1000
-                  "
-                  :content="`${previewData.visitTotalLine}`"
-                  placement="bottom"
-                >
-                  <div class="api-monitor-total__text din-font">
-                    {{ calcUnit(previewData.visitTotalLine || 0) }}
-                  </div>
-                </el-tooltip>
-              </div>
-              <div class="flex-1 text-center">
-                <header class="api-monitor-total__tittle">
-                  {{ t('api_monitor_total_transmitTotal') }}
-                </header>
-                <div class="api-monitor-total__text din-font">
-                  {{ calcUnit(previewData.transmitTotal, 'b') || 0 }}
-                </div>
-              </div>
-            </div>
-          </section>
-          <div
-            v-loading="loadingTotal"
-            class="flex flex-column api-monitor-card bg-card overflow-hidden pt-5 rounded-xl"
-          >
-            <div class="api-monitor-chart__text mb-2 pl-5">
-              {{ t('api_monitor_total_warningCount') }}
-            </div>
-            <div class="flex align-center flex-1 p-3">
-              <Chart style="width: 140px" type="pie" :extend="getPieOption()" />
-              <div class="flex flex-column gap-2 pr-2">
-                <div class="flex">
-                  <div
-                    class="tooltip-bar my-0.5 ml-0.5 mr-2 rounded-pill"
-                    style="width: 4px; background: #8fd8c0"
-                  />
-                  <div>
-                    <div class="font-color-sslight lh-5">
-                      {{ t('api_monitor_total_successCount') }}
-                    </div>
-                    <div class="fs-6 fw-sub lh-6">
-                      {{
-                        (previewData.totalCount || 0) -
-                        (previewData.warningApiCount || 0)
-                      }}
-                    </div>
-                  </div>
-                </div>
-                <div class="flex">
-                  <div
-                    class="tooltip-bar my-0.5 ml-0.5 mr-2 rounded-pill"
-                    style="width: 4px; background: #f7d762"
-                  />
-                  <div>
-                    <div class="font-color-sslight lh-5">
-                      {{ t('api_monitor_total_warningCount') }}
-                    </div>
-                    <div class="fs-6 fw-sub lh-6">
-                      {{ previewData.warningApiCount }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+  <PageContainer
+    mode="auto"
+    container-class="bg-card rounded-xl shadow-sm gap-1"
+    content-class="flex-1 min-h-0 overflow-auto p-6 position-relative flex flex-column"
+  >
+    <template #actions>
+      <div class="flex align-center gap-4">
+        <TimeRangeSelector
+          v-model="timeRange"
+          v-model:custom-time="customTimeRange"
+          @change="refreshData"
+        />
+        <el-button type="primary" @click="refreshData">
+          <el-icon class="mr-1"><i-lucide-refresh-cw /></el-icon>
+          {{ t('api_monitor_refresh') }}
+        </el-button>
+      </div>
+    </template>
+    <div class="grid gap-4 grid-cols-5">
+      <div
+        class="border rounded-xl p-3 top-card cursor-pointer"
+        @click="handleSortApi('requestCount')"
+      >
+        <div class="card-header mb-6">
+          <div class="card-title font-color-light">
+            {{ $t('api_monitor_total_request_count') }}
           </div>
         </div>
-
-        <!--api 排行榜 -->
-        <section class="flex flex-direction mb-5">
-          <section
-            class="rounded-xl bg-card api-monitor-card"
-            style="width: 380px"
+        <div class="card-content font-semibold">
+          <div v-if="requestCount.value !== undefined">
+            <CountUp :end-val="requestCount.value" :duration="0.5" />
+          </div>
+          <div v-else>--</div>
+        </div>
+      </div>
+      <div
+        class="border rounded-xl p-3 top-card cursor-pointer"
+        @click="handleSortApi('errorCount')"
+      >
+        <div class="card-header mb-6">
+          <div class="card-title font-color-light">
+            {{ $t('api_monitor_total_error_count') }}
+          </div>
+        </div>
+        <div class="card-content">
+          <div
+            v-if="errorCount.value !== undefined"
+            class="flex flex-column align-items-start gap-2 font-semibold"
+            :class="{ 'color-danger': errorCount.value > 0 }"
           >
-            <div class="p-5 fw-sub flex align-center gap-2 pb-3">
-              <el-icon size="16" class="color-primary"
-                ><i-lucide-server
-              /></el-icon>
-              {{ $t('api_monitor_server_title') }}
-            </div>
-            <div
-              v-loading="loadingApiServerList"
-              class="p-5 pt-0 flex flex-column gap-3"
+            <CountUp :end-val="errorCount.value" :duration="0.5" />
+            <el-tag
+              v-if="errorCount.errorRate"
+              type="danger"
+              size="small"
+              class="border-0 fw-sub cursor-pointer"
+              @click.stop="handleNavigateToAuditWithError(errorCount)"
+              ><span class="mr-1">{{ $t('api_monitor_error_rate') }}</span
+              >{{ errorCount.errorRate }}</el-tag
             >
-              <div
-                v-for="item in apiServerList"
-                :key="item.processId"
-                class="border rounded-xl p-3 cursor-pointer server-item position-relative flex align-center"
-                @click="handleServerClick(item)"
+          </div>
+          <div v-else>--</div>
+        </div>
+      </div>
+      <!-- <div
+        class="border rounded-xl p-3 top-card cursor-pointer"
+        @click="handleSortApi('errorCount')"
+      >
+        <div class="card-header mb-6">
+          <div class="card-title font-color-light">
+            {{ $t('api_monitor_unhealthy_api_count') }}
+          </div>
+        </div>
+        <div class="card-content font-semibold">
+          <div
+            v-if="notHealthyApiCount.value !== undefined"
+            :class="{ 'color-danger': notHealthyApiCount.value > 0 }"
+          >
+            <CountUp :end-val="notHealthyApiCount.value" :duration="0.5" />
+          </div>
+          <div v-else>--</div>
+        </div>
+      </div> -->
+      <div
+        class="border rounded-xl p-3 top-card cursor-pointer"
+        @click="handleSortApi('responseTimeAvg')"
+      >
+        <div class="card-header mb-6">
+          <div class="card-title font-color-light">
+            {{ $t('api_monitor_avg_response_time') }}
+          </div>
+        </div>
+        <div class="card-content font-semibold">
+          <div
+            v-if="responseTimeAvg.value !== undefined"
+            class="gap-2 flex flex-column align-items-start"
+          >
+            <CountUp
+              :end-val="responseTimeAvg.value"
+              :suffix="responseTimeAvg.unit"
+              :duration="0.5"
+              :decimals="2"
+            />
+            <div class="flex align-center gap-1 flex-wrap">
+              <el-tag
+                v-if="responseTimeAvg.maxDelay !== undefined"
+                size="small"
+                class="is-code fw-sub cursor-pointer"
+                @click.stop="
+                  handleNavigateToAuditWithResponseTime(responseTimeAvg, 'DESC')
+                "
               >
-                <div class="flex-1">
-                  <div class="flex align-center gap-2 mb-2 flex-wrap">
-                    <el-tooltip
-                      v-if="item.pingWarning"
-                      :content="
-                        $t('api_monitor_server_ping_warning', {
-                          val: item.pingWarning,
-                        })
-                      "
-                      placement="bottom"
-                    >
-                      <el-icon class="color-warning"
-                        ><i-lucide-triangle-alert
-                      /></el-icon>
-                    </el-tooltip>
+                <span class="mr-1">Max</span>{{ responseTimeAvg.maxDelay }}
+              </el-tag>
+              <el-tag
+                v-if="responseTimeAvg.minDelay !== undefined"
+                size="small"
+                class="is-code fw-sub cursor-pointer"
+                @click.stop="
+                  handleNavigateToAuditWithResponseTime(responseTimeAvg, 'ASC')
+                "
+              >
+                <span class="mr-1">Min</span>{{ responseTimeAvg.minDelay }}
+              </el-tag>
+            </div>
+          </div>
+          <div v-else>--</div>
+        </div>
+      </div>
+      <div
+        class="border rounded-xl p-3 top-card cursor-pointer"
+        @click="handleSortApi('p95')"
+      >
+        <div class="card-header mb-6">
+          <div class="card-title font-color-light">
+            {{ $t('api_monitor_p95_response_time') }}
+          </div>
+        </div>
+        <div class="card-content font-semibold">
+          <div v-if="p95.value !== undefined">
+            <CountUp
+              :end-val="p95.value"
+              :suffix="p95.unit"
+              :duration="0.5"
+              :decimals="2"
+            />
+          </div>
+          <div v-else>--</div>
+        </div>
+      </div>
+      <div
+        class="border rounded-xl p-3 top-card cursor-pointer"
+        @click="handleSortApi('p99')"
+      >
+        <div class="card-header mb-6">
+          <div class="card-title font-color-light">
+            {{ $t('api_monitor_p99_response_time') }}
+          </div>
+        </div>
+        <div class="card-content font-semibold">
+          <div v-if="p99.value !== undefined">
+            <CountUp
+              :end-val="p99.value"
+              :suffix="p99.unit"
+              :duration="0.5"
+              :decimals="2"
+            />
+          </div>
+          <div v-else>--</div>
+        </div>
+      </div>
+    </div>
 
-                    <div
-                      v-else
-                      class="rounded-pill w-2 h-2"
-                      :class="`${item.status !== 'running' ? 'bg-red-500' : 'bg-green-500'}`"
-                    />
-                    <span>{{ item.name }}</span>
-                    <span
-                      v-if="item.pid"
-                      class="font-mono font-color-light lh-4 border rounded-4 px-1.5 fs-8"
-                      >{{ item.pid }}</span
-                    >
-                  </div>
-                  <div class="flex gap-3">
-                    <div class="flex align-center gap-2">
-                      <el-icon class="color-primary"><i-lucide-cpu /></el-icon>
-                      <span class="text-gray-600">CPU</span>
-                      <span class="fw-sub ml-auto">{{
-                        item.metricValues.cpuUsage
-                      }}</span>
-                    </div>
-                    <div class="flex align-center gap-2">
-                      <el-icon class="color-primary"
-                        ><i-lucide-memory-stick
-                      /></el-icon>
-                      <span class="font-color-sslight">{{
-                        $t('api_monitor_memory')
-                      }}</span>
-                      <span class="fw-sub ml-auto">{{
-                        item.metricValues.heapMemoryUsage
-                      }}</span>
-                    </div>
-                  </div>
-                </div>
-                <el-icon color="var(--icon-n2)" class="">
-                  <!-- <RightBoldOutlined /> -->
-                  <i-lucide-chevron-right />
-                </el-icon>
-                <!-- <div class="flex align-center gap-2 fs-8">
-                  <span class="text-gray-500">PID</span>
-                  <span class="font-mono ml-auto text-gray-700">{{
-                    item.workerPid || '666666'
-                  }}</span>
-                </div> -->
-              </div>
-              <!-- <el-table :data="apiServerList">
-                <el-table-column prop="name" label="服务名称" />
-                <el-table-column prop="metricValues.cpuUsage" label="% CPU" />
-                <el-table-column
-                  prop="metricValues.heapMemoryUsage"
-                  label="内存"
-                />
-              </el-table> -->
-            </div>
-          </section>
-          <div
-            class="flex flex-column flex-1 bg-card api-monitor-table api-monitor-card overflow-hidden ml-5 mr-5 rounded-xl"
-          >
-            <div class="api-monitor-chart__text p-5 pb-2 lh-5">
-              {{ t('api_monitor_total_FailRate') }}
-            </div>
-            <div class="px-4 flex flex-column flex-1">
-              <VTable
-                v-loading="loadingFailRateList"
-                class="h-auto"
-                :has-pagination="false"
-                :data="failRateList"
-                :columns="columns"
-                :default-sort="{ prop: 'failed', order: 'descending' }"
-                @sort-change="handleFailRateOrder"
-              >
-                <template #failed="{ row }">
-                  <span> {{ Math.round(row.failed * 100) }}</span>
-                </template>
-              </VTable>
-              <el-pagination
-                v-model:current-page="page.failRateCurrent"
-                class="my-3 flex-wrap"
-                layout="->, total, prev,pager, next"
-                :page-size="5"
-                :pager-count="5"
-                :total="page.failRateTotal"
-                @current-change="remoteFailedMethod"
-              />
-            </div>
-          </div>
-          <div
-            class="flex flex-column flex-1 bg-card api-monitor-card overflow-hidden rounded-xl"
-          >
-            <div class="api-monitor-chart__text p-5 pb-2 lh-5">
-              {{ t('api_monitor_total_consumingTime') }}
-            </div>
-            <div class="px-4 flex flex-column flex-1">
-              <VTable
-                v-loading="loadingTimeList"
-                background
-                class="h-auto"
-                :has-pagination="false"
-                :data="consumingTimeList"
-                :columns="columnsRT"
-                :default-sort="{ prop: 'failed', order: 'descending' }"
-                @sort-change="handleConsumingTimeOrder"
-              >
-                <template #failed="{ row }: { row: FailRateItem }">
-                  <span>
-                    {{ formatMs(row.failed) }}
-                  </span>
-                </template>
-              </VTable>
-              <el-pagination
-                v-model:current-page="page.consumingTimeCurrent"
-                class="my-3 flex-wrap"
-                layout="->, total, prev,pager, next"
-                :pager-count="5"
-                :page-size="5"
-                :total="page.consumingTimeTotal"
-                @current-change="consumingMethod"
-              />
-            </div>
-          </div>
-        </section>
-        <!--api list -->
-        <section
-          class="flex flex-column bg-card api-monitor-card api-monitor-list__min__height px-5 pt-5 rounded-xl"
+    <el-tabs v-model="currentTab" class="mt-4" @tab-change="runFetch">
+      <el-tab-pane name="server">
+        <template #label>
+          <span> {{ t('api_monitor_tab_server') }} </span>
+        </template>
+      </el-tab-pane>
+      <el-tab-pane name="api">
+        <template #label>
+          <span> {{ t('api_monitor_tab_api') }} </span>
+        </template>
+      </el-tab-pane>
+    </el-tabs>
+
+    <div v-if="currentTab === 'server'">
+      <div class="service-grid">
+        <ServiceCard
+          v-for="item in serverList"
+          :key="item.serverId"
+          :data="item"
+          @view-details="handleViewServiceDetails"
+        />
+      </div>
+    </div>
+
+    <div v-if="currentTab === 'api'">
+      <div class="api-list-table">
+        <el-table
+          ref="tableRef"
+          :data="apiListData.items"
+          style="width: 100%"
+          :default-sort="{ prop: 'requestCount', order: 'descending' }"
+          @row-click="onClickApi"
+          @sort-change="handleSortChange"
         >
-          <header class="api-monitor-chart__text mb-2">
-            {{ t('api_monitor_total_api_list') }}
-          </header>
-          <FilterBar
-            v-model:value="searchParams"
-            class="mb-4"
-            :items="filterItems"
-            @fetch="getApiList(1)"
-          />
-          <el-table
-            ref="table"
-            v-loading="loadingApiList"
-            row-key="id"
-            class="data-flow-list has-border-t"
-            :data="apiList"
-            :default-sort="{ prop: 'createTime', order: 'descending' }"
-            @expand-change="expandChange"
+          <el-table-column
+            :label="t('api_monitor_total_api_list_name')"
+            min-width="200"
+            fixed
           >
-            <el-table-column type="expand" width="45">
-              <template #default="{ row }">
-                <Detail :id="row.id" />
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="name"
-              :label="t('api_monitor_total_api_list_name')"
-            />
-            <el-table-column
-              prop="status"
-              :label="t('api_monitor_total_api_list_status')"
-            >
-              <template #default="{ row }">
-                <span :class="[`status-${row.status}`, 'status-block', 'mr-2']">
-                  {{ getStatusLabel(row.status) }}
-                </span>
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="visitLine"
-              :label="t('api_monitor_total_api_list_visitLine')"
-            />
-            <el-table-column
-              prop="visitCount"
-              :label="t('api_monitor_total_api_list_visitCount')"
-            />
-            <el-table-column
-              prop="transitQuantity"
-              :label="t('api_monitor_total_api_list_transitQuantity')"
-            >
-              <template #default="{ row }">
-                <span>{{ calcUnit(row.transitQuantity, 'b') || '-' }}</span>
-              </template>
-            </el-table-column>
-          </el-table>
-          <el-pagination
-            v-model:current-page="page.apiListCurrent"
-            class="my-3"
-            layout="->, total, prev, pager, next, jumper"
-            :page-size="5"
-            :total="page.apiListTotal"
-            @current-change="getApiList"
-          />
-        </section>
-      </main>
-    </section>
+            <template #default="{ row }">
+              <div class="flex flex-wrap align-center gap-2">
+                <el-link type="primary">
+                  {{ row.apiName }}
+                </el-link>
+                <el-tag
+                  type="info"
+                  class="is-code is-wrap px-1.5 font-mono"
+                  disable-transitions
+                >
+                  {{ row.apiPath }}
+                </el-tag>
+              </div>
+            </template>
+          </el-table-column>
 
-    <ServerDetails v-model="serverDetailsVisible" :server="serverDetails" />
+          <el-table-column
+            :label="t('api_monitor_total_request_count')"
+            prop="requestCount"
+            width="120"
+            sortable="custom"
+          />
+          <el-table-column
+            :label="t('api_monitor_error_count')"
+            prop="errorCount"
+            width="130"
+            sortable="custom"
+          >
+            <template #default="{ row }">
+              <span
+                v-if="row.errorCount > 0"
+                class="color-danger cursor-pointer is-external-link flex align-center gap-1 flex-wrap"
+                @click.stop="handleNavigateToAuditWithError(row)"
+              >
+                {{ row.errorCount }}
+                ({{ row.errorRate }})
+                <el-icon>
+                  <i-lucide-external-link />
+                </el-icon>
+              </span>
+              <span v-else-if="row.errorCount === 0">0 </span>
+              <span v-else> -- </span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            :label="t('api_monitor_avg_response_time')"
+            prop="responseTimeAvg"
+            width="140"
+            sortable="custom"
+          >
+            <template #default="{ row }">
+              {{ row.responseTimeAvg ?? '--' }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            :label="t('api_monitor_max_response_time')"
+            prop="maxDelay"
+            width="100"
+            sortable="custom"
+          >
+            <template #default="{ row }">
+              <span
+                v-if="row.maxDelay !== undefined"
+                class="is-external-link cursor-pointer flex align-center gap-1"
+                @click.stop="handleNavigateToAuditWithResponseTime(row, 'DESC')"
+              >
+                {{ row.maxDelay }}
+                <el-icon>
+                  <i-lucide-external-link />
+                </el-icon>
+              </span>
+              <span v-else>--</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            :label="t('api_monitor_min_response_time')"
+            prop="minDelay"
+            width="100"
+            sortable="custom"
+          >
+            <template #default="{ row }">
+              <span
+                v-if="row.minDelay !== undefined"
+                class="is-external-link cursor-pointer flex align-center gap-1"
+                @click.stop="handleNavigateToAuditWithResponseTime(row, 'ASC')"
+              >
+                {{ row.minDelay }}
+                <el-icon>
+                  <i-lucide-external-link />
+                </el-icon>
+              </span>
+              <span v-else>--</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            :label="t('api_monitor_p95_response_time')"
+            prop="p95"
+            width="100"
+            sortable="custom"
+          >
+            <template #default="{ row }">
+              <span>
+                {{ row.p95 ?? '--' }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            :label="t('api_monitor_p99_response_time')"
+            prop="p99"
+            width="100"
+            sortable="custom"
+          >
+            <template #default="{ row }">
+              <span>
+                {{ row.p99 ?? '--' }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            :label="t('api_monitor_throughput')"
+            prop="totalRps"
+            width="126"
+            sortable="custom"
+          >
+            <template #default="{ row }">
+              {{ row.totalRps }}
+            </template>
+          </el-table-column>
+        </el-table>
+
+        <!-- API 列表分页 -->
+        <el-pagination
+          v-model:current-page="apiListPage"
+          v-model:page-size="apiListPageSize"
+          class="mt-4"
+          :total="apiListTotal"
+          :page-sizes="[10, 20, 50, 100]"
+          layout="->,total, prev, pager, next, sizes"
+        />
+      </div>
+    </div>
   </PageContainer>
 </template>
 
 <style lang="scss" scoped>
+.card-content {
+  font-size: 2rem;
+}
 .api-monitor-wrap {
   display: flex;
   -ms-flex: 1;
@@ -917,10 +757,87 @@ onUnmounted(() => {
   }
 }
 
+// 自定义时间选择器样式
+.custom-time-picker {
+  padding: 10px 0;
+
+  .text-gray-500 {
+    color: var(--el-text-color-secondary);
+    display: flex;
+    align-items: center;
+  }
+}
+
 .server-item {
   min-width: 300px;
   &:hover:not(.border-warning) {
     border: 1px solid var(--el-color-primary) !important;
+  }
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.api-list-table {
+  // :deep(.el-table) {
+  //   border-radius: 8px;
+  //   overflow: hidden;
+  // }
+
+  // :deep(.el-table__header) {
+  //   th {
+  //     background-color: var(--el-fill-color-light);
+  //     font-weight: 600;
+  //     font-size: 12px;
+  //     color: var(--el-text-color-secondary);
+  //     text-transform: uppercase;
+  //   }
+  // }
+
+  .method-tag {
+    font-weight: 600;
+    min-width: 60px;
+    text-align: center;
+  }
+
+  .text-blue-600 {
+    color: #2563eb;
+    font-family: monospace;
+  }
+
+  .text-orange-500 {
+    color: #f97316;
+    font-weight: 600;
+  }
+
+  .text-red-500 {
+    color: #ef4444;
+    font-weight: 600;
+  }
+}
+.top-card {
+  transition: all 0.3s ease;
+  &:hover {
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+  }
+}
+.is-external-link {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: currentColor;
+  &:hover {
+    text-decoration-style: solid;
   }
 }
 </style>

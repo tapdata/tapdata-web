@@ -252,7 +252,7 @@ export default {
   packages_business_dataFlow_button_reset: '重置',
   packages_business_connection_type_source: '源头',
   packages_business_connection_type_target: '目标',
-  packages_business_connection_type_source_and_target: '源头和目标',
+  packages_business_connection_type_source_and_target: '源和目标',
   packages_business_task_preview_status_error: '错误',
   packages_business_task_preview_status_edit: '编辑中',
   packages_business_task_preview_status_wait_run: '启动中',
@@ -613,6 +613,10 @@ export default {
   packages_business_task_status_agent_tooltip_agent: '任务所在的引擎为',
   packages_business_task_status_retrying_tooltip:
     '当前任务正在重试中，重试开始时间：{val}',
+  packages_business_task_status_increment_delay_warning:
+    '当前任务最大延迟为 {delay}，已超过阈值 {threshold}',
+  packages_business_task_status_heartbeat_task_abnormal:
+    '心跳任务异常，请检查并恢复',
   packages_business_select_placeholder: '请添加或选择',
   packages_business_verification_form_youjiantongzhi: '邮件通知',
   packages_business_verification_form_xitongtongzhi: '系统通知',
@@ -675,6 +679,8 @@ export default {
     '当任务遇到错误时',
   packages_business_setting_alarmnotification_dangrenwustop: 'Agent服务停止时',
   packages_business_setting_alarmnotification_dangrenwuuP: 'Agent服务启动时',
+  packages_business_setting_alarmnotification_dangyinqinglixian: '当引擎停止时',
+  packages_business_setting_alarmnotification_dangyinqinghuifu: '当引擎启动时',
   packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn:
     '当APIServer工作进程每分钟请求延时P50超过阈值时',
   packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn:
@@ -777,6 +783,14 @@ export default {
   packages_business_milestone_list_haoshi: '耗时',
   packages_business_milestone_list_guanjianbuzhou: '关键步骤',
   packages_business_nodes_list_laiyuan: '来源',
+  packages_business_api_server_p95_warn:
+    '当任一API Server 请求耗时P95超过告警阈值时',
+  packages_business_api_server_p99_warn:
+    '当任一API Server 请求耗时P99超过告警阈值时',
+  packages_business_api_server_error_rate_warn:
+    '当任一API Server 请求错误率超过告警阈值时',
+  packages_business_task_source_no_incremental_event:
+    '当源端已开启心跳表，连续 60 秒未接收到增量事件时',
   //表详情
   daas_data_discovery_previewdrawer_qingshurumingcheng: '请输入名称',
   daas_data_discovery_previewdrawer_jiedian: '节点',
@@ -920,6 +934,9 @@ export default {
   packages_business_data_server_drawer_zanwumiaoshu: '暂无描述',
   packages_business_data_server_drawer_tiaoshi: '调试',
   packages_business_data_server_drawer_peizhi: '配置',
+  packages_business_data_server_drawer_refresh_fields: '刷新字段',
+  packages_business_data_server_add_field: '添加字段',
+  packages_business_data_server_add_sub_field: '添加子字段',
   packages_business_data_server_drawer_chuangjianfuwu: '创建服务',
   packages_business_data_server_drawer_fuwuxiangqing: '服务详情',
   packages_business_data_server_list_quedingchexiaogai: '确定撤销该服务？',
@@ -1197,6 +1214,9 @@ export default {
   packages_business_tiaoshi: '调试',
   packages_business_peizhi: '配置',
   packages_business_chuangjianfuwu: '创建服务',
+  packages_business_copy_server: '复制服务',
+  packages_business_import_server: '导入服务',
+  packages_business_export_server: '导出服务',
   packages_business_fuwuxiangqing: '服务详情',
   packages_business_geshicuowu: '格式错误',
   packages_business_validate:
@@ -1297,6 +1317,31 @@ export default {
   packages_business_components_conditionbox_mubiaobiaoshuju: '目标表数据过滤',
   packages_business_components_conditionbox_enableCustomCommand_tip:
     '需要保证查询条件有索引，如果没索引会产生全表扫描导致数据库压力变大',
+  packages_business_components_conditionbox_advanced_verification_doc: `##### 高级校验说明
+**第一步** 函数入参为源表数据，可以根据源表数据调用**内置函数**查询出目标数据<br>
+**第二步** 自定义校验逻辑<br>
+**第三步** 函数返回结果<br>
+
+- **result**：是否通过校验（passed：校验通过，failed：校验失败），如果不填或填其它字符则校验失败，必填项<br>
+- **message**：校验异常信息，建议校验失败返回，选填项<br>
+- **data**：当前校验目标数据，建议校验失败返回，选填项<br>
+
+
+完整示例：此为MongoDB查询示例
+\`\`\`javascript
+function validate(sourceRow){'{'}
+  // 第1步
+  var targetRow = target.executeQuery({'{'}database: "target",collection: "USER",filter: {'{'}USER_ID: sourceRow.USER_ID{'}}'});
+  // 第2步
+  if(sourceRow.USER_ID === targetRow[0].USER_ID){'{'}
+    // 第3步
+    return {'{'}result: 'passed',message: "",data: ""{'}'}
+  {'}'}else{'{'}
+    return {'{'}result: 'failed',message: "记录不一致",data: targetRow{'}'}
+  {'}'}
+{'}'}
+\`\`\`
+`,
   packages_business_data_server_list_apIwendang: 'API文档导出',
   packages_business_verification_form_gaojipeizhi: '高级配置',
   packages_business_verification_form_validate_table_is_empty:
@@ -1484,6 +1529,9 @@ export default {
     '点击变量名称插入到模板中',
   packages_business_ignoreTimePrecision_round: '四舍五入',
   packages_business_ignoreTimePrecision_truncate: '截断',
+  packages_business_treatEmptyStringAsNull: '空字符串视为 NULL',
+  packages_business_treatEmptyStringAsNull_tip: `<p>开启后，源端和目标端在字段校验时，空字符串（""）将被视为与 NULL 相等。</p>
+<p>适用于目标端为 Oracle 等会自动把空字符串转换为 NULL 的数据库，避免因数据库语义差异导致的字段不一致误报。</p>`,
   packages_business_validation_task_type: '校验任务类型',
   packages_business_select_task_to_be_verified: '选择被校验的任务',
   packages_business_drag_file_here:
@@ -1536,14 +1584,26 @@ export default {
   packages_business_monitor_cron: '监控周期',
   packages_business_monitor_cron_tip: `语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 ? 年 *\n举例：0 */1 * * * ? 每分钟运行一次 0 0 2 * * ? 每天2点运行`,
   packages_business_datasource_monitor_alter: '数据源监控告警',
+  packages_business_task_ddl_warning: '任务风险DDL告警',
   packages_business_import_mode: '同名处理方式',
   packages_business_import_as_copy: '以副本导入',
   packages_business_import_replace: '覆盖导入',
   packages_business_import_cancel_import: '取消导入',
+  packages_business_import_reuse_existing: '复用现有连接导入',
   packages_business_import_as_copy_tip:
-    '若任务名或数据源名冲突，会在名称后加 _import 后缀导入为新副本。',
+    '若任务名或连接名冲突，会在名称后加 _import 后缀导入为新副本。',
   packages_business_import_replace_tip:
-    '若任务名或数据源名冲突，将覆盖系统中已有的任务或数据源。',
+    '若任务名或连接名冲突，将覆盖系统中已有的任务或连接。',
   packages_business_import_cancel_import_tip:
-    '若任务名或数据源名冲突，则终止导入操作，不导入任何内容。',
+    '若任务名或连接名冲突，则终止导入操作，不导入任何内容。',
+  packages_business_import_reuse_existing_tip:
+    '若任务名冲突则替换任务，连接名冲突则复用系统中已有连接。',
+  public_connector_beta_tip: '正在测试阶段，我们正在不断优化体验',
+  public_connector_alpha_tip: '正在持续开发中，部分功能可能还在完善',
+  packages_business_column_setting: '显示设置',
+  packages_business_column_reset: '重置',
+  packages_business_api_server_connection_pool_deficiency_warn:
+    '当任一API Server 连接池资源紧张触发告警阈值时',
+  packages_business_api_server_connection_pool_idle_warn:
+    '当任一API Server 连接池连接数低于告警阈值时',
 }

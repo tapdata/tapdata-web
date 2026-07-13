@@ -56,8 +56,13 @@ export default {
     this.init()
   },
   methods: {
-    handleNotify() {
-      this.$router.push({ name: 'notification' })
+    handleViewMore() {
+      const routeMap = {
+        system: { name: 'systemNotification' },
+        alarm: { name: 'systemAlarm' },
+        user: { name: 'userNotification' },
+      }
+      this.$router.push(routeMap[this.activeTab])
     },
     init() {
       const msg = {
@@ -251,32 +256,9 @@ export default {
       class="notification-popover-wrap"
       @tab-change="tabHandler"
     >
-      <ElButton
-        v-if="activeTab === 'system'"
-        text
-        type="primary"
-        @click="handleNotify"
-        >{{ $t('notify_view_all_notify') }}</ElButton
-      >
-      <ElButton
-        v-if="activeTab === 'alarm'"
-        text
-        type="primary"
-        @click="
-          $router.push({
-            name: 'alarmNotification',
-            query: { type: 'alarmNotice' },
-          })
-        "
-        >{{ $t('notify_view_more') }}</ElButton
-      >
-      <ElButton
-        v-if="activeTab === 'user'"
-        text
-        type="primary"
-        @click="$router.push({ name: 'notification', query: { type: 'user' } })"
-        >{{ $t('notify_view_more') }}</ElButton
-      >
+      <ElButton text type="primary" @click="handleViewMore">{{
+        $t('notify_view_more')
+      }}</ElButton>
       <el-tab-pane class="tab-item" name="system">
         <template #label>
           <span>{{ $t('notify_system_notice') }}</span>
@@ -347,7 +329,7 @@ export default {
       </el-tab-pane>
       <el-tab-pane v-loading="loading" class="tab-item" name="user">
         <template #label>
-          <span>{{ $t('notify_user_notice') }}</span>
+          <span>{{ $t('daas_notification_center_yonghucaozuo') }}</span>
         </template>
         <div class="tab-item-container">
           <ul v-if="userOperations.length" class="tab-list notification-list">
@@ -503,7 +485,7 @@ export default {
           border-radius: 50%;
         }
         &:hover {
-          background-color: #ecf5ff;
+          background-color: var(--el-fill-color-light);
         }
         &:last-child {
           border: none;

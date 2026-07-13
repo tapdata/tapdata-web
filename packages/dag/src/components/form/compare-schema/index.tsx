@@ -7,18 +7,18 @@ import { dayjs } from '@tap/business/src/shared/dayjs'
 import { useForm } from '@tap/form'
 import { useI18n } from '@tap/i18n'
 import { computed, defineComponent, ref, watch } from 'vue'
-import { useStore } from 'vuex'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 import CompareResultDialog from '../field-inference/CompareResultDialog.vue'
 
 const CompareSchema = defineComponent({
   setup() {
-    const store = useStore()
+    const store = useDataflowStore()
     const { t } = useI18n()
 
     const formRef = useForm()
     const form = formRef.value
     const nodeId = form.values.id
-    const taskId = store.state.dataflow.taskId
+    const taskId = store.dataflow.id
     const dialogOpen = ref(false)
     const compareResultStatistics = ref<CompareResultStatistics | null>(null)
     const singleTable = form.values.type === 'table'
@@ -27,9 +27,10 @@ const CompareSchema = defineComponent({
     const applyCompareRules = applyCompareRule
       ? form.values.applyCompareRules
       : []
+    const ignoreCase = ref(form.values.compareIgnoreCase)
 
     const taskSaving = computed(() => {
-      return store.state.dataflow.taskSaving
+      return store.dataflow.taskSaving
     })
 
     const fetchCompareResultStatistics = async () => {
@@ -40,7 +41,12 @@ const CompareSchema = defineComponent({
       compareResultStatistics.value = res
     }
 
-    fetchCompareResultStatistics()
+    if (applyCompareRule === undefined) {
+      // 旧任务 applyCompareRule === false, 不影响已有任务
+      handleChangeRules(['Different', 'Precision'])
+    } else {
+      fetchCompareResultStatistics()
+    }
 
     const openCompareResult = () => {
       dialogOpen.value = true
@@ -67,7 +73,10 @@ const CompareSchema = defineComponent({
 
       const details = []
       const total =
-        (map.CannotWrite || 0) + (map.Missing || 0) + (map.Different || 0)
+        (map.CannotWrite || 0) +
+        (map.Missing || 0) +
+        (map.Different || 0) +
+        (map.PrimaryKeyInconsistency || 0)
       const resolved =
         (map.CannotWriteApply || 0) +
         (map.MissingApply || 0) +
@@ -135,20 +144,31 @@ const CompareSchema = defineComponent({
         )
       }
 
+      if (map.PrimaryKeyInconsistency) {
+        details.push(
+          t('packages_dag_compare_result_detail_primary_key_inconsistency', {
+            primaryKeyInconsistency: map.PrimaryKeyInconsistency,
+          }),
+        )
+      }
+
       return {
         type,
         title: t('packages_dag_compare_result_alert', {
           time1,
           time2,
-          result: t('packages_dag_compare_result_with_diff', {
-            count: total,
-            details: `(${details.join(',')})`,
-          }),
+          result:
+            details.length > 1
+              ? t('packages_dag_compare_result_with_diff', {
+                  count: total,
+                  details: `(${details.join(',')})`,
+                })
+              : details[0],
         }),
       }
     })
 
-    const afterTaskSaved = () => {
+    function afterTaskSaved() {
       return new Promise((resolve) => {
         setTimeout(() => {
           if (taskSaving.value) {
@@ -163,7 +183,7 @@ const CompareSchema = defineComponent({
       })
     }
 
-    const handleChangeRules = async (value: string[]) => {
+    async function handleChangeRules(value: string[]) {
       const handler = action.bound((applyCompareRule, applyCompareRules) => {
         form.setValuesIn('applyCompareRule', applyCompareRule)
         form.setValuesIn('applyCompareRules', applyCompareRules)
@@ -206,110 +226,26 @@ const CompareSchema = defineComponent({
       )
     }
 
+    const handleIgnoreCaseChange = (value: boolean) => {
+      ignoreCase.value = value
+      form.setValuesIn('compareIgnoreCase', value)
+    }
+
     return () => {
       return (
         compareResultStatistics.value && (
           <div class="flex flex-column gap-2 my-2">
             {renderAlert()}
-            {/* <el-alert
-            type="info"
-            show-icon
-            closable={false}
-            class="fit-content"
-            v-slots={{
-              title: () => (
-                <div class="flex align-center gap-2">
-                  <span>1 小时前对比数据库模型无差异</span>
-                  <el-button
-                    type="primary"
-                    text
-                    class="ml-auto"
-                    onClick={openCompareResult}
-                  >
-                    查看
-                  </el-button>
-                </div>
-              ),
-            }}
-          ></el-alert>
-          <el-alert
-            type="info"
-            show-icon
-            closable={false}
-            class="fit-content"
-            v-slots={{
-              title: () => (
-                <div class="flex align-center gap-2">
-                  <span>2 小时前未找到数据库模型，暂未进行对比</span>
-                  <el-button
-                    type="primary"
-                    text
-                    class="ml-auto"
-                    onClick={openCompareResult}
-                  >
-                    查看
-                  </el-button>
-                </div>
-              ),
-            }}
-          ></el-alert>
-          <el-alert
-            type="info"
-            show-icon
-            closable={false}
-            class="fit-content"
-            v-slots={{
-              title: () => (
-                <div class="flex align-center gap-2">
-                  <span>
-                    5 分钟前对比数据库模型，发现 6 个字段差异（1 个只读，5
-                    个缺失），已处理
-                  </span>
-                  <el-button
-                    type="primary"
-                    text
-                    class="ml-auto"
-                    onClick={openCompareResult}
-                  >
-                    查看
-                  </el-button>
-                </div>
-              ),
-            }}
-          />
-          <el-alert
-            type="warning"
-            show-icon
-            closable={false}
-            class="fit-content"
-            v-slots={{
-              title: () => (
-                <div class="flex align-center gap-2">
-                  <span>
-                    5 分钟前对比数据库模型，发现 6 个字段差异（1 个只读，5
-                    个缺失）
-                  </span>
-                  <el-button
-                    type="primary"
-                    text
-                    class="ml-auto"
-                    onClick={openCompareResult}
-                  >
-                    查看
-                  </el-button>
-                </div>
-              ),
-            }}
-          /> */}
-
             <CompareResultDialog
               v-model={dialogOpen.value}
               nodeId={nodeId}
               singleTable={singleTable}
               rules={applyCompareRules}
+              ignoreCase={ignoreCase.value}
               onLoadSchema={handleLoadSchema}
               onChangeRules={handleChangeRules}
               onClose={fetchCompareResultStatistics}
+              onUpdate:ignoreCase={handleIgnoreCaseChange}
             />
           </div>
         )

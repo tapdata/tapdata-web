@@ -19,6 +19,11 @@ export default {
           value: 0,
         },
         {
+          label: this.$t('apiaudit_total_records'),
+          key: 'totalRows',
+          value: 0,
+        },
+        {
           label: this.$t('apiaudit_average_access_rate'),
           key: 'speed',
           value: 0,
@@ -26,7 +31,7 @@ export default {
         { label: this.$t('apiaudit_access_time'), key: 'latency', value: 0 },
         {
           label: this.$t('apiaudit_average_response_time'),
-          key: 'averResponseTime',
+          key: 'dataQueryTotalTime',
           value: 0,
         },
       ],
@@ -144,7 +149,7 @@ export default {
         >
         <ElCol class="font-color-normal" :span="12"
           ><span class="font-text">{{ $t('apiaudit_interview_time') }}:</span>
-          <span class="fw-sub"> {{ auditData.createAt }}</span></ElCol
+          <span class="fw-sub"> {{ auditData.reqTime }}</span></ElCol
         >
       </ElRow>
     </div>
@@ -160,7 +165,7 @@ export default {
             <div
               v-if="
                 item.value > 0 &&
-                ['latency', 'averResponseTime'].includes(item.key)
+                ['latency', 'dataQueryTotalTime'].includes(item.key)
               "
               class="link-primary pt-4 din-font details-box-item-num"
             >

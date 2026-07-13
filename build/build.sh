@@ -23,6 +23,9 @@ sed -i.bak "s|DAAS_BUILD_NUMBER|$DAAS_BUILD_NUMBER|g" $base/apps/$app/.env
 
 echo "pnpm build:$app --dest $dist --mode $mode"
 
+npm set registry https://registry.npmmirror.com/
+pnpm set registry https://registry.npmmirror.com/
+
 npm i -g corepack@latest
 
 corepack enable

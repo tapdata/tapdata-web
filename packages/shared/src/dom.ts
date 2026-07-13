@@ -78,3 +78,18 @@ function insertHtml(el, html, func = 'appendChild') {
   fragment = null
   return _nodes.length > 1 ? nodes : _nodes[0]
 }
+
+export function isOutsideSelected(el: HTMLElement | null) {
+  const selection = document.getSelection()
+
+  if (!selection?.anchorNode || !selection.focusNode || !el) {
+    return false
+  }
+
+  return (
+    !el.contains(selection.anchorNode) &&
+    !el.contains(selection.focusNode) &&
+    (selection.anchorNode !== selection.focusNode ||
+      selection.anchorOffset !== selection.focusOffset)
+  )
+}

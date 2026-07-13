@@ -42,7 +42,7 @@ const changeTheme = (mode: 'light' | 'dark' | 'auto') => {
     ]
     const animate = document.documentElement.animate(
       {
-        clipPath: state.value === 'dark' ? clipPath.toReversed() : clipPath,
+        clipPath: state.value === 'dark' ? [...clipPath].reverse() : clipPath,
       },
       {
         duration: 450,
@@ -127,7 +127,7 @@ watch(state, (newVal) => {
           command="light"
         >
           <el-icon><i-lucide-sun /></el-icon>
-          <span>浅色</span>
+          <span>{{ $t('public_light') }}</span>
         </ElDropdownItem>
         <ElDropdownItem
           class="gap-2 pr-2"
@@ -135,7 +135,7 @@ watch(state, (newVal) => {
           command="dark"
         >
           <el-icon><i-lucide-moon /></el-icon>
-          <span>深色</span>
+          <span>{{ $t('public_dark') }}</span>
         </ElDropdownItem>
         <ElDropdownItem
           class="gap-2 pr-2"
@@ -143,7 +143,7 @@ watch(state, (newVal) => {
           command="auto"
         >
           <el-icon><i-lucide-monitor /></el-icon>
-          <span>跟随系统</span>
+          <span>{{ $t('public_follow_system') }}</span>
         </ElDropdownItem>
       </ElDropdownMenu>
     </template>

@@ -4,6 +4,7 @@ import {
   autoInspectResultsGroupByTable,
   getAutoInspectResults,
 } from '@tap/api/src/core/task'
+import { withPassive } from '@tap/api/src/request'
 import { VTable } from '@tap/component/src/base/v-table'
 import i18n from '@tap/i18n'
 import { delayTrigger } from '@tap/shared'
@@ -69,11 +70,13 @@ export default {
     this.init()
     //轮询结果
     this.timeout = setInterval(() => {
-      this.getCheckingStatus((flag) => {
-        if (!flag) {
-          this.$refs.table.fetch?.(null, 0, true)
-        }
-      })
+      withPassive(() =>
+        this.getCheckingStatus((flag) => {
+          if (!flag) {
+            this.$refs.table.fetch?.(null, 0, true)
+          }
+        }),
+      )
     }, 5000)
   },
   unmounted() {

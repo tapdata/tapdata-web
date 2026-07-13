@@ -1,4 +1,4 @@
-<script>
+<script setup lang="ts">
 import {
   API_SERVER_BASE_URL,
   createApiServer,
@@ -8,228 +8,170 @@ import {
 } from '@tap/api/src/core/api-server'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
-import { FilterBar } from '@tap/component/src/filter-bar'
+import { useHas } from '@tap/business/src/composables'
+import i18n from '@tap/i18n'
 import Cookie from '@tap/shared/src/cookie'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { escapeRegExp } from 'lodash-es'
-import { h } from 'vue'
+import { h, nextTick, reactive, ref } from 'vue'
 
-export default {
-  name: 'ApiServer',
-  components: {
-    PageContainer,
-    TablePage,
-    FilterBar,
-  },
-  data() {
-    return {
-      searchParams: {
-        keyword: '',
-      },
-      filterItems: [],
-      order: 'clientName DESC',
-      createDialogVisible: false,
-      createForm: {
-        processId: '',
-        clientName: '',
-        clientURI: '',
-      },
-      createFormConfig: {
-        form: {
-          labelPosition: 'top',
-          labelWidth: '180px',
-        },
-        items: [
-          {
-            type: 'input',
-            label: this.$t('api_server_process_id'),
-            field: 'processId',
-            show: true,
-            required: true,
-          },
-          {
-            type: 'input',
-            label: this.$t('api_server_client_name'),
-            field: 'clientName',
-            show: true,
-            required: true,
-            maxlength: 100,
-            showWordLimit: true,
-          },
-          {
-            type: 'input',
-            label: this.$t('api_server_client_uri'),
-            field: 'clientURI',
-            placeholder: `${this.$t('api_server_client_uri')}(http://127.0.0.1:3080)`,
-            show: true,
-            required: true,
-            maxlength: 200,
-            showWordLimit: true,
-          },
-        ],
-        rules: {
-          processId: [
-            {
-              required: true,
-              message: `${this.$t('api_server_process_id')} ${this.$t(
-                'public_form_not_empty',
-              )}`,
-              trigger: 'blur',
-            },
-          ],
-          clientName: [
-            {
-              required: true,
-              message: `${this.$t('api_server_client_name')} ${this.$t(
-                'public_form_not_empty',
-              )}`,
-              trigger: 'blur',
-            },
-          ],
-          clientURI: [
-            {
-              required: true,
-              message: `${this.$t('api_server_client_uri')} ${this.$t(
-                'public_form_not_empty',
-              )}`,
-              trigger: 'blur',
-            },
-          ],
-        },
-      },
+const spacer = h(ElDivider, { direction: 'vertical', class: 'mx-1' })
+
+const { t } = i18n.global
+const $has = useHas()
+
+interface CreateForm {
+  id?: string
+  processId: string
+  clientName: string
+  clientURI: string
+}
+
+const table = ref()
+const formRef = ref()
+const searchParams = ref({
+  keyword: '',
+})
+const order = ref('clientName DESC')
+const createDialogVisible = ref(false)
+const createForm = reactive<CreateForm>({
+  processId: '',
+  clientName: '',
+  clientURI: '',
+})
+
+const createFormRules = {
+  processId: [
+    {
+      required: true,
+      message: `${t('api_server_process_id')} ${t('public_form_not_empty')}`,
+      trigger: 'blur',
+    },
+  ],
+  clientName: [
+    {
+      required: true,
+      message: `${t('api_server_client_name')} ${t('public_form_not_empty')}`,
+      trigger: 'blur',
+    },
+  ],
+  clientURI: [
+    {
+      required: true,
+      message: `${t('api_server_client_uri')} ${t('public_form_not_empty')}`,
+      trigger: 'blur',
+    },
+  ],
+}
+
+// 自动生成唯一标识
+const generatorSecret = () => {
+  const S4 = () => {
+    return (((1 + Math.random()) * 0x40000) | 0).toString(16).slice(1)
+  }
+  const NewGuid = () => {
+    return S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4()
+  }
+  return NewGuid()
+}
+
+// 创建
+const openCreateDialog = () => {
+  createDialogVisible.value = true
+  nextTick(() => {
+    formRef.value?.clearValidate()
+  })
+  Object.assign(createForm, {
+    id: undefined as string | undefined,
+    processId: generatorSecret(),
+    clientName: '',
+    clientURI: '',
+  })
+}
+
+// 编辑
+const edit = (item: Record<string, any>) => {
+  createDialogVisible.value = true
+  nextTick(() => {
+    formRef.value?.clearValidate()
+  })
+  Object.assign(createForm, item)
+}
+
+// 移除
+const remove = (item: Record<string, any>) => {
+  const message = h('p', [
+    `${t('public_message_delete_confirm')} ${item.clientName}`,
+  ])
+  ElMessageBox.confirm(message).then(() => {
+    deleteApiServer(item.id).then(() => {
+      ElMessage.success(t('public_message_delete_ok'))
+      table.value?.fetch()
+    })
+  })
+}
+
+// 下载api配置文件
+const downloadConfig = (item: Record<string, any>) => {
+  const token = Cookie.get('access_token')
+  window.open(
+    `${API_SERVER_BASE_URL}/download/${item.id}?access_token=${token}`,
+    '_blank',
+  )
+}
+
+// 保存
+const createServer = () => {
+  const params = createForm
+  formRef.value?.validate((valid: boolean) => {
+    if (valid) {
+      const apiCall = createForm.id
+        ? updateApiServer(createForm.id, params)
+        : createApiServer(params)
+
+      apiCall.then(() => {
+        table.value?.fetch()
+        createDialogVisible.value = false
+        ElMessage.success(t('public_message_save_ok'))
+      })
     }
-  },
-  computed: {
-    table() {
-      return this.$refs.table
-    },
-  },
-  created() {
-    this.getFilterItems()
-  },
-  methods: {
-    // 重置查询条件
-    reset(name) {
-      if (name === 'reset') {
-        this.searchParams = {
-          keyword: '',
-        }
-      }
-      this.table.fetch(1)
-    },
-    // 创建
-    openCreateDialog() {
-      this.createDialogVisible = true
-      this.$nextTick(() => {
-        this.$refs.form.clearValidate()
-      })
-      this.createForm = {
-        processId: this.generatorSecret(),
-        clientName: '',
-        clientURI: '',
-      }
-    },
-    // 编辑
-    edit(item) {
-      this.createDialogVisible = true
-      this.$nextTick(() => {
-        this.$refs.form.clearValidate()
-      })
-      Object.assign(this.createForm, item)
-    },
-    // 移除
-    remove(item) {
-      const message = h('p', [
-        `${this.$t('public_message_delete_confirm')} ${item.clientName}`,
-      ])
-      this.$confirm(message).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        deleteApiServer(item.id).then(() => {
-          this.$message.success(this.$t('public_message_delete_ok'))
-          this.table.fetch()
-        })
-      })
-    },
+  })
+}
 
-    // 下载api配置文件
-    downloadConfig(item) {
-      const token = Cookie.get('access_token')
-      window.open(
-        `${API_SERVER_BASE_URL}/download/${item.id}?access_token=${token}`,
-        '_blank',
-      )
-    },
+// 获取数据
+const getData = ({ page }: { page: { current: number; size: number } }) => {
+  const { current, size } = page
+  const { keyword } = searchParams.value
+  const where: Record<string, any> = {}
+  if (keyword && keyword.trim()) {
+    const filterObj = { like: escapeRegExp(keyword), options: 'i' }
+    where.or = [{ clientName: filterObj }]
+  }
 
-    // 保存
-    createServer() {
-      const params = this.createForm
-      this.$refs.form.validate((valid) => {
-        if (valid) {
-          const apiCall = this.createForm.id
-            ? updateApiServer(this.createForm.id, params)
-            : createApiServer(params)
+  const filter = {
+    order: order.value,
+    limit: size,
+    skip: (current - 1) * size,
+    where,
+  }
+  return fetchApiServers(filter).then((data) => {
+    return {
+      total: data?.total || 0,
+      data: data?.items || [],
+    }
+  })
+}
 
-          apiCall.then(() => {
-            this.table.fetch()
-            this.createDialogVisible = false
-            this.$message.success(this.$t('public_message_save_ok'))
-          })
-          // .catch(() => {
-          // })
-        }
-      })
-    },
-
-    // 自动生成唯一标识
-    generatorSecret() {
-      const S4 = function () {
-        return (((1 + Math.random()) * 0x40000) | 0).toString(16).slice(1)
-      }
-      const NewGuid = function () {
-        return S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4()
-      }
-      return NewGuid()
-    },
-    // 获取数据
-    getData({ page }) {
-      const { current, size } = page
-      const { keyword } = this.searchParams
-      const where = {}
-      if (keyword && keyword.trim()) {
-        const filterObj = { like: escapeRegExp(keyword), options: 'i' }
-        where.or = [{ clientName: filterObj }]
-      }
-
-      const filter = {
-        order: this.order,
-        limit: size,
-        skip: (current - 1) * size,
-        where,
-      }
-      return fetchApiServers(filter).then((data) => {
-        return {
-          total: data?.total || 0,
-          data: data?.items || [],
-        }
-      })
-    },
-
-    // 表格排序
-    handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'clientName'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
-      this.table.fetch(1)
-    },
-    getFilterItems() {
-      this.filterItems = [
-        {
-          placeholder: this.$t('public_name'),
-          key: 'keyword',
-          type: 'input',
-        },
-      ]
-    },
-  },
+// 表格排序
+const handleSortTable = ({
+  order: sortOrder,
+  prop,
+}: {
+  order: string
+  prop: string
+}) => {
+  order.value = `${sortOrder ? prop : 'clientName'} ${sortOrder === 'ascending' ? 'ASC' : 'DESC'}`
+  table.value?.fetch(1)
 }
 </script>
 
@@ -237,7 +179,7 @@ export default {
   <PageContainer>
     <template #actions>
       <el-button
-        v-readonlybtn="'API_creation'"
+        v-if="$has('v2_api-servers_creation')"
         type="primary"
         class="btn btn-create"
         @click="openCreateDialog"
@@ -255,16 +197,6 @@ export default {
       :remote-method="getData"
       @sort-change="handleSortTable"
     >
-      <template #search>
-        <div class="search-bar">
-          <FilterBar
-            v-model:value="searchParams"
-            :items="filterItems"
-            @fetch="table.fetch(1)"
-          />
-        </div>
-      </template>
-
       <el-table-column
         :label="$t('api_server_user')"
         :show-overflow-tooltip="true"
@@ -299,38 +231,35 @@ export default {
         width="200"
         fixed="right"
       >
-        <template #default="scope">
-          <el-button
-            v-readonlybtn="'API_clients_amangement'"
-            text
-            type="primary"
-            @click="edit(scope.row)"
-          >
-            {{ $t('public_button_edit') }}
-          </el-button>
-          <ElDivider class="mx-1" direction="vertical" />
-          <el-button
-            v-readonlybtn="'API_clients_amangement'"
-            text
-            type="primary"
-            @click="remove(scope.row)"
-            >{{ $t('public_button_delete') }}</el-button
-          >
-          <ElDivider class="mx-1" direction="vertical" />
-          <el-tooltip
-            class="item"
-            effect="dark"
-            :content="$t('api_server_download_API_Server_config')"
-            placement="top"
-          >
+        <template #default="{ row }">
+          <el-space :spacer="spacer" :size="0" class="lh-1">
             <el-button
-              v-readonlybtn="'API_clients_amangement'"
+              v-if="row.permissionActions?.includes('Edit')"
               text
               type="primary"
-              @click="downloadConfig(scope.row)"
-              >{{ $t('public_button_download') }}</el-button
+              @click="edit(row)"
             >
-          </el-tooltip>
+              {{ $t('public_button_edit') }}
+            </el-button>
+            <el-button
+              v-if="row.permissionActions?.includes('Delete')"
+              text
+              type="primary"
+              @click="remove(row)"
+              >{{ $t('public_button_delete') }}</el-button
+            >
+            <el-tooltip
+              v-if="$has('v2_api-servers_download')"
+              class="item"
+              effect="dark"
+              :content="$t('api_server_download_API_Server_config')"
+              placement="top"
+            >
+              <el-button text type="primary" @click="downloadConfig(row)">{{
+                $t('public_button_download')
+              }}</el-button>
+            </el-tooltip>
+          </el-space>
         </template>
       </el-table-column>
     </TablePage>
@@ -345,11 +274,11 @@ export default {
       :close-on-click-modal="false"
     >
       <el-form
-        ref="form"
+        ref="formRef"
         :model="createForm"
-        :label-position="createFormConfig.form.labelPosition"
-        :label-width="createFormConfig.form.labelWidth"
-        :rules="createFormConfig.rules"
+        label-position="top"
+        label-width="180px"
+        :rules="createFormRules"
       >
         <el-form-item
           :label="$t('api_server_process_id')"

@@ -60,4 +60,62 @@ export default {
     'You have already copied some tables, but you can still select more. Newly selected tables will be added to the existing list.',
   packages_ldp_fdm_create_task_has_expression:
     'You have selected tables by regex matching and cannot select more. Please use the Data Copy feature to continue copying tables.',
+  packages_ldp_task_delay_detail: 'Task Delay Details',
+  packages_ldp_task_delay_detail_tip:
+    'Displays all tasks involved in this model and their corresponding delay durations',
+  packages_ldp_task_delay_detail_logic: 'Calculation Logic',
+  packages_ldp_task_delay_detail_logic_tip1:
+    'Maximum data delay represents the longest time required for data changes generated in the source systems to be written into the model, after passing through all related synchronization and processing tasks.',
+  packages_ldp_task_delay_detail_logic_tip2:
+    'This metric aggregates the incremental delays across all upstream tables and their associated task pipelines involved in building the model, and takes the maximum value to indicate how late the most recently updated data in the model may be.',
+  packages_ldp_task_delay_detail_logic_tip3:
+    'Tasks included in this calculation are highlighted with their delay',
+
+  // ─── Data Trace ───
+  packages_ldp_trace_data_filters: 'Data Filters',
+  packages_ldp_trace_builder: 'Builder',
+  packages_ldp_trace_mql_json: 'MQL JSON',
+  packages_ldp_trace_btn: 'Trace',
+  packages_ldp_trace_tracked_fields:
+    'Select the fields you want to trace across the data lineage',
+  packages_ldp_trace_add_field: '+ Add Field',
+  packages_ldp_trace_data_lineage: 'Data Lineage',
+  packages_ldp_trace_no_results_title: 'No trace results yet',
+  packages_ldp_trace_no_results_desc:
+    'Configure filters and click {0} to start tracking data across pipeline nodes.',
+  packages_ldp_trace_flow: 'Data Tracing',
+  packages_ldp_trace_copy: 'Copy',
+  packages_ldp_trace_no_data: 'No data found',
+  packages_ldp_trace_data_missing: 'Data missing',
+  packages_ldp_trace_no_data_comment:
+    '// No data — record missing at this node',
+  packages_ldp_trace_change_stream: 'Change Stream / Oplog',
+  packages_ldp_trace_tab_table: 'Table',
+  packages_ldp_trace_tab_json: 'JSON',
+  packages_ldp_trace_tab_changelog: 'Change Log',
+  packages_ldp_trace_changelog_start: 'Start time',
+  packages_ldp_trace_changelog_end: 'End time',
+  packages_ldp_trace_changelog_query: 'Query',
+  packages_ldp_trace_changelog_empty: 'Select a time range and click Query to view change logs.',
+  packages_ldp_trace_changelog_no_more: 'No more logs',
+  packages_ldp_trace_changelog_max_range: 'Time range cannot exceed 7 days',
+  packages_ldp_trace_changelog_shortcut_5m: 'Last 5 minutes',
+  packages_ldp_trace_changelog_shortcut_30m: 'Last 30 minutes',
+  packages_ldp_trace_changelog_shortcut_1h: 'Last 1 hour',
+  packages_ldp_trace_changelog_shortcut_1d: 'Last 1 day',
+  packages_ldp_trace_changelog_shortcut_3d: 'Last 3 days',
+  packages_ldp_trace_status_loading: 'Loading…',
+  packages_ldp_trace_status_ok: 'Data Found',
+  packages_ldp_trace_status_error: 'Missing Data',
+  packages_ldp_trace_main_table: 'Main Table',
+  packages_ldp_trace_sub_table: 'Sub Table',
+  packages_ldp_trace_join: '{0} join | {0} joins',
+  packages_ldp_trace_filter_field: 'Field',
+  packages_ldp_trace_filter_value: 'Enter value...',
+  packages_ldp_trace_page_title: 'Data Trace',
+  packages_ldp_trace_qc_title: 'Query Conditions',
+  packages_ldp_trace_qc_edit: 'Edit Conditions',
+  packages_ldp_trace_qc_cancel: 'Cancel',
+  packages_ldp_trace_qc_save: 'Save & Retrace',
+  packages_ldp_trace_qc_invalid_json: 'Invalid JSON',
 }

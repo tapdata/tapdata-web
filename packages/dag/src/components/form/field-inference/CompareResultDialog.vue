@@ -7,7 +7,7 @@ import {
   saveCompareApply,
   type ItemDifferenceFieldList,
 } from '@tap/api/src/core/metadata-instances'
-import { useRequest } from '@tap/api/src/request'
+import { usePollingRequest } from '@tap/api/src/request'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 import { CloseIcon } from '@tap/component/src/CloseIcon'
 
@@ -16,9 +16,17 @@ import { getFieldIcon } from '@tap/form/src/components/field-select/FieldSelect'
 import { useI18n } from '@tap/i18n'
 import { computed, onBeforeUnmount, ref, watch, type PropType } from 'vue'
 import { useStore } from 'vuex'
+import { useDataflowStore } from '../../../stores/dataflow.store'
+
+const dataflowStore = useDataflowStore()
 
 const visible = defineModel<boolean>()
-const emit = defineEmits(['loadSchema', 'changeRules', 'close'])
+const emit = defineEmits([
+  'loadSchema',
+  'changeRules',
+  'close',
+  'update:ignoreCase',
+])
 
 const props = defineProps({
   nodeId: {
@@ -33,6 +41,10 @@ const props = defineProps({
     type: Array as PropType<string[]>,
     default: () => [],
   },
+  ignoreCase: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 type TableItem = {
@@ -43,11 +55,12 @@ type TableItem = {
   additionalNum: number
   missingNum: number
   cannotWriteNum: number
+  primaryKeyInconsistencyNum: number
 }
 
 const { t } = useI18n()
 const store = useStore()
-const taskId = store.state.dataflow.taskId
+const taskId = dataflowStore.dataflow.id
 const compareStatus = ref<string | null>(null)
 const finishTime = ref<string>()
 const tableList = ref<TableItem[]>([])
@@ -60,60 +73,72 @@ const invalidApplyNum = ref<number>(0)
 const pageSize = ref<number>(10)
 const currentPage = ref<number>(1)
 const applyCompareRules = ref<string[]>(props.rules)
-const filterType = ref(['Different', 'Missing', 'CannotWrite'])
-
-const typeMap = {
-  Different: {
-    text: t('packages_dag_compare_different'),
-    type: 'warning',
-    doneText: 'packages_dag_compare_done_modify',
-    btnText: t('public_button_revise'),
-    numKey: 'differentNum',
-  },
-  Missing: {
-    text: t('packages_dag_compare_missing'),
-    type: 'danger',
-    doneText: 'packages_dag_compare_done_delete',
-    btnText: t('public_button_delete'),
-    numKey: 'missingNum',
-  },
-  CannotWrite: {
-    text: t('packages_dag_compare_cannot_write'),
-    type: 'danger',
-    doneText: 'packages_dag_compare_done_delete',
-    btnText: t('public_button_delete'),
-    numKey: 'cannotWriteNum',
-  },
-}
+const filterType = ref([
+  'PrimaryKeyInconsistency',
+  'Different',
+  'Missing',
+  'CannotWrite',
+])
 
 const filterOptions = ref([
   {
+    label: t('packages_dag_compare_primary_key_inconsistency'),
+    value: 'PrimaryKeyInconsistency',
+    type: 'warning',
+    numKey: 'primaryKeyInconsistencyNum',
+  },
+  {
     label: t('packages_dag_compare_different'),
     value: 'Different',
+    type: 'warning',
+    numKey: 'differentNum',
+    doneText: 'packages_dag_compare_done_modify',
+    actionText: t('public_button_update'),
   },
   {
     label: t('packages_dag_compare_missing'),
     value: 'Missing',
+    type: 'danger',
+    numKey: 'missingNum',
+    doneText: 'packages_dag_compare_done_delete',
+    actionText: t('public_button_delete'),
   },
   {
     label: t('packages_dag_compare_cannot_write'),
     value: 'CannotWrite',
+    type: 'danger',
+    numKey: 'cannotWriteNum',
+    doneText: 'packages_dag_compare_done_delete',
+    actionText: t('public_button_delete'),
   },
   {
     label: t('packages_dag_compare_missing_source'),
     value: 'Additional',
+    type: 'info',
   },
   {
     label: t('packages_dag_compare_precision'),
     value: 'Precision',
+    type: 'info',
+    doneText: 'packages_dag_compare_done_modify',
+    actionText: t('public_button_update'),
   },
 ])
 
 const ruleOptions = filterOptions.value.filter((item) => {
-  return item.value !== 'Additional'
+  return !!item.actionText
 })
 
 const totalMap = ref<Record<string, number>>({})
+
+const typeMap = filterOptions.value.reduce((acc: Record<string, any>, item) => {
+  acc[item.value] = item
+  return acc
+}, {})
+
+const importantOptions = filterOptions.value.filter((item) => {
+  return ['warning', 'danger'].includes(item.type)
+})
 
 const isLoading = computed(() => {
   return compareResultLoading.value || compareStatus.value === 'running'
@@ -135,7 +160,7 @@ const {
   runAsync: fetchCompareResultAsync,
   refresh: refreshCompareResult,
   cancel: cancelFetchCompareResult,
-} = useRequest(
+} = usePollingRequest(
   async (page?: number) => {
     if (page) {
       currentPage.value = page
@@ -179,25 +204,29 @@ const {
         Additional: 0,
         Missing: 0,
         CannotWrite: 0,
+        PrimaryKeyInconsistency: 0,
       }
       const fields: TableItem['fields'] = []
 
       item.differenceFieldList.forEach((field) => {
-        if (!field.applyType) totalMap[field.type as keyof typeof totalMap]++
+        if (!field.applyType) {
+          totalMap[field.type as keyof typeof totalMap]++
+          if (field.type !== 'PrimaryKeyInconsistency' && field.isPrimaryKey) {
+            // 只要是主键，其他差异也需要算进来
+            totalMap.PrimaryKeyInconsistency++
+          }
+        }
 
         let fieldType
-        let isPrimaryKey
         let isNullable
         let icon
 
         if (field.sourceField) {
           fieldType = field.sourceField.data_type
-          isPrimaryKey = field.sourceField.primary_key_position > 0
           isNullable = field.sourceField.is_nullable
           icon = getFieldIcon(field.sourceField.tapType)
         } else {
           fieldType = field.targetField.data_type
-          isPrimaryKey = field.targetField.primary_key_position > 0
           isNullable = field.targetField.is_nullable
           icon = getFieldIcon(field.targetField.tapType)
         }
@@ -212,9 +241,11 @@ const {
             field.sourceField?.data_type,
             field.targetField?.data_type,
           ),
+          sourcePrimaryKey: field.sourceField?.primaryKey,
+          targetPrimaryKey: field.targetField?.primaryKey,
           fieldType,
           icon,
-          isPrimaryKey,
+          isPrimaryKey: field.isPrimaryKey,
           isNullable,
         })
       })
@@ -227,6 +258,7 @@ const {
         additionalNum: totalMap.Additional,
         missingNum: totalMap.Missing,
         cannotWriteNum: totalMap.CannotWrite,
+        primaryKeyInconsistencyNum: totalMap.PrimaryKeyInconsistency,
       }
     })
 
@@ -294,10 +326,6 @@ const handleApplyTable = () => {
   ])
 }
 
-const handleApplyAll = () => {
-  saveApply(true)
-}
-
 const handleUndo = (item: Partial<ItemDifferenceFieldList>) => {
   deleteApply(false, [
     {
@@ -314,10 +342,6 @@ const handleUndoTable = () => {
       fieldNames: filteredFields.value.map((field) => field.fieldName),
     },
   ])
-}
-
-const handleUndoAll = () => {
-  deleteApply(true)
 }
 
 let unwatch: () => void
@@ -364,7 +388,7 @@ const filteredFields = computed(() => {
 })
 
 const taskSaving = computed(() => {
-  return store.state.dataflow.taskSaving
+  return dataflowStore.taskSaving
 })
 
 // 比较字段类型并返回带有红色高亮的 HTML 字符串
@@ -442,6 +466,17 @@ const handleApplyCompareRulesChange = async (value: string[]) => {
   applyAfterLoading.value = false
 }
 
+const handleIgnoreCaseChange = async (value: string | number | boolean) => {
+  applyAfterLoading.value = true
+  emit('update:ignoreCase', value)
+
+  await afterTaskSaved()
+
+  fetchCompareResult()
+
+  applyAfterLoading.value = false
+}
+
 const afterTaskSaved = () => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -468,6 +503,8 @@ onBeforeUnmount(() => {
     width="60%"
     class="p-0 overflow-hidden compare-result-dialog"
     :show-close="false"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
     @open="onOpen"
     @close="onClose"
   >
@@ -561,7 +598,7 @@ onBeforeUnmount(() => {
               <el-tag
                 v-for="item in data"
                 :key="item.value"
-                :type="typeMap[item.value]?.type || 'info'"
+                :type="typeMap[item.value]?.type"
                 closable
                 @close="deleteTag($event, item)"
               >
@@ -603,23 +640,20 @@ onBeforeUnmount(() => {
             :label="item.label"
             :value="item.value"
           >
-            <el-tag
-              disable-transitions
-              :type="typeMap[item.value]?.type || 'info'"
-              class="px-1.5"
-            >
+            <el-tag disable-transitions :type="item.type" class="px-1.5">
               <span class="flex align-center">
                 {{ item.label }}
                 <el-icon><i-lucide-chevrons-right /></el-icon>
-                {{
-                  item.value === 'Different' || item.value === 'Precision'
-                    ? $t('public_button_update')
-                    : $t('public_button_delete')
-                }}
+                {{ item.actionText }}
               </span>
             </el-tag>
           </el-checkbox>
         </el-checkbox-group>
+        <el-divider direction="vertical" class="mx-3" />
+        <div class="fw-sub mr-4">
+          {{ $t('packages_dag_compareIgnoreCase') }}
+        </div>
+        <el-switch :model-value="ignoreCase" @change="handleIgnoreCaseChange" />
       </div>
     </div>
 
@@ -716,15 +750,18 @@ onBeforeUnmount(() => {
                     >
                   </div>
                   <div class="flex gap-1 flex-wrap mt-1 table-item-tags">
-                    <template v-for="(v, key) in typeMap" :key="key">
+                    <template
+                      v-for="option in importantOptions"
+                      :key="option.value"
+                    >
                       <el-tag
-                        v-if="item[v.numKey] > 0"
-                        :type="v.type"
+                        v-if="item[option.numKey] > 0"
+                        :type="option.type"
                         size="small"
                         class="px-1"
                       >
-                        {{ v.text
-                        }}<span class="ml-0.5">{{ item[v.numKey] }}</span>
+                        {{ option.label
+                        }}<span class="ml-0.5">{{ item[option.numKey] }}</span>
                       </el-tag>
                     </template>
                   </div>
@@ -763,16 +800,19 @@ onBeforeUnmount(() => {
                 <template v-if="singleTable">
                   <el-divider direction="vertical" class="mx-3" />
                   <div class="flex gap-2 flex-wrap">
-                    <template v-for="(v, key) in typeMap" :key="key">
+                    <template
+                      v-for="(item, index) in importantOptions"
+                      :key="index"
+                    >
                       <el-tag
-                        v-if="selectedTable[v.numKey] > 0"
-                        :type="v.type"
+                        v-if="selectedTable[item.numKey] > 0"
+                        :type="item.type"
                         size="small"
                         class="px-1"
                       >
-                        {{ t(v.text)
+                        {{ t(item.label)
                         }}<span class="ml-0.5">{{
-                          selectedTable[v.numKey]
+                          selectedTable[item.numKey]
                         }}</span>
                       </el-tag>
                     </template>
@@ -805,6 +845,8 @@ onBeforeUnmount(() => {
                     <el-tooltip
                       :content="t('packages_dag_compare_result_apply_table')"
                       placement="top"
+                      :enterable="false"
+                      :hide-after="0"
                     >
                       <el-button
                         type="primary"
@@ -821,6 +863,8 @@ onBeforeUnmount(() => {
                     <el-tooltip
                       :content="t('packages_dag_compare_result_undo_table')"
                       placement="top"
+                      :enterable="false"
+                      :hide-after="0"
                     >
                       <el-button
                         type="primary"
@@ -862,6 +906,12 @@ onBeforeUnmount(() => {
                             (field.type === 'Missing' ||
                               field.type === 'CannotWrite'),
                         }"
+                        ><VIcon
+                          v-if="field.sourcePrimaryKey"
+                          size="12"
+                          class="text-warning mr-1"
+                        >
+                          key </VIcon
                         >{{ field.fieldName }}</span
                       >
                       <div class="flex align-center">
@@ -880,16 +930,9 @@ onBeforeUnmount(() => {
                         >
                           <el-icon><i-mingcute-check-line /></el-icon>
                           {{
-                            t(
-                              typeMap[
-                                field.type === 'Precision'
-                                  ? 'Different'
-                                  : field.type
-                              ].doneText,
-                              {
-                                type: t('public_automatically'),
-                              },
-                            )
+                            t(typeMap[field.type].doneText, {
+                              type: t('public_automatically'),
+                            })
                           }}
                         </div>
                         <div
@@ -898,16 +941,9 @@ onBeforeUnmount(() => {
                         >
                           <el-icon><i-mingcute-check-line /></el-icon>
                           {{
-                            t(
-                              typeMap[
-                                field.type === 'Precision'
-                                  ? 'Different'
-                                  : field.type
-                              ].doneText,
-                              {
-                                type: t('public_manually'),
-                              },
-                            )
+                            t(typeMap[field.type].doneText, {
+                              type: t('public_manually'),
+                            })
                           }}
                         </div>
                       </div>
@@ -971,7 +1007,15 @@ onBeforeUnmount(() => {
                     >
                     <div v-else>
                       <div class="mb-1 flex align-center gap-1">
-                        <span>{{ field.fieldName }}</span>
+                        <span
+                          ><VIcon
+                            v-if="field.targetPrimaryKey"
+                            size="12"
+                            class="text-warning mr-1"
+                          >
+                            key </VIcon
+                          >{{ field.fieldName }}</span
+                        >
                         <el-tag
                           v-if="field.type === 'CannotWrite'"
                           type="danger"

@@ -1,8 +1,38 @@
 import { isPlainObj } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
-import { requestClient } from '../request'
+import { requestClient, type Page } from '../request'
 
 const BASE_URL = '/api/Task'
+
+export interface Node {
+  id: string
+  type: string
+  name: string
+  attrs: {
+    position: [number, number]
+    [key: string]: any
+  }
+  [key: string]: any
+}
+
+export interface Edge {
+  source: string
+  target: string
+  [key: string]: any
+}
+
+export interface Dag {
+  edges: Edge[]
+  nodes: Node[]
+}
+
+export interface Task {
+  id: string
+  name: string
+  status: string
+  [key: string]: any
+  dag: Dag
+}
 
 export interface TaskChart {
   chart1: {
@@ -88,12 +118,12 @@ export function tranModelVersionControl(params: any) {
 
 export function getTaskById(id: string, params?: any, headers?: any) {
   if (Array.isArray(params)) {
-    return requestClient.get(`${BASE_URL}/${id}${params.join('/')}`, {
+    return requestClient.get<Task>(`${BASE_URL}/${id}${params.join('/')}`, {
       headers,
     })
   }
   params = params || {}
-  return requestClient.get(`${BASE_URL}/${id}`, { params, headers })
+  return requestClient.get<Task>(`${BASE_URL}/${id}`, { params, headers })
 }
 
 export function editTask(params: any) {
@@ -199,6 +229,10 @@ export function getRunJsResult(params: any) {
   return requestClient.get('/api/task/migrate-js/get-result', { params })
 }
 
+export function getJsMockData(params: any) {
+  return requestClient.post('/api/task/migrate-js/mock-data', params)
+}
+
 export function testRunPythonRpc(params: any) {
   return requestClient.post('/api/task/migrate-python/test-run-rpc', params)
 }
@@ -294,7 +328,7 @@ export function downloadTaskAnalyze(taskId: string, params: any) {
   })
 }
 
-export function refreshTaskSchema(taskId: string, params: any) {
+export function refreshTaskSchema(taskId: string, params?: any) {
   return requestClient.put(`${BASE_URL}/${taskId}/re-schemas`, null, {
     params,
   })
@@ -333,16 +367,12 @@ export function updateTask(where: any, attributes: any) {
 }
 
 export function updateTaskInfo(taskId: string, newName: string, desc: string) {
-  return requestClient.patch(
-    `${BASE_URL}/updateInfo/${taskId}`,
-    undefined,
-    {
-      params: {
-        newName,
-        desc,
-      },
+  return requestClient.patch(`${BASE_URL}/updateInfo/${taskId}`, undefined, {
+    params: {
+      newName,
+      desc,
     },
-  )
+  })
 }
 
 export function uploadTask(data: any) {
@@ -350,5 +380,155 @@ export function uploadTask(data: any) {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
+  })
+}
+
+export function fetchMergeTaskCache(
+  taskId: string,
+  nodeId: string,
+  check?: boolean,
+) {
+  return requestClient.get(`${BASE_URL}/getMergeTaskCacheManager`, {
+    params: {
+      taskId,
+      nodeId,
+      check,
+    },
+  })
+}
+
+export interface SkipErrorTableParams {
+  tableFilter?: string
+  skip?: number
+  limit?: number
+  order?: string
+}
+
+export interface SkipErrorTable {
+  id: string
+  status: 'SKIPPED' | 'RECOVERING'
+  created: string
+  updated: string
+  taskId: string
+  sourceTable: string
+  targetTable: string
+  skipStage: string
+  skipDate: string
+  cdcDate: string
+  errorMessage: string
+  errorStack?: string
+  errorTitle?: string
+  errorContent?: string
+  errorCode: string
+  fullErrorCode?: string
+}
+
+export function fetchSkipErrorTable(
+  taskId: string,
+  params: SkipErrorTableParams,
+) {
+  return requestClient.get<Page<SkipErrorTable>>(
+    `${BASE_URL}/${taskId}/skip-error-table`,
+    {
+      params,
+    },
+  )
+}
+
+export function recoverSkipErrorTable(taskId: string, sourceTable: string) {
+  return requestClient.put(
+    `${BASE_URL}/${taskId}/skip-error-table-recovering?sourceTables=${sourceTable}`,
+  )
+}
+
+export function checkTaskMemoryHeap(taskId: string) {
+  return requestClient.get<{
+    isSafe: boolean
+  }>(`${BASE_URL}/checkTaskMemoryHeap/${taskId}`)
+}
+
+// ── Task Dashboard ──────────────────────────────────────────────────
+
+export interface TaskDashboardQuery {
+  type: string
+  step: number
+  dashboardType: string
+  top: number
+  startAt: number
+  endAt: number
+}
+
+export interface TaskDashboardActiveTasks {
+  total: number
+  running: number
+  error: number
+  maxLag: number
+  minLag: number
+}
+
+export interface TaskDashboardThroughput {
+  current: number
+  peak: number
+  dataRate: number
+  changeRate: number
+}
+
+export interface TaskDashboardConnectedDb {
+  id: string
+  name: string
+  tableCount: number
+}
+
+export interface TaskDashboardApiRequests {
+  total: number
+  failed: number
+  errorRate: number
+  avgTime: number
+}
+
+export interface TaskDashboardTrendSeries {
+  ts: number[]
+  values: number[]
+}
+
+export interface TaskDashboardTopTask {
+  taskId: string
+  taskName: string
+  syncType?: string
+  latency: number
+  throughput: number
+}
+
+export interface TaskDashboardVo {
+  query: TaskDashboardQuery
+  summary: {
+    activeTasks: TaskDashboardActiveTasks
+    totalThroughput: TaskDashboardThroughput
+    connectedDbs: {
+      total: number
+      items: TaskDashboardConnectedDb[]
+    }
+    apiRequests: TaskDashboardApiRequests
+  }
+  trends: {
+    throughput: TaskDashboardTrendSeries
+    apiRequests: TaskDashboardTrendSeries
+  }
+  tops: {
+    topLaggingTasks: TaskDashboardTopTask[]
+    topThroughputTasks: TaskDashboardTopTask[]
+  }
+}
+
+export interface TaskDashboardParams {
+  type?: 'minute' | 'hours' | 'days'
+  step?: number
+  dashboardType?: string
+  top?: number
+}
+
+export function fetchTaskDashboard(params?: TaskDashboardParams) {
+  return requestClient.get<TaskDashboardVo>(`${BASE_URL}/dashboard`, {
+    params,
   })
 }

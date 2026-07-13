@@ -7,13 +7,15 @@ import {
   readAllNotifications,
 } from '@tap/api/src/core/notification'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import VIcon from '@tap/component/src/base/VIcon.vue'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import { $emit, $on } from '@tap/shared/src/event'
 import dayjs from 'dayjs'
+import { debounce } from 'lodash-es'
 import { TYPEMAP } from './tyepMap'
 
 export default {
-  components: { SelectList, PageContainer },
+  components: { SelectList, PageContainer, VIcon },
   emits: ['notificationUpdate'],
   data() {
     return {
@@ -25,6 +27,8 @@ export default {
       searchParams: {
         search: '',
         msg: '',
+        system: '',
+        serverName: '',
       },
 
       currentPage: 1,
@@ -44,6 +48,14 @@ export default {
         JobDDL: this.$t('notify_ddl_deal'),
         system: this.$t('notify_system'),
       },
+      systemOptions: [
+        { value: 'sync', label: this.$t('notify_sync') },
+        { value: 'migration', label: this.$t('notify_migration') },
+        { value: 'agent', label: this.$t('notify_manage_sever') },
+        { value: 'inspect', label: this.$t('notify_inspect') },
+        { value: 'JobDDL', label: this.$t('notify_ddl_deal') },
+        { value: 'system', label: this.$t('notify_system') },
+      ],
       options: [
         {
           value: 'ERROR',
@@ -113,6 +125,7 @@ export default {
     }
   },
   created() {
+    this.getDataDebounce = debounce(this.getData, 300)
     this.getData()
     this.getFilterItems()
     $on(this.$root, 'notificationUpdate', () => {
@@ -124,7 +137,7 @@ export default {
       this.$router.push({ name: 'notificationSetting' })
     },
     getData() {
-      const { search, msg } = this.searchParams
+      const { search, msg, system, serverName } = this.searchParams
       const where = {}
       if (!this.read) {
         where.read = false
@@ -134,6 +147,12 @@ export default {
       }
       if (msg || msg !== '') {
         where.msg = msg
+      }
+      if (system || system !== '') {
+        where.system = system
+      }
+      if (serverName || serverName !== '') {
+        where.serverName = { like: serverName, options: 'i' }
       }
       const filter = {
         where,
@@ -313,14 +332,18 @@ export default {
 <template>
   <PageContainer
     mode="auto"
-    container-class="bg-card rounded-xl shadow-sm gap-1"
-    content-class="flex-1 gap-6 min-h-0 overflow-auto px-6 position-relative"
+    container-class="bg-card rounded-xl shadow-sm gap-1 overflow-hidden"
+    content-class="flex-1 gap-6 min-h-0 overflow-auto position-relative"
   >
     <div v-loading="loading" class="system-notification">
       <div
         class="position-sticky top-0 z-10 bg-white dark:bg-transparent dark:backdrop-blur-md"
       >
-        <el-tabs v-model="activeName" @tab-change="handleClick">
+        <el-tabs
+          v-model="activeName"
+          style="--el-tabs-padding-left: 24px"
+          @tab-change="handleClick"
+        >
           <el-tab-pane name="first">
             <template #label>
               <span>{{ $t('notify_user_all_notice') }}</span>
@@ -332,7 +355,7 @@ export default {
             </template>
           </el-tab-pane>
         </el-tabs>
-        <div class="position-absolute top-0 end-0 z-10">
+        <div class="position-absolute top-0 end-6 z-10">
           <ElButton type="primary" @click="handlePageRead()">{{
             $t('notify_mask_read')
           }}</ElButton>
@@ -348,7 +371,7 @@ export default {
         </div>
       </div>
 
-      <div class="flex gap-3 mb-2">
+      <div class="flex gap-3 mb-2 px-6">
         <SelectList
           v-if="options.length"
           v-model="searchParams.search"
@@ -369,10 +392,30 @@ export default {
           dropdown-width="240px"
           @change="getData()"
         />
+        <SelectList
+          v-model="searchParams.system"
+          :items="systemOptions"
+          :label="$t('notify_belong_module')"
+          clearable
+          dropdown-width="240px"
+          @change="getData()"
+        />
+        <ElInput
+          v-model="searchParams.serverName"
+          :placeholder="$t('notify_search_server_name')"
+          clearable
+          style="width: 300px"
+          @keyup="getDataDebounce()"
+          @clear="getData()"
+        >
+          <template #prefix>
+            <VIcon>magnify</VIcon>
+          </template>
+        </ElInput>
       </div>
       <ul
         v-if="listData && listData.length"
-        class="cuk-list clearfix cuk-list-type-block"
+        class="cuk-list clearfix cuk-list-type-block px-6"
       >
         <li
           v-for="item in listData"
@@ -414,6 +457,22 @@ export default {
                   {{ `DDL SQL : ${item.sql}` }}
                 </span>
               </el-tooltip>
+            </div>
+            <div class="list-item-time">
+              <span>{{ item.createTime }}</span>
+            </div>
+          </div>
+          <div
+            v-else-if="item.msg === 'expired' || item.msg === 'expiring'"
+            class="list-item-content"
+          >
+            <div v-show="!item.read" class="unread-1zPaAXtSu" />
+            <div class="list-item-desc">
+              <span :style="`color: ${colorMap[item.level]};`"
+                >【{{ item.level }}】</span
+              >
+              <span>{{ systemMap[item.system] }}</span>
+              <span class="px-1">{{ item.title }}</span>
             </div>
             <div class="list-item-time">
               <span>{{ item.createTime }}</span>
@@ -462,7 +521,7 @@ export default {
       </div>
       <el-pagination
         v-model:current-page="currentPage"
-        class="position-sticky py-6 bottom-0 z-10"
+        class="position-sticky py-6 bottom-0 z-10 bg-white dark:bg-transparent dark:backdrop-blur-md px-6"
         background
         layout="->,total,prev, pager, next,sizes"
         :page-sizes="[20, 30, 50, 100]"

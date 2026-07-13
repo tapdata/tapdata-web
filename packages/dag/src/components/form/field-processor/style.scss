@@ -50,7 +50,7 @@
     &:hover,
     &.is-plain:focus:hover {
       border-color: var(--color-primary);
-      background-color: var(--color-white);
+      background-color: var(--el-bg-color-overlay);
     }
   }
   .task-form-body {
@@ -77,7 +77,7 @@
       overflow-x: hidden;
       overflow-y: auto;
       li {
-        background: var(--color-white);
+        background: var(--el-bg-color-overlay);
         border-left: 2px solid transparent;
         border-bottom: 1px solid var(--border-light);
         display: flex;
@@ -174,7 +174,7 @@
   }
 
   .table-checkbox-wrap {
-    border-top: 1px solid #ebeef5;
+    border-top: 1px solid var(--el-border-color-lighter);
   }
 
   .field-search-input-wrap {
@@ -182,7 +182,7 @@
   }
 
   .fields-toolbar {
-    border-left: 1px solid #ebeef5;
+    border-left: 1px solid var(--el-border-color-lighter);
   }
   /*.el-table__empty-block {
     height: 100% !important;

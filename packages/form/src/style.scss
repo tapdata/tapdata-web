@@ -64,6 +64,10 @@ $formNamespace: formily-element-plus;
   }
 }
 
+.#{$formNamespace}-form-collapse.advanced-collapse:has(~ .advanced-collapse) {
+  padding-bottom: 1px;
+}
+
 .#{$formNamespace}-space-horizontal {
   > .#{$formNamespace}-space-item > .#{$formNamespace}-form-item-layout-horizontal > .#{$formNamespace}-form-item-label {
     * {
@@ -137,7 +141,6 @@ $formNamespace: formily-element-plus;
     background-color: #bcbfc3;
   }
 }
-
 .#{$formNamespace}-form-item-label .el-button {
   line-height: 1;
 
@@ -148,6 +151,10 @@ $formNamespace: formily-element-plus;
   * {
     line-height: inherit;
   }
+}
+
+.#{$formNamespace}-form-item-label .el-segmented__item-label {
+  line-height: normal;
 }
 
 

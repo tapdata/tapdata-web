@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { deleteSdk, fetchSdkList } from '@tap/api/src/core/sdk'
+import { withPassive } from '@tap/api/src/request'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
@@ -157,7 +158,7 @@ const handleSortTable = ({ order, prop }: { order: string; prop: string }) => {
 }
 
 const interval = setInterval(() => {
-  fetch(null, 0, true)
+  withPassive(() => fetch(null, 0, true))
 }, 8000)
 
 onBeforeUnmount(() => {

@@ -18,6 +18,7 @@ export default {
   packages_component_classification_nameExist: '標籤名稱已存在',
   packages_component_classification_addNode: '新建標籤',
   packages_component_classification_addChildernNode: '新建子標籤',
+  packages_component_classification_noTag: '無標籤',
   packages_component_classification_nodeName: '請輸入標籤名稱',
   packages_component_classification_deteleMessage:
     '此操作會將該標籤下存在的子標籤都刪除，是否刪除',
@@ -67,4 +68,13 @@ export default {
   packages_component_src_selectlist_xiang: '項',
   packages_component_src_selectlist_yixuanze: '已選擇',
   packages_component_data_already_exists: '數據已存在',
+
+  // Sort dropdown
+  packages_component_sort_by: '排序方式',
+  packages_component_sort_by_name: '名稱',
+  packages_component_sort_by_priority: '優先級',
+  packages_component_sort_by_created_time: '創建時間',
+  packages_component_sort_order: '排序順序',
+  packages_component_sort_order_asc: '升序',
+  packages_component_sort_order_desc: '降序',
 }

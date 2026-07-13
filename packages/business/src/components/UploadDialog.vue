@@ -4,7 +4,10 @@ import { fetchMetadataDefinitions } from '@tap/api/core/metadata-definitions'
 import { uploadMetadataInstance } from '@tap/api/core/metadata-instances'
 import { uploadModules } from '@tap/api/core/modules'
 import { uploadTask } from '@tap/api/core/task'
-import { fetchConnections } from '@tap/api/src/core/connections'
+import {
+  fetchConnections,
+  uploadConnections,
+} from '@tap/api/src/core/connections'
 import { FileAddColorful, FileDocxColorful } from '@tap/component/src/icon'
 import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import { calcUnit } from '@tap/shared'
@@ -16,6 +19,7 @@ const uploadHandlers = {
   Javascript_functions: uploadFunctions,
   Modules: uploadModules,
   dataflow: uploadTask,
+  database: uploadConnections,
 }
 
 export default {
@@ -80,6 +84,7 @@ export default {
         dataflow: 'packages_business_modules_dialog_import_title',
         relmig: 'packages_business_relmig_import',
         Javascript_functions: 'packages_business_functions_import',
+        database: 'public_connection_button_import',
       },
     }
   },
@@ -105,7 +110,11 @@ export default {
       return this.type === 'relmig'
     },
     fileAccept() {
-      return !this.isRelmig ? '.gz' : '.relmig' // 云版仅支持 .relmig
+      return this.type === 'database'
+        ? '.xlsx'
+        : !this.isRelmig
+          ? '.gz'
+          : '.relmig' // 云版仅支持 .relmig
     },
   },
   created() {
@@ -381,6 +390,18 @@ export default {
             </div>
             <p class="lh-sm font-color-sslight fs-8 text-wrap">
               {{ $t('packages_business_import_cancel_import_tip') }}
+            </p>
+          </el-radio>
+          <el-radio
+            value="reuse_existing"
+            border
+            class="h-auto px-3 py-2 rounded-xl bg-card w-100 m-0"
+          >
+            <div class="lh-5 mb-1">
+              {{ $t('packages_business_import_reuse_existing') }}
+            </div>
+            <p class="lh-sm font-color-sslight fs-8 text-wrap">
+              {{ $t('packages_business_import_reuse_existing_tip') }}
             </p>
           </el-radio>
         </el-radio-group>

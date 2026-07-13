@@ -1,170 +1,191 @@
-<script>
+<script setup lang="ts">
 import { taskConsoleRelations } from '@tap/api/src/core/task'
-
 import NodeLog from '@tap/business/src/components/logs/NodeLog'
 import MilestoneList from '@tap/business/src/components/milestone/List'
 import RelationList from '@tap/business/src/views/task/relation/List.vue'
-import focusSelect from '@tap/component/src/directives/focusSelect'
-import resize from '@tap/component/src/directives/resize'
-import { mapActions, mapGetters, mapMutations } from 'vuex'
-
+import vResize from '@tap/component/src/directives/resize'
+import { computed, nextTick, onMounted, ref, useAttrs, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { useDataflowStore } from '../../stores/dataflow.store'
 import Alert from './components/Alert'
 import Record from './components/Record'
+import SkipErrorTable from './components/SkipErrorTable.vue'
 import TaskInspect from './components/TaskInspect.vue'
 import '@tap/component/src/directives/resize/index.scss'
 
-export default {
+defineOptions({
   name: 'ConfigPanel',
-  components: {
-    Record,
-    Alert,
-    RelationList,
-    NodeLog,
-    MilestoneList,
-    TaskInspect,
-  },
-  directives: {
-    resize,
-    focusSelect,
-  },
-  props: {
-    onlyLog: {
-      type: Boolean,
-      default: false,
-    },
-    hideLog: Boolean,
-  },
-  data() {
-    return {
-      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
-      isCommunity: import.meta.env.VUE_APP_MODE === 'community',
-      currentTab: 'milestone',
-      name: this.activeNode?.name,
-      relationCount: 0,
-      nodeId: '',
-    }
-  },
-  computed: {
-    ...mapGetters('dataflow', [
-      'activeType',
-      'activeNode',
-      'nodeById',
-      'stateIsReadonly',
-    ]),
+  // directives: { resize, focusSelect },
+})
 
-    showAlert() {
-      return !['SharedCacheMonitor'].includes(this.$route.name)
-    },
-  },
-  watch: {
-    'activeNode.name': function (v) {
-      this.name = v
-    },
-  },
-  mounted() {
-    if (['MigrationMonitorViewer'].includes(this.$route.name)) {
-      this.currentTab = 'log'
-      const { start, end } = this.$route.query
-      this.changeTab(this.currentTab, {
-        start: start * 1,
-        end: end * 1,
-      })
-    }
-    this.getRelationData()
-  },
-  methods: {
-    ...mapMutations('dataflow', [
-      'updateNodeProperties',
-      'setNodeError',
-      'clearNodeError',
-      'setActiveType',
-    ]),
-    ...mapActions('dataflow', ['updateDag']),
+type BottomPanelTab =
+  | 'milestone'
+  | 'log'
+  | 'record'
+  | 'alert'
+  | 'relation'
+  | 'inspect'
+  | 'skipErrorTable'
 
-    handleChangeName(name) {
-      if (name) {
-        this.updateNodeProperties({
-          id: this.activeNode.id,
-          properties: {
-            name,
-          },
-        })
-        this.updateDag({ vm: this })
-      } else {
-        this.name = this.activeNode.name
-      }
-    },
+const defaultTabs: BottomPanelTab[] = [
+  'milestone',
+  'log',
+  'record',
+  'alert',
+  'relation',
+  'inspect',
+  'skipErrorTable',
+]
 
-    async validateForm() {
-      await this.$refs.formPanel?.validate()
-    },
+const props = defineProps<{
+  onlyLog?: boolean
+  hideLog?: boolean
+  tabs?: BottomPanelTab[]
+}>()
 
-    getLogRef() {
-      return this.$refs.log
-    },
-    changeAlertTab(tab) {
-      this.currentTab = tab
-    },
+const tabs = computed(() => props.tabs ?? defaultTabs)
 
-    changeTab(tab, data) {
-      this.currentTab = tab
-      this.$nextTick(() => {
-        if (tab === 'log') {
-          data.nodeId && this.getLogRef()?.changeItem(data.nodeId)
-          const t = new Date(data.start).getTime()
-          const len = 10 * 1000
-          const start = t - len
-          const end = data.end ? data.end + len : t + len
-          data.start &&
-            this.getLogRef()?.$refs.timeSelect.changeTime([start, end])
-        }
-      })
-    },
+const emit = defineEmits<{
+  action: [any]
+  'load-data': []
+  showBottomPanel: []
+  'open-inspect': []
+}>()
 
-    getRelationData() {
-      const { id, syncType } = this.$attrs.dataflow || {}
-      const { taskRecordId } = this.$route.query || {}
-      const filter = {
-        taskId: this.$route.params.id || id,
-        taskRecordId,
-      }
-      if (['logCollector'].includes(syncType)) {
-        filter.type = 'task_by_collector'
-      } else if (['sync'].includes(syncType)) {
-        // filter.type = 'task_by_collector'
-      }
-      taskConsoleRelations(filter).then((data) => {
-        this.relationCount = data?.length || 0
-      })
-    },
-  },
-  emits: [
-    'action',
-    'load-data',
-    'showBottomPanel',
-    'load-data',
-    'showBottomPanel',
-  ],
+const dataflowStore = useDataflowStore()
+const route = useRoute()
+const attrs = useAttrs() as any
+
+const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+const isCommunity = import.meta.env.VUE_APP_MODE === 'community'
+
+const currentTab = ref('milestone')
+const relationCount = ref(0)
+const nodeId = ref('')
+const logRef = ref<any>(null)
+
+const showAlert = computed(() => {
+  return !['SharedCacheMonitor'].includes(route.name as string)
+})
+
+const hasSkipErrorTable = computed(() => {
+  return (
+    attrs.dataflow?.skipErrorEvent?.errorMode === 'SkipTableForMigrateSnapshot'
+  )
+})
+
+const enabledTabs = computed(() => new Set(tabs.value))
+const visibleTabs = computed(() => {
+  return defaultTabs.filter((tab) => {
+    if (!enabledTabs.value.has(tab)) return false
+    if (tab === 'log') return !props.hideLog
+    if (tab === 'alert') return showAlert.value
+    if (tab === 'relation') return !!relationCount.value
+    if (tab === 'inspect') return isDaas && !isCommunity
+    if (tab === 'skipErrorTable') return hasSkipErrorTable.value
+    return true
+  })
+})
+
+function hasTab(tab: BottomPanelTab) {
+  return visibleTabs.value.includes(tab)
 }
+
+function setCurrentTab(tab: string) {
+  if (visibleTabs.value.includes(tab as BottomPanelTab)) {
+    currentTab.value = tab
+    return
+  }
+
+  currentTab.value = visibleTabs.value[0] || tab
+}
+
+onMounted(() => {
+  if (route.name === 'MigrationMonitorViewer') {
+    const { start, end } = route.query
+    changeTab('log', {
+      start: Number(start),
+      end: Number(end),
+    })
+  }
+  getRelationData()
+})
+
+function getLogRef() {
+  return logRef.value
+}
+
+function changeAlertTab(tab: string) {
+  setCurrentTab(tab)
+}
+
+function changeTab(tab: string, data: any) {
+  setCurrentTab(tab)
+  nextTick(() => {
+    if (currentTab.value === 'log') {
+      data.nodeId && logRef.value?.changeItem(data.nodeId)
+      const t = new Date(data.start).getTime()
+      const len = 10 * 1000
+      const start = t - len
+      const end = data.end ? data.end + len : t + len
+      data.start && logRef.value?.changePickerTime([start, end])
+    }
+  })
+}
+
+function getRelationData() {
+  if (!tabs.value.includes('relation')) return
+
+  const { id, syncType } = attrs.dataflow || {}
+  const { taskRecordId } = route.query || {}
+  const filter: any = {
+    taskId: (route.params.id as string) || id,
+    taskRecordId,
+  }
+  if (['logCollector'].includes(syncType)) {
+    filter.type = 'task_by_collector'
+  }
+  taskConsoleRelations(filter).then((data: any) => {
+    relationCount.value = data?.length || 0
+  })
+}
+
+watch(visibleTabs, () => {
+  setCurrentTab(currentTab.value)
+})
+
+defineExpose({
+  changeTab,
+  changeAlertTab,
+  getLogRef,
+})
 </script>
 
 <template>
-  <section class="bottom-panel border-top flex-column">
+  <section
+    v-resize.top="{
+      minHeight: 328,
+    }"
+    class="bottom-panel flex-column rounded-2xl shadow-canvas overflow-hidden"
+  >
     <NodeLog
       v-if="onlyLog"
       v-bind="$attrs"
-      ref="log"
+      ref="logRef"
       :current-tab="currentTab"
-      @action="$emit('action', arguments[0])"
+      @action="emit('action', $event)"
     />
     <div v-else class="panel-header flex h-100">
       <ElTabs
         key="bottomPanel"
         v-model="currentTab"
+        :default-value="
+          $route.name === 'MigrationMonitorViewer' ? 'log' : defaultTabs[0]
+        "
         style="--el-tabs-padding-left: 1rem; --el-tabs-header-height: 44px"
         class="setting-tabs h-100 flex-1 flex w-100 monitor-bottom-tabs"
       >
-        <ElTabPane name="milestone">
+        <ElTabPane v-if="hasTab('milestone')" name="milestone">
           <template #label>
             <span>
               {{ $t('packages_dag_monitor_bottompanel_renwujindu') }}
@@ -178,7 +199,7 @@ export default {
             :current-tab="currentTab"
           />
         </ElTabPane>
-        <ElTabPane v-if="!hideLog" name="log" class="monitor-log-pane">
+        <ElTabPane v-if="hasTab('log')" name="log" class="monitor-log-pane">
           <template #label>
             <span>
               {{ $t('public_task_log') }}
@@ -187,13 +208,13 @@ export default {
           <NodeLog
             v-if="currentTab === 'log'"
             v-bind="$attrs"
-            ref="log"
+            ref="logRef"
             v-model:node-id="nodeId"
             :current-tab="currentTab"
-            @action="$emit('action', arguments[0])"
+            @action="emit('action', $event)"
           />
         </ElTabPane>
-        <ElTabPane name="record">
+        <ElTabPane v-if="hasTab('record')" name="record">
           <template #label>
             <span>
               {{ $t('packages_dag_monitor_bottompanel_yunxingjilu') }}
@@ -205,7 +226,7 @@ export default {
             :current-tab="currentTab"
           />
         </ElTabPane>
-        <ElTabPane v-if="showAlert" name="alert">
+        <ElTabPane v-if="hasTab('alert')" name="alert">
           <template #label>
             <span>
               {{ $t('packages_dag_monitor_bottompanel_gaojingliebiao') }}
@@ -216,10 +237,10 @@ export default {
             v-bind="$attrs"
             :current-tab="currentTab"
             @change-tab="changeTab"
-            @load-data="$emit('load-data')"
+            @load-data="emit('load-data')"
           />
         </ElTabPane>
-        <ElTabPane v-if="relationCount" name="relation">
+        <ElTabPane v-if="hasTab('relation')" name="relation">
           <template #label>
             <span>
               {{ $t('packages_dag_monitor_bottompanel_guanlianrenwu') }}
@@ -230,10 +251,10 @@ export default {
             :current-tab="currentTab"
             :type="$attrs.dataflow.syncType"
             @change-tab="changeTab"
-            @load-data="$emit('load-data')"
+            @load-data="emit('load-data')"
           />
         </ElTabPane>
-        <ElTabPane v-if="isDaas && !isCommunity" name="inspect">
+        <ElTabPane v-if="hasTab('inspect')" name="inspect">
           <template #label>
             <span>
               {{ $t('public_validation_record') }}
@@ -244,14 +265,24 @@ export default {
             v-bind="$attrs"
             style="min-width: 1000px"
             :current-tab="currentTab"
-            @open-inspect="$emit('open-inspect')"
+            @open-inspect="emit('open-inspect')"
           />
         </ElTabPane>
+        <SkipErrorTable
+          v-if="hasTab('skipErrorTable')"
+          name="skipErrorTable"
+          :current-tab="currentTab"
+          v-bind="$attrs"
+        />
       </ElTabs>
 
-      <el-button text class="close-icon" @click="$emit('showBottomPanel')">
+      <el-button
+        text
+        class="close-icon"
+        @click="dataflowStore.showBottom = false"
+      >
         <template #icon>
-          <VIcon size="16">close</VIcon>
+          <i-lucide-x />
         </template>
       </el-button>
     </div>
@@ -265,7 +296,7 @@ $headerHeight: 40px;
 
 .bottom-panel {
   position: relative;
-  height: 328px;
+  height: 58vh;
   //min-height: 328px;
   //height: 100%;
   overflow: visible;

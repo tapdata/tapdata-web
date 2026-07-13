@@ -1,7 +1,5 @@
 import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
-// TODO: 后端合并后删除
-const isHa = import.meta.env.MODE === 'ha'
 
 export class Table extends NodeType {
   type = 'table'
@@ -41,6 +39,10 @@ export class Table extends NodeType {
         'x-display': 'hidden',
         'x-reactions':
           '{{useAsyncDataSourceByConfig({service: useSyncConnection})}}',
+      },
+      connectionConfig: {
+        type: 'void',
+        'x-data': '{{{}}}',
       },
       tabs: {
         type: 'void',
@@ -138,7 +140,7 @@ export class Table extends NodeType {
                   fulfill: {
                     state: {
                       visible:
-                        '{{!$form.disabled && !$deps[1].length && $deps[2].length > 0 && $deps[1].length === 0 && $deps[0] !== "dropTable" && !!$values.attrs.connectionTags && !$values.attrs.connectionTags.includes("schema-free")}}',
+                        '{{!$form.disabled && !$deps[1].length && $deps[2].length > 0 && $deps[1].length === 0 && $deps[0] !== "dropTable" && !isSchemaFree($values)}}',
                     },
                   },
                 },
@@ -212,16 +214,15 @@ export class Table extends NodeType {
                           connectionId: '{{$values.connectionId}}',
                           itemType: 'string',
                           itemQuery: 'value',
-                          hasPartition: `{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}`,
+                          hasPartition: `{{hasCapability($values, "source_support_partition")}}`,
                           syncPartitionTableEnable:
                             '{{$values.syncSourcePartitionTableEnable}}',
                         },
                         'x-reactions': [
                           {
-                            target: 'name',
                             effects: ['onFieldInputValueChange'],
                             fulfill: {
-                              run: `{{ $self.value && !$values.attrs.hasNameEdited && ($target.value = $self.value) }}`,
+                              run: `{{ $self.value && !$values.attrs.hasNameEdited && ($values.name = $self.value) }}`,
                             },
                           },
                           {
@@ -277,7 +278,7 @@ export class Table extends NodeType {
                       fulfill: {
                         state: {
                           visible:
-                            '{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}',
+                            '{{hasCapability($values, "source_support_partition")}}',
                         },
                       },
                     },
@@ -455,7 +456,7 @@ export class Table extends NodeType {
                         },
                         schema: {
                           // 根据capabilities列表如果不存在{"id" : "clear_table_function"}属性，表示不支持“运行前删除已存在数据”，⚠️👇表达式依赖enum的顺序
-                          'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`,
+                          'x-component-props.options': `{{options=[$self.dataSource[0]],hasCapability($values, "drop_table_function") && options.push($self.dataSource[1]),hasCapability($values, "clear_table_function") && options.push($self.dataSource[2]),options}}`,
                         },
                       },
                     },
@@ -742,7 +743,7 @@ export class Table extends NodeType {
                             },
                           },
                           {
-                            when: `{{!$values.attrs.capabilities.filter(item => item.type === 10).length}}`,
+                            when: `{{!getCapabilitiesByType($values, 10).length}}`,
                             fulfill: {
                               state: {
                                 disabled: true,
@@ -799,7 +800,7 @@ export class Table extends NodeType {
                     'x-reactions': {
                       fulfill: {
                         state: {
-                          visible: `{{$settings.type !== "initial_sync" && $values.attrs.capabilities.some(item => item.id === 'query_by_advance_filter_function')}}`,
+                          visible: `{{$settings.type !== "initial_sync" && hasCapability($values, 'query_by_advance_filter_function')}}`,
                         },
                       },
                     },
@@ -831,7 +832,7 @@ export class Table extends NodeType {
                           {
                             fulfill: {
                               state: {
-                                display: `{{$settings.type !== "initial_sync" && $values.attrs.capabilities.some(item => item.id === 'query_by_advance_filter_function') ? "visible":"hidden"}}`,
+                                display: `{{$settings.type !== "initial_sync" && hasCapability($values, 'query_by_advance_filter_function') ? "visible":"hidden"}}`,
                               },
                             },
                           },
@@ -947,7 +948,7 @@ export class Table extends NodeType {
                           {
                             fulfill: {
                               state: {
-                                visible: `{{$settings.type !== "cdc" && $values.attrs.capabilities.some(item => item.id === "execute_command_function")}}`,
+                                visible: `{{$settings.type !== "cdc" && hasCapability($values, "execute_command_function")}}`,
                               },
                             },
                           },
@@ -1158,7 +1159,7 @@ export class Table extends NodeType {
                                 loading: '{{$deps[1]}}',
                               },
                               // 不设置字段的 loading，体验不好
-                              run: `{{$form.setFieldState('*(conditions.*.key,cdcPollingFields.*.field)', {dataSource: $self.dataSource})}}`,
+                              run: `{{$form.setFieldState('cdcPollingFields.*.field', {dataSource: $self.dataSource})}}`,
                             },
                           },
                         ],
@@ -1174,194 +1175,26 @@ export class Table extends NodeType {
                             key: '',
                             value: '',
                             operator: 5,
+                            fastQuery: false,
                             number: 1,
                             form: 'BEFORE',
                             unit: 'DAY',
                           },
                         ],
                         'x-decorator': 'FormItem',
-                        'x-component': 'ArrayItems',
-                        items: {
-                          type: 'object',
-                          properties: {
-                            space: {
-                              type: 'void',
-                              'x-component': 'Space',
-                              'x-component-props': {
-                                class: 'w-100',
-                                align: 'start',
-                              },
-                              properties: {
-                                key: {
-                                  type: 'string',
-                                  required: 'true',
-                                  'x-decorator': 'FormItem',
-                                  'x-decorator-props': {
-                                    className: 'flex-1',
-                                  },
-                                  'x-component': 'FieldSelect',
-                                  'x-component-props': {
-                                    filterable: true,
-                                  },
-                                  'x-reactions': {
-                                    effects: ['onFieldInputValueChange'],
-                                    fulfill: {
-                                      run: '{{$record.value = undefined}}',
-                                    },
-                                  },
-                                },
-                                timeFilter: {
-                                  type: 'void',
-                                  'x-component': 'Space',
-                                  'x-reactions': {
-                                    dependencies: [
-                                      'nodeSchema#dataSource',
-                                      '.key',
-                                    ],
-                                    fulfill: {
-                                      state: {
-                                        display: `{{Boolean($deps[0] && $deps[1] && $deps[0].find(field=>field.value===$deps[1]&&/timestamp|date|DATE_TIME|datetime/i.test(field.type))) ? "visible" :"hidden"}}`,
-                                      },
-                                    },
-                                  },
-                                  properties: {
-                                    fastQuery: {
-                                      type: 'boolean',
-                                      default: false,
-                                      enum: [
-                                        {
-                                          label: i18n.t('public_date_specific'),
-                                          value: false,
-                                        },
-                                        {
-                                          label: i18n.t('public_date_relative'),
-                                          value: true,
-                                        },
-                                      ],
-                                      'x-decorator': 'FormItem',
-                                      'x-decorator-props': {
-                                        wrapperWidth: 140,
-                                      },
-                                      'x-component': 'Select',
-                                    },
-                                    RelativeTimePicker: {
-                                      type: 'void',
-                                      'x-component': 'RelativeTimePicker',
-                                      'x-component-props': {
-                                        offsetHours: '{{$values.offsetHours}}',
-                                      },
-                                      'x-reactions': {
-                                        dependencies: ['.fastQuery'],
-                                        fulfill: {
-                                          state: {
-                                            display: `{{!!$deps[0] ? "visible" :"hidden"}}`,
-                                          },
-                                        },
-                                      },
-                                    },
-                                  },
-                                },
-                                valueWrapper: {
-                                  type: 'void',
-                                  'x-reactions': {
-                                    dependencies: [
-                                      'nodeSchema#dataSource',
-                                      '.key',
-                                      '.fastQuery',
-                                    ],
-                                    fulfill: {
-                                      state: {
-                                        display: `{{!$deps[2] || !(field=$deps[0] && $deps[0].find(item=>item.value===$deps[1]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.type)) ? "visible" :"hidden"}}`,
-                                      },
-                                    },
-                                  },
-                                  properties: {
-                                    operator: {
-                                      type: 'number',
-                                      required: 'true',
-                                      default: 5,
-                                      enum: [
-                                        {
-                                          label: '>',
-                                          value: 1,
-                                        },
-                                        {
-                                          label: '>=',
-                                          value: 2,
-                                        },
-                                        {
-                                          label: '<',
-                                          value: 3,
-                                        },
-                                        {
-                                          label: '<=',
-                                          value: 4,
-                                        },
-                                        {
-                                          label: '=',
-                                          value: 5,
-                                        },
-                                      ],
-                                      'x-decorator': 'FormItem',
-                                      'x-decorator-props': {
-                                        wrapperWidth: 66,
-                                      },
-                                      'x-component': 'Select',
-                                    },
-                                    value: {
-                                      type: 'string',
-                                      required: 'true',
-                                      'x-decorator': 'FormItem',
-                                      'x-decorator-props': {
-                                        wrapperWidth: 208,
-                                      },
-                                      'x-component': 'Input',
-                                      'x-component-props': {
-                                        type: 'datetime',
-                                        align: 'right',
-                                        format: 'YYYY-MM-DD HH:mm:ss',
-                                      },
-                                      'x-reactions': {
-                                        dependencies: [
-                                          'nodeSchema#dataSource',
-                                          '.key',
-                                        ],
-                                        fulfill: {
-                                          schema: {
-                                            'x-component':
-                                              '{{field=$deps[0] && $deps[0].find(item=>item.value===$deps[1]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.type)?"DatePicker":"Input"}}',
-                                          },
-                                        },
-                                      },
-                                    },
-                                  },
-                                },
-                                remove: {
-                                  type: 'void',
-                                  'x-decorator': 'FormItem',
-                                  'x-component': 'ArrayItems.Remove',
-                                  'x-component-props': {
-                                    disabled: '{{$values.conditions.length<2}}',
-                                  },
-                                },
-                              },
-                            },
-                          },
+                        'x-component': 'ConditionsEditor',
+                        'x-component-props': {
+                          offsetHours: '{{$values.offsetHours}}',
                         },
-                        properties: {
-                          add: {
-                            type: 'void',
-                            title: i18n.t('packages_dag_nodes_table_tianjia'),
-                            'x-component': 'ArrayItems.Addition',
-                            'x-component-props': {
-                              defaultValue: {
-                                key: '',
-                                value: '',
-                                operator: 5,
-                                number: 1,
-                                form: 'BEFORE',
-                                unit: 'DAY',
-                              },
+                        'x-reactions': {
+                          dependencies: [
+                            'nodeSchema#dataSource',
+                            'nodeSchema#loading',
+                          ],
+                          fulfill: {
+                            schema: {
+                              'x-component-props.fields': '{{$deps[0]}}',
+                              // 'x-component-props.fieldsLoading': '{{$deps[1]}}',
                             },
                           },
                         },
@@ -1433,7 +1266,7 @@ export class Table extends NodeType {
                       fulfill: {
                         state: {
                           display:
-                            '{{hasFeature("resume") && $values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? "visible":"hidden"}}',
+                            '{{hasFeature("resume") && hasCapability($values, "get_read_partitions_function") && ($settings.type !== "cdc") ? "visible":"hidden"}}',
                         },
                       },
                     },
@@ -1461,7 +1294,7 @@ export class Table extends NodeType {
                                 fulfill: {
                                   state: {
                                     value:
-                                      '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? $values.readPartitionOptions.enable:false}}',
+                                      '{{hasCapability($values, "get_read_partitions_function") && ($settings.type !== "cdc") ? $values.readPartitionOptions.enable:false}}',
                                   },
                                 },
                               },
@@ -1509,12 +1342,12 @@ export class Table extends NodeType {
                             'x-reactions': {
                               dependencies: ['.enable'],
                               fulfill: {
-                                run: `{{ $values.splitTyp !== 10 && $values.attrs.capabilities.some(t => t.id === 'count_by_partition_filter_function') && $self.setValue(1) }}`,
+                                run: `{{ $values.splitTyp !== 10 && hasCapability($values, "count_by_partition_filter_function") && $self.setValue(1) }}`,
                                 state: {
                                   display: '{{$deps[0] ? "visible" :"hidden"}}',
                                 },
                                 schema: {
-                                  'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.some(item => item.id ==='count_by_partition_filter_function') && options.push($self.dataSource[1]),options}}`,
+                                  'x-component-props.options': `{{options=[$self.dataSource[0]],hasCapability($values, "count_by_partition_filter_function") && options.push($self.dataSource[1]),options}}`,
                                 },
                               },
                             },
@@ -1764,6 +1597,7 @@ export class Table extends NodeType {
                           colon: false,
                           feedbackLayout: 'none',
                         },
+                        'x-reactions': '{{useDmlPolicy}}',
                         properties: {
                           insertPolicy: {
                             type: 'string',
@@ -1912,9 +1746,7 @@ export class Table extends NodeType {
                           {
                             fulfill: {
                               state: {
-                                display: isHa
-                                  ? `{{$values.attrs.capabilities.filter(item => ["transaction_begin_function", "transaction_commit_function", "transaction_rollback_function"].includes(item.id)).length === 3 ? 'visible' : 'hidden'}}`
-                                  : `{{findParentNodes($values.id).length < 2 && $values.attrs.capabilities.filter(item => ["transaction_begin_function", "transaction_commit_function", "transaction_rollback_function"].includes(item.id)).length === 3 ? 'visible' : 'hidden'}}`,
+                                display: `{{hasCapabilities($values,["transaction_begin_function", "transaction_commit_function", "transaction_rollback_function"]) ? 'visible' : 'hidden'}}`,
                               },
                             },
                           },
@@ -1937,7 +1769,7 @@ export class Table extends NodeType {
                           fulfill: {
                             state: {
                               visible:
-                                '{{hasFeature("syncIndex") && $settings.type !== "cdc" && $values.attrs.capabilities.filter(item => ["get_table_info_function", "create_index_function", "query_indexes_function"].includes(item.id)).length === 3}}',
+                                '{{hasFeature("syncIndex") && $settings.type !== "cdc" && hasCapabilities($values, ["get_table_info_function", "create_index_function", "query_indexes_function"])}}',
                               description: `{{$self.value ? '${i18n.t('packages_dag_syncIndex_desc')}' : ''}}`,
                             },
                           },
@@ -1955,7 +1787,7 @@ export class Table extends NodeType {
                           fulfill: {
                             state: {
                               visible:
-                                '{{hasFeature("syncPartitionTable") && $values.attrs.capabilities.some(item => item.id==="target_support_partition")}}',
+                                '{{hasFeature("syncPartitionTable") && hasCapability($values, "target_support_partition")}}',
                             },
                           },
                         },
@@ -1973,7 +1805,7 @@ export class Table extends NodeType {
                           fulfill: {
                             state: {
                               visible:
-                                '{{$values.attrs.capabilities.some(item => item.id==="create_constraint_function")}}',
+                                '{{hasCapability($values, "create_constraint_function")}}',
                             },
                           },
                         },
@@ -2203,28 +2035,6 @@ export class Table extends NodeType {
                     ],
                   },
                   ms: {
-                    type: 'number',
-                    'x-reactions': [
-                      {
-                        dependencies: ['._ms'],
-                        fulfill: {
-                          state: {
-                            value: `{{Math.ceil($deps[0] * 1000) < 1 ? 1 : Math.ceil($deps[0] * 1000)}}`,
-                          },
-                        },
-                      },
-                      {
-                        target: 'alarmRules.0._ms',
-                        effects: ['onFieldInit'],
-                        fulfill: {
-                          state: {
-                            value: `{{Math.ceil($self.value / 1000) < 1 ? 1 : Math.ceil($self.value / 1000)}}`,
-                          },
-                        },
-                      },
-                    ],
-                  },
-                  _ms: {
                     title: '',
                     type: 'number',
                     'x-editable': true,
@@ -2242,7 +2052,7 @@ export class Table extends NodeType {
                     },
                   },
                   unit: {
-                    title: 's',
+                    title: 'ms',
                     type: 'void',
                     default: 0,
                     'x-decorator': 'FormItem',
@@ -2266,12 +2076,6 @@ export class Table extends NodeType {
       'attrs.connectionName': {
         type: 'string',
         'x-display': 'hidden',
-      },
-
-      'attrs.capabilities': {
-        type: 'array',
-        'x-display': 'hidden',
-        'x-reactions': '{{useDmlPolicy}}',
       },
     },
   }

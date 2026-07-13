@@ -23,11 +23,16 @@ import { reactive, ref } from 'vue'
 
 import type { ElInput } from 'element-plus'
 
-defineProps<{
-  keyMapping: Record<string, string>
-  hideMenu?: boolean
-  variablesMapping: Record<string, Array>
-}>()
+withDefaults(
+  defineProps<{
+    keyMapping?: Record<string, string>
+    hideMenu?: boolean
+    variablesMapping?: Record<string, []>
+  }>(),
+  {
+    variablesMapping: () => ({}),
+  },
+)
 
 const { t } = useI18n()
 
@@ -115,6 +120,13 @@ const variablesMap = reactive({
       name: 'delayTime',
       label: t('public_delay_time'),
       icon: IconLucideClock,
+    },
+  ],
+  TASK_DDL_WARNING: [
+    {
+      name: 'taskName',
+      label: t('public_task_name'),
+      icon: IconLucideFileText,
     },
   ],
   DATANODE_CANNOT_CONNECT: [

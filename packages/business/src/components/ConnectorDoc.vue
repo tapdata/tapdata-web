@@ -16,9 +16,7 @@ const { locale } = useI18n()
 const store = useStore()
 const isDaas = ref(import.meta.env.VUE_APP_PLATFORM === 'DAAS')
 const doc = ref('')
-const iframe = ref<HTMLIFrameElement>()
 const navJson = ref({})
-const showIframe = ref(true)
 
 const docUrl = computed(() => {
   return navJson.value[props.pdkId]
@@ -54,9 +52,7 @@ const fetchNavJson = async () => {
     console.error('error', error)
   }
 
-  showIframe.value = !!docUrl.value
-
-  if (!showIframe.value) {
+  if (!docUrl.value) {
     getPdkDocFn()
   }
 }
@@ -66,12 +62,7 @@ fetchNavJson()
 
 <template>
   <div class="h-100">
-    <GitBook v-if="!showIframe" class="bg-white border-0 p-4" :value="doc" />
-    <iframe
-      v-else-if="docUrl"
-      ref="iframe"
-      :src="src"
-      class="w-100 h-100 block"
-    />
+    <GitBook v-if="!docUrl" class="bg-white border-0 p-4" :value="doc" />
+    <iframe v-else :src="src" class="w-100 h-100 block" />
   </div>
 </template>

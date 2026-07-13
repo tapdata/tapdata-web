@@ -44,6 +44,13 @@ watch(
 const handleSearch = (value: string) => {
   treeRef.value?.filter(value)
 }
+
+const clearSearch = () => {
+  search.value = ''
+  treeRef.value?.filter('')
+}
+
+defineExpose({ clearSearch })
 </script>
 
 <template>
@@ -94,7 +101,7 @@ const handleSearch = (value: string) => {
             </div>
           </el-button>
           <el-tag class="is-code font-mono" size="small" disable-transitions>{{
-            data.dataType
+            data.simpleTypeName
           }}</el-tag>
         </div>
       </template>

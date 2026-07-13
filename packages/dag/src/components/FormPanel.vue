@@ -14,7 +14,6 @@ import { deepEqual } from '@tap/shared'
 import { debounce } from 'lodash-es'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
-import { $emit } from '../../utils/gogocodeTransfer'
 import { getSchema } from '../util'
 import FormRender from './FormRender'
 
@@ -83,11 +82,13 @@ export default {
       async handler(n, o) {
         const oldNode = this.nodeById(o)
         const formSchema = this.$store.getters['dataflow/formSchema'] || {}
+        const activeKey = this.scope?.formTab?.activeKey
 
         // 重置TAB
         if (
-          this.ins?.group !== oldNode?.__Ctor.group &&
-          this.scope?.formTab?.activeKey !== 'previewTab'
+          (this.ins?.group !== oldNode?.__Ctor.group &&
+            activeKey !== 'previewTab') ||
+          activeKey === 'cacheTab'
         ) {
           this.scope?.formTab?.setActiveKey('tab1')
         }
@@ -149,7 +150,7 @@ export default {
             const $inputs = this.form.getFieldState('$inputs')
             if ($inputs && $inputs.value.join(',') !== v.join(',')) {
               this.form.setValuesIn('$inputs', [...v])
-              $emit(this, 'update:InputsOrOutputs')
+              this.$emit('update:InputsOrOutputs')
             }
           }),
         )
@@ -159,7 +160,7 @@ export default {
             const $outputs = this.form.getFieldState('$outputs')
             if ($outputs && $outputs.value.join(',') !== v.join(',')) {
               this.form.setValuesIn('$outputs', [...v])
-              $emit(this, 'update:InputsOrOutputs')
+              this.$emit('update:InputsOrOutputs')
             }
           }),
         )

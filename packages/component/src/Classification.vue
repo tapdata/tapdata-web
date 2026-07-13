@@ -13,14 +13,21 @@ import {
   fetchUserGroups,
   patchUserGroupById,
 } from '@tap/api/core/user-groups'
-
 import { useI18n } from '@tap/i18n'
 import { ElMessage } from 'element-plus'
+
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import VIcon from './base/VIcon.vue'
+import vResize from './directives/resize'
 import { Modal } from './modal'
+import { OverflowTooltip } from './overflow-tooltip'
+import SortDropdown from './SortDropdown.vue'
 import type { RenderContentContext, TreeInstance, TreeKey } from 'element-plus'
+import './directives/resize/index.scss'
+
+type SortField = 'name' | 'priority' | 'createdTime'
+type SortOrder = 'asc' | 'desc'
 
 type Node = RenderContentContext['node']
 
@@ -75,6 +82,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   'update:visible': [value: boolean]
   nodeChecked: [checkedNodes: TreeKey[]]
+  selectNoTag: [isSelectedNoTag: boolean]
   dropInTag: []
   setUserGroupData: [data: TreeNode[]]
 }>()
@@ -102,6 +110,14 @@ const dialogConfig = ref<DialogConfig>({
   title: '',
   visible: false,
 })
+const isSelectedNoTag = ref(false)
+
+// Sort state
+const sortField = ref<SortField>('name')
+const sortOrder = ref<SortOrder>('asc')
+
+// Panel width state
+const panelWidth = ref(240)
 
 const priorityOptions = [
   {
@@ -176,6 +192,29 @@ const setPanelFlag = (payload: { panelFlag: boolean; type: string }) => {
   store.commit('classification/setPanelFlag', payload)
 }
 
+const setSort = (payload: {
+  sortField?: SortField
+  sortOrder?: SortOrder
+  type: string
+}) => {
+  store.commit('classification/setSort', payload)
+}
+
+const setPanelWidthToStore = (payload: {
+  panelWidth: number
+  type: string
+}) => {
+  store.commit('classification/setPanelWidth', payload)
+}
+
+const handleResize = ({ newVal }: { newVal: number }) => {
+  panelWidth.value = newVal
+  setPanelWidthToStore({
+    panelWidth: newVal,
+    type: props.viewPage || '',
+  })
+}
+
 const toggle = () => {
   const _isExpand = !isExpand.value
   isExpand.value = _isExpand
@@ -222,13 +261,14 @@ const checkHandler = (
 }
 
 const nodeClickHandler = (data: TreeNode) => {
-  const checkedNodes = tree.value?.getCheckedKeys() || []
+  let checkedNodes = tree.value?.getCheckedKeys() || []
   const index = checkedNodes.indexOf(data.id)
 
   if (index !== -1) {
     checkedNodes.splice(index, 1)
   } else {
-    checkedNodes.push(data.id)
+    // checkedNodes.push(data.id)
+    checkedNodes = [data.id]
   }
 
   // setChecked 不缓存，setCheckedKeys 缓存，采用缓存的方式
@@ -238,6 +278,7 @@ const nodeClickHandler = (data: TreeNode) => {
 }
 
 const emitCheckedNodes = () => {
+  isSelectedNoTag.value = false
   const checkedNodes = tree.value?.getCheckedKeys() || []
   emit('nodeChecked', checkedNodes)
   setTag({
@@ -333,6 +374,45 @@ const formatData = (items: TreeNode[]): TreeNode[] => {
   }
   return []
 }
+
+// 排序函数
+const sortNodes = (nodes: TreeNode[]): TreeNode[] => {
+  const sorted = [...nodes].sort((a, b) => {
+    let compareValue = 0
+
+    switch (sortField.value) {
+      case 'name':
+        compareValue = (a.value || '').localeCompare(b.value || '')
+        break
+      case 'priority': {
+        // priority 值越小优先级越高，没有 priority 的排在最后
+        const aPriority = (a as any).priority ?? 999
+        const bPriority = (b as any).priority ?? 999
+        compareValue = aPriority - bPriority
+        break
+      }
+      case 'createdTime': {
+        const aTime = a.last_updated ? new Date(a.last_updated).getTime() : 0
+        const bTime = b.last_updated ? new Date(b.last_updated).getTime() : 0
+        compareValue = aTime - bTime
+        break
+      }
+    }
+
+    return sortOrder.value === 'asc' ? compareValue : -compareValue
+  })
+
+  // 递归排序子节点
+  return sorted.map((node) => ({
+    ...node,
+    children: node.children ? sortNodes(node.children) : undefined,
+  }))
+}
+
+// 排序后的树数据
+const sortedTreeData = computed(() => {
+  return sortNodes(treeData.value)
+})
 
 const filterNode = (value: string, data: TreeNode) => {
   if (!value) return true
@@ -622,6 +702,16 @@ const handleNodeCollapse = (data, node) => {
   expandedKeys.value = expandedKeys.value.filter((item) => item !== data.id)
 }
 
+const onClickUnclassified = () => {
+  isSelectedNoTag.value = !isSelectedNoTag.value
+  tree.value?.setCheckedKeys([])
+  setTag({
+    value: [],
+    type: props.viewPage || '',
+  })
+  emit('selectNoTag', isSelectedNoTag.value)
+}
+
 // Watchers
 watch(
   () => props.types,
@@ -637,33 +727,59 @@ watch(filterText, (val) => {
   tree.value?.filter(val)
 })
 
+// Watch sort changes and persist to store
+watch([sortField, sortOrder], ([newSortField, newSortOrder]) => {
+  setSort({
+    sortField: newSortField,
+    sortOrder: newSortOrder,
+    type: props.viewPage || '',
+  })
+})
+
 // Lifecycle
 onMounted(() => {
-  // 是否默认打开/是否有选择tag
+  // 是否默认打开/是否有选择tag/排序规则/面板宽度
   let flag = false
   let tags: string[] = []
+  let storedSortField: SortField = 'name'
+  let storedSortOrder: SortOrder = 'asc'
+  let storedPanelWidth = 240
+
   switch (props.viewPage) {
     case 'connections':
       flag = connections.value?.panelFlag
       tags = connections.value?.classification
-
+      storedSortField = connections.value?.sortField || 'name'
+      storedSortOrder = connections.value?.sortOrder || 'asc'
+      storedPanelWidth = connections.value?.panelWidth || 240
       break
     case 'migrate':
       flag = migrate.value?.panelFlag
       tags = migrate.value?.classification
+      storedSortField = migrate.value?.sortField || 'name'
+      storedSortOrder = migrate.value?.sortOrder || 'asc'
+      storedPanelWidth = migrate.value?.panelWidth || 240
       break
     case 'sync':
       flag = sync.value?.panelFlag
       tags = sync.value?.classification
-
+      storedSortField = sync.value?.sortField || 'name'
+      storedSortOrder = sync.value?.sortOrder || 'asc'
+      storedPanelWidth = sync.value?.panelWidth || 240
       break
     case 'inspect':
       flag = inspect.value?.panelFlag
       tags = inspect.value?.classification
+      storedSortField = inspect.value?.sortField || 'name'
+      storedSortOrder = inspect.value?.sortOrder || 'asc'
+      storedPanelWidth = inspect.value?.panelWidth || 240
       break
   }
 
   isExpand.value = flag
+  sortField.value = storedSortField
+  sortOrder.value = storedSortOrder
+  panelWidth.value = storedPanelWidth
 
   getData((data) => {
     if (flag) {
@@ -690,7 +806,16 @@ defineExpose({
 </script>
 
 <template>
-  <div v-show="props.visible" class="classification bg-light rounded-xl">
+  <div
+    v-show="props.visible"
+    v-resize.right="{
+      minWidth: 240,
+      maxWidth: 480,
+      onResize: handleResize,
+    }"
+    class="classification bg-light rounded-xl"
+    :style="{ width: `${panelWidth}px` }"
+  >
     <div class="classification-header">
       <div class="h-8 flex align-center my-2 p-2 gap-1" style="--btn-space: 0">
         <el-button text @click="toggle">
@@ -701,6 +826,11 @@ defineExpose({
         <div class="fs-6 flex-1">
           <span>{{ comTitle }}</span>
         </div>
+        <SortDropdown
+          v-model:sort-field="sortField"
+          v-model:sort-order="sortOrder"
+          :is-task="type === 'dataflow'"
+        />
         <el-button
           text
           :class="{ 'is-active': showSearch }"
@@ -735,7 +865,7 @@ defineExpose({
         show-checkbox
         :props="treeProps"
         :expand-on-click-node="false"
-        :data="treeData"
+        :data="sortedTreeData"
         :filter-node-method="filterNode"
         :render-after-expand="false"
         :indent="8"
@@ -759,16 +889,23 @@ defineExpose({
               <VIcon v-if="types[0] === 'user'" class="color-primary"
                 >folder-close</VIcon
               >
-              <el-icon v-else class="color-primary"><i-lucide-tag /></el-icon>
-              <span class="table-label" :title="data.value">{{
+              <el-icon v-else><i-lucide-tag /></el-icon>
+              <OverflowTooltip
+                :text="data.value"
+                :hide-after="0"
+                placement="left"
+                class="text-truncate"
+              />
+              <!-- <span class="table-label" :title="data.value">{{
                 data.value
-              }}</span>
+              }}</span> -->
 
               <el-tooltip
                 v-if="data.priority && priorityOptions[data.priority - 1]"
                 placement="top"
                 :show-after="350"
                 :hide-after="0"
+                :enterable="false"
                 :content="
                   $t('public_tag_priority_tip', {
                     val: priorityOptions[data.priority - 1].label,
@@ -816,6 +953,21 @@ defineExpose({
           </slot>
         </template>
       </ElTree>
+    </div>
+
+    <div v-if="treeData.length && type === 'dataflow'" class="mt-auto px-2">
+      <el-divider class="mt-0 mb-2" />
+
+      <div
+        class="position-relative gap-2 unclassified rounded-lg h-8 flex align-center px-3 lh-8 mb-2 cursor-pointer font-color-light"
+        :class="{ active: isSelectedNoTag }"
+        @click="onClickUnclassified"
+      >
+        <el-icon>
+          <i-lucide-inbox />
+        </el-icon>
+        <span>{{ $t('packages_component_classification_noTag') }}</span>
+      </div>
     </div>
 
     <div
@@ -916,11 +1068,24 @@ defineExpose({
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 213px;
+  width: 240px;
   user-select: none;
   box-sizing: border-box;
   border-top: none;
   background: var(--color-white);
+  // Resize handle indicator (iOS style)
+  &::before {
+    content: '';
+    position: absolute;
+    right: -3px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 36px;
+    border-radius: 10px;
+    background-color: lab(90.952% 0 -0.0000119209);
+    pointer-events: none;
+  }
   .btn-expand {
     // padding: 2px 3px;
     // color: var(--text-light);
@@ -1022,6 +1187,9 @@ defineExpose({
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: 26px;
+    &:where(.is-checked *) {
+      color: var(--el-color-primary) !important;
+    }
     .icon-folder {
       margin-right: 5px;
       font-size: 12px;
@@ -1086,41 +1254,14 @@ defineExpose({
       background-color: var(--el-color-primary-light-9);
     }
   }
-
-  .tag-red {
-    background-color: oklch(0.936 0.032 17.717);
-    border: 1px solid oklch(0.885 0.062 18.334);
-    color: oklch(0.505 0.213 27.518);
+}
+.unclassified {
+  &:hover {
+    background-color: var(--fill-hover);
   }
-
-  .tag-orange {
-    background-color: oklch(0.954 0.038 75.164);
-    border: 1px solid oklch(0.901 0.076 70.697);
-    color: oklch(0.553 0.195 38.402);
-  }
-
-  .tag-yellow {
-    background-color: oklch(0.973 0.071 103.193);
-    border: 1px solid oklch(0.945 0.129 101.54);
-    color: oklch(0.554 0.135 66.442);
-  }
-
-  .tag-blue {
-    background-color: oklch(0.932 0.032 255.585);
-    border: 1px solid oklch(0.882 0.059 254.128);
-    color: oklch(0.488 0.243 264.376);
-  }
-
-  .tag-green {
-    background-color: oklch(0.962 0.044 156.743);
-    border: 1px solid oklch(0.925 0.084 155.995);
-    color: oklch(0.527 0.154 150.069);
-  }
-
-  .tag-purple {
-    background-color: oklch(0.946 0.033 307.174);
-    border: 1px solid oklch(0.902 0.063 306.703);
-    color: oklch(0.496 0.265 301.924);
+  &.active {
+    background-color: var(--el-color-primary-light-9);
+    color: var(--el-color-primary) !important;
   }
 }
 </style>

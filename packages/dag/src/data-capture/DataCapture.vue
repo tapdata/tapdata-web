@@ -2,6 +2,7 @@
 import { getDataActions } from '@tap/api/src/core/data-permission'
 import { callProxy } from '@tap/api/src/core/proxy'
 import { getTaskById } from '@tap/api/src/core/task'
+import { usePollingRequest, withPassive } from '@tap/api/src/request'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import syncTaskAgent from '@tap/business/src/mixins/syncTaskAgent'
 import { makeStatusAndDisabled } from '@tap/business/src/shared/task'
@@ -24,7 +25,7 @@ import {
   ref,
   watch,
 } from 'vue'
-import { useRequest } from 'vue-request'
+
 import { useRoute, useRouter } from 'vue-router'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { useStore } from 'vuex'
@@ -264,7 +265,9 @@ export default defineComponent({
       if (!id) return
       startLoopTaskTimer = setTimeout(async () => {
         const { parent_task_sign } = route.query || {}
-        const data = await getTaskById(id, {}, { parent_task_sign })
+        const data = await withPassive(() =>
+          getTaskById(id, {}, { parent_task_sign }),
+        )
 
         if (data) {
           if (data.errorEvents?.length) {
@@ -483,7 +486,7 @@ export default defineComponent({
       )
     }
 
-    const { run, cancel, loading } = useRequest(loadData, {
+    const { run, cancel, loading } = usePollingRequest(loadData, {
       manual: true,
       pollingInterval: 5000,
       debounceInterval: 200,
@@ -604,7 +607,7 @@ export default defineComponent({
       <div class="mb-4 text-center">
         <el-input
           v-model="keyword"
-          placeholder="请输入关键字"
+          :placeholder="$t('packages_dag_data_capture_keyword_placeholder')"
           style="width: 300px"
           clearable
           @input="onInput"
@@ -635,20 +638,26 @@ export default defineComponent({
                 style="margin-bottom: -10px"
                 content-class-name="fw-bold font-color-dark"
               >
-                <el-descriptions-item label="原表名">{{
-                  item.partitionTableId || item.tableId
-                }}</el-descriptions-item>
-                <el-descriptions-item label="事件类型">{{
-                  item.type
-                }}</el-descriptions-item>
-                <el-descriptions-item label="事件时间">{{
-                  item.time
-                }}</el-descriptions-item>
-                <el-descriptions-item label="事件ID">{{
-                  item.id
-                }}</el-descriptions-item>
                 <el-descriptions-item
-                  label="原始数据"
+                  :label="$t('packages_dag_data_capture_source_table')"
+                  >{{
+                    item.partitionTableId || item.tableId
+                  }}</el-descriptions-item
+                >
+                <el-descriptions-item
+                  :label="$t('packages_dag_data_capture_event_type')"
+                  >{{ item.type }}</el-descriptions-item
+                >
+                <el-descriptions-item
+                  :label="$t('packages_dag_data_capture_event_time')"
+                  >{{ item.time }}</el-descriptions-item
+                >
+                <el-descriptions-item
+                  :label="$t('packages_dag_data_capture_event_id')"
+                  >{{ item.id }}</el-descriptions-item
+                >
+                <el-descriptions-item
+                  :label="$t('packages_dag_data_capture_original_data')"
                   content-class-name="ellipsis"
                 >
                   <div class="flex align-center overflow-hidden">
@@ -697,9 +706,12 @@ export default defineComponent({
           {{ $t('public_load_more') }}
         </el-button>
         <span v-else-if="!isCancel">
-          {{ $t('public_loading') }}
-
-          <i class="el-icon-loading" /> {{ $t('public_loading') }}
+          <el-text>
+            <el-icon class="is-loading">
+              <i-lucide-loader />
+            </el-icon>
+            {{ $t('public_loading') }}
+          </el-text>
         </span>
         <span v-else-if="list.length > 10"> {{ $t('public_load_end') }} </span>
       </div>

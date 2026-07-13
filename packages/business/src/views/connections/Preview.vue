@@ -6,7 +6,7 @@ import {
 import { getPermissions } from '@tap/api/src/core/data-permission'
 import { fetchDatabaseTypeByPdkHash } from '@tap/api/src/core/database-types'
 import { callProxy } from '@tap/api/src/core/proxy'
-import { countUsers } from '@tap/api/src/core/users'
+import { getUserRoles } from '@tap/api/src/core/users'
 import Drawer from '@tap/component/src/Drawer.vue'
 import { Modal } from '@tap/component/src/modal'
 import i18n, { useI18n } from '@tap/i18n'
@@ -33,7 +33,7 @@ interface Connection {
     user?: string
     username?: string
     extParams?: string
-    addtionalString?: string
+    additionalString?: string
     timezone?: string
     uri?: string
     isUri?: boolean
@@ -63,7 +63,7 @@ interface Connection {
   database_name?: string
   database_owner?: string
   database_username?: string
-  addtionalString?: string
+  additionalString?: string
   database_datetype_without_timezone?: string
   sourceFrom?: string
   // Additional properties for source from
@@ -176,7 +176,7 @@ const configModel = {
       items: [
         {
           label: i18n.t('public_connection_form_other_connection_string'),
-          key: 'addtionalString',
+          key: 'additionalString',
         },
       ],
     },
@@ -220,7 +220,7 @@ const transformData = (row: Connection) => {
   row.database_name = row.config.database || row.config.sid
   row.database_owner = row.config.schema
   row.database_username = row.config.user || row.config.username
-  row.addtionalString = row.config.extParams || row.config.addtionalString
+  row.additionalString = row.config.extParams || row.config.additionalString
   row.database_datetype_without_timezone = row.config.timezone
   row.sourceFrom = getSourceFrom(row)
   row.loadSchemaTime = row.loadSchemaTime
@@ -582,26 +582,24 @@ const loadPermissions = (id: string) => {
     dataId: id,
   }
   getPermissions(filter).then((data: any = []) => {
-    countUsers
-      .role({
-        filter: JSON.stringify({
-          limit: 1000,
-        }),
-      })
-      .then((roleList) => {
-        permissions.value = data
-          .map((t) => {
-            const role = roleList.items?.find((r) => r.id === t.typeId) || {
-              name: '',
-            }
-            return {
-              checked: t.actions,
-              roleId: t.typeId,
-              roleName: role.name,
-            }
-          })
-          .filter((t) => !!t.roleName)
-      })
+    getUserRoles({
+      filter: JSON.stringify({
+        limit: 1000,
+      }),
+    }).then((roleList) => {
+      permissions.value = data
+        .map((t) => {
+          const role = roleList.items?.find((r) => r.id === t.typeId) || {
+            name: '',
+          }
+          return {
+            checked: t.actions,
+            roleId: t.typeId,
+            roleName: role.name,
+          }
+        })
+        .filter((t) => !!t.roleName)
+    })
   })
 }
 
@@ -706,7 +704,7 @@ defineExpose({
 </script>
 
 <template>
-  <Drawer v-model="visible" width="400px">
+  <Drawer v-model="visible" width="400px" :modal="false" modal-penetrable>
     <template #header>
       <div class="flex align-center gap-2 font-color-dark overflow-hidden">
         <DatabaseIcon

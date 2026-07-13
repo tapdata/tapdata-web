@@ -2,8 +2,11 @@ import { observable } from '@formily/reactive'
 import { getDataActions } from '@tap/api/src/core/data-permission'
 import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
 import { fetchSharedCache } from '@tap/api/src/core/shared-cache'
+import { withPassive } from '@tap/api/src/request'
 import {
   batchStartTasks,
+  checkTaskMemoryHeap,
+  fetchMergeTaskCache,
   fetchTasks,
   forceStopTask,
   getNodeTableInfo,
@@ -92,6 +95,8 @@ export default {
       'stateIsReadonly',
       'processorNodeTypes',
       'hasNodeError',
+      'getCapabilitiesMap',
+      'hasCapability',
     ]),
 
     selectBoxStyle() {
@@ -168,6 +173,7 @@ export default {
       'setPdkPropertiesMap',
       'setPdkSchemaFreeMap',
       'setPdkDoubleActiveMap',
+      'setPdkCapabilitiesMap',
       'setMaterializedViewVisible',
     ]),
 
@@ -453,16 +459,26 @@ export default {
         fields: { name: 1 },
         where: { name: { like: `^${source}\\d+$` } },
       })
-      let def = 1
-      if (taskNames?.items.length) {
-        const arr = [0]
-        taskNames.items.forEach((item) => {
-          const res = item.name.match(new RegExp(`^${source}(\\d+)$`))
-          if (res && res[1]) arr.push(+res[1])
-        })
-        arr.sort((a, b) => a - b)
-        def = arr.pop() + 1
+
+      if (!taskNames?.items.length) {
+        return `${source}1`
       }
+
+      // 提取所有已存在的数字
+      const existingNumbers = new Set()
+      taskNames.items.forEach((item) => {
+        const res = item.name.match(new RegExp(`^${source}(\\d+)$`))
+        if (res && res[1]) {
+          existingNumbers.add(Number.parseInt(res[1]))
+        }
+      })
+
+      // 找到第一个不存在的数字
+      let def = 1
+      while (existingNumbers.has(def)) {
+        def++
+      }
+
       return `${source}${def}`
     },
 
@@ -732,6 +748,7 @@ export default {
       this.dataflow.startTime = data.startTime
       this.dataflow.lastStartDate = data.lastStartDate
       this.dataflow.pingTime = data.pingTime
+      this.dataflow.autoIncrementalBatchSize = data.autoIncrementalBatchSize
 
       if (data.currentEventTimestamp) {
         this.dataflow.currentEventTimestampLabel = dayjs(
@@ -1420,15 +1437,13 @@ export default {
     validateDag() {
       let someErrorMsg = ''
       // 检查每个节点的源节点个数、连线个数、节点的错误状态
+      let targetDataNodeCount = 0
       this.allNodes.some((node) => {
         const { id } = node
         const minInputs = node.__Ctor.minInputs ?? 1
+        const isDataNode = node.type === 'database' || node.type === 'table'
         // 非数据节点至少有一个目标
-        const minOutputs =
-          (node.__Ctor.minOutputs ??
-          (node.type !== 'database' && node.type !== 'table'))
-            ? 1
-            : 0
+        const minOutputs = (node.__Ctor.minOutputs ?? !isDataNode) ? 1 : 0
         const inputNum = node.$inputs.length
         const outputNum = node.$outputs.length
 
@@ -1461,6 +1476,15 @@ export default {
           someErrorMsg = i18n.t('packages_dag_node_none_connection', {
             val1: node.name,
           })
+          return true
+        }
+
+        if (isDataNode && inputNum && !outputNum) {
+          targetDataNodeCount += 1
+        }
+
+        if (targetDataNodeCount > 1) {
+          someErrorMsg = i18n.t('packages_dag_not_support_multi_target')
           return true
         }
       })
@@ -1540,13 +1564,7 @@ export default {
         let hasNoStreamReadFunction = false
         this.allNodes.forEach((node) => {
           if (node.$outputs.length && !node.$inputs.length) {
-            const capbilitiesMap = node.attrs.capabilities.reduce(
-              (map, item) => {
-                map[item.id] = true
-                return map
-              },
-              {},
-            )
+            const capbilitiesMap = this.getCapabilitiesMap(node)
 
             if (
               !capbilitiesMap.stream_read_function &&
@@ -1657,13 +1675,8 @@ export default {
       let hasEnableDDLAndIncreasesql
       let inBlacklist = false
       const blacklist = [
-        'js_processor',
-        'custom_processor',
-        'migrate_js_processor',
         'union_processor',
         'migrate_union_processor',
-        'standard_js_processor',
-        'standard_migrate_js_processor',
       ]
       this.allNodes.forEach((node) => {
         // 开启了DDL
@@ -1812,8 +1825,8 @@ export default {
       if (nodes.length > 1) return i18n.t('packages_dag_migrate_union_multiple')
     },
 
-    validateMergeTableProcessor() {
-      if (this.dataflow.syncType === 'migrate') return
+    async validateMergeTableProcessor() {
+      if (this.dataflow.syncType !== 'sync') return
 
       const nodes = this.allNodes.filter(
         (node) => node.type === 'merge_table_processor',
@@ -1887,6 +1900,34 @@ export default {
             val: targetNode.databaseType,
           })
         }
+
+        if (this.mergeTableCacheValidated) continue
+
+        try {
+          // check cache
+          const cache = await fetchMergeTaskCache(
+            this.dataflow.id,
+            node.id,
+            true,
+          )
+          const needRebuild = cache.some((item) => item.needRebuild)
+
+          if (needRebuild) {
+            this.setNodeErrorMsg({
+              id: node.id,
+              msg: i18n.t('packages_dag_cache_expired'),
+            })
+            this.setActiveNode(node.id)
+            this.$nextTick(() => {
+              this.scope?.formTab?.setActiveKey('cacheTab')
+            })
+            // 标记验证过一次
+            this.mergeTableCacheValidated = true
+            return i18n.t('packages_dag_cache_expired')
+          }
+        } catch (error) {
+          console.error(error)
+        }
       }
     },
 
@@ -1898,16 +1939,10 @@ export default {
       )
 
       if (target && isEmpty(target.dmlPolicy)) {
-        const capabilities = target.attrs.capabilities
-        const insertPolicy = capabilities?.find(
-          ({ id }) => id === 'dml_insert_policy',
-        )
-        const updatePolicy = capabilities?.find(
-          ({ id }) => id === 'dml_update_policy',
-        )
-        const deletePolicy = capabilities?.find(
-          ({ id }) => id === 'dml_delete_policy',
-        )
+        const capabilities = this.getCapabilitiesMap(target)
+        const insertPolicy = capabilities.dml_insert_policy
+        const updatePolicy = capabilities.dml_update_policy
+        const deletePolicy = capabilities.dml_delete_policy
 
         const insertOptions = [
           'update_on_exists',
@@ -1957,6 +1992,8 @@ export default {
     },
 
     async validateDropTableEnabled() {
+      if (this.dataflow.type === 'cdc') return true
+
       if (
         this.allNodes.some(
           (node) =>
@@ -1969,6 +2006,27 @@ export default {
         )
       }
       return true
+    },
+
+    async validateMemoryHeap() {
+      try {
+        const mongoNode = this.allNodes.find(
+          (node) => node.databaseType === 'MongoDB' && !node.$inputs.length,
+        )
+        if (!mongoNode) return true
+
+        const result = await checkTaskMemoryHeap(this.dataflow.id)
+        if (result?.isSafe) {
+          return true
+        }
+        return await this.$confirm(
+          i18n.t('packages_dag_memory_heap_risk_title'),
+          i18n.t('packages_dag_memory_heap_risk_message'),
+        )
+      } catch (error) {
+        console.error('checkTaskMemoryHeap error:', error)
+        return true
+      }
     },
 
     async eachValidate(...fns) {
@@ -2645,7 +2703,9 @@ export default {
       if (!id) return
       this.startLoopTaskTimer = setTimeout(async () => {
         const { parent_task_sign } = this.$route.query || {}
-        const data = await getTaskById(id, {}, { parent_task_sign })
+        const data = await withPassive(() =>
+          getTaskById(id, {}, { parent_task_sign }),
+        )
         if (this.destory) return
         if (data) {
           if (data.errorEvents?.length) {
@@ -2813,13 +2873,15 @@ export default {
           tags: true,
           pdkHash: true,
           properties: true,
+          capabilities: true,
         },
       })
       const tagsMap = {}
       const doubleActiveMap = {}
       const propertiesMap = {}
+      const capabilitiesMap = {}
 
-      databaseItems.forEach(({ properties, pdkHash, tags }) => {
+      databaseItems.forEach(({ properties, pdkHash, tags, capabilities }) => {
         const nodeProperties = properties?.node
 
         if (nodeProperties) {
@@ -2831,12 +2893,17 @@ export default {
         if (tags?.includes('doubleActive')) {
           doubleActiveMap[pdkHash] = true
         }
+        if (capabilities?.length) {
+          capabilitiesMap[pdkHash] = capabilities.reduce((map, item) => {
+            map[item.id] = item
+            return map
+          }, {})
+        }
       })
       this.setPdkPropertiesMap(propertiesMap)
       this.setPdkSchemaFreeMap(tagsMap)
       this.setPdkDoubleActiveMap(doubleActiveMap)
-
-      // console.log(propertiesMap, tagsMap) // eslint-disable-line
+      this.setPdkCapabilitiesMap(capabilitiesMap)
     },
 
     getIsDataflow() {

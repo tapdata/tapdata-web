@@ -11,6 +11,7 @@ import { fetchDatabaseTypeByPdkHash } from '@tap/api/src/core/database-types'
 import {
   fetchExternalStorageList,
   getExternalStorage,
+  getSharedCdcEnable,
 } from '@tap/api/src/core/external-storage'
 import {
   commandProxy,
@@ -374,8 +375,16 @@ export default {
     },
     async getPdkForm() {
       const pdkHash = this.$route.query?.pdkHash
-      const data = await fetchDatabaseTypeByPdkHash(pdkHash)
       const id = this.id || this.$route.params.id
+
+      if (id) {
+        await this.getPdkData(id)
+      }
+
+      const data = await fetchDatabaseTypeByPdkHash(
+        pdkHash || this.model.pdkHash,
+      )
+
       this.pdkOptions = data || {}
 
       if (
@@ -426,6 +435,18 @@ export default {
           (t) => t.id === 'stream_read_function',
         )
       ) {
+        !this.id &&
+          getSharedCdcEnable()
+            .then((sharedCdc) => {
+              if (sharedCdc?.enabled) {
+                this.schemaFormInstance.setValuesIn(
+                  '__TAPDATA.shareCdcEnable',
+                  true,
+                )
+              }
+            })
+            .catch(() => null)
+
         Object.assign(endProperties, {
           shareCdcEnable: {
             type: 'boolean',
@@ -1273,7 +1294,6 @@ export default {
       }
 
       if (id) {
-        await this.getPdkData(id)
         // 开启了共享挖掘
         const { shareCdcEnable, shareCDCExternalStorageId } = this.model
         if (shareCdcEnable && shareCDCExternalStorageId) {
@@ -1661,14 +1681,7 @@ export default {
           <div class="connection-from-title p-4">
             <div class="flex align-center gap-2">
               <slot name="title-prefix">
-                <el-button
-                  text
-                  @click="
-                    $router.push({
-                      name: 'connectionsList',
-                    })
-                  "
-                >
+                <el-button text @click="$router.back()">
                   <template #icon>
                     <VIcon>left</VIcon>
                   </template>
@@ -1682,7 +1695,7 @@ export default {
               <div class="flex align-center overflow-hidden gap-2">
                 <DatabaseIcon
                   class="flex-shrink-0"
-                  :item="$route.query"
+                  :pdk-hash="$route.query.pdkHash || pdkOptions.pdkHash"
                   :size="20"
                 />
                 <template v-if="!$route.params.id">
@@ -1802,7 +1815,7 @@ export default {
         <div class="flex-1 overflow-x-hidden bg-white rounded-xl">
           <ConnectorDoc
             :pdk-hash="$route.query.pdkHash"
-            :pdk-id="$route.query.pdkId"
+            :pdk-id="$route.query.pdkId || pdkOptions.pdkId"
           />
         </div>
       </div>

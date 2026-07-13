@@ -3,11 +3,9 @@ import NotifyLayout from '@/layouts/NotifyLayout.vue'
 import SettingLayout from '@/layouts/SettingLayout.vue'
 
 const FunctionForm = () => import('@/views/function/Form.vue')
-const DagEditor = () => import('@tap/dag/src/Editor.vue')
-const MigrationEditor = () => import('@tap/dag/src/MigrationEditor.vue')
-const MigrationMonitor = () => import('@tap/dag/src/MigrationMonitor.vue')
-const MigrationMonitorViewer = () =>
-  import('@tap/dag/src/MigrationMonitorViewer.vue')
+const DagEditorView = () => import('@tap/dag/src/EditorView.vue')
+const DagMonitorView = () => import('@tap/dag/src/MonitorView.vue')
+const TaskRecordView = () => import('@tap/dag/src/RecordView.vue')
 const DataCapture = () => import('@tap/dag/src/data-capture/DataCapture.vue')
 const CustomNodeList = () =>
   import('@tap/business/src/views/custom-node/List.vue')
@@ -57,10 +55,6 @@ const SharedCacheList = () =>
 const SharedCacheForm = () =>
   import('@tap/business/src/views/shared-cache/Form.vue')
 
-// 应用管理
-const ApiApplicationList = () =>
-  import('@tap/business/src/views/api-application/List.vue')
-
 // 外存管理
 const ExternalStorageList = () =>
   import('@tap/business/src/views/external-storage/List.vue')
@@ -109,7 +103,7 @@ export const routes = [
   {
     path: '/dataflow/editor',
     name: 'DataflowNew',
-    component: DagEditor,
+    component: DagEditorView,
     meta: {
       title: 'page_title_data_develop',
       code: 'v2_data_flow_dag_edit',
@@ -118,25 +112,16 @@ export const routes = [
   {
     path: '/dataflow/editor/:id',
     name: 'DataflowEditor',
-    component: DagEditor,
+    component: DagEditorView,
     meta: {
       title: 'page_title_data_develop',
       code: 'v2_data_flow_edit',
     },
   },
   {
-    path: '/dataflow/viewer/:id',
-    name: 'DataflowViewer',
-    component: DagEditor,
-    meta: {
-      title: 'page_title_data_develop',
-      code: 'v2_data_flow_details',
-    },
-  },
-  {
     path: '/dataflow/monitor/:id',
     name: 'TaskMonitor',
-    component: MigrationMonitor,
+    component: DagMonitorView,
     meta: {
       title: 'page_title_run_monitor',
       code: 'v2_data_flow_monitor',
@@ -146,7 +131,7 @@ export const routes = [
   {
     path: '/migrate/editor',
     name: 'MigrateCreate',
-    component: MigrationEditor,
+    component: DagEditorView,
     meta: {
       title: 'page_title_data_copy',
       code: 'v2_data_replication_dag_edit',
@@ -155,25 +140,16 @@ export const routes = [
   {
     path: '/migrate/editor/:id',
     name: 'MigrateEditor',
-    component: MigrationEditor,
+    component: DagEditorView,
     meta: {
       title: 'page_title_data_copy',
       code: 'v2_data_replication_dag_edit',
     },
   },
   {
-    path: '/migrate/viewer/:id',
-    name: 'MigrateViewer',
-    component: MigrationEditor,
-    meta: {
-      title: 'page_title_data_copy',
-      code: 'v2_data_replication_details',
-    },
-  },
-  {
     path: '/migrate/monitor/:id',
     name: 'MigrationMonitor',
-    component: MigrationMonitor,
+    component: DagMonitorView,
     meta: {
       title: 'page_title_run_monitor',
       code: 'v2_data_replication_monitor',
@@ -182,7 +158,7 @@ export const routes = [
   {
     path: '/migrate/monitor-record/:id',
     name: 'MigrationMonitorViewer',
-    component: MigrationMonitorViewer,
+    component: TaskRecordView,
     meta: {
       title: 'page_title_run_monitor',
       code: 'v2_data_replication_record_monitor',
@@ -199,9 +175,17 @@ export const routes = [
     component: DataCapture,
   },
   {
+    path: '/data-trace',
+    name: 'DataTrace',
+    component: () => import('@tap/ldp/src/DataTracePage.vue'),
+    meta: {
+      title: 'Data Trace',
+    },
+  },
+  {
     path: '/shared-mining/monitor/:id',
     name: 'SharedMiningMonitor',
-    component: MigrationMonitor,
+    component: DagMonitorView,
     meta: {
       title: 'page_title_run_monitor',
       code: 'v2_data_replication_monitor',
@@ -210,7 +194,7 @@ export const routes = [
   {
     path: '/heartbeat/monitor/:id',
     name: 'HeartbeatMonitor',
-    component: MigrationMonitor,
+    component: DagMonitorView,
     meta: {
       title: 'page_title_run_monitor',
       code: 'v2_data_replication_monitor',
@@ -219,7 +203,7 @@ export const routes = [
   {
     path: '/shared-cache/monitor/:id',
     name: 'SharedCacheMonitor',
-    component: MigrationMonitor,
+    component: DagMonitorView,
     meta: {
       title: 'page_title_run_monitor',
       code: 'v2_data_replication_monitor',
@@ -474,6 +458,29 @@ export const routes = [
       },
     ],
   },
+  /* ---------- 任务均衡  ----------*/
+  {
+    path: '/task-rebalance',
+    name: 'taskRebalance',
+    component: Layout,
+    redirect: {
+      name: 'taskRebalanceHistory',
+    },
+    meta: {
+      title: 'page_title_task_rebalance',
+    },
+    children: [
+      {
+        path: '',
+        name: 'taskRebalanceHistory',
+        component: () => import('@/views/task-rebalance/History.vue'),
+        meta: {
+          hideTitle: true,
+          title: 'page_title_task_rebalance',
+        },
+      },
+    ],
+  },
   /* ---------- 函数管理  ----------*/
   {
     path: '/function',
@@ -710,6 +717,48 @@ export const routes = [
     ],
   },
 
+  /* ---------- API监控  ----------*/
+  {
+    path: '/api-monitor',
+    name: 'apiMonitor',
+    component: Layout,
+    meta: {
+      title: 'page_title_api_monitor',
+      code: 'v2_api_monitor',
+    },
+    redirect: {
+      name: 'apiMonitorList',
+    },
+    children: [
+      {
+        path: '',
+        name: 'apiMonitorList',
+        component: () => import('@/views/api-page/api-monitor/ApiMonitor.vue'),
+        meta: {
+          title: 'page_title_api_monitor',
+          code: 'v2_api_monitor',
+        },
+      },
+      {
+        path: 'api/:id',
+        name: 'apiMonitorDetail',
+        component: () => import('@/views/api-page/api-monitor/ApiDetail.vue'),
+        meta: {
+          title: 'page_title_api_monitor_detail',
+        },
+      },
+      {
+        path: 'server/:id',
+        name: 'apiMonitorServerDetail',
+        component: () =>
+          import('@/views/api-page/api-monitor/ServerDetail.vue'),
+        meta: {
+          title: 'page_title_api_monitor_server_detail',
+        },
+      },
+    ],
+  },
+
   {
     path: '/',
     name: 'layout',
@@ -738,17 +787,6 @@ export const routes = [
           hideTitle: true,
         },
       },
-      /* ---------- 应用管理  ----------*/
-      {
-        path: '/api-application',
-        name: 'apiApplication',
-        component: ApiApplicationList,
-        meta: {
-          title: 'page_title_api_application',
-          code: 'v2_api-application',
-          hideTitle: true,
-        },
-      },
       /* ---------- API客户端  ----------*/
       {
         path: '/api-client',
@@ -772,16 +810,16 @@ export const routes = [
         },
       },
 
-      /* ---------- API监控  ----------*/
-      {
-        path: '/api-monitor',
-        name: 'apiMonitor',
-        component: () => import('@/views/api-page/api-monitor/ApiMonitor.vue'),
-        meta: {
-          title: 'page_title_api_monitor',
-          code: 'v2_api_monitor',
-        },
-      },
+      // /* ---------- API监控  ----------*/
+      // {
+      //   path: '/api-monitor',
+      //   name: 'apiMonitor',
+      //   component: () => import('@/views/api-page/api-monitor/ApiMonitor.vue'),
+      //   meta: {
+      //     title: 'page_title_api_monitor',
+      //     code: 'v2_api_monitor',
+      //   },
+      // },
       /* ---------- 集群管理  ----------*/
       {
         path: '/cluster',
@@ -840,6 +878,25 @@ export const routes = [
         meta: {
           title: 'public_data_encryption',
           // code: 'v2_data-encryption',
+        },
+      },
+      {
+        path: 'project-management',
+        name: 'projectManagement',
+        component: () =>
+          import('@/views/data-import-export/ProjectManagement.vue'),
+        meta: {
+          title: 'page_title_project_management',
+          code: 'v2_project_management',
+        },
+      },
+      {
+        path: 'data-import-export',
+        name: 'dataImportExport',
+        component: () => import('@/views/data-import-export/List.vue'),
+        meta: {
+          title: 'page_title_data_import_export',
+          code: 'v2_project_import_and_export',
         },
       },
     ],
@@ -924,19 +981,19 @@ export const routes = [
         path: 'userNotification',
         name: 'userNotification',
         component: () => import('@/views/notification/UserNotification.vue'),
-        meta: { title: 'notify_user_notice' },
+        meta: { title: 'daas_notification_center_yonghucaozuo' },
       },
       {
         path: 'alarmNotification',
         name: 'alarmNotification',
         component: AlarmNotification,
-        meta: { title: 'notify_system_notice' },
+        meta: { title: 'daas_notification_alarmnotification_gaojingtongzhi' },
       },
       {
         path: 'systemAlarm',
         name: 'systemAlarm',
         component: () => import('@/views/notification/SystemAlarm.vue'),
-        meta: { title: 'notify_user_notice' },
+        meta: { title: 'daas_notification_center_xitonggaojing' },
       },
     ],
   },

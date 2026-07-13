@@ -10,13 +10,12 @@ import { RightBoldOutlined } from '@tap/component/src/RightBoldOutlined'
 import { useI18n } from '@tap/i18n'
 import { computed, nextTick, ref, watch } from 'vue'
 import { RecycleScroller } from 'vue-virtual-scroller'
-import { useStore } from 'vuex'
-
+import { useDataflowStore } from '../../../stores/dataflow.store'
 import { getPrimaryKeyTablesByType } from '../../../util'
 
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
-const store = useStore()
+const dataflowStore = useDataflowStore()
 const { t } = useI18n()
 
 // Props
@@ -136,7 +135,7 @@ watch(
 )
 
 watch(
-  () => store.state.dataflow.schemaRefreshing,
+  () => dataflowStore.schemaRefreshing,
   (v) => {
     if (!v) {
       getTables()
@@ -185,8 +184,8 @@ const getTables = () => {
 
 const loadSchema = async () => {
   schemaLoading.value = true
-  const nodeId = props.nodeId || store.state?.dataflow.activeNodeId
-  const taskId = props.taskId || store.state?.dataflow.taskId
+  const nodeId = props.nodeId || dataflowStore.selectedNode?.id
+  const taskId = props.taskId || dataflowStore.dataflow.id
 
   await refreshTaskSchema(taskId, {
     nodeIds: nodeId,
@@ -452,13 +451,7 @@ getTables()
           </VEmpty>
           <VEmpty v-else>
             <span class="align-middle"
-              >{{
-                $t(
-                  table.searchKeyword || alwaysShowReload
-                    ? 'packages_form_component_table_selector_error_not_exit'
-                    : 'public_data_no_data',
-                )
-              }},</span
+              >{{ $t('public_no_available_tables') }},</span
             >
             <el-button
               class="ml-1"

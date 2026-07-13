@@ -746,18 +746,8 @@ export default {
     },
 
     async getApiServerHost() {
-      const showError = () => {
-        this.$message.error(
-          this.$t('packages_business_data_server_list_huoqufuwuyu'),
-        )
-      }
-      const data = await fetchApiServers().catch(() => {
-        showError()
-      })
+      const data = await fetchApiServers()
       this.apiServerHost = data?.items?.[0]?.clientURI || ''
-      if (!this.apiServerHost) {
-        showError()
-      }
     },
 
     handlePreviewApi(row = {}) {
@@ -967,7 +957,7 @@ export default {
                   {{
                     $t(
                       'packages_business_data_console_target_connection_desc',
-                      { val: item.database_type },
+                      { val: item.pdkRealName },
                     )
                   }}
                 </div>
@@ -1124,7 +1114,7 @@ export default {
                       $t(
                         'packages_business_data_console_target_connection_desc',
                         {
-                          val: item.database_type,
+                          val: item.pdkRealName,
                         },
                       )
                     }}
@@ -1225,7 +1215,7 @@ export default {
             <ElRadioGroup v-model="taskDialogConfig.task.type">
               <ElTooltip
                 :disabled="!taskDialogConfig.notSupportedCDC"
-                content="当前源数据不支持增量"
+                :content="$t('packages_ldp_not_support_increments')"
               >
                 <ElRadio
                   label="initial_sync+cdc"

@@ -1,86 +1,79 @@
-<script>
+<script setup lang="ts">
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
-import i18n from '@tap/i18n'
+import { useI18n } from '@tap/i18n'
+import { computed, inject, ref, watch } from 'vue'
 import { RecycleScroller } from 'vue-virtual-scroller'
-import { mapGetters } from 'vuex'
 import { NodeIcon } from '../DatabaseIcon'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
-export default {
-  name: 'List',
+defineOptions({ name: 'List' })
 
-  components: { NodeIcon, OverflowTooltip, RecycleScroller },
+const { t } = useI18n()
+const dag = inject('dag')
 
-  props: {
-    value: {
-      type: String,
-    },
-    label: {
-      type: String,
-      default: () => {
-        return i18n.t('public_select_option_all')
-      },
-    },
-    showType: {
-      type: Boolean,
-      default: false,
-    },
-    customClass: {
-      type: Function,
-      default: () => {},
-    },
+const props = withDefaults(
+  defineProps<{
+    value?: string
+    label?: string
+    showType?: boolean
+    customClass?: (node: any) => string
+  }>(),
+  {
+    value: undefined,
+    showType: false,
+    customClass: () => () => '',
   },
-  data() {
-    return {
-      activeNodeId: this.value,
-      typeMap: {
-        source: i18n.t('packages_business_nodes_list_laiyuan'),
-        target: i18n.t('public_connection_type_target'),
-        processor: i18n.t('public_node_processor'),
-      },
-    }
-  },
-  watch: {
-    value(v) {
-      this.activeNodeId = v
-    },
-  },
-  computed: {
-    ...mapGetters('dataflow', ['allNodes']),
+)
 
-    items() {
-      return this.allNodes
-        .filter((node) => {
-          return !node.disabled && !node.attrs.disabled
-        })
-        .map((t) => {
-          const { type, $inputs, $outputs } = t
-          const isSource =
-            (type === 'database' || type === 'table') && !$inputs.length
-          const isTarget =
-            (type === 'database' || type === 'table') && !$outputs.length
-          t.nodeType = isSource ? 'source' : isTarget ? 'target' : 'processor'
-          t.index = isSource ? 1 : isTarget ? 3 : 2
-          return t
-        })
-        .sort((a, b) => a.index - b.index)
-    },
+const emit = defineEmits<{
+  (e: 'update:value', value: string): void
+  (e: 'change', value: string, node?: any): void
+}>()
+
+const activeNodeId = ref(props.value ?? '')
+
+const typeMap: Record<string, string> = {
+  source: t('packages_business_nodes_list_laiyuan'),
+  target: t('public_connection_type_target'),
+  processor: t('public_node_processor'),
+}
+
+watch(
+  () => props.value,
+  (v) => {
+    activeNodeId.value = v ?? ''
   },
-  methods: {
-    changeItem(itemId = '') {
-      if (this.activeNodeId === itemId) {
-        return
-      }
-      this.activeNodeId = itemId
-      this.$emit('update:value', this.activeNodeId)
-      this.$emit(
-        'change',
-        this.activeNodeId,
-        this.items.find((t) => t.id === this.activeNodeId),
-      )
-    },
-  },
-  emits: ['change', 'update:value'],
+)
+
+const items = computed(() => {
+  return dag.value.nodes
+    .filter((node: any) => {
+      return !node.disabled && !node.attrs.disabled
+    })
+    .map((t: any) => {
+      const { type, $inputs, $outputs } = t
+      const isSource =
+        (type === 'database' || type === 'table') && !$inputs.length
+      const isTarget =
+        (type === 'database' || type === 'table') && !$outputs.length
+      t.nodeType = isSource ? 'source' : isTarget ? 'target' : 'processor'
+      t.index = isSource ? 1 : isTarget ? 3 : 2
+      return t
+    })
+    .sort((a: any, b: any) => a.index - b.index)
+})
+
+function changeItem(itemId = '') {
+  if (activeNodeId.value === itemId) {
+    return
+  }
+  activeNodeId.value = itemId
+  emit('update:value', activeNodeId.value)
+  emit(
+    'change',
+    activeNodeId.value,
+    items.value.find((t: any) => t.id === activeNodeId.value),
+  )
 }
 </script>
 
@@ -91,7 +84,8 @@ export default {
       :class="{ active: activeNodeId === '' }"
       @click="changeItem()"
     >
-      <VIcon size="16" class="mr-2">device</VIcon>{{ label }}
+      <VIcon size="16" class="mr-2">device</VIcon
+      >{{ label || $t('public_select_option_all') }}
     </div>
     <RecycleScroller
       key-field="id"
@@ -100,7 +94,7 @@ export default {
       class="scroller"
       :buffer="72"
     >
-      <template #default="{ item: node, index, active }">
+      <template #default="{ item: node }">
         <div class="pb-1">
           <div
             class="node-list-item px-2 flex align-center font-color-dark"

@@ -3,14 +3,19 @@ import { EditPen, InfoFilled } from '@element-plus/icons-vue'
 import { fetchConnections } from '@tap/api/src/core/connections'
 import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
 import { fetchEncryptionList } from '@tap/api/src/core/encryption'
-import { fetchMetadataInstances } from '@tap/api/src/core/metadata-instances'
+import {
+  fetchMetadataInstances,
+  reloadSchema,
+} from '@tap/api/src/core/metadata-instances'
 import {
   createApiModule,
   updateApiModule,
   updateApiModulePermissions,
   updateApiModuleTags,
+  updateParamEncryption,
 } from '@tap/api/src/core/modules'
 import { fetchRoles } from '@tap/api/src/core/roles'
+import { DownBoldOutlined } from '@tap/component'
 import SortConditionDisplay from '@tap/component/src/api-server/SortConditionDisplay.vue'
 import WhereConditionDisplay from '@tap/component/src/api-server/WhereConditionDisplay.vue'
 import Highlight from '@tap/component/src/base/Highlight'
@@ -19,8 +24,8 @@ import { EditOutlined } from '@tap/component/src/icon'
 import { Modal } from '@tap/component/src/modal'
 import InfiniteSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import { useI18n } from '@tap/i18n'
-import { cloneDeep, isEmpty, isEqual, merge } from 'lodash-es'
 
+import { cloneDeep, isEmpty, isEqual, merge } from 'lodash-es'
 import {
   computed,
   inject,
@@ -40,8 +45,8 @@ import Debug from './Debug.vue'
 import FieldsTree from './FieldsTree.vue'
 import FieldsTreePreview from './FieldsTreePreview.vue'
 import MqlEditor from './MqlEditor.vue'
-import { getTableOptions, useDrawer } from './shared'
 
+import { getTableOptions, PARAM_NAME_PATTERN, useDrawer } from './shared'
 import type { InputInstance, SelectInstance, TableInstance } from 'element-plus'
 
 // Types
@@ -77,13 +82,13 @@ const emit = defineEmits([
   'save',
   'update',
   'update:selectedFields',
+  'close',
 ])
 
 const apiApplication = inject<Ref<any>>('apiApplication', ref(null))
 
 const {
   rules,
-  isHa,
   typeOptions,
   operatorOptions,
   conditionOptions,
@@ -109,11 +114,12 @@ let initialFormData: Record<string, any> = {}
 const tab = ref('form')
 const isEdit = ref(false)
 const debugParams = ref<any>(null)
-const roles = ref([])
+const roles = ref<any[]>([])
 const allFields = ref<any[]>([])
 const tempFields = ref<Field[]>([])
 const fieldLoading = ref(false)
 const databaseTypes = ref<any[] | null>(null)
+const permissionActions = ref<any[]>([])
 
 const mqlEditor = ref<any>(null)
 const containerRef = ref<HTMLElement | null>(null)
@@ -121,8 +127,25 @@ const paramsTableRef = ref<TableInstance>()
 const parameterSelectRef = ref<SelectInstance[]>([])
 const fieldsTreeRef =
   useTemplateRef<InstanceType<typeof FieldsTree>>('fieldsTreeRef')
+const fieldsTreePreviewRef = useTemplateRef<
+  InstanceType<typeof FieldsTreePreview>
+>('fieldsTreePreviewRef')
 const selectedFieldSize = ref(0)
 const helpVisible = ref(false)
+const previewFieldMode = ref<'selected' | 'unselected'>('selected')
+
+const unselectedFields = computed(() => {
+  const selectedNames = new Set(
+    (form.value.fields || []).map((f: any) => f.field_name),
+  )
+  return allFields.value.filter((f: any) => !selectedNames.has(f.field_name))
+})
+
+const previewFields = computed(() => {
+  return previewFieldMode.value === 'unselected'
+    ? unselectedFields.value
+    : form.value.fields || []
+})
 
 // Template refs
 const form_ref = ref()
@@ -224,6 +247,7 @@ const getDatabaseTypes = async () => {
     data.map((it: any) => {
       return {
         name: it.name,
+        type: it.type,
         pdkHash: it.pdkHash,
       }
     }) || []
@@ -243,7 +267,7 @@ const getConnectionOptions = async (filter: any) => {
       database_type: form.value.connectionType
         ? form.value.connectionType
         : {
-            in: AllowedTypes,
+            in: databaseTypes.value?.map((t: any) => t.type),
           },
       connection_type:
         import.meta.env.VUE_APP_MODE !== 'msa'
@@ -294,7 +318,6 @@ const handleChangeConnection = (connection: any) => {
 }
 
 const getFields = async () => {
-  selectedFieldSize.value = 0
   fieldLoading.value = true
   const filter = {
     where: {
@@ -308,7 +331,27 @@ const getFields = async () => {
   try {
     const data = await fetchMetadataInstances(filter)
 
-    allFields.value = data.items?.[0]?.fields || []
+    const metaFields = data.items?.[0]?.fields || []
+    const userCreatedFields = allFields.value.filter(
+      (f: any) => f.tag === 'USER_CREATE',
+    )
+    const metaFieldNames = new Set(metaFields.map((f: any) => f.field_name))
+    const userFieldsMap = userCreatedFields.reduce((acc: any, f: any) => {
+      acc[f.field_name] = f
+      return acc
+    }, {})
+    const mergedMetaFields = metaFields.map((f: any) => {
+      const userField = userFieldsMap[f.field_name]
+      if (userField?.textEncryptionRuleIds?.length) {
+        return { ...f, textEncryptionRuleIds: userField.textEncryptionRuleIds }
+      }
+      return f
+    })
+    // 只保留 metaFields 中不存在的用户字段
+    const remainingUserFields = userCreatedFields.filter(
+      (f: any) => !metaFieldNames.has(f.field_name),
+    )
+    allFields.value = [...mergedMetaFields, ...remainingUserFields]
 
     if (!form.value.id || !form.value.fields?.length) {
       nextTick(() => {
@@ -335,6 +378,8 @@ const open = (formData?: any, copy?: boolean) => {
   debugParams.value = null
   allFields.value = []
   selectedFieldSize.value = 0
+  previewFieldMode.value = 'selected'
+  permissionActions.value = formData?.permissionActions || []
 
   if (isEmpty(formData)) {
     form.value = getInitData()
@@ -344,13 +389,16 @@ const open = (formData?: any, copy?: boolean) => {
   } else {
     formatData(cloneDeep(formData))
 
-    const { connectionId, tableName } = formData
-
-    if (copy) {
-      allFields.value = formData?.fields || []
-    } else if (connectionId && tableName) {
-      getFields()
-    }
+    // const { connectionId, tableName } = formData
+    allFields.value = formData?.fields || []
+    selectedFieldSize.value = 0
+    getFields()
+    // if (copy) {
+    //   // allFields.value = formData?.fields || []
+    // } else if (connectionId && tableName) {
+    //   selectedFieldSize.value = 0
+    //   getFields()
+    // }
 
     if (!formData.id) {
       edit(copy)
@@ -395,7 +443,7 @@ const save = async (type?: boolean) => {
       acl,
     } = form.value
 
-    if (fullCustomQuery) {
+    if (apiType === 'customerQuery' && fullCustomQuery) {
       const validation = mqlEditor.value?.validateJSON(customWhere)
       if (!validation.isValid) {
         ElMessage.error(
@@ -414,6 +462,7 @@ const save = async (type?: boolean) => {
           defaultvalue: t.defaultvalue,
           description: t.description,
           required: t.required,
+          textEncryptionRuleIds: t.textEncryptionRuleIds,
         }
       })
     const sort = form.value?.sort?.filter((t: any) => t.fieldName)
@@ -463,6 +512,7 @@ const save = async (type?: boolean) => {
         readPreference: '',
         readPreferenceTag: '',
         limit,
+        connection: connectionId,
         datasource: connectionId,
         tablename: tableName,
         apiVersion,
@@ -494,20 +544,21 @@ const save = async (type?: boolean) => {
       }
 
       if (!type && connectionId && tableName) {
-        const fieldList = await getAllFields()
+        formData.fields = allFields.value
+        // const fieldList = await getAllFields()
 
-        const map = fields.reduce((acc: any, field: any) => {
-          field.field_alias = field.field_alias?.trim() || ''
-          acc[field.id] = field
-          return acc
-        }, {})
+        // const map = fields.reduce((acc: any, field: any) => {
+        //   field.field_alias = field.field_alias?.trim() || ''
+        //   acc[field.id] = field
+        //   return acc
+        // }, {})
 
-        formData.fields = fieldList.map((f: any) => {
-          return {
-            ...f,
-            field_alias: map[f.id]?.field_alias,
-          }
-        })
+        // formData.fields = fieldList.map((f: any) => {
+        //   return {
+        //     ...f,
+        //     field_alias: map[f.id]?.field_alias,
+        //   }
+        // })
       }
 
       const func = id ? updateApiModule : createApiModule
@@ -522,6 +573,7 @@ const save = async (type?: boolean) => {
       formatData(data)
       emit('save', data)
       isEdit.value = false
+      visible.value = false
     } finally {
       loading.value = false
       emit('update:loading', false)
@@ -567,6 +619,8 @@ const edit = (copy?: boolean) => {
 const handleCancel = () => {
   isEdit.value = false
   form.value = initialFormData
+  selectedFieldSize.value = 0
+  previewFieldMode.value = 'selected'
   getFields()
 }
 
@@ -586,11 +640,51 @@ const tabChanged = (tab: string | number) => {
 
 const handleChangeApiType = () => {
   form.value.params = getDefaultParams(form.value.apiType)
+  focusedParamNameIndex.value = null
+  hoveredParamNameIndex.value = null
+}
+
+const focusedParamNameIndex = ref<number | null>(null)
+const hoveredParamNameIndex = ref<number | null>(null)
+
+const getParamNameError = (index: number) => {
+  const paramName = form.value.params?.[index]?.name || ''
+
+  if (!paramName.trim()) {
+    return t('packages_business_data_server_drawer_qingshurucanshu')
+  }
+
+  if (!PARAM_NAME_PATTERN.test(paramName)) {
+    return t('packages_business_data_server_drawer_geshicuowu')
+  }
+
+  return ''
+}
+
+const isParamNameTipVisible = (index: number) => {
+  return (
+    !!getParamNameError(index) &&
+    (focusedParamNameIndex.value === index ||
+      hoveredParamNameIndex.value === index)
+  )
+}
+
+const hideFocusedParamNameTip = (index: number) => {
+  if (focusedParamNameIndex.value === index) {
+    focusedParamNameIndex.value = null
+  }
+}
+
+const hideHoveredParamNameTip = (index: number) => {
+  if (hoveredParamNameIndex.value === index) {
+    hoveredParamNameIndex.value = null
+  }
 }
 
 const handleChangeTable = () => {
   form.value.fields = []
   allFields.value = []
+  selectedFieldSize.value = 0
   getFields()
   form_ref.value?.clearValidate('tableName')
 }
@@ -617,9 +711,13 @@ const addItem = (key: 'params' | 'where' | 'sort') => {
   form.value[key].push(cloneDeep(map[key]))
 }
 
-const removeItem = (key: 'params' | 'where' | 'sort', index: number) => {
-  const removed = form.value[key][index]
-  form.value[key].splice(index, 1)
+const removeItem = (
+  key: 'params' | 'where' | 'sort',
+  index: number | string,
+) => {
+  const idx = typeof index === 'number' ? index : Number(index)
+  const removed = form.value[key][idx]
+  form.value[key].splice(idx, 1)
   if (
     'sort' === key &&
     removed.fieldName &&
@@ -634,7 +732,7 @@ const removeItem = (key: 'params' | 'where' | 'sort', index: number) => {
   }
 }
 
-const handleAddParameter = (index: number) => {
+const handleAddParameter = (index: number | string) => {
   addItem('params')
 
   nextTick(() => {
@@ -642,13 +740,40 @@ const handleAddParameter = (index: number) => {
       `tbody tr:nth-child(${form.value.params.length}) td:first-child input`,
     )
     if (input) {
-      parameterSelectRef.value?.[index]?.blur()
+      const idx = typeof index === 'number' ? index : Number(index)
+      parameterSelectRef.value?.[idx]?.blur()
       nextTick(() => {
         input.focus()
         input.scrollIntoView({ behavior: 'smooth' })
       })
     }
   })
+}
+
+const handleReloadSchema = async () => {
+  const { connectionId, tableName } = form.value
+  if (!connectionId || !tableName) return
+
+  // 保存当前选中的字段
+  const checkedFields = fieldsTreeRef.value?.getCheckedFields(true) || []
+
+  fieldLoading.value = true
+  try {
+    await reloadSchema(connectionId, tableName)
+    await getFields()
+
+    // 恢复之前的选中状态
+    if (checkedFields.length) {
+      nextTick(() => {
+        fieldsTreeRef.value?.setCheckedFields(checkedFields)
+        selectedFieldSize.value = (
+          fieldsTreeRef.value?.getCheckedFields(false) || []
+        ).length
+      })
+    }
+  } finally {
+    fieldLoading.value = false
+  }
 }
 
 // Expose key methods
@@ -727,6 +852,11 @@ const getAllFields = async () => {
 }
 
 const handleBeforeClose = async (done: () => void) => {
+  const doneAndEmitClose = () => {
+    done()
+    emit('close')
+  }
+
   if (isEdit.value) {
     const formValue = {
       ...form.value,
@@ -742,13 +872,13 @@ const handleBeforeClose = async (done: () => void) => {
     if (hasChanges) {
       const isConfirm = await Modal.confirm(t('public_current_is_editing'))
 
-      isConfirm && done()
+      isConfirm && doneAndEmitClose()
     } else {
-      done()
+      doneAndEmitClose()
       isEdit.value = false
     }
   } else {
-    done()
+    doneAndEmitClose()
   }
 }
 
@@ -787,6 +917,10 @@ const saveEdit = (index: number) => {
 
 const handleFormat = () => {
   mqlEditor.value?.format()
+}
+
+const handlePreviewMode = () => {
+  fieldsTreePreviewRef.value?.clearSearch()
 }
 
 watch(
@@ -846,20 +980,360 @@ function onFieldsTreeCheck(keys: string[]) {
   selectedFieldSize.value = keys.length
 }
 
-function editable(item: any, fromVal: any) {
+function onAddField(field: any) {
+  allFields.value = [...allFields.value, field]
+}
+
+function onDeleteField(field: any) {
+  const fieldName = field.field_name
+  const prefix = `${fieldName}.`
+  // 删除字段本身及其所有子字段
+  allFields.value = allFields.value.filter(
+    (f: any) => f.field_name !== fieldName && !f.field_name.startsWith(prefix),
+  )
+  // 重新触发 check 更新
+  nextTick(() => {
+    const keys = (fieldsTreeRef.value?.getCheckedFields(false) || [])
+      .map((f: any) => f.field_name)
+      .filter((k: string) => k !== fieldName && !k.startsWith(prefix))
+    selectedFieldSize.value = keys.length
+  })
+}
+
+function onUpdateFieldName(oldFieldName: string, newName: string) {
+  const parts = oldFieldName.split('.')
+  parts[parts.length - 1] = newName
+  const newFieldName = parts.join('.')
+
+  allFields.value = allFields.value.map((f: any) => {
+    if (f.field_name === oldFieldName) {
+      return { ...f, field_name: newFieldName }
+    }
+    // 同步更新子字段路径
+    if (f.field_name.startsWith(`${oldFieldName}.`)) {
+      return {
+        ...f,
+        field_name: newFieldName + f.field_name.slice(oldFieldName.length),
+      }
+    }
+    return f
+  })
+}
+
+const CONTAINER_TYPES = ['OBJECT', 'DOCUMENT', 'ARRAY', 'MAP']
+
+function onUpdateFieldType(fieldName: string, newType: string) {
+  const isContainer = CONTAINER_TYPES.includes(newType.toUpperCase())
+  const prefix = `${fieldName}.`
+
+  allFields.value = allFields.value
+    .filter((f: any) => {
+      // 改为非容器类型时，删除所有子字段
+      if (!isContainer && f.field_name.startsWith(prefix)) {
+        return false
+      }
+      return true
+    })
+    .map((f: any) => {
+      if (f.field_name === fieldName) {
+        return { ...f, data_type: newType, simpleTypeName: newType }
+      }
+      return f
+    })
+}
+
+function editable(
+  item: any,
+  fromVal: any,
+  editableFlag: boolean = isEdit.value,
+) {
   if (fromVal.apiType === 'customerQuery') {
     return (
-      isEdit.value &&
+      editableFlag &&
       (!item.name || !['page', 'limit', 'fields'].includes(item.name))
     )
   } else if (fromVal.apiType === 'defaultApi') {
     return (
-      isEdit.value &&
+      editableFlag &&
       (!item.name || !['page', 'limit', 'filter'].includes(item.name))
     )
   }
   return false
 }
+
+const paramEncryptionTriggerRef = ref<HTMLElement | null>(null)
+const paramEncryptionPopoverVisible = ref(false)
+const currentParamEncryptionIds = ref<string[]>([])
+const currentParamIndex = ref<number | null>(null)
+
+const PARAM_ENCRYPTION_DISPLAY_MAX_CHARS = 16
+
+const getParamEncryptionEntries = (paramIndex: number) => {
+  const ids = (form.value.params?.[paramIndex]?.textEncryptionRuleIds ||
+    []) as string[]
+  return ids
+    .map((id: string) => ({ id, name: encryptionsMap.value[id] || id }))
+    .filter((v: { id: string; name: string }) => v.name)
+}
+
+const getParamEncryptionNames = (paramIndex: number) => {
+  return getParamEncryptionEntries(paramIndex).map(
+    (t: { id: string; name: string }) => t.name,
+  )
+}
+
+const shouldCollapseParamEncryption = (paramIndex: number) => {
+  const names = getParamEncryptionNames(paramIndex)
+  if (names.length <= 1) return false
+  return names.join(',').length > PARAM_ENCRYPTION_DISPLAY_MAX_CHARS
+}
+
+const setCurrentParamEncryption = (
+  triggerEl: HTMLElement,
+  paramIndex: number,
+) => {
+  paramEncryptionTriggerRef.value = triggerEl
+  currentParamIndex.value = paramIndex
+  currentParamEncryptionIds.value = (
+    form.value.params?.[paramIndex]?.textEncryptionRuleIds || []
+  ).slice()
+}
+
+const openParamEncryptionPopover = async () => {
+  await nextTick()
+  setTimeout(() => {
+    paramEncryptionPopoverVisible.value = true
+  }, 50)
+}
+
+const closeParamEncryptionPopover = async () => {
+  paramEncryptionTriggerRef.value = null
+  currentParamIndex.value = null
+  await nextTick()
+  setTimeout(() => {
+    paramEncryptionPopoverVisible.value = false
+  }, 50)
+}
+
+const resolveTriggerEl = (e: MouseEvent) => {
+  const currentTarget = e.currentTarget as HTMLElement | null
+  if (currentTarget) return currentTarget
+
+  const target = e.target as HTMLElement | null
+  return (target?.closest?.('button') as HTMLElement | null) || target
+}
+
+const handleOpenParamEncryption = async (e: MouseEvent, paramIndex: number) => {
+  const triggerEl = resolveTriggerEl(e)
+  if (!triggerEl) return
+
+  if (!paramEncryptionPopoverVisible.value) {
+    beforeParamEncryptionState.value = cloneDeep(getParamEncryptionState())
+    setCurrentParamEncryption(triggerEl, paramIndex)
+    await openParamEncryptionPopover()
+    return
+  }
+
+  if (currentParamIndex.value === paramIndex) {
+    await closeParamEncryptionPopover()
+    return
+  }
+
+  paramEncryptionPopoverVisible.value = false
+  await nextTick()
+  setTimeout(() => {
+    beforeParamEncryptionState.value = cloneDeep(getParamEncryptionState())
+    setCurrentParamEncryption(triggerEl, paramIndex)
+    paramEncryptionPopoverVisible.value = true
+  }, 50)
+}
+
+const getParamEncryptionState = () => {
+  return (form.value?.params || []).map((p: any) => {
+    return {
+      name: p?.name,
+      textEncryptionRuleIds: (p?.textEncryptionRuleIds || []).slice(),
+    }
+  })
+}
+
+const getCurrentPathsPayload = () => {
+  const {
+    apiType,
+    acl,
+    method,
+    fullCustomQuery,
+    customWhere,
+    path,
+    sort,
+    where,
+    params,
+    fields,
+  } = form.value || {}
+
+  const normalizedParams =
+    params
+      ?.filter((t: any) => t.name)
+      .map((t: any) => {
+        return {
+          name: t.name,
+          type: Array.isArray(t.type) ? t.type.join(': ') : t.type,
+          defaultvalue: t.defaultvalue,
+          description: t.description,
+          required: t.required,
+          textEncryptionRuleIds: t.textEncryptionRuleIds,
+        }
+      }) || []
+
+  const normalizedSort = sort?.filter((t: any) => t.fieldName) || []
+  const normalizedWhere =
+    where?.filter((t: any) => t.fieldName && t.parameter) || []
+  const normalizedFields =
+    fieldsTreeRef.value?.getCheckedFields(true) || fields || []
+
+  return [
+    {
+      name: apiType === 'customerQuery' ? 'customerQuery' : 'findPage',
+      result: 'Page<Document>',
+      type: apiType === 'customerQuery' ? 'customerQuery' : 'preset',
+      acl,
+      method,
+      params: normalizedParams,
+      where: normalizedWhere,
+      sort: normalizedSort,
+      fields: normalizedFields,
+      path,
+      fullCustomQuery,
+      customWhere,
+    },
+  ]
+}
+
+const shouldAutoUpdateParamEncryption = () => {
+  return !isEdit.value && !!form.value?.id
+}
+
+const beforeParamEncryptionState = ref<ReturnType<
+  typeof getParamEncryptionState
+> | null>(null)
+
+let paramEncryptionSyncTimer: ReturnType<typeof setTimeout> | null = null
+let paramEncryptionSyncInFlight = false
+let paramEncryptionSyncQueuedState: ReturnType<
+  typeof getParamEncryptionState
+> | null = null
+const lastSyncedParamEncryptionState = ref<ReturnType<
+  typeof getParamEncryptionState
+> | null>(null)
+
+const syncParamEncryption = async (
+  nextState: ReturnType<typeof getParamEncryptionState>,
+) => {
+  if (!shouldAutoUpdateParamEncryption()) return
+
+  if (paramEncryptionSyncInFlight) {
+    paramEncryptionSyncQueuedState = cloneDeep(nextState)
+    return
+  }
+
+  paramEncryptionSyncInFlight = true
+  try {
+    await updateParamEncryption({
+      apiId: form.value.id,
+      paths: getCurrentPathsPayload(),
+    })
+    lastSyncedParamEncryptionState.value = cloneDeep(nextState)
+  } catch {
+    ElMessage.error(t('public_operation_fail'))
+  } finally {
+    paramEncryptionSyncInFlight = false
+    if (
+      paramEncryptionSyncQueuedState &&
+      !isEqual(
+        lastSyncedParamEncryptionState.value,
+        paramEncryptionSyncQueuedState,
+      )
+    ) {
+      const queued = paramEncryptionSyncQueuedState
+      paramEncryptionSyncQueuedState = null
+      await syncParamEncryption(queued)
+    } else {
+      paramEncryptionSyncQueuedState = null
+    }
+  }
+}
+
+const scheduleSyncParamEncryption = () => {
+  if (!shouldAutoUpdateParamEncryption()) return
+
+  if (paramEncryptionPopoverVisible.value) {
+    return
+  }
+
+  if (paramEncryptionSyncTimer) clearTimeout(paramEncryptionSyncTimer)
+  paramEncryptionSyncTimer = setTimeout(() => {
+    paramEncryptionSyncTimer = null
+    syncParamEncryption(getParamEncryptionState())
+  }, 150)
+}
+
+const handleRemoveParamEncryption = (
+  paramIndex: number | string,
+  i: number | string,
+) => {
+  const pIdx = typeof paramIndex === 'number' ? paramIndex : Number(paramIndex)
+  const param = form.value?.params?.[pIdx]
+  if (!param?.textEncryptionRuleIds?.length) return
+  const idx = typeof i === 'number' ? i : Number(i)
+  param.textEncryptionRuleIds.splice(idx, 1)
+  if (currentParamIndex.value === pIdx) {
+    currentParamEncryptionIds.value = (
+      param.textEncryptionRuleIds || []
+    ).slice()
+  }
+  scheduleSyncParamEncryption()
+}
+
+const handleSelectParamEncryption = (encryptionId: string) => {
+  if (currentParamIndex.value === null) return
+  const param = form.value?.params?.[currentParamIndex.value]
+  if (!param) return
+
+  if (currentParamEncryptionIds.value.includes(encryptionId)) {
+    currentParamEncryptionIds.value = currentParamEncryptionIds.value.filter(
+      (id) => id !== encryptionId,
+    )
+  } else {
+    currentParamEncryptionIds.value = [
+      ...currentParamEncryptionIds.value,
+      encryptionId,
+    ]
+  }
+
+  form.value.params[currentParamIndex.value].textEncryptionRuleIds =
+    currentParamEncryptionIds.value
+}
+
+watch(
+  paramEncryptionPopoverVisible,
+  (v) => {
+    if (v) return
+
+    if (!shouldAutoUpdateParamEncryption()) {
+      beforeParamEncryptionState.value = null
+      return
+    }
+
+    const currentState = getParamEncryptionState()
+    const beforeState = beforeParamEncryptionState.value
+    beforeParamEncryptionState.value = null
+
+    if (beforeState && !isEqual(beforeState, currentState)) {
+      scheduleSyncParamEncryption()
+    }
+  },
+  { flush: 'post' },
+)
 
 provide('encryptionsMap', encryptionsMap)
 provide('encryptions', encryptions)
@@ -885,13 +1359,14 @@ provide('form', form)
           $t('packages_business_data_server_drawer_fuwuxiangqing')
         }}</span>
         <el-button
+          v-if="permissionActions?.includes('Edit')"
           text
           type="primary"
           :class="{
             invisible: !(tab === 'form' && form.status !== 'active' && !isEdit),
           }"
           :disabled="fieldLoading"
-          @click="edit"
+          @click="edit()"
         >
           <el-icon class="mr-1">
             <EditPen />
@@ -1055,7 +1530,7 @@ provide('form', form)
               </ElSelect>
             </ElFormItem>
             <ElFormItem
-              v-if="!params.to"
+              v-if="!params?.to"
               class="flex-1"
               :label="$t('packages_business_data_server_drawer_suoshuyingyong')"
               prop="appValue"
@@ -1102,7 +1577,7 @@ provide('form', form)
               <ElOption
                 v-for="item in databaseTypes"
                 :key="item"
-                :value="item.name"
+                :value="item.type"
                 :label="item.name"
               >
                 <div class="flex align-items-center gap-2">
@@ -1195,7 +1670,7 @@ provide('form', form)
                 <ElInput v-model="form.basePath" :disabled="!isEdit" />
               </ElFormItem>
             </div>
-            <ElFormItem v-if="isHa" class="flex-1" prop="limit">
+            <ElFormItem class="flex-1" prop="limit">
               <template #label>
                 <el-text>
                   <span>{{ $t('packages_business_request_speed_limit') }}</span>
@@ -1311,23 +1786,40 @@ provide('form', form)
             min-width="80"
           >
             <template #default="{ row, $index }">
-              <div v-if="editable(row, form, isEdit)">
-                <ElFormItem
-                  :prop="`params.${$index}.name`"
-                  :error="!form.params[$index].name ? 'true' : ''"
-                  :show-message="false"
-                  :rules="rules.param"
-                  class="mb-0"
+              <div
+                v-if="editable(row, form)"
+                @mouseenter="hoveredParamNameIndex = $index"
+                @mouseleave="hideHoveredParamNameTip($index)"
+              >
+                <ElTooltip
+                  :disabled="!getParamNameError($index)"
+                  :content="getParamNameError($index)"
+                  :hide-after="0"
+                  transition="none"
+                  :visible="isParamNameTipVisible($index)"
+                  placement="top"
                 >
-                  <ElInput v-model="form.params[$index].name" />
-                </ElFormItem>
+                  <ElFormItem
+                    :prop="`params.${$index}.name`"
+                    :error="getParamNameError($index)"
+                    :show-message="false"
+                    :rules="rules.param"
+                    class="mb-0"
+                  >
+                    <ElInput
+                      v-model="form.params[$index].name"
+                      @focus="focusedParamNameIndex = $index"
+                      @blur="hideFocusedParamNameTip($index)"
+                    />
+                  </ElFormItem>
+                </ElTooltip>
               </div>
               <div v-else>{{ row.name }}</div>
             </template>
           </ElTableColumn>
           <ElTableColumn :label="$t('public_type')" prop="type" min-width="90">
             <template #default="{ row, $index }">
-              <div v-if="editable(row, form, isEdit)">
+              <div v-if="editable(row, form)">
                 <el-cascader
                   v-model="form.params[$index].type"
                   :options="typeOptions"
@@ -1364,11 +1856,11 @@ provide('form', form)
           <ElTableColumn
             :label="$t('packages_business_data_server_drawer_required')"
             prop="required"
-            min-width="60"
+            min-width="80"
             align="center"
           >
             <template #default="{ row, $index }">
-              <div v-if="editable(row, form, isEdit)">
+              <div v-if="editable(row, form)">
                 <ElFormItem
                   :prop="`params.${$index}.required`"
                   :error="!form.params[$index].required ? 'true' : ''"
@@ -1389,12 +1881,161 @@ provide('form', form)
             </template>
           </ElTableColumn>
           <ElTableColumn
+            :label="$t('public_data_encryption')"
+            prop="textEncryptionRuleIds"
+            min-width="180"
+          >
+            <template #default="{ row, $index }">
+              <el-button
+                v-if="editable(row, form, true)"
+                text
+                class="encryption-btn min-w-0"
+                @click.stop="(e) => handleOpenParamEncryption(e, $index)"
+              >
+                <el-icon
+                  v-if="form.params?.[$index]?.textEncryptionRuleIds?.length"
+                  color="var(--el-color-primary)"
+                >
+                  <i-lucide-shield-ellipsis />
+                </el-icon>
+                <el-icon v-else color="var(--icon-n3)"
+                  ><i-lucide-shield
+                /></el-icon>
+                <div
+                  v-if="form.params?.[$index]?.textEncryptionRuleIds?.length"
+                >
+                  <el-popover
+                    v-if="shouldCollapseParamEncryption($index)"
+                    trigger="hover"
+                    placement="top"
+                    width="auto"
+                    popper-class="param-encryption-preview-popper"
+                  >
+                    <div class="encryption-tooltip">
+                      <el-tooltip
+                        v-for="item in getParamEncryptionEntries($index)"
+                        :key="item.id"
+                        :content="item.name"
+                        placement="top"
+                      >
+                        <el-tag
+                          size="small"
+                          class="border-0 encryption-tooltip-tag"
+                          >{{ item.name }}</el-tag
+                        >
+                      </el-tooltip>
+                    </div>
+                    <template #reference>
+                      <span class="encryption-summary ml-1 overflow-hidden">
+                        <el-tag
+                          size="small"
+                          class="border-0 encryption-tag-ellipsis"
+                          closable
+                          @close="
+                            (e) => {
+                              e?.stopPropagation?.()
+                              handleRemoveParamEncryption($index, 0)
+                            }
+                          "
+                          >{{ getParamEncryptionNames($index)[0] }}</el-tag
+                        >
+                        <sup class="encryption-more"
+                          >+{{
+                            form.params?.[$index]?.textEncryptionRuleIds
+                              ?.length - 1
+                          }}</sup
+                        >
+                      </span>
+                    </template>
+                  </el-popover>
+                  <div
+                    v-else
+                    class="flex align-center gap-1 ml-1 overflow-hidden"
+                  >
+                    <el-tag
+                      v-for="(encryption, i) in form.params?.[$index]
+                        ?.textEncryptionRuleIds"
+                      :key="encryption"
+                      size="small"
+                      class="border-0"
+                      closable
+                      @close="
+                        (e) => {
+                          e?.stopPropagation?.()
+                          handleRemoveParamEncryption($index, i)
+                        }
+                      "
+                      >{{ encryptionsMap[encryption] }}</el-tag
+                    >
+                  </div>
+                </div>
+                <span v-else class="ml-1">{{ $t('public_unencrypted') }}</span>
+                <el-icon class="ml-1" size="12"><DownBoldOutlined /></el-icon>
+              </el-button>
+              <div
+                v-else-if="form.params?.[$index]?.textEncryptionRuleIds?.length"
+                class="flex align-center gap-1 overflow-hidden"
+              >
+                <el-popover
+                  v-if="shouldCollapseParamEncryption($index)"
+                  trigger="hover"
+                  placement="top"
+                  width="auto"
+                  popper-class="param-encryption-preview-popper"
+                >
+                  <div class="encryption-tooltip">
+                    <el-tooltip
+                      v-for="item in getParamEncryptionEntries($index)"
+                      :key="item.id"
+                      :content="item.name"
+                      placement="top"
+                    >
+                      <el-tag
+                        size="small"
+                        class="border-0 encryption-tooltip-tag"
+                        >{{ item.name }}</el-tag
+                      >
+                    </el-tooltip>
+                  </div>
+                  <template #reference>
+                    <span class="encryption-summary overflow-hidden">
+                      <el-tag
+                        size="small"
+                        class="border-0 encryption-tag-ellipsis"
+                        >{{ getParamEncryptionNames($index)[0] }}</el-tag
+                      >
+                      <sup class="encryption-more"
+                        >+{{
+                          form.params?.[$index]?.textEncryptionRuleIds?.length -
+                          1
+                        }}</sup
+                      >
+                    </span>
+                  </template>
+                </el-popover>
+                <template v-else>
+                  <el-tag
+                    v-for="encryption in form.params?.[$index]
+                      ?.textEncryptionRuleIds"
+                    :key="encryption"
+                    size="small"
+                    class="border-0"
+                    >{{ encryptionsMap[encryption] }}</el-tag
+                  >
+                </template>
+              </div>
+              <span v-else>{{
+                editable(row, form) ? $t('public_unencrypted') : ''
+              }}</span>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn
             :label="$t('public_description')"
             prop="description"
             min-width="100"
           >
             <template #default="{ row, $index }">
-              <div v-if="editable(row, form, isEdit)">
+              <div v-if="editable(row, form)">
                 <ElInput
                   v-model="form.params[$index].description"
                   type="textarea"
@@ -1441,6 +2082,37 @@ provide('form', form)
             </template>
           </ElTableColumn>
         </ElTable>
+        <el-popover
+          v-model:visible="paramEncryptionPopoverVisible"
+          :virtual-ref="paramEncryptionTriggerRef"
+          trigger="click"
+          popper-class="p-0 w-auto"
+          popper-style="min-width: 200px; max-width: 600px;"
+          placement="bottom-end"
+          :hide-after="0"
+          virtual-triggering
+        >
+          <el-scrollbar>
+            <div class="flex flex-column gap-1 p-1" style="max-height: 300px">
+              <div
+                v-for="encryption in encryptions"
+                :key="encryption.id"
+                class="lh-5 px-3 py-1.5 rounded-lg cursor-pointer list-item flex align-center justify-content-between gap-1"
+                :class="{
+                  'is-selected': currentParamEncryptionIds.includes(
+                    encryption.id!,
+                  ),
+                }"
+                @click="handleSelectParamEncryption(encryption.id!)"
+              >
+                {{ encryption.name }}
+                <el-icon size="16" color="var(--el-color-primary)"
+                  ><i-lucide-check
+                /></el-icon>
+              </div>
+            </div>
+          </el-scrollbar>
+        </el-popover>
 
         <div v-if="isEdit && form.apiType === 'customerQuery'" class="mt-2">
           <el-button
@@ -1509,6 +2181,7 @@ provide('form', form)
                 <ElSelect
                   v-model="item.fieldName"
                   class="mr-4"
+                  filterable
                   :placeholder="$t('public_select_field')"
                 >
                   <ElOption
@@ -1629,6 +2302,7 @@ provide('form', form)
             >
               <ElSelect
                 v-model="item.fieldName"
+                filterable
                 class="flex-1"
                 :placeholder="$t('public_select_field')"
               >
@@ -1680,15 +2354,56 @@ provide('form', form)
 
         <!-- 输出结果 -->
         <template v-if="tab === 'form'">
-          <div class="data-server-panel__title mt-7 mb-3 gap-2">
+          <div
+            class="data-server-panel__title mt-7 mb-3 gap-2"
+            style="--btn-space: 0"
+          >
             <span>{{
               $t('packages_business_data_server_drawer_shuchujieguo')
             }}</span>
             <el-tag v-if="isEdit && selectedFieldSize" type="info" size="small">
               {{ $t('public_selected_fields', { val: selectedFieldSize }) }}
             </el-tag>
+            <el-segmented
+              v-if="!isEdit && unselectedFields.length"
+              v-model="previewFieldMode"
+              :options="[
+                {
+                  label: $t('public_field_view_selected'),
+                  value: 'selected',
+                },
+                {
+                  label: $t('public_field_view_unselected'),
+                  value: 'unselected',
+                },
+              ]"
+              @change="handlePreviewMode"
+            >
+              <template #default="{ item }">
+                <span v-if="item.value === 'selected'">
+                  {{ $t('public_field_view_selected') }}({{
+                    form.fields.length
+                  }})
+                </span>
+                <span v-else>
+                  {{ $t('public_field_view_unselected') }}({{
+                    unselectedFields.length
+                  }})
+                </span>
+              </template>
+            </el-segmented>
             <div class="flex-1" />
             <template v-if="isEdit && selectedFieldSize">
+              <el-button
+                text
+                :loading="fieldLoading"
+                @click="handleReloadSchema"
+              >
+                <template #icon>
+                  <i-lucide-refresh-cw />
+                </template>
+                {{ $t('packages_business_data_server_drawer_refresh_fields') }}
+              </el-button>
               <el-dropdown placement="bottom" @command="handleAliasConversion">
                 <el-button text>
                   <el-icon class="mr-1"><i-lucide-wand-sparkles /></el-icon>
@@ -1731,8 +2446,16 @@ provide('form', form)
             ref="fieldsTreeRef"
             :fields="allFields"
             @check="onFieldsTreeCheck"
+            @add-field="onAddField"
+            @delete-field="onDeleteField"
+            @update-field-name="onUpdateFieldName"
+            @update-field-type="onUpdateFieldType"
           />
-          <FieldsTreePreview v-else :fields="form.fields" />
+          <FieldsTreePreview
+            v-else
+            ref="fieldsTreePreviewRef"
+            :fields="previewFields"
+          />
         </template>
 
         <template v-if="tab === 'debug'">
@@ -1778,6 +2501,85 @@ provide('form', form)
   // :deep(.el-tabs__header.is-top) {
   //   margin: 0;
   // }
+}
+
+.el-button.encryption-btn.encryption-btn {
+  --el-button-text-color: var(--el-text-color-disabled);
+  :deep(> span) {
+    min-width: 0;
+  }
+  &:hover {
+    --el-button-text-color: var(--el-text-color-primary);
+  }
+}
+
+.encryption-tooltip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.encryption-tooltip-tag {
+  max-width: 360px;
+  min-width: 0;
+  :deep(.el-tag__content) {
+    display: inline-block;
+    max-width: 360px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
+  }
+}
+
+.encryption-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.encryption-more {
+  color: var(--el-text-color-secondary);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.encryption-tag-ellipsis {
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+:deep(.param-encryption-preview-popper) {
+  background: #fff;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  padding: 8px 10px;
+  width: auto;
+  max-width: 420px;
+}
+
+:deep(.param-encryption-preview-popper .el-popper__arrow::before) {
+  background: #fff;
+  border: none;
+}
+
+.list-item {
+  &:hover {
+    background-color: var(--el-fill-color-light);
+  }
+  .el-icon {
+    display: none;
+  }
+  &.is-selected {
+    color: var(--el-color-primary);
+    .el-icon {
+      display: inline-flex;
+    }
+  }
 }
 
 .data-server__form {

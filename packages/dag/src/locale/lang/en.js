@@ -209,8 +209,7 @@ export default {
   packages_dag_components_eventchart_suoxuanzhouqilei:
     'Selected cycle accumulation',
   packages_dag_components_eventchart_renwuyunxinglei: 'Task running cumulative',
-  packages_dag_components_initiallist_quanliangtongbuzhuang:
-    'Full synchronization status',
+  packages_dag_components_initiallist_quanliangtongbuzhuang: 'Status',
   packages_dag_components_initiallist_shujutongbu: 'Data synchronization',
   packages_dag_components_initiallist_mubiaobiaoming: 'Target table name',
   packages_dag_components_initiallist_yuanbiaoming: 'Source table name',
@@ -369,6 +368,8 @@ export default {
     'The task contains nodes that do not support CDC, change the task type to full',
   packages_dag_mixins_editor_buzhichiduotiao:
     'Multiple links are not supported, please re-edit the task link',
+  packages_dag_not_support_multi_target:
+    'Writing to multiple target nodes is not currently supported',
   packages_dag_mixins_editor_renwulianlubu: 'The task link is incomplete',
   packages_dag_mixins_editor_renwushezhiyi: 'The task setting is abnormal',
   packages_dag_mixins_editor_suoshuage:
@@ -599,6 +600,7 @@ export default {
     'Notice of full completion of tasks',
   packages_dag_migration_alarmpanel_renwujiaoyanchu: 'Task validation error',
   packages_dag_migration_alarmpanel_renwuyunxingchu: 'Task running error alert',
+  packages_dag_migration_alarmpanel_renwufengxianddl: 'Task risk DDL alert',
   packages_dag_migration_alarmpanel_jiedianpingjunchu:
     'Node average processing time alert',
   packages_dag_migration_alarmpanel_shujuyuanxieyi:
@@ -642,6 +644,28 @@ export default {
   packages_dag_monitor_node_popover_targetWriteTime_title: 'Average write time',
   packages_dag_monitor_node_per_deal_need_time: 'Single processing time',
   packages_dag_api_docs: 'API Documentation',
+  packages_dag_ai_generate: 'AI Generate',
+  packages_dag_ai_code_dialog_title: 'AI Code Generator',
+  packages_dag_ai_code_dialog_subtitle:
+    'Describe the data processing logic you want to implement, and AI will generate code for you',
+  packages_dag_ai_code_dialog_placeholder:
+    'For example: Convert all field names to camelCase format...',
+  packages_dag_ai_code_dialog_quick_commands: 'Quick Commands',
+  packages_dag_ai_code_dialog_cmd_camel_case:
+    'Convert field names to camelCase',
+  packages_dag_ai_code_dialog_cmd_filter_empty: 'Filter out empty value fields',
+  packages_dag_ai_code_dialog_cmd_add_timestamp: 'Add timestamp field',
+  packages_dag_ai_code_dialog_cmd_round_numbers: 'Round numeric fields',
+  packages_dag_ai_code_dialog_cmd_merge_fields:
+    'Merge multiple fields into one',
+  packages_dag_ai_code_dialog_generate: 'Generate',
+  packages_dag_ai_code_dialog_cancel: 'Cancel',
+  packages_dag_ai_code_dialog_apply: 'Apply Code',
+  packages_dag_ai_code_dialog_generating: 'Generating...',
+  packages_dag_ai_code_dialog_preview: 'Generated Result',
+  packages_dag_ai_code_dialog_generate_success: 'Code generated successfully',
+  packages_dag_ai_code_dialog_generate_failed:
+    'Code generation failed, please try again later',
   packages_dag_js_declare_index_queding: 'OK',
   packages_dag_js_declare_index_shilidaima: 'Sample Code',
   packages_dag_js_declare_index_shiyongbangzhu: 'Use Help',
@@ -828,6 +852,11 @@ export default {
   packages_dag_config_data_read: 'Data Read',
   packages_dag_config_breakpoint_resume: 'Resume from Breakpoint',
   packages_dag_config_datasource: 'Data Source',
+  packages_dag_add_table_from_top: 'Click top to add table',
+  packages_dag_select_table_from_left: 'Select table from left',
+  packages_dag_pdk_node_config_table_level: 'Table Level Config',
+  packages_dag_pdk_node_config_add_table: 'Add Table',
+  packages_dag_pdk_node_config_search_configured: 'Search for added tables',
   packages_dag_config_data_write: 'Data Write',
   packages_dag_config_incremental_mode: 'Incremental Mode',
   packages_dag_config_data_filter: 'Data Filter',
@@ -921,6 +950,9 @@ export default {
   packages_dag_doubleActive: 'Bidirectional Synchronization',
   packages_dag_doubleActive_tip:
     'When bidirectional synchronization is required and the generated incremental events do not interfere with the system itself, please turn on this switch.',
+  packages_dag_dataSaving: 'Data Saving',
+  packages_dag_dataSaving_tip:
+    'When enabled, optimizes data transmission to reduce unnecessary bandwidth usage.',
   packages_dag_time_zone_offset: 'Time Zone Offset',
   packages_dag_dynamic_date_suffix: 'Dynamic Date Suffix',
   packages_dag_dynamic_date_suffix_tip:
@@ -1104,11 +1136,12 @@ export default {
   packages_dag_applyCompareRules_Different: 'Update Field Type',
   packages_dag_applyCompareRules_CannotWrite: 'Delete Read-Only Fields',
   packages_dag_view_compare_result: 'View Schema Comparison Result',
-  packages_dag_compare_different: 'Type Different',
+  packages_dag_compare_different: 'Type Diff',
   packages_dag_compare_missing: 'Missing',
   packages_dag_compare_missing_source: 'Not Defined',
-  packages_dag_compare_precision: 'Type Different (General)',
+  packages_dag_compare_precision: 'Type Diff (General)',
   packages_dag_compare_cannot_write: 'Read-Only',
+  packages_dag_compare_primary_key_inconsistency: 'PK Diff',
   packages_dag_compare_done_modify: '{type} Modified',
   packages_dag_compare_done_add: '{type} Added',
   packages_dag_compare_done_delete: '{type} Deleted',
@@ -1142,7 +1175,9 @@ export default {
     '{time1} No Database Model Found, No Comparison',
   packages_dag_compare_result_detail_readonly: '{readonly} Read-Only',
   packages_dag_compare_result_detail_missing: '{missing} Missing',
-  packages_dag_compare_result_detail_different: '{different} Type Different',
+  packages_dag_compare_result_detail_different: '{different} Type Diff',
+  packages_dag_compare_result_detail_primary_key_inconsistency:
+    '{primaryKeyInconsistency} PK Diff',
   packages_dag_compare_result_detail_precision:
     '{precision} Precision Different',
   packages_dag_compare_result_detail_all: 'All Differences',
@@ -1152,6 +1187,7 @@ export default {
   //Api server
   public_api_name: 'API Name',
   public_api_server_name: 'API Server Name',
+  public_datasource_name: 'Datasource name',
   public_api_worker_name: 'API Server Worker Name',
   public_api_threshold: 'Threshold',
   public_api_threshold_unit: 'Unit',
@@ -1160,10 +1196,78 @@ export default {
   public_api_alarmDate: 'Alarm Date',
   packages_dag_drop_table_enabled_confirm:
     'Confirm clearing target table data?',
+  packages_dag_compareIgnoreCase: 'Ignore Case',
+  packages_dag_memory_heap_risk_title: 'Memory Risk Warning',
+  packages_dag_memory_heap_risk_message:
+    'Potential memory risk detected. This task may require more memory than available resources.It is recommended to reduce the source node’s full-load batch size before proceeding. Continue anyway?',
   packages_dag_qpSshizhi_tip: 'Query < 1h: avg QPS from 5s data points',
   packages_dag_qpSshizhi2_tip:
     '1h ≤ Query < 24h: avg & max QPS from 1m data points',
   packages_dag_qpSshizhi3_tip:
     '24h ≤ Query < 30d: avg & max QPS from 1h data points',
   packages_dag_task_resource_usage: 'Task Resource Usage',
+  packages_dag_cache: 'Cache',
+  packages_dag_cache_expired: 'Cache Expired, Need to Rebuild',
+  packages_dag_rebuild_cache: 'Rebuild Cache',
+  packages_dag_rebuild_cache_tips: 'Auto Rebuild Expired Cache',
+  packages_dag_connection_address: 'Connection Address',
+  packages_dag_cache_pending: 'Pending',
+  packages_dag_cache_running: 'Running',
+  packages_dag_cache_done: 'Done',
+  packages_dag_cache_error: 'Error',
+  packages_dag_cache_count: 'Cache Count',
+  packages_dag_cache_space: 'Cache Space',
+  packages_dag_cache_no_data: 'No Cache Data',
+  packages_dag_batch_read_size_chart_title: 'Batch Read Size (rows/batch)',
+  packages_dag_batch_read_size: 'Each batch read size',
+  packages_dag_autoIncrementalBatchSize: 'Auto Adjust Incremental Batch Size',
+  packages_dag_autoIncrementalBatchSize_tip:
+    'When enabled, incremental sync dynamically adjusts the source batch size based on real-time load: reducing delay during log spikes and expanding during idle periods to improve performance.',
+  packages_dag_enableSkipErrorTable: 'Skip Error Table',
+  packages_dag_enableSkipErrorTable_tip:
+    'When enabled, table write errors during the full sync phase will be skipped. The task will report an error and stop after all tables finish full synchronization.',
+  packages_dag_error_skipped: 'Error Skipped',
+  packages_dag_error_table_record: 'Error Table Record',
+  packages_dag_skip_error_date: 'Skip Date',
+  packages_dag_skip_error_no_data: 'No Error Table Record',
+  packages_dag_skip_error_recover_selected: 'Recover Selected',
+  packages_dag_skip_error_recover_all: 'Recover All',
+  packages_dag_only_show_skip: 'Only Show Skipped',
+  packages_dag_SkipTableForMigrateSnapshot:
+    'Skip failed tables, then stop after full sync',
+  packages_dag_fileLog: 'Database Log',
+  packages_dag_fileLog_tip:
+    'When enabled, database JDBC execution logs will be output in the engine background',
+  packages_dag_search_processor: 'Search Processor',
+  packages_dag_canvas_add_node: 'Add Node',
+  packages_dag_canvas_empty_title: 'Start Building Your Data Flow',
+  packages_dag_canvas_empty_desc:
+    'Add your first node to start creating a data processing pipeline',
+  packages_dag_canvas_empty_hint: 'Or right-click on the canvas to quickly add',
+  packages_dag_canvas_fit_view: 'Fit to View',
+  packages_dag_batch_edit: 'Batch Edit',
+  packages_dag_auto_layout: 'Auto Layout',
+  packages_dag_panning_mode: 'Panning Mode',
+  packages_dag_zoom_in: 'Zoom In',
+  packages_dag_zoom_out: 'Zoom Out',
+  packages_dag_zoom_reset: 'Reset to 100%',
+  packages_dag_undo: 'Undo',
+  packages_dag_redo: 'Redo',
+  packages_dag_src_editor_copy_success: 'Copied to clipboard',
+  packages_dag_hide_nodes_panel_tip:
+    'Collapse panel. Right-click on the canvas to quickly add nodes.',
+  packages_dag_handle_click: 'Click',
+  packages_dag_handle_click_add_node: 'to add node',
+  packages_dag_handle_drag: 'Drag',
+  packages_dag_handle_drag_connect_node: 'to connect nodes',
+  packages_dag_link_end_must_be_data_node:
+    'The end of the link must be a data node',
+  packages_dag_node_panel_desc_placeholder: 'Add description...',
+  packages_dag_data_capture_keyword_placeholder: 'Enter keyword',
+  packages_dag_data_capture_source_table: 'Source Table',
+  packages_dag_data_capture_event_type: 'Event Type',
+  packages_dag_data_capture_event_time: 'Event Time',
+  packages_dag_data_capture_event_id: 'Event ID',
+  packages_dag_data_capture_original_data: 'Original Data',
+  packages_dag_locate_selected_node: 'Locate Selected Node',
 }

@@ -24,6 +24,7 @@ html.dark {
   --N200: #373737;
   --N50: #1a1a1a;
   --N50-raw: 26, 26, 26;
+  --N500: #757575;
   --N900: #ebebeb;
   --N900-raw: 235, 235, 235;
   --primary-raw: 51, 112, 235;
@@ -40,6 +41,10 @@ html.dark {
   --bg-light: #121212;
   --bg-normal: var(--N100);
   --bg-disable: var(--N100);
+  --bg-block: var(--white5);
+  --bg-node: #27272b;
+
+  --color-background-section: #18181b66;
 
   .layout-bg {
     background-color: #000;
@@ -64,6 +69,9 @@ html.dark {
   .layout-bg-bl {
     display: none;
   }
+
+  --color-components-kbd-bg-gray: #ffffff08;
+  --color-dataflow-canvas-bg: #1d1d20;
 }
 html.dark {
   color-scheme: dark;
@@ -199,9 +207,10 @@ html.dark .el-table {
   }
 }
 
-.el-table tr.hover-row {
+/* 这里会造成渲染层混乱，导致鼠标 hover 后单元格背景色不一致 */
+/* .el-table tr.hover-row {
   background: var(--el-table-row-hover-bg-color);
-}
+} */
 
 html.dark .el-table:not(.is-scrolling-none) {
   td.el-table-fixed-column--left,

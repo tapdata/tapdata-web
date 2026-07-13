@@ -86,6 +86,10 @@ export function updateApiModule(params: Partial<ApiModule>) {
   return requestClient.patch(BASE_URL, params)
 }
 
+export function updateParamEncryption(params: { apiId: string; paths: any[] }) {
+  return requestClient.post(`${BASE_URL}/update-param-encryption`, params)
+}
+
 /**
  * 删除 API 模块 - 支持按表名删除
  */

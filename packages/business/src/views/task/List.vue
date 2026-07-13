@@ -14,11 +14,12 @@ import {
   updateTask,
 } from '@tap/api/src/core/task'
 import { getTaskUsedAgent } from '@tap/api/src/core/workers'
+import { withPassive } from '@tap/api/src/request'
 import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import FilterBar from '@tap/component/src/filter-bar/Main.vue'
 import i18n from '@tap/i18n'
-import { calcUnit } from '@tap/shared'
+import { calcTimeUnit, calcUnit } from '@tap/shared'
 import dayjs from 'dayjs'
 import { escapeRegExp, isNumber, uniqBy } from 'lodash-es'
 import { h } from 'vue'
@@ -35,7 +36,8 @@ import Upload from '../../components/UploadDialog.vue'
 import syncTaskAgent from '../../mixins/syncTaskAgent'
 import { makeStatusAndDisabled, MILESTONE_TYPE, STATUS_MAP } from '../../shared'
 import EditInfoDialog from './EditInfoDialog.vue'
-import SkipError from './SkipError'
+import SkipError from './SkipError.vue'
+import TaskName from './TaskName.vue'
 
 export default {
   name: 'List',
@@ -54,6 +56,7 @@ export default {
     UpgradeFee,
     SyncStatus,
     EditInfoDialog,
+    TaskName,
   },
 
   mixins: [syncTaskAgent],
@@ -135,6 +138,7 @@ export default {
       uploadType: 'dataflow',
       pipelineOptions: [],
       pipelineSelected: '',
+      spacer: h(ElDivider, { direction: 'vertical', class: 'mx-1' }),
     }
   },
 
@@ -211,7 +215,7 @@ export default {
   created() {
     //定时轮询
     this.timeout = setInterval(() => {
-      this.table.fetch(null, 0, true)
+      withPassive(() => this.table.fetch(null, 0, true))
     }, 8000)
     this.getFilterItems()
     this.searchParams = Object.assign(this.searchParams, this.$route.query)
@@ -224,7 +228,10 @@ export default {
   },
 
   methods: {
-    getData({ page, tags }) {
+    formatTimeUnit(val) {
+      return isNumber(val) ? calcTimeUnit(val) : '-'
+    },
+    getData({ page, tags, isSelectedNoTag }) {
       const { current, size } = page
       const { syncType } = this
       const { keyword, status, type, agentId, syncStatus, id } =
@@ -261,6 +268,10 @@ export default {
         restartFlag: true,
         attrs: true,
         metricInfo: true,
+        delayTime: true,
+        taskIncrementDelay: true,
+        taskIncrementDelayThreshold: true,
+        heartbeatTaskRunning: true,
       }
       const where = {
         syncType,
@@ -279,6 +290,13 @@ export default {
           in: tags,
         }
       }
+      if (isSelectedNoTag) {
+        where.$or = [
+          { listtags: { $exists: false } },
+          { listtags: { $size: 0 } },
+        ]
+      }
+
       type && (where.type = type)
       if (status) {
         if (status.includes(',')) {
@@ -348,12 +366,20 @@ export default {
             map[item.id] = item
             return map
           }, {})
+          const deleted = []
           this.multipleSelection.forEach((item, i) => {
             const temp = tempMap[item.id]
             if (temp) {
               this.multipleSelection[i] = temp
+            } else {
+              deleted.push(item)
             }
           })
+          deleted.forEach((item) => {
+            this.table.toggleRowSelection(item, false)
+          })
+        } else if (!list.length) {
+          this.table.clearSelection()
         }
 
         return {
@@ -375,6 +401,7 @@ export default {
           type: 'select-inner',
           items: this.statusOptions,
           id: 'status-filter-select',
+          height: this.statusOptions * 34,
         },
         {
           label: this.$t('packages_business_task_list_sync_type'),
@@ -444,7 +471,7 @@ export default {
 
       if (this.showInstanceInfo) {
         items.splice(-1, 0, {
-          label: '数据源通道',
+          label: this.$t('daas_datasourcePipeline'),
           key: 'id',
           slotName: 'pipeline',
           type: 'select-inner',
@@ -1064,6 +1091,8 @@ export default {
       ref="table"
       row-key="id"
       class="data-flow-list"
+      :enable-custom-columns="syncType"
+      :locked-columns="['name', 'operation']"
       :classify="{
         authority: 'SYNC_category_management',
         types: ['dataflow'],
@@ -1218,133 +1247,25 @@ export default {
         "
       />
       <el-table-column
+        prop="name"
+        sortable
         min-width="240"
         :label="$t('public_task_name')"
-        :show-overflow-tooltip="true"
+        show-overflow-tooltip
       >
         <template #default="{ row }">
-          <div class="dataflow-name flex flex-wrap">
-            <!-- <span v-if="handleClickNameDisabled(row)" class="mr-1">{{
-              row.name
-            }}</span> -->
-            <ElLink
-              role="ellipsis"
-              type="primary"
-              underline="never"
-              class="justify-content-start ellipsis block mr-1 position-relative min-w-0 task-name-link"
-              :class="['name', { 'has-children': row.hasChildren }]"
-              @click.stop="handleClickName(row)"
-            >
-              <span class="inline-flex min-w-0">
-                <span class="ellipsis">{{ row.name }}</span>
-                <el-tooltip
-                  v-if="!row.desc"
-                  placement="top"
-                  :hide-after="0"
-                  :content="$t('packages_business_edit_task_info')"
-                >
-                  <el-button
-                    size="small"
-                    text
-                    class="edit-info-btn"
-                    @click.stop="handleEditInfo(row)"
-                  >
-                    <template #icon>
-                      <el-icon><i-lucide-file-pen /></el-icon>
-                    </template>
-                  </el-button>
-                </el-tooltip>
-                <el-popover
-                  v-else
-                  :teleported="true"
-                  placement="top"
-                  :content="row.desc"
-                  :hide-after="0"
-                  popper-style="width: auto;max-width: 448px"
-                >
-                  <template #reference>
-                    <el-button
-                      size="small"
-                      text
-                      class="edit-info-btn"
-                      style="--el-button-text-color: var(--icon-n1)"
-                      @click.stop="handleEditInfo(row)"
-                    >
-                      <template #icon>
-                        <el-icon><i-lucide-file-text /></el-icon>
-                      </template>
-                    </el-button>
-                  </template>
-                  <template #default>
-                    <div class="mb-2 flex align-center gap-1">
-                      {{ row.name }}
-                      <el-button
-                        class="flex-shrink-0"
-                        size="small"
-                        text
-                        @click="handleEditInfo(row)"
-                      >
-                        <template #icon>
-                          <el-icon><i-lucide-file-pen /></el-icon>
-                        </template>
-                      </el-button>
-                    </div>
-                    <div
-                      class="bg-gray-50 dark:bg-card rounded-lg p-2 border border-gray-100"
-                    >
-                      <div>{{ row.desc }}</div>
-                    </div>
-                  </template>
-                </el-popover>
-              </span>
-            </ElLink>
-
-            <span
-              v-if="row.listtags"
-              class="justify-content-start ellipsis flex flex-wrap align-center gap-1"
-            >
-              <span
-                v-for="item in row.listtags"
-                :key="item.id"
-                class="tag ellipsis"
-                :title="item.value"
-                >{{ item.value }}</span
-              >
-            </span>
-          </div>
-          <div class="fs-8 font-color-sslight lh-base flex align-center">
-            <span class="align-middle">{{
-              row.type ? taskType[row.type] : ''
-            }}</span>
-            <VIcon
-              v-if="row.attrs && row.attrs.editorType === 'form'"
-              size="18"
-              class="align-middle ml-1"
-              >dynamic-form-outline</VIcon
-            >
-            <template v-if="row.status === 'running' && row.metricInfo">
-              <el-divider direction="vertical" />
-              <el-tooltip :content="row.metricInfo.lastUpdateTime">
-                <div class="flex align-center gap-1">
-                  <el-icon
-                    v-if="row.metricInfo.hasWarning"
-                    class="color-warning"
-                    ><i-lucide-triangle-alert
-                  /></el-icon>
-                  <span class="font-color-sslight">CPU:</span>
-                  <span class="fw-sub">{{ row.metricInfo.cpuUsage }}</span>
-                  <span class="font-color-sslight ml-2">MEM:</span>
-                  <span class="fw-sub">{{ row.metricInfo.memoryUsage }}</span>
-                </div>
-              </el-tooltip>
-            </template>
-          </div>
+          <TaskName
+            :row="row"
+            @edit-info="handleEditInfo"
+            @click-name="handleClickName"
+          />
         </template>
       </el-table-column>
       <el-table-column
         prop="status"
         :label="$t('public_task_status')"
         :min-width="colWidth.status"
+        class-name="task-status-cell"
       >
         <template #default="{ row }">
           <TaskStatus
@@ -1360,14 +1281,60 @@ export default {
         :min-width="colWidth.syncStatus"
       >
         <template #default="{ row }">
-          <SyncStatus :status="row.syncStatus" />
+          <SyncStatus :status="row.syncStatus" :delay-time="row.delayTime" />
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="delayTime"
+        :label="$t('public_event_incremental_delay')"
+        min-width="170"
+        sortable="custom"
+      >
+        <template #default="{ row }">
+          <span v-if="row.delayTime == null">-</span>
+          <el-tooltip
+            v-else-if="
+              row.taskIncrementDelay != null &&
+              row.taskIncrementDelayThreshold != null
+            "
+            :content="
+              $t('packages_business_task_status_increment_delay_warning', {
+                delay: formatTimeUnit(row.taskIncrementDelay),
+                threshold: formatTimeUnit(row.taskIncrementDelayThreshold),
+              })
+            "
+            placement="top"
+            :enterable="false"
+            :hide-after="0"
+          >
+            <el-tag effect="light" round type="warning" disable-transitions>
+              <div class="flex align-center">
+                <el-icon class="mr-1">
+                  <i-lucide-clock />
+                </el-icon>
+                {{ formatTimeUnit(row.delayTime) }}
+              </div>
+            </el-tag>
+          </el-tooltip>
+          <el-tag v-else effect="light" round type="info" disable-transitions>
+            <div class="flex align-center">
+              <el-icon class="mr-1">
+                <i-lucide-clock />
+              </el-icon>
+              <span class="font-color-light">
+                {{ formatTimeUnit(row.delayTime) }}
+              </span>
+            </div>
+          </el-tag>
+
+          <!-- <span v-else>-</span> -->
         </template>
       </el-table-column>
       <el-table-column
         sortable
         prop="currentEventTimestamp"
         :label="$t('public_task_cdc_time_point')"
-        min-width="168"
+        min-width="170"
       >
         <template #default="{ row }">
           {{ formatTime(row.currentEventTimestamp) }}
@@ -1376,7 +1343,7 @@ export default {
       <el-table-column
         prop="lastStartDate"
         :label="$t('public_task_last_run_time')"
-        min-width="168"
+        min-width="170"
         sortable="custom"
       >
         <template #default="{ row }">
@@ -1384,6 +1351,27 @@ export default {
         </template>
       </el-table-column>
       <el-table-column
+        prop="createTime"
+        :label="$t('public_create_time')"
+        min-width="170"
+        sortable="custom"
+      >
+        <template #default="{ row }">
+          {{ formatTime(row.createTime) }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="last_updated"
+        :label="$t('public_update_time')"
+        min-width="170"
+        sortable="custom"
+      >
+        <template #default="{ row }">
+          {{ formatTime(row.last_updated) }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="operation"
         fixed="right"
         :label="$t('public_operation')"
         :width="colWidth.operation"
@@ -1403,14 +1391,15 @@ export default {
           </div>
         </template>
         <template #default="{ row }">
-          <div v-if="!row.hasChildren" class="table-operations">
+          <!-- 经过不停的快照比对，发现如果多个按钮带有 v-readonlybtn 
+          则会影响 vnode 的 patch 导致内存泄露，每次列表刷新就会增加很多 vnode -->
+          <el-space :spacer="spacer" :size="0" class="flex-wrap">
             <ElButton
               v-if="
                 row.btnDisabled.stop &&
                 row.btnDisabled.forceStop &&
                 havePermission(row, 'Start')
               "
-              v-readonlybtn="'SYNC_job_operation'"
               name="start-task-btn"
               text
               type="primary"
@@ -1423,7 +1412,6 @@ export default {
             <template v-else>
               <ElButton
                 v-if="row.status === 'stopping' && havePermission(row, 'Stop')"
-                v-readonlybtn="'SYNC_job_operation'"
                 text
                 type="primary"
                 data-testid="force-stop-task"
@@ -1434,7 +1422,6 @@ export default {
               </ElButton>
               <ElButton
                 v-else-if="havePermission(row, 'Stop')"
-                v-readonlybtn="'SYNC_job_operation'"
                 text
                 type="primary"
                 name="stop-task-btn"
@@ -1445,15 +1432,8 @@ export default {
                 {{ $t('public_button_stop') }}
               </ElButton>
             </template>
-            <ElDivider
-              v-if="havePermission(row, 'Start') || havePermission(row, 'Stop')"
-              v-readonlybtn="'SYNC_job_operation'"
-              class="mx-1"
-              direction="vertical"
-            />
             <ElButton
               v-if="havePermission(row, 'Edit')"
-              v-readonlybtn="'SYNC_job_edition'"
               text
               type="primary"
               data-testid="edit-task"
@@ -1462,14 +1442,8 @@ export default {
             >
               {{ $t('public_button_edit') }}
             </ElButton>
-            <ElDivider
-              v-if="havePermission(row, 'Edit')"
-              v-readonlybtn="'SYNC_job_edition'"
-              class="mx-1"
-              direction="vertical"
-            />
             <ElButton
-              v-readonlybtn="'SYNC_job_edition'"
+              key="monitor"
               text
               type="primary"
               data-testid="monitor-task"
@@ -1478,14 +1452,9 @@ export default {
             >
               {{ $t('packages_business_task_list_button_monitor') }}
             </ElButton>
-            <ElDivider
-              v-readonlybtn="'SYNC_job_edition'"
-              class="mx-1"
-              direction="vertical"
-            />
             <ElButton
               v-if="havePermission(row, 'Reset')"
-              v-readonlybtn="'SYNC_job_edition'"
+              key="reset"
               text
               type="primary"
               data-testid="reset-task"
@@ -1494,31 +1463,19 @@ export default {
             >
               {{ $t('public_button_reset') }}
             </ElButton>
-            <ElDivider
-              v-if="havePermission(row, 'Reset')"
-              v-readonlybtn="'SYNC_job_edition'"
-              class="mx-1"
-              direction="vertical"
-            />
             <ElButton
               v-if="buttonShowMap.copy"
-              v-readonlybtn="'SYNC_job_edition'"
+              key="copy"
               text
               type="primary"
               data-testid="copy-task"
               @click="copy([row.id], row)"
             >
-              {{ $t('public_button_copy') }}
+              {{ $t('public_button_duplicate') }}
             </ElButton>
-            <ElDivider
-              v-if="buttonShowMap.copy && havePermission(row, 'Delete')"
-              v-readonlybtn="'SYNC_job_edition'"
-              class="mx-1"
-              direction="vertical"
-            />
             <ElButton
               v-if="havePermission(row, 'Delete')"
-              v-readonlybtn="'SYNC_job_edition'"
+              key="delete"
               text
               type="primary"
               name="delete-task-btn"
@@ -1528,7 +1485,7 @@ export default {
             >
               {{ $t('public_button_delete') }}
             </ElButton>
-          </div>
+          </el-space>
         </template>
       </el-table-column>
     </TablePage>
@@ -1676,27 +1633,6 @@ export default {
       }
     }
 
-    .dataflow-name {
-      line-height: 24px;
-      .tag {
-        padding: 0 4px;
-        font-style: normal;
-        font-weight: 400;
-        font-size: 12px;
-        line-height: 20px;
-        color: var(--color-tag);
-        border: 1px solid var(--bg-tag);
-        border-radius: 6px;
-      }
-
-      .name {
-        &:not(.has-children) {
-          cursor: pointer;
-          // text-decoration: underline;
-        }
-      }
-    }
-
     .table-operations {
       display: flex;
       align-items: center;
@@ -1717,24 +1653,28 @@ export default {
     }
   }
 
-  .task-name-link :deep(.el-link__inner) {
-    width: 100%;
+  :deep(.task-name-link) {
+    .el-link__inner {
+      width: 100%;
+    }
+    .el-button.el-button.edit-info-btn {
+      --el-button-text-color: var(--icon-n3);
+      opacity: 0;
+      pointer-events: none;
+      position: absolute;
+      right: -24px;
+      top: 0;
+    }
+    .el-button.el-button.edit-info-btn:where(.hover-row *),
+    .el-button.el-button.edit-info-btn[aria-describedby] {
+      opacity: 1;
+      pointer-events: auto;
+      position: static;
+    }
   }
 
-  .el-button.el-button.edit-info-btn {
-    --el-button-text-color: var(--icon-n3);
-    opacity: 0;
-    pointer-events: none;
-    position: absolute;
-    right: -24px;
-    top: 0;
-  }
-
-  .hover-row .el-button.el-button.edit-info-btn,
-  .el-button.el-button.edit-info-btn[aria-describedby] {
-    opacity: 1;
-    pointer-events: auto;
-    position: static;
+  :deep(.task-status-cell .cell) {
+    overflow: visible;
   }
 }
 </style>

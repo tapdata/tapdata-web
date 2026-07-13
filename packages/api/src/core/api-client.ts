@@ -59,12 +59,17 @@ export async function fetchApiServerToken() {
   })
   const clientInfoItem = clientInfo?.items[0] || {}
   const data = `grant_type=client_credentials&client_id=${clientInfoItem.id}&client_secret=${clientInfoItem.clientSecret}`
-  const result = await baseRequestClient.post('/oauth/token', data, {
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-  })
-  return result?.data || {}
+  try {
+   const result = await baseRequestClient.post('/oauth/token', data, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        debug: 'true',
+      },
+    })
+    return result.data ? result.data : result
+  } catch (error) {
+    return error
+  }
 }
 
 export function fetchApisByClient(clientId: string) {

@@ -1,7 +1,8 @@
 <script>
 import { getFullStatistics } from '@tap/api/src/core/measurement'
-
+import { withPassive } from '@tap/api/src/request'
 import { VTable } from '@tap/component/src/base/v-table'
+
 import i18n from '@tap/i18n'
 import { debounce } from 'lodash-es'
 
@@ -19,6 +20,7 @@ export default {
     return {
       tableName: '',
       visible: false,
+      skipErrorTable: false,
       statusMap: {
         NOT_START: {
           text: i18n.t('packages_dag_components_initiallist_weikaishi'),
@@ -41,28 +43,25 @@ export default {
           title: i18n.t('packages_dag_counting_num_of_rows_table'),
           type: 'scheduling',
         },
+        ERROR_SKIPPED: {
+          text: i18n.t('public_status_skipped'),
+          type: 'error',
+        },
       },
       columns: [
         {
           label: i18n.t('packages_dag_components_initiallist_yuanbiaoming'),
           prop: 'originTable',
-          width: 180,
         },
         {
           label: i18n.t('packages_dag_components_initiallist_mubiaobiaoming'),
           prop: 'targetTable',
-          width: 180,
         },
-        // {
-        //   label: '表结构同步',
-        //   prop: 'structureStatus',
-        //   slotName: 'structureStatus',
-        //   width: 80
-        // },
         {
           label: i18n.t('packages_dag_components_initiallist_shujutongbu'),
           prop: 'progress',
           slotName: 'progress',
+          width: 240,
         },
         {
           label: i18n.t(
@@ -72,12 +71,6 @@ export default {
           slotName: 'syncStatus',
           width: 120,
         },
-        // {
-        //   label: '操作',
-        //   prop: 'operation',
-        //   slotName: 'operation',
-        //   width: 60
-        // }
       ],
       timer: null,
     }
@@ -90,6 +83,7 @@ export default {
       } else {
         this.clearTimer()
         this.tableName = ''
+        this.skipErrorTable = false
       }
     },
   },
@@ -100,11 +94,15 @@ export default {
     }, 200)
   },
 
+  unmounted() {
+    this.clearTimer()
+  },
+
   methods: {
     init() {
       this.startLoadData()
       this.timer = setInterval(() => {
-        this.$refs.table?.fetch?.(null, null, true)
+        withPassive(() => this.$refs.table?.fetch?.(null, null, true))
       }, 5000)
     },
 
@@ -131,6 +129,11 @@ export default {
         page: current,
         tableName: this.tableName,
       }
+
+      if (this.skipErrorTable) {
+        filter.skipErrorTable = true
+      }
+
       return getFullStatistics(filter).then((data) => {
         return {
           total: data.total || 0,
@@ -160,38 +163,40 @@ export default {
 <template>
   <ElDialog
     v-model="visible"
-    width="774px"
+    width="50%"
+    class="min-w-800"
     :close-on-click-modal="false"
-    :modal-append-to-body="false"
+    append-to-body
     @close="$emit('update:value', false)"
   >
-    <template #header>
-      <div>
+    <template #header="{ titleClass }">
+      <div :class="titleClass" class="flex align-items-center gap-2">
         <span>{{
           $t('packages_dag_components_initiallist_quanliangxinxixiang')
         }}</span>
-        <ElTooltip
-          transition="tooltip-fade-in"
-          :content="$t('packages_dag_components_initiallist_dianjishuaxin')"
-          class="ml-2"
-        >
-          <VIcon
-            class="color-primary cursor-pointer"
-            size="12"
-            @click="startLoadData"
-            >icon_table_selector_load</VIcon
-          >
-        </ElTooltip>
-      </div>
-      <div class="mb-2">
+        <el-divider direction="vertical" />
         <ElInput
           v-model="tableName"
           :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
-          prefix-icon="el-icon-search"
           clearable
           style="width: 240px"
           @input="handleInput"
+        >
+          <template #prefix>
+            <i-lucide-search />
+          </template>
+        </ElInput>
+        <el-checkbox
+          v-model="skipErrorTable"
+          :label="$t('packages_dag_only_show_skip')"
+          border
+          @change="startLoadData"
         />
+        <el-button class="rounded-lg" circle @click="startLoadData">
+          <template #icon>
+            <i-lucide-refresh-cw />
+          </template>
+        </el-button>
       </div>
     </template>
     <VTable
@@ -199,6 +204,7 @@ export default {
       :remote-method="remoteMethod"
       :columns="columns"
       height="100%"
+      table-class="has-border-t"
       class="table-list"
     >
       <template #progress="scope">

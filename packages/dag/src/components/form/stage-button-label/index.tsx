@@ -2,7 +2,7 @@ import { observer } from '@formily/reactive-vue'
 import StageButton from '@tap/business/src/components/StageButton'
 import { FormItem, useForm } from '@tap/form'
 import { defineComponent } from 'vue'
-import { useStore } from 'vuex'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 
 import './style.scss'
 
@@ -10,8 +10,9 @@ export const StageButtonLabel = observer(
   defineComponent({
     props: ['value', 'disabled', 'connectionId', 'title', 'target'],
     setup(props, { attrs, slots }) {
-      const store = useStore()
-      const { taskId, activeNodeId } = store.state?.dataflow || {}
+      const dataflowStore = useDataflowStore()
+      const taskId = dataflowStore.dataflow.id
+      const activeNodeId = dataflowStore.selectedNode?.id
 
       const formRef = useForm()
 

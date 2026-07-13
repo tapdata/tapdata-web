@@ -1,748 +1,870 @@
-<script>
+<script setup lang="ts">
 import {
   checkMultipleDataType,
   dataType2TapType,
 } from '@tap/api/src/core/metadata-instances'
-import { VTable } from '@tap/component/src/base/v-table'
-import i18n from '@tap/i18n'
+import { Modal } from '@tap/component/src/modal'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
+import { useForm } from '@tap/form'
+import { computed as reactiveComputed } from '@tap/form/src/shared/reactive'
+import { useI18n } from '@tap/i18n'
 import { uuid } from '@tap/shared'
+import { ElMessage } from 'element-plus'
 import { cloneDeep } from 'lodash-es'
-import { mapGetters } from 'vuex'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { useDataflowStore } from '../../../stores/dataflow.store'
 
-export default {
-  name: 'List',
-  components: { VTable },
-  props: {
-    data: {
-      type: Object,
-      default: () => {
-        return {
-          qualified_name: '',
-          fields: [],
-        }
-      },
-    },
-    showColumns: {
-      type: Array,
-      default: () => [],
-    },
-    showDelete: {
-      type: Boolean,
-      default: false,
-    },
-    readonly: {
-      type: Boolean,
-      default: false,
-    },
-    fieldChangeRules: {
-      type: Array,
-      default: () => [],
-    },
-    singleTable: {
-      type: Boolean,
-      default: false,
-    },
-    type: {
-      type: String,
-      default: 'target',
-    },
-    ignoreError: Boolean,
-    dataTypesJson: {
-      type: Object,
-      default: () => {
-        return {}
-      },
-    },
-  },
-  data() {
-    return {
-      columns: [
-        {
-          label: '#',
-          type: 'index',
-          prop: 'index',
-          minWidth: 40,
-        },
-        {
-          label: i18n.t('packages_form_field_add_del_index_ziduanmingcheng'),
-          prop: 'field_name',
-          slotName: 'field_name',
-          'min-width': '90px',
-          'show-overflow-tooltip': true,
-        },
-        {
-          label: i18n.t('packages_form_dag_dialog_field_mapping_type'),
-          prop: 'data_type',
-          slotName: 'data_type',
-          'min-width': '126px',
-        },
-        {
-          label: i18n.t('packages_form_field_inference_list_feikong'),
-          prop: 'is_nullable',
-          slotName: 'is_nullable',
-          width: '60px',
-        },
-        {
-          label: i18n.t('packages_form_field_inference_list_ziduanzhushi'),
-          prop: 'comment',
-        },
-        {
-          label: i18n.t('public_operation'),
-          prop: 'operation',
-          slotName: 'operation',
-          headerSlot: 'operationHeader',
-          minWidth: 60,
-        },
-      ],
-      nullableMap: {
-        true: i18n.t('packages_dag_meta_table_true'),
-        false: i18n.t('packages_dag_meta_table_false'),
-      },
-      editDataTypeVisible: false,
-      currentData: {
-        changeRuleId: '',
-        fieldName: '',
-        dataTypeTemp: '',
-        dataType: '',
-        newDataType: '',
-        selectDataType: '',
-        useToAll: false,
-        errorMessage: '',
-        source: {},
-        canUseDataTypes: [],
-        coefficient: 1,
-        customInputData: {},
-        selectedDataType: '',
-      },
-      customInputDataValue: '',
-      customInputLabelMap: {
-        precision: i18n.t('packages_dag_meta_table_precision'),
-        scale: i18n.t('packages_dag_meta_table_scale'),
-        byte: i18n.t('packages_dag_meta_table_precision'),
-        fraction: i18n.t('packages_dag_meta_table_precision'),
-      },
-      editBtnLoading: false,
-      rules: [],
-      modeType: 'custom',
-      originType: '',
+defineOptions({ name: 'List' })
+
+const { t } = useI18n()
+
+const props = withDefaults(
+  defineProps<{
+    data?: {
+      qualified_name: string
+      fields: any[]
+      nodeId?: string
+      [key: string]: any
     }
+    showColumns?: any[]
+    showDelete?: boolean
+    readonly?: boolean
+    fieldChangeRules?: any[]
+    singleTable?: boolean
+    type?: string
+    ignoreError?: boolean
+    dataTypesJson?: Record<string, any>
+    draggable?: boolean
+  }>(),
+  {
+    data: () => ({ qualified_name: '', fields: [] }),
+    showColumns: () => [],
+    showDelete: false,
+    readonly: false,
+    fieldChangeRules: () => [],
+    singleTable: false,
+    type: 'target',
+    ignoreError: false,
+    dataTypesJson: () => ({}),
   },
-  computed: {
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'stateIsReadonly']),
+)
 
-    columnsList() {
-      const { showColumns, columns, readonly } = this
-      let result = columns
-      if (readonly) {
-        result = result.filter((t) => t.prop !== 'operation')
-      }
-      if (!showColumns.length) {
-        return result
-      }
-      return showColumns
-        .map((t) => {
-          return result.find((f) => f.prop === t || f.type === t)
+const emit = defineEmits<{
+  'update-rules': [data: any[]]
+  'open-update-rules': []
+  updateFields: [updater: (fields: any[]) => void, tableName?: string]
+}>()
+
+const dataflowStore = useDataflowStore()
+const activeNode = computed<any>(() => dataflowStore.selectedNode)
+const isDatabaseNode = computed<boolean>(
+  () => activeNode.value.type === 'database',
+)
+
+const formRef = useForm()
+const treeRef = ref()
+
+const editDataTypeVisible = ref(false)
+const currentData = reactive({
+  changeRuleId: '',
+  fieldName: '',
+  dataTypeTemp: '',
+  dataType: '',
+  newDataType: '',
+  selectDataType: '',
+  useToAll: false,
+  errorMessage: '',
+  source: {} as any,
+  canUseDataTypes: [] as any[],
+  coefficient: 1,
+  customInputData: {} as Record<string, any>,
+  selectedDataType: '',
+})
+const customInputDataValue = ref('')
+const customInputLabelMap: Record<string, string> = {
+  precision: t('packages_dag_meta_table_precision'),
+  scale: t('packages_dag_meta_table_scale'),
+  byte: t('packages_dag_meta_table_precision'),
+  fraction: t('packages_dag_meta_table_precision'),
+}
+const editBtnLoading = ref(false)
+const rules = ref<any[]>([])
+const modeType = ref('custom')
+const originType = ref('')
+
+// Computed
+const tableList = computed(() => {
+  const { fields } = props.data
+  const list = (fields || []).sort(
+    (a: any, b: any) => a.columnPosition - b.columnPosition,
+  )
+  return props.showDelete ? list : list.filter((t: any) => !t.is_deleted)
+})
+
+const revokeTableDisabled = computed(() => {
+  if (props.singleTable) return !rules.value.length
+  return rules.value.every((t) => t.namespace?.[1] !== props.data.ancestorsName)
+})
+
+const computedDataTypes = computed(() => {
+  return [
+    {
+      label: t('packages_dag_field_inference_list_zidingyileixing'),
+      value: '',
+    },
+    ...currentData.canUseDataTypes,
+  ]
+})
+
+// Watch
+watch(
+  () => props.fieldChangeRules,
+  (val = []) => {
+    setRules(val)
+  },
+  { deep: true },
+)
+
+// Lifecycle
+onMounted(() => {
+  setRules(props.fieldChangeRules)
+})
+
+// Methods
+function setRules(data: any[] = []) {
+  rules.value = cloneDeep(data)
+}
+
+function findInRulesById(id: string) {
+  return rules.value.find((t) => t.id === id)
+}
+
+function findNodeRuleByType(type: string) {
+  return rules.value.find((t) => t.accept === type && t.scope === 'Node')
+}
+
+function deleteRuleById(id: string) {
+  const index = rules.value.findIndex((t) => t.id === id)
+  rules.value.splice(index, 1)
+}
+
+async function openEditDataTypeVisible(row: any) {
+  const { source = {} } = row || {}
+  currentData.changeRuleId = row.changeRuleId
+  currentData.dataType = getDataType(row)
+  currentData.dataTypeTemp = row.dataTypeTemp
+  currentData.fieldName = row.field_name
+  currentData.newDataType = currentData.dataType
+  currentData.useToAll = false
+  currentData.errorMessage = ''
+  currentData.source = source
+  currentData.canUseDataTypes = await getTypeJson()
+  const findRule = rules.value.find((t) => t.id === currentData.changeRuleId)
+  currentData.selectDataType = findRule?.result?.selectDataType || ''
+  currentData.coefficient = findRule?.multiple || 1
+  currentData.selectedDataType = '' // 下拉框选择的类型，仅前端使用
+
+  const dataTypeCheckMultiple = await checkMultipleDataType({
+    databaseType: activeNode.value?.databaseType,
+    dataType: currentData.dataType,
+  })
+
+  let _modeType = 'custom'
+  if (dataTypeCheckMultiple?.result) {
+    originType.value = dataTypeCheckMultiple.originType
+    const rule = findInRulesById(currentData.changeRuleId)
+    if (rule?.scope !== 'Field') {
+      props.fieldChangeRules
+        .filter((t) => t.type !== 'Field')
+        .forEach((item: any = {}) => {
+          const { namespace = [] } = item
+          if (
+            item.type === 'MutiDataType' &&
+            item.accept === originType.value
+          ) {
+            currentData.coefficient = item.multiple
+            _modeType = 'coefficient'
+          } else {
+            const flag =
+              namespace[0] === props.data.nodeId &&
+              (namespace.length === 1 ||
+                (namespace[1] === props.data.qualified_name &&
+                  namespace[2] === currentData.fieldName))
+            if (flag) {
+              _modeType = 'custom'
+            }
+          }
         })
-        .filter((t) => t)
-    },
+    }
+  } else {
+    originType.value = ''
+  }
 
-    tableList() {
-      const { fields } = this.data
-      const list = (fields || []).sort(
-        (a, b) => a.columnPosition - b.columnPosition,
-      )
-      return this.showDelete ? list : list.filter((t) => !t.is_deleted)
-    },
+  modeType.value = _modeType
+  editDataTypeVisible.value = true
+}
 
-    revokeTableDisabled() {
-      const { qualified_name } = this.data
-      if (this.singleTable) return !this.rules.length
-      return this.rules.every((t) => t.namespace?.[1] !== qualified_name)
-    },
+function handleUpdate(data?: any[]) {
+  emit('update-rules', cloneDeep(data || rules.value))
+}
 
-    computedDataTypes() {
-      return [
-        {
-          label: i18n.t('packages_dag_field_inference_list_zidingyileixing'),
-          value: '',
-        },
-        ...this.currentData.canUseDataTypes,
-      ]
-    },
-  },
-  watch: {
-    fieldChangeRules: {
-      deep: true,
-      handler(val = []) {
-        this.setRules(val)
-      },
-    },
-  },
-  mounted() {
-    this.setRules(this.fieldChangeRules)
-  },
-  methods: {
-    setRules(data = []) {
-      this.rules = cloneDeep(data)
-    },
+function submitEdit() {
+  const { nodeId, ancestorsName } = props.data
+  const {
+    changeRuleId,
+    fieldName,
+    dataTypeTemp,
+    newDataType,
+    useToAll,
+    selectDataType,
+    coefficient = 1,
+  } = currentData
+  const params = {
+    databaseType: activeNode.value?.databaseType,
+    dataTypes: [newDataType],
+  }
 
-    findInRulesById(id) {
-      return this.rules.find((t) => t.id === id)
-    },
-
-    findNodeRuleByType(type) {
-      return this.rules.find((t) => t.accept === type && t.scope === 'Node')
-    },
-
-    deleteRuleById(id) {
-      const index = this.rules.findIndex((t) => t.id === id)
-      this.rules.splice(index, 1)
-    },
-
-    async openEditDataTypeVisible(row) {
-      const { source = {}, canUseDataTypes = [] } = row || {}
-      this.currentData.changeRuleId = row.changeRuleId
-      this.currentData.dataType = this.getDataType(row)
-      this.currentData.dataTypeTemp = row.dataTypeTemp
-      this.currentData.fieldName = row.field_name
-      this.currentData.newDataType = this.currentData.dataType
-      this.currentData.useToAll = false
-      this.currentData.errorMessage = ''
-      this.currentData.source = source
-      this.currentData.canUseDataTypes = await this.getTypeJson()
-      const findRule = this.rules.find(
-        (t) => t.id === this.currentData.changeRuleId,
-      )
-      this.currentData.selectDataType = findRule?.result?.selectDataType || ''
-      this.currentData.coefficient = findRule?.multiple || 1
-      this.currentData.selectedDataType = '' // 下拉框选择的类型，仅前端使用
-
-      const dataTypeCheckMultiple = await checkMultipleDataType({
-        databaseType: this.activeNode.databaseType,
-        dataType: this.currentData.dataType,
-      })
-
-      let modeType = 'custom'
-      if (dataTypeCheckMultiple?.result) {
-        this.originType = dataTypeCheckMultiple.originType
-        const rule = this.findInRulesById(this.currentData.changeRuleId)
-        if (rule?.scope !== 'Field') {
-          this.fieldChangeRules
-            .filter((t) => t.type !== 'Field')
-            .forEach((item = {}) => {
-              const { namespace = [] } = item
-              if (
-                item.type === 'MutiDataType' &&
-                item.accept === this.originType
-              ) {
-                this.currentData.coefficient = item.multiple
-                modeType = 'coefficient'
-              } else {
-                const flag =
-                  namespace[0] === this.data.nodeId &&
-                  (namespace.length === 1 ||
-                    (namespace[1] === this.data.qualified_name &&
-                      namespace[2] === this.currentData.fieldName))
-                if (flag) {
-                  modeType = 'custom'
-                }
-              }
-            })
-        }
-      } else {
-        this.originType = ''
-      }
-
-      this.modeType = modeType
-      this.editDataTypeVisible = true
-    },
-
-    handleUpdate(data) {
-      this.$emit('update-rules', cloneDeep(data || this.rules))
-    },
-
-    submitEdit() {
-      const { qualified_name, nodeId } = this.data
-      const {
-        changeRuleId,
-        fieldName,
-        dataType,
+  if (modeType.value === 'coefficient') {
+    const f = findInRulesById(changeRuleId)
+    let ruleId = f?.id
+    let ruleAccept = f?.accept
+    if (f?.type === 'MutiDataType') {
+      f.multiple = coefficient
+      f.accept = originType.value
+      f.result = {
+        dataType: `${originType.value}(${coefficient}n)`,
         dataTypeTemp,
-        newDataType,
-        useToAll,
-        selectDataType,
-        coefficient = 1,
-      } = this.currentData
-      const params = {
-        databaseType: this.activeNode.databaseType,
-        dataTypes: [newDataType],
       }
+      const index = rules.value.findIndex((t) => t.id === ruleId)
+      rules.value.splice(index, 1)
+      rules.value.push(f)
+    } else {
+      const index = rules.value.findIndex(
+        (t) => t.accept === originType.value && t.type === 'MutiDataType',
+      )
+      if (index !== -1) {
+        rules.value.splice(index, 1)
+      }
+      const op = {
+        id: uuid(),
+        scope: 'Node',
+        namespace: [nodeId],
+        type: 'MutiDataType',
+        accept: originType.value,
+        multiple: coefficient,
+        result: {
+          dataType: `${originType.value}(${coefficient}n)`,
+          dataTypeTemp,
+        },
+      }
+      ruleId = op.id
+      ruleAccept = op.accept
+      rules.value.push(op)
+    }
 
-      if (this.modeType === 'coefficient') {
-        const f = this.findInRulesById(changeRuleId)
-        let ruleId = f?.id
-        let ruleAccept = f?.accept
-        if (f?.type === 'MutiDataType') {
-          f.multiple = coefficient
-          f.accept = this.originType
-          f.result = {
-            dataType: `${this.originType}(${coefficient}n)`,
-            dataTypeTemp,
-          }
-          const index = this.rules.findIndex((t) => t.id === ruleId)
-          this.rules.splice(index, 1)
-          this.rules.push(f)
-        } else {
-          const index = this.rules.findIndex(
-            (t) => t.accept === this.originType && t.type === 'MutiDataType',
-          )
-          if (index !== -1) {
-            this.rules.splice(index, 1)
-          }
-          const op = {
-            id: uuid(),
-            scope: 'Node',
-            namespace: [nodeId],
-            type: 'MutiDataType',
-            accept: this.originType,
-            multiple: coefficient,
-            result: {
-              dataType: `${this.originType}(${coefficient}n)`,
-              dataTypeTemp,
+    // 刷新字段 - emit 到 Main.vue 对所有表做处理
+    const _originType = originType.value
+    const _coefficient = coefficient
+    const _ruleId = ruleId
+    const updater = (fields: any[]) => {
+      fields.forEach((t: any) => {
+        const fieldOriginType = t.data_type?.split('(')[0]
+        if (fieldOriginType === _originType && t.dataTypeTemp) {
+          t.data_type = t.dataTypeTemp.replace(
+            /(\w+\()(\w+)([,)][\s\S]*)/,
+            function (_val: string, sub1: string, sub2: string, sub3: string) {
+              return `${sub1}${(sub2 as any) * _coefficient}${sub3}`
             },
-          }
-          ruleId = op.id
-          ruleAccept = op.accept
-          this.rules.push(op)
+          )
+          t.changeRuleId = _ruleId
         }
+      })
+    }
+    isDatabaseNode.value
+      ? emit('updateFields', updater)
+      : updater(props.data.fields)
+    handleUpdate()
+    ElMessage.success(t('public_message_operation_success'))
+    editDataTypeVisible.value = false
+    return
+  }
 
-        // 刷新字段
-        this.data.fields.forEach((t) => {
-          const fieldOriginType = t.data_type?.split('(')[0]
-          if (fieldOriginType === this.originType) {
-            t.data_type = t.dataTypeTemp.replace(
-              /(\w+\()(\w+)([,)][\s\S]*)/,
-              function (val, sub1, sub2, sub3) {
-                return `${sub1}${sub2 * coefficient}${sub3}`
-              },
-            )
-            t.changeRuleId = ruleId
-          }
-        })
-        this.handleUpdate()
-        this.$message.success(i18n.t('public_message_operation_success'))
-        this.editDataTypeVisible = false
+  editBtnLoading.value = true
+  currentData.errorMessage = ''
+  dataType2TapType(params)
+    .then((data) => {
+      const val = data[newDataType]
+      const tapType = val && val.type !== 7 ? JSON.stringify(val) : null
+      if (!tapType) {
+        currentData.errorMessage = t(
+          'packages_form_field_inference_list_geshicuowu',
+        )
+        editBtnLoading.value = false
         return
       }
-
-      this.editBtnLoading = true
-      this.currentData.errorMessage = ''
-      dataType2TapType(params)
-        .then((data) => {
-          const val = data[newDataType]
-          const tapType = val && val.type !== 7 ? JSON.stringify(val) : null
-          if (!tapType) {
-            this.currentData.errorMessage = i18n.t(
-              'packages_form_field_inference_list_geshicuowu',
-            )
-            this.editBtnLoading = false
-            return
-          }
-          const f = this.findInRulesById(changeRuleId)
-          let ruleId = f?.id
-          if (f?.scope === 'Field') {
-            if (useToAll) {
-              const batchRule = this.findNodeRuleByType(f.accept)
-              if (batchRule) {
-                // 删除节点规则
-                this.deleteRuleById(f.id)
-                // 修改批量规则
-                batchRule.result = {
-                  dataType: newDataType,
-                  tapType,
-                  selectDataType,
-                }
-                ruleId = batchRule.id
-              } else {
-                // 修改规则为批量规则 scope、namespace
-                f.scope = 'Node'
-                f.namespace = [nodeId]
-                f.result = { dataType: newDataType, tapType, selectDataType }
-              }
-            } else {
-              // 修改字段规则
-              f.result = { dataType: newDataType, tapType, selectDataType }
+      const f = findInRulesById(changeRuleId)
+      let ruleId = f?.id
+      if (f?.scope === 'Field') {
+        if (useToAll) {
+          const batchRule = findNodeRuleByType(f.accept)
+          if (batchRule) {
+            deleteRuleById(f.id)
+            batchRule.result = {
+              dataType: newDataType,
+              tapType,
+              selectDataType,
             }
-            const index = this.rules.findIndex((t) => t.id === ruleId)
-            this.rules.splice(index, 1)
-            this.rules.push(f)
+            ruleId = batchRule.id
           } else {
-            const op = {
-              id: uuid(),
-              scope: useToAll ? 'Node' : 'Field',
-              namespace: useToAll
-                ? [nodeId]
-                : [nodeId, qualified_name, fieldName],
-              type: 'DataType',
-              accept: dataTypeTemp,
-              result: { dataType: newDataType, tapType, selectDataType },
-            }
-            ruleId = op.id
-            this.rules.push(op)
+            f.scope = 'Node'
+            f.namespace = [nodeId]
+            f.result = { dataType: newDataType, tapType, selectDataType }
           }
+        } else {
+          f.result = { dataType: newDataType, tapType, selectDataType }
+        }
+        const index = rules.value.findIndex((t) => t.id === ruleId)
+        rules.value.splice(index, 1)
+        rules.value.push(f)
+      } else {
+        const op = {
+          id: uuid(),
+          scope: useToAll ? 'Node' : 'Field',
+          namespace: useToAll
+            ? [nodeId]
+            : [nodeId, isDatabaseNode.value ? ancestorsName : null, fieldName],
+          type: 'DataType',
+          accept: dataTypeTemp,
+          result: { dataType: newDataType, tapType, selectDataType },
+        }
+        ruleId = op.id
+        rules.value.push(op)
+      }
 
-          this.data.fields.forEach((t) => {
+      // emit 到 Main.vue 对所有表做处理
+      const _useToAll = useToAll
+      const _dataTypeTemp = dataTypeTemp
+      const _fieldName = fieldName
+      const _newDataType = newDataType
+      const _ruleId = ruleId
+      const updater = (fields: any[], tableName?: string) => {
+        fields.forEach((t: any) => {
+          if (
+            (_useToAll &&
+              t.data_type === t.dataTypeTemp &&
+              t.dataTypeTemp === _dataTypeTemp) ||
+            (t.field_name === _fieldName && tableName === ancestorsName)
+          ) {
+            t.data_type = _newDataType
+            t.changeRuleId = _ruleId
+          }
+        })
+      }
+      isDatabaseNode.value
+        ? emit('updateFields', updater)
+        : props.data.fields.forEach((t: any) => {
             if (
-              (useToAll &&
+              (_useToAll &&
                 t.data_type === t.dataTypeTemp &&
-                t.dataTypeTemp === dataTypeTemp) ||
-              t.field_name === fieldName
+                t.dataTypeTemp === _dataTypeTemp) ||
+              t.field_name === _fieldName
             ) {
-              t.data_type = newDataType
-              t.changeRuleId = ruleId
+              t.data_type = _newDataType
+              t.changeRuleId = _ruleId
             }
           })
-          this.handleUpdate()
-          this.editBtnLoading = false
-          this.$message.success(i18n.t('public_message_operation_success'))
-          this.editDataTypeVisible = false
-        })
-        .catch(() => {
-          this.editBtnLoading = false
-        })
-    },
-
-    revoke(row) {
-      if (this.getRevokeDisabled(row)) return
-      const f = this.findInRulesById(row.changeRuleId)
-      if (!f) return
-      if (f.scope === 'Node') {
-        this.$emit('open-update-rules')
-        return
-      }
-      if (f.scope === 'Field') {
-        row.data_type = f.accept
-        const index = this.rules.findIndex((t) => t.id === f.id)
-        this.rules.splice(index, 1)
-      }
-      row.data_type = row.dataTypeTemp
-      this.handleUpdate()
-    },
-
-    revokeAll() {
-      if (this.revokeTableDisabled) {
-        return
-      }
-      this.$confirm(
-        i18n.t('packages_form_field_inference_list_ninquerenyaohui'),
-      ).then((resFlag) => {
-        if (resFlag) {
-          const { qualified_name } = this.data
-          if (this.singleTable) {
-            this.rules = [] // 清空数据
-            this.handleUpdate()
-          } else {
-            this.rules = this.rules.filter(
-              (t) => t.namespace?.[1] !== qualified_name,
-            ) // 清空当前表的数据
-            this.handleUpdate()
-          }
-          this.$message.success(i18n.t('public_message_operation_success'))
-        }
-      })
-    },
-
-    doLayout() {
-      this.$refs.table.doLayout()
-    },
-
-    getRevokeDisabled(row) {
-      return !this.fieldChangeRules.find((t) => t.id === row.changeRuleId)
-        ?.scope
-    },
-
-    getFieldScope(row = {}) {
-      return this.fieldChangeRules.find((t) => t.id === row.changeRuleId)?.scope
-    },
-
-    getRevokeColorClass(row = {}) {
-      const map = {
-        Node: 'color-warning',
-        Field: 'color-primary',
-      }
-      return map[this.getFieldScope(row)] || 'color-disable'
-    },
-
-    tableRowClassName({ row }) {
-      return !this.ignoreError && row.matchedDataTypeLevel === 'error'
-        ? 'warning-row'
-        : ''
-    },
-
-    getCanUseDataTypesTooltip(matchedDataTypeLevel) {
-      const map = {
-        error:
-          this.type === 'target'
-            ? i18n.t('packages_dag_field_inference_list_gaiziduanshuju')
-            : i18n.t('packages_dag_field_inference_list_gaiziduanwufa'),
-        // warning: i18n.t('packages_dag_field_inference_list_gaiziduanyingshe')
-      }
-      return map[matchedDataTypeLevel]
-    },
-
-    querySearch(val, cb) {
-      cb(
-        this.currentData.canUseDataTypes?.map((t) => {
-          return { value: t }
-        }) || [],
-      )
-    },
-
-    handleAutocomplete(itemValue) {
-      if (!itemValue) {
-        this.currentData.newDataType = this.currentData.dataTypeTemp
-        return
-      }
-      const item = this.computedDataTypes.find((t) => t.value === itemValue)
-      this.currentData.customInputData = {}
-
-      /**
-       * 1.选中选项后，检查选项是否有变量；有变量向下走
-       * 2.把括号内字符串提取出来，并进行分割
-       * 3.根据多个变量名（$开头的），获取输入框的范围；默认最小值
-       * 4.每次修改输入框都会改变最终结果
-       */
-      this.customInputDataValue = itemValue // 记录原始值
-      this.currentData.selectDataType = itemValue
-      const contentStr = item.value.match(/\(([^)]+)\)/)?.[1]
-      if (contentStr) {
-        const contentArr = contentStr.split(',')
-        contentArr.forEach((el) => {
-          const key = el.replace(/^\$/, '')
-          let min, max
-          if (typeof item.attrs[key] === 'number') {
-            max = typeof item.attrs[key]
-          } else if (Array.isArray(item.attrs[key])) {
-            min = item.attrs[key][0] ? item.attrs[key][0] * 1 : undefined
-            max = item.attrs[key][1] ? item.attrs[key][1] * 1 : undefined
-          }
-          this.currentData.customInputData[key] = {
-            min,
-            max,
-            label: this.customInputLabelMap[key] || key,
-          }
-          const defaultValue =
-            item.attrs.default ??
-            item.attrs[
-              `default${key.charAt(0).toUpperCase()}${key.slice(1)}`
-            ] ??
-            item.attrs[key]?.[0] ??
-            null
-          this.currentData.customInputData[key].value = defaultValue
-            ? defaultValue * 1
-            : null
-        })
-      }
-      this.handleChangeCustomInput()
-    },
-
-    getDataType(row = {}) {
-      // 这里不清楚为要返回 dataTypeTemp，不过 dataTypeTemp 可能为空，所以加上 || row.data_type
-      if (
-        !this.rules.length ||
-        !this.rules.find((t) => t.id === row.changeRuleId)
-      )
-        return row.dataTypeTemp || row.data_type
-      return row.data_type
-    },
-
-    async getTypeJson() {
-      const dataTypes = this.dataTypesJson
-      const result = []
-      for (const key in dataTypes) {
-        const item = dataTypes[key]
-        result.push({
-          label: key.replace(/[([]([^)]+)\)\]/, ''),
-          value: key,
-          attrs: item,
-        })
-      }
-      return result
-    },
-
-    handleChangeCustomInput() {
-      const { customInputData } = this.currentData
-      this.currentData.newDataType = this.customInputDataValue
-        .replaceAll(/\[(.*?)\]/g, '$1') // 去掉所有的方括号，保留内容
-        .replaceAll(/\$\w+/g, (match) => {
-          // 匹配所有 $ 开头的变量
-          const key = match.slice(1) // 去掉 $ 前缀
-          return customInputData[key]?.value || match
-        })
-    },
-  },
-  emits: ['update-rules'],
+      handleUpdate()
+      editBtnLoading.value = false
+      ElMessage.success(t('public_message_operation_success'))
+      editDataTypeVisible.value = false
+    })
+    .catch(() => {
+      editBtnLoading.value = false
+    })
 }
+
+function revoke(row: any) {
+  if (getRevokeDisabled(row)) return
+  const f = findInRulesById(row.changeRuleId)
+  if (!f) return
+  if (f.scope === 'Node') {
+    emit('open-update-rules')
+    return
+  }
+  if (f.scope === 'Field') {
+    row.data_type = f.accept
+    const index = rules.value.findIndex((t) => t.id === f.id)
+    rules.value.splice(index, 1)
+  }
+  row.data_type = row.dataTypeTemp
+  handleUpdate()
+}
+
+function revokeAll() {
+  Modal.confirm(t('packages_form_field_inference_list_ninquerenyaohui')).then(
+    (resFlag: boolean) => {
+      if (resFlag) {
+        const { ancestorsName } = props.data
+        if (props.singleTable) {
+          rules.value = [] // 清空数据
+          handleUpdate()
+        } else {
+          rules.value = rules.value.filter(
+            (t) => t.namespace?.[1] !== ancestorsName,
+          ) // 清空当前表的数据
+          handleUpdate()
+        }
+        ElMessage.success(t('public_message_operation_success'))
+      }
+    },
+  )
+}
+
+function doLayout() {
+  // 树视图无需重新布局，保留空实现以兼容调用方
+}
+
+function getRevokeDisabled(row: any) {
+  return !props.fieldChangeRules.find((t) => t.id === row.changeRuleId)?.scope
+}
+
+function getFieldScope(row: any = {}) {
+  return props.fieldChangeRules.find((t) => t.id === row.changeRuleId)?.scope
+}
+
+function getScopeBtnType(field: any) {
+  const scope = getFieldScope(field)
+  if (scope === 'Node') return 'warning' as const
+  if (scope === 'Field') return 'primary' as const
+  return undefined
+}
+
+function getTypeColorClass(field: any = {}) {
+  const map: Record<string, string> = {
+    Node: 'color-warning',
+    Field: 'color-primary',
+  }
+  return map[getFieldScope(field)] || ''
+}
+
+function showCol(prop: string) {
+  if (props.readonly && prop === 'operation') return false
+  if (!props.showColumns.length) return true
+  return props.showColumns.includes(prop)
+}
+
+function getFieldIndex(field: any) {
+  return tableList.value.indexOf(field) + 1
+}
+
+function allowDrop(_draggingNode: any, _dropNode: any, type: string) {
+  return type !== 'inner'
+}
+
+function handleNodeDrop() {
+  const childNodes = treeRef.value?.store?.root?.childNodes || []
+  const orderedFields = childNodes.map((node: any) => node.data)
+
+  // Sync columnPosition back to props.data.fields
+  orderedFields.forEach((f: any, i: number) => {
+    f.columnPosition = i + 1
+  })
+
+  const fields = orderedFields
+    .filter((f: any) => f.field_name)
+    .map((f: any, i: number) => ({
+      fieldName: f.original_field_name || f.field_name,
+      columnPosition: i + 1,
+    }))
+
+  if (isDatabaseNode.value) {
+    const tableName = props.data.ancestorsName
+    const fieldsAfter = formRef.value?.getValuesIn('fieldsAfter') || []
+    const target = fieldsAfter.find((t: any) => t.tableName === tableName)
+    if (target) {
+      target.fields = fields
+    } else {
+      fieldsAfter.push({ tableName, fields })
+    }
+    formRef.value?.setValuesIn('fieldsAfter', fieldsAfter)
+  } else {
+    formRef.value?.setValuesIn('fieldsAfter', [{ fields }])
+  }
+}
+
+const hasColumnPositionConfig = reactiveComputed(() => {
+  if (!props.draggable) return false
+  const fieldsAfter = formRef.value.values.fieldsAfter || []
+  if (isDatabaseNode.value) {
+    const tableName = props.data.ancestorsName
+    return fieldsAfter.some((t: any) => t.tableName === tableName)
+  }
+  return (fieldsAfter[0]?.fields?.length ?? 0) > 0
+})
+
+function resetColumnPosition() {
+  const fieldsAfter = formRef.value?.getValuesIn('fieldsAfter') || []
+  if (isDatabaseNode.value) {
+    const tableName = props.data.ancestorsName
+    const updated = fieldsAfter.filter((t: any) => t.tableName !== tableName)
+    formRef.value?.setValuesIn('fieldsAfter', updated)
+  } else {
+    formRef.value?.setValuesIn('fieldsAfter', [])
+  }
+}
+
+function getCanUseDataTypesTooltip(matchedDataTypeLevel: string) {
+  const map: Record<string, string> = {
+    error:
+      props.type === 'target'
+        ? t('packages_dag_field_inference_list_gaiziduanshuju')
+        : t('packages_dag_field_inference_list_gaiziduanwufa'),
+  }
+  return map[matchedDataTypeLevel]
+}
+
+function querySearch(val: string, cb: (items: any[]) => void) {
+  cb(
+    currentData.canUseDataTypes?.map((t) => {
+      return { value: t }
+    }) || [],
+  )
+}
+
+function handleAutocomplete(itemValue: string) {
+  if (!itemValue) {
+    currentData.newDataType = currentData.dataTypeTemp
+    return
+  }
+  const item = computedDataTypes.value.find((t) => t.value === itemValue)
+  currentData.customInputData = {}
+
+  /**
+   * 1.选中选项后，检查选项是否有变量；有变量向下走
+   * 2.把括号内字符串提取出来，并进行分割
+   * 3.根据多个变量名（$开头的），获取输入框的范围；默认最小值
+   * 4.每次修改输入框都会改变最终结果
+   */
+  customInputDataValue.value = itemValue // 记录原始值
+  currentData.selectDataType = itemValue
+  const contentStr = item?.value.match(/\(([^)]+)\)/)?.[1]
+  if (contentStr) {
+    const contentArr = contentStr.split(',')
+    contentArr.forEach((el) => {
+      const key = el.replace(/^\$/, '')
+      let min: number | undefined, max: number | string | undefined
+      if (typeof item.attrs[key] === 'number') {
+        max = typeof item.attrs[key]
+      } else if (Array.isArray(item.attrs[key])) {
+        min = item.attrs[key][0] ? item.attrs[key][0] * 1 : undefined
+        max = item.attrs[key][1] ? item.attrs[key][1] * 1 : undefined
+      }
+      currentData.customInputData[key] = {
+        min,
+        max,
+        label: customInputLabelMap[key] || key,
+      }
+      const defaultValue =
+        item.attrs.default ??
+        item.attrs[`default${key.charAt(0).toUpperCase()}${key.slice(1)}`] ??
+        item.attrs[key]?.[0] ??
+        null
+      currentData.customInputData[key].value = defaultValue
+        ? defaultValue * 1
+        : null
+    })
+  }
+  handleChangeCustomInput()
+}
+
+function getDataType(row: any = {}) {
+  // 这里不清楚为要返回 dataTypeTemp，不过 dataTypeTemp 可能为空，所以加上 || row.data_type
+  if (
+    !rules.value.length ||
+    !rules.value.find((t) => t.id === row.changeRuleId)
+  )
+    return row.dataTypeTemp || row.data_type
+  return row.data_type
+}
+
+async function getTypeJson() {
+  const dataTypes = props.dataTypesJson
+  const result: any[] = []
+  for (const key in dataTypes) {
+    const item = dataTypes[key]
+    result.push({
+      label: key.replace(/[([]([^)]+)\)\]/, ''),
+      value: key,
+      attrs: item,
+    })
+  }
+  return result
+}
+
+function handleChangeCustomInput() {
+  const { customInputData } = currentData
+  currentData.newDataType = customInputDataValue.value
+    .replaceAll(/\[(.*?)\]/g, '$1') // 去掉所有的方括号，保留内容
+    .replaceAll(/\$\w+/g, (match) => {
+      // 匹配所有 $ 开头的变量
+      const key = match.slice(1) // 去掉 $ 前缀
+      return customInputData[key]?.value || match
+    })
+}
+
+defineExpose({ setRules, doLayout })
 </script>
 
 <template>
-  <div class="field-inference__list">
-    <VTable
-      ref="table"
-      :key="`${revokeTableDisabled}`"
-      :columns="columnsList"
-      :data="tableList"
-      :has-pagination="false"
-      height="100%"
-      :row-class-name="tableRowClassName"
+  <div
+    class="field-inference__list bg-light dark:bg-white/5 rounded-xl p-1 pt-0"
+  >
+    <div
+      class="field-tree-header flex align-center gap-2 pr-2 py-1 fs-7 font-color-light"
     >
-      <template #field_name="{ row: field }">
-        <template v-if="field.isPrimaryKey">
-          <ElTooltip
-            v-if="field.isForeignKey"
-            placement="top"
-            :content="
-              $t('public_foreign_key_tip', {
-                name: field.constraints[0],
-                val: field.constraints[2],
-              })
-            "
-          >
-            <VIcon size="12" class="text-warning align-middle">key</VIcon>
-          </ElTooltip>
-          <VIcon v-else size="12" class="text-warning align-middle">key</VIcon>
-        </template>
-        <ElTooltip
-          v-else-if="field.isForeignKey"
-          placement="top"
+      <span
+        v-if="showCol('index')"
+        class="field-index flex align-center justify-center"
+      >
+        <el-tooltip
+          v-if="hasColumnPositionConfig"
           :content="
-            $t('public_foreign_key_tip', {
-              name: field.constraints[0],
-              val: field.constraints[2],
-            })
+            $t('packages_form_field_inference_list_reset_column_position')
           "
-          :open-delay="200"
-          transition="none"
-        >
-          <span class="inline-flex align-center align-middle">
-            <VIcon size="14">share</VIcon>
-            <span
-              v-if="field.isMultiForeignKey"
-              :style="`--index: '${field.constraints[1]}';`"
-              class="fingerprint-sub foreign-sub"
-            />
-          </span>
-        </ElTooltip>
-        <ElTooltip
-          v-else-if="field.indicesUnique"
+          :enterable="false"
+          :hide-after="0"
           placement="top"
-          :content="`${$t(field.indicesUnique[2] ? 'public_unique_index' : 'public_normal_index')}: ${field.indicesUnique[0]}`"
-          :open-delay="200"
-          transition="none"
         >
-          <span
-            v-if="field.indicesUnique[2]"
-            class="inline-flex align-center align-middle"
-            :class="{ 'text-primary': field.indicesUnique[3] }"
-          >
-            <VIcon size="14">fingerprint</VIcon>
-            <span
-              v-if="field.isMultiUniqueIndex"
-              :style="`--index: '${field.indicesUnique[1]}';`"
-              class="fingerprint-sub unique-sub"
-            />
-          </span>
-          <span v-else class="inline-flex align-center align-middle">
-            <VIcon size="14">sort-descending</VIcon>
-            <span
-              v-if="field.isMultiIndex"
-              :style="`--index: '${field.indicesUnique[1]}';`"
-              class="fingerprint-sub index-sub"
-            />
-          </span>
-        </ElTooltip>
-        <VIcon
-          v-else-if="field.isPartitionKey"
-          size="14"
-          class="ml-1 align-middle"
-          >circle-dashed-letter-p</VIcon
-        >
-        <VIcon v-else-if="field.source === 'virtual_hash'" size="14"
-          >file-hash</VIcon
-        >
-        <span
-          class="ellipsis ml-1 align-middle"
-          :style="field.source === 'virtual_hash' ? 'font-style:italic' : ''"
-          >{{ field.field_name }}</span
-        >
-      </template>
-      <template #dataTypeHeader>
-        <span class="pl-4">
-          {{ $t('packages_dag_meta_table_field_type') }}
+          <el-button text size="small" @click="resetColumnPosition">
+            <template #icon>
+              <i-lucide-rotate-ccw />
+            </template>
+          </el-button>
+        </el-tooltip>
+      </span>
+      <div class="flex-1 min-w-0">
+        {{ $t('packages_form_field_add_del_index_ziduanmingcheng') }}
+      </div>
+      <div
+        v-if="showCol('data_type')"
+        class="field-type flex-1 flex align-center gap-2"
+      >
+        <span class="ellipsis">
+          {{ $t('packages_form_dag_dialog_field_mapping_type') }}
         </span>
-      </template>
-      <template #data_type="scope">
+
+        <ElButton
+          v-if="!readonly && showCol('operation') && !revokeTableDisabled"
+          text
+          type="primary"
+          class="ml-auto"
+          @click="revokeAll"
+        >
+          <template #icon>
+            <i-lucide-undo-2 />
+          </template>
+        </ElButton>
+      </div>
+    </div>
+    <ElTree
+      ref="treeRef"
+      :data="tableList"
+      node-key="field_name"
+      :draggable="draggable"
+      :allow-drop="allowDrop"
+      :expand-on-click-node="false"
+      :indent="0"
+      class="field-tree rounded-xl"
+      style="border: 1px solid #f2f4f7; --btn-space: 0"
+      @node-drop="handleNodeDrop"
+    >
+      <template #default="{ data: field }">
         <div
-          class="position-relative"
+          class="field-tree-node flex align-center gap-2 pr-2"
           :class="{
-            'pl-5':
-              !ignoreError &&
-              !!getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel),
+            'is-error': !ignoreError && field.matchedDataTypeLevel === 'error',
           }"
         >
-          <ElTooltip
-            v-if="!ignoreError"
-            transition="tooltip-fade-in"
-            :disabled="scope.row.matchedDataTypeLevel !== 'error'"
-            :content="getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel)"
-            class="type-warning position-absolute"
+          <span
+            v-if="showCol('index')"
+            class="field-index font-color-light text-center flex align-center justify-center"
           >
-            <VIcon
-              size="16"
-              class="color-warning"
-              :class="{ 'opacity-0': !scope.row.matchedDataTypeLevel }"
-              >warning</VIcon
+            <span class="field-index-text">
+              {{ getFieldIndex(field) }}
+            </span>
+            <el-icon v-if="draggable" class="field-grip-icon">
+              <i-lucide-grip-vertical />
+            </el-icon>
+          </span>
+          <div class="flex align-center min-w-0 flex-1 gap-1">
+            <template v-if="field.isPrimaryKey">
+              <ElTooltip
+                v-if="field.isForeignKey"
+                placement="top"
+                :content="
+                  $t('public_foreign_key_tip', {
+                    name: field.constraints[0],
+                    val: field.constraints[2],
+                  })
+                "
+              >
+                <VIcon size="12" class="text-warning align-middle">key</VIcon>
+              </ElTooltip>
+              <VIcon v-else size="12" class="text-warning align-middle"
+                >key</VIcon
+              >
+            </template>
+            <ElTooltip
+              v-else-if="field.isForeignKey"
+              placement="top"
+              :content="
+                $t('public_foreign_key_tip', {
+                  name: field.constraints[0],
+                  val: field.constraints[2],
+                })
+              "
+              :open-delay="200"
+              transition="none"
             >
-          </ElTooltip>
-          <span v-if="readonly">{{ getDataType(scope.row) }}</span>
+              <span class="inline-flex align-center align-middle">
+                <VIcon size="14">share</VIcon>
+                <span
+                  v-if="field.isMultiForeignKey"
+                  :style="`--index: '${field.constraints[1]}';`"
+                  class="fingerprint-sub foreign-sub"
+                />
+              </span>
+            </ElTooltip>
+            <ElTooltip
+              v-else-if="field.indicesUnique"
+              placement="top"
+              :content="`${$t(field.indicesUnique[2] ? 'public_unique_index' : 'public_normal_index')}: ${field.indicesUnique[0]}`"
+              :open-delay="200"
+              transition="none"
+            >
+              <span
+                v-if="field.indicesUnique[2]"
+                class="inline-flex align-center align-middle"
+                :class="{ 'text-primary': field.indicesUnique[3] }"
+              >
+                <VIcon size="14">fingerprint</VIcon>
+                <span
+                  v-if="field.isMultiUniqueIndex"
+                  :style="`--index: '${field.indicesUnique[1]}';`"
+                  class="fingerprint-sub unique-sub"
+                />
+              </span>
+              <span v-else class="inline-flex align-center align-middle">
+                <VIcon size="14">sort-descending</VIcon>
+                <span
+                  v-if="field.isMultiIndex"
+                  :style="`--index: '${field.indicesUnique[1]}';`"
+                  class="fingerprint-sub index-sub"
+                />
+              </span>
+            </ElTooltip>
+            <VIcon
+              v-else-if="field.isPartitionKey"
+              size="14"
+              class="align-middle"
+              >circle-dashed-letter-p</VIcon
+            >
+            <VIcon v-else-if="field.source === 'virtual_hash'" size="14"
+              >file-hash</VIcon
+            >
+            <OverflowTooltip
+              class="min-w-0 lh-1"
+              placement="top"
+              :hide-after="0"
+              :enterable="false"
+              :text="field.field_name"
+              :style="
+                field.source === 'virtual_hash' ? 'font-style:italic' : ''
+              "
+            />
+            <ElTooltip
+              v-if="!field.is_nullable"
+              placement="top"
+              :content="$t('packages_form_field_inference_list_feikong')"
+            >
+              <el-icon size="12" class="color-danger flex-shrink-0">
+                <i-lucide-asterisk />
+              </el-icon>
+            </ElTooltip>
+            <el-popover
+              v-if="field.comment"
+              placement="top"
+              :hide-after="0"
+              :content="field.comment"
+              popper-style="width: auto;max-width: 448px"
+            >
+              <template #reference>
+                <el-button size="small" text>
+                  <template #icon>
+                    <el-icon><i-lucide-file-text /></el-icon>
+                  </template>
+                </el-button>
+              </template>
+            </el-popover>
+          </div>
           <div
-            v-else
-            class="cursor-pointer inline-block"
-            @click="openEditDataTypeVisible(scope.row)"
+            v-if="showCol('data_type')"
+            class="field-type flex align-center gap-1 flex-1 min-w-0"
           >
-            <span>{{ getDataType(scope.row) }}</span>
-            <VIcon class="ml-2">edit-outline</VIcon>
+            <ElTooltip
+              v-if="!ignoreError && field.matchedDataTypeLevel"
+              transition="tooltip-fade-in"
+              :disabled="field.matchedDataTypeLevel !== 'error'"
+              :content="getCanUseDataTypesTooltip(field.matchedDataTypeLevel)"
+            >
+              <VIcon size="16" class="color-warning flex-shrink-0"
+                >warning</VIcon
+              >
+            </ElTooltip>
+            <span class="ellipsis" :class="getTypeColorClass(field)">{{
+              getDataType(field)
+            }}</span>
+
+            <div
+              v-if="!readonly && showCol('operation')"
+              class="field-ops flex-shrink-0 ml-auto align-center rounded-lg bg-card gap-0.5"
+            >
+              <ElButton
+                text
+                size="small"
+                @click.stop="openEditDataTypeVisible(field)"
+              >
+                <template #icon>
+                  <i-lucide-pencil-line />
+                </template>
+              </ElButton>
+              <ElTooltip
+                v-if="getFieldScope(field)"
+                placement="top"
+                :disabled="getFieldScope(field) !== 'Node'"
+                :content="
+                  $t('packages_form_field_inference_main_gepiliangxiugai')
+                "
+                :open-delay="200"
+                transition="none"
+              >
+                <ElButton
+                  text
+                  size="small"
+                  :type="getScopeBtnType(field)"
+                  @click.stop="revoke(field)"
+                >
+                  <template #icon>
+                    <i-lucide-undo-2 />
+                  </template>
+                </ElButton>
+              </ElTooltip>
+            </div>
           </div>
         </div>
       </template>
-      <template #is_nullable="scope">
-        {{ nullableMap[!scope.row.is_nullable] }}
-      </template>
-      <template #operationHeader>
-        <ElButton
-          text
-          type="primary"
-          :class="!revokeTableDisabled ? 'color-primary' : 'color-disable'"
-          @click="revokeAll()"
-          >{{ $t('public_button_revoke') }}</ElButton
-        >
-      </template>
-      <template #operation="scope">
-        <ElTooltip
-          :disabled="getFieldScope(scope.row) !== 'Node'"
-          :content="$t('packages_form_field_inference_main_gepiliangxiugai')"
-          placement="top"
-        >
-          <ElButton
-            text
-            type="primary"
-            :class="getRevokeColorClass(scope.row)"
-            @click="revoke(scope.row)"
-            >{{ $t('public_button_revoke') }}</ElButton
-          >
-        </ElTooltip>
-      </template>
-    </VTable>
+    </ElTree>
+
     <ElDialog
       v-model="editDataTypeVisible"
       :title="$t('packages_form_field_inference_list_ziduanleixingtiao')"
@@ -750,7 +872,7 @@ export default {
       :close-on-click-modal="false"
       width="820px"
     >
-      <div class="mb-6 px-4 py-2" style="background-color: #f4f4f5">
+      <div class="mb-6 px-4 py-2 rounded-lg bg-color-main">
         <span class="mr-3">{{
           $t('packages_form_field_inference_list_tuiyanchudelei')
         }}</span>
@@ -882,14 +1004,96 @@ export default {
 
 <style lang="scss" scoped>
 .field-inference__list {
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  :deep(.warning-row) {
-    background: rgb(254, 229, 216);
-    &:hover {
-      > td.el-table__cell {
-        background: rgb(254, 229, 216);
-      }
+}
+
+.field-tree-header {
+  flex-shrink: 0;
+}
+
+.field-tree {
+  flex: 1;
+  overflow: auto;
+  --el-tree-node-content-height: 36px;
+
+  :deep(.el-tree-node__content) {
+    > .el-tree-node__expand-icon {
+      width: 0;
+      height: 100%;
+      padding: 0;
     }
+
+    > .field-tree-node {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .field-grip-icon {
+      display: none;
+    }
+  }
+
+  :deep(.el-tree-node__content:has(.field-grip-icon):hover) {
+    .field-index-text {
+      display: none;
+    }
+    .field-grip-icon {
+      display: flex;
+    }
+  }
+
+  :deep(.el-tree-node:focus > .el-tree-node__content:not(:hover)) {
+    background-color: unset;
+  }
+
+  :deep(.el-tree__drop-indicator) {
+    left: 8px !important;
+  }
+}
+
+.field-tree-header,
+.field-tree-node {
+  .field-index {
+    flex-shrink: 0;
+    width: 32px;
+  }
+
+  .field-type {
+    flex-shrink: 0;
+  }
+
+  .field-ops {
+    flex-shrink: 0;
+  }
+}
+
+.field-tree-node {
+  &.is-error {
+    background: rgb(254, 229, 216);
+  }
+
+  .field-ops {
+    display: none;
+    padding: 2px;
+  }
+
+  &:hover .field-ops {
+    display: flex;
+    box-shadow:
+      0px 0px 0.5px rgba(0, 0, 0, 0.3),
+      0px 1px 3px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .field-ops-actions {
+    &.has-bg {
+      background-color: var(--el-fill-color-light);
+    }
+
+    // .el-button {
+    //   font-size: 14px !important;
+    // }
   }
 }
 .type-warning {

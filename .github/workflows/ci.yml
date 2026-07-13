@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  pull_request:
+    branches: ['main', 'develop', 'release-v*.*']
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changed-files:
+    name: Get Changed Files
+    runs-on: ubuntu-latest
+    outputs:
+      i18n_files: ${{ steps.changed.outputs.i18n_files }}
+      has_i18n_files: ${{ steps.changed.outputs.has_i18n_files }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed
+        run: |
+          FILES=$(git diff --name-only --diff-filter=ACM origin/${{ github.base_ref }}...HEAD)
+
+          # i18n: 排除 locale 目录的 vue/js/ts/tsx/jsx 文件
+          I18N_FILES=$(echo "$FILES" | grep -E '\.(vue|js|ts|tsx|jsx)$' | grep -v -E '(locale[s]?/|i18n/langs/)' || true)
+          if [ -n "$I18N_FILES" ]; then
+            echo "has_i18n_files=true" >> $GITHUB_OUTPUT
+            echo "i18n_files=$(echo "$I18N_FILES" | tr '\n' ' ')" >> $GITHUB_OUTPUT
+          else
+            echo "has_i18n_files=false" >> $GITHUB_OUTPUT
+            echo "i18n_files=" >> $GITHUB_OUTPUT
+          fi
+
+  check-i18n:
+    name: Check i18n
+    runs-on: ubuntu-latest
+    needs: changed-files
+    if: needs.changed-files.outputs.has_i18n_files == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for hardcoded Chinese text
+        run: node scripts/check-i18n.js ${{ needs.changed-files.outputs.i18n_files }}
+
