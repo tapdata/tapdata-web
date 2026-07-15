@@ -14,6 +14,7 @@ import { AdminOutlined } from '@tap/component/src/icon'
 import { TextFileReader } from '@tap/form/src/components/text-file-reader'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 import Cookie from '@tap/shared/src/cookie'
+import { setSettings } from '@tap/shared/src/settings'
 import Time from '@tap/shared/src/time'
 import { find, uniq } from 'lodash-es'
 import i18n from '@/i18n'
@@ -299,12 +300,15 @@ export default {
     // 保存
     save() {
       const settingData = []
-      this.formData.items.filter((item) => {
+      this.formData.items.forEach((item) => {
         item.items.forEach((childItem) => {
           settingData.push(childItem)
         })
       })
-      saveSettings(settingData).then(() => {
+      saveSettings(settingData).then(async () => {
+        const settings = await fetchSettings()
+        setSettings(settings)
+        localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(settings))
         this.$message.success(this.$t('public_message_save_ok'))
 
         if (this.appearanceForm && Object.keys(this.appearanceForm).length) {

@@ -35,6 +35,7 @@ import UpgradeFee from '../../components/UpgradeFee.vue'
 import Upload from '../../components/UploadDialog.vue'
 import syncTaskAgent from '../../mixins/syncTaskAgent'
 import { makeStatusAndDisabled, MILESTONE_TYPE, STATUS_MAP } from '../../shared'
+import BatchAlarmEmailDialog from './BatchAlarmEmailDialog.vue'
 import EditInfoDialog from './EditInfoDialog.vue'
 import SkipError from './SkipError.vue'
 import TaskName from './TaskName.vue'
@@ -57,6 +58,7 @@ export default {
     SyncStatus,
     EditInfoDialog,
     TaskName,
+    BatchAlarmEmailDialog,
   },
 
   mixins: [syncTaskAgent],
@@ -867,6 +869,15 @@ export default {
       exportTasks(ids)
     },
 
+    batchUpdateAlarmEmailReceivers(ids) {
+      this.$refs.batchAlarmEmailDialog.open(ids)
+    },
+
+    handleBatchAlarmEmailSuccess() {
+      this.table.fetch()
+      this.table.clearSelection()
+    },
+
     handleCommand(command, node) {
       const commandFilter = ['start', 'stop', 'del', 'initialize']
       let ids = []
@@ -1206,20 +1217,44 @@ export default {
               <ElDropdownItem
                 v-readonlybtn="'SYNC_job_operation'"
                 command="start"
-                >{{ $t('packages_business_dataFlow_bulkScheuled') }}
+              >
+                <el-icon :size="14" class="mr-2">
+                  <i-lucide-play />
+                </el-icon>
+                {{ $t('packages_business_dataFlow_bulkScheuled') }}
               </ElDropdownItem>
               <ElDropdownItem
                 v-readonlybtn="'SYNC_job_operation'"
                 command="stop"
-                >{{ $t('packages_business_dataFlow_bulkStopping') }}
+              >
+                <el-icon :size="14" class="mr-2">
+                  <i-lucide-square />
+                </el-icon>
+                {{ $t('packages_business_dataFlow_bulkStopping') }}
               </ElDropdownItem>
               <ElDropdownItem
                 v-readonlybtn="'SYNC_job_operation'"
                 command="initialize"
-                >{{ $t('packages_business_dataFlow_batchRest') }}
+              >
+                <el-icon :size="14" class="mr-2">
+                  <i-lucide-rotate-ccw />
+                </el-icon>
+                {{ $t('packages_business_dataFlow_batchRest') }}
               </ElDropdownItem>
-              <ElDropdownItem v-readonlybtn="'SYNC_job_delete'" command="del"
-                >{{ $t('packages_business_dataFlow_batchDelete') }}
+              <ElDropdownItem v-readonlybtn="'SYNC_job_delete'" command="del">
+                <el-icon :size="14" class="mr-2">
+                  <i-lucide-trash-2 />
+                </el-icon>
+                {{ $t('packages_business_dataFlow_batchDelete') }}
+              </ElDropdownItem>
+              <ElDropdownItem
+                v-readonlybtn="'SYNC_job_operation'"
+                command="batchUpdateAlarmEmailReceivers"
+              >
+                <el-icon :size="14" class="mr-2">
+                  <i-lucide-mail />
+                </el-icon>
+                {{ $t('packages_business_task_batch_alarm_email_action') }}
               </ElDropdownItem>
             </ElDropdownMenu>
           </template>
@@ -1490,6 +1525,10 @@ export default {
       </el-table-column>
     </TablePage>
     <SkipError ref="skipError" @skip="handleSkipAndRun" />
+    <BatchAlarmEmailDialog
+      ref="batchAlarmEmailDialog"
+      @success="handleBatchAlarmEmailSuccess"
+    />
     <!-- 导入 -->
     <Upload ref="upload" :type="uploadType" @success="table.fetch()" />
     <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->

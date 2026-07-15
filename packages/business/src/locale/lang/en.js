@@ -258,6 +258,15 @@ export default {
   packages_business_dataFlow_bulkScheuled: 'Batch Start',
   packages_business_dataFlow_bulkStopping: 'Batch Stop',
   packages_business_dataFlow_taskBulkOperation: 'Batch Operation',
+  packages_business_task_batch_alarm_email_action: 'Batch Set Alert Receivers',
+  packages_business_task_batch_alarm_email_title: 'Batch Set Alert Receivers',
+  packages_business_task_batch_alarm_email_label: 'Email Receivers',
+  packages_business_task_batch_alarm_email_placeholder:
+    'Select email receivers',
+  packages_business_task_batch_alarm_email_overwrite_tip:
+    "After saving, the selected tasks' existing alert receiver settings will be overwritten.",
+  packages_business_task_batch_alarm_email_empty:
+    'No email receivers available. Save directly to clear alert receivers from the selected tasks.',
   packages_business_dataFlow_addTag: 'Add Tag',
   packages_business_dataVerify_dataVerify: 'Data Verify',
   packages_business_dataFlow_selectAll: 'Select All',

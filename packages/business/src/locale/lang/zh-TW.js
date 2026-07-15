@@ -231,6 +231,14 @@ export default {
   packages_business_dataFlow_bulkScheuled: '批量啟動',
   packages_business_dataFlow_bulkStopping: '批量停止',
   packages_business_dataFlow_taskBulkOperation: '任務操作',
+  packages_business_task_batch_alarm_email_action: '批量設置告警接收人',
+  packages_business_task_batch_alarm_email_title: '批量設置告警接收人',
+  packages_business_task_batch_alarm_email_label: '郵件接收人',
+  packages_business_task_batch_alarm_email_placeholder: '請選擇郵件接收人',
+  packages_business_task_batch_alarm_email_overwrite_tip:
+    '保存後，將覆蓋所選任務原有的告警接收人設置',
+  packages_business_task_batch_alarm_email_empty:
+    '暫無可選郵件接收人，可直接保存以清空所選任務的告警接收人',
   packages_business_dataFlow_addTag: '添加標籤',
   packages_business_dataVerify_dataVerify: '數據校驗',
   packages_business_dataFlow_selectAll: '全選',
