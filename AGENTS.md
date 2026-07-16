@@ -17,3 +17,18 @@
 - Add reasonable, focused types for newly introduced TypeScript/TSX code and for existing declarations that must change to support the new code.
 - Do not run repository-wide type checks or builds by default for localized changes. These checks may fail because of unrelated legacy issues and are not required unless the user explicitly requests them.
 - Prefer targeted inspection or lightweight checks when validation is useful, without treating unrelated existing type errors as part of the task.
+
+## Jira Task Workflow
+
+- When taking over a Jira issue, read the issue, parent issue, description, attachments, comments, status, assignee, priority, and any user-provided API docs or screenshots before planning code changes.
+- Move the Jira issue to `In Progress` when implementation starts.
+- Create feature branches with the Jira key in the branch name, for example `feat/TAP-12226-short-description`.
+- To associate the branch with Jira, push the branch to the connected remote repository. Do not rely on a Jira comment as the development branch association.
+- Before editing, run `git status --short --branch` and identify unrelated user changes. Do not revert, stage, commit, or overwrite unrelated user changes.
+- Keep implementation scoped to the issue. For UI work, reuse existing components, styles, i18n structure, and icon rules from this file.
+- If a settings page save changes runtime global settings, refresh the shared settings cache the same way app bootstrap does: refetch settings, call `setSettings(settings)`, and update `TAPDATA_SETTINGS` in localStorage. Do not overwrite the cache with only currently visible settings rows.
+- For bulk operations that overwrite, delete, or clear existing task configuration, show a clear UI warning. If an empty array is a valid action, such as clearing receivers, do not disable save only because the array is empty.
+- Validate localized frontend changes with targeted checks such as `git diff --check` and `pnpm exec eslint <touched-files>`. Do not run full repository checks unless requested.
+- Before committing, stage only files related to the Jira issue, then inspect `git diff --cached --stat` and `git diff --cached --check`.
+- Commit messages must include the Jira key, for example `feat(TAP-12226): short summary`.
+- PR descriptions should include a concise summary, validation actually run, and any remaining risks or unrelated worktree changes.
