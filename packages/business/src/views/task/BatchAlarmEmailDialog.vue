@@ -94,6 +94,7 @@ defineExpose({
           filterable
           collapse-tags
           collapse-tags-tooltip
+          :max-collapse-tags="4"
           :placeholder="
             $t('packages_business_task_batch_alarm_email_placeholder')
           "
