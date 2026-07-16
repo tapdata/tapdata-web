@@ -10,6 +10,7 @@ import {
 } from 'vue-router'
 
 import i18n from '@/i18n'
+import { ensurePermissions, signOut } from '@/utils/util'
 import { routes } from './routes'
 
 const router = createRouter({
@@ -17,7 +18,7 @@ const router = createRouter({
   routes: routes as readonly RouteRecordRaw[],
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   if (!to.matched.length) {
     Message.error({
       message: 'Page not found!',
@@ -30,9 +31,14 @@ router.beforeEach((to, from, next) => {
   }
   const token = Cookie.get('access_token')
   if (token) {
-    //若token存在，获取权限
-    const permissionsStr = sessionStorage.getItem('tapdata_permissions')
-    const permissions = JSON.parse(permissionsStr)
+    let permissions: Awaited<ReturnType<typeof ensurePermissions>> = []
+
+    try {
+      permissions = await ensurePermissions()
+    } catch {
+      signOut()
+      return
+    }
 
     //判断当前路由的页面是否有权限，无权限则不跳转，有权限则执行跳转
     let matched = true
