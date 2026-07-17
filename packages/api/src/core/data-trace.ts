@@ -1,4 +1,5 @@
 import { requestClient } from '../request'
+import { createTraceStreamProcessor } from './data-trace-stream-parser'
 
 const BASE_URL = '/api/lineage/wide-table'
 
@@ -98,27 +99,9 @@ export function getTraceData(
   callbacks: TraceStreamCallbacks,
 ): AbortController {
   const controller = new AbortController()
-  let lastIndex = 0
-
-  function processChunk(text: string) {
-    const newText = text.slice(lastIndex)
-    lastIndex = text.length
-
-    const lines = newText.split('\n')
-    for (const line of lines) {
-      const trimmed = line.trim()
-      if (!trimmed) continue
-      try {
-        const parsed = JSON.parse(trimmed)
-        if (parsed.nodeId !== undefined && parsed.type === 'TRACE_VALUE') {
-          console.log('parsed', parsed)
-          callbacks.onNodeData?.(parsed.nodeId, parsed)
-        }
-      } catch {
-        // ignore incomplete line (will be completed in next chunk)
-      }
-    }
-  }
+  const processChunk = createTraceStreamProcessor((nodeId, parsed) => {
+    callbacks.onNodeData?.(nodeId, parsed)
+  })
 
   requestClient
     .post(`${BASE_URL}/trace/stream`, data, {
@@ -135,6 +118,7 @@ export function getTraceData(
       },
     })
     .then(() => {
+      processChunk.flush()
       callbacks.onDone?.()
     })
     .catch((error: any) => {
