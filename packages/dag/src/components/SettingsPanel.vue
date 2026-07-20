@@ -182,9 +182,9 @@ const alarmSettingSchemaConfigMap: Record<
   TASK_SOURCE_NO_INCREMENTAL_EVENT: {
     title: t('packages_business_task_source_no_incremental_event'),
   },
-  // TASK_DDL_WARNING: {
-  //   title: t('packages_dag_migration_alarmpanel_renwufengxianddl'),
-  // },
+  TASK_DDL_WARNING: {
+    title: t('packages_dag_migration_alarmpanel_renwufengxianddl'),
+  },
 }
 
 function getAlarmSettingsDefault() {
