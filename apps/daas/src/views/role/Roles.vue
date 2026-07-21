@@ -357,7 +357,8 @@ export default {
           <ElDivider class="mx-1" direction="vertical" />
           <ElButton
             v-readonlybtn="'role_edition'"
-            type="text"
+            text
+            type="primary"
             :disabled="
               $disabledByPermission('role_edition_all_data', scope.row.user_id)
             "
