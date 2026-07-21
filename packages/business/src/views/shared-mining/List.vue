@@ -23,7 +23,7 @@ import { calcTimeUnit, openUrl } from '@tap/shared'
 import dayjs from 'dayjs'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { escapeRegExp, uniqBy } from 'lodash-es'
-import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, h, inject, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
@@ -57,6 +57,7 @@ const searchParams = ref({
 })
 
 const order = ref('createTime DESC')
+const spacer = h(ElDivider, { direction: 'vertical', class: 'mx-1' })
 let timer: ReturnType<typeof setInterval> | null = null
 const taskBuried = { start: 'sharedMiningStart' }
 
@@ -495,7 +496,7 @@ onUnmounted(() => {
         :label="$t('public_operation')"
       >
         <template #default="{ row }">
-          <div class="table-operations">
+          <el-space :spacer="spacer" :size="0" class="flex-wrap">
             <ElButton
               v-if="
                 row.btnDisabled.stop &&
@@ -509,34 +510,26 @@ onUnmounted(() => {
             >
               {{ $t('public_button_start') }}
             </ElButton>
-            <template v-else-if="havePermission(row, 'Stop')">
-              <ElButton
-                v-if="row.status === 'stopping'"
-                text
-                type="primary"
-                :disabled="row.btnDisabled.forceStop"
-                @click="forceStop([row.id], row)"
-              >
-                {{ $t('public_button_force_stop') }}
-              </ElButton>
-              <ElButton
-                v-else
-                text
-                type="primary"
-                :disabled="row.btnDisabled.stop"
-                @click="stop([row.id])"
-              >
-                {{ $t('public_button_stop') }}
-              </ElButton>
-            </template>
-            <ElDivider
-              v-if="
-                havePermission(row, 'Edit') &&
-                (havePermission(row, 'Start') || havePermission(row, 'Stop'))
+            <ElButton
+              v-else-if="
+                havePermission(row, 'Stop') && row.status === 'stopping'
               "
-              class="mx-1"
-              direction="vertical"
-            />
+              text
+              type="primary"
+              :disabled="row.btnDisabled.forceStop"
+              @click="forceStop([row.id], row)"
+            >
+              {{ $t('public_button_force_stop') }}
+            </ElButton>
+            <ElButton
+              v-else-if="havePermission(row, 'Stop')"
+              text
+              type="primary"
+              :disabled="row.btnDisabled.stop"
+              @click="stop([row.id])"
+            >
+              {{ $t('public_button_stop') }}
+            </ElButton>
             <ElButton
               v-if="havePermission(row, 'Edit')"
               text
@@ -546,15 +539,6 @@ onUnmounted(() => {
             >
               {{ $t('public_button_edit') }}
             </ElButton>
-            <ElDivider
-              v-if="
-                havePermission(row, 'Start') ||
-                havePermission(row, 'Stop') ||
-                havePermission(row, 'Edit')
-              "
-              class="mx-1"
-              direction="vertical"
-            />
             <ElButton
               text
               type="primary"
@@ -563,11 +547,6 @@ onUnmounted(() => {
             >
               {{ $t('packages_business_task_list_button_monitor') }}
             </ElButton>
-            <ElDivider
-              v-if="havePermission(row, 'Reset')"
-              class="mx-1"
-              direction="vertical"
-            />
             <ElButton
               v-if="havePermission(row, 'Reset')"
               text
@@ -577,11 +556,6 @@ onUnmounted(() => {
             >
               {{ $t('public_button_reset') }}
             </ElButton>
-            <ElDivider
-              v-if="havePermission(row, 'Delete')"
-              class="mx-1"
-              direction="vertical"
-            />
             <ElButton
               v-if="havePermission(row, 'Delete')"
               text
@@ -591,7 +565,7 @@ onUnmounted(() => {
             >
               {{ $t('public_button_delete') }}
             </ElButton>
-          </div>
+          </el-space>
         </template>
       </el-table-column>
     </TablePage>

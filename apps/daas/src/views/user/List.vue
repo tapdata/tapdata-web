@@ -16,7 +16,9 @@ import TablePage from '@tap/business/src/components/TablePage.vue'
 import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import dayjs from 'dayjs'
+import { ElDivider } from 'element-plus'
 import { escapeRegExp } from 'lodash-es'
+import { h } from 'vue'
 
 export default {
   components: {
@@ -34,6 +36,7 @@ export default {
       },
       showTooltip: false,
       order: 'last_updated DESC',
+      spacer: h(ElDivider, { direction: 'vertical', class: 'mx-1' }),
       list: null,
       multipleSelection: [],
       roleMappding: [],
@@ -960,7 +963,7 @@ export default {
       </el-table-column>
       <el-table-column :label="$t('public_operation')" width="210">
         <template #default="scope">
-          <div>
+          <el-space :spacer="spacer" :size="0" class="flex-wrap">
             <el-button
               v-if="
                 ['rejected', 'notActivated'].includes(scope.row.status) &&
@@ -972,14 +975,6 @@ export default {
             >
               {{ $t('user_list_activation') }}
             </el-button>
-            <ElDivider
-              v-if="
-                ['rejected', 'notActivated'].includes(scope.row.status) &&
-                havePermission(scope.row, 'Edit')
-              "
-              class="mx-1"
-              direction="vertical"
-            />
             <el-button
               v-if="
                 !['rejected'].includes(scope.row.status) &&
@@ -991,14 +986,6 @@ export default {
             >
               {{ $t('user_list_freeze') }}
             </el-button>
-            <ElDivider
-              v-if="
-                !['rejected'].includes(scope.row.status) &&
-                havePermission(scope.row, 'Edit')
-              "
-              class="mx-1"
-              direction="vertical"
-            />
             <el-button
               v-if="
                 ['notVerified'].includes(scope.row.status) &&
@@ -1009,14 +996,6 @@ export default {
               @click="handleCheck(scope.row)"
               >{{ $t('user_list_check') }}</el-button
             >
-            <ElDivider
-              v-if="
-                ['notVerified'].includes(scope.row.status) &&
-                havePermission(scope.row, 'Edit')
-              "
-              class="mx-1"
-              direction="vertical"
-            />
             <el-button
               v-if="
                 ['activated', 'rejected'].includes(scope.row.status) &&
@@ -1027,14 +1006,6 @@ export default {
               @click="edit(scope.row)"
               >{{ $t('public_button_edit') }}</el-button
             >
-            <ElDivider
-              v-if="
-                ['activated', 'rejected'].includes(scope.row.status) &&
-                havePermission(scope.row, 'Edit')
-              "
-              class="mx-1"
-              direction="vertical"
-            />
             <el-button
               v-if="havePermission(scope.row, 'Delete')"
               text
@@ -1042,7 +1013,7 @@ export default {
               @click="remove(scope.row)"
               >{{ $t('public_button_delete') }}</el-button
             >
-          </div>
+          </el-space>
         </template>
       </el-table-column>
     </TablePage>

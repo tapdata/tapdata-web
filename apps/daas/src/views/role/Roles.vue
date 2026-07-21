@@ -10,7 +10,9 @@ import { fetchUsers, getUserRoles } from '@tap/api/src/core/users'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import { FilterBar } from '@tap/component/src/filter-bar'
+import { ElDivider } from 'element-plus'
 import { escapeRegExp } from 'lodash-es'
+import { h } from 'vue'
 import ApiAccessDialog from './ApiAccessDialog.vue'
 
 export default {
@@ -27,6 +29,7 @@ export default {
         // time: ''
       },
       order: 'last_updated DESC',
+      spacer: h(ElDivider, { direction: 'vertical', class: 'mx-1' }),
       tableData: [],
       roleusers: [],
       userGroup: [],
@@ -343,68 +346,78 @@ export default {
       </ElTableColumn>
       <ElTableColumn :label="$t('public_operation')" width="350">
         <template #default="scope">
-          <ElButton
-            v-readonlybtn="'role_edition'"
-            text
-            type="primary"
-            :disabled="
-              $disabledByPermission('role_edition_all_data', scope.row.user_id)
-            "
-            @click="handleSettingPermissions(scope.row.id, scope.row.name)"
-          >
-            {{ $t('role_list_setting_permissions') }}
-          </ElButton>
-          <ElDivider class="mx-1" direction="vertical" />
-          <ElButton
-            v-readonlybtn="'role_edition'"
-            text
-            type="primary"
-            :disabled="
-              $disabledByPermission('role_edition_all_data', scope.row.user_id)
-            "
-            @click="handleSettingApi(scope.row.id, scope.row.name)"
-          >
-            {{ $t('role_list_setting_api') }}
-          </ElButton>
-          <ElDivider class="mx-1" direction="vertical" />
-          <ElButton
-            v-readonlybtn="'role_edition'"
-            text
-            type="primary"
-            :disabled="
-              $disabledByPermission('role_edition_all_data', scope.row.user_id)
-            "
-            @click="handleAssociatUsers(scope.row.id)"
-          >
-            {{ $t('role_list_associat_users') }}
-          </ElButton>
-          <ElDivider class="mx-1" direction="vertical" />
-          <ElButton
-            v-readonlybtn="'role_edition'"
-            text
-            type="primary"
-            :disabled="
-              $disabledByPermission('role_edition_all_data', scope.row.user_id)
-            "
-            @click="openCreateDialog(scope.row.id, scope.row)"
-          >
-            {{ $t('public_button_edit') }}
-          </ElButton>
-          <ElDivider class="mx-1" direction="vertical" />
-          <ElButton
-            v-readonlybtn="'role_delete'"
-            text
-            type="primary"
-            :disabled="
-              $disabledByPermission(
-                'role_delete_all_data',
-                scope.row.user_id,
-              ) || scope.row.name === 'admin'
-            "
-            @click="handleDelete(scope.row)"
-          >
-            {{ $t('public_button_delete') }}
-          </ElButton>
+          <el-space :spacer="spacer" :size="0" class="flex-wrap">
+            <ElButton
+              v-readonlybtn="'role_edition'"
+              text
+              type="primary"
+              :disabled="
+                $disabledByPermission(
+                  'role_edition_all_data',
+                  scope.row.user_id,
+                )
+              "
+              @click="handleSettingPermissions(scope.row.id, scope.row.name)"
+            >
+              {{ $t('role_list_setting_permissions') }}
+            </ElButton>
+            <ElButton
+              v-readonlybtn="'role_edition'"
+              text
+              type="primary"
+              :disabled="
+                $disabledByPermission(
+                  'role_edition_all_data',
+                  scope.row.user_id,
+                )
+              "
+              @click="handleSettingApi(scope.row.id, scope.row.name)"
+            >
+              {{ $t('role_list_setting_api') }}
+            </ElButton>
+            <ElButton
+              v-readonlybtn="'role_edition'"
+              text
+              type="primary"
+              :disabled="
+                $disabledByPermission(
+                  'role_edition_all_data',
+                  scope.row.user_id,
+                )
+              "
+              @click="handleAssociatUsers(scope.row.id)"
+            >
+              {{ $t('role_list_associat_users') }}
+            </ElButton>
+            <ElButton
+              v-readonlybtn="'role_edition'"
+              text
+              type="primary"
+              :disabled="
+                $disabledByPermission(
+                  'role_edition_all_data',
+                  scope.row.user_id,
+                )
+              "
+              @click="openCreateDialog(scope.row.id, scope.row)"
+            >
+              {{ $t('public_button_edit') }}
+            </ElButton>
+            <ElButton
+              v-readonlybtn="'role_delete'"
+              text
+              type="primary"
+              :disabled="
+                $disabledByPermission(
+                  'role_delete_all_data',
+                  scope.row.user_id,
+                ) || scope.row.name === 'admin'
+              "
+              @click="handleDelete(scope.row)"
+            >
+              {{ $t('public_button_delete') }}
+            </ElButton>
+          </el-space>
         </template>
       </ElTableColumn>
     </TablePage>

@@ -23,7 +23,7 @@ import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
-import { computed, onBeforeMount, onUnmounted, ref, watch } from 'vue'
+import { computed, h, onBeforeMount, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ErrorMessage } from '../../components/error-message'
 import PageContainer from '../../components/PageContainer.vue'
@@ -109,6 +109,7 @@ const importLoading = ref(false)
 // Reactive data
 const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 const order = ref('last_updated DESC')
+const spacer = h(ElDivider, { direction: 'vertical', class: 'mx-1' })
 const multipleSelection = ref<InspectItem[]>([])
 
 const searchParams = ref<SearchParams>({
@@ -877,34 +878,31 @@ onUnmounted(() => {
         </template>
 
         <template #default="{ row }">
-          <ElButton
-            text
-            type="primary"
-            :disabled="!row.InspectResult"
-            @click="toTableInfo(row.id)"
-            >{{ $t('packages_business_verification_result_title') }}
-          </ElButton>
+          <el-space :spacer="spacer" :size="0" class="flex-wrap">
+            <ElButton
+              text
+              type="primary"
+              :disabled="!row.InspectResult"
+              @click="toTableInfo(row.id)"
+              >{{ $t('packages_business_verification_result_title') }}
+            </ElButton>
 
-          <template
-            v-if="
-              havePermission(row.permissionActions, 'Stop') &&
-              row.status === 'running'
-            "
-          >
-            <ElDivider class="mx-1" direction="vertical" />
-            <ElButton text type="primary" @click="stop(row.id)"
+            <ElButton
+              v-if="
+                havePermission(row.permissionActions, 'Stop') &&
+                row.status === 'running'
+              "
+              text
+              type="primary"
+              @click="stop(row.id)"
               >{{ $t('public_button_stop') }}
             </ElButton>
-          </template>
 
-          <template
-            v-if="
-              havePermission(row.permissionActions, 'Start') &&
-              row.status !== 'running'
-            "
-          >
-            <ElDivider class="mx-1" direction="vertical" />
             <ElButton
+              v-if="
+                havePermission(row.permissionActions, 'Start') &&
+                row.status !== 'running'
+              "
               text
               type="primary"
               :disabled="
@@ -913,34 +911,32 @@ onUnmounted(() => {
               @click="startTask(row.id)"
               >{{ $t('packages_business_verification_executeVerifyTip') }}
             </ElButton>
-          </template>
 
-          <ElDivider class="mx-1" direction="vertical" />
-          <ElButton
-            text
-            type="primary"
-            :disabled="!row.InspectResult"
-            @click="history(row.id)"
-            >{{ $t('packages_business_verification_historyTip') }}
-          </ElButton>
-
-          <template v-if="havePermission(row.permissionActions, 'Edit')">
-            <ElDivider class="mx-1" direction="vertical" />
             <ElButton
+              text
+              type="primary"
+              :disabled="!row.InspectResult"
+              @click="history(row.id)"
+              >{{ $t('packages_business_verification_historyTip') }}
+            </ElButton>
+
+            <ElButton
+              v-if="havePermission(row.permissionActions, 'Edit')"
               text
               type="primary"
               :disabled="['running', 'scheduling'].includes(row.status)"
               @click="goEdit(row.id, row.flowId)"
               >{{ $t('packages_business_verification_configurationTip') }}
             </ElButton>
-          </template>
 
-          <template v-if="havePermission(row.permissionActions, 'Delete')">
-            <ElDivider class="mx-1" direction="vertical" />
-            <ElButton text type="primary" @click="remove(row.id, row)"
+            <ElButton
+              v-if="havePermission(row.permissionActions, 'Delete')"
+              text
+              type="primary"
+              @click="remove(row.id, row)"
               >{{ $t('public_button_delete') }}
             </ElButton>
-          </template>
+          </el-space>
         </template>
       </el-table-column>
     </TablePage>
