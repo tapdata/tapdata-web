@@ -145,7 +145,39 @@ const pageSort = [
           { label: t('public_stop_all'), name: 'v2_data_flow_all_data_Stop' },
         ],
       },
-      { name: 'v2_data_check' },
+      {
+        name: 'v2_data_check',
+        buttons: [
+          {
+            label: t('public_task_create'),
+            name: 'v2_data_check_creation',
+            checked: false,
+          },
+          {
+            label: t('public_task_import'),
+            name: 'v2_data_check_import',
+            checked: false,
+          },
+          {
+            label: t('public_task_export'),
+            name: 'v2_data_check_export',
+            checked: false,
+          },
+        ],
+        filterData: [
+          { label: t('public_view_all'), name: 'v2_data_check_all_data' },
+          { label: t('public_edit_all'), name: 'v2_data_check_all_data_Edit' },
+          {
+            label: t('public_delete_all'),
+            name: 'v2_data_check_all_data_Delete',
+          },
+          {
+            label: t('public_start_all'),
+            name: 'v2_data_check_all_data_Start',
+          },
+          { label: t('public_stop_all'), name: 'v2_data_check_all_data_Stop' },
+        ],
+      },
     ],
   },
   {
@@ -243,12 +275,149 @@ const pageSort = [
   {
     name: 'v2_advanced_features',
     children: [
-      { name: 'v2_log_collector' },
+      {
+        name: 'v2_log_collector',
+        filterData: [
+          { label: t('public_view_all'), name: 'v2_log_collector_all_data' },
+          {
+            label: t('public_edit_all'),
+            name: 'v2_log_collector_all_data_Edit',
+          },
+          {
+            label: t('public_delete_all'),
+            name: 'v2_log_collector_all_data_Delete',
+          },
+          {
+            label: t('public_reset_all'),
+            name: 'v2_log_collector_all_data_Reset',
+          },
+          {
+            label: t('public_start_all'),
+            name: 'v2_log_collector_all_data_Start',
+          },
+          {
+            label: t('public_stop_all'),
+            name: 'v2_log_collector_all_data_Stop',
+          },
+        ],
+      },
       { name: 'v2_function_management' },
       { name: 'v2_custom_node' },
-      { name: 'v2_shared_cache' },
-      { name: 'v2_project_management' },
-      { name: 'v2_project_import_and_export' },
+      {
+        name: 'v2_shared_cache',
+        buttons: [
+          {
+            label: t('public_task_create'),
+            name: 'v2_shared_cache_creation',
+            checked: false,
+          },
+          {
+            label: t('public_task_import'),
+            name: 'v2_shared_cache_import',
+            checked: false,
+          },
+          {
+            label: t('public_task_export'),
+            name: 'v2_shared_cache_export',
+            checked: false,
+          },
+        ],
+        filterData: [
+          { label: t('public_view_all'), name: 'v2_shared_cache_all_data' },
+          {
+            label: t('public_edit_all'),
+            name: 'v2_shared_cache_all_data_Edit',
+          },
+          {
+            label: t('public_delete_all'),
+            name: 'v2_shared_cache_all_data_Delete',
+          },
+          {
+            label: t('public_reset_all'),
+            name: 'v2_shared_cache_all_data_Reset',
+          },
+          {
+            label: t('public_start_all'),
+            name: 'v2_shared_cache_all_data_Start',
+          },
+          {
+            label: t('public_stop_all'),
+            name: 'v2_shared_cache_all_data_Stop',
+          },
+        ],
+      },
+      {
+        name: 'v2_conn_heartbeat',
+        filterData: [
+          { label: t('public_view_all'), name: 'v2_conn_heartbeat_all_data' },
+          {
+            label: t('public_delete_all'),
+            name: 'v2_conn_heartbeat_all_data_Delete',
+          },
+          {
+            label: t('public_reset_all'),
+            name: 'v2_conn_heartbeat_all_data_Reset',
+          },
+          {
+            label: t('public_start_all'),
+            name: 'v2_conn_heartbeat_all_data_Start',
+          },
+          {
+            label: t('public_stop_all'),
+            name: 'v2_conn_heartbeat_all_data_Stop',
+          },
+        ],
+      },
+      {
+        name: 'v2_project_management',
+        buttons: [
+          {
+            label: t('data_import_export_add_group'),
+            name: 'v2_project_management_creation',
+            checked: false,
+          },
+          {
+            label: t('data_import_export_git_config'),
+            name: 'v2_project_management_git_config',
+            checked: false,
+          },
+        ],
+        filterData: [
+          {
+            label: t('public_view_all'),
+            name: 'v2_project_management_all_data',
+          },
+          {
+            label: t('public_edit_all'),
+            name: 'v2_project_management_all_data_Edit',
+          },
+          {
+            label: t('public_delete_all'),
+            name: 'v2_project_management_all_data_Delete',
+          },
+        ],
+      },
+      {
+        name: 'v2_project_import_and_export',
+        buttons: [
+          {
+            label: t('data_import_export_import'),
+            name: 'v2_project_import_and_export_import',
+            checked: false,
+          },
+          {
+            label: t('data_import_export_export'),
+            name: 'v2_project_import_and_export_export',
+            checked: false,
+          },
+        ],
+        filterData: [
+          {
+            label: t('public_view_all'),
+            name: 'v2_project_import_and_export_all_data',
+          },
+        ],
+      },
       {
         name: 'v2_task_rebalance',
         buttons: [
@@ -266,7 +435,30 @@ const pageSort = [
     children: [
       { name: 'v2_cluster-management_menu' },
       { name: 'v2_external-storage_menu' },
-      { name: 'v2_user_management_menu' },
+      {
+        name: 'v2_user_management_menu',
+        buttons: [
+          {
+            label: t('public_button_create'),
+            name: 'v2_user_management_menu_creation',
+            checked: false,
+          },
+        ],
+        filterData: [
+          {
+            label: t('public_view_all'),
+            name: 'v2_user_management_menu_all_data',
+          },
+          {
+            label: t('public_edit_all'),
+            name: 'v2_user_management_menu_all_data_Edit',
+          },
+          {
+            label: t('public_delete_all'),
+            name: 'v2_user_management_menu_all_data_Delete',
+          },
+        ],
+      },
       { name: 'v2_role_management' },
     ],
   },

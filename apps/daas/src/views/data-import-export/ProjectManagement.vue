@@ -16,7 +16,7 @@ import { makeStatusAndDisabled } from '@tap/business/src/shared'
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { useI18n } from '@tap/i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, inject, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import GitConfigDialog from './GitConfigDialog.vue'
 import GroupExportDialog from './GroupExportDialog.vue'
@@ -24,6 +24,9 @@ import GroupExportDialog from './GroupExportDialog.vue'
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
+const hasPermissionByCode = inject<(code: string) => boolean>(
+  'hasPermissionByCode',
+)
 
 // 导出对话框
 const exportDialogVisible = ref(false)
@@ -39,6 +42,13 @@ const groupLoading = ref(false)
 const groupFilterText = ref('')
 const showGroupSearch = ref(false)
 const groupSearchInput = ref()
+
+const havePermission = (group: GroupInfoDto | null, type: string) =>
+  !!group?.permissionActions?.includes(type)
+
+const canEditSelectedGroup = computed(() =>
+  havePermission(selectedGroup.value, 'Edit'),
+)
 
 // 中间资源列表
 const activeTab = ref<'SYNC_TASK' | 'MIGRATE_TASK' | 'MODULE'>('MIGRATE_TASK')
@@ -119,6 +129,8 @@ const openGroupSearch = () => {
 
 // 添加项目
 const handleAddGroup = async () => {
+  if (!hasPermissionByCode?.('v2_project_management_creation')) return
+
   ElMessageBox.prompt(
     t('data_import_export_group_name_placeholder'),
     t('data_import_export_add_group'),
@@ -308,7 +320,11 @@ const isResourceAdded = (id: string) => {
 
 // 判断资源是否不可操作（已添加或属于其他分组）
 const isResourceDisabled = (resource: any) => {
-  return isResourceAdded(resource.id) || isResourceInOtherGroup(resource)
+  return (
+    !canEditSelectedGroup.value ||
+    isResourceAdded(resource.id) ||
+    isResourceInOtherGroup(resource)
+  )
 }
 
 // 切换资源选中状态
@@ -564,13 +580,19 @@ const handleSelectAll = (checked: any) => {
       </div>
     </template>
     <template #actions>
-      <el-button @click="handleGitConfig">
+      <el-button
+        v-if="$has('v2_project_management_git_config') && canEditSelectedGroup"
+        @click="handleGitConfig"
+      >
         <template #icon>
           <i-lucide-github />
         </template>
         {{ t('data_import_export_git_config') }}
       </el-button>
-      <el-button @click="handleExport">
+      <el-button
+        v-if="$has('v2_project_import_and_export_export')"
+        @click="handleExport"
+      >
         <template #icon>
           <i-lucide-download />
         </template>
@@ -596,7 +618,11 @@ const handleSelectAll = (checked: any) => {
                 <i-lucide-search />
               </template>
             </el-button>
-            <el-button text @click="handleAddGroup">
+            <el-button
+              v-if="$has('v2_project_management_creation')"
+              text
+              @click="handleAddGroup"
+            >
               <template #icon>
                 <i-lucide-plus />
               </template>
@@ -649,6 +675,10 @@ const handleSelectAll = (checked: any) => {
                   </div>
                 </div>
                 <el-dropdown
+                  v-if="
+                    havePermission(group, 'Edit') ||
+                    havePermission(group, 'Delete')
+                  "
                   class="btn-menu"
                   @command="handleGroupCommand($event, group)"
                 >
@@ -659,13 +689,20 @@ const handleSelectAll = (checked: any) => {
                   </el-button>
                   <template #dropdown>
                     <el-dropdown-menu>
-                      <el-dropdown-item command="edit">
+                      <el-dropdown-item
+                        v-if="havePermission(group, 'Edit')"
+                        command="edit"
+                      >
                         <el-icon class="mr-2">
                           <i-lucide-edit />
                         </el-icon>
                         {{ t('public_button_edit') }}
                       </el-dropdown-item>
-                      <el-dropdown-item command="delete" class="is-danger">
+                      <el-dropdown-item
+                        v-if="havePermission(group, 'Delete')"
+                        command="delete"
+                        class="is-danger"
+                      >
                         <el-icon class="mr-2">
                           <i-lucide-trash-2 />
                         </el-icon>
@@ -682,7 +719,10 @@ const handleSelectAll = (checked: any) => {
               :image-size="60"
             >
               <template #description>
-                <el-button @click="handleAddGroup">
+                <el-button
+                  v-if="$has('v2_project_management_creation')"
+                  @click="handleAddGroup"
+                >
                   <template #icon>
                     <i-lucide-plus />
                   </template>
@@ -761,7 +801,9 @@ const handleSelectAll = (checked: any) => {
                   {{ resource.groupName }}
                 </el-tag>
                 <el-button
-                  v-else-if="!isResourceAdded(resource.id)"
+                  v-else-if="
+                    canEditSelectedGroup && !isResourceAdded(resource.id)
+                  "
                   text
                   class="add-btn"
                   @click.stop="addSingleResource(resource)"
@@ -782,6 +824,7 @@ const handleSelectAll = (checked: any) => {
               <el-checkbox
                 :model-value="isAllSelected"
                 :indeterminate="selectedResources.length > 0 && !isAllSelected"
+                :disabled="!canEditSelectedGroup"
                 @change="handleSelectAll"
               >
                 {{ t('public_all_selected') }}
@@ -800,6 +843,7 @@ const handleSelectAll = (checked: any) => {
                 <span class="mr-2">{{ totalPage }}</span>
               </el-pagination>
               <el-button
+                v-if="canEditSelectedGroup"
                 type="primary"
                 :disabled="canAddCount === 0"
                 @click="addSelectedResources"
@@ -822,7 +866,7 @@ const handleSelectAll = (checked: any) => {
             }}</span>
             <div class="flex gap-2" style="--btn-space: 0">
               <el-button
-                v-if="nonExistentResourcesCount > 0"
+                v-if="canEditSelectedGroup && nonExistentResourcesCount > 0"
                 text
                 type="warning"
                 @click="removeNonExistentResources"
@@ -835,7 +879,7 @@ const handleSelectAll = (checked: any) => {
                 }})
               </el-button>
               <el-button
-                v-if="selectedAddedResources.length > 0"
+                v-if="canEditSelectedGroup && selectedAddedResources.length > 0"
                 text
                 type="danger"
                 @click="removeSelectedResources"
@@ -858,7 +902,7 @@ const handleSelectAll = (checked: any) => {
               :data="treeData"
               node-key="id"
               :indent="8"
-              show-checkbox
+              :show-checkbox="canEditSelectedGroup"
               default-expand-all
               :props="{
                 label: (data: any) => data.name || data.label,
@@ -915,6 +959,7 @@ const handleSelectAll = (checked: any) => {
           <!-- 底部统计和保存 -->
           <div class="panel-footer p-3">
             <el-button
+              v-if="canEditSelectedGroup"
               class="w-100"
               type="primary"
               :loading="saving"

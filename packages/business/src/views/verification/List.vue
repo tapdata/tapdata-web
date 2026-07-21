@@ -540,11 +540,15 @@ onUnmounted(() => {
 <template>
   <PageContainer>
     <template #actions>
-      <ElButton :icon="ImportOutlined" @click="handleImport">
+      <ElButton
+        v-if="$has('v2_data_check_import')"
+        :icon="ImportOutlined"
+        @click="handleImport"
+      >
         {{ $t('public_task_import') }}
       </ElButton>
       <ElButton
-        v-readonlybtn="'datasource_creation'"
+        v-if="$has('v2_data_check_creation')"
         class="btn btn-create"
         type="primary"
         @click="handleCreate('pipeline')"
@@ -554,7 +558,7 @@ onUnmounted(() => {
         }}</span>
       </ElButton>
       <ElButton
-        v-readonlybtn="'datasource_creation'"
+        v-if="$has('v2_data_check_creation')"
         class="btn btn-create"
         type="primary"
         @click="handleCreate('random')"
@@ -687,7 +691,7 @@ onUnmounted(() => {
         <ElButton @click="$refs.table.showClassify(handleSelectTag())">
           <span> {{ $t('public_button_bulk_tag') }}</span>
         </ElButton>
-        <ElButton @click="handleExport">
+        <ElButton v-if="$has('v2_data_check_export')" @click="handleExport">
           <el-icon><ExportOutlined /></el-icon>
           <span> {{ $t('public_button_export') }}</span>
         </ElButton>
@@ -887,22 +891,8 @@ onUnmounted(() => {
               row.status === 'running'
             "
           >
-            <ElDivider
-              v-readonlybtn="'verify_job_edition'"
-              class="mx-1"
-              direction="vertical"
-            />
-            <ElButton
-              v-readonlybtn="'verify_job_edition'"
-              text
-              type="primary"
-              :disabled="
-                $disabledByPermission(
-                  'verify_job_edition_all_data',
-                  row.user_id,
-                )
-              "
-              @click="stop(row.id)"
+            <ElDivider class="mx-1" direction="vertical" />
+            <ElButton text type="primary" @click="stop(row.id)"
               >{{ $t('public_button_stop') }}
             </ElButton>
           </template>
@@ -915,14 +905,10 @@ onUnmounted(() => {
           >
             <ElDivider class="mx-1" direction="vertical" />
             <ElButton
-              v-readonlybtn="'verify_job_edition'"
               text
               type="primary"
               :disabled="
-                $disabledByPermission(
-                  'verify_job_edition_all_data',
-                  row.user_id,
-                ) || ['running', 'scheduling', 'stopping'].includes(row.status)
+                ['running', 'scheduling', 'stopping'].includes(row.status)
               "
               @click="startTask(row.id)"
               >{{ $t('packages_business_verification_executeVerifyTip') }}
@@ -931,7 +917,6 @@ onUnmounted(() => {
 
           <ElDivider class="mx-1" direction="vertical" />
           <ElButton
-            v-readonlybtn="'verify_job_edition'"
             text
             type="primary"
             :disabled="!row.InspectResult"
@@ -940,21 +925,11 @@ onUnmounted(() => {
           </ElButton>
 
           <template v-if="havePermission(row.permissionActions, 'Edit')">
-            <ElDivider
-              v-readonlybtn="'verify_job_edition'"
-              class="mx-1"
-              direction="vertical"
-            />
+            <ElDivider class="mx-1" direction="vertical" />
             <ElButton
-              v-readonlybtn="'verify_job_edition'"
               text
               type="primary"
-              :disabled="
-                $disabledByPermission(
-                  'verify_job_edition_all_data',
-                  row.user_id,
-                ) || ['running', 'scheduling'].includes(row.status)
-              "
+              :disabled="['running', 'scheduling'].includes(row.status)"
               @click="goEdit(row.id, row.flowId)"
               >{{ $t('packages_business_verification_configurationTip') }}
             </ElButton>
@@ -962,14 +937,7 @@ onUnmounted(() => {
 
           <template v-if="havePermission(row.permissionActions, 'Delete')">
             <ElDivider class="mx-1" direction="vertical" />
-            <ElButton
-              v-readonlybtn="'verify_job_edition'"
-              text
-              type="primary"
-              :disabled="
-                $disabledByPermission('verify_job_delete_all_data', row.user_id)
-              "
-              @click="remove(row.id, row)"
+            <ElButton text type="primary" @click="remove(row.id, row)"
               >{{ $t('public_button_delete') }}
             </ElButton>
           </template>

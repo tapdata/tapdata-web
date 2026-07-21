@@ -371,10 +371,7 @@ export default {
             text
             type="primary"
             :disabled="
-              $disabledByPermission(
-                'role_edition_all_data',
-                scope.row.user_id,
-              ) || scope.row.name === 'admin'
+              $disabledByPermission('role_edition_all_data', scope.row.user_id)
             "
             @click="handleAssociatUsers(scope.row.id)"
           >

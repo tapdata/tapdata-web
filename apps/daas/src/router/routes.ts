@@ -453,7 +453,7 @@ export const routes = [
         meta: {
           hideTitle: true,
           title: 'page_title_heartbeat_table',
-          code: 'v2_log_collector',
+          code: 'v2_conn_heartbeat',
         },
       },
     ],

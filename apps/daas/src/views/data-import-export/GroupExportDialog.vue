@@ -398,7 +398,12 @@ const handleCreateProject = () => {
                 :image-size="80"
               >
                 <template #description>
-                  <el-button v-if="!searchKeyword" @click="handleCreateProject">
+                  <el-button
+                    v-if="
+                      !searchKeyword && $has('v2_project_management_creation')
+                    "
+                    @click="handleCreateProject"
+                  >
                     <template #icon>
                       <i-lucide-plus />
                     </template>
@@ -413,7 +418,10 @@ const handleCreateProject = () => {
           </el-scrollbar>
 
           <el-button
-            v-if="filteredGroupList.length || searchKeyword"
+            v-if="
+              $has('v2_project_management_creation') &&
+              (filteredGroupList.length || searchKeyword)
+            "
             class="border-dashed m-2"
             @click="handleCreateProject"
           >
