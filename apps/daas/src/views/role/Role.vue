@@ -18,14 +18,13 @@ const emit = defineEmits<{
   saveBack: []
 }>()
 
-// ---- 模块图标映射 ----
-const MODULE_ICONS: Record<string, any> = {
-  'v2_data-console': IconLucideLayoutDashboard,
-  v2_datasource_menu: IconLucideDatabase,
-  v2_data_pipeline: IconLucideGitBranch,
-  v2_advanced_features: IconLucideBoxes,
-  'v2_data-server': IconLucideServerCog,
-  'v2_system-management': IconLucideSettings,
+const MODULE_ICONS: Record<string, string> = {
+  'v2_data-console': 'process-platform',
+  v2_datasource_menu: 'agent',
+  v2_data_pipeline: 'migrate',
+  v2_advanced_features: 'vip-one',
+  'v2_data-server': 'apiServer_navbar',
+  'v2_system-management': 'setting',
 }
 
 // ---- pageSort 配置 ----
@@ -497,7 +496,7 @@ function getCheckedStats(items: any[] = []) {
 }
 
 function getModuleIcon(name: string) {
-  return MODULE_ICONS[name] || IconLucidePanelTop
+  return MODULE_ICONS[name] || 'page'
 }
 
 function getPageAccessLabel(page: any) {
@@ -509,6 +508,10 @@ function getPageStats(page: any) {
     functions: getCheckedStats(page.buttons),
     data: getCheckedStats(page.filterData),
   }
+}
+
+function hasPageExtraPermissions(page: any) {
+  return Boolean(page.buttons?.length || page.filterData?.length)
 }
 
 function getModuleStats(item: any) {
@@ -579,7 +582,9 @@ function toggleExpand(name: string) {
 function expandAll() {
   filteredDataList.value.forEach((item: any) => {
     item.children?.forEach((page: any) => {
-      expandedPages[page.name] = true
+      if (hasPageExtraPermissions(page)) {
+        expandedPages[page.name] = true
+      }
     })
   })
 }
@@ -628,6 +633,8 @@ function getMappingData(pageData: any[]) {
             permission.checked = selectRole.value.includes(permission.name)
             permission.checkOrigin = permission.checked
           })
+          expandedPages[childItem.name] =
+            childItem.checked && hasPageExtraPermissions(childItem)
         })
       })
     })
@@ -659,11 +666,6 @@ function getPermission() {
           })
         }
         dataList.value = pageMenu(pageSort)
-        dataList.value.forEach((item: any) => {
-          item.children?.forEach((page: any) => {
-            expandedPages[page.name] = true
-          })
-        })
         getMappingData(dataList.value)
       }
     })
@@ -686,8 +688,17 @@ function getRoleDetail() {
 function handlePageAccessChange(page: any, module: any) {
   updateData(page.checked, page)
 
+  if (page.checked) {
+    if (hasPageExtraPermissions(page)) {
+      expandedPages[page.name] = true
+    }
+    return
+  }
+
+  setPagePermissionsChecked(page, false)
+  expandedPages[page.name] = false
+
   if (
-    !page.checked &&
     module.children?.every((item: any) => !item.checked) &&
     !checkPrincipalId(deletes.value, module.name)?.length
   ) {
@@ -700,6 +711,9 @@ function ensurePageAccess(page: any) {
   if (!page.checked) {
     page.checked = true
     updateData(true, page)
+  }
+  if (hasPageExtraPermissions(page)) {
+    expandedPages[page.name] = true
   }
 }
 
@@ -718,6 +732,17 @@ function togglePermissionAll(checked: any, page: any, key: string) {
     updateData(checked, permission)
   })
   if (checked) ensurePageAccess(page)
+}
+
+function setPagePermissionsChecked(page: any, checked: boolean) {
+  ;['buttons', 'filterData'].forEach((key) => {
+    page[key]?.forEach((permission: any) => {
+      if (permission.checked === checked) return
+
+      permission.checked = checked
+      updateData(checked, permission)
+    })
+  })
 }
 
 function updateData(checked: boolean, data: any) {
@@ -740,7 +765,7 @@ function updateData(checked: boolean, data: any) {
   } else {
     if (
       checked !== data.checkOrigin &&
-      checkPrincipalId(deletes.value, data.name)
+      checkPrincipalId(deletes.value, data.name)?.length === 0
     ) {
       deletes.value.push({
         principalType: 'PERMISSION',
@@ -859,7 +884,7 @@ onMounted(() => {
             <el-icon><i-lucide-search /></el-icon>
           </template>
         </el-input>
-        <div class="role-toolbar__actions">
+        <div class="role-toolbar__actions gap-3" style="--btn-space: 0">
           <el-button @click="expandAll">
             <template #icon><i-lucide-unfold-vertical /></template>
             {{ t('public_button_expand_all') }}
@@ -879,9 +904,7 @@ onMounted(() => {
         >
           <header class="role-module-group__header">
             <span class="role-module-group__icon">
-              <el-icon :size="16">
-                <component :is="getModuleIcon(item.name)" />
-              </el-icon>
+              <VIcon size="16">{{ getModuleIcon(item.name) }}</VIcon>
             </span>
             <h3 class="role-module-group__title">{{ item.description }}</h3>
             <span class="role-module-group__count">
@@ -911,11 +934,19 @@ onMounted(() => {
                   />
                 </div>
 
-                <button
-                  type="button"
+                <component
+                  :is="hasPageExtraPermissions(second) ? 'button' : 'div'"
+                  :type="hasPageExtraPermissions(second) ? 'button' : null"
                   class="role-page-card__summary"
-                  :aria-expanded="isExpanded(second.name)"
-                  @click="toggleExpand(second.name)"
+                  :class="{ 'is-static': !hasPageExtraPermissions(second) }"
+                  :aria-expanded="
+                    hasPageExtraPermissions(second)
+                      ? isExpanded(second.name)
+                      : null
+                  "
+                  @click="
+                    hasPageExtraPermissions(second) && toggleExpand(second.name)
+                  "
                 >
                   <span class="role-page-card__identity">
                     <span class="role-page-card__title-row">
@@ -924,57 +955,50 @@ onMounted(() => {
                       </span>
                       <span
                         v-if="!second.checked"
-                        class="role-page-card__status"
+                        class="role-page-card__status rounded-lg"
                       >
                         {{ t('role_permission_inaccessible') }}
                       </span>
                     </span>
-                    <span class="role-page-card__description">
-                      {{ t('role_permission_page_subtitle') }}
-                    </span>
                   </span>
 
                   <span class="role-page-card__summary-stats">
-                    <span class="role-page-card__summary-stat">
+                    <span
+                      v-if="getPageStats(second).functions.total"
+                      class="role-page-card__summary-stat"
+                    >
                       {{ t('daas_role_role_gongnengquanxian') }}
-                      <span
-                        v-if="getPageStats(second).functions.total"
-                        class="role-page-card__summary-count"
-                      >
+                      <span class="role-page-card__summary-count rounded-lg">
                         {{ getPageStats(second).functions.enabled }}/{{
                           getPageStats(second).functions.total
                         }}
                       </span>
-                      <span v-else class="role-page-card__summary-empty"
-                        >&mdash;</span
-                      >
                     </span>
-                    <span class="role-page-card__summary-stat">
+                    <span
+                      v-if="getPageStats(second).data.total"
+                      class="role-page-card__summary-stat"
+                    >
                       {{ t('role_dataPermission') }}
-                      <span
-                        v-if="getPageStats(second).data.total"
-                        class="role-page-card__summary-count"
-                      >
+                      <span class="role-page-card__summary-count rounded-lg">
                         {{ getPageStats(second).data.enabled }}/{{
                           getPageStats(second).data.total
                         }}
                       </span>
-                      <span v-else class="role-page-card__summary-empty"
-                        >&mdash;</span
-                      >
                     </span>
                   </span>
 
                   <span
+                    v-if="hasPageExtraPermissions(second)"
                     class="role-page-card__chevron"
                     :class="{ 'is-expanded': isExpanded(second.name) }"
                   >
                     <el-icon :size="18"><i-lucide-chevron-down /></el-icon>
                   </span>
-                </button>
+                </component>
               </header>
 
               <div
+                v-if="hasPageExtraPermissions(second)"
                 v-show="isExpanded(second.name)"
                 class="role-page-card__body"
                 :class="{ 'is-inactive': !second.checked }"
@@ -997,7 +1021,6 @@ onMounted(() => {
                             }}
                           </span>
                         </div>
-                        <p>{{ t('role_permission_function_description') }}</p>
                       </div>
                     </div>
                     <el-button
@@ -1052,7 +1075,6 @@ onMounted(() => {
                             }}
                           </span>
                         </div>
-                        <p>{{ t('role_permission_data_description') }}</p>
                       </div>
                     </div>
                     <el-button
@@ -1088,14 +1110,6 @@ onMounted(() => {
                     </el-checkbox>
                   </div>
                 </section>
-
-                <div
-                  v-if="!second.buttons?.length && !second.filterData?.length"
-                  class="role-page-card__empty"
-                >
-                  <el-icon :size="18"><i-lucide-circle-check /></el-icon>
-                  <span>{{ t('role_permission_no_extra_config') }}</span>
-                </div>
               </div>
             </article>
           </div>
@@ -1117,37 +1131,75 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .role-permission-wrap {
-  --role-border: #dfe3eb;
-  --role-border-subtle: #e9ecf2;
+  --role-border: var(--el-border-color-light);
+  --role-border-subtle: var(--el-border-color-lighter);
   --role-canvas: #f7f7fb;
-  --role-muted-panel: lab(96.2466% 0.28044 -2.2576);
-  --role-text: #20222a;
-  --role-text-secondary: #6f7482;
-  --role-text-muted: #9da2ad;
-  --role-primary: #5b50e6;
-  --role-primary-soft: #eeedff;
-  --role-primary-border: #c7c3ff;
-  --role-chevron-bg: #eef1fb;
+  --role-surface: var(--el-bg-color);
+  --role-hover: #fafbfc;
+  --role-divider: #f1f2f5;
+  --role-badge-bg: #f1f2f5;
+  --role-progress-bg: #eceef3;
+  --role-option-bg: var(--el-bg-color);
+  --role-option-inactive-selected-bg: #eceef2;
+  --role-option-inactive-border: #d9dce3;
+  --role-summary-empty: #c3c7cf;
+  --role-disabled-check: #aeb3bd;
+  --role-muted-panel: #f3f4f966;
+  --role-muted-control: #f1f2f5;
+  --role-text: var(--el-text-color-primary);
+  --role-text-secondary: var(--el-text-color-secondary);
+  --role-text-muted: var(--el-text-color-placeholder);
+  --role-primary: var(--el-color-primary);
+  --role-primary-soft: color-mix(
+    in srgb,
+    var(--role-primary) 10%,
+    var(--role-surface)
+  );
+  --role-primary-border: color-mix(
+    in srgb,
+    var(--role-primary) 34%,
+    var(--role-surface)
+  );
+  --role-chevron-bg: var(--role-primary-soft);
+  --role-toolbar-bg: rgba(255, 255, 255, 0.86);
+  --role-shadow: 0 1px 3px rgba(31, 35, 48, 0.1);
 
   margin: 0 auto;
   padding-bottom: 32px;
   color: var(--role-text);
+
+  &:where(html.dark *) {
+    --role-canvas: var(--el-bg-color);
+    --role-hover: rgba(255, 255, 255, 0.05);
+    --role-divider: var(--el-border-color-lighter);
+    --role-badge-bg: rgba(255, 255, 255, 0.08);
+    --role-progress-bg: rgba(255, 255, 255, 0.08);
+    --role-option-inactive-selected-bg: rgba(255, 255, 255, 0.07);
+    --role-option-inactive-border: rgba(255, 255, 255, 0.12);
+    --role-summary-empty: rgba(255, 255, 255, 0.32);
+    --role-disabled-check: rgba(255, 255, 255, 0.36);
+    --role-muted-panel: rgba(255, 255, 255, 0.04);
+    --role-muted-control: rgba(255, 255, 255, 0.08);
+    --role-toolbar-bg: rgba(20, 20, 24, 0.78);
+    --role-shadow: none;
+    color-scheme: dark;
+  }
 }
 
 .role-overview {
   position: relative;
   overflow: hidden;
-  background: #fff;
+  background: var(--role-surface);
   border: 1px solid var(--role-border);
   border-radius: 14px;
-  box-shadow: 0 1px 3px rgba(31, 35, 48, 0.1);
+  box-shadow: var(--role-shadow);
 
   &__content {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 32px;
-    padding: 24px 28px 26px;
+    padding: 20px;
   }
 
   &__identity {
@@ -1159,11 +1211,11 @@ onMounted(() => {
 
   &__icon {
     display: inline-flex;
-    flex: 0 0 52px;
+    flex: 0 0 44px;
     align-items: center;
     justify-content: center;
-    width: 52px;
-    height: 52px;
+    width: 44px;
+    height: 44px;
     color: var(--role-primary);
     background: var(--role-primary-soft);
     border-radius: 14px;
@@ -1185,8 +1237,8 @@ onMounted(() => {
     margin: 0;
     overflow-wrap: anywhere;
     color: var(--role-text);
-    font-size: 20px;
-    font-weight: 650;
+    font-size: 16px;
+    font-weight: 500;
     line-height: 1.35;
   }
 
@@ -1194,8 +1246,8 @@ onMounted(() => {
     flex-shrink: 0;
     padding: 3px 8px;
     color: var(--role-text-secondary);
-    background: #f1f2f5;
-    border: 1px solid #e1e4ea;
+    background: var(--role-badge-bg);
+    border: 1px solid var(--role-border);
     border-radius: 999px;
     font-size: 12px;
     line-height: 18px;
@@ -1239,7 +1291,7 @@ onMounted(() => {
 
   &__progress {
     height: 4px;
-    background: #eceef3;
+    background: var(--role-progress-bg);
 
     span {
       display: block;
@@ -1252,16 +1304,23 @@ onMounted(() => {
 
 .role-toolbar {
   display: flex;
+  position: sticky;
+  top: 0;
+  z-index: 20;
   align-items: center;
   gap: 12px;
-  margin: 24px 0 28px;
+  padding: 12px 0;
+  margin: 12px 0 20px;
+  background: var(--role-toolbar-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 
   &__search {
     flex: 1;
     min-width: 0;
 
     :deep(.el-input__wrapper) {
-      min-height: 42px;
+      min-height: 36px;
       border-radius: 12px;
     }
   }
@@ -1272,7 +1331,7 @@ onMounted(() => {
     gap: 8px;
 
     :deep(.el-button) {
-      min-height: 42px;
+      min-height: 36px;
       margin: 0;
       border-radius: 10px;
     }
@@ -1290,7 +1349,7 @@ onMounted(() => {
     display: flex;
     align-items: center;
     gap: 10px;
-    min-height: 34px;
+    min-height: 32px;
     margin-bottom: 10px;
   }
 
@@ -1333,24 +1392,18 @@ onMounted(() => {
   }
 
   &__pages {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    overflow: hidden;
+    background: var(--role-surface);
+    border: 1px solid var(--role-border);
+    border-radius: 14px;
   }
 }
 
 .role-page-card {
-  overflow: hidden;
-  background: #fff;
-  border: 1px solid var(--role-border);
-  border-radius: 14px;
-  transition:
-    border-color 180ms ease,
-    box-shadow 180ms ease;
+  background: var(--role-surface);
 
-  &.is-expanded {
-    border-color: var(--role-primary-border);
-    box-shadow: 0 2px 8px rgba(91, 80, 230, 0.12);
+  & + & {
+    border-top: 1px solid var(--role-divider);
   }
 
   &.is-inaccessible {
@@ -1363,12 +1416,12 @@ onMounted(() => {
   &__header {
     display: flex;
     align-items: stretch;
-    min-height: 76px;
+    min-height: 56px;
   }
 
   &__access {
     display: flex;
-    flex: 0 0 72px;
+    flex: 0 0 64px;
     align-items: center;
     justify-content: center;
     padding-left: 8px;
@@ -1381,7 +1434,7 @@ onMounted(() => {
     align-items: center;
     gap: 20px;
     min-width: 0;
-    padding: 12px 18px 12px 4px;
+    padding: 10px 16px 10px 2px;
     color: inherit;
     text-align: left;
     background: transparent;
@@ -1391,6 +1444,12 @@ onMounted(() => {
     &:focus-visible {
       box-shadow: 0 0 0 2px var(--role-primary-border) inset;
       outline: 0;
+    }
+
+    &.is-static {
+      grid-template-columns: minmax(220px, 1fr) auto;
+      padding-right: 24px;
+      cursor: default;
     }
   }
 
@@ -1412,7 +1471,7 @@ onMounted(() => {
   &__title {
     overflow-wrap: anywhere;
     color: var(--role-text);
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 650;
     line-height: 22px;
   }
@@ -1421,8 +1480,7 @@ onMounted(() => {
     flex-shrink: 0;
     padding: 2px 7px;
     color: var(--role-text-muted);
-    background: #f1f2f5;
-    border-radius: 999px;
+    background: var(--role-badge-bg);
     font-size: 11px;
     line-height: 18px;
   }
@@ -1454,13 +1512,12 @@ onMounted(() => {
     padding: 2px 7px;
     color: var(--role-primary);
     background: var(--role-primary-soft);
-    border-radius: 999px;
     font-variant-numeric: tabular-nums;
   }
 
   &__summary-empty {
     min-width: 20px;
-    color: #c3c7cf;
+    color: var(--role-summary-empty);
     font-size: 14px;
     text-align: center;
   }
@@ -1469,18 +1526,20 @@ onMounted(() => {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 28px;
+    height: 28px;
     color: var(--role-text-secondary);
-    background: var(--role-chevron-bg);
-    border-radius: 12px;
-    transition:
-      color 180ms ease,
-      transform 180ms ease;
-
+    border-radius: 10px;
+    transition: all 180ms ease;
+    .el-icon {
+      transition: all 180ms ease;
+    }
     &.is-expanded {
       color: var(--role-primary);
-      transform: rotate(180deg);
+      background: var(--role-chevron-bg);
+      .el-icon {
+        transform: rotate(180deg);
+      }
     }
   }
 
@@ -1488,9 +1547,9 @@ onMounted(() => {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 24px;
-    padding: 22px 24px 24px;
+    padding: 1rem 20px 20px;
     background: var(--role-muted-panel);
-    border-top: 1px solid var(--role-border-subtle);
+    border-top: 1px solid var(--role-divider);
 
     &.is-inactive {
       .role-permission-section__heading,
@@ -1499,15 +1558,15 @@ onMounted(() => {
       }
 
       .role-permission-option {
-        --el-checkbox-checked-bg-color: #aeb3bd;
-        --el-checkbox-checked-input-border-color: #aeb3bd;
+        --el-checkbox-checked-bg-color: var(--role-disabled-check);
+        --el-checkbox-checked-input-border-color: var(--role-disabled-check);
 
         background: var(--role-muted-panel);
-        border-color: #e2e5ea;
+        border-color: var(--role-border);
 
         &.is-selected {
-          background: #eceef2;
-          border-color: #d9dce3;
+          background: var(--role-option-inactive-selected-bg);
+          border-color: var(--role-option-inactive-border);
         }
 
         :deep(.el-checkbox__label) {
@@ -1541,36 +1600,30 @@ onMounted(() => {
 
   &__header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 20px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }
 
   &__heading {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     min-width: 0;
-    gap: 10px;
+    gap: 8px;
   }
 
   &__icon {
     display: inline-flex;
-    flex: 0 0 32px;
+    flex: 0 0 auto;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 10px;
-
-    &.is-function {
-      color: var(--role-primary);
-      background: var(--role-primary-soft);
-    }
+    width: 16px;
+    height: 20px;
+    color: var(--role-text-secondary);
 
     &.is-data {
       color: var(--role-text-secondary);
-      background: #eef0f5;
     }
   }
 
@@ -1582,8 +1635,7 @@ onMounted(() => {
     h4 {
       margin: 0;
       color: var(--role-text);
-      font-size: 14px;
-      font-weight: 650;
+      font-size: 13px;
       line-height: 20px;
     }
   }
@@ -1591,7 +1643,7 @@ onMounted(() => {
   &__count {
     padding: 1px 7px;
     color: var(--role-text-secondary);
-    background: #eceef3;
+    background: var(--role-badge-bg);
     border-radius: 999px;
     font-size: 11px;
     font-variant-numeric: tabular-nums;
@@ -1607,8 +1659,8 @@ onMounted(() => {
 }
 
 .role-permission-options {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
@@ -1619,12 +1671,13 @@ onMounted(() => {
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  width: 100%;
+  width: auto;
+  max-width: 100%;
   min-width: 0;
-  min-height: 38px;
+  min-height: 32px;
   padding: 0 10px;
   margin: 0;
-  background: #fff;
+  background: var(--role-option-bg);
   border: 1px solid var(--role-border);
   border-radius: 10px;
   transition:
@@ -1651,7 +1704,7 @@ onMounted(() => {
     padding-left: 8px;
     overflow-wrap: anywhere;
     color: var(--role-text-secondary);
-    font-size: 12px;
+    font-size: 13px;
     line-height: 18px;
     white-space: normal;
   }
@@ -1667,8 +1720,8 @@ onMounted(() => {
 }
 
 @media (hover: hover) {
-  .role-page-card__summary:hover {
-    background: #fafbfc;
+  .role-page-card__header:has(.role-page-card__summary:not(.is-static)):hover {
+    background: var(--role-hover);
   }
 
   .role-permission-option:not(.is-disabled):hover {
@@ -1701,6 +1754,10 @@ onMounted(() => {
   .role-page-card__summary {
     grid-template-columns: minmax(180px, 1fr) 40px;
     gap: 12px;
+
+    &.is-static {
+      grid-template-columns: minmax(180px, 1fr);
+    }
   }
 
   .role-page-card__summary-stats {
@@ -1712,10 +1769,6 @@ onMounted(() => {
   .role-page-card__chevron {
     grid-column: 2;
     grid-row: 1;
-  }
-
-  .role-permission-options {
-    grid-template-columns: minmax(0, 1fr);
   }
 
   .role-page-card__body {
@@ -1807,6 +1860,11 @@ onMounted(() => {
     &__summary {
       grid-template-columns: minmax(0, 1fr) 40px;
       padding: 14px 12px 14px 0;
+
+      &.is-static {
+        grid-template-columns: minmax(0, 1fr);
+        padding-right: 12px;
+      }
     }
 
     &__summary-stats {
@@ -1821,10 +1879,6 @@ onMounted(() => {
 
   .role-permission-section__header {
     gap: 8px;
-  }
-
-  .role-permission-options {
-    grid-template-columns: minmax(0, 1fr);
   }
 }
 

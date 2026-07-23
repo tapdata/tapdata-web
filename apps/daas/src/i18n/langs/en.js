@@ -791,7 +791,8 @@ export default {
     'Switch to batch insert mode interval in cdc. ',
   setting_share_cdc: 'Share cdc',
   setting_global_share_cdc_enable: 'Default global enable share cdc',
-  setting_global_share_cdc_enable_doc: 'When enabled by default, use the default external storage specified in the external storage list and apply it as the default setting to subsequent newly created connections and tasks. (Only after enabling can change logs be queried in Data trace)',
+  setting_global_share_cdc_enable_doc:
+    'When enabled by default, use the default external storage specified in the external storage list and apply it as the default setting to subsequent newly created connections and tasks. (Only after enabling can change logs be queried in Data trace)',
   setting_share_cdc_persistence_mode: 'Share cdc persistence mode',
   setting_share_cdc_persistence_memory_size:
     'Shared incremental memory cache line count',
@@ -811,8 +812,10 @@ export default {
     'The local path to the RocksDB store',
   setting_share_cdc_persistence_rocksdb_path_doc:
     'This configuration takes effect only when RocksDB is selected as the mode, and the local path stored by RocksDB',
-  setting_task_start_transform_wait_seconds: 'Task start transform wait time (seconds)',
-  setting_task_start_transform_wait_seconds_doc: 'After clicking to start the task, it will proceed with simulation or trial operation. If the set waiting duration is exceeded, the start will fail, requiring another click to initiate or increasing the simulation waiting duration. The default waiting duration is 60 seconds',
+  setting_task_start_transform_wait_seconds:
+    'Task start transform wait time (seconds)',
+  setting_task_start_transform_wait_seconds_doc:
+    'After clicking to start the task, it will proceed with simulation or trial operation. If the set waiting duration is exceeded, the start will fail, requiring another click to initiate or increasing the simulation waiting duration. The default waiting duration is 60 seconds',
   setting_task_log_file_save_time: 'Task log retention time (days)',
   setting_task_log_file_save_size: 'Task log retention size (MB)',
   setting_task_log_file_save_count: 'Task log retention total count',
@@ -828,8 +831,10 @@ export default {
   setting_Login_Brief_Tips: 'Login brief tips',
   setting_Login_Brief_Tips_doc:
     'Once enabled, the login prompt will be simplified',
-  setting_Access_Token_Idle_Timeout_Minutes: 'Session idle timeout (in minutes)',
-  setting_Access_Token_Idle_Timeout_Minutes_doc: 'When the session is inactive for more than the set value, the session becomes invalid and needs to be logged in again',
+  setting_Access_Token_Idle_Timeout_Minutes:
+    'Session idle timeout (in minutes)',
+  setting_Access_Token_Idle_Timeout_Minutes_doc:
+    'When the session is inactive for more than the set value, the session becomes invalid and needs to be logged in again',
   setting_LDAP: 'LDAP Authentication',
   setting_Ldap_Login_Enable: 'Use LDAP Login',
   setting_Ldap_Server_Host: 'LDAP Server Address',
@@ -1031,12 +1036,12 @@ export default {
   notify_noticeInterval: 'Send interval',
   notify_operator: 'Operator',
   role_list_select_role_name: 'Please enter the role name',
-  role_list_role_name: 'role name',
-  role_list_description: 'role description',
+  role_list_role_name: 'Role Name',
+  role_list_description: 'Role Description',
   role_list_associat_users: 'Associate User',
-  role_list_create: 'Create roles',
+  role_list_create: 'Create Roles',
   role_list_edit: 'Edit roles',
-  role_list_default_role: 'Default role',
+  role_list_default_role: 'Default Role',
   role_list_setting_permissions: 'Set Permissions',
   role_list_setting_api: 'Set API access',
   role_list_delete_remind: 'Confirm to delete role {0}',
@@ -2316,7 +2321,8 @@ export default {
   daas_task_rebalance_confirm: 'Confirm Rebalance',
   daas_task_rebalance_create: 'Create Rebalance',
   daas_task_rebalance_empty: 'No tasks available for rebalancing',
-  daas_task_rebalance_create_success: 'Rebalance plan created, migration started',
+  daas_task_rebalance_create_success:
+    'Rebalance plan created, migration started',
   daas_task_rebalance_type_initial_sync: 'Full',
   daas_task_rebalance_type_cdc: 'Incremental',
   daas_task_rebalance_type_full_cdc: 'Full + Incremental',
