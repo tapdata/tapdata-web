@@ -2044,6 +2044,22 @@ export default {
     'Please select the functions and data permissions available for this role (checking all role data means you can browse or operate the data of all roles, unchecking means you can only browse or operate your own data )',
   role_funcPermission: 'Function permission settings',
   role_currentRole: 'Current role',
+  role_permission_overview_subtitle:
+    'Configure the pages and actions available to this role',
+  role_permission_default_role: 'System default',
+  role_permission_accessible_pages: 'Accessible pages',
+  role_permission_enabled_permissions: 'Enabled permissions',
+  role_permission_enabled_modules: 'Active modules',
+  role_permission_coverage: 'Permission coverage',
+  role_permission_search_placeholder: 'Search pages or modules',
+  role_permission_page_access: 'Page access',
+  role_permission_inaccessible: 'No access',
+  role_permission_page_subtitle: 'Manage access and permission scope',
+  role_permission_function_description: 'Actions available on this page',
+  role_permission_data_description: 'Read and write control for data scope',
+  role_permission_deselect_all: 'Deselect all',
+  role_permission_no_extra_config:
+    'No additional configuration is required. Enable access to use this page.',
   role_pageVisible: 'Page permission settings',
   role_pageShowTip:
     'Checked means navigation and page are visible to the current character, unchecked will not display',
