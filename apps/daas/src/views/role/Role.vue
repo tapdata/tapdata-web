@@ -1026,6 +1026,7 @@ onMounted(() => {
                       v-model="permission.checked"
                       class="role-permission-option"
                       :class="{ 'is-selected': permission.checked }"
+                      size="small"
                       @change="handlePermissionChange(permission, second)"
                     >
                       {{ permission.label }}
@@ -1080,6 +1081,7 @@ onMounted(() => {
                       v-model="permission.checked"
                       class="role-permission-option"
                       :class="{ 'is-selected': permission.checked }"
+                      size="small"
                       @change="handlePermissionChange(permission, second)"
                     >
                       {{ permission.label }}
@@ -1117,10 +1119,15 @@ onMounted(() => {
 .role-permission-wrap {
   --role-border: #dfe3eb;
   --role-border-subtle: #e9ecf2;
-  --role-canvas: #f7f8fb;
+  --role-canvas: #f7f7fb;
+  --role-muted-panel: lab(96.2466% 0.28044 -2.2576);
   --role-text: #20222a;
   --role-text-secondary: #6f7482;
   --role-text-muted: #9da2ad;
+  --role-primary: #5b50e6;
+  --role-primary-soft: #eeedff;
+  --role-primary-border: #c7c3ff;
+  --role-chevron-bg: #eef1fb;
 
   margin: 0 auto;
   padding-bottom: 32px;
@@ -1132,7 +1139,7 @@ onMounted(() => {
   overflow: hidden;
   background: #fff;
   border: 1px solid var(--role-border);
-  border-radius: 8px;
+  border-radius: 14px;
   box-shadow: 0 1px 3px rgba(31, 35, 48, 0.1);
 
   &__content {
@@ -1157,9 +1164,9 @@ onMounted(() => {
     justify-content: center;
     width: 52px;
     height: 52px;
-    color: var(--el-color-primary);
-    background: var(--el-color-primary-light-9);
-    border-radius: 8px;
+    color: var(--role-primary);
+    background: var(--role-primary-soft);
+    border-radius: 14px;
   }
 
   &__copy {
@@ -1237,7 +1244,7 @@ onMounted(() => {
     span {
       display: block;
       height: 100%;
-      background: var(--el-color-primary);
+      background: var(--role-primary);
       transition: width 220ms cubic-bezier(0.16, 1, 0.3, 1);
     }
   }
@@ -1255,7 +1262,7 @@ onMounted(() => {
 
     :deep(.el-input__wrapper) {
       min-height: 42px;
-      border-radius: 8px;
+      border-radius: 12px;
     }
   }
 
@@ -1267,7 +1274,7 @@ onMounted(() => {
     :deep(.el-button) {
       min-height: 42px;
       margin: 0;
-      border-radius: 8px;
+      border-radius: 10px;
     }
   }
 }
@@ -1294,9 +1301,9 @@ onMounted(() => {
     justify-content: center;
     width: 32px;
     height: 32px;
-    color: var(--el-color-primary);
-    background: var(--el-color-primary-light-9);
-    border-radius: 8px;
+    color: var(--role-primary);
+    background: var(--role-primary-soft);
+    border-radius: 10px;
   }
 
   &__title {
@@ -1311,8 +1318,8 @@ onMounted(() => {
   &__count {
     flex-shrink: 0;
     padding: 2px 8px;
-    color: var(--el-color-primary);
-    background: var(--el-color-primary-light-9);
+    color: var(--role-primary);
+    background: var(--role-primary-soft);
     border-radius: 999px;
     font-size: 12px;
     font-variant-numeric: tabular-nums;
@@ -1336,14 +1343,14 @@ onMounted(() => {
   overflow: hidden;
   background: #fff;
   border: 1px solid var(--role-border);
-  border-radius: 8px;
+  border-radius: 14px;
   transition:
     border-color 180ms ease,
     box-shadow 180ms ease;
 
   &.is-expanded {
-    border-color: var(--el-color-primary-light-5);
-    box-shadow: 0 1px 3px rgba(31, 35, 48, 0.12);
+    border-color: var(--role-primary-border);
+    box-shadow: 0 2px 8px rgba(91, 80, 230, 0.12);
   }
 
   &.is-inaccessible {
@@ -1356,7 +1363,7 @@ onMounted(() => {
   &__header {
     display: flex;
     align-items: stretch;
-    min-height: 80px;
+    min-height: 76px;
   }
 
   &__access {
@@ -1374,7 +1381,7 @@ onMounted(() => {
     align-items: center;
     gap: 20px;
     min-width: 0;
-    padding: 14px 18px 14px 4px;
+    padding: 12px 18px 12px 4px;
     color: inherit;
     text-align: left;
     background: transparent;
@@ -1382,7 +1389,7 @@ onMounted(() => {
     cursor: pointer;
 
     &:focus-visible {
-      box-shadow: 0 0 0 2px var(--el-color-primary-light-5) inset;
+      box-shadow: 0 0 0 2px var(--role-primary-border) inset;
       outline: 0;
     }
   }
@@ -1445,8 +1452,8 @@ onMounted(() => {
 
   &__summary-count {
     padding: 2px 7px;
-    color: var(--el-color-primary);
-    background: var(--el-color-primary-light-9);
+    color: var(--role-primary);
+    background: var(--role-primary-soft);
     border-radius: 999px;
     font-variant-numeric: tabular-nums;
   }
@@ -1465,21 +1472,24 @@ onMounted(() => {
     width: 40px;
     height: 40px;
     color: var(--role-text-secondary);
-    background: var(--role-canvas);
-    border-radius: 8px;
+    background: var(--role-chevron-bg);
+    border-radius: 12px;
     transition:
       color 180ms ease,
       transform 180ms ease;
 
     &.is-expanded {
-      color: var(--el-color-primary);
+      color: var(--role-primary);
       transform: rotate(180deg);
     }
   }
 
   &__body {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
     padding: 22px 24px 24px;
-    background: var(--role-canvas);
+    background: var(--role-muted-panel);
     border-top: 1px solid var(--role-border-subtle);
 
     &.is-inactive {
@@ -1492,7 +1502,7 @@ onMounted(() => {
         --el-checkbox-checked-bg-color: #aeb3bd;
         --el-checkbox-checked-input-border-color: #aeb3bd;
 
-        background: #f2f3f5;
+        background: var(--role-muted-panel);
         border-color: #e2e5ea;
 
         &.is-selected {
@@ -1513,6 +1523,7 @@ onMounted(() => {
 
   &__empty {
     display: flex;
+    grid-column: 1 / -1;
     align-items: center;
     gap: 8px;
     min-height: 44px;
@@ -1522,10 +1533,10 @@ onMounted(() => {
 }
 
 .role-permission-section {
-  & + & {
-    padding-top: 20px;
-    margin-top: 20px;
-    border-top: 1px solid var(--role-border-subtle);
+  min-width: 0;
+
+  &:only-child {
+    grid-column: 1 / -1;
   }
 
   &__header {
@@ -1550,16 +1561,16 @@ onMounted(() => {
     justify-content: center;
     width: 32px;
     height: 32px;
-    border-radius: 8px;
+    border-radius: 10px;
 
     &.is-function {
-      color: var(--el-color-primary);
-      background: var(--el-color-primary-light-9);
+      color: var(--role-primary);
+      background: var(--role-primary-soft);
     }
 
     &.is-data {
-      color: #18775b;
-      background: #eaf6f1;
+      color: var(--role-text-secondary);
+      background: #eef0f5;
     }
   }
 
@@ -1597,35 +1608,51 @@ onMounted(() => {
 
 .role-permission-options {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
 }
 
 .role-permission-option {
+  --el-checkbox-checked-bg-color: var(--role-primary);
+  --el-checkbox-checked-input-border-color: var(--role-primary);
+
   box-sizing: border-box;
+  display: flex;
+  align-items: center;
   width: 100%;
   min-width: 0;
-  min-height: 48px;
-  padding: 0 14px;
+  min-height: 38px;
+  padding: 0 10px;
   margin: 0;
   background: #fff;
   border: 1px solid var(--role-border);
-  border-radius: 6px;
+  border-radius: 10px;
   transition:
     background-color 160ms ease,
     border-color 160ms ease;
 
   &.is-selected {
-    background: var(--el-color-primary-light-9);
-    border-color: var(--el-color-primary-light-5);
+    background: var(--role-primary-soft);
+    border-color: var(--role-primary-border);
+  }
+
+  :deep(.el-checkbox__input) {
+    flex-shrink: 0;
+  }
+
+  :deep(.el-checkbox__inner) {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
   }
 
   :deep(.el-checkbox__label) {
     min-width: 0;
+    padding-left: 8px;
     overflow-wrap: anywhere;
     color: var(--role-text-secondary);
-    font-size: 13px;
-    line-height: 20px;
+    font-size: 12px;
+    line-height: 18px;
     white-space: normal;
   }
 
@@ -1645,7 +1672,7 @@ onMounted(() => {
   }
 
   .role-permission-option:not(.is-disabled):hover {
-    border-color: var(--el-color-primary-light-5);
+    border-color: var(--role-primary-border);
   }
 }
 
@@ -1688,7 +1715,11 @@ onMounted(() => {
   }
 
   .role-permission-options {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .role-page-card__body {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
