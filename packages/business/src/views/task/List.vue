@@ -890,8 +890,11 @@ export default {
       exportTasks(ids)
     },
 
-    batchUpdateAlarmEmailReceivers(ids) {
-      this.$refs.batchAlarmEmailDialog.open(ids)
+    batchUpdateAlarmEmailReceivers(ids, item = {}) {
+      const tasks = item?.id
+        ? [item]
+        : this.multipleSelection.filter(({ id }) => ids.includes(id))
+      this.$refs.batchAlarmEmailDialog.open(tasks)
     },
 
     handleBatchAlarmEmailSuccess() {
@@ -1561,29 +1564,29 @@ export default {
             >
               {{ $t('public_button_start') }}
             </ElButton>
-            <template v-else>
-              <ElButton
-                v-if="row.status === 'stopping' && havePermission(row, 'Stop')"
-                text
-                type="primary"
-                data-testid="force-stop-task"
-                :disabled="row.btnDisabled.forceStop"
-                @click="forceStop([row.id], row)"
-              >
-                {{ $t('public_button_force_stop') }}
-              </ElButton>
-              <ElButton
-                v-else-if="havePermission(row, 'Stop')"
-                text
-                type="primary"
-                name="stop-task-btn"
-                data-testid="stop-task"
-                :disabled="row.btnDisabled.stop"
-                @click="stop([row.id], row)"
-              >
-                {{ $t('public_button_stop') }}
-              </ElButton>
-            </template>
+            <ElButton
+              v-else-if="
+                row.status === 'stopping' && havePermission(row, 'Stop')
+              "
+              text
+              type="primary"
+              data-testid="force-stop-task"
+              :disabled="row.btnDisabled.forceStop"
+              @click="forceStop([row.id], row)"
+            >
+              {{ $t('public_button_force_stop') }}
+            </ElButton>
+            <ElButton
+              v-else-if="havePermission(row, 'Stop')"
+              text
+              type="primary"
+              name="stop-task-btn"
+              data-testid="stop-task"
+              :disabled="row.btnDisabled.stop"
+              @click="stop([row.id], row)"
+            >
+              {{ $t('public_button_stop') }}
+            </ElButton>
             <ElButton
               v-if="havePermission(row, 'Edit')"
               text

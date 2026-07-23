@@ -240,6 +240,8 @@ export default {
     '保存后，将覆盖所选任务原有的告警接收人设置',
   packages_business_task_batch_alarm_email_empty:
     '暂无可选邮件接收人，可直接保存以清空所选任务的告警接收人',
+  packages_business_task_batch_alarm_email_no_edit_permission_tip:
+    '以下 {count} 个任务没有编辑权限，保存时将自动跳过',
   packages_business_dataFlow_addTag: '添加标签',
   packages_business_dataVerify_dataVerify: '数据校验',
   packages_business_dataFlow_selectAll: '全选',

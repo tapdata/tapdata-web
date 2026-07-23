@@ -112,5 +112,5 @@ export function batchUpdateTaskAlarm(params: {
   alarmSettings?: AlarmSettingVO[] | null
   emailReceivers?: string[] | null
 }) {
-  return requestClient.post(`${BASE_URL}/batch-update`, params)
+  return requestClient.post('/api/task/alarm/batch-update', params)
 }

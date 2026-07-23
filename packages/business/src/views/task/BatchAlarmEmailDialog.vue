@@ -10,6 +10,12 @@ type EmailOption = {
   value: string
 }
 
+type BatchAlarmTask = {
+  id: string
+  name?: string
+  permissionActions?: string[]
+}
+
 const emit = defineEmits<{
   (event: 'success'): void
 }>()
@@ -19,6 +25,7 @@ const { t } = useI18n()
 const visible = ref(false)
 const saveLoading = ref(false)
 const taskIds = ref<string[]>([])
+const noEditTasks = ref<BatchAlarmTask[]>([])
 const emailReceivers = ref<string[]>([])
 const emailOptions = ref<EmailOption[]>([])
 
@@ -40,8 +47,15 @@ function loadEmailReceivers() {
   emailReceivers.value = receivers
 }
 
-function open(ids: string[]) {
-  taskIds.value = ids
+function open(tasks: BatchAlarmTask[]) {
+  const editableTasks = tasks.filter((task) =>
+    task.permissionActions?.includes('Edit'),
+  )
+
+  taskIds.value = editableTasks.map((task) => task.id)
+  noEditTasks.value = tasks.filter(
+    (task) => !task.permissionActions?.includes('Edit'),
+  )
   loadEmailReceivers()
   visible.value = true
 }
@@ -85,6 +99,43 @@ defineExpose({
     :close-on-click-modal="false"
     @close="close"
   >
+    <ElAlert
+      v-if="noEditTasks.length"
+      class="batch-alarm-email-permission-alert align-items-start"
+      type="warning"
+      :closable="false"
+      show-icon
+    >
+      <template #icon>
+        <el-icon :size="20">
+          <i-lucide-triangle-alert />
+        </el-icon>
+      </template>
+      <template #title>
+        <span class="fs-7 lh-sm">
+          {{
+            $t(
+              'packages_business_task_batch_alarm_email_no_edit_permission_tip',
+              {
+                count: noEditTasks.length,
+              },
+            )
+          }}
+        </span>
+      </template>
+      <div class="batch-alarm-email-no-permission-list">
+        <ElTag
+          v-for="task in noEditTasks"
+          :key="task.id"
+          type="warning"
+          effect="plain"
+          class="batch-alarm-email-no-permission-item wrap-tag rounded-lg"
+          :title="task.name || task.id"
+        >
+          {{ task.name || task.id }}
+        </ElTag>
+      </div>
+    </ElAlert>
     <ElForm label-position="top">
       <ElFormItem :label="$t('packages_business_task_batch_alarm_email_label')">
         <ElSelect
@@ -159,5 +210,33 @@ defineExpose({
   flex: 0 0 auto;
   margin-top: 1px;
   color: var(--el-text-color-placeholder);
+}
+
+.batch-alarm-email-permission-alert {
+  margin-bottom: 12px;
+}
+
+.batch-alarm-email-no-permission-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.batch-alarm-email-no-permission-item {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wrap-tag {
+  height: auto;
+  white-space: normal;
+  line-height: 1.5;
+  padding: 4px 8px;
+}
+
+.wrap-tag .el-tag__content {
+  white-space: normal;
 }
 </style>

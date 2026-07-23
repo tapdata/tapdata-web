@@ -267,6 +267,8 @@ export default {
     "After saving, the selected tasks' existing alert receiver settings will be overwritten.",
   packages_business_task_batch_alarm_email_empty:
     'No email receivers available. Save directly to clear alert receivers from the selected tasks.',
+  packages_business_task_batch_alarm_email_no_edit_permission_tip:
+    '{count} tasks do not have edit permission and will be skipped.',
   packages_business_dataFlow_addTag: 'Add Tag',
   packages_business_dataVerify_dataVerify: 'Data Verify',
   packages_business_dataFlow_selectAll: 'Select All',
@@ -761,8 +763,10 @@ export default {
     'When the task encounters an error',
   packages_business_setting_alarmnotification_dangrenwustop:
     'When the Agent service stops',
-  packages_business_setting_alarmnotification_dangyinqinglixian: 'When the engine stops',
-  packages_business_setting_alarmnotification_dangyinqinghuifu: 'When the engine starts',
+  packages_business_setting_alarmnotification_dangyinqinglixian:
+    'When the engine stops',
+  packages_business_setting_alarmnotification_dangyinqinghuifu:
+    'When the engine starts',
   packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn:
     'When APIServer worker P50 per minute exceeding threshold',
   packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn:
@@ -1779,6 +1783,8 @@ export default {
     'Under active development. Some features may still be incomplete.',
   packages_business_column_setting: 'Display Settings',
   packages_business_column_reset: 'Reset',
-  packages_business_api_server_connection_pool_deficiency_warn: 'When any API Server connection pool resource is tight and triggers the alarm threshold',
-  packages_business_api_server_connection_pool_idle_warn: 'When the number of connections in the connection pool of any API Server falls below the alarm threshold',
+  packages_business_api_server_connection_pool_deficiency_warn:
+    'When any API Server connection pool resource is tight and triggers the alarm threshold',
+  packages_business_api_server_connection_pool_idle_warn:
+    'When the number of connections in the connection pool of any API Server falls below the alarm threshold',
 }
