@@ -429,7 +429,7 @@ export default {
       class="create-role"
       width="600px"
     >
-      <ElForm ref="form" :model="form" label-width="120px">
+      <ElForm ref="form" :model="form" label-position="top">
         <ElFormItem
           :label="$t('role_list_role_name')"
           prop="name"
