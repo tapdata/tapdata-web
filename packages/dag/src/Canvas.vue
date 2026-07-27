@@ -272,6 +272,10 @@ onMounted(() => {
 onUnmounted(() => {
   cleanupKeyboardShortcuts()
   dataflowStore.unregisterVueFlowUpdateCallback()
+  if (locatedNodeHighlightTimer) {
+    clearTimeout(locatedNodeHighlightTimer)
+    locatedNodeHighlightTimer = null
+  }
   leftPanelResizeObserver?.disconnect()
   leftPanelMutationObserver?.disconnect()
   rightPanelResizeObserver?.disconnect()
@@ -315,6 +319,8 @@ const ZOOM_STEP = 0.1
 const MIN_ZOOM = 0.1
 const MAX_ZOOM = 10
 const ZOOM_PRESETS = [0.25, 0.5, 0.75, 1, 2]
+const LOCATED_NODE_HIGHLIGHT_DURATION = 1800
+let locatedNodeHighlightTimer: ReturnType<typeof setTimeout> | null = null
 
 const zoomPercentage = computed(() => Math.round(viewport.value.zoom * 100))
 const previousZoom = ref(1)
@@ -806,13 +812,25 @@ provide('clearDragHelperLines', () => {
   helperLineVertical.value = undefined
 })
 
-function locateNode(nodeId: string) {
+async function locateNode(nodeId: string) {
   const node = vueFlow.findNode(nodeId)
   if (!node) return
+  dataflowStore.locatedNodeId = ''
+  await nextTick()
+  dataflowStore.locatedNodeId = nodeId
+
+  if (locatedNodeHighlightTimer) clearTimeout(locatedNodeHighlightTimer)
+  locatedNodeHighlightTimer = setTimeout(() => {
+    if (dataflowStore.locatedNodeId === nodeId) {
+      dataflowStore.locatedNodeId = ''
+    }
+    locatedNodeHighlightTimer = null
+  }, LOCATED_NODE_HIGHLIGHT_DURATION)
+
   fitViewWithOffset({
     nodes: [nodeId],
     duration: 300,
-    maxZoom: viewport.value.zoom,
+    maxZoom: 1,
   })
 }
 
