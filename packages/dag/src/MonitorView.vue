@@ -44,7 +44,6 @@ const taskRecord = ref({ total: 0, items: [] as any[] })
 const timeFormat = ref('HH:mm:ss')
 const nodeDetailDialog = ref(false)
 const nodeDetailDialogId = ref('')
-const canvasRef = ref<any>(null)
 const { t } = useI18n()
 
 const {
@@ -56,6 +55,7 @@ const {
   formScope,
   isSaving,
   syncTypeLabel,
+  canvasRef,
   taskOperationsRef,
   consoleRef,
   skipErrorRef,
