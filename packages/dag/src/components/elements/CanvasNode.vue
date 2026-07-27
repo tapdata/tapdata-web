@@ -28,9 +28,14 @@ const hasNodeError = computed(() => store.getters['dataflow/hasNodeError'])
 const ins = computed(() => props.data?.__Ctor || {})
 
 const wrapClass = computed(() => {
-  if (dataflowStore.selectedNode?.id === props.data.id || props.selected)
-    return 'border-primary'
-  return ''
+  const list: string[] = []
+  if (dataflowStore.selectedNode?.id === props.data.id || props.selected) {
+    list.push('border-primary')
+  }
+  if (dataflowStore.locatedNodeId === props.data.id) {
+    list.push('is-locating')
+  }
+  return list
 })
 
 const nodeClass = computed(() => {
@@ -216,6 +221,11 @@ const canBeTarget = computed(() => {
 .df-node-wrap {
   z-index: 5;
   outline: none;
+
+  &.is-locating {
+    z-index: 9;
+  }
+
   &.can-be-connected {
     .node-anchor.input {
       display: flex;
