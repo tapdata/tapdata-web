@@ -453,6 +453,11 @@ const save = async (type?: boolean) => {
       }
     }
 
+    const normalizedCustomWhere =
+      apiType === 'customerQuery' && fullCustomQuery
+        ? mqlEditor.value?.normalize(customWhere) ?? customWhere
+        : customWhere
+
     const params = form.value?.params
       ?.filter((t: any) => t.name)
       .map((t: any) => {
@@ -537,10 +542,14 @@ const save = async (type?: boolean) => {
             fields,
             path,
             fullCustomQuery,
-            customWhere,
+            customWhere: normalizedCustomWhere,
           },
         ],
         pathSetting: pathSettingList,
+      }
+
+      if (apiType === 'customerQuery' && fullCustomQuery) {
+        form.value.customWhere = normalizedCustomWhere
       }
 
       if (!type && connectionId && tableName) {

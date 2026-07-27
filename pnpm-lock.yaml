@@ -733,6 +733,9 @@ importers:
       dayjs:
         specifier: 'catalog:'
         version: 1.11.13
+      json5:
+        specifier: ^2.2.3
+        version: 2.2.3
       juice:
         specifier: 'catalog:'
         version: 11.0.1

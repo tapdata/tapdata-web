@@ -103,6 +103,7 @@ const bloodlineLoading = ref(false)
 const filterMode = ref<'builder' | 'mql'>('builder')
 const filterRows = ref<FilterRow[]>([{ field: '', operator: '=', value: '' }])
 const mqlJson = ref('')
+const mqlEditorRef = ref<any>(null)
 const trackedFields = ref<string[]>([])
 const trackedFieldInput = ref('')
 const selectedNodeId = ref<string | null>(null)
@@ -471,7 +472,22 @@ function handleTrace() {
       .filter(Boolean)
     if (custom.length) filters = { custom }
   } else {
-    filters = { sql: mqlJson.value }
+    const validation = mqlEditorRef.value?.validateJSON(mqlJson.value)
+    if (!validation?.isValid) {
+      ElMessage.error(
+        `${t('public_json_format_error')}: ${validation?.error?.message || ''}`,
+      )
+      tracing.value = false
+      nodeStatus.value = {}
+      return
+    }
+
+    const normalizedMqlJson =
+      mqlEditorRef.value?.normalize(mqlJson.value) ?? mqlJson.value
+    mqlJson.value = normalizedMqlJson
+    if (normalizedMqlJson.trim()) {
+      filters = { sql: normalizedMqlJson }
+    }
   }
 
   traceAbortController = getTraceData(
@@ -977,7 +993,12 @@ const OplogTreeNode = defineComponent({
 
       <!-- MQL Mode -->
       <div v-else class="trace-mql">
-        <MqlEditor v-model="mqlJson" height="180" :fields="fieldOptions" />
+        <MqlEditor
+          ref="mqlEditorRef"
+          v-model="mqlJson"
+          :height="180"
+          :fields="fieldOptions"
+        />
       </div>
 
       <!-- Tracked Fields -->
