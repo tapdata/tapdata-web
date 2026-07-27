@@ -20,6 +20,7 @@
     "axios": "catalog:",
     "cron-parser": "catalog:",
     "dayjs": "catalog:",
+    "json5": "^2.2.3",
     "juice": "catalog:",
     "lodash": "catalog:",
     "monaco-editor": "catalog:",
