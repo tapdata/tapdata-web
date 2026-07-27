@@ -1130,6 +1130,17 @@ export default {
   packages_business_application_list_chuangjianyingyong: '创建应用',
   packages_business_data_server_drawer_qingxuanzesuoshu: '请选择所属应用',
   packages_business_data_server_drawer_suoshuyingyong: '所属应用',
+  packages_business_data_server_drawer_fuwusuoyin: '服务型索引',
+  packages_business_data_server_drawer_tuijiansuoyin: '推荐索引',
+  packages_business_data_server_drawer_tuijianbukeyong:
+    '使用自定义查询时无法推荐索引',
+  packages_business_data_server_drawer_explainmianze:
+    '推荐仅依据接口查询条件生成，未经真实流量验证；创建前请用 explain() 核对。',
+  packages_business_data_server_drawer_wuketuijian: '当前查询无可推荐的索引',
+  packages_business_data_server_drawer_jiazaisuoyin: '加载索引',
+  packages_business_data_server_drawer_jiazai: '加载',
+  packages_business_data_server_drawer_yishoulusuoyin: '已收录索引',
+  packages_business_data_server_drawer_zanwushoulu: '暂无已收录索引',
   packages_business_create_connection_scenedialog_gongzuoliu: '工作流',
   packages_business_create_connection_scenedialog_duiliegongshu: '队列供数',
   packages_business_create_connection_scenedialog_guochantidai: '国产替代',

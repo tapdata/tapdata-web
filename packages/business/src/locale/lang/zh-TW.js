@@ -1124,6 +1124,17 @@ export default {
   packages_business_application_list_chuangjianyingyong: '创建应用',
   packages_business_data_server_drawer_qingxuanzesuoshu: '请选择所属应用',
   packages_business_data_server_drawer_suoshuyingyong: '所属应用',
+  packages_business_data_server_drawer_fuwusuoyin: '服務型索引',
+  packages_business_data_server_drawer_tuijiansuoyin: '推薦索引',
+  packages_business_data_server_drawer_tuijianbukeyong:
+    '使用自訂查詢時無法推薦索引',
+  packages_business_data_server_drawer_explainmianze:
+    '推薦僅依據介面查詢條件產生，未經真實流量驗證；建立前請用 explain() 核對。',
+  packages_business_data_server_drawer_wuketuijian: '目前查詢無可推薦的索引',
+  packages_business_data_server_drawer_jiazaisuoyin: '載入索引',
+  packages_business_data_server_drawer_jiazai: '載入',
+  packages_business_data_server_drawer_yishoulusuoyin: '已收錄索引',
+  packages_business_data_server_drawer_zanwushoulu: '暫無已收錄索引',
   packages_business_create_connection_scenedialog_gongzuoliu: '工作流',
   packages_business_create_connection_scenedialog_duiliegongshu: '隊列供數',
   packages_business_create_connection_scenedialog_guochantidai: '國產替代',

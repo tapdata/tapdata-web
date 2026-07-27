@@ -288,6 +288,7 @@ export const useDrawer = (t: any, apiApplication?: Ref<any>) => {
       connectionType: '',
       connectionId: '',
       tableName: '',
+      servingIndexes: [],
 
       // paths
       fields: [],
@@ -347,6 +348,7 @@ export const useDrawer = (t: any, apiApplication?: Ref<any>) => {
       listtags,
       limit = 0,
       pathSetting,
+      servingIndexes = [],
     } = formData
 
     const {
@@ -385,6 +387,7 @@ export const useDrawer = (t: any, apiApplication?: Ref<any>) => {
       appLabel,
       limit,
       pathSetting,
+      servingIndexes,
 
       // paths
       method,

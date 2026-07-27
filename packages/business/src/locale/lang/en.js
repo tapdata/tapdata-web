@@ -1251,6 +1251,18 @@ export default {
   packages_business_data_server_drawer_qingxuanzesuoshu:
     'Please select the application',
   packages_business_data_server_drawer_suoshuyingyong: 'Owner Application',
+  packages_business_data_server_drawer_fuwusuoyin: 'Serving Indexes',
+  packages_business_data_server_drawer_tuijiansuoyin: 'Recommended Index',
+  packages_business_data_server_drawer_tuijianbukeyong:
+    'Index recommendation is unavailable when a custom query is used',
+  packages_business_data_server_drawer_explainmianze:
+    'Recommendations are derived from the API query conditions only and have not been validated against real traffic; verify with explain() before creating.',
+  packages_business_data_server_drawer_wuketuijian:
+    'No index to recommend for the current query',
+  packages_business_data_server_drawer_jiazaisuoyin: 'Load Indexes',
+  packages_business_data_server_drawer_jiazai: 'Load',
+  packages_business_data_server_drawer_yishoulusuoyin: 'Collected Indexes',
+  packages_business_data_server_drawer_zanwushoulu: 'No collected indexes yet',
   packages_business_create_connection_scenedialog_gongzuoliu: 'Workflow',
   packages_business_create_connection_scenedialog_duiliegongshu: 'Queue Supply',
   packages_business_create_connection_scenedialog_guochantidai:

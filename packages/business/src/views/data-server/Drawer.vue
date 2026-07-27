@@ -42,6 +42,7 @@ import Debug from './Debug.vue'
 import FieldsTree from './FieldsTree.vue'
 import FieldsTreePreview from './FieldsTreePreview.vue'
 import MqlEditor from './MqlEditor.vue'
+import ServingIndexTab from './serving-index/ServingIndexTab.vue'
 
 import { getTableOptions, useDrawer } from './shared'
 import type { InputInstance, SelectInstance, TableInstance } from 'element-plus'
@@ -391,6 +392,7 @@ const save = async (type?: boolean) => {
       appLabel,
       appValue,
       limit,
+      servingIndexes = [],
 
       // paths
       method,
@@ -480,6 +482,7 @@ const save = async (type?: boolean) => {
             value: appLabel,
           },
         ],
+        servingIndexes,
         paths: [
           {
             name: apiType === 'customerQuery' ? 'customerQuery' : 'findPage',
@@ -1226,6 +1229,13 @@ provide('form', form)
             <template #label>
               <span>{{
                 $t('packages_business_data_server_drawer_tiaoshi')
+              }}</span>
+            </template>
+          </ElTabPane>
+          <ElTabPane name="servingIndex">
+            <template #label>
+              <span>{{
+                $t('packages_business_data_server_drawer_fuwusuoyin')
               }}</span>
             </template>
           </ElTabPane>
@@ -2220,6 +2230,10 @@ provide('form', form)
             :host="host"
             :visible="visible"
           />
+        </template>
+
+        <template v-if="tab === 'servingIndex'">
+          <ServingIndexTab />
         </template>
       </ElForm>
     </div>
