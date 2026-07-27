@@ -1263,6 +1263,21 @@ export default {
   packages_business_data_server_drawer_jiazai: 'Load',
   packages_business_data_server_drawer_yishoulusuoyin: 'Collected Indexes',
   packages_business_data_server_drawer_zanwushoulu: 'No collected indexes yet',
+  packages_business_data_server_drawer_jiazaizhong: 'Reading indexes…',
+  packages_business_data_server_drawer_jiazaichaoshi:
+    'Timed out — check the engine is online and retry',
+  packages_business_data_server_drawer_jiazaishibai: 'Failed to load indexes',
+  packages_business_data_server_drawer_wusuoyinkejiazai:
+    'No indexes on this table',
+  packages_business_data_server_drawer_xianbaocunapi:
+    'Save the API before loading indexes',
+  packages_business_data_server_drawer_yingyonggouxuan: 'Apply selection',
+  packages_business_data_server_drawer_guiyin_xitong: 'System index',
+  packages_business_data_server_drawer_guiyin_buzhichi: 'Unsupported',
+  packages_business_data_server_drawer_guiyin_pipei: 'Matches this API',
+  packages_business_data_server_drawer_guiyin_benapi: 'Collected by this API',
+  packages_business_data_server_drawer_guiyin_qitaapi:
+    'Collected by another API',
   packages_business_create_connection_scenedialog_gongzuoliu: 'Workflow',
   packages_business_create_connection_scenedialog_duiliegongshu: 'Queue Supply',
   packages_business_create_connection_scenedialog_guochantidai:

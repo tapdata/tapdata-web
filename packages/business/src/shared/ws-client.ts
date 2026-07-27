@@ -249,6 +249,14 @@ class WSClient extends EventEmitter {
     }
   }
 
+  /**
+   * 本 ws 会话 id（连接时作为 `id` query 参数上报，后端按此路由消息）。
+   * 供「面向连接的运维动作」把异步结果推回本会话用（如服务型索引读回，ADR-0009）。
+   */
+  getId(): string {
+    return this.__getId()
+  }
+
   bindNetworkEvent(): void {
     window.addEventListener('online', this.onLine.bind(this))
     window.addEventListener('offline', this.offLine.bind(this))
