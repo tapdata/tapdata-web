@@ -143,6 +143,10 @@ export function batchUpdateTaskListtags(params: any) {
   return requestClient.patch(`${BASE_URL}/batchUpdateListtags`, params)
 }
 
+export function batchApplyTaskListtags(params: any) {
+  return requestClient.patch(`${BASE_URL}/batchApplyListtags`, params)
+}
+
 export function saveTask(params: any, config?: any) {
   return requestClient.patch(
     `${BASE_URL}/confirm/${params.id || ''}`,

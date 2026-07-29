@@ -6,7 +6,6 @@ import {
   batchRenewTasks,
   batchStartTasks,
   batchStopTasks,
-  batchUpdateTaskListtags,
   copyTask,
   exportTasks,
   fetchTasks,
@@ -24,6 +23,7 @@ import dayjs from 'dayjs'
 import { escapeRegExp, isNumber, uniqBy } from 'lodash-es'
 import { h } from 'vue'
 
+import BatchTagDialog from '../../components/BatchTagDialog.vue'
 import { DatabaseIcon } from '../../components/DatabaseIcon'
 import { showErrorMessage } from '../../components/error-message'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
@@ -50,6 +50,7 @@ export default {
     TablePage,
     SkipError,
     Upload,
+    BatchTagDialog,
     TaskStatus,
     PermissionseSettingsCreate,
     UpgradeCharges,
@@ -82,7 +83,6 @@ export default {
       STATUS_MAP,
       isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       showInstanceInfo: import.meta.env.VUE_APP_LICENSE_TYPE === 'PIPELINE',
-      dataFlowId: '',
       isShowDetails: false,
       previewLoading: false,
       previewData: null,
@@ -234,8 +234,7 @@ export default {
     getData({ page, tags, isSelectedNoTag }) {
       const { current, size } = page
       const { syncType } = this
-      const { keyword, status, type, agentId, syncStatus, id } =
-        this.searchParams
+      const { keyword, status, type, agentId, syncStatus } = this.searchParams
       const fields = {
         id: true,
         name: true,
@@ -591,37 +590,18 @@ export default {
       this.changeStatus([id], { status: 'scheduled', errorEvents })
     },
 
-    handleOperationClassify(listtags) {
-      let ids = []
-      if (this.dataFlowId) {
-        ids = [this.dataFlowId]
-      } else {
-        ids = this.multipleSelection.map((r) => r.id)
-      }
-      const attributes = {
-        id: ids,
-        listtags,
-      }
-      batchUpdateTaskListtags(attributes).then(() => {
-        this.dataFlowId = ''
-        this.table.fetch()
-      })
+    openBatchTagDialog() {
+      if (!this.multipleSelection.length) return
+      this.$refs.batchTagDialog?.open(this.multipleSelection)
     },
 
-    handleSelectTag() {
-      const tagList = []
-      const tagMap = {}
+    handleBatchTagSaved() {
+      this.table.clearSelection()
+      this.table.fetch()
+    },
 
-      this.multipleSelection.forEach((row) => {
-        row.listtags?.forEach((item) => {
-          if (!tagMap[item.id]) {
-            tagList.push(item)
-            tagMap[item.id] = true
-          }
-        })
-      })
-
-      return tagList
+    handleBatchTagCreated() {
+      this.table.refreshClassifyTags()
     },
 
     create() {
@@ -1036,7 +1016,7 @@ export default {
               }),
             )}`,
           )
-          .then(async (data) => {
+          .then((data) => {
             const { items = [] } = data
 
             if (items.some((t) => t.status === 'Stopped')) {
@@ -1067,8 +1047,8 @@ export default {
       })
     },
 
-    handlePipelineSelectVisible(val) {
-      if (val) {
+    handlePipelineSelectVisible() {
+      if (this.pipelineSelected) {
         this.loadPipelineOptions()
       }
     },
@@ -1106,7 +1086,6 @@ export default {
           multipleSelection = val
         }
       "
-      @classify-submit="handleOperationClassify"
       @sort-change="handleSortTable"
     >
       <template #search>
@@ -1188,7 +1167,7 @@ export default {
         </ElButton>
         <ElButton
           v-readonlybtn="'SYNC_category_application'"
-          @click="$refs.table.showClassify(handleSelectTag())"
+          @click="openBatchTagDialog"
         >
           <span> {{ $t('public_button_bulk_tag') }}</span>
         </ElButton>
@@ -1489,6 +1468,12 @@ export default {
         </template>
       </el-table-column>
     </TablePage>
+    <BatchTagDialog
+      ref="batchTagDialog"
+      view-page="dataflow"
+      @saved="handleBatchTagSaved"
+      @tag-created="handleBatchTagCreated"
+    />
     <SkipError ref="skipError" @skip="handleSkipAndRun" />
     <!-- 导入 -->
     <Upload ref="upload" :type="uploadType" @success="table.fetch()" />
