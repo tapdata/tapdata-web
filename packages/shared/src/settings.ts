@@ -1,5 +1,15 @@
 let settings: Record<string, any> = {}
 
+const normalizeSetting = (setting: Record<string, any>) => {
+  return {
+    ...setting,
+    value:
+      setting.isArray && typeof setting.value === 'string'
+        ? setting.value.split(',')
+        : setting.value,
+  }
+}
+
 export const getSettings = () => {
   return Object.values(settings)
 }
@@ -8,8 +18,7 @@ export const setSettings = (data: Record<string, any>[] = []) => {
   settings = {}
 
   data.forEach((setting) => {
-    setting.value = setting.isArray ? setting.value.split(',') : setting.value
-    settings[setting.key] = setting
+    settings[setting.key] = normalizeSetting(setting)
   })
 }
 
