@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from '@tap/i18n'
-import * as monaco from 'monaco-editor'
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import { onBeforeUnmount, ref } from 'vue'
 import MonacoEditor from './MonacoEditor.vue'
 
