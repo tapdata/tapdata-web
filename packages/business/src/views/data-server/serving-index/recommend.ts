@@ -109,6 +109,35 @@ export function recommendServingIndex(input: RecommendInput): RecommendResult {
   }
 }
 
+/**
+ * 目标表已有的索引是否已经能服务这条推荐——能则不必再建（调用方据此隐藏推荐）。
+ *
+ * 判据是 **前缀覆盖**：某条已有索引的<b>前 n 个键</b>与推荐的 n 个键逐位同字段同方向，
+ * 即该索引已覆盖推荐（复合索引 `{a,b,c}` 覆盖推荐 `{a,b}`；反之 `{a}` 不覆盖 `{a,b}`）。
+ * 方向允许**整体取反**：B-tree 可反向遍历，`{a:1,b:-1}` 与 `{a:-1,b:1}` 服务同一组查询与排序；
+ * 但**逐位混搭**不算覆盖（那会改变排序语义）。
+ */
+export function isRecommendationCovered(
+  keys: RecommendKey[],
+  existing: RecommendKey[][],
+): boolean {
+  if (!keys.length) return false
+  return existing.some((index) => {
+    if (index.length < keys.length) return false
+    const prefix = index.slice(0, keys.length)
+    const matches = (invert: boolean): boolean =>
+      keys.every((k, i) => {
+        const p = prefix[i]
+        return (
+          !!p &&
+          k.field === p.field &&
+          k.direction === (invert ? -1 : 1) * p.direction
+        )
+      })
+    return matches(false) || matches(true)
+  })
+}
+
 function buildStatement(
   collection: string | undefined,
   keys: RecommendKey[],
@@ -118,5 +147,8 @@ function buildStatement(
     ? '<collection>'
     : (collection as string).trim()
   const body = keys.map((k) => `${k.field}: ${k.direction}`).join(', ')
-  return `db.${coll}.createIndex({ ${body} })`
+  // `background: true`：语句是给人**手工在目标库执行**的，目标库版本未知。
+  // MongoDB 4.2+ 已废弃该选项并忽略之（4.2 起索引构建不再全程持排他锁）；4.0 及更早则确实需要它，
+  // 否则前台建索引会阻塞该库的读写。带上它在新版是空操作、在老版是保护，故一律附带。
+  return `db.${coll}.createIndex({ ${body} }, { background: true })`
 }
