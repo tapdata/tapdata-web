@@ -618,6 +618,25 @@ export default {
   public_tag_priority: '优先级设置',
   public_tag_priority_desc:
     '选择标签优先级，数字越小优先级越高，批量启动时会按优先级顺序执行',
+  packages_business_batch_tag_dialog_title: '批量设置标签',
+  packages_business_batch_tag_dialog_subtitle:
+    '已选择 {count} 个任务 · 勾选表示添加，取消勾选表示移除',
+  packages_business_batch_tag_dialog_search_placeholder:
+    '搜索标签，或输入名称回车新建',
+  packages_business_batch_tag_dialog_create_tag: '新建标签 “{name}”',
+  packages_business_batch_tag_dialog_empty: '没有匹配的标签',
+  packages_business_batch_tag_dialog_state_some:
+    '部分任务拥有（{count}/{total}）',
+  packages_business_batch_tag_dialog_state_add_all: '将添加到全部',
+  packages_business_batch_tag_dialog_state_all: '全部拥有',
+  packages_business_batch_tag_dialog_state_remove_all: '将从全部移除',
+  packages_business_batch_tag_dialog_summary_title: '本次改动',
+  packages_business_batch_tag_dialog_add: '添加',
+  packages_business_batch_tag_dialog_remove: '移除',
+  packages_business_batch_tag_dialog_task_count: '{count} 个任务',
+  packages_business_batch_tag_dialog_no_changes:
+    '尚无改动 · 半选标签将保持各任务原样',
+  packages_business_batch_tag_dialog_save: '保存改动',
   public_priority_highest: '最高',
   public_priority_high: '高',
   public_priority_medium_high: '中高',
