@@ -843,9 +843,8 @@ export default {
   packages_business_create_connection_dialog_neirongCho:
     '從下面選擇一個數據源連接器並配置連接和憑據。',
   // 共享挖掘
-  packages_business_shared_cdc_placeholder_task_name: '請輸入挖掘任務名搜索',
-  packages_business_shared_cdc_placeholder_connection_name:
-    '請輸入連接名稱搜索',
+  packages_business_shared_cdc_placeholder_task_name: '任務名稱',
+  packages_business_shared_cdc_placeholder_connection_name: '連接名稱',
   packages_business_shared_cdc_name: '請輸入挖掘名稱',
   packages_business_shared_cdc_setting_select_mode: '存储模式',
   packages_business_shared_cdc_setting_select_mongodb_tip: '請輸入mongodb連接',
@@ -1094,9 +1093,8 @@ export default {
   // 共享緩存
   packages_business_shared_cache_create: '創建緩存',
   packages_business_shared_cache_edit: '編輯緩存',
-  packages_business_shared_cache_placeholder_task_name: '請輸入緩存任務名搜索',
-  packages_business_shared_cache_placeholder_connection_name:
-    '請輸入連接名稱搜索',
+  packages_business_shared_cache_placeholder_task_name: '任務名稱',
+  packages_business_shared_cache_placeholder_connection_name: '連接名稱',
   packages_business_shared_cache_button_create: '新建緩存',
   packages_business_shared_cache_name: '緩存名稱',
   packages_business_shared_cache_status: '緩存狀態',
