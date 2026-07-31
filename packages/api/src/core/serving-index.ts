@@ -36,7 +36,10 @@ export type LoadedIndexAttribution =
 export interface LoadedServingIndex {
   index: ServingIndex
   attribution: LoadedIndexAttribution
-  /** 是否可勾选（`false`=灰置不可动，如超范围 / 已被本 API 收录）。 */
+  /**
+   * 是否可勾选（`false`=灰置不可动）。目前仅系统索引（`_id_`）与超出支持边界者不可勾；
+   * 「已被本 API 收录」是**可勾且默认勾上**——否则用户无法取消收录（应用=整体替换）。
+   */
   checkable: boolean
   /** 默认勾选（首个命中即定，§3.8.3）。 */
   defaultChecked: boolean
@@ -44,16 +47,12 @@ export interface LoadedServingIndex {
   attributionApi?: string
 }
 
-/**
- * P1-2 读回触发（ADR-0009）：非阻塞返回；结果由引擎经 ws 推回 `clientId` 对应会话。
- * `params` = `tableName` + 前端生成的 `reqId`（引擎回显）+ `clientId`（本 ws 会话 id）。
+/*
+ * 读回触发**没有**对应的前端 REST 函数：浏览器一律经 ws 发
+ * `{ type: 'queryIndexes', data: { connectionId, tableName, reqId } }`（见 ServingIndexTab.startLoad）。
+ * TM 的 `api/serving-indexes/query/{connectionId}` 端点仍在，但只服务于非浏览器调用者（CICD 等）——
+ * 它要求调用方自报 sender，而浏览器自生成的 ws id 不在 TM 会话表里、回推必然落空（ADR-0009 修订）。
  */
-export function queryServingIndexes(
-  connectionId: string,
-  params: { tableName: string; reqId: string; clientId: string },
-) {
-  return requestClient.post<void>(`${BASE_URL}/query/${connectionId}`, params)
-}
 
 /**
  * P2-2 加载规划：把 ws 读回的索引连同 `moduleId` 回传，返回归因 + 默认勾选的全表结果（不预过滤）。
