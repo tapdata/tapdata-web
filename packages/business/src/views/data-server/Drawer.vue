@@ -110,6 +110,14 @@ const loading = ref(false)
 const data = ref<any>({})
 let initialFormData: Record<string, any> = {}
 const tab = ref('form')
+/**
+ * 「服务型索引」tab 只呈现索引本身（推荐 / 加载 / 已收录）。
+ *
+ * 抽屉里的服务名、数据源、请求参数、筛选/排列条件等区块是 `ElForm` 的平级兄弟、**没有 tab 守卫**
+ * （历史上唯一的另一个 tab 是 Debug，编辑态不可达，故一直没暴露）。这里只对本 tab 关掉它们，
+ * 不改 Debug 既有表现。
+ */
+const isServingIndexTab = computed(() => tab.value === 'servingIndex')
 const isEdit = ref(false)
 const debugParams = ref<any>(null)
 const roles = ref<any[]>([])
@@ -125,6 +133,23 @@ const paramsTableRef = ref<TableInstance>()
 const parameterSelectRef = ref<SelectInstance[]>([])
 const fieldsTreeRef =
   useTemplateRef<InstanceType<typeof FieldsTree>>('fieldsTreeRef')
+/**
+ * 字段勾选快照。`FieldsTree` 挂在 `tab === 'form'` 之下，切到别的 tab 就卸载、`fieldsTreeRef` 变
+ * `undefined`；而保存前置校验、关闭时的脏检查、payload 组装三处都直接读它，卸载后会误判「未选字段」
+ * 拒绝保存、并误报「有未保存改动」。勾选也不回写 `form.fields`（`onFieldsTreeCheck` 只记数量），
+ * 所以不能拿 `form.fields` 兜底——那会把用户取消勾选的字段又存回去。故切 tab 时快照、回配置 tab 时回灌。
+ *
+ * 历史上唯一的另一个 tab（Debug）要求 `status === 'active'`、编辑态不可达，故此问题到服务型索引 tab
+ * （TAP-12057，编辑态常显）才第一次暴露。
+ */
+const checkedFieldsSnapshot = ref<any[] | null>(null)
+const snapshotCheckedFields = () => {
+  const checked = fieldsTreeRef.value?.getCheckedFields(true)
+  if (checked) checkedFieldsSnapshot.value = checked
+}
+/** 当前勾选字段：树在则以树为准，树已卸载则回退到快照。 */
+const currentCheckedFields = () =>
+  fieldsTreeRef.value?.getCheckedFields(true) ?? checkedFieldsSnapshot.value ?? undefined
 const selectedFieldSize = ref(0)
 const helpVisible = ref(false)
 
@@ -428,7 +453,7 @@ const save = async (type?: boolean) => {
     const where = form.value?.where?.filter(
       (t: any) => t.fieldName && t.parameter,
     )
-    const fields = fieldsTreeRef.value?.getCheckedFields(true)
+    const fields = currentCheckedFields()
 
     if (params.some((it: any) => !it.name.trim())) {
       ElMessage.error(t('packages_business_data_server_drawer_qingshurucanshu'))
@@ -544,6 +569,10 @@ const edit = (copy?: boolean) => {
 
   if (form.value.id || copy) {
     const checkedFields = form.value.fields || []
+    // 进编辑态即以「树将被初始化成的那份勾选」播种快照：从服务型索引 tab 直接点编辑时，
+    // FieldsTree 压根不会挂载、也不会发生 tab 切换，没有这行快照就是空的，
+    // 保存前置校验会误判「未选字段」而拒绝保存。
+    checkedFieldsSnapshot.value = checkedFields
     const fieldsMap = checkedFields.reduce((acc: any, it: any) => {
       if (it.field_alias || it.textEncryptionRuleIds?.length) {
         acc[it.field_name] = {
@@ -582,6 +611,17 @@ const handleCancel = () => {
 
 // Event handlers
 const tabChanged = (tab: string | number) => {
+  // 先快照：此刻 DOM 尚未按新 tab 重渲染，FieldsTree 仍在。
+  snapshotCheckedFields()
+  if (tab === 'form' && checkedFieldsSnapshot.value?.length) {
+    // 回灌：树重新挂载后不会自行恢复勾选（初始勾选只在进入编辑态时设过一次）。
+    const snapshot = checkedFieldsSnapshot.value
+    setTimeout(() => {
+      nextTick(() => {
+        fieldsTreeRef.value?.setCheckedFields(snapshot)
+      })
+    }, 0)
+  }
   if (tab === 'debug') {
     isEdit.value = false
     const newDebugParams: Record<string, any> = {}
@@ -750,7 +790,7 @@ const handleBeforeClose = async (done: () => void) => {
   if (isEdit.value) {
     const formValue = {
       ...form.value,
-      fields: fieldsTreeRef.value?.getCheckedFields(true),
+      fields: currentCheckedFields(),
     }
     const hasChanges = Object.keys(formValue).some((key) => {
       if (['status', 'path'].includes(key)) {
@@ -1013,7 +1053,7 @@ const getCurrentPathsPayload = () => {
   const normalizedWhere =
     where?.filter((t: any) => t.fieldName && t.parameter) || []
   const normalizedFields =
-    fieldsTreeRef.value?.getCheckedFields(true) || fields || []
+    currentCheckedFields() || fields || []
 
   return [
     {
@@ -1162,6 +1202,8 @@ watch(
 provide('encryptionsMap', encryptionsMap)
 provide('encryptions', encryptions)
 provide('form', form)
+// 服务型索引 tab 要按编辑态分流：只读态下抽屉没有底部「保存」，收录动作无处落库（TAP-12057）。
+provide('isEdit', isEdit)
 </script>
 
 <template>
@@ -1187,7 +1229,12 @@ provide('form', form)
           text
           type="primary"
           :class="{
-            invisible: !(tab === 'form' && form.status !== 'active' && !isEdit),
+            // 服务型索引 tab 同样需要进编辑态（收录索引要保存），否则得先切回配置页点编辑再切回来。
+            invisible: !(
+              (tab === 'form' || isServingIndexTab) &&
+              form.status !== 'active' &&
+              !isEdit
+            ),
           }"
           :disabled="fieldLoading"
           @click="edit()"
@@ -1251,7 +1298,7 @@ provide('form', form)
         :model="form"
         :rules="rules"
       >
-        <template v-if="!inDialog">
+        <template v-if="!inDialog && !isServingIndexTab">
           <div class="flex justify-content-between align-items-start">
             <ElFormItem
               class="flex-1 form-item-name"
@@ -1324,7 +1371,7 @@ provide('form', form)
           </div>
         </template>
 
-        <template v-else>
+        <template v-else-if="!isServingIndexTab">
           <div class="flex gap-4">
             <ElFormItem
               :label="$t('public_name')"
@@ -1387,11 +1434,14 @@ provide('form', form)
           </ElFormItem>
         </template>
 
-        <div class="fs-7 data-server-panel__title mt-4 mb-3">
+        <div
+          v-if="!isServingIndexTab"
+          class="fs-7 data-server-panel__title mt-4 mb-3"
+        >
           {{ $t('public_data_source') }}
         </div>
 
-        <div class="flex gap-4">
+        <div v-if="!isServingIndexTab" class="flex gap-4">
           <ElFormItem
             style="flex: 0.5"
             :label="$t('public_connection_type')"
@@ -1597,6 +1647,7 @@ provide('form', form)
 
         <!-- 輸入参数 -->
         <div
+          v-if="!isServingIndexTab"
           class="data-server-panel__title mt-4 mb-3 justify-content-start gap-3"
         >
           <span>{{
@@ -1610,7 +1661,12 @@ provide('form', form)
           />
         </div>
 
-        <ElTable ref="paramsTableRef" class="flex-1" :data="form.params">
+        <ElTable
+          v-if="!isServingIndexTab"
+          ref="paramsTableRef"
+          class="flex-1"
+          :data="form.params"
+        >
           <ElTableColumn
             :label="$t('packages_business_data_server_drawer_canshumingcheng')"
             prop="name"
@@ -1897,6 +1953,7 @@ provide('form', form)
           </ElTableColumn>
         </ElTable>
         <el-popover
+          v-if="!isServingIndexTab"
           v-model:visible="paramEncryptionPopoverVisible"
           :virtual-ref="paramEncryptionTriggerRef"
           trigger="click"
@@ -1928,7 +1985,10 @@ provide('form', form)
           </el-scrollbar>
         </el-popover>
 
-        <div v-if="isEdit && form.apiType === 'customerQuery'" class="mt-2">
+        <div
+          v-if="isEdit && form.apiType === 'customerQuery' && !isServingIndexTab"
+          class="mt-2"
+        >
           <el-button
             class="w-100 border-dashed"
             size="small"
@@ -1943,7 +2003,9 @@ provide('form', form)
 
         <template
           v-if="
-            data.apiType === 'customerQuery' || form.apiType === 'customerQuery'
+            (data.apiType === 'customerQuery' ||
+              form.apiType === 'customerQuery') &&
+            !isServingIndexTab
           "
         >
           <!-- 筛选条件 -->
