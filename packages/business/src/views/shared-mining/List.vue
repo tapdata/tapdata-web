@@ -23,7 +23,7 @@ import { calcTimeUnit, openUrl } from '@tap/shared'
 import dayjs from 'dayjs'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { escapeRegExp, uniqBy } from 'lodash-es'
-import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue'
+import { inject, onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
@@ -90,9 +90,7 @@ const taskColumns = [
   { label: t('public_task_name'), prop: 'name', slotName: 'name' },
 ]
 
-// ── Computed ──────────────────────────────────────────────────────────────────
-
-const filterItems = computed(() => [
+const filterItems = ref<any[]>([
   {
     label: t('public_status'),
     key: 'status',
@@ -370,24 +368,21 @@ const handleName = ({
   openUrl(routeUrl.href)
 }
 
-// ── Lifecycle & Watchers ──────────────────────────────────────────────────────
-
 watch(
   () => route.query,
   () => {
-    searchParams.value = {
-      ...searchParams.value,
-      taskName: (route.query?.keyword as string) || '',
-    }
     table.value?.fetch(1)
   },
 )
+
+onBeforeMount(() => {
+  Object.assign(searchParams.value, route.query)
+})
 
 onMounted(() => {
   timer = setInterval(() => {
     withPassive(() => table.value?.fetch(null, 0, true))
   }, 8000)
-  Object.assign(searchParams.value, { taskName: route.query?.keyword || '' })
 })
 
 onUnmounted(() => {
