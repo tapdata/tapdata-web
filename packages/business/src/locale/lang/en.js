@@ -911,9 +911,9 @@ export default {
     'Choose a data source connector from below and configure the connection & credentials.',
   // 共享挖掘
   packages_business_shared_cdc_placeholder_task_name:
-    'Please enter the mining task name to search',
+    'Task name',
   packages_business_shared_cdc_placeholder_connection_name:
-    'Please enter the connection name to search',
+    'Connection name',
   packages_business_shared_cdc_name: 'Please enter the task name ',
   packages_business_shared_cdc_setting_select_mode: 'Storage mode',
   packages_business_shared_cdc_setting_select_mongodb_tip:
@@ -1198,9 +1198,9 @@ export default {
   packages_business_shared_cache_create: 'Create Cache',
   packages_business_shared_cache_edit: 'Edit Cache',
   packages_business_shared_cache_placeholder_task_name:
-    'Please enter the cache task name to search',
+    'Task name',
   packages_business_shared_cache_placeholder_connection_name:
-    'Please enter the connection name to search',
+    'Connection name',
   packages_business_shared_cache_button_create: 'New Cache',
   packages_business_shared_cache_name: 'Name',
   packages_business_shared_cache_status: 'Cache Status',
