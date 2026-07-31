@@ -1128,12 +1128,18 @@ export default {
   packages_business_data_server_drawer_tuijiansuoyin: '推薦索引',
   packages_business_data_server_drawer_tuijianbukeyong:
     '使用自訂查詢時無法推薦索引',
+  packages_business_data_server_drawer_tuijianyicunzai:
+    '目標表已有可服務該查詢的索引，無需新建',
+  packages_business_data_server_drawer_bianjihoushoulu:
+    '點擊上方「編輯」後可載入並收錄索引',
+  packages_business_data_server_drawer_suoyinliebiao: '索引',
+  packages_business_data_server_drawer_gouxuanjishoulu:
+    '勾選即隨本 API 收錄，儲存後生效；清單過舊可點「載入」重新讀取',
+  packages_business_data_server_drawer_guiyin_weijian: '庫中未見',
   packages_business_data_server_drawer_explainmianze:
     '推薦僅依據介面查詢條件產生，未經真實流量驗證；建立前請用 explain() 核對。',
   packages_business_data_server_drawer_wuketuijian: '目前查詢無可推薦的索引',
-  packages_business_data_server_drawer_jiazaisuoyin: '載入索引',
   packages_business_data_server_drawer_jiazai: '載入',
-  packages_business_data_server_drawer_yishoulusuoyin: '已收錄索引',
   packages_business_data_server_drawer_zanwushoulu: '暫無已收錄索引',
   packages_business_data_server_drawer_jiazaizhong: '正在讀取索引…',
   packages_business_data_server_drawer_jiazaichaoshi:
@@ -1141,7 +1147,6 @@ export default {
   packages_business_data_server_drawer_jiazaishibai: '載入失敗',
   packages_business_data_server_drawer_wusuoyinkejiazai: '該表暫無可載入的索引',
   packages_business_data_server_drawer_xianbaocunapi: '請先儲存 API 後再載入索引',
-  packages_business_data_server_drawer_yingyonggouxuan: '套用勾選',
   packages_business_data_server_drawer_guiyin_xitong: '系統索引',
   packages_business_data_server_drawer_guiyin_buzhichi: '本期不支援',
   packages_business_data_server_drawer_guiyin_pipei: '匹配本 API',
