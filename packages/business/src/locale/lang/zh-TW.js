@@ -930,6 +930,14 @@ export default {
   packages_business_data_server_drawer_tiaoshi: '調試',
   packages_business_data_server_drawer_peizhi: '配置',
   packages_business_data_server_drawer_refresh_fields: '刷新字段',
+  packages_business_data_server_drawer_refresh_fields_no_change:
+    '字段已刷新，暫無變化',
+  packages_business_data_server_drawer_refresh_fields_added:
+    '字段已刷新，新增 {val} 個字段',
+  packages_business_data_server_drawer_refresh_fields_removed:
+    '字段已刷新，刪除 {val} 個字段',
+  packages_business_data_server_drawer_refresh_fields_changed:
+    '字段已刷新，新增 {val1} 個字段，刪除 {val2} 個字段',
   packages_business_data_server_add_field: '添加字段',
   packages_business_data_server_add_sub_field: '添加子字段',
   packages_business_data_server_drawer_chuangjianfuwu: '創建服務',
