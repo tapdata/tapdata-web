@@ -363,6 +363,41 @@ const getFields = async () => {
   }
 }
 
+const getFieldNameSet = (fields: any[] = []) =>
+  new Set(fields.map((field: any) => field.field_name).filter(Boolean))
+
+const getRefreshFieldsMessage = (oldFields: any[], newFields: any[]) => {
+  const oldFieldNames = getFieldNameSet(oldFields)
+  const newFieldNames = getFieldNameSet(newFields)
+  const addedCount = [...newFieldNames].filter(
+    (fieldName) => !oldFieldNames.has(fieldName),
+  ).length
+  const removedCount = [...oldFieldNames].filter(
+    (fieldName) => !newFieldNames.has(fieldName),
+  ).length
+
+  if (addedCount && removedCount) {
+    return t('packages_business_data_server_drawer_refresh_fields_changed', {
+      val1: addedCount,
+      val2: removedCount,
+    })
+  }
+
+  if (addedCount) {
+    return t('packages_business_data_server_drawer_refresh_fields_added', {
+      val: addedCount,
+    })
+  }
+
+  if (removedCount) {
+    return t('packages_business_data_server_drawer_refresh_fields_removed', {
+      val: removedCount,
+    })
+  }
+
+  return t('packages_business_data_server_drawer_refresh_fields_no_change')
+}
+
 const getEncryptions = async () => {
   const { items } = await fetchEncryptionList({
     limit: 10000,
@@ -765,6 +800,7 @@ const handleReloadSchema = async () => {
 
   // 保存当前选中的字段
   const checkedFields = fieldsTreeRef.value?.getCheckedFields(true) || []
+  const oldFields = [...allFields.value]
 
   fieldLoading.value = true
   try {
@@ -773,16 +809,17 @@ const handleReloadSchema = async () => {
 
     // 恢复之前的选中状态
     if (checkedFields.length) {
-      nextTick(() => {
-        fieldsTreeRef.value?.setCheckedFields(checkedFields)
-        selectedFieldSize.value = (
-          fieldsTreeRef.value?.getCheckedFields(false) || []
-        ).length
-      })
+      await nextTick()
+      fieldsTreeRef.value?.setCheckedFields(checkedFields)
+      selectedFieldSize.value = (
+        fieldsTreeRef.value?.getCheckedFields(false) || []
+      ).length
     }
   } finally {
     fieldLoading.value = false
   }
+
+  ElMessage.success(getRefreshFieldsMessage(oldFields, allFields.value))
 }
 
 // Expose key methods

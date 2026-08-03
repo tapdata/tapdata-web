@@ -1035,6 +1035,14 @@ export default {
   packages_business_data_server_drawer_tiaoshi: 'Debug',
   packages_business_data_server_drawer_peizhi: 'Configuration',
   packages_business_data_server_drawer_refresh_fields: 'Refresh Fields',
+  packages_business_data_server_drawer_refresh_fields_no_change:
+    'Fields refreshed. No changes.',
+  packages_business_data_server_drawer_refresh_fields_added:
+    'Fields refreshed. {val} field(s) added.',
+  packages_business_data_server_drawer_refresh_fields_removed:
+    'Fields refreshed. {val} field(s) removed.',
+  packages_business_data_server_drawer_refresh_fields_changed:
+    'Fields refreshed. {val1} field(s) added, {val2} field(s) removed.',
   packages_business_data_server_add_field: 'Add Field',
   packages_business_data_server_add_sub_field: 'Add Sub-field',
   packages_business_data_server_drawer_chuangjianfuwu: 'Create API',
