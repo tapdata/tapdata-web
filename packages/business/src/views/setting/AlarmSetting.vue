@@ -21,6 +21,7 @@ import { cloneDeep } from 'lodash-es'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
+import { getAlarmKeyMap } from '../../shared/alarm'
 import EmailTemplateDialog from './EmailTemplateDialog.vue'
 
 // Types
@@ -117,121 +118,7 @@ const columns = ref([
   },
 ])
 
-const keyMapping = reactive({
-  TASK_STATUS_ERROR: t(
-    'packages_business_setting_alarmnotification_dangrenwuyudao',
-  ),
-  // TASK_INSPECT_ERROR: t(
-  //   'packages_business_setting_alarmnotification_dangrenwujiaoyan',
-  // ),
-  TASK_FULL_COMPLETE: t(
-    'packages_business_setting_alarmnotification_dangrenwuquanliang',
-  ),
-  TASK_INCREMENT_START: t(
-    'packages_business_setting_alarmnotification_dangrenwuzengliang',
-  ),
-  TASK_STATUS_STOP: t(
-    'packages_business_setting_alarmnotification_dangrenwutingzhi',
-  ),
-  TASK_INCREMENT_DELAY: t(
-    'packages_business_setting_alarmnotification_dangrenwudezeng',
-  ),
-  // DATANODE_CANNOT_CONNECT: t(
-  //   'packages_business_setting_alarmnotification_dangshujuwufa',
-  // ),
-  DATANODE_HTTP_CONNECT_CONSUME: t(
-    'packages_business_setting_alarmnotification_dangshujuyuanwang',
-  ),
-  DATANODE_TCP_CONNECT_CONSUME: t(
-    'packages_business_setting_alarmnotification_dangshujuyuanxie',
-  ),
-  DATANODE_AVERAGE_HANDLE_CONSUME: t(
-    'packages_business_setting_alarmnotification_dangshujuyuanjie',
-  ),
-  PROCESSNODE_AVERAGE_HANDLE_CONSUME: t(
-    'packages_business_setting_alarmnotification_dangjiediandeping',
-  ),
-  INSPECT_TASK_ERROR: t(
-    'packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu',
-  ),
-  INSPECT_COUNT_ERROR: t(
-    'packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu',
-  ),
-  INSPECT_VALUE_ERROR: t(
-    'packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu',
-  ),
-  // SYSTEM_FLOW_EGINGE_DOWN: t(
-  //   'packages_business_setting_alarmnotification_dangrenwustop',
-  // ),
-  SYSTEM_FLOW_EGINGE_UP: t(
-    'packages_business_setting_alarmnotification_dangrenwuuP',
-  ),
-  TASK_INSPECT_DIFFERENCE: t('packages_dag_task_inspect_difference_alarm'),
-  TASK_RETRY_WARN: t('packages_dag_task_retry_alert'),
-  API_SERVER_WORKER_DELAY_P50_WARN: t(
-    'packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn',
-  ),
-  API_SERVER_WORKER_DELAY_P95_WARN: t(
-    'packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn',
-  ),
-  API_SERVER_WORKER_DELAY_P99_WARN: t(
-    'packages_business_setting_alarmnotification_api_server_worker_delay_p99_warn',
-  ),
-  API_SERVER_WORKER_ERROR_RATE_WARN: t(
-    'packages_business_setting_alarmnotification_api_server_worker_error_rate_warn',
-  ),
-  API_SERVER_WORKER_ERROR_RATE_ALTER: t(
-    'packages_business_setting_alarmnotification_api_server_worker_error_rate_alter',
-  ),
-  API_SERVER_API_DELAY_AVG_WARN: t(
-    'packages_business_setting_alarmnotification_api_server_api_delay_avg_warn',
-  ),
-  API_SERVER_API_DELAY_P95_ALTER: t(
-    'packages_business_setting_alarmnotification_api_server_api_delay_p95_alter',
-  ),
-  API_SERVER_API_DELAY_P99_ALTER: t(
-    'packages_business_setting_alarmnotification_api_server_api_delay_p99_alter',
-  ),
-  API_SERVER_API_ERROR_RATE_ALTER: t(
-    'packages_business_setting_alarmnotification_api_server_api_error_rate_alter',
-  ),
-  API_SERVER_ALL_API_ERROR_RATE_ALTER: t(
-    'packages_business_setting_alarmnotification_api_server_all_api_error_rate_alter',
-  ),
-  API_SERVER_API_RESPONSE_SIZE_ALTER: t(
-    'packages_business_setting_alarmnotification_api_server_api_response_size_alter',
-  ),
-  API_SERVER_CPU_USAGE_WARN: t(
-    'packages_business_setting_alarmnotification_api_server_cpu_usage_warn',
-  ),
-  API_SERVER_CPU_USAGE_ALTER: t(
-    'packages_business_setting_alarmnotification_api_server_cpu_usage_alter',
-  ),
-  API_SERVER_MEMORY_USAGE_WARN: t(
-    'packages_business_setting_alarmnotification_api_server_memory_usage_warn',
-  ),
-  API_SERVER_MEMORY_USAGE_ALTER: t(
-    'packages_business_setting_alarmnotification_api_server_memory_usage_alter',
-  ),
-  API_SERVER_WORKER_CPU_USAGE_WARN: t(
-    'packages_business_setting_alarmnotification_api_server_worker_cpu_usage_warn',
-  ),
-  API_SERVER_WORKER_CPU_USAGE_ALTER: t(
-    'packages_business_setting_alarmnotification_api_server_worker_cpu_usage_alter',
-  ),
-  API_SERVER_WORKER_MEMORY_USAGE_WARN: t(
-    'packages_business_setting_alarmnotification_api_server_worker_memory_usage_warn',
-  ),
-  API_SERVER_WORKER_MEMORY_USAGE_ALTER: t(
-    'packages_business_setting_alarmnotification_api_server_worker_memory_usage_alter',
-  ),
-  DATASOURCE_MONITOR_ALTER: t('packages_business_datasource_monitor_alter'),
-  API_SERVER_P95_WARN: t('packages_business_api_server_p95_warn'),
-  API_SERVER_P99_WARN: t('packages_business_api_server_p99_warn'),
-  API_SERVER_ERROR_RATE_WARN: t('packages_business_api_server_error_rate_warn'),
-  API_SERVER_CONNECTION_POOL_DEFICIENCY_WARN: t('packages_business_api_server_connection_pool_deficiency_warn'),
-  API_SERVER_CONNECTION_POOL_IDLE_WARN: t('packages_business_api_server_connection_pool_idle_warn'),
-})
+const keyMapping = reactive(getAlarmKeyMap())
 const variables = ref([])
 
 const alarmRulesColumns = ref([

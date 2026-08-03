@@ -2,6 +2,7 @@
 import { getDataActions } from '@tap/api/src/core/data-permission'
 import { callProxy } from '@tap/api/src/core/proxy'
 import { getTaskById } from '@tap/api/src/core/task'
+import { usePollingRequest, withPassive } from '@tap/api/src/request'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import syncTaskAgent from '@tap/business/src/mixins/syncTaskAgent'
 import { makeStatusAndDisabled } from '@tap/business/src/shared/task'
@@ -24,7 +25,7 @@ import {
   ref,
   watch,
 } from 'vue'
-import { useRequest } from 'vue-request'
+
 import { useRoute, useRouter } from 'vue-router'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { useStore } from 'vuex'
@@ -264,7 +265,9 @@ export default defineComponent({
       if (!id) return
       startLoopTaskTimer = setTimeout(async () => {
         const { parent_task_sign } = route.query || {}
-        const data = await getTaskById(id, {}, { parent_task_sign })
+        const data = await withPassive(() =>
+          getTaskById(id, {}, { parent_task_sign }),
+        )
 
         if (data) {
           if (data.errorEvents?.length) {
@@ -483,7 +486,7 @@ export default defineComponent({
       )
     }
 
-    const { run, cancel, loading } = useRequest(loadData, {
+    const { run, cancel, loading } = usePollingRequest(loadData, {
       manual: true,
       pollingInterval: 5000,
       debounceInterval: 200,

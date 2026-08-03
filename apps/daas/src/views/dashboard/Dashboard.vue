@@ -9,6 +9,7 @@ import {
   type TaskDashboardVo,
 } from '@tap/api/src/core/task'
 import { fetchWorkers, getProcessInfo } from '@tap/api/src/core/workers'
+import { withPassive } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import Chart from '@tap/component/src/chart/Chart.vue'
 import CountUp from '@tap/component/src/CountUp.vue'
@@ -247,13 +248,13 @@ function getAgentStatus(node: AgentNode) {
 function getCpuUsage(node: AgentNode): number {
   const val = node.metricValues?.CpuUsage
   if (!val) return 0
-  return Math.round(Number.parseFloat(String(val)) || 0)
+  return Number((Number.parseFloat(String(val)) || 0).toFixed(2))
 }
 
 function getMemUsage(node: AgentNode): number {
   const val = node.metricValues?.HeapMemoryUsage
   if (!val) return 0
-  return Math.round(Number.parseFloat(String(val)) || 0)
+  return Number((Number.parseFloat(String(val)) || 0).toFixed(2))
 }
 
 function usageBarColor(pct: number) {
@@ -459,7 +460,7 @@ async function refreshAll() {
 // ── Lifecycle ──────────────────────────────────────────
 onMounted(() => {
   fetchDashboardData()
-  refreshTimer = setInterval(refreshAll, 60_000)
+  refreshTimer = setInterval(() => withPassive(refreshAll), 60_000)
 })
 
 onBeforeUnmount(() => {

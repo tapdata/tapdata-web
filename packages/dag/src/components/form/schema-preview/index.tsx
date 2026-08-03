@@ -2,12 +2,14 @@ import { action } from '@formily/reactive'
 import { fetchDatabaseTypeByPdkHash } from '@tap/api/src/core/database-types'
 import { getNodeSchemaPage } from '@tap/api/src/core/metadata-instances'
 import { refreshTaskSchema } from '@tap/api/src/core/task'
+import VIcon from '@tap/component/src/base/VIcon.vue'
 import { IconButton } from '@tap/component/src/icon-button'
 import { mapFieldsData, useField, useForm } from '@tap/form'
 import { getUpdateConditionFields } from '@tap/form/src/components/field-select/FieldSelect'
-import i18n from '@tap/i18n'
+import { computed as reactiveComputed } from '@tap/form/src/shared/reactive'
+import { useI18n } from '@tap/i18n'
 import { debounce, isEqual } from 'lodash-es'
-import { defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref } from 'vue'
 import { useSchemaEffect } from '../../../hooks/useAfterTaskSaved'
 import { useDataflowStore } from '../../../stores/dataflow.store'
 import {
@@ -15,12 +17,14 @@ import {
   getCanUseDataTypes,
   getMatchedDataTypeLevel,
 } from '../../../util'
+import FieldRuleDialog from '../field-inference/Dialog.vue'
 import FieldList from '../field-inference/List.vue'
 import './style.scss'
 
 export const SchemaPreview = defineComponent({
   props: ['ignoreError', 'disabled'],
   setup(props) {
+    const { t } = useI18n()
     const dataflowStore = useDataflowStore()
     const formRef = useForm()
     const fieldRef = useField()
@@ -28,16 +32,37 @@ export const SchemaPreview = defineComponent({
     const treeData = ref([])
     const loading = ref(false)
     const isTreeView = ref(true)
+    const viewOptions = [
+      { value: true, icon: IconLucideListTree },
+      { value: false, icon: IconLucideTable2 },
+    ]
     const isMultiIndex = ref(false)
     const isMultiUniqueIndex = ref(false)
     const isMultiForeignKey = ref(false)
-    const isTarget =
-      form.values.type === 'table' && !!form.values.$inputs.length
+    const isTarget = reactiveComputed(() => {
+      return form.values.type === 'table' && !!form.values.$inputs.length
+    })
     const isSource = form.values.type === 'table' && !form.values.$inputs.length
     const readonly = ref(
-      props.disabled || dataflowStore?.stateIsReadonly || !isTarget,
+      props.disabled || dataflowStore?.stateIsReadonly || !isTarget.value,
     )
-    let fieldChangeRules = form.values.fieldChangeRules || []
+    const fieldChangeRules = ref(form.values.fieldChangeRules || [])
+    const visible = ref(false)
+
+    const draggable = computed(() => {
+      return !readonly.value && !dataflowStore.isSchemaFree(form.values)
+    })
+
+    const hasColumnPositionConfig = reactiveComputed(() => {
+      if (!draggable.value) return false
+      const fieldsAfter = form.values.fieldsAfter || []
+      return (fieldsAfter[0]?.fields?.length ?? 0) > 0
+    })
+
+    const handleOpen = () => {
+      visible.value = true
+    }
+
     const createTree = (data) => {
       const root = { children: [] }
 
@@ -111,7 +136,7 @@ export const SchemaPreview = defineComponent({
         schemaData.value = mapSchema(schema)
         treeData.value = createTree(fields)
 
-        if (isTarget && !form.values.attrs?.hasCreated) {
+        if (isTarget.value && !form.values.attrs?.hasCreated) {
           // 自动设置更新条件字段为主键/唯一索引
           const updateConditionFields = getUpdateConditionFields(fields)
           if (
@@ -155,7 +180,7 @@ export const SchemaPreview = defineComponent({
       const { fields = [], findPossibleDataTypes = {} } = schema
       fields.sort((a, b) => a.columnPosition - b.columnPosition)
       //如果findPossibleDataTypes = {}，不做类型校验
-      if (isTarget) {
+      if (isTarget.value) {
         fields.forEach((field) => {
           const { dataTypes = [], lastMatchedDataType = '' } =
             findPossibleDataTypes[field.field_name] || {}
@@ -164,7 +189,7 @@ export const SchemaPreview = defineComponent({
           field.matchedDataTypeLevel = getMatchedDataTypeLevel(
             field,
             field.canUseDataTypes,
-            fieldChangeRules,
+            fieldChangeRules.value,
             findPossibleDataTypes,
           )
           // mapField(field)
@@ -194,7 +219,7 @@ export const SchemaPreview = defineComponent({
         ) : (
           <ElTooltip
             placement="top"
-            content={i18n.t('public_foreign_key_tip', {
+            content={t('public_foreign_key_tip', {
               name: data.constraints[0],
               val: data.constraints[2],
             })}
@@ -211,7 +236,7 @@ export const SchemaPreview = defineComponent({
         icon = (
           <ElTooltip
             placement="top"
-            content={i18n.t('public_foreign_key_tip', {
+            content={t('public_foreign_key_tip', {
               name: data.constraints[0],
               val: data.constraints[2],
             })}
@@ -232,7 +257,7 @@ export const SchemaPreview = defineComponent({
         icon = (
           <ElTooltip
             placement="top"
-            content={`${i18n.t(data.indicesUnique[2] ? 'public_unique_index' : 'public_normal_index')}: ${
+            content={`${t(data.indicesUnique[2] ? 'public_unique_index' : 'public_normal_index')}: ${
               data.indicesUnique[0]
             }`}
             open-delay={200}
@@ -270,6 +295,11 @@ export const SchemaPreview = defineComponent({
 
       return (
         <div class="flex flex-1 min-w-0 justify-content-between align-center gap-2 pr-2 position-relative">
+          {draggable.value && (
+            <el-icon class="field-grip-icon position-absolute">
+              <i-lucide-grip-vertical />
+            </el-icon>
+          )}
           {icon}
           <span class="ellipsis">
             <span
@@ -299,9 +329,9 @@ export const SchemaPreview = defineComponent({
 
     loadDatatypesjson()
 
-    const handleUpdate = (rules) => {
+    const handleUpdate = (rules: any[]) => {
       form.setValuesIn('fieldChangeRules', rules)
-      fieldChangeRules = rules
+      fieldChangeRules.value = rules
     }
 
     const taskId = dataflowStore.dataflow.id
@@ -322,14 +352,58 @@ export const SchemaPreview = defineComponent({
       }
     }
 
+    const allowDrop = (draggingNode, dropNode, type) => {
+      return type !== 'inner'
+    }
+
+    const handleNodeDrop = () => {
+      const fields: { fieldName: string; columnPosition: number }[] = []
+      const walk = (nodes: any[]) => {
+        for (const node of nodes) {
+          if (node.field_name) {
+            fields.push({
+              fieldName: node.original_field_name,
+              columnPosition: fields.length + 1,
+            })
+          }
+          if (node.children?.length) {
+            walk(node.children)
+          }
+        }
+      }
+      walk(treeData.value)
+
+      // Sync columnPosition back to schemaData.fields
+      const schemaFields = schemaData.value.fields || []
+      for (const item of fields) {
+        const target = schemaFields.find(
+          (f: any) => f.field_name === item.fieldName,
+        )
+        if (target) {
+          target.columnPosition = item.columnPosition
+        }
+      }
+
+      form.setValuesIn('fieldsAfter', [
+        {
+          // tableName: tableName.value,
+          fields,
+        },
+      ])
+    }
+
+    function resetColumnPosition() {
+      form.setValuesIn('fieldsAfter', [])
+    }
+
     return () => (
       <div class="schema-preview pb-6">
         <ElDivider class="mt-8">
           <span class="inline-flex align-center gap-1">
-            {i18n.t('public_schema')}
+            {t('public_schema')}
             <el-divider direction="vertical" class="mr-1" />
             <el-tooltip
-              content={i18n.t('packages_dag_refresh_schema')}
+              content={t('packages_dag_refresh_schema')}
               placement="top"
               hide-after={0}
               enterable={false}
@@ -343,25 +417,17 @@ export const SchemaPreview = defineComponent({
                 refresh
               </IconButton>
             </el-tooltip>
-            <el-tooltip
-              content={i18n.t(
-                isTreeView.value
-                  ? 'packages_dag_switch_to_table_view'
-                  : 'packages_dag_switch_to_tree_view',
-              )}
-              placement="top"
-              hide-after={0}
-              enterable={false}
-              transition="none"
-            >
-              <IconButton
-                onClick={() => {
-                  isTreeView.value = !isTreeView.value
-                }}
-              >
-                {isTreeView.value ? 'table-grid' : 'tree-view'}
-              </IconButton>
-            </el-tooltip>
+            <ElSegmented v-model={isTreeView.value} options={viewOptions}>
+              {{
+                default: ({ item }) => (
+                  <div class="flex align-center justify-center">
+                    <el-icon size={16}>
+                      <item.icon />
+                    </el-icon>
+                  </div>
+                ),
+              }}
+            </ElSegmented>
           </span>
         </ElDivider>
         <div
@@ -376,7 +442,25 @@ export const SchemaPreview = defineComponent({
         >
           {isTreeView.value ? (
             <div class="schema-card rounded-xl inline-block overflow-hidden shadow-sm border border-light">
-              <div class="schema-card-header border-bottom px-3 py-2 fs-7 lh-base text-center">
+              <div class="schema-card-header text-center border-bottom px-3 py-2 fs-7 lh-base position-relative">
+                {hasColumnPositionConfig.value && (
+                  <el-tooltip
+                    content={t(
+                      'packages_form_field_inference_list_reset_column_position',
+                    )}
+                    placement="top"
+                    enterable={false}
+                    hide-after={0}
+                  >
+                    <el-button
+                      class="position-absolute translate-middle-y top-50 start-1"
+                      text
+                      size="small"
+                      onClick={resetColumnPosition}
+                      icon={IconLucideRotateCcw}
+                    ></el-button>
+                  </el-tooltip>
+                )}
                 {tableName.value}
               </div>
               <div
@@ -398,23 +482,37 @@ export const SchemaPreview = defineComponent({
               >
                 <ElTree
                   indent={8}
+                  draggable={draggable.value}
+                  allow-drop={allowDrop}
                   data={treeData.value}
                   render-content={renderContent}
+                  onNode-drop={handleNodeDrop}
                 ></ElTree>
               </div>
             </div>
           ) : (
-            <FieldList
-              class="w-100 border rounded-lg overflow-hidden"
-              data={schemaData.value}
-              readonly={readonly.value}
-              dataTypesJson={dataTypesJson.value}
-              fieldChangeRules={fieldChangeRules}
-              type={isTarget ? 'target' : isSource ? 'source' : ''}
-              single-table
-              ignore-error={!isTarget}
-              onUpdateRules={handleUpdate}
-            ></FieldList>
+            <>
+              <FieldList
+                class="w-100 overflow-hidden"
+                data={schemaData.value}
+                draggable={draggable.value}
+                readonly={readonly.value}
+                dataTypesJson={dataTypesJson.value}
+                fieldChangeRules={fieldChangeRules.value}
+                type={isTarget.value ? 'target' : isSource ? 'source' : ''}
+                single-table
+                ignore-error={!isTarget.value}
+                onUpdateRules={handleUpdate}
+                onOpenUpdateRules={handleOpen}
+              ></FieldList>
+              <FieldRuleDialog
+                visible={visible.value}
+                onUpdate:visible={(val: boolean) => (visible.value = val)}
+                v-model:fieldChangeRules={fieldChangeRules.value}
+                form={form}
+                readonly={readonly.value}
+              />
+            </>
           )}
         </div>
       </div>

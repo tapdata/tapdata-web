@@ -5,7 +5,7 @@ import {
 } from '@tap/api/src/core/monitoring-logs'
 import { callProxy } from '@tap/api/src/core/proxy'
 import { downloadTaskAnalyze, putTaskLogSetting } from '@tap/api/src/core/task'
-import { CancelToken } from '@tap/api/src/request'
+import { CancelToken, withPassive } from '@tap/api/src/request'
 import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
 import TimeSelect from '@tap/component/src/TimeSelect.vue'
 import { useI18n } from '@tap/i18n'
@@ -197,9 +197,13 @@ const isNoMore = computed(() => {
   return page * pageSize > total
 })
 
+const isCustomTime = computed(() => {
+  return quotaTimeType.value === 'custom' || quotaTimeType.value.includes(',')
+})
+
 const isEnterTimer = computed(() => {
   return (
-    quotaTimeType.value !== 'custom' &&
+    !isCustomTime.value &&
     (props.dataflow?.status === 'running' ||
       props.dataflow?.status === 'starting')
   )
@@ -272,10 +276,10 @@ function pollingData() {
       (['error', 'schedule_failed'].includes(props.dataflow.status) &&
         ++extraEnterCount.value < 5)
     ) {
-      loadNew()
+      withPassive(loadNew)
     }
   }, 5000)
-  loadNew()
+  !isCustomTime.value && loadNew()
 }
 
 function changeItem(val: string) {
@@ -831,6 +835,13 @@ onUnmounted(() => {
   if (overflowObserver) {
     overflowObserver.disconnect()
   }
+})
+
+defineExpose({
+  changeItem,
+  changePickerTime(val: number[]) {
+    timeSelect.value?.changeTime?.(val)
+  },
 })
 </script>
 

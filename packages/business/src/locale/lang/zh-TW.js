@@ -716,10 +716,17 @@ export default {
     '當任一API Server的工作行程記憶體使用量超過告警閾值時',
   packages_business_setting_alarmnotification_api_server_worker_memory_usage_alter:
     '當任一API Server的工作行程記憶體使用量超過通知閾值時',
-  packages_business_api_server_p95_warn: '當任一API Server請求耗時P95超過告警閾值時',
-  packages_business_api_server_p99_warn: '當任一API Server請求耗時P99超過告警閾值時',
-  packages_business_api_server_error_rate_warn: '當任一API Server請求錯誤率超過告警閾值時',
+  packages_business_api_server_p95_warn:
+    '當任一API Server請求耗時P95超過告警閾值時',
+  packages_business_api_server_p99_warn:
+    '當任一API Server請求耗時P99超過告警閾值時',
+  packages_business_api_server_error_rate_warn:
+    '當任一API Server請求錯誤率超過告警閾值時',
+  packages_business_task_source_no_incremental_event:
+    '當源端已開啟心跳表，連續 60 秒未接收到增量事件時',
   packages_business_setting_alarmnotification_dangrenwuuP: 'Agent服务啓動時',
+  packages_business_setting_alarmnotification_dangyinqinglixian: '當引擎停止時',
+  packages_business_setting_alarmnotification_dangyinqinghuifu: '當引擎啓動時',
   packages_business_setting_alarmnotification_msshigaojing: ' 時告警',
   packages_business_setting_alarmnotification_lianxu: '連續',
   packages_business_setting_alarmnotification_cichugaojinggui:
@@ -830,9 +837,8 @@ export default {
   packages_business_create_connection_dialog_neirongCho:
     '從下面選擇一個數據源連接器並配置連接和憑據。',
   // 共享挖掘
-  packages_business_shared_cdc_placeholder_task_name: '請輸入挖掘任務名搜索',
-  packages_business_shared_cdc_placeholder_connection_name:
-    '請輸入連接名稱搜索',
+  packages_business_shared_cdc_placeholder_task_name: '任務名稱',
+  packages_business_shared_cdc_placeholder_connection_name: '連接名稱',
   packages_business_shared_cdc_name: '請輸入挖掘名稱',
   packages_business_shared_cdc_setting_select_mode: '存储模式',
   packages_business_shared_cdc_setting_select_mongodb_tip: '請輸入mongodb連接',
@@ -923,6 +929,9 @@ export default {
   packages_business_data_server_drawer_zanwumiaoshu: '暫無描述',
   packages_business_data_server_drawer_tiaoshi: '調試',
   packages_business_data_server_drawer_peizhi: '配置',
+  packages_business_data_server_drawer_refresh_fields: '刷新字段',
+  packages_business_data_server_add_field: '添加字段',
+  packages_business_data_server_add_sub_field: '添加子字段',
   packages_business_data_server_drawer_chuangjianfuwu: '創建服務',
   packages_business_copy_server: '復製服務',
   packages_business_import_server: '導入服務',
@@ -1078,9 +1087,8 @@ export default {
   // 共享緩存
   packages_business_shared_cache_create: '創建緩存',
   packages_business_shared_cache_edit: '編輯緩存',
-  packages_business_shared_cache_placeholder_task_name: '請輸入緩存任務名搜索',
-  packages_business_shared_cache_placeholder_connection_name:
-    '請輸入連接名稱搜索',
+  packages_business_shared_cache_placeholder_task_name: '任務名稱',
+  packages_business_shared_cache_placeholder_connection_name: '連接名稱',
   packages_business_shared_cache_button_create: '新建緩存',
   packages_business_shared_cache_name: '緩存名稱',
   packages_business_shared_cache_status: '緩存狀態',
@@ -1146,7 +1154,8 @@ export default {
     '讀取超時，請確認引擎在線後重試',
   packages_business_data_server_drawer_jiazaishibai: '載入失敗',
   packages_business_data_server_drawer_wusuoyinkejiazai: '該表暫無可載入的索引',
-  packages_business_data_server_drawer_xianbaocunapi: '請先儲存 API 後再載入索引',
+  packages_business_data_server_drawer_xianbaocunapi:
+    '請先儲存 API 後再載入索引',
   packages_business_data_server_drawer_guiyin_xitong: '系統索引',
   packages_business_data_server_drawer_guiyin_buzhichi: '本期不支援',
   packages_business_data_server_drawer_guiyin_pipei: '匹配本 API',
@@ -1325,6 +1334,30 @@ export default {
   packages_business_components_conditionbox_mubiaobiaoshuju: '目標表數據過濾',
   packages_business_components_conditionbox_enableCustomCommand_tip:
     '需要保證查詢條件有索引，如果沒索引會產生全表掃描導致數據庫壓力變大',
+  packages_business_components_conditionbox_advanced_verification_doc: `##### 高級校驗說明
+**第一步** 函數入參為源表數據，可以根據源表數據調用**內置函數**查詢出目標數據<br>
+**第二步** 自定義校驗邏輯<br>
+**第三步** 函數返回結果<br>
+
+- **result**：是否通過校驗（passed：校驗通過，failed：校驗失敗），如果不填或填其它字符則校驗失敗，必填項<br>
+- **message**：校驗異常信息，建議校驗失敗返回，選填項<br>
+- **data**：當前校驗目標數據，建議校驗失敗返回，選填項<br>
+
+
+完整示例：此為MongoDB查詢示例
+\`\`\`javascript
+function validate(sourceRow){'{'}
+  // 第1步
+  var targetRow = target.executeQuery({'{'}database: "target",collection: "USER",filter: {'{'}USER_ID: sourceRow.USER_ID{'}}'});
+  // 第2步
+  if(sourceRow.USER_ID === targetRow[0].USER_ID){'{'}
+    // 第3步
+    return {'{'}result: 'passed',message: "",data: ""{'}'}
+  {'}'}else{'{'}
+    return {'{'}result: 'failed',message: "記錄不一致",data: targetRow{'}'}
+  {'}'}
+{'}'}
+\`\`\``,
   packages_business_data_server_list_apIwendang: 'API文檔導出',
   packages_business_verification_form_gaojipeizhi: '高級配置',
   packages_business_verification_form_validate_table_is_empty:
@@ -1512,6 +1545,9 @@ export default {
     '點擊變量名稱插入到模板中',
   packages_business_ignoreTimePrecision_round: '四捨五入',
   packages_business_ignoreTimePrecision_truncate: '截斷',
+  packages_business_treatEmptyStringAsNull: '空字符串視為 NULL',
+  packages_business_treatEmptyStringAsNull_tip: `<p>開啓後，源端和目標端在字段校驗時，空字符串（""）將被視為與 NULL 相等。</p>
+<p>適用於目標端為 Oracle 等會自動把空字符串轉換為 NULL 的數據庫，避免因數據庫語義差異導致的字段不一致誤報。</p>`,
   packages_business_validation_task_type: '校驗任務類型',
   packages_business_select_task_to_be_verified: '選擇被校驗的任務',
   packages_business_drag_file_here:
@@ -1563,6 +1599,7 @@ export default {
   packages_business_monitor_cron: '監控周期',
   packages_business_monitor_cron_tip: `語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 ? 年 *\n舉例：0 */1 * * * ? 每分鐘運行一次 0 0 2 * * ? 每天2點運行`,
   packages_business_datasource_monitor_alter: '數據源監控告警',
+  packages_business_task_ddl_warning: '任務風險DDL告警',
   packages_business_import_mode: '同名處理方式',
   packages_business_import_as_copy: '以副本導入',
   packages_business_import_replace: '覆蓋導入',
@@ -1578,6 +1615,10 @@ export default {
     '若任務名衝突則替換任務，連接名衝突則重用系統中已有連接。',
   public_connector_beta_tip: '正在測試階段，我們正在不斷優化體驗',
   public_connector_alpha_tip: '正在持續開發中，部分功能可能還在完善',
-  packages_business_api_server_connection_pool_deficiency_warn: '當任一API Server 連接池資源緊張触发告警閾值時',
-  packages_business_api_server_connection_pool_idle_warn: '當任一API Server 連接池連接數低於告警閾值時',
+  packages_business_column_setting: '顯示設定',
+  packages_business_column_reset: '重置',
+  packages_business_api_server_connection_pool_deficiency_warn:
+    '當任一API Server 連接池資源緊張触发告警閾值時',
+  packages_business_api_server_connection_pool_idle_warn:
+    '當任一API Server 連接池連接數低於告警閾值時',
 }

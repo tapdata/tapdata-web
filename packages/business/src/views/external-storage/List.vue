@@ -8,10 +8,11 @@ import {
   updateExternalStorageById,
 } from '@tap/api/src/core/external-storage'
 
+import { withPassive } from '@tap/api/src/request'
 import Drawer from '@tap/component/src/Drawer.vue'
 import { FilterBar } from '@tap/component/src/filter-bar'
-import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 
+import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 import { openUrl } from '@tap/shared'
 import dayjs from 'dayjs'
 import { cloneDeep, escapeRegExp } from 'lodash-es'
@@ -174,7 +175,7 @@ export default {
 
     //定时轮询
     timeout = setInterval(() => {
-      this.table.fetch(null, 0, true)
+      withPassive(() => this.table.fetch(null, 0, true))
     }, 10000)
   },
   unmounted() {

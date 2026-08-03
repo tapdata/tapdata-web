@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { batchMeasurements } from '@tap/api/src/core/measurement'
+import { withPassive } from '@tap/api/src/request'
 import { IconButton } from '@tap/component/src/icon-button'
 import TimeSelect from '@tap/component/src/TimeSelect.vue'
 import { useI18n } from '@tap/i18n'
@@ -303,10 +304,34 @@ const totalData = computed(() => {
 })
 
 const totalDataPercentage = computed(() => {
-  const { snapshotTableTotal, tableTotal } = totalData.value
-  return snapshotTableTotal && tableTotal
-    ? (snapshotTableTotal / tableTotal) * 100
-    : 0
+  const {
+    snapshotTableTotal,
+    tableTotal,
+    snapshotRowTotal,
+    snapshotInsertRowTotal,
+  } = totalData.value
+
+  if (props.dataflow.syncType === 'migrate')
+    return tableTotal
+      ? {
+          val: Math.round((snapshotTableTotal / tableTotal) * 100),
+          text: `${snapshotTableTotal}/${tableTotal}`,
+        }
+      : { val: 0, text: '' }
+  if (snapshotTableTotal === tableTotal)
+    return {
+      val: 100,
+      text: '',
+    }
+  return snapshotRowTotal
+    ? {
+        val: Math.round((snapshotInsertRowTotal / snapshotRowTotal) * 100),
+        text: `${snapshotInsertRowTotal} / ${snapshotRowTotal}`,
+      }
+    : {
+        val: 0,
+        text: '',
+      }
 })
 
 const currentTotalDataPercentage = computed(() => {
@@ -344,7 +369,7 @@ function init() {
   timer = setInterval(() => {
     quotaTimeType.value !== 'custom' &&
       props.dataflow?.status === 'running' &&
-      loadQuotaData()
+      withPassive(loadQuotaData)
   }, refreshRate.value)
   loadQuotaData(true)
   nextTick(() => {
@@ -580,6 +605,7 @@ function onClose() {
           v-model="selected"
           class="ml-2 dark"
           filterable
+          style="width: 200px"
           @change="init()"
         >
           <ElOption
@@ -663,11 +689,9 @@ function onClose() {
                   <ElProgress
                     class="flex-1"
                     :show-text="false"
-                    :percentage="totalDataPercentage"
+                    :percentage="totalDataPercentage.val"
                   />
-                  <span class="ml-2">{{
-                    `${totalData.snapshotTableTotal}/${totalData.tableTotal}`
-                  }}</span>
+                  <span class="ml-2">{{ totalDataPercentage.text }}</span>
                 </div>
               </div>
               <div

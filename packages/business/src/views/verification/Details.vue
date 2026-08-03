@@ -6,6 +6,7 @@ import {
   fetchInspects,
   updateInspect,
 } from '@tap/api/src/core/inspects'
+import { withPassive } from '@tap/api/src/request'
 import { checkEllipsisActive, downloadBlob } from '@tap/shared'
 import dayjs from 'dayjs'
 import { ErrorMessage } from '../../components/error-message'
@@ -111,7 +112,7 @@ export default {
     this.getData()
     this.interval = setInterval(() => {
       if (['running', 'scheduling'].includes(this.inspect?.status)) {
-        this.getData(false)
+        withPassive(() => this.getData(false))
       }
     }, 10000)
   },

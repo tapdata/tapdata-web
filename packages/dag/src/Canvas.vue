@@ -7,9 +7,9 @@ import {
   useVueFlow,
   VueFlow,
   type Connection,
-  type ConnectStartEvent,
   type GraphNode,
   type NodeChange,
+  type OnConnectStartParams,
 } from '@vue-flow/core'
 import { useDark } from '@vueuse/core'
 import {
@@ -39,7 +39,7 @@ import { useKeybindings, type KeyMap } from './composables/useKeybindings'
 import { useLayout } from './composables/useLayout'
 import { useDataflowStore } from './stores/dataflow.store'
 import { useUiStore } from './stores/ui.store'
-import { getHelperLines } from './utils/helperLines'
+import { getHelperLines, getHelperLinesForPosition } from './utils/helperLines'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
 
@@ -72,9 +72,8 @@ const dataflowStore = useDataflowStore()
 const { controlKeyText } = useDeviceSupport()
 const dag = inject('dag')
 const nodesPanelExpanded = inject<Ref<boolean>>('nodesPanelExpanded', ref(true))
-
+const needsFitView = inject<Ref<boolean>>('needsFitView', ref(true))
 // Bottom bar dynamic positioning
-const RIGHT_PANEL_WIDTH = 600
 const PANEL_MARGIN = 12
 
 // Observe actual width of the left panel slot content
@@ -126,9 +125,34 @@ function observeBottomBar() {
   bottomBarResizeObserver.observe(bottomBarRef.value)
 }
 
+// Observe actual width of the right panel
+const rightPanelRef =
+  useTemplateRef<InstanceType<typeof RightPanel>>('rightPanel')
+const rightPanelWidth = ref(0)
+
+const rightPanelExpanded = computed(() => {
+  return dataflowStore.selectedNode || dataflowStore.showSettings
+})
+
+let rightPanelResizeObserver: ResizeObserver | null = null
+
+function observeRightPanel() {
+  const el = rightPanelRef.value?.$el as HTMLElement | undefined
+  if (!el) return
+  rightPanelResizeObserver?.disconnect()
+  rightPanelResizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      rightPanelWidth.value = entry.contentRect.width
+    }
+  })
+  rightPanelResizeObserver.observe(el)
+}
+
 const { layout, fitViewWithOffset } = useLayout({
   nodesPanelExpanded,
   nodesPanelWidth: leftPanelWidth,
+  rightPanelExpanded,
+  rightPanelWidth,
   bottomPanelHeight: bottomBarHeight,
 })
 
@@ -232,6 +256,9 @@ onMounted(() => {
     }
   }
 
+  // Start observing the right panel width
+  observeRightPanel()
+
   // Start observing the bottom bar height
   observeBottomBar()
 
@@ -245,19 +272,24 @@ onMounted(() => {
 onUnmounted(() => {
   cleanupKeyboardShortcuts()
   dataflowStore.unregisterVueFlowUpdateCallback()
+  if (locatedNodeHighlightTimer) {
+    clearTimeout(locatedNodeHighlightTimer)
+    locatedNodeHighlightTimer = null
+  }
   leftPanelResizeObserver?.disconnect()
   leftPanelMutationObserver?.disconnect()
+  rightPanelResizeObserver?.disconnect()
   bottomBarResizeObserver?.disconnect()
 })
 
 const bottomBarStyle = computed(() => {
   const left =
     leftPanelWidth.value > 0
-      ? `${leftPanelWidth.value + 20}px`
+      ? `${leftPanelWidth.value + PANEL_MARGIN * 2}px`
       : `${PANEL_MARGIN}px`
   const right =
-    dataflowStore.selectedNode || dataflowStore.showSettings
-      ? `${RIGHT_PANEL_WIDTH + 20}px`
+    rightPanelWidth.value > 0 && rightPanelExpanded.value
+      ? `${rightPanelWidth.value + PANEL_MARGIN}px`
       : `${PANEL_MARGIN}px`
   return { left, right }
 })
@@ -287,6 +319,8 @@ const ZOOM_STEP = 0.1
 const MIN_ZOOM = 0.1
 const MAX_ZOOM = 10
 const ZOOM_PRESETS = [0.25, 0.5, 0.75, 1, 2]
+const LOCATED_NODE_HIGHLIGHT_DURATION = 1800
+let locatedNodeHighlightTimer: ReturnType<typeof setTimeout> | null = null
 
 const zoomPercentage = computed(() => Math.round(viewport.value.zoom * 100))
 const previousZoom = ref(1)
@@ -487,14 +521,49 @@ function onUpdateEdgeLabelHovered(id: string, hovered: boolean) {
 }
 
 const connectionCreated = ref(false)
-const connectingHandle = ref<ConnectStartEvent>()
+const connectingHandle = ref<OnConnectStartParams>()
 const connectedHandle = ref<Connection>()
+
+function onConnectStart(params: { event?: MouseEvent } & OnConnectStartParams) {
+  connectingHandle.value = params
+  connectionCreated.value = false
+}
 
 function onConnect(connection: Connection) {
   emit('create:connection', connection)
 
   connectedHandle.value = connection
   connectionCreated.value = true
+}
+
+// 在节点本体（非 Handle）上松开连线时，仍尝试建立连接
+function onConnectEnd(event?: MouseEvent | TouchEvent) {
+  const start = connectingHandle.value
+  connectingHandle.value = undefined
+
+  // 已命中 Handle 完成连线，或缺少起始节点/事件信息，无需补充处理
+  if (connectionCreated.value || !start?.nodeId || !event) return
+
+  const point = 'changedTouches' in event ? event.changedTouches[0] : event
+  if (!point) return
+
+  const el = document.elementFromPoint(point.clientX, point.clientY)
+  const targetNodeId = el?.closest('.vue-flow__node')?.getAttribute('data-id')
+  if (!targetNodeId || targetNodeId === start.nodeId) return
+
+  // 根据起始 Handle 类型确定连线方向：target 起始则落点节点为 source，反之为 target
+  const connection =
+    start.handleType === 'target'
+      ? { source: targetNodeId, target: start.nodeId }
+      : { source: start.nodeId, target: targetNodeId }
+
+  if (!dataflowStore.isValidConnection(connection as any)) return
+
+  emit('create:connection', {
+    ...connection,
+    sourceHandle: null,
+    targetHandle: null,
+  })
 }
 
 function onCreateConnection(connection: any) {
@@ -595,10 +664,47 @@ function clearTextSelection() {
   window.getSelection()?.removeAllRanges()
 }
 
+/**
+ * Returns true if any visible node is entirely outside the current viewport.
+ * Uses the full container width (right panel excluded – it's closing after deselect).
+ */
+function hasNodesOutsideView(): boolean {
+  const visibleNodes = getNodes.value.filter((n) => !n.hidden)
+  if (!visibleNodes.length) return false
+
+  const container = document.querySelector('#node-canvas') as HTMLElement | null
+  if (!container) return false
+
+  const { x: vx, y: vy, zoom } = viewport.value
+  const cw = container.clientWidth
+  const ch = container.clientHeight
+  const leftOffset = nodesPanelExpanded.value ? leftPanelWidth.value : 0
+  const bottomOffset = Math.max(0, bottomBarHeight.value - 44)
+
+  return visibleNodes.some((node) => {
+    const w = node.dimensions?.width ?? 150
+    const h = node.dimensions?.height ?? 50
+    const sl = node.position.x * zoom + vx
+    const st = node.position.y * zoom + vy
+    const sr = sl + w * zoom
+    const sb = st + h * zoom
+    // Trigger if node is not fully contained within the visible area
+    return sl < leftOffset || sr > cw || st < 0 || sb > ch - bottomOffset
+  })
+}
+
 function onPaneClick(event: MouseEvent) {
+  const readyFit = rightPanelExpanded.value
   const pos = screenToFlowCoordinate({ x: event.clientX, y: event.clientY })
   dataflowStore.lastClickPosition = [pos.x, pos.y]
   dataflowStore.selectNode(null)
+
+  if (readyFit && hasNodesOutsideView()) {
+    fitViewWithOffset({
+      duration: 300,
+      maxZoom: 1,
+    })
+  }
 }
 
 function onSelectionEnd(event: MouseEvent) {
@@ -672,14 +778,6 @@ function handleLayoutGraph() {
   })
 }
 
-// const hasInit = ref(false)
-// function onInitialized() {
-//   if (hasInit.value) return
-//   console.log('fitViewWithOffset', bottomBarHeight.value)
-//   fitViewWithOffset({ duration: 0, maxZoom: 1 })
-//   hasInit.value = true
-// }
-
 provide('popoverTarget', popoverTarget)
 provide('showPopover', showPopover)
 provide('popoverTargetKey', popoverTargetKey)
@@ -689,15 +787,50 @@ provide('onCreateConnection', onCreateConnection)
 provide('onDeleteConnection', onDeleteConnection)
 provide('onMoveNodePosition', onMoveNodePosition)
 provide('handleDisableNode', handleDisableNode)
+provide('fitViewWithOffset', fitViewWithOffset)
 
-function locateNode(nodeId: string) {
+// Expose helper-line updaters so that NodesPanel drag can show guide lines
+provide(
+  'updateDragHelperLines',
+  (
+    position: { x: number; y: number },
+    dimensions: { width: number; height: number },
+  ) => {
+    const lines = getHelperLinesForPosition(
+      position,
+      dimensions,
+      getNodes.value,
+    )
+    helperLineHorizontal.value = lines.horizontal
+    helperLineVertical.value = lines.vertical
+    // 返回吸附位置（flow 坐标），供拖拽元素对齐到引导线
+    return lines.snapPosition
+  },
+)
+provide('clearDragHelperLines', () => {
+  helperLineHorizontal.value = undefined
+  helperLineVertical.value = undefined
+})
+
+async function locateNode(nodeId: string) {
   const node = vueFlow.findNode(nodeId)
   if (!node) return
-  vueFlow.fitView({
+  dataflowStore.locatedNodeId = ''
+  await nextTick()
+  dataflowStore.locatedNodeId = nodeId
+
+  if (locatedNodeHighlightTimer) clearTimeout(locatedNodeHighlightTimer)
+  locatedNodeHighlightTimer = setTimeout(() => {
+    if (dataflowStore.locatedNodeId === nodeId) {
+      dataflowStore.locatedNodeId = ''
+    }
+    locatedNodeHighlightTimer = null
+  }, LOCATED_NODE_HIGHLIGHT_DURATION)
+
+  fitViewWithOffset({
     nodes: [nodeId],
     duration: 300,
     maxZoom: 1,
-    padding: 0.5,
   })
 }
 
@@ -708,11 +841,10 @@ function ensureNodesVisible(nodeIds: string[]) {
   if (!nodeIds.length) return
   const existingIds = nodeIds.filter((id) => vueFlow.findNode(id))
   if (!existingIds.length) return
-  vueFlow.fitView({
+  fitViewWithOffset({
     nodes: existingIds,
-    duration: 200,
-    maxZoom: viewport.value.zoom, // 不放大，保持当前缩放
-    padding: 0.2,
+    duration: 300,
+    maxZoom: viewport.value.zoom,
   })
 }
 
@@ -727,20 +859,18 @@ function selectNodes(nodeIds: string[]) {
   )
 }
 
-let isInitialized = false
-
 function onNodesInitialized() {
-  if (isInitialized) return
-  isInitialized = true
-  nextTick(() => {
-    setTimeout(() => {
-      if (dataflowStore.stateIsReadonly) {
-        handleLayoutGraph()
-      } else {
-        fitViewWithOffset({ duration: 0, maxZoom: 1 })
-      }
-    }, 0)
-  })
+  if (!needsFitView.value && !dataflowStore.needsAutoLayout) return
+
+  needsFitView.value = false
+  setTimeout(() => {
+    if (dataflowStore.stateIsReadonly || dataflowStore.needsAutoLayout) {
+      handleLayoutGraph()
+      dataflowStore.needsAutoLayout = false
+    } else {
+      fitViewWithOffset({ duration: 0, maxZoom: 1 })
+    }
+  }, 0)
 }
 
 defineExpose({
@@ -762,7 +892,7 @@ defineExpose({
       </slot>
     </div>
 
-    <RightPanel />
+    <RightPanel ref="rightPanel" />
 
     <!-- Empty state overlay -->
     <Transition name="empty-state">
@@ -1005,7 +1135,9 @@ defineExpose({
       :apply-changes="false"
       @mousedown="clearTextSelection"
       @node-drag-stop="onNodeDragStop"
+      @connect-start="onConnectStart"
       @connect="onConnect"
+      @connect-end="onConnectEnd"
       @node-click="onNodeClick"
       @pane-click="onPaneClick"
       @selection-end="onSelectionEnd"

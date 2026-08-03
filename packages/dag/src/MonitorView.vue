@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { batchMeasurements } from '@tap/api/src/core/measurement'
 import { getTaskById, getTaskRecords } from '@tap/api/src/core/task'
+import { withPassive, withPassiveAsync } from '@tap/api/src/request'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
+import { ALARM_LEVEL_SORT } from '@tap/business/src/shared/const'
 import SharedCacheDetails from '@tap/business/src/views/shared-cache/Details.vue'
 import SharedCacheEditor from '@tap/business/src/views/shared-cache/Editor.vue'
 import SharedMiningEditor from '@tap/business/src/views/shared-mining/Editor.vue'
@@ -11,7 +13,7 @@ import { useI18n } from '@tap/i18n'
 import Time from '@tap/shared/src/time'
 import { useDark } from '@vueuse/core'
 import { debounce } from 'lodash-es'
-import { computed, onUnmounted, provide, ref } from 'vue'
+import { computed, onUnmounted, provide, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Canvas from './Canvas.vue'
 import ConsolePanel from './components/migration/ConsolePanel.vue'
@@ -42,8 +44,6 @@ const taskRecord = ref({ total: 0, items: [] as any[] })
 const timeFormat = ref('HH:mm:ss')
 const nodeDetailDialog = ref(false)
 const nodeDetailDialogId = ref('')
-const noNeedRefresh = ref(false)
-const canvasRef = ref<any>(null)
 const { t } = useI18n()
 
 const {
@@ -55,6 +55,7 @@ const {
   formScope,
   isSaving,
   syncTypeLabel,
+  canvasRef,
   taskOperationsRef,
   consoleRef,
   skipErrorRef,
@@ -87,7 +88,6 @@ const {
   reformDataflow,
 } = useCanvasOperation()
 
-const isInitialized = ref(false)
 const timer = ref()
 const quotaTimeType = ref('5m')
 const quotaTime = ref([])
@@ -102,12 +102,19 @@ const lastStopTime = computed(() => {
   return stopTime ? new Date(stopTime).getTime() : null
 })
 
-const isEnterTimer = computed(() => {
-  return (
-    quotaTimeType.value !== 'custom' &&
-    !nodeDetailDialog.value &&
-    ['running', 'stopping'].includes(dataflow.value?.status)
-  )
+const TERMINAL_STATUSES = [
+  'error',
+  'schedule_failed',
+  'stop',
+  'complete',
+  'wait_start',
+]
+
+const shouldPoll = computed(() => {
+  if (quotaTimeType.value === 'custom' || nodeDetailDialog.value) {
+    return false
+  }
+  return !TERMINAL_STATUSES.includes(dataflow.value?.status)
 })
 
 const timeSelectRange = computed(() => {
@@ -464,17 +471,17 @@ function getParams() {
   }
 }
 
-function polling() {
-  if (
-    isEnterTimer.value ||
-    (!noNeedRefresh.value &&
-      ['error', 'schedule_failed', 'stop', 'complete'].includes(
-        dataflow.value.status,
-      ) &&
-      ++extraEnterCount.value < 4)
+function polling(): Promise<void> {
+  if (shouldPoll.value) {
+    // 非终态（running、stopping 等）持续轮询
+    return startLoadData()
+  } else if (
+    TERMINAL_STATUSES.includes(dataflow.value?.status) &&
+    ++extraEnterCount.value < 4
   ) {
-    startLoadData()
+    return startLoadData()
   }
+  return Promise.resolve()
 }
 
 const loadData = () => {
@@ -503,9 +510,10 @@ const loadData = () => {
     })
     .finally(() => {
       timer.value && clearTimeout(timer.value)
-      timer.value = setTimeout(() => {
-        polling()
-      }, refreshRate.value)
+      timer.value = setTimeout(
+        () => withPassiveAsync(polling),
+        refreshRate.value,
+      )
     })
 }
 
@@ -560,8 +568,9 @@ const startLoadData = async () => {
 
 const initMonitor = debounce(() => {
   timer.value && clearTimeout(timer.value)
+  extraEnterCount.value = 0
   startLoadData()
-}, 200)
+}, 300)
 
 function handleOpenDetail(node: any) {
   if (['mem_cache'].includes(node.type)) return
@@ -576,7 +585,7 @@ async function pollTaskDetail() {
   if (!taskId) return
 
   try {
-    const task = await getTaskById(taskId)
+    const task = await withPassive(() => getTaskById(taskId))
     if (task) {
       reformDataflow(task)
     }
@@ -605,10 +614,19 @@ const init = async () => {
   initMonitor()
   initWS()
   pollingTimer = setTimeout(pollTaskDetail, 10000)
-  isInitialized.value = true
 }
 
 init()
+
+// 状态变化时重新加载监控数据，如 stop → running
+watch(
+  () => dataflow.value?.status,
+  (v) => {
+    if (v) {
+      initMonitor()
+    }
+  },
+)
 
 onUnmounted(() => {
   if (pollingTimer) {
@@ -626,7 +644,6 @@ provide('dataflowDesc', dataflowDesc)
 provide('onNameInputChange', onNameInputChange)
 provide('formScope', formScope)
 provide('isSaving', isSaving)
-provide('isInitialized', isInitialized)
 </script>
 
 <template>

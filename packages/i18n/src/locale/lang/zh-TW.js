@@ -113,8 +113,11 @@ export default {
   public_button_setting: '設置',
   public_button_reduction: '還原',
   public_button_copy: '複製',
+  public_button_duplicate: '複製',
   public_button_details: '詳情',
   public_button_preview: '預覽',
+  public_button_enable: '啟用',
+  public_button_disable: '停用',
   public_button_reload: '重新加載',
   public_button_restart: '重啟',
   public_button_start: '啟動',
@@ -303,6 +306,7 @@ export default {
 
   // 任務
   public_task: '任務',
+  public_task_desc: '任務描述',
   public_task_name: '任務名稱',
   public_task_type: '任務類型',
   public_task_sync_type: '同步類型',
@@ -592,6 +596,8 @@ export default {
   public_select_encryption_rule: '選擇加密規則',
   public_clear_alias_confirm: '確定清空所有字段別名嗎?',
   public_selected_fields: '已選擇 {val} 個字段',
+  public_field_view_selected: '已選字段',
+  public_field_view_unselected: '未選字段',
   public_selected_tables: '已選擇 {val} 個表',
   public_quick_convert_alias: '快速轉換別名',
   public_clear_alias: '清空別名',
@@ -649,4 +655,8 @@ export default {
   public_import_count: '已匯入 {0} 條',
   public_apply_to_form: '套用到表單',
   public_copy_text: '複製文字',
+  public_last_capture_time: '最近觀測時間',
+  public_alarm_date: '告警時間',
+  public_duration: '時長',
+  packages_dag_validate_shared_cdc_title: '以下連接尚未開啟共享挖掘，運行任務將會出錯',
 }

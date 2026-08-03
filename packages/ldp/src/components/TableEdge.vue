@@ -38,6 +38,7 @@ const emit = defineEmits<{
 
 const taskReplicateLagMap = inject<Record<string, string>>(
   'taskReplicateLagMap',
+  {},
 )!
 
 const path = computed(() => getBezierPath(props))
@@ -54,7 +55,12 @@ const openTaskPopover = (ev: MouseEvent) => {
 
 <template>
   <!-- You can use the `BaseEdge` component to create your own custom edge more easily -->
-  <BaseEdge :id="id" :style="style" :path="path[0]" :marker-end="markerEnd" />
+  <BaseEdge
+    :id="id"
+    :style="style"
+    :path="path[0]"
+    marker-end="url(#marker-arrow)"
+  />
 
   <!-- Use the `EdgeLabelRenderer` to escape the SVG world of edges and render your own custom label in a `<div>` ctx -->
   <EdgeLabelRenderer v-if="tasks[0]">
@@ -77,16 +83,11 @@ const openTaskPopover = (ev: MouseEvent) => {
             <TaskStatusDot :status="tasks[0].status" />
             <OverflowTooltip
               :text="tasks[0].name"
-              append-to="#table-lineage-graph"
               class="min-w-0 text-xs font-color-light"
+              append-to="#table-lineage-graph"
             />
-            <!-- <span
-              class="overflow-hidden clickable ellipsis px-1 rounded-4"
-              :title="tasks[0].name"
-              >{{ tasks[0].name }}
-            </span> -->
           </div>
-          <el-tooltip
+          <!-- <el-tooltip
             v-if="
               tasks[0].status === 'running' &&
               taskReplicateLagMap[tasks[0].id as string]
@@ -106,10 +107,10 @@ const openTaskPopover = (ev: MouseEvent) => {
                 taskReplicateLagMap[tasks[0].id as string]
               }}</span>
             </div>
-          </el-tooltip>
+          </el-tooltip> -->
         </div>
 
-        <div
+        <!-- <div
           v-if="tasks.length > 1"
           class="flex align-center label-dropdown clickable flex-shrink-0"
           @click="openTaskPopover"
@@ -119,7 +120,7 @@ const openTaskPopover = (ev: MouseEvent) => {
             }}<el-icon class="ml-0.5" size="14"
               ><i-lucide-chevron-down /></el-icon
           ></span>
-        </div>
+        </div> -->
       </div>
     </div>
   </EdgeLabelRenderer>

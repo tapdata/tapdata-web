@@ -2,7 +2,27 @@ export const NODE_PREFIX = 'node-'
 export const NODE_WIDTH = 242
 export const NODE_HEIGHT = 52
 
-export const DEFAULT_SETTINGS = {
+export interface DefaultSettings {
+  name: string
+  desc: string
+  status: string
+  type: string
+  isAutoCreateIndex: boolean
+  isOpenAutoDDL: boolean
+  increOperationMode: boolean
+  increaseReadSize: number
+  processorThreadNum: number
+  shareCdcEnable: boolean
+  isSchedule: boolean
+  cronExpression: string
+  accessNodeType: string
+  isAutoInspect: boolean
+  timeDifference: number
+  currentEventTimestamp: Date | number | string | null
+  autoIncrementalBatchSize: boolean
+}
+
+export const DEFAULT_SETTINGS: DefaultSettings = {
   name: '', // 任务名称
   desc: '', // 任务描述
   status: '', // 任务状态
@@ -64,7 +84,7 @@ export const DEFAULT_SETTINGS = {
 }
 
 // 不支持全量
-export const NONSUPPORT_SYNC = [
+export const NONSUPPORT_SYNC: string[] = [
   'elasticsearch',
   'redis',
   'hive',
@@ -73,7 +93,7 @@ export const NONSUPPORT_SYNC = [
   'hazelcast_cloud_cluster',
 ]
 // 不支持增量
-export const NONSUPPORT_CDC = [
+export const NONSUPPORT_CDC: string[] = [
   'gbase-8s',
   'sybase ase',
   'gaussdb200',
@@ -92,3 +112,16 @@ export const NONSUPPORT_CDC = [
   'clickhouse',
   'hazelcast_cloud_cluster',
 ]
+
+export const alarmSettingKeys = [
+  'TASK_STATUS_ERROR',
+  'TASK_FULL_COMPLETE',
+  'TASK_INCREMENT_START',
+  'TASK_INCREMENT_DELAY',
+  'TASK_INSPECT_DIFFERENCE',
+  'TASK_RETRY_WARN',
+  'TASK_SOURCE_NO_INCREMENTAL_EVENT',
+  // 'TASK_DDL_WARNING',  // 4.21 不包含这个告警
+] as const
+
+export type AlarmSettingKey = (typeof alarmSettingKeys)[number]

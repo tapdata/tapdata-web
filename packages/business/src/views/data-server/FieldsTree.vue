@@ -66,7 +66,21 @@ const encryptions = inject<Ref<any[]>>('encryptions', ref([]))
 
 const emit = defineEmits<{
   check: [keys: string[]]
+  addField: [field: any]
+  deleteField: [field: any]
+  updateFieldName: [oldFieldName: string, newName: string]
+  updateFieldType: [fieldName: string, newType: string]
 }>()
+
+const expandedKeys = ref<string[]>(['root'])
+
+const updateExpandedKeys = (key: string, expanded: boolean) => {
+  if (expanded && !expandedKeys.value.includes(key)) {
+    expandedKeys.value = [...expandedKeys.value, key]
+  } else if (!expanded) {
+    expandedKeys.value = expandedKeys.value.filter((k) => k !== key)
+  }
+}
 
 watch(
   () => props.fields,
@@ -276,6 +290,111 @@ const selectAll = () => {
   emit('check', (treeRef.value?.getCheckedKeys(true) || []) as string[])
 }
 
+// ========= 添加字段功能 =========
+
+const generateFieldName = (parentFieldName: string) => {
+  const prefix = parentFieldName === 'root' ? '' : `${parentFieldName}.`
+  let name = 'new_field'
+  let counter = 0
+  while (props.fields.some((f) => f.field_name === `${prefix}${name}`)) {
+    counter++
+    name = `new_field_${counter}`
+  }
+  return { name, fieldName: `${prefix}${name}` }
+}
+
+const startAddField = (parentFieldName = 'root') => {
+  const { fieldName } = generateFieldName(parentFieldName)
+
+  const newField = {
+    field_name: fieldName,
+    simpleTypeName: 'String',
+    tag: 'USER_CREATE',
+    textEncryptionRuleIds: [],
+  }
+
+  // 保存当前选中状态
+  const checkedKeys = (treeRef.value?.getCheckedKeys(true) || []) as string[]
+
+  emit('addField', newField)
+
+  // 新字段自动选中 + 展开父节点 + 聚焦输入框
+  nextTick(() => {
+    if (parentFieldName !== 'root') {
+      const parentNode = treeRef.value?.getNode(parentFieldName)
+      if (parentNode) parentNode.expanded = true
+    }
+    // 恢复之前的选中状态 + 新字段
+    const newKeys = [...checkedKeys, fieldName]
+    treeRef.value?.setCheckedKeys(newKeys)
+    emit('check', (treeRef.value?.getCheckedKeys(true) || []) as string[])
+
+    // 聚焦新字段的输入框并滚动可见
+    nextTick(() => {
+      const treeEl = treeRef.value?.$el as HTMLElement | undefined
+      if (!treeEl) return
+      const cssSelector = `[data-field-name="${CSS.escape(fieldName)}"]`
+      const nodeEl = treeEl.querySelector(cssSelector) as HTMLElement | null
+      if (!nodeEl) return
+      const input = nodeEl.querySelector(
+        '.text-editable input',
+      ) as HTMLInputElement | null
+      if (input) {
+        input.focus()
+        input.select()
+      }
+      nodeEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+    })
+  })
+}
+
+const handleAddChildField = (data: any) => {
+  startAddField(data.field_name)
+}
+
+const handleDeleteField = (data: any) => {
+  emit('deleteField', data)
+}
+
+const handleUpdateFieldName = (data: any, newName: string) => {
+  // 记录当前选中状态
+  const checkedKeys = (treeRef.value?.getCheckedKeys(true) || []) as string[]
+  const oldFieldName = data.field_name
+  const parts = oldFieldName.split('.')
+  parts[parts.length - 1] = newName
+  const newFieldName = parts.join('.')
+
+  // 替换 checked keys 中的旧名
+  const newCheckedKeys = checkedKeys.map((k) =>
+    k === oldFieldName
+      ? newFieldName
+      : k.startsWith(`${oldFieldName}.`)
+        ? newFieldName + k.slice(oldFieldName.length)
+        : k,
+  )
+
+  emit('updateFieldName', oldFieldName, newName)
+
+  // tree rebuild 后恢复选中
+  nextTick(() => {
+    treeRef.value?.setCheckedKeys(newCheckedKeys)
+    emit('check', newCheckedKeys)
+  })
+}
+
+const handleUpdateFieldType = (data: any, newType: string) => {
+  // 用 false 获取所有选中 key（含非叶子），避免容器节点变叶子后丢失选中
+  const checkedKeys = (treeRef.value?.getCheckedKeys(false) || []) as string[]
+  emit('updateFieldType', data.field_name, newType)
+
+  nextTick(() => {
+    treeRef.value?.setCheckedKeys(checkedKeys)
+    emit('check', (treeRef.value?.getCheckedKeys(true) || []) as string[])
+  })
+}
+
+// ========= End 添加字段功能 =========
+
 onMounted(() => {
   window.addEventListener('keydown', handleGlobalKeydown, {
     capture: true,
@@ -315,15 +434,30 @@ defineExpose({
       :data="treeData"
       :show-checkbox="!readonly"
       node-key="field_name"
-      :default-expanded-keys="['root']"
+      :default-expanded-keys="expandedKeys"
       :default-checked-keys="[]"
       :filter-node-method="filterNode"
       @check="handleCheck"
+      @node-expand="(data: any) => updateExpandedKeys(data.field_name, true)"
+      @node-collapse="(data: any) => updateExpandedKeys(data.field_name, false)"
     >
       <template #default="{ node, data }">
-        <span v-if="data.isRoot">{{
-          $t('packages_component_dataFlow_selectAll')
-        }}</span>
+        <template v-if="data.isRoot">
+          <span>{{ $t('packages_component_dataFlow_selectAll') }}</span>
+          <el-button
+            v-if="!readonly"
+            text
+            type="primary"
+            size="small"
+            class="ml-2"
+            @click.stop="startAddField('root')"
+          >
+            <el-icon size="12"><i-lucide-plus /></el-icon>
+            <span class="ml-0.5">{{
+              $t('packages_business_data_server_add_field')
+            }}</span>
+          </el-button>
+        </template>
         <FieldTreeNode
           v-else
           :node="node"
@@ -331,6 +465,10 @@ defineExpose({
           :readonly="readonly"
           @open-encryption="handleOpenEncryption"
           @remove-encryption="handleRemoveEncryption"
+          @add-child="handleAddChildField"
+          @delete-field="handleDeleteField"
+          @update-field-name="handleUpdateFieldName"
+          @update-field-type="handleUpdateFieldType"
         />
       </template>
     </el-tree>

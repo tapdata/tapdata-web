@@ -77,7 +77,7 @@ const emit = defineEmits<{
 }>()
 
 const route = useRoute()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const spacer = h(ElDivider, { direction: 'vertical', class: 'mx-1' })
 
@@ -116,6 +116,8 @@ const btnPermissions = computed(() => {
     export: $has('v2_data-server-list_export'),
   }
 })
+
+const operationColWidth = computed(() => (locale.value === 'en' ? 260 : 200))
 
 const statusOptions: StatusOption[] = [
   {
@@ -774,7 +776,7 @@ defineExpose({
         <el-table-column
           :label="$t('packages_business_data_server_list_fuwuzhuangtai')"
           prop="statusFmt"
-          :min-width="110"
+          :min-width="119"
         >
           <template #default="{ row }">
             <div class="flex align-center gap-1">
@@ -811,8 +813,9 @@ defineExpose({
                   v-if="row.source?.pdkHash"
                   :pdk-hash="row.source.pdkHash"
                   :size="16"
+                  class="flex-shrink-0"
                 />
-                <span>{{ row.connectionName }}</span>
+                <span class="text-break">{{ row.connectionName }}</span>
               </div>
             </template>
           </el-table-column>
@@ -820,7 +823,11 @@ defineExpose({
             :label="$t('public_table_name')"
             prop="tableName"
             :min-width="180"
-          />
+          >
+            <template #default="{ row }">
+              <span class="text-break">{{ row.tableName }}</span>
+            </template>
+          </el-table-column>
           <el-table-column
             :label="$t('daas_data_server_drawer_path')"
             prop="_path"
@@ -840,11 +847,11 @@ defineExpose({
 
         <el-table-column
           :label="$t('public_operation')"
-          width="200"
+          :width="operationColWidth"
           fixed="right"
         >
           <template #default="{ row }">
-            <el-space :spacer="spacer" :size="0" class="lh-1">
+            <el-space :spacer="spacer" :size="0" class="lh-1 flex-wrap">
               <ElButton
                 v-if="
                   row.status !== 'active' &&
@@ -878,7 +885,7 @@ defineExpose({
                 text
                 type="primary"
                 @click="showDrawer(row, true)"
-                >{{ $t('public_button_copy') }}</ElButton
+                >{{ $t('public_button_duplicate') }}</ElButton
               >
               <ElButton
                 v-if="row.permissionActions?.includes('Delete')"

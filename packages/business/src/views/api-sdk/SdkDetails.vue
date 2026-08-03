@@ -7,7 +7,7 @@ import {
   fetchSdkVersionApiList,
   fetchSdkVersions,
 } from '@tap/api/src/core/sdk'
-import { useRequest } from '@tap/api/src/request'
+import { usePollingRequest, useRequest } from '@tap/api/src/request'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
@@ -83,7 +83,7 @@ const { data: sdk, run: runFetchSdk } = useRequest(
   },
 )
 
-const { data: allVersionList, runAsync: runFetchSdkVersions } = useRequest(
+const { data: allVersionList, runAsync: runFetchSdkVersions } = usePollingRequest(
   async () => {
     const res = await fetchSdkVersions({
       order: 'createTime DESC',

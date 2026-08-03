@@ -1,3 +1,7 @@
+import {
+  getConnectionSharedCdcStatus,
+  getSharedCdcEnable,
+} from '@tap/api/src/core/external-storage'
 import { callProxy } from '@tap/api/src/core/proxy'
 import { fetchSharedCache } from '@tap/api/src/core/shared-cache'
 import {
@@ -14,6 +18,7 @@ import {
 } from '@tap/api/src/core/task'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
 import { makeStatusAndDisabled } from '@tap/business/src/shared/task'
+import { getConnectionIcon } from '@tap/business/src/views/connections/util'
 import { Modal } from '@tap/component/src/modal'
 import { computed as reactiveComputed } from '@tap/form/src/shared/reactive'
 import {
@@ -22,6 +27,7 @@ import {
 } from '@tap/form/src/shared/validate'
 import { useI18n } from '@tap/i18n'
 import { setPageTitle, uuid } from '@tap/shared'
+import { useVueFlow } from '@vue-flow/core'
 import { cloneDeep, isEmpty } from 'lodash-es'
 import {
   computed,
@@ -54,6 +60,8 @@ import {
 import { useFormScope } from './useFormScope'
 
 export function useCanvasOperation() {
+  const X_OFFSET = 100
+  const NODE_WIDTH = 244
   const instance = getCurrentInstance()
   const $ws = (instance?.proxy as any).$ws
   const dataflowStore = useDataflowStore()
@@ -77,6 +85,7 @@ export function useCanvasOperation() {
   const formScope = useFormScope({
     canvasRef,
   })
+  const { findNode, getOutgoers, viewport } = useVueFlow()
 
   const buttonShowMap = reactive({
     View: true,
@@ -365,6 +374,12 @@ export function useCanvasOperation() {
 
   const onClickNode = (node: any) => {
     dataflowStore.selectNode(node.data)
+    // canvasRef.value.fitViewWithOffset({
+    //   nodes: [node.data.id],
+    //   duration: 300,
+    //   maxZoom: viewport.value.zoom,
+    //   padding: 0.2,
+    // })
   }
 
   const deleteConnectionsByNodeId = (
@@ -411,6 +426,92 @@ export function useCanvasOperation() {
     }
   }
 
+  const getBeforeNodesInSameBranch = (nodeId: string) => {
+    const list: any[] = []
+    const visited = new Set<string>()
+
+    const traverse = (id: string) => {
+      if (visited.has(id)) return
+      visited.add(id)
+
+      const currentNode = dataflowStore.getNodeById(id) as any
+      if (!currentNode) return
+
+      list.push(currentNode)
+
+      currentNode.$inputs?.forEach((inputId: string) => {
+        traverse(inputId)
+      })
+    }
+
+    traverse(nodeId)
+
+    return list
+  }
+
+  const moveDownstreamNodesForward = (
+    node: any,
+    { trackHistory = true } = {},
+  ) => {
+    const outputs = node?.$outputs || []
+    if (!outputs.length) return
+
+    const canvasNode = findNode(node.id)
+    const movedNodeIds = new Set<string>()
+    const offset = (canvasNode?.dimensions?.width || NODE_WIDTH) + X_OFFSET
+
+    const hasMultiInputOutput = outputs.some((outputId: string) => {
+      return dataflowStore
+        .getAfterNodesInSameBranch(outputId)
+        .some((outputNode: any) => (outputNode?.$inputs?.length || 0) > 1)
+    })
+
+    if (hasMultiInputOutput) {
+      node.$inputs?.forEach((inputId: string) => {
+        const inputNode = dataflowStore.getNodeById(inputId) as any
+        const [deletedX, deletedY] = node.attrs?.position || [0, 0]
+        const [inputX, inputY] = inputNode?.attrs?.position || [0, 0]
+        const deltaX = deletedX - inputX
+        const deltaY = deletedY - inputY
+
+        getBeforeNodesInSameBranch(inputId).forEach((beforeNode) => {
+          if (
+            !beforeNode ||
+            beforeNode.id === node.id ||
+            movedNodeIds.has(beforeNode.id)
+          ) {
+            return
+          }
+
+          movedNodeIds.add(beforeNode.id)
+          const [x, y] = beforeNode.attrs?.position || [0, 0]
+          onMoveNodePosition(beforeNode.id, [x + deltaX, y + deltaY], {
+            trackHistory,
+          })
+        })
+      })
+      return
+    }
+
+    outputs.forEach((outputId: string) => {
+      const afterNodes = dataflowStore.getAfterNodesInSameBranch(outputId)
+
+      afterNodes.forEach((afterNode: any) => {
+        if (
+          !afterNode ||
+          afterNode.id === node.id ||
+          movedNodeIds.has(afterNode.id)
+        ) {
+          return
+        }
+
+        movedNodeIds.add(afterNode.id)
+        const [x, y] = afterNode.attrs?.position || [0, 0]
+        onMoveNodePosition(afterNode.id, [x - offset, y], { trackHistory })
+      })
+    })
+  }
+
   const onDeleteNode = (
     node: any,
     { trackHistory = true, trackBulk = true } = {},
@@ -419,6 +520,7 @@ export function useCanvasOperation() {
       historyStore.startRecordingUndo()
     }
 
+    moveDownstreamNodesForward(node, { trackHistory })
     connectAdjacentNodes(node.id, { trackHistory })
     deleteConnectionsByNodeId(node.id, { trackHistory, trackBulk: false })
 
@@ -963,15 +1065,7 @@ export function useCanvasOperation() {
     let hasEnableDDL: boolean | undefined
     let hasEnableDDLAndIncreasesql: boolean | undefined
     let inBlacklist = false
-    const blacklist = [
-      'js_processor',
-      'custom_processor',
-      'migrate_js_processor',
-      'union_processor',
-      'migrate_union_processor',
-      'standard_js_processor',
-      'standard_migrate_js_processor',
-    ]
+    const blacklist = ['union_processor', 'migrate_union_processor']
     allNodes.value.forEach((node: any) => {
       if (node.ddlConfiguration === 'SYNCHRONIZATION') {
         hasEnableDDL = true
@@ -1232,6 +1326,103 @@ export function useCanvasOperation() {
       }
 
       ;(target as any).dmlPolicy = dmlPolicy
+    }
+  }
+
+  const validateSharedCdc = async () => {
+    if (
+      dataflowStore.dataflow.shareCdcEnable &&
+      dataflowStore.dataflow.enforceShareCdc
+    ) {
+      const sharedCdc = await getSharedCdcEnable().catch(() => null)
+      if (!sharedCdc?.enabled) return
+
+      // 收集所有源节点的 connectionId
+      const sourceNodes = allNodes.value.filter(
+        (node: any) => !node.$inputs?.length && node.connectionId,
+      )
+      const connectionIds = sourceNodes.map((node: any) => node.connectionId)
+      if (!connectionIds.length) return
+
+      // connectionId -> pdkHash 映射，用于展示图标
+      const connPdkHashMap: Record<string, string> = {}
+      sourceNodes.forEach((node: any) => {
+        if (node.connectionId && node.attrs?.pdkHash) {
+          connPdkHashMap[node.connectionId] = node.attrs.pdkHash
+        }
+      })
+
+      const result = await getConnectionSharedCdcStatus(connectionIds).catch(
+        () => null,
+      )
+      const unenabledConnections = result?.connections
+      if (!unenabledConnections?.length) return
+
+      const connList = unenabledConnections.map((conn: any) => ({
+        ...conn,
+        pdkHash: connPdkHashMap[conn.id],
+      }))
+
+      const openConnEdit = (id: string, pdkHash: string) => {
+        const { href } = router.resolve({
+          name: 'connectionsEdit',
+          params: { id },
+          query: { pdkHash },
+        })
+        window.open(href, '_blank')
+      }
+
+      return await Modal.confirm(
+        t('packages_dag_validate_shared_cdc_title'),
+        h(
+          'ul',
+          { class: 'list-style-none p-0 m-0' },
+          connList.map((conn: any) =>
+            h(
+              'li',
+              {
+                class:
+                  'flex align-items-center gap-2 px-2 py-1 rounded-lg hover:bg-fill-color-light',
+              },
+              [
+                // 左：图标容器
+                h('img', {
+                  class: 'connection-img',
+                  src: getConnectionIcon(conn.pdkHash),
+                  alt: '',
+                  style: 'width: 16px; height: 16px; object-fit: contain;',
+                }),
+                // 中：连接名称
+                h(
+                  'span',
+                  {
+                    class: 'flex-1 text-truncate',
+                    style: 'min-width: 0;',
+                    title: conn.name,
+                  },
+                  conn.name,
+                ),
+                // 右：编辑按钮
+                h(ElButton, {
+                  class: 'flex-shrink-0',
+                  text: true,
+                  icon: IconLucidePencilLine,
+                  size: 'small',
+                  onClick: (e: MouseEvent) => {
+                    e.stopPropagation()
+                    openConnEdit(conn.id, conn.pdkHash)
+                  },
+                }),
+              ],
+            ),
+          ),
+        ),
+        {
+          customStyle: {
+            maxWidth: '500px',
+          },
+        },
+      )
     }
   }
 
@@ -1505,6 +1696,13 @@ export function useCanvasOperation() {
     const result = await taskOperationsRef.value.validateDataValidation()
 
     if (!result) {
+      isSaving.value = false
+      return
+    }
+
+    const enableSharedCdc = await validateSharedCdc()
+
+    if (enableSharedCdc === false) {
       isSaving.value = false
       return
     }

@@ -3,11 +3,9 @@ import NotifyLayout from '@/layouts/NotifyLayout.vue'
 import SettingLayout from '@/layouts/SettingLayout.vue'
 
 const FunctionForm = () => import('@/views/function/Form.vue')
-const DagEditor = () => import('@tap/dag/src/Editor.vue')
 const DagEditorView = () => import('@tap/dag/src/EditorView.vue')
 const DagMonitorView = () => import('@tap/dag/src/MonitorView.vue')
 const TaskRecordView = () => import('@tap/dag/src/RecordView.vue')
-const MigrationEditor = () => import('@tap/dag/src/MigrationEditor.vue')
 const DataCapture = () => import('@tap/dag/src/data-capture/DataCapture.vue')
 const CustomNodeList = () =>
   import('@tap/business/src/views/custom-node/List.vue')
@@ -56,10 +54,6 @@ const SharedCacheList = () =>
 
 const SharedCacheForm = () =>
   import('@tap/business/src/views/shared-cache/Form.vue')
-
-// 应用管理
-const ApiApplicationList = () =>
-  import('@tap/business/src/views/api-application/List.vue')
 
 // 外存管理
 const ExternalStorageList = () =>
@@ -125,15 +119,6 @@ export const routes = [
     },
   },
   {
-    path: '/dataflow/viewer/:id',
-    name: 'DataflowViewer',
-    component: DagEditor,
-    meta: {
-      title: 'page_title_data_develop',
-      code: 'v2_data_flow_details',
-    },
-  },
-  {
     path: '/dataflow/monitor/:id',
     name: 'TaskMonitor',
     component: DagMonitorView,
@@ -159,15 +144,6 @@ export const routes = [
     meta: {
       title: 'page_title_data_copy',
       code: 'v2_data_replication_dag_edit',
-    },
-  },
-  {
-    path: '/migrate/viewer/:id',
-    name: 'MigrateViewer',
-    component: MigrationEditor,
-    meta: {
-      title: 'page_title_data_copy',
-      code: 'v2_data_replication_details',
     },
   },
   {
@@ -197,6 +173,14 @@ export const routes = [
     path: '/data-capture/:id',
     name: 'DataCapture',
     component: DataCapture,
+  },
+  {
+    path: '/data-trace',
+    name: 'DataTrace',
+    component: () => import('@tap/ldp/src/DataTracePage.vue'),
+    meta: {
+      title: 'Data Trace',
+    },
   },
   {
     path: '/shared-mining/monitor/:id',
@@ -470,6 +454,29 @@ export const routes = [
           hideTitle: true,
           title: 'page_title_heartbeat_table',
           code: 'v2_log_collector',
+        },
+      },
+    ],
+  },
+  /* ---------- 任务均衡  ----------*/
+  {
+    path: '/task-rebalance',
+    name: 'taskRebalance',
+    component: Layout,
+    redirect: {
+      name: 'taskRebalanceHistory',
+    },
+    meta: {
+      title: 'page_title_task_rebalance',
+    },
+    children: [
+      {
+        path: '',
+        name: 'taskRebalanceHistory',
+        component: () => import('@/views/task-rebalance/History.vue'),
+        meta: {
+          hideTitle: true,
+          title: 'page_title_task_rebalance',
         },
       },
     ],
@@ -780,17 +787,6 @@ export const routes = [
           hideTitle: true,
         },
       },
-      /* ---------- 应用管理  ----------*/
-      {
-        path: '/api-application',
-        name: 'apiApplication',
-        component: ApiApplicationList,
-        meta: {
-          title: 'page_title_api_application',
-          code: 'v2_api-application',
-          hideTitle: true,
-        },
-      },
       /* ---------- API客户端  ----------*/
       {
         path: '/api-client',
@@ -985,19 +981,19 @@ export const routes = [
         path: 'userNotification',
         name: 'userNotification',
         component: () => import('@/views/notification/UserNotification.vue'),
-        meta: { title: 'notify_user_notice' },
+        meta: { title: 'daas_notification_center_yonghucaozuo' },
       },
       {
         path: 'alarmNotification',
         name: 'alarmNotification',
         component: AlarmNotification,
-        meta: { title: 'notify_system_notice' },
+        meta: { title: 'daas_notification_alarmnotification_gaojingtongzhi' },
       },
       {
         path: 'systemAlarm',
         name: 'systemAlarm',
         component: () => import('@/views/notification/SystemAlarm.vue'),
-        meta: { title: 'notify_user_notice' },
+        meta: { title: 'daas_notification_center_xitonggaojing' },
       },
     ],
   },

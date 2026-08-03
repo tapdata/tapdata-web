@@ -2,6 +2,7 @@ import { observable } from '@formily/reactive'
 import { fetchCustomNodes } from '@tap/api/src/core/custom-node'
 import { getDataActions } from '@tap/api/src/core/data-permission'
 import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
+import { getSharedCdcEnable } from '@tap/api/src/core/external-storage'
 import {
   createTask,
   fetchTasks,
@@ -20,7 +21,7 @@ import { isObject } from '@tap/shared'
 import { debounce, isString } from 'lodash-es'
 import { defineStore } from 'pinia'
 import { markRaw, reactive, ref, shallowRef } from 'vue'
-import { DEFAULT_SETTINGS } from '../constants'
+import { alarmSettingKeys, DEFAULT_SETTINGS } from '../constants'
 import { CustomProcessor } from '../nodes/extends/CustomProcessor'
 import { allResourceIns as resourceIns } from '../nodes/loader'
 
@@ -73,6 +74,20 @@ function hasCycle(
   return flag
 }
 
+function sortAlarmSettings<T extends { key?: string }>(alarmSettings?: T[]) {
+  if (!Array.isArray(alarmSettings)) return alarmSettings
+
+  return [...alarmSettings].sort((a, b) => {
+    const aIndex = (alarmSettingKeys as readonly string[]).indexOf(a.key || '')
+    const bIndex = (alarmSettingKeys as readonly string[]).indexOf(b.key || '')
+
+    return (
+      (aIndex === -1 ? Number.MAX_SAFE_INTEGER : aIndex) -
+      (bIndex === -1 ? Number.MAX_SAFE_INTEGER : bIndex)
+    )
+  })
+}
+
 export const useDataflowStore = defineStore('dataflow', () => {
   const { t } = useI18n()
   const dataflow = markRaw(observable(createEmptyDataflow()))
@@ -91,6 +106,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
   const pageVersion = ref(Date.now().toString())
   const selectedNode = ref(null)
   const selectedNodeId = ref(null)
+  const locatedNodeId = ref('')
   const lastClickPosition = ref<[number, number]>([0, 0])
   const stateIsReadonly = ref(false)
   const showSettings = ref(false)
@@ -104,6 +120,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
   const taskLoading = ref(true)
   const schemaRefreshing = ref(false)
   const materializedViewVisible = ref(false)
+  const needsAutoLayout = ref(false)
 
   const buttonShowMap = reactive({
     View: true,
@@ -260,9 +277,15 @@ export const useDataflowStore = defineStore('dataflow', () => {
       dataflowData.syncType = dataflowData.shareCache
         ? 'shareCache'
         : dataflowData.syncType
+      dataflowData.alarmSettings = sortAlarmSettings(dataflowData.alarmSettings)
 
       setDataflow(dataflowData)
       getTaskPermissions()
+
+      // 检测是否有节点缺少 attrs.position，需要自动布局
+      needsAutoLayout.value = dagData.nodes?.some(
+        (node: any) => !node.attrs?.position,
+      )
 
       const { nodes, edges } = initialDag(dagData)
 
@@ -281,6 +304,11 @@ export const useDataflowStore = defineStore('dataflow', () => {
     const name = await makeTaskName(`${t('public_task')} `)
     dataflow.name = name
     dataflow.syncType = syncType
+
+    const sharedCdc = await getSharedCdcEnable().catch(() => null)
+    if (sharedCdc?.enabled) {
+      dataflow.shareCdcEnable = true
+    }
 
     const data = await createTask({
       ...dataflow,
@@ -859,6 +887,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     // UI / 交互状态归零
     selectedNode.value = null
     selectedNodeId.value = null
+    locatedNodeId.value = ''
     stateIsReadonly.value = false
     showSettings.value = false
     showConsole.value = false
@@ -867,6 +896,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     taskLoading.value = true
     taskSaving.value = false
     materializedViewVisible.value = false
+    needsAutoLayout.value = false
 
     processorNodeTypes.value = []
 
@@ -900,6 +930,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     patchDataflowDebounce,
     processorNodeTypes,
     selectedNode,
+    locatedNodeId,
     lastClickPosition,
     stateIsReadonly,
     taskSaving,
@@ -910,6 +941,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     taskLoading,
     schemaRefreshing,
     materializedViewVisible,
+    needsAutoLayout,
     buttonShowMap,
     showBottom,
     editVersion,

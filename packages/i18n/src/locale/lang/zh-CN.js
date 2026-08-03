@@ -113,8 +113,11 @@ export default {
   public_button_setting: '设置',
   public_button_reduction: '还原',
   public_button_copy: '复制',
+  public_button_duplicate: '复制',
   public_button_details: '详情',
   public_button_preview: '预览',
+  public_button_enable: '启用',
+  public_button_disable: '禁用',
   public_button_reload: '重新加载',
   public_button_restart: '重启',
   public_button_start: '启动',
@@ -305,6 +308,7 @@ export default {
 
   // 任务
   public_task: '任务',
+  public_task_desc: '任务描述',
   public_task_name: '任务名称',
   public_task_type: '任务类型',
   public_task_sync_type: '同步类型',
@@ -595,6 +599,8 @@ export default {
   public_select_encryption_rule: '选择加密规则',
   public_clear_alias_confirm: '确定清空所有字段别名吗?',
   public_selected_fields: '已选择 {val} 个字段',
+  public_field_view_selected: '已选字段',
+  public_field_view_unselected: '未选字段',
   public_selected_tables: '已选择 {val} 个表',
   public_quick_convert_alias: '快速转换别名',
   public_clear_alias: '清空别名',
@@ -652,4 +658,8 @@ export default {
   public_import_count: '已导入 {0} 条',
   public_apply_to_form: '应用到表单',
   public_copy_text: '复制文本',
+  public_last_capture_time: '最近观测时间',
+  public_alarm_date: '告警时间',
+  public_duration: '时长',
+  packages_dag_validate_shared_cdc_title: '以下连接尚未开启共享挖掘，运行任务将会出错',
 }

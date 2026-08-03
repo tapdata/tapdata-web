@@ -1,0 +1,35 @@
+.conditions-editor {
+  &__row {
+    margin-bottom: 8px;
+  }
+
+  &__main {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  &__field {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__operator {
+    width: 64px !important;
+    flex: none;
+  }
+
+  &__value {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__remove {
+    flex: none;
+  }
+
+  &__date {
+    margin-top: 8px;
+    margin-left: 0;
+  }
+}

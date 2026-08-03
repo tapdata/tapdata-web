@@ -26,8 +26,9 @@ import {
   queryAllBindWorker,
   unbindByProcessId,
 } from '@tap/api/src/core/workers'
-import { useRequest } from '@tap/api/src/request'
+import { usePollingRequest, withPassive } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import { useHas } from '@tap/business/src/composables'
 import { dayjs, makeDragNodeImage } from '@tap/business/src/shared'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import { IconButton } from '@tap/component/src/icon-button'
@@ -35,14 +36,28 @@ import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import { downloadJson } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
-import { nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import {
+  computed,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  reactive,
+  ref,
+  watch,
+} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import SetTag from '@/views/cluster/SetTag.vue'
 import AddServe from './AddServe.vue'
 import { STATUS_MAP } from './const'
+import TaskRebalanceDrawer from './TaskRebalanceDrawer.vue'
 import UpdateLicense from './UpdateLicense.vue'
 
 const { t } = useI18n()
+const $has = useHas()
+
+const hasRebalancePermission = computed(() => {
+  return $has('v2_task_rebalance_Edit')
+})
 
 // Types
 interface TagDialog {
@@ -169,6 +184,7 @@ const filterItems = ref([
 ])
 const bindWorkerMap = ref({})
 const viewType = ref('cluster')
+const showRebalanceDrawer = ref(false)
 const netStatDialog = reactive<NetStatDialog>({
   visible: false,
   data: [],
@@ -264,6 +280,12 @@ const init = async () => {
   await getDataApi(true)
   await loadTags()
   handleFilterAgent()
+  // Start polling usage rates independently so CPU/Mem stay fresh
+  // without re-fetching the full cluster list every time.
+  timer.value = setInterval(
+    () => withPassive(refreshUsageRate),
+    10000,
+  ) as unknown as null
 }
 
 const submitForm = async () => {
@@ -434,6 +456,45 @@ const getUsageRate = (processId: string[]) => {
       worker_type: 'connector',
     },
   })
+}
+
+/**
+ * Poll only the metric values (CPU / Mem) and patch them onto the existing
+ * waterfallData items so the rest of the page state is not disturbed.
+ */
+const refreshUsageRate = async () => {
+  const data = waterfallData.value as any[]
+  if (!data.length) return
+  const processIds = data
+    .map((it) => it?.systemInfo?.process_id)
+    .filter(Boolean)
+  if (!processIds.length) return
+
+  try {
+    const workerResponse = await getUsageRate(processIds)
+    const metricValuesData: Record<
+      string,
+      { CpuUsage: string; HeapMemoryUsage: string }
+    > = {}
+    for (const w of workerResponse?.items || []) {
+      if (w.process_id && w.metricValues) {
+        metricValuesData[w.process_id] = {
+          CpuUsage: `${(Number(w.metricValues.CpuUsage) * 100).toFixed(2)}%`,
+          HeapMemoryUsage: `${(Number(w.metricValues.HeapMemoryUsage) * 100).toFixed(2)}%`,
+        }
+      }
+    }
+    for (const item of data) {
+      const pid = item.systemInfo?.process_id
+      if (item?.engine?.status === 'running' && pid && metricValuesData[pid]) {
+        item.metricValues = metricValuesData[pid]
+      }
+    }
+    // Re-assign to trigger Vue reactivity on nested metricValues changes
+    waterfallData.value = [...data] as never[]
+  } catch {
+    // ignore refresh errors silently
+  }
 }
 
 const getAllBindWorker = async () => {
@@ -630,12 +691,44 @@ const getStatus = (type: string) => {
   return STATUS_MAP[type] || '-'
 }
 
-const navigateToTaskList = (item: any, syncType: 'migrate' | 'sync') => {
+const parseUsage = (val?: string) => {
+  if (!val || val === '-') return 0
+  const num = Number.parseFloat(val)
+  return Number.isNaN(num)
+    ? 0
+    : Math.min(100, Math.max(0, Number(num.toFixed(2))))
+}
+
+const rebalanceAgents = computed(() =>
+  (waterfallData.value as any[]).map((item) => ({
+    agentId: item.systemInfo?.process_id,
+    name: item.agentName || item.systemInfo?.hostname,
+    online: item.status === 'running',
+    cpuUsage: parseUsage(item.metricValues?.CpuUsage),
+    memUsage: parseUsage(item.metricValues?.HeapMemoryUsage),
+  })),
+)
+
+type TaskType =
+  | 'migrate'
+  | 'sync'
+  | 'logCollector'
+  | 'mem_cache'
+  | 'connHeartbeat'
+
+const TASK_TYPE_ROUTE_MAP: Record<TaskType, string> = {
+  migrate: 'migrateList',
+  sync: 'dataflowList',
+  logCollector: 'HeartbeatTableList',
+  mem_cache: 'sharedCacheList',
+  connHeartbeat: 'HeartbeatTableList',
+}
+
+const navigateToTaskList = (item: any, syncType: TaskType) => {
   const processId = item.systemInfo?.process_id
   if (!processId) return
-  const routeName = syncType === 'migrate' ? 'migrateList' : 'dataflowList'
   router.push({
-    name: routeName,
+    name: TASK_TYPE_ROUTE_MAP[syncType],
     query: { agentId: processId, status: 'running' },
   })
 }
@@ -910,7 +1003,7 @@ const {
   runAsync: fetchLogMiningData,
   cancel: cancelFetchLogMiningData,
   loading: logMiningLoading,
-} = useRequest<LogMiningMonitor[]>(
+} = usePollingRequest<LogMiningMonitor[]>(
   async () => {
     const data = await findRawServerInfo()
     const result = data.items
@@ -1133,11 +1226,20 @@ const onUpdateLicenseSuccess = () => {
     <section class="clusterManagement-container">
       <div class="section-wrap-box">
         <div v-if="viewType !== 'logMining'" class="search-bar mb-4">
-          <FilterBar
-            v-model:value="searchParams"
-            :items="filterItems"
-            @fetch="getDataApi()"
-          />
+          <div class="flex align-center justify-content-between">
+            <FilterBar
+              v-model:value="searchParams"
+              :items="filterItems"
+              @fetch="getDataApi()"
+            />
+            <el-button
+              v-if="hasRebalancePermission"
+              type="primary"
+              @click="showRebalanceDrawer = true"
+            >
+              {{ $t('daas_task_rebalance_button') }}
+            </el-button>
+          </div>
         </div>
       </div>
 
@@ -1499,16 +1601,19 @@ const onUpdateLicenseSuccess = () => {
                       :class="item.status !== 'running' ? 'bgred' : 'bggreen'"
                     />
                     <div class="list-box-header-main">
-                      <h2 class="name fs-6">
+                      <h2 class="name fs-6 flex align-center gap-2">
                         {{ item.agentName || item.systemInfo.hostname }}
+                        <span class="ip text-xs">{{
+                          item.custIP ? item.custIP : item.systemInfo.ip
+                        }}</span>
                       </h2>
                       <div class="uuid fs-8 my-2">
                         {{ item.systemInfo.uuid }}
                       </div>
-                      <div class="flex gap-2">
-                        <span class="ip">{{
-                          item.custIP ? item.custIP : item.systemInfo.ip
-                        }}</span>
+                      <div
+                        class="flex gap-2 flex-wrap"
+                        style="min-height: 20px"
+                      >
                         <el-tag
                           v-if="item.runningTaskNum?.migrate > 0"
                           type="primary"
@@ -1531,6 +1636,44 @@ const onUpdateLicenseSuccess = () => {
                           {{ $t('public_task_type_sync')
                           }}<span class="ml-1 fw-bold">{{
                             item.runningTaskNum?.sync || 0
+                          }}</span>
+                        </el-tag>
+                        <el-tag
+                          v-if="item.runningTaskNum?.logCollector > 0"
+                          type="primary"
+                          size="small"
+                          class="cursor-pointer"
+                          @click.stop="navigateToTaskList(item, 'logCollector')"
+                        >
+                          {{ $t('public_task_type_log_collector')
+                          }}<span class="ml-1 fw-bold">{{
+                            item.runningTaskNum?.logCollector || 0
+                          }}</span>
+                        </el-tag>
+                        <el-tag
+                          v-if="item.runningTaskNum?.mem_cache > 0"
+                          type="primary"
+                          size="small"
+                          class="cursor-pointer"
+                          @click.stop="navigateToTaskList(item, 'mem_cache')"
+                        >
+                          {{ $t('page_title_shared_cache')
+                          }}<span class="ml-1 fw-bold">{{
+                            item.runningTaskNum?.mem_cache || 0
+                          }}</span>
+                        </el-tag>
+                        <el-tag
+                          v-if="item.runningTaskNum?.connHeartbeat > 0"
+                          type="primary"
+                          size="small"
+                          class="cursor-pointer"
+                          @click.stop="
+                            navigateToTaskList(item, 'connHeartbeat')
+                          "
+                        >
+                          {{ $t('public_task_type_heartbeat')
+                          }}<span class="ml-1 fw-bold">{{
+                            item.runningTaskNum?.connHeartbeat || 0
                           }}</span>
                         </el-tag>
                       </div>
@@ -2292,6 +2435,11 @@ const onUpdateLicenseSuccess = () => {
       v-model="updateLicenseDialog.visible"
       :service-id="updateLicenseDialog.serviceId"
       @success="onUpdateLicenseSuccess"
+    />
+
+    <TaskRebalanceDrawer
+      v-model="showRebalanceDrawer"
+      :agents="rebalanceAgents"
     />
   </PageContainer>
 </template>

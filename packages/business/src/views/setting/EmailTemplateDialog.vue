@@ -122,6 +122,13 @@ const variablesMap = reactive({
       icon: IconLucideClock,
     },
   ],
+  TASK_DDL_WARNING: [
+    {
+      name: 'taskName',
+      label: t('public_task_name'),
+      icon: IconLucideFileText,
+    },
+  ],
   DATANODE_CANNOT_CONNECT: [
     {
       name: 'taskName',

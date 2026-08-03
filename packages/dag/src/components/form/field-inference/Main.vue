@@ -7,7 +7,8 @@ import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import { FieldSelect, mapFieldsData } from '@tap/form'
 import { useI18n } from '@tap/i18n'
 import { cloneDeep, debounce } from 'lodash-es'
-import { computed, onMounted, ref, useTemplateRef, watch } from 'vue'
+import { computed, ref, useTemplateRef, watch } from 'vue'
+import { useSchemaEffect } from '../../../hooks/useAfterTaskSaved'
 import { useDataflowStore } from '../../../stores/dataflow.store'
 import { getCanUseDataTypes, getMatchedDataTypeLevel } from '../../../util'
 import Dialog from './Dialog.vue'
@@ -31,6 +32,12 @@ const listRef = useTemplateRef<any>('list')
 const activeNode = computed(() => dataflowStore.selectedNode)
 const stateIsReadonly = computed(() => dataflowStore.stateIsReadonly)
 
+const draggable = computed(() => {
+  return (
+    !stateIsReadonly.value && !dataflowStore.isSchemaFree(props.form.values)
+  )
+})
+
 // Data
 const navLoading = ref(false)
 const fieldsLoading = ref(false)
@@ -49,7 +56,6 @@ const visible = ref(false)
 const fieldChangeRules = ref<any[]>([])
 const updateList = ref<any[]>([])
 const updateConditionFieldMap = ref<Record<string, any>>({})
-const activeClassification = ref('')
 const tableClassification = ref([
   {
     type: '',
@@ -70,15 +76,11 @@ const tableClassification = ref([
     label: '',
   },
 ])
+const activeClassification = ref(tableClassification.value[0]!.type)
 const transformExNum = ref(0)
 const updateExNum = ref(0)
 const dataTypesJson = ref<any>({})
 const fieldOptions = ref<any[]>([])
-
-// Computed
-const batchRuleCounts = computed(
-  () => fieldChangeRules.value.filter((t: any) => t.scope === 'Node').length,
-)
 
 const readonly = computed(() => stateIsReadonly.value)
 
@@ -103,6 +105,7 @@ async function getData(op: Record<string, any> = {}) {
           'name',
           'indices',
           'constraints',
+          'ancestorsName',
         ],
         page: 1,
         pageSize: 20,
@@ -270,11 +273,11 @@ function handleUpdateRules(val: any[] = []) {
 }
 
 function handleUpdateFields(
-  updater: (fields: any[], qualifiedName: string) => void,
+  updater: (fields: any[], ancestorsName: string) => void,
 ) {
   navList.value.forEach((item: any) => {
     if (item.fields?.length) {
-      updater(item.fields, item.qualified_name)
+      updater(item.fields, item.ancestorsName)
     }
   })
 }
@@ -300,10 +303,16 @@ watch(updateExNum, (newVal, oldVal) => {
 })
 
 // Mounted
-onMounted(() => {
-  activeClassification.value = tableClassification.value[0].type
+// onMounted(() => {
+//   activeClassification.value = tableClassification.value[0].type
+//   loadData()
+// })
+
+useSchemaEffect(() => [], loadData)
+
+if (!dataflowStore.taskSaving) {
   loadData()
-})
+}
 
 defineExpose({
   refresh,
@@ -315,10 +324,15 @@ defineExpose({
 
 <template>
   <div class="field-inference">
-    <div class="field-inference__main rounded-xl bg-light flex">
+    <div class="field-inference__main rounded-xl flex">
       <div class="field-inference__nav flex flex-column">
-        <div class="p-2 flex flex-column gap-3">
-          <ElSelect v-model="activeClassification" @change="loadData">
+        <div class="p-2 py-1 flex flex-column gap-3 border-bottom">
+          <ElSelect
+            v-model="activeClassification"
+            class="select-box-shadow-none"
+            :empty-values="[null, undefined]"
+            @change="loadData"
+          >
             <ElOption
               v-for="(item, index) in tableClassification"
               :key="index"
@@ -468,11 +482,12 @@ defineExpose({
           </div>
           <List
             ref="list"
-            v-model:field-change-rules="fieldChangeRules"
+            :field-change-rules="fieldChangeRules"
             :data="selected"
             :show-columns="['index', 'field_name', 'data_type', 'operation']"
             :data-types-json="dataTypesJson"
             :readonly="readonly"
+            :draggable="draggable"
             ignore-error
             class="content__list flex-fill"
             @update-rules="handleUpdateRules"
@@ -580,6 +595,11 @@ defineExpose({
     :deep(.el-input__inner) {
       border-color: #f54a45;
     }
+  }
+}
+.select-box-shadow-none {
+  :deep(.el-select__wrapper) {
+    box-shadow: none !important;
   }
 }
 </style>

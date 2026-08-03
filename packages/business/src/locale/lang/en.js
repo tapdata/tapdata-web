@@ -752,6 +752,10 @@ export default {
     'When the task encounters an error',
   packages_business_setting_alarmnotification_dangrenwustop:
     'When the Agent service stops',
+  packages_business_setting_alarmnotification_dangyinqinglixian:
+    'When the engine stops',
+  packages_business_setting_alarmnotification_dangyinqinghuifu:
+    'When the engine starts',
   packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn:
     'When APIServer worker P50 per minute exceeding threshold',
   packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn:
@@ -908,10 +912,8 @@ export default {
   packages_business_create_connection_dialog_neirongCho:
     'Choose a data source connector from below and configure the connection & credentials.',
   // 共享挖掘
-  packages_business_shared_cdc_placeholder_task_name:
-    'Please enter the mining task name to search',
-  packages_business_shared_cdc_placeholder_connection_name:
-    'Please enter the connection name to search',
+  packages_business_shared_cdc_placeholder_task_name: 'Task name',
+  packages_business_shared_cdc_placeholder_connection_name: 'Connection name',
   packages_business_shared_cdc_name: 'Please enter the task name ',
   packages_business_shared_cdc_setting_select_mode: 'Storage mode',
   packages_business_shared_cdc_setting_select_mongodb_tip:
@@ -1019,6 +1021,9 @@ export default {
   packages_business_data_server_drawer_zanwumiaoshu: 'no description yet',
   packages_business_data_server_drawer_tiaoshi: 'Debug',
   packages_business_data_server_drawer_peizhi: 'Configuration',
+  packages_business_data_server_drawer_refresh_fields: 'Refresh Fields',
+  packages_business_data_server_add_field: 'Add Field',
+  packages_business_data_server_add_sub_field: 'Add Sub-field',
   packages_business_data_server_drawer_chuangjianfuwu: 'Create API',
   packages_business_copy_server: 'Copy API',
   packages_business_import_server: 'Import API',
@@ -1192,10 +1197,8 @@ export default {
   // 共享緩存
   packages_business_shared_cache_create: 'Create Cache',
   packages_business_shared_cache_edit: 'Edit Cache',
-  packages_business_shared_cache_placeholder_task_name:
-    'Please enter the cache task name to search',
-  packages_business_shared_cache_placeholder_connection_name:
-    'Please enter the connection name to search',
+  packages_business_shared_cache_placeholder_task_name: 'Task name',
+  packages_business_shared_cache_placeholder_connection_name: 'Connection name',
   packages_business_shared_cache_button_create: 'New Cache',
   packages_business_shared_cache_name: 'Name',
   packages_business_shared_cache_status: 'Cache Status',
@@ -1480,6 +1483,30 @@ export default {
   packages_business_components_conditionbox_mubiaobiaoshuju: 'Target Filter',
   packages_business_components_conditionbox_enableCustomCommand_tip:
     'Ensure that the query conditions have indexes; without indexes, it may result in a full table scan, causing increased database pressure.',
+  packages_business_components_conditionbox_advanced_verification_doc: `##### Advanced Verification Instructions
+**The first step** The function input parameter is the source table data, you can call the **built-in function** according to the source table data to query the target data<br>
+**Step 2** Custom verification logic<br>
+**Step 3** The function returns the result<br>
+
+- **result**: whether the verification is passed (passed: verification passed, failed: verification failed), if no or other characters are filled in, the verification fails, required <br>
+- **message**: verification exception information, it is recommended to return if verification fails, optional<br>
+- **data**: current verification target data, it is recommended to return if verification fails, optional<br>
+
+
+Full Example: This is an example MongoDB query
+\`\`\`\`javascript
+function validate(sourceRow){'{'}
+  // step 1
+  var targetRow = target.executeQuery({'{'}database: "target",collection: "USER",filter: {'{'}USER_ID: sourceRow.USER_ID{'}}'});
+  // step 2
+  if(sourceRow.USER_ID === targetRow[0].USER_ID){'{'}
+    // step 3
+    return {'{'}result: 'passed',message: "",data: ""{'}'}
+  {'}'}else{'{'}
+    return {'{'}result: 'failed', message: "Inconsistent records", data: targetRow{'}'}
+  {'}'}
+{'}'}
+\`\`\`\``,
   packages_business_data_server_list_apIwendang: 'API Document Export',
   packages_business_verification_form_gaojipeizhi: 'Advanced Configuration',
   packages_business_verification_form_validate_table_is_empty:
@@ -1552,9 +1579,14 @@ export default {
     'Click to view the IP address information for the fully managed agent.',
   packages_business_demo_database_desc:
     'Demo data source, allows for quick creation of data source information, with no need to prepare database details for an immediate experience.',
-  packages_business_api_server_p95_warn: 'When the time taken for any API Server request exceeds the alarm threshold P95',
-  packages_business_api_server_p99_warn: 'When the response time P99 of any API Server request exceeds the alarm threshold',
-  packages_business_api_server_error_rate_warn: 'When the error rate of any API Server request exceeds the alarm threshold',
+  packages_business_api_server_p95_warn:
+    'When the time taken for any API Server request exceeds the alarm threshold P95',
+  packages_business_api_server_p99_warn:
+    'When the response time P99 of any API Server request exceeds the alarm threshold',
+  packages_business_api_server_error_rate_warn:
+    'When the error rate of any API Server request exceeds the alarm threshold',
+  packages_business_task_source_no_incremental_event:
+    'When the source heartbeat table is enabled and no incremental events are received for 60 consecutive seconds',
   packages_business_use_ssl: 'Use SSL',
   packages_business_certificate_authority: 'CA File',
   packages_business_client_certificate: 'Client Certificate File',
@@ -1701,6 +1733,9 @@ export default {
     'Click variable name to insert into template',
   packages_business_ignoreTimePrecision_round: 'Round',
   packages_business_ignoreTimePrecision_truncate: 'Truncate',
+  packages_business_treatEmptyStringAsNull: 'Treat empty string as NULL',
+  packages_business_treatEmptyStringAsNull_tip: `<p>When enabled, an empty string ("") on either side is considered equal to NULL during field comparison.</p>
+<p>Useful when the target is a database that automatically converts empty strings to NULL (e.g. Oracle), to avoid false-positive field inconsistencies caused by such semantic differences.</p>`,
   packages_business_validation_task_type: 'Validation Task Type',
   packages_business_select_task_to_be_verified: 'Select Task to be Verified',
   packages_business_drag_file_here:
@@ -1769,6 +1804,7 @@ export default {
   packages_business_monitor_cron: 'Monitor Period',
   packages_business_monitor_cron_tip: `Syntax: seconds * minutes * hours * days * months * weeks ? years *\nExample: 0 */1 * * * ? Run every minute 0 0 2 * * ? Run every day at 2am`,
   packages_business_datasource_monitor_alter: 'Data Source Monitor Alert',
+  packages_business_task_ddl_warning: 'Task Dangerous DDL Alert',
   packages_business_import_mode: 'Handling for Name Conflicts',
   packages_business_import_as_copy: 'Import as Copy',
   packages_business_import_replace: 'Replace Existing',
@@ -1786,6 +1822,10 @@ export default {
     'Currently in testing. We are continuously optimizing the experience.',
   public_connector_alpha_tip:
     'Under active development. Some features may still be incomplete.',
-  packages_business_api_server_connection_pool_deficiency_warn: 'When any API Server connection pool resource is tight and triggers the alarm threshold',
-  packages_business_api_server_connection_pool_idle_warn: 'When the number of connections in the connection pool of any API Server falls below the alarm threshold',
+  packages_business_column_setting: 'Display Settings',
+  packages_business_column_reset: 'Reset',
+  packages_business_api_server_connection_pool_deficiency_warn:
+    'When any API Server connection pool resource is tight and triggers the alarm threshold',
+  packages_business_api_server_connection_pool_idle_warn:
+    'When the number of connections in the connection pool of any API Server falls below the alarm threshold',
 }

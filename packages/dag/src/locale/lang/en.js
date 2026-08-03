@@ -600,6 +600,7 @@ export default {
     'Notice of full completion of tasks',
   packages_dag_migration_alarmpanel_renwujiaoyanchu: 'Task validation error',
   packages_dag_migration_alarmpanel_renwuyunxingchu: 'Task running error alert',
+  packages_dag_migration_alarmpanel_renwufengxianddl: 'Task risk DDL alert',
   packages_dag_migration_alarmpanel_jiedianpingjunchu:
     'Node average processing time alert',
   packages_dag_migration_alarmpanel_shujuyuanxieyi:
@@ -1268,4 +1269,5 @@ export default {
   packages_dag_data_capture_event_time: 'Event Time',
   packages_dag_data_capture_event_id: 'Event ID',
   packages_dag_data_capture_original_data: 'Original Data',
+  packages_dag_locate_selected_node: 'Locate Selected Node',
 }

@@ -70,6 +70,7 @@ interface FormData {
   checkTableThreadNum: number
   alarmSettings: AlarmSetting[]
   ignoreTimePrecision?: boolean
+  treatEmptyStringAsNull?: boolean
 }
 
 interface Task {
@@ -184,6 +185,7 @@ const form = reactive({
   inconsistentNotifys: ['SYSTEM', 'EMAIL'],
   checkTableThreadNum: 10,
   roundingMode: 'HALF_UP',
+  treatEmptyStringAsNull: true,
   alarmSettings: [
     {
       type: 'INSPECT',
@@ -1088,6 +1090,25 @@ provide('ConnectorMap', ConnectorMap)
                 </el-radio-group>
               </template>
             </div>
+          </ElFormItem>
+
+          <ElFormItem v-if="!isCountOrHash" class="form-item">
+            <template #label>
+              <span class="align-middle mr-1">{{
+                $t('packages_business_treatEmptyStringAsNull')
+              }}</span>
+              <el-tooltip placement="top">
+                <template #content>
+                  <div
+                    v-html="$t('packages_business_treatEmptyStringAsNull_tip')"
+                  />
+                </template>
+                <VIcon class="align-self-center" color="#909399" size="14"
+                  >info</VIcon
+                >
+              </el-tooltip>
+            </template>
+            <ElSwitch v-model="form.treatEmptyStringAsNull" />
           </ElFormItem>
 
           <ElFormItem v-if="!isCountOrHash" class="form-item">

@@ -22,6 +22,7 @@ import ConsolePanel from './components/migration/ConsolePanel.vue'
 import TaskOperations from './components/TaskOperations.vue'
 import { useCanvasOperation } from './composables/useCanvasOperation'
 import { useClipboard } from './composables/useClipboard'
+import { makeNode } from './composables/useDnD'
 import { useDataflowStore } from './stores/dataflow.store'
 import { useHistoryStore } from './stores/history.store'
 
@@ -76,6 +77,7 @@ const {
 const clipboard = useClipboard({ onPaste: onClipboardPaste })
 
 const isInitialized = ref(false)
+const needsFitView = ref(false)
 const init = async () => {
   dataflowStore.$reset()
   const taskId = route.params.id as string
@@ -90,6 +92,8 @@ const init = async () => {
       handlePageReturn()
       return
     }
+
+    needsFitView.value = dag.value.nodes.length > 0
   } else {
     let syncType
     let targetRoute
@@ -372,7 +376,8 @@ async function checkMaterializedView() {
   if (by !== 'materialized-view' && by !== 'transformation-materialized') return
 
   await router.replace({
-    params: { id: route.params.id },
+    name: 'DataflowEditor',
+    params: { id: dataflowStore.dataflow.id },
     query: {
       ...query,
       by: undefined,
@@ -380,6 +385,8 @@ async function checkMaterializedView() {
       tableName: undefined,
     },
   })
+
+  dataflowStore.needsAutoLayout = true
 
   let connection: any
   if (connectionId) {
@@ -396,31 +403,25 @@ async function checkMaterializedView() {
       attrs: { position: [300, 300] },
     })
 
-    historyStore.startRecordingUndo()
-    onAddNode(mergeTableNode)
+    onAddNode(mergeTableNode, { trackHistory: false })
 
     if (connection) {
-      const targetNode = createNodeData({
-        name: tableName || connection.name,
-        type: 'table',
-        databaseType: connection.database_type,
-        connectionId: connection.id,
-        tableName,
-        attrs: {
-          connectionName: connection.name,
-          connectionType: connection.connection_type,
-          hasCreated: false,
-          position: [300 + NODE_WIDTH + X_OFFSET, 300],
+      const targetNode = makeNode(connection, tableName || connection.name)
+      onAddNode(targetNode, { trackHistory: false })
+      onCreateConnection(
+        {
+          source: mergeTableNode.id,
+          target: targetNode.id,
         },
-      })
-      onAddNode(targetNode)
-      onCreateConnection({
-        source: mergeTableNode.id,
-        target: targetNode.id,
-      })
+        { trackHistory: false },
+      )
     }
 
-    historyStore.stopRecordingUndo()
+    // setTimeout(() => {
+    //   canvasRef.value?.handleLayoutGraph()
+    //   console.log(canvasRef.value?.handleLayoutGraph)
+    // }, 1000)
+
     return
   }
 
@@ -483,6 +484,11 @@ async function checkMaterializedView() {
   }, 120)
 }
 
+function locateSelectedNode() {
+  const node = dataflowStore.selectedNode as any
+  if (node?.id) canvasRef.value?.locateNode(node.id)
+}
+
 provide('dag', dag)
 provide('nodesPanelExpanded', nodesPanelExpanded)
 provide('buttonShowMap', buttonShowMap)
@@ -495,7 +501,7 @@ provide('isSaving', isSaving)
 provide('previewData', previewData)
 provide('previewLoading', previewLoading)
 provide('handlePreview', handlePreview)
-provide('isInitialized', isInitialized)
+provide('needsFitView', needsFitView)
 provide('isSyncTask', isSyncTask)
 </script>
 
@@ -553,6 +559,17 @@ provide('isSyncTask', isSyncTask)
     </div>
     <div class="w-100 h-0 position-absolute header z-10 flex align-center px-3">
       <div class="flex-1" />
+
+      <Transition name="locate-node-fade">
+        <div
+          v-if="dataflowStore.selectedNode"
+          class="position-absolute start-50 top-50 translate-middle flex h-6 text-xs cursor-pointer items-center justify-center rounded-lg px-3 shadow-lg hover:color-primary bg-overlay fw-sub font-color-light"
+          @click="locateSelectedNode"
+        >
+          {{ $t('packages_dag_locate_selected_node') }}
+        </div>
+      </Transition>
+
       <TaskOperations
         v-if="dataflow.id"
         ref="taskOperationsRef"
@@ -605,6 +622,19 @@ provide('isSyncTask', isSyncTask)
 <style scoped lang="scss">
 .header {
   top: 28px;
+}
+
+.locate-node-fade-enter-active,
+.locate-node-fade-leave-active {
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+.locate-node-fade-enter-from,
+.locate-node-fade-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-4px);
 }
 :deep(.btn-shadow) {
   box-shadow:

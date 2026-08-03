@@ -9,6 +9,7 @@ import {
   updateInspect,
 } from '@tap/api/src/core/inspects'
 import { downloadMetadataInstance } from '@tap/api/src/core/metadata-instances'
+import { withPassive } from '@tap/api/src/request'
 import loadingImg from '@tap/assets/icons/loading.svg'
 import FilterBar from '@tap/component/src/filter-bar/Main.vue'
 import {
@@ -519,7 +520,7 @@ watch(
 // Lifecycle
 onBeforeMount(() => {
   timer = setInterval(() => {
-    table.value?.fetch(null, 0, true)
+    withPassive(() => table.value?.fetch(null, 0, true))
   }, 8000)
   getFilterItems()
   Object.assign(searchParams.value, route.query)

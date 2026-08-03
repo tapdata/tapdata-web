@@ -9,6 +9,7 @@ import {
   getConnectionDatabaseTypes,
   updateConnectionById,
 } from '@tap/api/src/core/connections'
+import { withPassive } from '@tap/api/src/request'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import FilterBar from '@tap/component/src/filter-bar/Main.vue'
 import { ImportOutlined } from '@tap/component/src/icon'
@@ -690,7 +691,7 @@ onMounted(async () => {
   }
 
   timeout = setInterval(() => {
-    table.value?.fetch(null, 0, true)
+    withPassive(() => table.value?.fetch(null, 0, true))
   }, 10000)
 
   getFilterItems()
@@ -945,7 +946,7 @@ onUnmounted(() => {
           </div>
         </template>
         <template #default="{ row }">
-          <el-space :spacer="spacer" :size="0">
+          <el-space :spacer="spacer" :size="0" class="flex-wrap">
             <ElButton
               data-testid="test-connection"
               text
@@ -988,7 +989,7 @@ onUnmounted(() => {
               :loading="row.copyLoading"
               :disabled="row.agentType === 'Cloud'"
               @click="copy(row)"
-              >{{ $t('public_button_copy') }}
+              >{{ $t('public_button_duplicate') }}
             </ElButton>
             <ElButton
               v-if="

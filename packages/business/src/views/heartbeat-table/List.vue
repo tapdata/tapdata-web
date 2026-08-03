@@ -1,4 +1,5 @@
-<script>
+<script setup lang="ts">
+import { fetchClusterStates } from '@tap/api/src/core/cluster'
 import {
   batchDeleteTasks,
   batchRenewTasks,
@@ -7,245 +8,265 @@ import {
   fetchTasks,
   forceStopTask,
 } from '@tap/api/src/core/task'
+import { requestClient } from '@tap/api/src/request'
 import { FilterBar } from '@tap/component/src/filter-bar'
+import { useI18n } from '@tap/i18n'
 import dayjs from 'dayjs'
-import { escapeRegExp } from 'lodash-es'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { escapeRegExp, uniqBy } from 'lodash-es'
+import {
+  computed,
+  inject,
+  onBeforeMount,
+  onMounted,
+  onUnmounted,
+  ref,
+  watch,
+} from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
 import TaskStatus from '../../components/TaskStatus.vue'
 import { makeStatusAndDisabled, TASK_TYPE_MAP } from '../../shared'
 
-let timeout = null
-export default {
-  components: {
-    PageContainer,
-    TablePage,
-    FilterBar,
-    TaskStatus,
-  },
-  inject: ['buried'],
-  data() {
-    return {
-      searchParams: {
-        keyword: '',
-      },
-      filterItems: [
-        {
-          placeholder: this.$t('public_task_name'),
-          key: 'keyword',
-          type: 'input',
-        },
-      ],
-      order: 'createTime DESC',
-      list: null,
-      taskBuried: {
-        start: 'heartbeatStart',
-      },
-    }
-  },
-  computed: {
-    table() {
-      return this.$refs.table
-    },
+const { t, locale } = useI18n()
+const route = useRoute()
+const router = useRouter()
+const buried =
+  inject<(name: string, extra?: string, params?: object) => void>('buried')
+const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 
-    colWidth() {
-      const { locale } = this.$i18n
-      return locale === 'en'
-        ? {
-            taskType: 140,
-            status: 145,
-            operation: 340,
-          }
-        : {
-            taskType: 80,
-            status: 110,
-            operation: 280,
-          }
-    },
+// ── Refs ──────────────────────────────────────────────────────────────────────
+
+const table = ref<any>()
+
+const searchParams = ref({
+  keyword: '',
+  status: '',
+  agentId: '',
+})
+
+const order = ref('createTime DESC')
+let timer: ReturnType<typeof setInterval> | null = null
+const taskBuried = { start: 'heartbeatStart' }
+
+// ── Computed ──────────────────────────────────────────────────────────────────
+
+const colWidth = computed(() =>
+  locale.value === 'en'
+    ? { taskType: 140, status: 145, operation: 340 }
+    : { taskType: 80, status: 110, operation: 280 },
+)
+
+const filterItems = ref([
+  {
+    label: t('public_status'),
+    key: 'status',
+    type: 'select-inner',
+    items: [
+      { label: t('public_status_running'), value: 'running' },
+      { label: t('public_status_stop'), value: 'stop' },
+      { label: t('public_status_error'), value: 'error' },
+    ],
   },
-  watch: {
-    '$route.query': function () {
-      this.table.fetch(1)
-    },
-  },
-  mounted() {
-    //定时轮询
-    timeout = setInterval(() => {
-      this.table.fetch(null, 0, true)
-    }, 8000)
-    this.searchParams = Object.assign(this.searchParams, this.$route.query)
-  },
-  unmounted() {
-    clearInterval(timeout)
-  },
-  methods: {
-    // 获取列表数据
-    getData({ page }) {
-      const { current, size } = page
-      const where = {
-        syncType: 'connHeartbeat',
+  {
+    label: t('public_agent_name'),
+    key: 'agentId',
+    type: 'select-inner',
+    menuMinWidth: '250px',
+    items: async () => {
+      if (isDaas) {
+        const clusterData = await fetchClusterStates()
+        const options = (clusterData?.items || [])
+          .filter((item) => item.systemInfo?.process_id)
+          .map((item) => ({
+            label: (item as any).agentName || item.systemInfo.hostname,
+            value: item.systemInfo.process_id,
+          }))
+        return uniqBy(options, 'value')
       }
-      const { keyword } = this.searchParams
-      const filter = {
-        order: this.order,
-        limit: size,
-        skip: (current - 1) * size,
-        where,
-      }
-      if (keyword && keyword.trim()) {
-        where.name = { like: escapeRegExp(keyword), options: 'i' }
-      }
-      return fetchTasks(filter).then((data) => {
-        const list = data?.items || []
-        return {
-          total: data?.total || 0,
-          data: list.map((item) => {
-            item.createTime = dayjs(item.createTime).format(
-              'YYYY-MM-DD HH:mm:ss',
-            )
-            item.taskType = TASK_TYPE_MAP[item.type] || ''
-            makeStatusAndDisabled(item)
-            if (item.status === 'edit') {
-              item.btnDisabled.start = false
-            }
-            return item
-          }),
-        }
-      })
-    },
-
-    start(ids) {
-      this.buried(this.taskBuried.start)
-      const filter = {
-        where: {
-          id: ids[0],
-        },
-      }
-      fetchTasks(filter).then(() => {
-        batchStartTasks(ids)
-          .then((data) => {
-            this.buried(this.taskBuried.start, '', { result: true })
-            this.$message.success(
-              data?.message || this.$t('public_message_operation_success'),
-            )
-            this.table.fetch()
-          })
-          .catch(() => {
-            this.buried(this.taskBuried.start, '', { result: false })
-          })
-      })
-    },
-
-    forceStop(ids, row) {
-      const msgObj = this.getConfirmMessage('force_stop', row)
-      this.$confirm(this.$t('public_message_title_prompt'), msgObj.msg, {
-        dangerouslyUseHTMLString: true,
-      }).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        forceStopTask(ids).then((data) => {
-          this.$message.success(
-            data?.message || this.$t('public_message_operation_success'),
-          )
-          this.table.fetch()
-        })
-      })
-    },
-
-    stop(ids) {
-      this.$confirm(
-        this.$t('packages_business_important_reminder'),
-        this.$t('packages_business_stop_confirm_message'),
-      ).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        batchStopTasks(ids).then((data) => {
-          this.$message.success(
-            data?.message || this.$t('public_message_operation_success'),
-          )
-          this.table.fetch()
-        })
-      })
-    },
-
-    openRoute(route, newTab = true) {
-      if (newTab) {
-        window.open(this.$router.resolve(route).href)
-      } else {
-        this.$router.push(route)
-      }
-    },
-
-    handleDetails(task = {}) {
-      this.openRoute({
-        name: 'HeartbeatMonitor',
-        params: {
-          id: task.id,
-        },
-      })
-    },
-
-    getConfirmMessage(operateStr, task) {
-      const title = `${operateStr}_confirm_title`
-      const message = `${operateStr}_confirm_message`
-      const strArr = this.$t(`dataFlow_${message}`).split('xxx')
-      const msg = `
-        <p>
-          ${strArr[0]}
-          <span class="color-primary">${task.name}</span>
-          ${strArr[1]}
-        </p>`
-      return {
-        msg,
-        title: this.$t(`dataFlow_${title}`),
-      }
-    },
-
-    handleReset(row) {
-      const id = row.id
-      const msgObj = this.getConfirmMessage('initialize', row)
-      this.$confirm(msgObj.title, msgObj.msg, {
-        dangerouslyUseHTMLString: true,
-      }).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        batchRenewTasks([id]).then((data) => {
-          this.$message.success(
-            data?.message || this.$t('public_message_operation_success'),
-          )
-          this.table.fetch()
-        })
-      })
-    },
-
-    del(ids, item = {}, canNotList) {
-      this.$confirm(
-        this.$t('packages_ldp_src_tablepreview_querenshanchu'),
-        this.$t('packages_business_shared_mining_list_shanchurenwus', {
-          val1: item.name,
-        }),
-        {
-          dangerouslyUseHTMLString: true,
-        },
-      ).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        batchDeleteTasks(ids).then((data) => {
-          this.table.fetch()
-          this.responseDelHandler(
-            data,
-            this.$t('public_message_delete_ok'),
-            canNotList,
-          )
-        })
-      })
+      // Cloud mode
+      const filter = { where: { status: { $in: ['Running'] } }, size: 100 }
+      const data = await requestClient.get<any>(
+        `api/tcm/agent?filter=${encodeURIComponent(JSON.stringify(filter))}`,
+      )
+      return (data?.items || []).map((item: any) => ({
+        label: item.name,
+        value: item.tmInfo.agentId,
+      }))
     },
   },
+  {
+    placeholder: t('public_task_name'),
+    key: 'keyword',
+    type: 'input',
+  },
+])
+
+// ── Data fetching ─────────────────────────────────────────────────────────────
+
+const getData = async ({
+  page,
+}: {
+  page: { current: number; size: number }
+}) => {
+  const { current, size } = page
+  const where: Record<string, any> = { syncType: 'connHeartbeat' }
+  const { keyword, status, agentId } = searchParams.value
+
+  if (keyword?.trim()) {
+    where.name = { like: escapeRegExp(keyword), options: 'i' }
+  }
+  if (status) {
+    where.status = status
+  }
+  if (agentId) {
+    where.agentId = agentId
+  }
+
+  const filter = {
+    order: order.value,
+    limit: size,
+    skip: (current - 1) * size,
+    where,
+  }
+
+  const data = await fetchTasks(filter)
+  const list: any[] = data?.items || []
+  return {
+    total: data?.total || 0,
+    data: list.map((item) => {
+      item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+      item.taskType =
+        TASK_TYPE_MAP[item.type as keyof typeof TASK_TYPE_MAP] || ''
+      makeStatusAndDisabled(item)
+      if (item.status === 'edit') {
+        item.btnDisabled.start = false
+      }
+      return item
+    }),
+  }
 }
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+const getConfirmMessage = (operateStr: string, task: { name: string }) => {
+  const strArr = t(`dataFlow_${operateStr}_confirm_message`).split('xxx')
+  const msg = `<p>${strArr[0]}<span class="color-primary">${task.name}</span>${strArr[1]}</p>`
+  return { msg, title: t(`dataFlow_${operateStr}_confirm_title`) }
+}
+
+const openRoute = (routeObj: any, newTab = true) => {
+  if (newTab) {
+    window.open(router.resolve(routeObj).href)
+  } else {
+    router.push(routeObj)
+  }
+}
+
+// ── Actions ───────────────────────────────────────────────────────────────────
+
+const start = (ids: string[]) => {
+  buried?.(taskBuried.start)
+  fetchTasks({ where: { id: ids[0] } }).then(() => {
+    batchStartTasks(ids)
+      .then((data: any) => {
+        buried?.(taskBuried.start, '', { result: true })
+        ElMessage.success(
+          data?.message || t('public_message_operation_success'),
+        )
+        table.value?.fetch()
+      })
+      .catch(() => {
+        buried?.(taskBuried.start, '', { result: false })
+      })
+  })
+}
+
+const forceStop = async (ids: string[], row: any) => {
+  const { msg, title } = getConfirmMessage('force_stop', row)
+  try {
+    await ElMessageBox.confirm(msg, title, { dangerouslyUseHTMLString: true })
+    const data: any = await forceStopTask(ids[0]!)
+    ElMessage.success(data?.message || t('public_message_operation_success'))
+    table.value?.fetch()
+  } catch {
+    // dismissed
+  }
+}
+
+const stop = async (ids: string[]) => {
+  try {
+    await ElMessageBox.confirm(
+      t('packages_business_stop_confirm_message'),
+      t('packages_business_important_reminder'),
+    )
+    const data: any = await batchStopTasks(ids)
+    ElMessage.success(data?.message || t('public_message_operation_success'))
+    table.value?.fetch()
+  } catch {
+    // dismissed
+  }
+}
+
+const handleDetails = (task: any = {}) => {
+  openRoute({ name: 'HeartbeatMonitor', params: { id: task.id } })
+}
+
+const handleReset = async (row: any) => {
+  const { msg, title } = getConfirmMessage('initialize', row)
+  try {
+    await ElMessageBox.confirm(msg, title, { dangerouslyUseHTMLString: true })
+    const data: any = await batchRenewTasks([row.id])
+    ElMessage.success(data?.message || t('public_message_operation_success'))
+    table.value?.fetch()
+  } catch {
+    // dismissed
+  }
+}
+
+const del = async (ids: string[], item: any = {}) => {
+  try {
+    await ElMessageBox.confirm(
+      t('packages_business_shared_mining_list_shanchurenwus', {
+        val1: item.name,
+      }),
+      t('packages_ldp_src_tablepreview_querenshanchu'),
+      { dangerouslyUseHTMLString: true },
+    )
+    await batchDeleteTasks(ids)
+    ElMessage.success(t('public_message_delete_ok'))
+    table.value?.fetch()
+  } catch {
+    // dismissed
+  }
+}
+
+// ── Lifecycle & Watchers ──────────────────────────────────────────────────────
+
+watch(
+  () => route.query,
+  () => {
+    table.value?.fetch(1)
+  },
+)
+
+onBeforeMount(() => {
+  Object.assign(searchParams.value, route.query)
+})
+
+onMounted(() => {
+  timer = setInterval(() => {
+    table.value?.fetch(null, 0, true)
+  }, 8000)
+})
+
+onUnmounted(() => {
+  if (timer) {
+    clearInterval(timer)
+    timer = null
+  }
+})
 </script>
 
 <template>
@@ -260,7 +281,7 @@ export default {
         <FilterBar
           v-model:value="searchParams"
           :items="filterItems"
-          @fetch="table.fetch(1)"
+          @fetch="table?.fetch(1)"
         />
       </template>
       <el-table-column

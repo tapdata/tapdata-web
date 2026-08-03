@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { useI18n } from '@tap/i18n'
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
-import { onBeforeUnmount, ref } from 'vue'
+import JSON5 from 'json5'
+import * as monaco from 'monaco-editor'
+import { ref } from 'vue'
 import MonacoEditor from './MonacoEditor.vue'
 
 const { t } = useI18n()
+const JSON5_LANGUAGE_ID = 'json5'
 
 const props = defineProps({
   height: {
@@ -35,7 +37,76 @@ const editorValue = defineModel('modelValue', {
   type: String,
   default: '',
 })
-const monacoEditorRef = ref(null)
+const monacoEditorRef = ref<any>(null)
+
+let json5LanguageRegistered = false
+
+const registerJson5Language = () => {
+  if (json5LanguageRegistered) return
+
+  monaco.languages.register({
+    id: JSON5_LANGUAGE_ID,
+    extensions: ['.json5'],
+    aliases: ['JSON5', 'json5'],
+  })
+
+  monaco.languages.setLanguageConfiguration(JSON5_LANGUAGE_ID, {
+    comments: {
+      lineComment: '//',
+      blockComment: ['/*', '*/'],
+    },
+    brackets: [
+      ['{', '}'],
+      ['[', ']'],
+    ],
+    autoClosingPairs: [
+      { open: '{', close: '}' },
+      { open: '[', close: ']' },
+      { open: '(', close: ')' },
+      { open: '"', close: '"', notIn: ['string', 'comment'] },
+      { open: "'", close: "'", notIn: ['string', 'comment'] },
+    ],
+    surroundingPairs: [
+      { open: '{', close: '}' },
+      { open: '[', close: ']' },
+      { open: '(', close: ')' },
+      { open: '"', close: '"' },
+      { open: "'", close: "'" },
+    ],
+  })
+
+  monaco.languages.setMonarchTokensProvider(JSON5_LANGUAGE_ID, {
+    defaultToken: '',
+    tokenPostfix: '.json5',
+    tokenizer: {
+      root: [
+        [/[ \t\r\n]+/, 'white'],
+        [/\/\/.*$/, 'comment'],
+        [/\/\*/, { token: 'comment', next: '@comment' }],
+        [/\b(?:true|false|null|Infinity|NaN)\b/, 'keyword'],
+        [
+          /[+\-]?(?:0x[0-9a-f]+|(?:\d+\.\d*|\.\d+|\d+)(?:e[+\-]?\d+)?)/i,
+          'number',
+        ],
+        [/'(?:[^'\\]|\\.)*'/, 'string'],
+        [/"(?:[^"\\]|\\.)*"/, 'string'],
+        [/[A-Z_$][\w$]*/i, 'identifier'],
+        [/[{}[\]]/, '@brackets'],
+        [/[:,]/, 'delimiter'],
+        [/./, 'delimiter.invalid'],
+      ],
+      comment: [
+        [/[^/*]+/, 'comment'],
+        [/\*\//, { token: 'comment', next: '@pop' }],
+        [/[/*]/, 'comment'],
+      ],
+    },
+  })
+
+  json5LanguageRegistered = true
+}
+
+registerJson5Language()
 
 const mongoOperators = [
   // Comparison operators
@@ -141,16 +212,17 @@ const mongoOperators = [
   },
 ]
 
-const registerMongoCompletion = () => {
-  return monaco.languages.registerCompletionItemProvider('json', {
+const registerMongoCompletion = (languageId: string) => {
+  return monaco.languages.registerCompletionItemProvider(languageId, {
     triggerCharacters: ['$', '"', "'", '{'],
-    provideCompletionItems: (model, position) => {
+    provideCompletionItems: (model: any, position: any) => {
       const word = model.getWordUntilPosition(position)
       const lineContent = model.getLineContent(position.lineNumber)
       const textBeforeCursor = lineContent.slice(
         0,
         Math.max(0, position.column - 1),
       )
+      const isJson5 = model.getLanguageId() === JSON5_LANGUAGE_ID
 
       const range = {
         startLineNumber: position.lineNumber,
@@ -159,7 +231,7 @@ const registerMongoCompletion = () => {
         endColumn: word.endColumn,
       }
 
-      const suggestions = []
+      const suggestions: any[] = []
 
       if (lineContent?.trim() === '{}') return { suggestions }
 
@@ -200,14 +272,14 @@ const registerMongoCompletion = () => {
           label: op.label,
           kind: op.kind,
           detail: op.detail,
-          insertText: isInQuotes ? op.label : `"${op.label}"`,
+          insertText: isInQuotes || isJson5 ? op.label : `"${op.label}"`,
           range: replaceRange,
           sortText: `2${op.label}`,
         })),
       )
 
       if (props.fields && props.fields.length > 0) {
-        const matchingFields = props.fields.filter((field) =>
+        const matchingFields = (props.fields as any[]).filter((field: any) =>
           field.field_name.toLowerCase().startsWith(word.word.toLowerCase()),
         )
         if (matchingFields.length > 0) {
@@ -216,9 +288,10 @@ const registerMongoCompletion = () => {
               label: field.field_name,
               kind: monaco.languages.CompletionItemKind.Field,
               detail: field.data_type,
-              insertText: isInQuotes
-                ? field.field_name
-                : `"${field.field_name}"`,
+              insertText:
+                isInQuotes || isJson5
+                  ? field.field_name
+                  : `"${field.field_name}"`,
               range,
               sortText: `1${field.field_name}`,
             })),
@@ -227,8 +300,9 @@ const registerMongoCompletion = () => {
       }
 
       if (props.variables && props.variables.length > 0 && word.word) {
-        const matchingVariables = props.variables.filter((variable) =>
-          variable.name.toLowerCase().startsWith(word.word.toLowerCase()),
+        const matchingVariables = (props.variables as any[]).filter(
+          (variable: any) =>
+            variable.name.toLowerCase().startsWith(word.word.toLowerCase()),
         )
 
         console.info('🔍 Matching variables:', matchingVariables)
@@ -271,9 +345,10 @@ const registerMongoCompletion = () => {
                 }
               } else {
                 // 不在 {{}} 内部，需要完整的 {{variable}}
-                insertText = isInQuotes
-                  ? `{{${variable.name}}}`
-                  : `"{{${variable.name}}}"`
+                insertText =
+                  isInQuotes || isJson5
+                    ? `{{${variable.name}}}`
+                    : `"{{${variable.name}}}"`
               }
 
               return {
@@ -299,19 +374,21 @@ const registerMongoCompletion = () => {
 }
 
 // 注册自动补全
-let completionDisposable = null
+let completionRegistered = false
 
-if (typeof monaco !== 'undefined') {
-  completionDisposable = registerMongoCompletion()
+if (typeof monaco !== 'undefined' && !completionRegistered) {
+  completionRegistered = true
+  registerMongoCompletion('json')
+  registerMongoCompletion(JSON5_LANGUAGE_ID)
 }
 
-const validateJSON = (jsonString) => {
+const validateJSON = (jsonString: string) => {
   if (!jsonString.trim()) {
     return { isValid: true, error: null }
   }
 
   try {
-    const parsed = JSON.parse(jsonString)
+    const parsed = JSON5.parse(jsonString)
     if (typeof parsed !== 'object' || parsed === null) {
       return {
         isValid: false,
@@ -323,32 +400,37 @@ const validateJSON = (jsonString) => {
       }
     }
     return { isValid: true, error: null }
-  } catch (syntaxError) {
+  } catch (syntaxError: any) {
+    const errorMessage = String(syntaxError?.message ?? '')
     return {
       isValid: false,
       error: {
-        message: syntaxError.message,
-        line: getErrorLine(syntaxError.message),
-        column: getErrorColumn(syntaxError.message),
+        message: errorMessage,
+        line: syntaxError.lineNumber || getErrorLine(errorMessage) || 1,
+        column: syntaxError.columnNumber || getErrorColumn(errorMessage) || 1,
       },
     }
   }
 }
 
 // Extract line number from JSON parse error message
-const getErrorLine = (errorMessage) => {
+function getErrorLine(errorMessage: string) {
   const lineMatch = errorMessage.match(/line (\d+)/i)
-  return lineMatch ? Number.parseInt(lineMatch[1]) : 1
+  return Number.parseInt(lineMatch?.[1] ?? '1')
 }
 
-const getErrorColumn = (errorMessage) => {
+function getErrorColumn(errorMessage: string) {
   const columnMatch = errorMessage.match(/column (\d+)/i)
-  return columnMatch ? Number.parseInt(columnMatch[1]) : 1
+  return Number.parseInt(columnMatch?.[1] ?? '1')
 }
 
-const validationError = ref(null)
+const validationError = ref<{
+  message: string
+  line: number
+  column: number
+} | null>(null)
 
-const handleChange = (val) => {
+const handleChange = (val: string) => {
   const validation = validateJSON(val)
   validationError.value = validation.error
 
@@ -360,20 +442,32 @@ const handleChange = (val) => {
   })
 }
 
-const formatCode = () => {
-  if (monacoEditorRef.value) {
-    monacoEditorRef.value.format()
+const normalizeJSON = (jsonString: string) => {
+  if (!jsonString.trim()) {
+    return ''
+  }
+
+  try {
+    const parsed = JSON5.parse(jsonString)
+    if (typeof parsed !== 'object' || parsed === null) {
+      return null
+    }
+    return JSON.stringify(parsed, null, 2)
+  } catch {
+    return null
   }
 }
 
-onBeforeUnmount(() => {
-  if (completionDisposable) {
-    completionDisposable.dispose()
+const formatCode = () => {
+  const normalized = normalizeJSON(editorValue.value)
+  if (normalized !== null) {
+    editorValue.value = normalized
   }
-})
+}
 
 defineExpose({
   format: formatCode,
+  normalize: normalizeJSON,
   getEditor: () => monacoEditorRef.value?.getEditor(),
   validateJSON,
 })
@@ -389,7 +483,7 @@ defineExpose({
         ref="monacoEditorRef"
         v-model="editorValue"
         :options="{
-          language: 'json',
+          language: 'json5',
           automaticLayout: true,
           minimap: { enabled: false },
           scrollBeyondLastLine: false,
@@ -407,6 +501,7 @@ defineExpose({
           formatOnType: false,
           ...options,
         }"
+        :height="height"
         @change="handleChange"
       />
     </div>

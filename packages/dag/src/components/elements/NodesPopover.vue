@@ -110,6 +110,38 @@ const handleFetchConnections = () => {
 
 handleFetchConnections()
 
+// 搜索范围：表 / 连接，控制搜索框查询的目标
+const searchScope = ref<'table' | 'connection'>('table')
+
+const tableSearchQuery = computed({
+  get: () =>
+    searchScope.value === 'connection'
+      ? connectionQuery.value
+      : tableState.query,
+  set: (val: string) => {
+    if (searchScope.value === 'connection') {
+      connectionQuery.value = val
+    } else {
+      tableState.query = val
+    }
+  },
+})
+
+const handleSearchInput = () => {
+  if (searchScope.value === 'connection') {
+    handleFetchConnections()
+  } else {
+    runFetchTables()
+  }
+}
+
+const handleSearchScopeChange = () => {
+  // 切换搜索范围时清空两侧查询并刷新对应列表
+  connectionQuery.value = ''
+  tableState.query = ''
+  handleSearchInput()
+}
+
 // 根据添加位置决定哪些 tab 被禁用
 const disabledTabs = computed(() => {
   const { nextNodeId, prevNodeId } = props.params || {}
@@ -152,7 +184,10 @@ const handleMouseDown = (event: MouseEvent) => {
   if (!show.value) return
 
   const popperElement = popoverRef.value?.popperRef?.contentRef
-  const target = event.target as Node
+  const target = event.target as HTMLElement
+
+  // 忽略搜索范围下拉浮层内部的点击（已 teleport 到 body）
+  if (target.closest?.('.el-select-dropdown')) return
 
   // 检查点击是否在 popover 外部
   if (popperElement && !popperElement.contains(target)) {
@@ -160,9 +195,27 @@ const handleMouseDown = (event: MouseEvent) => {
   }
 }
 
+/**
+ * 立即隐藏 popper（同步设置 visibility:hidden），再设 show=false。
+ * 目的：防止图结构变化（如删除连线）导致 Popper.js 在 DOM 移除前重算位置产生漂移。
+ */
+function hideImmediately() {
+  const popperEl = popoverRef.value?.popperRef?.contentRef as
+    | HTMLElement
+    | undefined
+  if (popperEl) popperEl.style.visibility = 'hidden'
+  show.value = false
+}
+
 // 监听 show 的变化，添加或移除事件监听器
 watch(show, (newValue) => {
   if (newValue) {
+    // 清除 hideImmediately 留下的 visibility 覆盖
+    const popperEl = popoverRef.value?.popperRef?.contentRef as
+      | HTMLElement
+      | undefined
+    if (popperEl) popperEl.style.visibility = ''
+
     // 使用 mousedown 而不是 click
     document.addEventListener('mousedown', handleMouseDown, true)
 
@@ -215,6 +268,32 @@ const canConnect = (sourceNode: any, targetNode: any): boolean => {
   return dataflowStore.checkAllowTargetOrSource(sourceNode, targetNode, true)
 }
 
+const getBeforeNodesInSameBranch = (nodeId: string) => {
+  const list: any[] = []
+  const visited = new Set<string>()
+
+  const traverse = (id: string) => {
+    if (visited.has(id)) return
+    visited.add(id)
+
+    const currentNode = dataflowStore.findNodeById(id)
+    if (!currentNode) return
+
+    list.push(currentNode)
+
+    currentNode.$inputs?.forEach((inputId: string) => {
+      traverse(inputId)
+    })
+  }
+
+  traverse(nodeId)
+
+  return list
+}
+
+const hasMultiInputNode = (nodes: any[]) =>
+  nodes.some((n) => (n?.$inputs?.length || 0) > 1)
+
 const handleAddNode = (node: any) => {
   const { nextNodeId, prevNodeId } = props.params || {}
   let connection = null
@@ -239,18 +318,28 @@ const handleAddNode = (node: any) => {
 
     const afterNodes = dataflowStore.getAfterNodesInSameBranch(nextNodeId)
     const nextNode = findNode(nextNodeId)!
-    const offset = nextNode.dimensions.width + X_OFFSET
+    const prevCanvasNode = findNode(prevNodeId)!
+    const hasMultiInputDownstream = hasMultiInputNode(afterNodes)
+    const offset = hasMultiInputDownstream
+      ? prevCanvasNode.dimensions.width + X_OFFSET
+      : nextNode.dimensions.width + X_OFFSET
 
-    node.attrs.position = [nextNode.position.x, nextNode.position.y]
+    node.attrs.position = hasMultiInputDownstream
+      ? [prevCanvasNode.position.x, prevCanvasNode.position.y]
+      : [nextNode.position.x, nextNode.position.y]
 
     // 先收集所有节点的原始位置，避免循环中位置引用被修改
-    const positionsToMove = afterNodes.map((n) => ({
+    const positionsToMove = (
+      hasMultiInputDownstream
+        ? getBeforeNodesInSameBranch(prevNodeId)
+        : afterNodes
+    ).map((n) => ({
       id: n.id,
       oldPosition: [...n.attrs.position] as [number, number],
-      newPosition: [n.attrs.position[0] + offset, n.attrs.position[1]] as [
-        number,
-        number,
-      ],
+      newPosition: [
+        n.attrs.position[0] + (hasMultiInputDownstream ? -offset : offset),
+        n.attrs.position[1],
+      ] as [number, number],
     }))
 
     // 移动后续节点的位置（使用 tracking）
@@ -370,9 +459,8 @@ const onClickConnection = (item: any) => {
     handleSelectConnection(item)
   } else {
     const node = makeNode(item!)
+    hideImmediately()
     handleAddNode(node)
-
-    show.value = false
   }
 }
 
@@ -393,15 +481,13 @@ const onClickTable = async (item: any) => {
   }
 
   const node = makeNode(connection!, item.name)
+  hideImmediately()
   handleAddNode(node)
-
-  show.value = false
 }
 
 const onClickProcessor = (item: any) => {
+  hideImmediately()
   handleAddNode(makeProcessorNode(item))
-
-  show.value = false
 }
 
 defineExpose({
@@ -512,7 +598,7 @@ defineExpose({
             </template>
           </el-input>
           <el-input
-            v-else
+            v-else-if="currentConnection"
             v-model="tableState.query"
             :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
             clearable
@@ -520,6 +606,38 @@ defineExpose({
           >
             <template #prefix>
               <el-icon><i-lucide-search /></el-icon>
+            </template>
+          </el-input>
+          <el-input
+            v-else
+            v-model="tableSearchQuery"
+            :placeholder="
+              searchScope === 'connection'
+                ? $t('packages_dag_search_connection')
+                : $t('packages_form_table_rename_index_sousuobiaoming')
+            "
+            clearable
+            @input="handleSearchInput"
+          >
+            <template #prefix>
+              <el-icon><i-lucide-search /></el-icon>
+            </template>
+            <template #prepend>
+              <el-select
+                v-model="searchScope"
+                class="search-scope-select"
+                :teleported="false"
+                @change="handleSearchScopeChange"
+              >
+                <el-option
+                  :label="$t('packages_dag_dag_table')"
+                  value="table"
+                />
+                <el-option
+                  :label="$t('packages_dag_dag_connection')"
+                  value="connection"
+                />
+              </el-select>
             </template>
           </el-input>
         </div>
@@ -761,5 +879,17 @@ defineExpose({
   min-width: 400px;
   max-width: 480px;
   border-color: var(--el-border-color-extra-light) !important;
+}
+.search-scope-select {
+  width: auto;
+
+  :deep(.el-select__selected-item.el-select__placeholder) {
+    position: relative;
+    transform: none !important;
+  }
+
+  :deep(.el-select__caret) {
+    font-size: 10px;
+  }
 }
 </style>

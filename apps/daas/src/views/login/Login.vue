@@ -1,4 +1,5 @@
 <script>
+import { fetchSettings } from '@tap/api/core/settings'
 import { fetchTimestamp } from '@tap/api/src/core/timestamp'
 import {
   checkLdapLoginEnable,
@@ -6,7 +7,7 @@ import {
   login,
 } from '@tap/api/src/core/users'
 import Cookie from '@tap/shared/src/cookie'
-import { getSettingByKey } from '@tap/shared/src/settings'
+import { setSettings } from '@tap/shared/src/settings'
 import { useDark } from '@vueuse/core'
 import cryptoJS from 'crypto-js'
 import { configUser } from '@/utils/util'
@@ -37,7 +38,6 @@ export default {
     }
   },
   methods: {
-    getSettingByKey,
     async loadAdEnable() {
       const data = await checkLdapLoginEnable()
       this.adEnable = data
@@ -81,7 +81,15 @@ export default {
         Cookie.set('access_token', data?.id)
         Cookie.set('tem_token', data?.id)
 
+        const settings = await fetchSettings()
+        setSettings(settings)
+
         await this.$store.dispatch('feature/getFeatures')
+
+        if (settings.length) {
+          localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(settings))
+          this.$store.commit('setAppearanceBySetting', settings)
+        }
 
         const user = await getUserInfoByToken()
         configUser(user)
@@ -126,9 +134,6 @@ export default {
         <div class="sign-in-panel">
           <div class="title">
             {{ $t('app_signIn_signIn') }}
-            <span v-if="getSettingByKey('SHOW_REGISTER')" @click="registry">{{
-              $t('app_signIn_Registration')
-            }}</span>
           </div>
           <el-alert
             v-if="!!errorMessage"

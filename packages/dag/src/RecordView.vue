@@ -15,7 +15,6 @@ const alarmData = ref<any>(null)
 const logTotals = ref<any[]>([])
 const quota = ref({})
 const taskRecord = ref({ total: 0, items: [] as any[] })
-const canvasRef = ref<any>(null)
 
 const {
   dataflow,
@@ -41,8 +40,6 @@ const {
   handleOpenInspect,
 } = useCanvasOperation()
 
-const isInitialized = ref(false)
-
 const init = async () => {
   dataflowStore.stateIsReadonly = true
   dataflowStore.showBottom = true
@@ -54,7 +51,6 @@ const init = async () => {
     await dataflowStore.fetchDataflow(taskId, taskRecordId)
     await initNodeType(dataflowStore.dataflow.syncType)
   }
-  isInitialized.value = true
 }
 
 init()
@@ -71,7 +67,6 @@ provide('dataflowDesc', dataflowDesc)
 provide('onNameInputChange', onNameInputChange)
 provide('formScope', formScope)
 provide('isSaving', isSaving)
-provide('isInitialized', isInitialized)
 </script>
 
 <template>
@@ -145,7 +140,7 @@ provide('isInitialized', isInitialized)
           :log-totals="logTotals"
           :task-record="taskRecord"
           :quota="quota"
-          class="tabs-header__hidden"
+          :tabs="['milestone', 'log']"
           @open-inspect="handleOpenInspect"
           @start="handleStart(false, false)"
         />

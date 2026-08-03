@@ -14,6 +14,7 @@ import {
   updateTask,
 } from '@tap/api/src/core/task'
 import { getTaskUsedAgent } from '@tap/api/src/core/workers'
+import { withPassive } from '@tap/api/src/request'
 import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import FilterBar from '@tap/component/src/filter-bar/Main.vue'
@@ -214,7 +215,7 @@ export default {
   created() {
     //定时轮询
     this.timeout = setInterval(() => {
-      this.table.fetch(null, 0, true)
+      withPassive(() => this.table.fetch(null, 0, true))
     }, 8000)
     this.getFilterItems()
     this.searchParams = Object.assign(this.searchParams, this.$route.query)
@@ -1090,6 +1091,8 @@ export default {
       ref="table"
       row-key="id"
       class="data-flow-list"
+      :enable-custom-columns="syncType"
+      :locked-columns="['name', 'operation']"
       :classify="{
         authority: 'SYNC_category_management',
         types: ['dataflow'],
@@ -1368,6 +1371,7 @@ export default {
         </template>
       </el-table-column>
       <el-table-column
+        prop="operation"
         fixed="right"
         :label="$t('public_operation')"
         :width="colWidth.operation"
@@ -1389,7 +1393,7 @@ export default {
         <template #default="{ row }">
           <!-- 经过不停的快照比对，发现如果多个按钮带有 v-readonlybtn 
           则会影响 vnode 的 patch 导致内存泄露，每次列表刷新就会增加很多 vnode -->
-          <el-space :spacer="spacer" :size="0">
+          <el-space :spacer="spacer" :size="0" class="flex-wrap">
             <ElButton
               v-if="
                 row.btnDisabled.stop &&
@@ -1467,7 +1471,7 @@ export default {
               data-testid="copy-task"
               @click="copy([row.id], row)"
             >
-              {{ $t('public_button_copy') }}
+              {{ $t('public_button_duplicate') }}
             </ElButton>
             <ElButton
               v-if="havePermission(row, 'Delete')"

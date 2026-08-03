@@ -168,7 +168,7 @@ export default {
     <div v-loading="loading" class="system-notification">
       <TablePage
         ref="table"
-        row-key="id+indexName"
+        row-key="id"
         class="share-list"
         :remote-method="getData"
         @selection-change="
@@ -224,13 +224,14 @@ export default {
         <el-table-column fixed="right" :label="$t('public_operation')">
           <template #default="{ row }">
             <el-button
+              type="primary"
               text
               :disabled="row.status === 'CLOESE'"
               @click="handleClose(row.id)"
               >{{ $t('public_button_close') }}</el-button
             >
             <el-divider direction="vertical" />
-            <el-button text @click="goLog(row)">{{
+            <el-button text type="primary" @click="goLog(row)">{{
               $t('packages_dag_monitor_bottompanel_rizhi')
             }}</el-button>
           </template>
