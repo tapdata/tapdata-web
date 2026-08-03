@@ -397,7 +397,10 @@ const validateJSON = (jsonString: string) => {
     }
     return { isValid: true, error: null }
   } catch (syntaxError: any) {
-    const errorMessage = String(syntaxError?.message ?? '')
+    const errorMessage = String(syntaxError?.message ?? '').replace(
+      /^JSON5:\s*/,
+      '',
+    )
     return {
       isValid: false,
       error: {
