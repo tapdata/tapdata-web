@@ -1978,7 +1978,6 @@ provide('isEdit', isEdit)
                   :prop="`params.${$index}.required`"
                   :error="!form.params[$index].required ? 'true' : ''"
                   :show-message="false"
-                  :rules="rules.param"
                   class="mb-0"
                 >
                   <ElSwitch v-model="form.params[$index].required" />
