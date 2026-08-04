@@ -12,7 +12,7 @@ import {
   type Edge,
   type Node,
 } from '@vue-flow/core'
-import { nextTick, onUnmounted, provide, ref, useTemplateRef, watch } from 'vue'
+import { nextTick, onUnmounted, provide, ref, watch } from 'vue'
 import { useLayout } from '../composables/useLayout'
 import TableEdge from './TableEdge.vue'
 import TableNode from './TableNode.vue'
@@ -34,7 +34,6 @@ const props = defineProps<{
   isShow: boolean
 }>()
 
-const rootRef = useTemplateRef<HTMLElement>('root')
 const { fitView, zoomOut, zoomIn } = useVueFlow()
 const { layout } = useLayout()
 
@@ -232,47 +231,24 @@ const onNodeDoubleClick = ({ node }) => {
   emit('nodeDblclick', table)
 }
 
-function enterFullscreen(element: HTMLElement) {
-  if (element.requestFullscreen) {
-    element.requestFullscreen()
-  } else if (element.webkitRequestFullscreen) {
-    // Safari
-    element.webkitRequestFullscreen()
-  } else if (element.msRequestFullscreen) {
-    // IE11
-    element.msRequestFullscreen()
-  }
-}
+const setFullscreen = (fullscreen: boolean) => {
+  isFullscreen.value = fullscreen
 
-function exitFullscreen() {
-  if (document.exitFullscreen) {
-    document.exitFullscreen()
-  }
+  nextTick(() => {
+    setTimeout(() => {
+      fitView()
+    }, 10)
+  })
 }
-
-// function isFullscreenActive() {
-//   return !!(
-//     document.fullscreenElement ||
-//     document.webkitFullscreenElement ||
-//     document.msFullscreenElement
-//   )
-// }
 
 const toggleFullscreen = () => {
-  if (isFullscreen.value) {
-    exitFullscreen()
-  } else {
-    enterFullscreen(rootRef.value)
-  }
-
-  isFullscreen.value = !isFullscreen.value
+  setFullscreen(!isFullscreen.value)
 }
 
-const onFullscreenChange = () => {
-  isFullscreen.value = !!document.fullscreenElement
-  setTimeout(() => {
-    fitView()
-  }, 10)
+const onKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'Escape' && isFullscreen.value) {
+    setFullscreen(false)
+  }
 }
 
 const handleExpandCollapse = (ids: string[]) => {
@@ -297,17 +273,21 @@ watch(
   { immediate: true },
 )
 
-document.addEventListener('fullscreenchange', onFullscreenChange)
+document.addEventListener('keydown', onKeydown)
 
 onUnmounted(() => {
-  document.removeEventListener('fullscreenchange', onFullscreenChange)
+  document.removeEventListener('keydown', onKeydown)
 })
 
 provide('taskReplicateLagMap', taskReplicateLagMap)
 </script>
 
 <template>
-  <div id="table-lineage-graph" ref="root" class="table-lineage-graph h-100">
+  <div
+    id="table-lineage-graph"
+    class="table-lineage-graph h-100"
+    :class="{ 'is-fullscreen': isFullscreen }"
+  >
     <svg style="position: absolute; left: -1000px; top: 0">
       <defs>
         <marker
@@ -418,13 +398,22 @@ provide('taskReplicateLagMap', taskReplicateLagMap)
 </style>
 
 <style scoped lang="scss">
-.vue-flow.fullscreen {
+.table-lineage-graph {
+  position: relative;
+}
+
+.table-lineage-graph.is-fullscreen {
   position: fixed !important;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 10;
+  inset: 0;
+  z-index: 3000;
+  width: 100vw;
+  height: 100vh !important;
+  background: var(--el-bg-color);
+
+  :deep(.vue-flow) {
+    height: 100%;
+    border-radius: 0;
+  }
 }
 :deep(.table-lineage-connection-label) {
   max-width: 180px;
