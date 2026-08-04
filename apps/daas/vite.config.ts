@@ -32,7 +32,19 @@ const proxy = {
   changeOrigin: false,
 }
 
+// 同一个 root 下经常并行跑多个 dev server（如 :5173 连 TM:3000、:5174 连 TM:3001）。
+// Vite 的 cacheDir 默认是 <root>/node_modules/.vite，多个 server 会互相覆盖对方的预打包
+// 产物：各自内存里留着自己那一代（URL 带 ?v=<自己的 hash>），而 deps 内部形如
+// `from "./chunk-XXX.js"` 的相对引用不带 ?v=，会落到被别人覆盖的磁盘文件上。同一个包
+// 因此被实例化两份，任何 instanceof 判定都会失效——@formily/core 的 isVoidField 正是
+// instanceof，失效后 VoidField 被当成数据 Field，读 selfErrors 直接 TypeError。
+// 按端口 + origin 隔离缓存目录，各 server 互不干扰。
+const portArg = ~argv.indexOf('--port') ? argv[argv.indexOf('--port') + 1] : ''
+const cacheKey
+  = [portArg, origin].filter(Boolean).join('-').replaceAll(/\W+/g, '_') || 'default'
+
 export default defineConfig({
+  cacheDir: path.resolve(__dirname, 'node_modules/.vite', cacheKey),
   define: {
     TAP_ACCESS_TOKEN: "''",
   },
