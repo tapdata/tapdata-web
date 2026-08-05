@@ -146,7 +146,12 @@ function buildStatement(
   const coll = isBlank(collection)
     ? '<collection>'
     : (collection as string).trim()
-  const body = keys.map((k) => `${k.field}: ${k.direction}`).join(', ')
+  // 字段名一律加引号：`POLICY.POLICY_STATUS` 这种点号路径不加引号就是非法 JS，复制出去跑不通。
+  // 用 JSON.stringify 而非手拼引号——它顺带转义名字里的引号/反斜杠，不会把语句撕成两半。
+  // 口径对齐 TM 侧 `ServingIndexManualCommands.mongo()`（两处生成同一份给人执行的语句）。
+  const body = keys
+    .map((k) => `${JSON.stringify(k.field)}: ${k.direction}`)
+    .join(', ')
   // `background: true`：语句是给人**手工在目标库执行**的，目标库版本未知。
   // MongoDB 4.2+ 已废弃该选项并忽略之（4.2 起索引构建不再全程持排他锁）；4.0 及更早则确实需要它，
   // 否则前台建索引会阻塞该库的读写。带上它在新版是空操作、在老版是保护，故一律附带。
