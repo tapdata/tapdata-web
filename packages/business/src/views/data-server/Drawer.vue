@@ -660,9 +660,10 @@ const edit = (copy?: boolean) => {
 
   if (form.value.id || copy) {
     const checkedFields = form.value.fields || []
-    // 进编辑态即以「树将被初始化成的那份勾选」播种快照：从服务型索引 tab 直接点编辑时，
-    // FieldsTree 压根不会挂载、也不会发生 tab 切换，没有这行快照就是空的，
-    // 保存前置校验会误判「未选字段」而拒绝保存。
+    // 进编辑态即以「树将被初始化成的那份勾选」播种快照：FieldsTree 尚未挂载、也未发生过
+    // tab 切换时，没有这行快照就是空的，保存前置校验会误判「未选字段」而拒绝保存。
+    // （原触发场景是「从服务型索引 tab 直接点编辑」；该 tab 已与编辑态解绑、不再进得来，
+    //  但快照本身仍是首次进编辑态的正确初值，保留。）
     checkedFieldsSnapshot.value = checkedFields
     const fieldsMap = checkedFields.reduce((acc: any, it: any) => {
       if (it.field_alias || it.textEncryptionRuleIds?.length) {
@@ -696,7 +697,11 @@ const edit = (copy?: boolean) => {
 
 const handleCancel = () => {
   isEdit.value = false
+  // 索引 tab 自行落库、不受编辑态管辖：取消编辑不能把它一起回退到进编辑态时的快照，
+  // 否则界面会退回一个库里已经不成立的收录清单（TAP-12057）。
+  const servingIndexes = form.value?.servingIndexes
   form.value = initialFormData
+  form.value.servingIndexes = servingIndexes
   selectedFieldSize.value = 0
   previewFieldMode.value = 'selected'
   getFields()
@@ -954,7 +959,9 @@ const handleBeforeClose = async (done: () => void) => {
       fields: currentCheckedFields(),
     }
     const hasChanges = Object.keys(formValue).some((key) => {
-      if (['status', 'path'].includes(key)) {
+      // servingIndexes 由索引 tab 自己即时落库，永远不会是「未保存的修改」——
+      // 落库回执到达前的那个瞬间比对不上，不该因此弹「当前正在编辑」。
+      if (['status', 'path', 'servingIndexes'].includes(key)) {
         return false
       }
       return !isEqual(initialFormData[key], formValue[key])
@@ -1428,8 +1435,23 @@ watch(
 provide('encryptionsMap', encryptionsMap)
 provide('encryptions', encryptions)
 provide('form', form)
-// 服务型索引 tab 要按编辑态分流：只读态下抽屉没有底部「保存」，收录动作无处落库（TAP-12057）。
-provide('isEdit', isEdit)
+
+/**
+ * 服务型索引 tab 的三条注入（TAP-12057）。**刻意不注入 `isEdit`**：该 tab 已与编辑态解绑
+ * （2026-08-05），勾选即经窄端点落库，能不能改只看权限与只读态。
+ */
+provide('permissionActions', permissionActions)
+provide(
+  'drawerReadonly',
+  computed(() => props.readonly),
+)
+/**
+ * 索引自行落库后把脏检查基线一并挪过去：否则用户在配置 tab 处于编辑态时顺手勾了个索引，
+ * 关抽屉会被 `handleBeforeClose` 误判成「有未保存修改」。
+ */
+provide('onServingIndexesPersisted', (indexes: any[]) => {
+  initialFormData.servingIndexes = cloneDeep(indexes)
+})
 </script>
 
 <template>
@@ -1455,12 +1477,8 @@ provide('isEdit', isEdit)
           text
           type="primary"
           :class="{
-            // 服务型索引 tab 同样需要进编辑态（收录索引要保存），否则得先切回配置页点编辑再切回来。
-            invisible: !(
-              (tab === 'form' || isServingIndexTab) &&
-              form.status !== 'active' &&
-              !isEdit
-            ),
+            // 服务型索引 tab 不再需要编辑态：它自己落库（见 provide('onServingIndexesPersisted')）。
+            invisible: !(tab === 'form' && form.status !== 'active' && !isEdit),
           }"
           :disabled="fieldLoading"
           @click="edit()"

@@ -1268,11 +1268,14 @@ export default {
     'Index recommendation is unavailable when a custom query is used',
   packages_business_data_server_drawer_tuijianyicunzai:
     'The target table already has an index serving this query; no new index is needed',
-  packages_business_data_server_drawer_bianjihoushoulu:
-    'Click Edit above to load and collect indexes',
+  packages_business_data_server_drawer_zhikechakan:
+    'No edit permission — indexes are read-only here',
   packages_business_data_server_drawer_suoyinliebiao: 'Indexes',
   packages_business_data_server_drawer_gouxuanjishoulu:
-    'Checked means collected with this API; takes effect after saving. Click Load to refresh the list',
+    'Checking an index collects it with this API and saves right away — no need to enter edit mode. Click Load to refresh the list',
+  packages_business_data_server_drawer_baocunzhong: 'Saving…',
+  packages_business_data_server_drawer_yibaocun: 'Saved',
+  packages_business_data_server_drawer_baocunshibai: 'Failed to save',
   packages_business_data_server_drawer_guiyin_weijian: 'Not found in database',
   packages_business_data_server_drawer_explainmianze:
     'Recommendations are derived from the API query conditions only and have not been validated against real traffic; verify with explain() before creating.',

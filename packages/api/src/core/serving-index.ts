@@ -64,3 +64,18 @@ export function loadServingIndexes(moduleId: string, indexes: any[]) {
     { indexes },
   )
 }
+
+/**
+ * 只写 `servingIndexes` 的窄端点（索引 tab 与编辑态解绑，「勾选即存」）。
+ *
+ * **不要改用 `updateApiModule`**：那条路整表单回写，而抽屉进编辑态会把 `status` 翻成 `pending`——
+ * 收录一条索引就把已发布的 API 撤下发布；它还跑后端 `checkModule`（basePath / 名称查重），
+ * 让一次与 API 定义无关的勾选可能被别的 API 的路径冲突挡下。本端点只 `$set` 这一个字段。
+ *
+ * 空数组是合法输入（取消最后一条勾选），后端照写。
+ */
+export function saveServingIndexes(moduleId: string, servingIndexes: any[]) {
+  return requestClient.patch<void>(`/api/Modules/${moduleId}/serving-indexes`, {
+    servingIndexes,
+  })
+}

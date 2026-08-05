@@ -1152,11 +1152,14 @@ export default {
     '使用自定义查询时无法推荐索引',
   packages_business_data_server_drawer_tuijianyicunzai:
     '目标表已有可服务该查询的索引，无需新建',
-  packages_business_data_server_drawer_bianjihoushoulu:
-    '点击上方「编辑」后可加载并收录索引',
+  packages_business_data_server_drawer_zhikechakan:
+    '当前无编辑权限，仅可查看索引',
   packages_business_data_server_drawer_suoyinliebiao: '索引',
   packages_business_data_server_drawer_gouxuanjishoulu:
-    '勾选即随本 API 收录，保存后生效；列表过旧可点「加载」重新读取',
+    '勾选即随本 API 收录并立即保存，无需进入编辑态；列表过旧可点「加载」重新读取',
+  packages_business_data_server_drawer_baocunzhong: '保存中…',
+  packages_business_data_server_drawer_yibaocun: '已保存',
+  packages_business_data_server_drawer_baocunshibai: '保存失败',
   packages_business_data_server_drawer_guiyin_weijian: '库中未见',
   packages_business_data_server_drawer_explainmianze:
     '推荐仅依据接口查询条件生成，未经真实流量验证；创建前请用 explain() 核对。',

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   loadServingIndexes,
+  saveServingIndexes,
   type LoadedServingIndex,
 } from '@tap/api/src/core/serving-index'
 import { useI18n } from '@tap/i18n'
@@ -19,22 +20,28 @@ import ServingIndexDisplay from './ServingIndexDisplay.vue'
 /**
  * P2-3 · API 编辑抽屉「服务型索引」tab 内容（TAP-12057，方案 §3.7）。
  *
- * 三区：推荐（P2-5 ESR 计算 + P2-7 展示 + 可复制 createIndex）、加载（P2-6 触发引擎读回 → 归因/默认勾选
- * 全表面板）、已收录（读 form.servingIndexes 只读展示）。查询形态从同屏表单 inject 取。
+ * 两区：推荐（P2-5 ESR 计算 + P2-7 展示 + 可复制 createIndex）、索引列表（P2-6 触发引擎读回 →
+ * 归因面板；勾选即收录）。查询形态从同屏表单 inject 取。
  *
- * 加载链路（ADR-0009）：`query` 触发（非阻塞）→ 引擎经 ws 推回 `queryIndexesResult`（按 connId+table+reqId
- * 关联）→ `load` 归因规划 → 全表勾选面板；勾选「应用」写回 form.servingIndexes（P2-4 持久化）。
+ * 加载链路（ADR-0010）：`query` 经 ws 触发（非阻塞）→ 引擎推回 `queryIndexesResult`（按
+ * connId+table+reqId 关联）→ `load` 归因规划 → 全表列表。
+ *
+ * **本 tab 不进编辑态**（2026-08-05）：加载与勾选随时可做，每次变更**立刻**经窄端点落库。
+ * 详见 `persist()`。
  */
 
 const { t } = useI18n()
 
 const form = inject<Ref<any>>('form', ref<any>({}))
-/**
- * 抽屉是否处于编辑态。**加载/收录只在编辑态开放**：只读态下抽屉不渲染底部「保存」，
- * 此时「应用勾选」只会改内存里的 `form.servingIndexes`、关掉抽屉即丢——用户看到「已收录」
- * 更新了却存不下来（2026-07-31 用户实测反馈）。
- */
-const isEdit = inject<Ref<boolean>>('isEdit', ref(false))
+/** 抽屉的 API 级权限（`formData.permissionActions`）。 */
+const permissionActions = inject<Ref<any[]>>('permissionActions', ref([]))
+/** 整个抽屉只读（列表页的查看态）。 */
+const drawerReadonly = inject<Ref<boolean>>('drawerReadonly', ref(false))
+/** 落库成功后通知抽屉把脏检查基线挪过去，避免误报「有未保存修改」。 */
+const onPersisted = inject<(indexes: any[]) => void>(
+  'onServingIndexesPersisted',
+  () => {},
+)
 
 // —— 推荐区（P2-5 + P2-7）——
 const recommendation = computed(() =>
@@ -68,14 +75,13 @@ const toKeys = (index: any) =>
     direction: (f.asc === false ? -1 : 1) as 1 | -1,
   }))
 
-
 // —— 已收录区 ——
 const savedIndexes = computed<any[]>(() => form.value?.servingIndexes ?? [])
 
 const displayFieldsOf = (index: any) =>
   (index?.fields ?? []).map((f: any) => ({ field: f.field, asc: f.asc }))
 
-// —— 加载区（P2-6，ADR-0009）——
+// —— 加载区（P2-6，ADR-0010）——
 const instance = getCurrentInstance()
 const $ws = (instance?.proxy as any)?.$ws
 
@@ -106,9 +112,20 @@ const recommendationCovered = computed(() =>
 const moduleId = computed<string>(() => form.value?.id ?? '')
 const connectionId = computed<string>(() => form.value?.connectionId ?? '')
 const tableName = computed<string>(() => form.value?.tableName ?? '')
-// 加载需已保存 API（moduleId 供归因）+ 连接 + 表。新建 API 先存后加载（Tier-A 默认，NEEDS-PO 复核）。
+// 加载需已保存 API（moduleId 供归因）+ 连接 + 表。新建 API 先存后加载。
 const canLoad = computed(
   () => !!moduleId.value && !!connectionId.value && !!tableName.value,
+)
+/**
+ * 能否改收录。**刻意不看抽屉的编辑态**（2026-08-05 用户要求「随时可加载和修改」）：
+ * 旧口径把勾选锁在 `isEdit` 里，而进编辑态会把 `form.status` 翻成 `pending`——已发布的 API
+ * 想收录一条索引就得先被撤下发布，等于收不了。现在只看权限。
+ */
+const canEdit = computed(
+  () =>
+    !drawerReadonly.value &&
+    !!moduleId.value &&
+    !!permissionActions.value?.includes('Edit'),
 )
 const loading = computed(
   () => loadPhase.value === 'querying' || loadPhase.value === 'loading',
@@ -138,8 +155,8 @@ interface MergedRow {
  * 未点过「加载」时只列声明项；点「加载」刷新为库中现状（列表旧了就重新加载）。
  */
 const mergedRows = computed<MergedRow[]>(() => {
-  // 列表 = form.servingIndexes（编辑态下加载会把库里读到的并进去、保存即整体入库）
-  //      ∪ 尚未并入表单的读回项。后者是**只读态**的情形：只读不改表单，但点了加载就该看见库中现状。
+  // 列表 = form.servingIndexes（加载会把库里读到的并进去、随即落库）
+  //      ∪ 尚未并入表单的读回项。后者是**无编辑权限**的情形：不改声明，但点了加载就该看见库中现状。
   // 归因等易变信息只来自最近一次读回，不入库。
   const loadedBySig = new Map(loadedRows.value.map((r) => [sigOf(r.index), r]))
   const rows: MergedRow[] = savedIndexes.value.map((idx: any) => {
@@ -172,6 +189,55 @@ const mergedRows = computed<MergedRow[]>(() => {
   return rows
 })
 
+// —— 落库（勾选即存）——
+type SaveState = 'idle' | 'saving' | 'saved' | 'error'
+const saveState = ref<SaveState>('idle')
+const saveError = ref('')
+/** 最近一次**确认落库**的清单——失败时回滚到这里，而不是回滚到某个中间态。 */
+let lastPersisted: any[] = []
+/** 只有最新一次请求有权改状态；连点时旧请求的回执一律丢弃。 */
+let saveSeq = 0
+let savedFlashTimer: ReturnType<typeof setTimeout> | null = null
+
+const clearSavedFlash = (): void => {
+  if (savedFlashTimer) {
+    clearTimeout(savedFlashTimer)
+    savedFlashTimer = null
+  }
+}
+
+/**
+ * 乐观写：先改界面再发请求，失败回滚。
+ *
+ * **走 `saveServingIndexes` 这条只写 `servingIndexes` 的窄端点**，不能借道整表单保存——
+ * 整表单那条路会连带回写 `status` 等字段（抽屉进编辑态时它已是 `pending`），
+ * 于是「勾一条索引」的副作用是把已发布的 API 撤下发布；它还会跑后端 `checkModule` 查重，
+ * 让一次与 API 定义无关的勾选被别的 API 的路径冲突挡下。
+ */
+const persist = async (next: any[]): Promise<void> => {
+  form.value.servingIndexes = next
+  const seq = ++saveSeq
+  clearSavedFlash()
+  saveState.value = 'saving'
+  saveError.value = ''
+  try {
+    await saveServingIndexes(moduleId.value, next)
+    if (seq !== saveSeq) return // 更新的一次在飞，把状态让给它
+    lastPersisted = next
+    onPersisted(next)
+    saveState.value = 'saved'
+    savedFlashTimer = setTimeout(() => {
+      if (saveState.value === 'saved') saveState.value = 'idle'
+    }, 2000)
+  } catch (error: any) {
+    if (seq !== saveSeq) return
+    // 回滚到最后确认落库的那份，界面不会停在一个库里并不存在的状态。
+    form.value.servingIndexes = lastPersisted
+    saveError.value = error?.message ?? ''
+    saveState.value = 'error'
+  }
+}
+
 let currentReqId = ''
 let loadTimer: ReturnType<typeof setTimeout> | null = null
 const clearLoadTimer = (): void => {
@@ -183,7 +249,7 @@ const clearLoadTimer = (): void => {
 
 /**
  * ws 读回结果。载荷形状是引擎的 `WebSocketEventResult`：业务体在 **`result`** 下、
- * 成败看 `status`（`ERROR` 时 `error` 为文案）。按 connectionId + tableName + reqId 关联（ADR-0009）。
+ * 成败看 `status`（`ERROR` 时 `error` 为文案）。按 connectionId + tableName + reqId 关联（ADR-0010）。
  */
 const onQueryResult = (data: any): void => {
   const payload = data?.result
@@ -204,51 +270,52 @@ const onQueryResult = (data: any): void => {
     .then((rows) => {
       const list = rows ?? []
       loadedRows.value = list
-      // 后端的默认勾选（匹配本 API / 已被本 API 收录，§3.8.3「首个命中即定」）并入当前声明：
-      // 勾选态即收录态，读回只是**补上**建议项，不会摘掉用户已声明的（保存前一律可改）。
-      // 把读回的物理索引并入表单：**未勾选的也留下**，保存后下次打开无需再加载即可看到全貌。
-      // 只读态纯展示，绝不动声明（没有保存按钮，改了也存不下）。
-      if (isEdit.value) {
-        // `_id_` 是 MongoDB 自带的、也不由本功能管理：既不展示也不入库。
-        const fresh = new Map(
-          list
-            .filter(
-              (r) =>
-                r.attribution !== 'SYSTEM_INDEX' && sigOf(r.index) !== '_id:1',
-            )
-            .map((r) => [sigOf(r.index), r]),
-        )
-        // **按现有顺序就地更新**，不用库返回的顺序重排——否则每点一次加载列表就跳一次。
-        const merged: any[] = []
-        for (const prev of savedIndexes.value) {
-          const r = fresh.get(sigOf(prev))
-          if (r) {
-            merged.push({
-              ...r.index,
-              collected: isCollected(prev), // 保留用户已有的勾选态
-              // 归因随之落库，下次打开无需再加载即可看到标签（纯展示，可能过期）。
-              attribution: r.attribution,
-              attributionApi: r.attributionApi,
-            })
-            fresh.delete(sigOf(prev))
-          } else if (isCollected(prev)) {
-            // 库中已无但仍勾选的保留（「声明了还没建」，P3 会去创建）；
-            // 既没勾、库里也没有的，既非现状也非意图，随本次加载清理掉。
-            merged.push(prev)
-          }
-        }
-        // 新读到的追加在末尾，按后端默认勾选（§3.8.3 首个命中即定）。
-        for (const r of fresh.values()) {
+      loadPhase.value = 'loaded'
+      // 无编辑权限时纯展示，绝不动声明（`mergedRows` 会把读回项并进列表供查看）。
+      if (!canEdit.value) return
+      // 把读回的物理索引并入声明：**未勾选的也留下**，下次打开无需再加载即可看到全貌。
+      // 后端的默认勾选（匹配本 API / 已被本 API 收录，§3.8.3「首个命中即定」）只作用于**新读到**的，
+      // 不会摘掉用户已有的勾选态。
+      // `_id_` 是 MongoDB 自带的、也不由本功能管理：既不展示也不入库。
+      const fresh = new Map(
+        list
+          .filter(
+            (r) =>
+              r.attribution !== 'SYSTEM_INDEX' && sigOf(r.index) !== '_id:1',
+          )
+          .map((r) => [sigOf(r.index), r]),
+      )
+      // **按现有顺序就地更新**，不用库返回的顺序重排——否则每点一次加载列表就跳一次。
+      const merged: any[] = []
+      for (const prev of savedIndexes.value) {
+        const r = fresh.get(sigOf(prev))
+        if (r) {
           merged.push({
             ...r.index,
-            collected: !!r.defaultChecked,
+            collected: isCollected(prev), // 保留用户已有的勾选态
+            // 归因随之落库，下次打开无需再加载即可看到标签（纯展示，可能过期）。
             attribution: r.attribution,
             attributionApi: r.attributionApi,
           })
+          fresh.delete(sigOf(prev))
+        } else if (isCollected(prev)) {
+          // 库中已无但仍勾选的保留（「声明了还没建」，P3 会去创建）；
+          // 既没勾、库里也没有的，既非现状也非意图，随本次加载清理掉。
+          merged.push(prev)
         }
-        form.value.servingIndexes = merged
       }
-      loadPhase.value = 'loaded'
+      // 新读到的追加在末尾，按后端默认勾选（§3.8.3 首个命中即定）。
+      for (const r of fresh.values()) {
+        merged.push({
+          ...r.index,
+          collected: !!r.defaultChecked,
+          attribution: r.attribution,
+          attributionApi: r.attributionApi,
+        })
+      }
+      // 加载结果立刻落库：本 tab 没有保存按钮，不存就等于「看见的和存着的不一样」。
+      // persist 自己吞掉失败并回滚，这里不需要再接 catch。
+      persist(merged)
     })
     .catch(() => {
       loadPhase.value = 'error'
@@ -258,7 +325,7 @@ const onQueryResult = (data: any): void => {
 /**
  * 发起读回。**必须经 ws 发**（不是 REST）：TM 的会话表按引擎 `agentId` / 浏览器 Spring `session.getId()` 建键，
  * 前端自生成的 `?id=` uuid 不参与路由；经 ws 发起时 TM 用真实会话键作 sender，引擎 `receiver=sender` 回推才命中。
- * 见 ADR-0009 修订与 TM 侧 `ws/handler/QueryIndexesHandler`。
+ * 见 ADR-0010 与 TM 侧 `ws/handler/QueryIndexesHandler`。
  */
 const startLoad = (): void => {
   if (!canLoad.value || !$ws) return
@@ -287,17 +354,20 @@ const startLoad = (): void => {
 }
 
 /**
- * 单一列表 + 勾选即收录：勾选态**直接读写** `form.servingIndexes`，没有中间的「应用」步骤。
- * 变更仍需抽屉底部「保存」才落库（`isEdit` 之外不开放勾选）。
+ * 单一列表 + 勾选即收录：勾选态**直接读写** `form.servingIndexes` 并立刻落库，
+ * 既没有中间的「应用」步骤，也不需要抽屉底部的「保存」。
  */
 const isChecked = (row: MergedRow): boolean => isCollected(row.index)
 
 const toggleRow = (row: MergedRow): void => {
-  if (!row.checkable || !isEdit.value || !form.value) return
+  if (!row.checkable || !canEdit.value || !form.value) return
   const key = sigOf(row.index)
-  // 翻转 collected 而不是增删条目：未勾选的也要留在列表里（保存后下次打开仍可见）。
-  form.value.servingIndexes = savedIndexes.value.map((idx: any) =>
-    sigOf(idx) === key ? { ...idx, collected: !isCollected(idx) } : idx,
+  // 翻转 collected 而不是增删条目：未勾选的也要留在列表里（下次打开仍可见）。
+  // persist 自己吞掉失败并回滚，这里不需要再接 catch。
+  persist(
+    savedIndexes.value.map((idx: any) =>
+      sigOf(idx) === key ? { ...idx, collected: !isCollected(idx) } : idx,
+    ),
   )
 }
 
@@ -316,8 +386,12 @@ const attributionLabel = (attribution?: string): string => {
   return key ? t(key) : ''
 }
 
+// 声明的初值即「库中现状」：失败回滚的落点。
+lastPersisted = savedIndexes.value
+
 onBeforeUnmount(() => {
   clearLoadTimer()
+  clearSavedFlash()
   $ws?.off?.('queryIndexesResult')
 })
 </script>
@@ -342,10 +416,7 @@ onBeforeUnmount(() => {
         {{ $t('packages_business_data_server_drawer_tuijianyicunzai') }}
       </div>
 
-      <div
-        v-else-if="recommendation.statement"
-        class="serving-index-tab__card"
-      >
+      <div v-else-if="recommendation.statement" class="serving-index-tab__card">
         <div class="serving-index-tab__card-head flex align-center gap-2">
           <ServingIndexDisplay :fields="recommendedFields" />
           <ElButton
@@ -371,22 +442,22 @@ onBeforeUnmount(() => {
       </div>
     </section>
 
-    <!-- 索引列表（P2-6）：读回 ∪ 已声明，勾选即收录 -->
+    <!-- 索引列表（P2-6）：读回 ∪ 已声明，勾选即收录并立刻落库 -->
     <section class="serving-index-tab__section">
       <div class="serving-index-tab__title">
         {{ $t('packages_business_data_server_drawer_suoyinliebiao') }}
       </div>
 
-      <div v-if="isEdit && !moduleId" class="serving-index-tab__empty">
+      <div v-if="!moduleId" class="serving-index-tab__empty">
         {{ $t('packages_business_data_server_drawer_xianbaocunapi') }}
       </div>
 
       <template v-else>
         <div class="serving-index-tab__hint color-disable">
           {{
-            isEdit
+            canEdit
               ? $t('packages_business_data_server_drawer_gouxuanjishoulu')
-              : $t('packages_business_data_server_drawer_bianjihoushoulu')
+              : $t('packages_business_data_server_drawer_zhikechakan')
           }}
         </div>
 
@@ -419,28 +490,53 @@ onBeforeUnmount(() => {
             {{ $t('packages_business_data_server_drawer_jiazaishibai')
             }}<template v-if="loadError">：{{ loadError }}</template>
           </span>
+
+          <!-- 勾选即存：把落库结果就地说清楚，替代原来抽屉底部的「保存」 -->
+          <span
+            v-if="saveState === 'saving'"
+            class="color-disable serving-index-tab__hint ml-auto"
+          >
+            {{ $t('packages_business_data_server_drawer_baocunzhong') }}
+          </span>
+          <span
+            v-else-if="saveState === 'saved'"
+            class="color-success serving-index-tab__hint ml-auto"
+          >
+            {{ $t('packages_business_data_server_drawer_yibaocun') }}
+          </span>
+          <span
+            v-else-if="saveState === 'error'"
+            class="color-danger serving-index-tab__hint ml-auto"
+            :title="saveError"
+          >
+            {{ $t('packages_business_data_server_drawer_baocunshibai')
+            }}<template v-if="saveError">：{{ saveError }}</template>
+          </span>
         </div>
 
         <ul v-if="mergedRows.length" class="serving-index-tab__list m-0 p-0">
           <li
             v-for="(row, i) in mergedRows"
             :key="i"
-            class="serving-index-tab__row flex align-center gap-2"
+            class="serving-index-tab__row flex gap-2"
             :class="{ 'is-disabled': !row.checkable }"
           >
             <ElCheckbox
+              class="serving-index-tab__check flex-shrink-0"
               :model-value="isChecked(row)"
-              :disabled="!row.checkable || !isEdit"
+              :disabled="!row.checkable || !canEdit"
               @change="toggleRow(row)"
             />
             <ServingIndexDisplay
+              class="flex-1 min-w-0"
+              layout="stacked"
               :name="row.index.name"
               :unique="row.index.unique"
               :fields="displayFieldsOf(row.index)"
             />
             <ElTag
               v-if="row.declaredOnly"
-              class="ml-auto flex-shrink-0"
+              class="flex-shrink-0"
               size="small"
               type="warning"
               disable-transitions
@@ -449,7 +545,7 @@ onBeforeUnmount(() => {
             </ElTag>
             <ElTag
               v-else-if="attributionLabel(row.attribution)"
-              class="ml-auto flex-shrink-0"
+              class="flex-shrink-0"
               size="small"
               type="info"
               disable-transitions
@@ -548,7 +644,7 @@ onBeforeUnmount(() => {
     font-size: 12px;
   }
 
-  /** 加载面板与已收录列表共用：带边框的列表容器 + 行分隔线。 */
+  /** 索引列表容器：带边框 + 行分隔线。 */
   &__list {
     border: 1px solid var(--el-border-color-lighter);
     border-radius: 6px;
@@ -559,6 +655,8 @@ onBeforeUnmount(() => {
     list-style: none;
     padding: 8px 12px;
     min-height: 36px;
+    // 索引名与键分两行、都可能折行；勾选框与归因标一律咬住**首行**，不跟着往下飘。
+    align-items: flex-start;
 
     & + & {
       border-top: 1px solid var(--el-border-color-lighter);
@@ -572,6 +670,11 @@ onBeforeUnmount(() => {
       color: var(--el-text-color-disabled);
       background: var(--el-fill-color-lighter);
     }
+  }
+
+  /** ElCheckbox 默认 32px 行高，会把首行基线顶偏；压到与名字同高。 */
+  &__check {
+    height: 20px;
   }
 
   &__empty {
