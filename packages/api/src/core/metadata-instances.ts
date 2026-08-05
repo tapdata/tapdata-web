@@ -1,3 +1,4 @@
+import Cookie from '@tap/shared/src/cookie'
 import { requestClient, type PageFetchResult } from '../request'
 
 const BASE_URL = '/api/MetadataInstances'
@@ -16,8 +17,9 @@ export function updateMetadataInstanceClassification(params: any) {
 
 export function downloadMetadataInstance(where: any, type: string) {
   if (typeof where === 'object') where = JSON.stringify(where)
+  const accessToken = Cookie.get('access_token') as string | undefined
   window.open(
-    `${BASE_URL}/download?where=${encodeURIComponent(where)}&type=${type}`,
+    `${BASE_URL}/download?where=${encodeURIComponent(where)}&type=${type}&access_token=${encodeURIComponent(accessToken || '')}`,
   )
 }
 
