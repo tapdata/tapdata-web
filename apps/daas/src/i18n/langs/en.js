@@ -612,6 +612,14 @@ export default {
   setting_Worker: 'Process',
   setting_Download: 'Download',
   setting_Log_level: 'Log level',
+  setting_CacheObserveLogs_max_file_size_MB:
+    'CacheObserveLogs max file size (MB) per task',
+  setting_Maximum_CacheObserveLogs_file_size_in_MB_for_each_task:
+    'Maximum CacheObserveLogs file size in MB for each task',
+  setting_CacheObserveLogs_max_backup_index:
+    'Maximum CacheObserveLogs backup files',
+  setting_Maximum_CacheObserveLogs_backup_files_retained_for_each_task:
+    'Maximum CacheObserveLogs backup files retained for each task',
   setting_maxCpuUsage: 'Maximum CPU usage (value range 0.1 ~ 1)',
   setting_maxHeapMemoryUsage: 'Maximum heap memory usage (value range 0.1 ~ 1)',
   setting_switch_insert_mode_interval:

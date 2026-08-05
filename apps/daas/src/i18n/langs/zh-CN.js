@@ -590,6 +590,13 @@ export default {
   setting_Worker: '进程',
   setting_Download: '下载',
   setting_Log_level: '日志等级',
+  setting_CacheObserveLogs_max_file_size_MB:
+    'CacheObserveLogs 单任务最大文件大小（MB）',
+  setting_Maximum_CacheObserveLogs_file_size_in_MB_for_each_task:
+    '每个任务的 CacheObserveLogs 文件大小上限（MB）',
+  setting_CacheObserveLogs_max_backup_index: 'CacheObserveLogs 最大备份文件数',
+  setting_Maximum_CacheObserveLogs_backup_files_retained_for_each_task:
+    '每个任务最多保留的 CacheObserveLogs 备份文件数',
   setting_maxCpuUsage: '最大CPU使用率(取值范围 0.1 ~ 1)',
   setting_maxHeapMemoryUsage: '最大堆内存使用率(取值范围 0.1 ~ 1)',
   setting_switch_insert_mode_interval:
