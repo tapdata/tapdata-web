@@ -34,6 +34,9 @@ const searchKeyword = ref('') // 搜索关键词
 // 导出状态
 const exporting = ref(false)
 const groupTransferType = ref<'FILE' | 'GIT'>('FILE') // 导出类型
+// 是否移除包内敏感信息（连接凭据）。默认 false = 保真，本地导出的包能直接搬到另一个环境用。
+// 仅对 FILE 生效：GIT 由后端强制脱敏，界面不给这个假开关。
+const removeSensitiveData = ref(false)
 const gitBranchName = ref('') // 分支名
 const gitPrTitle = ref('') // PR 标题
 const gitPrDescription = ref('') // PR 描述
@@ -180,6 +183,7 @@ watch(visible, async (val) => {
 
     // 重置导出类型和字段
     groupTransferType.value = 'FILE'
+    removeSensitiveData.value = false
     gitBranchName.value = generateBranchName()
     gitPrTitle.value = ''
     gitPrDescription.value = ''
@@ -280,11 +284,13 @@ const handleExport = async () => {
       const res = await exportGroupInfoBatch({
         groupIds: selectedGroupIds.value,
         groupTransferType: groupTransferType.value,
+        removeSensitiveData: removeSensitiveData.value,
         groupResetTask: rerunData,
       })
       downloadBlob(res)
     } else {
-      // 调用导出接口
+      // 调用导出接口。GIT 不带 removeSensitiveData：后端强制脱敏，
+      // 显式发 false 只会换回一条「你的请求被覆盖了」的告警，而界面从未给过这个选择。
       await exportGroupInfoBatchGit({
         groupIds: selectedGroupIds.value,
         groupTransferType: groupTransferType.value,
@@ -458,6 +464,32 @@ const handleCreateProject = () => {
                 </div>
               </el-radio>
             </el-radio-group>
+
+            <!-- 敏感信息：FILE 可选（默认保真），GIT 后端强制脱敏、只说明不给假开关 -->
+            <div class="mt-2">
+              <template v-if="groupTransferType === 'FILE'">
+                <el-checkbox v-model="removeSensitiveData" class="h-auto">
+                  {{ $t('data_import_export_remove_sensitive_data') }}
+                </el-checkbox>
+                <div
+                  v-if="removeSensitiveData"
+                  class="fs-8 font-color-sslight lh-base"
+                >
+                  {{ $t('data_import_export_remove_sensitive_data_on_tip') }}
+                </div>
+                <div v-else class="fs-8 color-warning lh-base flex gap-1">
+                  <el-icon class="flex-shrink-0 mt-1">
+                    <i-lucide-triangle-alert />
+                  </el-icon>
+                  <span>{{
+                    $t('data_import_export_remove_sensitive_data_off_tip')
+                  }}</span>
+                </div>
+              </template>
+              <div v-else class="fs-8 font-color-sslight lh-base">
+                {{ $t('data_import_export_git_always_masked_tip') }}
+              </div>
+            </div>
 
             <!-- Git 配置入口 -->
             <div v-if="needGitConfig" class="mt-2">

@@ -130,6 +130,13 @@ export default {
   data_import_export_transfer_type: '导出类型',
   data_import_export_file_export: '文件导出',
   data_import_export_git_export: 'Git 导出',
+  data_import_export_remove_sensitive_data: '移除敏感信息',
+  data_import_export_remove_sensitive_data_on_tip:
+    '包内不含连接凭据。导入时目标环境已配置的凭据将被保留，不会被清空。',
+  data_import_export_remove_sensitive_data_off_tip:
+    '导出包内将含数据库连接的明文凭据（地址、账号、密码），请勿外发或提交到代码仓库。',
+  data_import_export_git_always_masked_tip:
+    'Git 导出一律移除连接凭据，不可关闭 —— 提交进仓库的历史无法撤回。',
   data_import_export_git_config_required: '该项目尚未配置 Git 信息',
   data_import_export_config_git: '配置 Git',
   data_import_export_latest_tag: '最新 Tag',

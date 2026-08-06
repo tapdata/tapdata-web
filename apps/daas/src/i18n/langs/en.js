@@ -133,6 +133,13 @@ export default {
   data_import_export_transfer_type: 'Export Type',
   data_import_export_file_export: 'File Export',
   data_import_export_git_export: 'Git Export',
+  data_import_export_remove_sensitive_data: 'Remove sensitive data',
+  data_import_export_remove_sensitive_data_on_tip:
+    'The package carries no connection credentials. On import, credentials already configured in the target environment are kept instead of being cleared.',
+  data_import_export_remove_sensitive_data_off_tip:
+    'The package will contain plaintext database credentials (host, username, password). Do not share it or commit it to a code repository.',
+  data_import_export_git_always_masked_tip:
+    'Git export always removes connection credentials and cannot be turned off — repository history cannot be taken back.',
   data_import_export_git_config_required:
     'Git configuration is required for this project',
   data_import_export_config_git: 'Configure Git',
