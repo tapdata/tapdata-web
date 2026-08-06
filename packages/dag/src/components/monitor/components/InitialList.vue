@@ -1,5 +1,6 @@
 <script>
 import { getFullStatistics } from '@tap/api/src/core/measurement'
+import { withPassive } from '@tap/api/src/request'
 import { VTable } from '@tap/component/src/base/v-table'
 
 import i18n from '@tap/i18n'
@@ -101,7 +102,7 @@ export default {
     init() {
       this.startLoadData()
       this.timer = setInterval(() => {
-        this.$refs.table?.fetch?.(null, null, true)
+        withPassive(() => this.$refs.table?.fetch?.(null, null, true))
       }, 5000)
     },
 

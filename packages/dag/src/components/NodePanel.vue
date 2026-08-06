@@ -14,6 +14,7 @@ import { createSchemaField } from '@tap/form/src/shared/create'
 import { deepEqual } from '@tap/shared'
 import { debounce } from 'lodash-es'
 import { inject, nextTick, onUnmounted, shallowRef, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import * as _components from '../components/form'
 import { useDataflowStore } from '../stores/dataflow.store'
 import { getSchema } from '../util'
@@ -176,6 +177,17 @@ onUnmounted(() => {
   watchOutputs?.()
 })
 
+const router = useRouter()
+
+function openConnectionEdit() {
+  const route = router.resolve({
+    name: 'connectionsEdit',
+    params: { id: props.node.connectionId },
+    query: { pdkHash: props.node.attrs?.pdkHash },
+  })
+  window.open(route.href, '_blank')
+}
+
 function handleClose() {
   dataflowStore.selectedNode = null
 }
@@ -213,18 +225,28 @@ function onDescChange() {
         :maxlength="200"
         @change="onNameChange"
       />
-      <el-tag
-        v-if="node.type === 'table' || node.type === 'database'"
-        class="px-1"
-        :disable-transitions="true"
-      >
-        <span class="flex align-center gap-0.5">
-          <el-icon>
-            <i-lucide-database />
-          </el-icon>
-          {{ node.attrs.connectionName }}
-        </span>
-      </el-tag>
+      <template v-if="node.type === 'table' || node.type === 'database'">
+        <el-tag class="px-1" :disable-transitions="true">
+          <div class="flex align-center gap-0.5">
+            <span class="flex align-center gap-0.5">
+              <el-icon>
+                <i-lucide-database />
+              </el-icon>
+              {{ node.attrs.connectionName }}
+            </span>
+            <el-button
+              text
+              size="small"
+              type="primary"
+              @click="openConnectionEdit"
+            >
+              <template #icon>
+                <i-lucide-pencil-line />
+              </template>
+            </el-button>
+          </div>
+        </el-tag>
+      </template>
       <div class="flex-1" />
       <template
         v-if="

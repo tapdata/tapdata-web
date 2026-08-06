@@ -588,6 +588,13 @@ export default {
   setting_Worker: '進程',
   setting_Download: '下載',
   setting_Log_level: '日誌等級',
+  setting_CacheObserveLogs_max_file_size_MB:
+    'CacheObserveLogs 單任務最大文件大小（MB）',
+  setting_Maximum_CacheObserveLogs_file_size_in_MB_for_each_task:
+    '每個任務的 CacheObserveLogs 文件大小上限（MB）',
+  setting_CacheObserveLogs_max_backup_index: 'CacheObserveLogs 最大備份文件數',
+  setting_Maximum_CacheObserveLogs_backup_files_retained_for_each_task:
+    '每個任務最多保留的 CacheObserveLogs 備份文件數',
   setting_maxCpuUsage: '最大CPU使用率(取值範圍 0.1 ~ 1)',
   setting_maxHeapMemoryUsage: '最大堆內存使用率(取值範圍 0.1 ~ 1)',
   setting_switch_insert_mode_interval:
@@ -747,7 +754,7 @@ export default {
     '切換到cdc中的批量插入模式間隔。 ',
   setting_share_cdc: '共享增量',
   setting_global_share_cdc_enable: '默認全域開啟共亯增量',
-  setting_global_share_cdc_enable_doc: '默認開啟時，使用外存清單中指定的默認外存，並且作為默認設置應用於後續新建的連接和任務',
+  setting_global_share_cdc_enable_doc: '默認開啟時，使用外存清單中指定的默認外存，並且作為默認設置應用於後續新建的連接和任務。（開啟後才能在數據追溯中査詢變更日誌）',
   setting_share_cdc_persistence_mode: '共享增量存儲模式',
   setting_share_cdc_persistence_memory_size: '共享增量內存緩存行數',
   setting_share_cdc_persistence_memory_size_doc:
@@ -777,6 +784,8 @@ export default {
   setting_Login_Single_Session_doc: '開啟後，同一賬號只允許單個會話登入',
   setting_Login_Brief_Tips: '登錄簡要提示',
   setting_Login_Brief_Tips_doc: '開啟後，登錄提示將簡化',
+  setting_Access_Token_Idle_Timeout_Minutes: '會話空閑超時時間（單位：分鍾）',
+  setting_Access_Token_Idle_Timeout_Minutes_doc: '當會話不活躍時間超過設置的值時，會話失效需重新登錄',
   setting_LDAP: 'LDAP登入設置',
   setting_Ldap_Login_Enable: '使用LDAP登入',
   setting_Ldap_Server_Host: 'LDAP伺服器地址',

@@ -480,7 +480,7 @@ export function useFormScope({ canvasRef }) {
       filter.where &&
         Object.assign(filter.where, {
           meta_type: {
-            in: ['collection', 'table'],
+            in: ['collection', 'table', 'view'],
           },
           is_deleted: false,
           sourceType: 'SOURCE',
@@ -488,6 +488,7 @@ export function useFormScope({ canvasRef }) {
       Object.assign(filter, {
         fields: {
           original_name: true,
+          meta_type: true,
         },
         order: ['original_name ASC'],
       })
@@ -505,6 +506,7 @@ export function useFormScope({ canvasRef }) {
         return {
           label: item.original_name + (item.comment ? `(${item.comment})` : ''),
           value: item.original_name,
+          meta_type: item.meta_type,
         }
       })
       const table = filter.where.original_name?.like

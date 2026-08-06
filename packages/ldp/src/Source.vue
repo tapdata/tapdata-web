@@ -272,6 +272,7 @@ export default defineComponent({
           type: 'table',
           LDP_TYPE: 'table',
           SWIM_TYPE: 'source',
+          meta_type: t.meta_type,
         }
       })
       return data.length
@@ -520,6 +521,13 @@ export default defineComponent({
                 <span class="mr-1">{{ $t('public_data_no_data') }}</span>
                 <StageButton :connection-id="getConnectionId(node)" />
               </div>
+              <el-icon
+                v-else-if="data.meta_type === 'view'"
+                :size="18"
+                class="mr-2"
+              >
+                <i-lucide-eye />
+              </el-icon>
               <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
               <span class="table-label" :title="data.name">
                 {{ data.name }}
@@ -589,6 +597,13 @@ export default defineComponent({
                   <span class="mr-1">{{ $t('public_data_no_data') }}</span>
                   <StageButton :connection-id="getConnectionId(node)" />
                 </div>
+                <el-icon
+                  v-else-if="data.meta_type === 'view'"
+                  :size="18"
+                  class="mr-2"
+                >
+                  <i-lucide-eye />
+                </el-icon>
                 <VIcon v-else class="tree-item-icon mr-2" size="18"
                   >table</VIcon
                 >

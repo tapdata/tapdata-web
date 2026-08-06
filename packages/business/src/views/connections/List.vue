@@ -9,6 +9,7 @@ import {
   getConnectionDatabaseTypes,
   updateConnectionById,
 } from '@tap/api/src/core/connections'
+import { withPassive } from '@tap/api/src/request'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import FilterBar from '@tap/component/src/filter-bar/Main.vue'
 import { ImportOutlined } from '@tap/component/src/icon'
@@ -35,6 +36,7 @@ import PermissionseSettingsCreate from '../../components/permissionse-settings/C
 import SchemaProgress from '../../components/SchemaProgress.vue'
 import TablePage from '../../components/TablePage.vue'
 import UploadDialog from '../../components/UploadDialog.vue'
+import BatchTagDialog from '../../components/BatchTagDialog.vue'
 import { useHas } from '../../composables'
 import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '../../shared'
 import Preview from './Preview.vue'
@@ -87,6 +89,7 @@ const previewRef = ref()
 const test = ref()
 const dialog = ref()
 const permissionseSettingsCreate = ref()
+const batchTagDialog = ref<InstanceType<typeof BatchTagDialog> | null>(null)
 
 // State
 let timeout: NodeJS.Timeout | null = null
@@ -433,22 +436,6 @@ const remove = async (row: any) => {
   }
 }
 
-const handleSelectTag = () => {
-  const tagList = []
-  const tagMap: Record<string, boolean> = {}
-
-  multipleSelection.value.forEach((row: any) => {
-    row.listtags?.forEach((item: any) => {
-      if (!tagMap[item.id]) {
-        tagList.push(item)
-        tagMap[item.id] = true
-      }
-    })
-  })
-
-  return tagList
-}
-
 const handleOperationClassify = async (listtags: any[]) => {
   const attributes = {
     id: multipleSelection.value.map((r: any) => r.id),
@@ -461,6 +448,20 @@ const handleOperationClassify = async (listtags: any[]) => {
   } catch (error) {
     console.error(error)
   }
+}
+
+const openBatchTagDialog = () => {
+  if (!multipleSelection.value.length) return
+  batchTagDialog.value?.open(multipleSelection.value as any)
+}
+
+const handleBatchTagSaved = () => {
+  table.value?.clearSelection?.()
+  table.value?.fetch()
+}
+
+const handleBatchTagCreated = () => {
+  table.value?.refreshClassifyTags?.()
 }
 
 const handleDialogDatabaseTypeVisible = () => {
@@ -690,7 +691,7 @@ onMounted(async () => {
   }
 
   timeout = setInterval(() => {
-    table.value?.fetch(null, 0, true)
+    withPassive(() => table.value?.fetch(null, 0, true))
   }, 10000)
 
   getFilterItems()
@@ -794,7 +795,7 @@ onUnmounted(() => {
         <ElButton
           v-readonlybtn="'datasource_category_application'"
           class="btn"
-          @click="$refs.table.showClassify(handleSelectTag())"
+          @click="openBatchTagDialog"
         >
           <span> {{ $t('public_button_bulk_tag') }}</span>
         </ElButton>
@@ -945,7 +946,7 @@ onUnmounted(() => {
           </div>
         </template>
         <template #default="{ row }">
-          <el-space :spacer="spacer" :size="0">
+          <el-space :spacer="spacer" :size="0" class="flex-wrap">
             <ElButton
               data-testid="test-connection"
               text
@@ -1005,6 +1006,13 @@ onUnmounted(() => {
         </template>
       </ElTableColumn>
     </TablePage>
+    <BatchTagDialog
+      ref="batchTagDialog"
+      view-page="database"
+      :submit-tags="batchUpdateConnectionTags"
+      @saved="handleBatchTagSaved"
+      @tag-created="handleBatchTagCreated"
+    />
     <Preview
       ref="previewRef"
       @test="testConnection"

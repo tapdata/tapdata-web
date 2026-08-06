@@ -4,6 +4,7 @@ import { computed, inject, onMounted, ref, type Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { MENU as menuSetting } from '@/router/menu'
+import { getCachedPermissions } from '@/utils/util'
 
 // Types
 interface MenuItem {
@@ -47,15 +48,7 @@ const isMenuEnabled = computed(() => store.getters['feature/isMenuEnabled'])
 
 // Methods
 const getMenus = (hideMenuMap: Record<string, boolean> = {}) => {
-  let permissions: any[] = []
-  const permissionsStr = sessionStorage.getItem('tapdata_permissions')
-  if (permissionsStr) {
-    try {
-      permissions = JSON.parse(permissionsStr)
-    } catch (error) {
-      console.error('Failed to parse permissions', error)
-    }
-  }
+  const permissions = getCachedPermissions() || []
 
   const routerMap: Record<string, any> = {}
   const routes = router.options.routes

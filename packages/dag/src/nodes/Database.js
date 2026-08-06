@@ -35,6 +35,7 @@ export class Database extends NodeType {
       },
       connectionConfig: {
         type: 'void',
+        'x-data': '{{{}}}',
       },
       type: {
         type: 'string',
@@ -238,6 +239,10 @@ export class Database extends NodeType {
                               'packages_dag_nodes_database_jinwuzhujianbiao',
                             ),
                             value: 'NoKeys',
+                          },
+                          {
+                            label: i18n.t('packages_dag_only_include_views'),
+                            value: 'View',
                           },
                         ],
                       },

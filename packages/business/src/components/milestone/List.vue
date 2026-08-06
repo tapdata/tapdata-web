@@ -195,7 +195,9 @@ const wholeItems = computed(() => {
     const begin = dayjs(item.begin).format('HH:mm:ss')
     const end = item.end ? dayjs(item.end).format('HH:mm:ss') : ''
 
-    switch (item?.status) {
+    const status =
+      el.key === 'SNAPSHOT' && item?.status === 'SKIP' ? 'FINISH' : item?.status
+    switch (status) {
       case 'FINISH':
         Object.assign(el, finishOpt)
         switch (el.key) {
@@ -267,7 +269,7 @@ const wholeItems = computed(() => {
       el.dataDesc = ''
     }
 
-    if (item.status === 'ERROR') {
+    if (status === 'ERROR') {
       el.errorMessage = item.errorMessage
       el.errorCode = item.errorCode
       el.stackMessage = item.stackMessage

@@ -1,4 +1,5 @@
 import { fetchClusterStates } from '@tap/api/src/core/cluster'
+import { withPassive } from '@tap/api/src/request'
 
 export default {
   data() {
@@ -66,7 +67,7 @@ export default {
     },
 
     async loop(callback, timeout) {
-      await callback()
+      await withPassive(() => callback())
 
       if (this.syncTaskAgentTimer) {
         clearTimeout(this.syncTaskAgentTimer)

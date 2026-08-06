@@ -1,5 +1,4 @@
 <script>
-import { delayTrigger } from '@tap/shared'
 import ColumnItem from './Column'
 export default {
   name: 'VTable',
@@ -162,33 +161,29 @@ export default {
         this.nonePage = this.list.length <= this.page.size
         return
       }
-      this.$nextTick(() => {
-        delayTrigger(() => {
-          if (!hideLoading) {
-            this.loading = true
-          }
-          this.remoteMethod({
-            page: this.page,
-            data: this.list,
-          })
-            .then(({ data, total }) => {
-              this.page.total = total
-              if (JSON.stringify(this.list) !== JSON.stringify(data)) {
-                this.list = data || []
-              }
-              this.nonePage = this.page.total <= this.list.length
-              if (total > 0 && (!data || !data.length)) {
-                setTimeout(() => {
-                  this.fetch(this.page.current - 1)
-                }, 0)
-              }
-            })
-            .finally(() => {
-              this.loading = false
-              callback?.(this.getData())
-            })
-        }, debounce)
+      if (!hideLoading) {
+        this.loading = true
+      }
+      this.remoteMethod({
+        page: this.page,
+        data: this.list,
       })
+        .then(({ data, total }) => {
+          this.page.total = total
+          if (JSON.stringify(this.list) !== JSON.stringify(data)) {
+            this.list = data || []
+          }
+          this.nonePage = this.page.total <= this.list.length
+          if (total > 0 && (!data || !data.length)) {
+            setTimeout(() => {
+              this.fetch(this.page.current - 1)
+            }, 0)
+          }
+        })
+        .finally(() => {
+          this.loading = false
+          callback?.(this.getData())
+        })
     },
     getData() {
       return this.list

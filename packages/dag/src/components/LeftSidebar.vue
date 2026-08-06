@@ -286,7 +286,7 @@ export default {
           'source.id': this.activeConnection.id,
           taskId: this.$store.state.dataflow.taskId,
           meta_type: {
-            in: ['collection', 'table'],
+            in: ['collection', 'table', 'view'],
           },
           is_deleted: false,
           sourceType: 'SOURCE',

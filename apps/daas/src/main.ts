@@ -18,7 +18,7 @@ import App from '@/App.vue'
 import { installOEM } from '@/oem'
 import { installAllPlugins } from '@/plugins'
 import { initRequestClient } from '@/plugins/axios'
-import { configUser, getUrlSearch } from '@/utils/util'
+import { configUser, getUrlSearch, signOut } from '@/utils/util'
 import store from '@/vuex' // 引入全局数据控制
 import { installDirectives } from './directives'
 import i18n from './i18n'
@@ -122,23 +122,23 @@ const loading = ElLoading.service({ fullscreen: true })
 const bootstrap = async () => {
   if (token) {
     //无权限，说明是首次进入页面，重新请求后台获取
-    const user = await getUserInfoByToken().catch(() => {
-      init()
-      return null
-    })
+    const user = await getUserInfoByToken().catch(() => null)
 
-    if (user) {
-      configUser(user)
+    if (!user) {
+      signOut()
+      return
+    }
 
-      const settings = await fetchSettings()
-      setSettings(settings)
+    configUser(user)
 
-      await store.dispatch('feature/getFeatures')
+    const settings = await fetchSettings()
+    setSettings(settings)
 
-      if (settings.length) {
-        localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(settings))
-        store.commit('setAppearanceBySetting', settings)
-      }
+    await store.dispatch('feature/getFeatures')
+
+    if (settings.length) {
+      localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(settings))
+      store.commit('setAppearanceBySetting', settings)
     }
   }
 

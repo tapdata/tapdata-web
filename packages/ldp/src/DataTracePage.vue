@@ -9,6 +9,7 @@ import {
 import { fetchMetadataInstances } from '@tap/api/src/core/metadata-instances'
 import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
 import { makeStatusAndDisabled } from '@tap/business/src/shared'
+import MqlEditor from '@tap/business/src/views/data-server/MqlEditor.vue'
 import { BaseFieldSelect as FieldSelect, mapFieldsData } from '@tap/form'
 import { useI18n } from '@tap/i18n'
 import { copyToClipboard } from '@tap/shared'
@@ -102,6 +103,7 @@ const bloodlineLoading = ref(false)
 const filterMode = ref<'builder' | 'mql'>('builder')
 const filterRows = ref<FilterRow[]>([{ field: '', operator: '=', value: '' }])
 const mqlJson = ref('')
+const mqlEditorRef = ref<any>(null)
 const trackedFields = ref<string[]>([])
 const trackedFieldInput = ref('')
 const selectedNodeId = ref<string | null>(null)
@@ -457,20 +459,34 @@ function handleTrace() {
   // Build filter
   let filters: Record<string, any> | undefined
   if (filterMode.value === 'builder') {
-    const custom = filterRows.value.map((row) => {
-      if (row.field && row.value) {
-        return {
-          key: row.field,
-          value: row.value,
+    const custom: Record<string, any> | null[] = filterRows.value
+      .map((row) => {
+        if (row.field && row.value) {
+          return {
+            key: row.field,
+            value: row.value,
+          }
         }
-      }
-    })
+        return null
+      })
+      .filter(Boolean)
     if (custom.length) filters = { custom }
   } else {
-    try {
-      filters = JSON.parse(mqlJson.value)
-    } catch {
-      // invalid JSON, ignore
+    const validation = mqlEditorRef.value?.validateJSON(mqlJson.value)
+    if (!validation?.isValid) {
+      ElMessage.error(
+        `${t('public_json_format_error')}: ${validation?.error?.message || ''}`,
+      )
+      tracing.value = false
+      nodeStatus.value = {}
+      return
+    }
+
+    const normalizedMqlJson =
+      mqlEditorRef.value?.normalize(mqlJson.value) ?? mqlJson.value
+    mqlJson.value = normalizedMqlJson
+    if (normalizedMqlJson.trim()) {
+      filters = { sql: normalizedMqlJson }
     }
   }
 
@@ -977,11 +993,11 @@ const OplogTreeNode = defineComponent({
 
       <!-- MQL Mode -->
       <div v-else class="trace-mql">
-        <textarea
+        <MqlEditor
+          ref="mqlEditorRef"
           v-model="mqlJson"
-          class="trace-mql__textarea"
-          spellcheck="false"
-          rows="4"
+          :height="180"
+          :fields="fieldOptions"
         />
       </div>
 
@@ -1660,7 +1676,7 @@ const OplogTreeNode = defineComponent({
   // }
 }
 .trace-tracked__select {
-  width: 180px;
+  min-width: 180px;
   flex-shrink: 0;
 }
 .trace-action-btn {
@@ -1671,23 +1687,6 @@ const OplogTreeNode = defineComponent({
 // ─── MQL ───
 .trace-mql {
   margin-top: 12px;
-}
-.trace-mql__textarea {
-  width: 100%;
-  padding: 12px 16px;
-  border-radius: 12px;
-  background: #1e1e2e;
-  color: #a6e3a1;
-  border: 1px solid #313244;
-  font-family: 'SF Mono', Monaco, Consolas, monospace;
-  font-size: 13px;
-  resize: vertical;
-  line-height: 1.6;
-  box-sizing: border-box;
-  &:focus {
-    outline: 2px solid #4f46e5;
-    outline-offset: -1px;
-  }
 }
 
 // ─── Workspace ───

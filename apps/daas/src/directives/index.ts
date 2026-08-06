@@ -1,8 +1,8 @@
 import { ClipboardPlugin, Cookie } from '@tap/shared'
+import { getCachedPermissions } from '@/utils/util'
 
 export function hasPermissionByCode(code) {
-  let permissions = sessionStorage.getItem('tapdata_permissions')
-  permissions = JSON.parse(permissions)
+  const permissions = getCachedPermissions()
 
   if (!permissions || permissions.length === 0) {
     return false

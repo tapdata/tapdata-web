@@ -279,6 +279,20 @@ export const TableSelect = connect(
                   {i18n.t('public_data_no_data')}
                 </p>
               ),
+            option: ({ item }) => {
+              return (
+                <span class="inline-flex align-center gap-2">
+                  <el-icon size={16}>
+                    {item.meta_type === 'view' ? (
+                      <i-lucide-eye />
+                    ) : (
+                      <i-lucide-table />
+                    )}
+                  </el-icon>
+                  <span>{item.value}</span>
+                </span>
+              )
+            },
           }
 
           if (props.allowCreate) {

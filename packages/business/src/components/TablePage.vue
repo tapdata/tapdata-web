@@ -7,6 +7,7 @@ import { getSettingByKey, setSettings } from '@tap/shared/src/settings'
 import { debounce } from 'lodash-es'
 import { ReorderGroup, ReorderItem } from 'motion-v'
 import {
+  cloneVNode,
   computed,
   defineComponent,
   Fragment,
@@ -42,6 +43,17 @@ function flattenSlotVNodes(vnodes: VNode[]): VNode[] {
 function getColumnKey(vnode: VNode): string | undefined {
   const props = (vnode.props || {}) as Record<string, any>
   return props.prop || props.label
+}
+
+function getStableColumnKey(vnode: VNode, index: number): string {
+  const props = (vnode.props || {}) as Record<string, any>
+  return String(vnode.key ?? getColumnKey(vnode) ?? props.type ?? index)
+}
+
+function cloneColumnWithKey(vnode: VNode, index: number): VNode {
+  return cloneVNode(vnode, {
+    key: `table-page-column:${getStableColumnKey(vnode, index)}`,
+  })
 }
 
 function isConfigurableColumn(vnode: VNode): boolean {
@@ -139,11 +151,16 @@ const FilteredColumns = defineComponent({
       const vnodes = innerSlots.default?.() || []
       const flat = flattenSlotVNodes(vnodes)
 
-      // Filter out hidden columns
-      const visible = flat.filter((vnode) => {
+      // Filter out hidden columns and keep a stable key for each table column.
+      // Element Plus registers column state by component instance, so reordering
+      // unkeyed ElTableColumn vnodes can leak sortable/fixed state across columns.
+      const visible = flat.reduce<VNode[]>((columns, vnode, index) => {
         const key = getColumnKey(vnode)
-        return !key || !filterProps.hiddenKeys.has(key)
-      })
+        if (!key || !filterProps.hiddenKeys.has(key)) {
+          columns.push(cloneColumnWithKey(vnode, index))
+        }
+        return columns
+      }, [])
 
       // If no order specified, return as-is
       if (!filterProps.columnOrder.length) return visible
@@ -380,6 +397,10 @@ export default defineComponent({
 
     const showClassify = (tagList: any[]) => {
       classifyRef.value?.show(tagList)
+    }
+
+    const refreshClassifyTags = () => {
+      classification.value?.getData?.()
     }
 
     const getData = () => {
@@ -678,6 +699,7 @@ export default defineComponent({
       nodeChecked,
       handleSelectionChange,
       showClassify,
+      refreshClassifyTags,
       getData,
       clearSelection,
       toggleRowSelection,

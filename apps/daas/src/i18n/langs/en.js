@@ -612,6 +612,14 @@ export default {
   setting_Worker: 'Process',
   setting_Download: 'Download',
   setting_Log_level: 'Log level',
+  setting_CacheObserveLogs_max_file_size_MB:
+    'CacheObserveLogs max file size (MB) per task',
+  setting_Maximum_CacheObserveLogs_file_size_in_MB_for_each_task:
+    'Maximum CacheObserveLogs file size in MB for each task',
+  setting_CacheObserveLogs_max_backup_index:
+    'Maximum CacheObserveLogs backup files',
+  setting_Maximum_CacheObserveLogs_backup_files_retained_for_each_task:
+    'Maximum CacheObserveLogs backup files retained for each task',
   setting_maxCpuUsage: 'Maximum CPU usage (value range 0.1 ~ 1)',
   setting_maxHeapMemoryUsage: 'Maximum heap memory usage (value range 0.1 ~ 1)',
   setting_switch_insert_mode_interval:
@@ -791,7 +799,7 @@ export default {
     'Switch to batch insert mode interval in cdc. ',
   setting_share_cdc: 'Share cdc',
   setting_global_share_cdc_enable: 'Default global enable share cdc',
-  setting_global_share_cdc_enable_doc: 'When enabled by default, use the default external storage specified in the external storage list and apply it as the default setting to subsequent newly created connections and tasks',
+  setting_global_share_cdc_enable_doc: 'When enabled by default, use the default external storage specified in the external storage list and apply it as the default setting to subsequent newly created connections and tasks. (Only after enabling can change logs be queried in Data trace)',
   setting_share_cdc_persistence_mode: 'Share cdc persistence mode',
   setting_share_cdc_persistence_memory_size:
     'Shared incremental memory cache line count',
@@ -828,6 +836,8 @@ export default {
   setting_Login_Brief_Tips: 'Login brief tips',
   setting_Login_Brief_Tips_doc:
     'Once enabled, the login prompt will be simplified',
+  setting_Access_Token_Idle_Timeout_Minutes: 'Session idle timeout (in minutes)',
+  setting_Access_Token_Idle_Timeout_Minutes_doc: 'When the session is inactive for more than the set value, the session becomes invalid and needs to be logged in again',
   setting_LDAP: 'LDAP Authentication',
   setting_Ldap_Login_Enable: 'Use LDAP Login',
   setting_Ldap_Server_Host: 'LDAP Server Address',

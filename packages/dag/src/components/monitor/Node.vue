@@ -165,6 +165,7 @@ const initialSyncProcess = computed(() => {
   } = props.sample || {}
   if (props.syncType === 'migrate')
     return tableTotal ? Math.round((snapshotTableTotal / tableTotal) * 100) : 0
+  if (snapshotTableTotal === tableTotal) return 100
   return snapshotRowTotal
     ? Math.round((snapshotInsertRowTotal / snapshotRowTotal) * 100)
     : 0
@@ -419,8 +420,14 @@ const alarmCls = computed(() =>
 )
 
 const wrapClass = computed(() => {
-  if (dataflowStore.selectedNode?.id === props.data.id) return 'border-primary'
-  return ''
+  const list: string[] = []
+  if (dataflowStore.selectedNode?.id === props.data.id) {
+    list.push('border-primary')
+  }
+  if (dataflowStore.locatedNodeId === props.data.id) {
+    list.push('is-locating')
+  }
+  return list
 })
 
 const nodeClass = computed(() => {

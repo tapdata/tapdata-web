@@ -3,6 +3,8 @@ import { uid } from '@tap/shared'
 import { merge } from 'lodash-es'
 import type { Ref } from 'vue'
 
+export const PARAM_NAME_PATTERN = /^[a-z$_\u4E00-\u9FA5][\w$\u4E00-\u9FA5]*$/i
+
 export const makeTree = (data: any[]) => {
   const root: any = {
     children: [],
@@ -91,19 +93,22 @@ export const useDrawer = (t: any, apiApplication?: Ref<any>) => {
     'tidb',
   ]
   // Regex validation patterns
-  const PARAM_PATTERN = /^[a-z$_\u4E00-\u9FA5][\w$\u4E00-\u9FA5]*$/i
   const PATH_PATTERN = /^(?!\/)[\w$/-]+$/
 
   // Validation rules
-  const validateParams = (rule: any, value: string, callback: Function) => {
-    if (PARAM_PATTERN.test(value)) {
+  const validateParams = (_rule: any, value: string, callback: Function) => {
+    const paramName = value || ''
+
+    if (!paramName.trim()) {
+      callback(t('packages_business_data_server_drawer_qingshurucanshu'))
+    } else if (PARAM_NAME_PATTERN.test(paramName)) {
       callback()
     } else {
       callback(t('packages_business_data_server_drawer_geshicuowu'))
     }
   }
 
-  const validateBasePath = (rule: any, value: string, callback: Function) => {
+  const validateBasePath = (_rule: any, value: string, callback: Function) => {
     if (!value || PATH_PATTERN.test(value)) {
       callback()
     } else {
@@ -111,7 +116,7 @@ export const useDrawer = (t: any, apiApplication?: Ref<any>) => {
     }
   }
 
-  const validatePrefix = (rule: any, value: string, callback: Function) => {
+  const validatePrefix = (_rule: any, value: string, callback: Function) => {
     if (PATH_PATTERN.test(value) || value === '') {
       callback()
     } else {

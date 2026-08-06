@@ -600,6 +600,7 @@ export default {
     'Notice of full completion of tasks',
   packages_dag_migration_alarmpanel_renwujiaoyanchu: 'Task validation error',
   packages_dag_migration_alarmpanel_renwuyunxingchu: 'Task running error alert',
+  packages_dag_migration_alarmpanel_renwufengxianddl: 'Task risk DDL alert',
   packages_dag_migration_alarmpanel_jiedianpingjunchu:
     'Node average processing time alert',
   packages_dag_migration_alarmpanel_shujuyuanxieyi:
@@ -1100,6 +1101,7 @@ export default {
     'You have not enabled data validation',
   packages_dag_only_include_pk: 'Only Include Primary Key',
   packages_dag_only_include_uk: 'Only Include Unique Index',
+  packages_dag_only_include_views: 'Views Only',
   packages_dag_auto_repair: 'Auto Repair',
   packages_dag_auto_repair_tips: 'Enable auto repair',
   packages_dag_auto_repair_disabled_tips:

@@ -31,6 +31,7 @@ export enum Key {
   TaskFullComplete = 'TASK_FULL_COMPLETE',
   TaskIncrementDelay = 'TASK_INCREMENT_DELAY',
   TaskIncrementStart = 'TASK_INCREMENT_START',
+  TaskDdlWarning = 'TASK_DDL_WARNING',
   TaskInspectError = 'TASK_INSPECT_ERROR',
   TaskStatusError = 'TASK_STATUS_ERROR',
   TaskStatusStop = 'TASK_STATUS_STOP',
@@ -103,4 +104,13 @@ export function updateTaskAlarm(params: {
   taskId?: null | string
 }) {
   return requestClient.post(`${BASE_URL}/updateTaskAlarm`, params)
+}
+
+export function batchUpdateTaskAlarm(params: {
+  taskIds: string[]
+  alarmRules?: AlarmRuleVO[] | null
+  alarmSettings?: AlarmSettingVO[] | null
+  emailReceivers?: string[] | null
+}) {
+  return requestClient.post('/api/task/alarm/batch-update', params)
 }

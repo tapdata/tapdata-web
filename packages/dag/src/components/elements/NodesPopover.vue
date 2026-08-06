@@ -693,7 +693,10 @@ defineExpose({
                 <div
                   class="flex align-center justify-center p-1.5 bg-gray-100 dark:bg-white/15 rounded-lg"
                 >
-                  <el-icon :size="16"><i-lucide-table /></el-icon>
+                  <el-icon :size="16">
+                    <i-lucide-eye v-if="item.meta_type === 'view'" />
+                    <i-lucide-table v-else />
+                  </el-icon>
                 </div>
 
                 <div>
@@ -732,7 +735,10 @@ defineExpose({
                 class="flex h-8 align-center gap-2 px-3 connection-item rounded-lg user-select-none"
                 @click="onClickTable(item)"
               >
-                <el-icon :size="16"><i-lucide-table /></el-icon>
+                <el-icon :size="16">
+                  <i-lucide-eye v-if="item.meta_type === 'view'" />
+                  <i-lucide-table v-else />
+                </el-icon>
                 <OverflowTooltip
                   class="text-truncate"
                   :text="item.name"

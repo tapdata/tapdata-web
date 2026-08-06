@@ -13,13 +13,13 @@ import {
   fetchTasks,
   forceStopTask,
 } from '@tap/api/src/core/task'
-import { requestClient } from '@tap/api/src/request'
+import { requestClient, withPassive } from '@tap/api/src/request'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import { useI18n } from '@tap/i18n'
 import dayjs from 'dayjs'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { escapeRegExp, uniqBy } from 'lodash-es'
-import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue'
+import { inject, onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
@@ -57,7 +57,7 @@ const multipleSelection = ref<any[]>([])
 
 // ── Computed ──────────────────────────────────────────────────────────────────
 
-const filterItems = computed(() => [
+const filterItems = ref([
   {
     label: t('public_status'),
     key: 'status',
@@ -96,12 +96,14 @@ const filterItems = computed(() => [
     },
   },
   {
-    placeholder: t('public_task_name'),
+    placeholder: t('packages_business_shared_cache_placeholder_task_name'),
     key: 'name',
     type: 'input',
   },
   {
-    placeholder: t('public_connectionName'),
+    placeholder: t(
+      'packages_business_shared_cache_placeholder_connection_name',
+    ),
     key: 'connectionName',
     type: 'input',
   },
@@ -285,24 +287,21 @@ const handleImport = () => {
   upload.value?.show()
 }
 
-// ── Lifecycle & Watchers ──────────────────────────────────────────────────────
-
 watch(
   () => route.query,
   () => {
-    searchParams.value = {
-      ...searchParams.value,
-      name: (route.query?.keyword as string) || '',
-    }
     table.value?.fetch(1)
   },
 )
 
+onBeforeMount(() => {
+  Object.assign(searchParams.value, route.query)
+})
+
 onMounted(() => {
   timer = setInterval(() => {
-    table.value?.fetch(null, 0, true)
+    withPassive(() => table.value?.fetch(null, 0, true))
   }, 8000)
-  Object.assign(searchParams.value, { name: route.query?.keyword || '' })
 })
 
 onUnmounted(() => {

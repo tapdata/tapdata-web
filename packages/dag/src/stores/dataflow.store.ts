@@ -21,7 +21,7 @@ import { isObject } from '@tap/shared'
 import { debounce, isString } from 'lodash-es'
 import { defineStore } from 'pinia'
 import { markRaw, reactive, ref, shallowRef } from 'vue'
-import { DEFAULT_SETTINGS } from '../constants'
+import { alarmSettingKeys, DEFAULT_SETTINGS } from '../constants'
 import { CustomProcessor } from '../nodes/extends/CustomProcessor'
 import { allResourceIns as resourceIns } from '../nodes/loader'
 
@@ -74,6 +74,20 @@ function hasCycle(
   return flag
 }
 
+function sortAlarmSettings<T extends { key?: string }>(alarmSettings?: T[]) {
+  if (!Array.isArray(alarmSettings)) return alarmSettings
+
+  return [...alarmSettings].sort((a, b) => {
+    const aIndex = (alarmSettingKeys as readonly string[]).indexOf(a.key || '')
+    const bIndex = (alarmSettingKeys as readonly string[]).indexOf(b.key || '')
+
+    return (
+      (aIndex === -1 ? Number.MAX_SAFE_INTEGER : aIndex) -
+      (bIndex === -1 ? Number.MAX_SAFE_INTEGER : bIndex)
+    )
+  })
+}
+
 export const useDataflowStore = defineStore('dataflow', () => {
   const { t } = useI18n()
   const dataflow = markRaw(observable(createEmptyDataflow()))
@@ -92,6 +106,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
   const pageVersion = ref(Date.now().toString())
   const selectedNode = ref(null)
   const selectedNodeId = ref(null)
+  const locatedNodeId = ref('')
   const lastClickPosition = ref<[number, number]>([0, 0])
   const stateIsReadonly = ref(false)
   const showSettings = ref(false)
@@ -262,6 +277,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
       dataflowData.syncType = dataflowData.shareCache
         ? 'shareCache'
         : dataflowData.syncType
+      dataflowData.alarmSettings = sortAlarmSettings(dataflowData.alarmSettings)
 
       setDataflow(dataflowData)
       getTaskPermissions()
@@ -871,6 +887,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     // UI / 交互状态归零
     selectedNode.value = null
     selectedNodeId.value = null
+    locatedNodeId.value = ''
     stateIsReadonly.value = false
     showSettings.value = false
     showConsole.value = false
@@ -913,6 +930,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     patchDataflowDebounce,
     processorNodeTypes,
     selectedNode,
+    locatedNodeId,
     lastClickPosition,
     stateIsReadonly,
     taskSaving,

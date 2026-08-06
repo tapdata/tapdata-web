@@ -1,25 +1,150 @@
+import { getUserInfoByToken } from '@tap/api/src/core/users'
 import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'
 import i18n from '@/i18n'
+
+type PermissionResource = { code?: string } & Record<string, any>
+
+const PERMISSIONS_STORAGE_KEY = 'tapdata_permissions'
+
+let cachedPermissions: PermissionResource[] | null = null
+let permissionsRequest: Promise<PermissionResource[]> | null = null
+
+function getPermissionDebugContext() {
+  const navigation = performance.getEntriesByType?.('navigation')?.[0] as
+    | PerformanceNavigationTiming
+    | undefined
+
+  return {
+    href: location.href,
+    navigationType: navigation?.type,
+    visibilityState: document.visibilityState,
+    wasDiscarded: (document as Document & { wasDiscarded?: boolean })
+      .wasDiscarded,
+  }
+}
+
+function debugPermissions(message: string, details: Record<string, any> = {}) {
+  // eslint-disable-next-line no-console
+  console.debug('[tapdata_permissions]', message, {
+    ...getPermissionDebugContext(),
+    ...details,
+  })
+}
+
+function flattenPermissions(user: Record<string, any> = {}) {
+  const permissions: PermissionResource[] = []
+  const list = user?.permissions || []
+
+  list.forEach((permission: Record<string, any>) => {
+    if (permission.resources && permission.resources.length > 0) {
+      permission.resources.forEach((res: PermissionResource) => {
+        permissions.push(res)
+      })
+    }
+  })
+
+  return permissions
+}
+
+function setPermissions(permissions: PermissionResource[]) {
+  cachedPermissions = permissions
+  sessionStorage.setItem(PERMISSIONS_STORAGE_KEY, JSON.stringify(permissions))
+
+  if (!permissions.length) {
+    debugPermissions('wrote empty permissions cache')
+  }
+}
+
+export function clearPermissions() {
+  cachedPermissions = null
+  permissionsRequest = null
+  sessionStorage.removeItem(PERMISSIONS_STORAGE_KEY)
+  debugPermissions('cleared permissions cache')
+}
+
+export function getCachedPermissions() {
+  const permissionsStr = sessionStorage.getItem(PERMISSIONS_STORAGE_KEY)
+
+  if (permissionsStr !== null) {
+    try {
+      const permissions = JSON.parse(permissionsStr)
+
+      if (Array.isArray(permissions)) {
+        cachedPermissions = permissions
+        return permissions as PermissionResource[]
+      }
+      debugPermissions('removed invalid permissions cache', {
+        valueType: typeof permissions,
+      })
+      sessionStorage.removeItem(PERMISSIONS_STORAGE_KEY)
+    } catch (error) {
+      debugPermissions('removed unparsable permissions cache', {
+        errorMessage: error?.message,
+        valueLength: permissionsStr.length,
+      })
+      sessionStorage.removeItem(PERMISSIONS_STORAGE_KEY)
+    }
+  }
+
+  if (cachedPermissions) {
+    debugPermissions('using in-memory permissions cache', {
+      permissionsCount: cachedPermissions.length,
+    })
+    return cachedPermissions
+  }
+
+  return null
+}
 
 export function configUser(user: Record<string, any> = {}) {
   Cookie.set('email', user.email)
   Cookie.set('username', user.username || '')
   Cookie.set('isAdmin', String(Number.parseInt(user.role) || 0))
   Cookie.set('user_id', user.id)
-  const permissions: string[] = []
-  const list = user?.permissions || []
-  if (list.length) {
-    list.forEach((permission: Record<string, any>) => {
-      if (permission.resources && permission.resources.length > 0) {
-        permission.resources.forEach((res: string) => {
-          permissions.push(res)
-        })
-      }
-    })
-    sessionStorage.setItem('tapdata_permissions', JSON.stringify(permissions))
-  }
+  const permissions = flattenPermissions(user)
+
+  setPermissions(permissions)
+
   return permissions
+}
+
+export function ensurePermissions() {
+  const permissions = getCachedPermissions()
+
+  if (permissions) {
+    return Promise.resolve(permissions)
+  }
+
+  debugPermissions('permissions cache missing, refetching user permissions')
+
+  if (!permissionsRequest) {
+    permissionsRequest = getUserInfoByToken()
+      .then((user) => {
+        const nextPermissions = configUser(user || {})
+
+        debugPermissions('refetched user permissions', {
+          hasUser: Boolean(user),
+          permissionsCount: nextPermissions.length,
+          userId: user?.id,
+        })
+
+        return nextPermissions
+      })
+      .catch((error) => {
+        debugPermissions('failed to refetch user permissions', {
+          errorMessage: error?.message,
+          status: error?.response?.status,
+        })
+
+        throw error
+      })
+      .finally(() => {
+        permissionsRequest = null
+      })
+  }
+
+  return permissionsRequest
 }
 
 export function signOut() {
@@ -29,7 +154,7 @@ export function signOut() {
   Cookie.remove('isAdmin')
   Cookie.remove('user_id')
   sessionStorage.setItem('lastLocationHref', location.href)
-  sessionStorage.removeItem('tapdata_permissions')
+  clearPermissions()
   location.href = `${location.href.split('#')[0]}#/login`
   return null
 }

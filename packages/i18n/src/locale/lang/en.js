@@ -307,6 +307,7 @@ export default {
   public_api_alarmDate: 'Alarm Date',
   // Task
   public_task: 'Task',
+  public_task_desc: 'Task Description',
   public_task_name: 'Task Name',
   public_task_type: 'Task Type',
   public_task_sync_type: 'Sync Type',
@@ -624,6 +625,25 @@ export default {
   public_tag_priority: 'Priority Setting',
   public_tag_priority_desc:
     'Select label priority. Smaller numbers mean higher priority. Batch tasks run in priority order.',
+  packages_business_batch_tag_dialog_title: 'Batch Set Tags',
+  packages_business_batch_tag_dialog_subtitle:
+    '{count} tasks selected · Checked means add, unchecked means remove',
+  packages_business_batch_tag_dialog_search_placeholder:
+    'Search tags, or press Enter to create a name',
+  packages_business_batch_tag_dialog_create_tag: 'Create tag "{name}"',
+  packages_business_batch_tag_dialog_empty: 'No matching tags',
+  packages_business_batch_tag_dialog_state_some:
+    'Some tasks have it ({count}/{total})',
+  packages_business_batch_tag_dialog_state_add_all: 'Will add to all',
+  packages_business_batch_tag_dialog_state_all: 'All tasks have it',
+  packages_business_batch_tag_dialog_state_remove_all: 'Will remove from all',
+  packages_business_batch_tag_dialog_summary_title: 'Changes',
+  packages_business_batch_tag_dialog_add: 'Add',
+  packages_business_batch_tag_dialog_remove: 'Remove',
+  packages_business_batch_tag_dialog_task_count: '{count} tasks',
+  packages_business_batch_tag_dialog_no_changes:
+    'No changes · Partially selected tags will keep each task as-is',
+  packages_business_batch_tag_dialog_save: 'Save Changes',
   public_priority_highest: 'Highest',
   public_priority_high: 'High',
   public_priority_medium_high: 'Medium High',
