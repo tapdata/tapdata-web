@@ -106,6 +106,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
   const pageVersion = ref(Date.now().toString())
   const selectedNode = ref(null)
   const selectedNodeId = ref(null)
+  const locatedNodeId = ref('')
   const lastClickPosition = ref<[number, number]>([0, 0])
   const stateIsReadonly = ref(false)
   const showSettings = ref(false)
@@ -886,6 +887,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     // UI / 交互状态归零
     selectedNode.value = null
     selectedNodeId.value = null
+    locatedNodeId.value = ''
     stateIsReadonly.value = false
     showSettings.value = false
     showConsole.value = false
@@ -928,6 +930,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     patchDataflowDebounce,
     processorNodeTypes,
     selectedNode,
+    locatedNodeId,
     lastClickPosition,
     stateIsReadonly,
     taskSaving,

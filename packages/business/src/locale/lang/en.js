@@ -258,6 +258,17 @@ export default {
   packages_business_dataFlow_bulkScheuled: 'Batch Start',
   packages_business_dataFlow_bulkStopping: 'Batch Stop',
   packages_business_dataFlow_taskBulkOperation: 'Batch Operation',
+  packages_business_task_batch_alarm_email_action: 'Batch Set Alert Receivers',
+  packages_business_task_batch_alarm_email_title: 'Batch Set Alert Receivers',
+  packages_business_task_batch_alarm_email_label: 'Email Receivers',
+  packages_business_task_batch_alarm_email_placeholder:
+    'Select email receivers',
+  packages_business_task_batch_alarm_email_overwrite_tip:
+    "After saving, the selected tasks' existing alert receiver settings will be overwritten.",
+  packages_business_task_batch_alarm_email_empty:
+    'No email receivers available. Save directly to clear alert receivers from the selected tasks.',
+  packages_business_task_batch_alarm_email_no_edit_permission_tip:
+    '{count} tasks do not have edit permission and will be skipped.',
   packages_business_dataFlow_addTag: 'Add Tag',
   packages_business_dataVerify_dataVerify: 'Data Verify',
   packages_business_dataFlow_selectAll: 'Select All',
@@ -752,8 +763,10 @@ export default {
     'When the task encounters an error',
   packages_business_setting_alarmnotification_dangrenwustop:
     'When the Agent service stops',
-  packages_business_setting_alarmnotification_dangyinqinglixian: 'When the engine stops',
-  packages_business_setting_alarmnotification_dangyinqinghuifu: 'When the engine starts',
+  packages_business_setting_alarmnotification_dangyinqinglixian:
+    'When the engine stops',
+  packages_business_setting_alarmnotification_dangyinqinghuifu:
+    'When the engine starts',
   packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn:
     'When APIServer worker P50 per minute exceeding threshold',
   packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn:
@@ -911,9 +924,9 @@ export default {
     'Choose a data source connector from below and configure the connection & credentials.',
   // 共享挖掘
   packages_business_shared_cdc_placeholder_task_name:
-    'Please enter the mining task name to search',
+    'Task name',
   packages_business_shared_cdc_placeholder_connection_name:
-    'Please enter the connection name to search',
+    'Connection name',
   packages_business_shared_cdc_name: 'Please enter the task name ',
   packages_business_shared_cdc_setting_select_mode: 'Storage mode',
   packages_business_shared_cdc_setting_select_mongodb_tip:
@@ -1022,6 +1035,14 @@ export default {
   packages_business_data_server_drawer_tiaoshi: 'Debug',
   packages_business_data_server_drawer_peizhi: 'Configuration',
   packages_business_data_server_drawer_refresh_fields: 'Refresh Fields',
+  packages_business_data_server_drawer_refresh_fields_no_change:
+    'Fields refreshed. No changes.',
+  packages_business_data_server_drawer_refresh_fields_added:
+    'Fields refreshed. {val} field(s) added.',
+  packages_business_data_server_drawer_refresh_fields_removed:
+    'Fields refreshed. {val} field(s) removed.',
+  packages_business_data_server_drawer_refresh_fields_changed:
+    'Fields refreshed. {val1} field(s) added, {val2} field(s) removed.',
   packages_business_data_server_add_field: 'Add Field',
   packages_business_data_server_add_sub_field: 'Add Sub-field',
   packages_business_data_server_drawer_chuangjianfuwu: 'Create API',
@@ -1198,9 +1219,9 @@ export default {
   packages_business_shared_cache_create: 'Create Cache',
   packages_business_shared_cache_edit: 'Edit Cache',
   packages_business_shared_cache_placeholder_task_name:
-    'Please enter the cache task name to search',
+    'Task name',
   packages_business_shared_cache_placeholder_connection_name:
-    'Please enter the connection name to search',
+    'Connection name',
   packages_business_shared_cache_button_create: 'New Cache',
   packages_business_shared_cache_name: 'Name',
   packages_business_shared_cache_status: 'Cache Status',
@@ -1770,6 +1791,8 @@ export default {
     'Under active development. Some features may still be incomplete.',
   packages_business_column_setting: 'Display Settings',
   packages_business_column_reset: 'Reset',
-  packages_business_api_server_connection_pool_deficiency_warn: 'When any API Server connection pool resource is tight and triggers the alarm threshold',
-  packages_business_api_server_connection_pool_idle_warn: 'When the number of connections in the connection pool of any API Server falls below the alarm threshold',
+  packages_business_api_server_connection_pool_deficiency_warn:
+    'When any API Server connection pool resource is tight and triggers the alarm threshold',
+  packages_business_api_server_connection_pool_idle_warn:
+    'When the number of connections in the connection pool of any API Server falls below the alarm threshold',
 }

@@ -130,6 +130,13 @@ export default {
   data_import_export_transfer_type: '导出类型',
   data_import_export_file_export: '文件导出',
   data_import_export_git_export: 'Git 导出',
+  data_import_export_remove_sensitive_data: '移除敏感信息',
+  data_import_export_remove_sensitive_data_on_tip:
+    '包内不含连接凭据。导入时目标环境已配置的凭据将被保留，不会被清空。',
+  data_import_export_remove_sensitive_data_off_tip:
+    '导出包内将含数据库连接的明文凭据（地址、账号、密码），请勿外发或提交到代码仓库。',
+  data_import_export_git_always_masked_tip:
+    'Git 导出一律移除连接凭据，不可关闭 —— 提交进仓库的历史无法撤回。',
   data_import_export_git_config_required: '该项目尚未配置 Git 信息',
   data_import_export_config_git: '配置 Git',
   data_import_export_latest_tag: '最新 Tag',
@@ -590,6 +597,13 @@ export default {
   setting_Worker: '进程',
   setting_Download: '下载',
   setting_Log_level: '日志等级',
+  setting_CacheObserveLogs_max_file_size_MB:
+    'CacheObserveLogs 单任务最大文件大小（MB）',
+  setting_Maximum_CacheObserveLogs_file_size_in_MB_for_each_task:
+    '每个任务的 CacheObserveLogs 文件大小上限（MB）',
+  setting_CacheObserveLogs_max_backup_index: 'CacheObserveLogs 最大备份文件数',
+  setting_Maximum_CacheObserveLogs_backup_files_retained_for_each_task:
+    '每个任务最多保留的 CacheObserveLogs 备份文件数',
   setting_maxCpuUsage: '最大CPU使用率(取值范围 0.1 ~ 1)',
   setting_maxHeapMemoryUsage: '最大堆内存使用率(取值范围 0.1 ~ 1)',
   setting_switch_insert_mode_interval:

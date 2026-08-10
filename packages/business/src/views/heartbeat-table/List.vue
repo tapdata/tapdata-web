@@ -14,7 +14,15 @@ import { useI18n } from '@tap/i18n'
 import dayjs from 'dayjs'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { escapeRegExp, uniqBy } from 'lodash-es'
-import { computed, h, inject, onMounted, onUnmounted, ref, watch } from 'vue'
+import {
+  computed,
+  inject,
+  onBeforeMount,
+  onMounted,
+  onUnmounted,
+  ref,
+  watch,
+} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
@@ -56,7 +64,7 @@ const colWidth = computed(() =>
     : { taskType: 80, status: 110, operation: 280 },
 )
 
-const filterItems = computed(() => [
+const filterItems = ref([
   {
     label: t('public_status'),
     key: 'status',
@@ -245,16 +253,18 @@ const del = async (ids: string[], item: any = {}) => {
 watch(
   () => route.query,
   () => {
-    searchParams.value = route.query
     table.value?.fetch(1)
   },
 )
+
+onBeforeMount(() => {
+  Object.assign(searchParams.value, route.query)
+})
 
 onMounted(() => {
   timer = setInterval(() => {
     table.value?.fetch(null, 0, true)
   }, 8000)
-  Object.assign(searchParams.value, route.query)
 })
 
 onUnmounted(() => {

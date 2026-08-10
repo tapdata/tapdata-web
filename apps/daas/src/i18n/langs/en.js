@@ -133,6 +133,13 @@ export default {
   data_import_export_transfer_type: 'Export Type',
   data_import_export_file_export: 'File Export',
   data_import_export_git_export: 'Git Export',
+  data_import_export_remove_sensitive_data: 'Remove sensitive data',
+  data_import_export_remove_sensitive_data_on_tip:
+    'The package carries no connection credentials. On import, credentials already configured in the target environment are kept instead of being cleared.',
+  data_import_export_remove_sensitive_data_off_tip:
+    'The package will contain plaintext database credentials (host, username, password). Do not share it or commit it to a code repository.',
+  data_import_export_git_always_masked_tip:
+    'Git export always removes connection credentials and cannot be turned off — repository history cannot be taken back.',
   data_import_export_git_config_required:
     'Git configuration is required for this project',
   data_import_export_config_git: 'Configure Git',
@@ -612,6 +619,14 @@ export default {
   setting_Worker: 'Process',
   setting_Download: 'Download',
   setting_Log_level: 'Log level',
+  setting_CacheObserveLogs_max_file_size_MB:
+    'CacheObserveLogs max file size (MB) per task',
+  setting_Maximum_CacheObserveLogs_file_size_in_MB_for_each_task:
+    'Maximum CacheObserveLogs file size in MB for each task',
+  setting_CacheObserveLogs_max_backup_index:
+    'Maximum CacheObserveLogs backup files',
+  setting_Maximum_CacheObserveLogs_backup_files_retained_for_each_task:
+    'Maximum CacheObserveLogs backup files retained for each task',
   setting_maxCpuUsage: 'Maximum CPU usage (value range 0.1 ~ 1)',
   setting_maxHeapMemoryUsage: 'Maximum heap memory usage (value range 0.1 ~ 1)',
   setting_switch_insert_mode_interval:

@@ -615,6 +615,25 @@ export default {
   public_tag_priority: '優先級設置',
   public_tag_priority_desc:
     '選擇標籤優先級，數字越小優先級越高，批量啟動時會按優先級順序執行',
+  packages_business_batch_tag_dialog_title: '批量設置標籤',
+  packages_business_batch_tag_dialog_subtitle:
+    '已選擇 {count} 個任務 · 勾選表示添加，取消勾選表示移除',
+  packages_business_batch_tag_dialog_search_placeholder:
+    '搜索標籤，或輸入名稱回車新建',
+  packages_business_batch_tag_dialog_create_tag: '新建標籤 “{name}”',
+  packages_business_batch_tag_dialog_empty: '沒有匹配的標籤',
+  packages_business_batch_tag_dialog_state_some:
+    '部分任務擁有（{count}/{total}）',
+  packages_business_batch_tag_dialog_state_add_all: '將添加到全部',
+  packages_business_batch_tag_dialog_state_all: '全部擁有',
+  packages_business_batch_tag_dialog_state_remove_all: '將從全部移除',
+  packages_business_batch_tag_dialog_summary_title: '本次改動',
+  packages_business_batch_tag_dialog_add: '添加',
+  packages_business_batch_tag_dialog_remove: '移除',
+  packages_business_batch_tag_dialog_task_count: '{count} 個任務',
+  packages_business_batch_tag_dialog_no_changes:
+    '尚無改動 · 半選標籤將保持各任務原樣',
+  packages_business_batch_tag_dialog_save: '保存改動',
   public_priority_highest: '最高',
   public_priority_high: '高',
   public_priority_medium_high: '中高',

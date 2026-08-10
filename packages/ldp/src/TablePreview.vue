@@ -33,7 +33,6 @@ import dayjs from 'dayjs'
 import { cloneDeep, debounce } from 'lodash-es'
 import { h } from 'vue'
 import LineageGraph from './components/LineageGraph'
-// import TableLineage from './components/TableLineage'
 
 export default {
   name: 'TablePreview',
@@ -43,7 +42,6 @@ export default {
     TaskStatus,
     VEmpty,
     DatabaseIcon,
-    // TableLineage,
     VCodeEditor,
     IconButton,
     LineageGraph,

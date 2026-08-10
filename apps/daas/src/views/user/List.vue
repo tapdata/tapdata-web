@@ -388,15 +388,10 @@ export default {
       fetchRoles(filter).then((data) => {
         const items = data?.items || []
         this.roleList = items
-        const options = []
-        items.forEach((db) => {
-          if (db.name !== 'admin') {
-            options.push({
-              label: db.name,
-              value: db.id,
-            })
-          }
-        })
+        const options = items.map((db) => ({
+          label: db.name,
+          value: db.id,
+        }))
         this.createFormConfig.items[3].options = options
       })
     },

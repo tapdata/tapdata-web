@@ -231,6 +231,16 @@ export default {
   packages_business_dataFlow_bulkScheuled: '批量啟動',
   packages_business_dataFlow_bulkStopping: '批量停止',
   packages_business_dataFlow_taskBulkOperation: '任務操作',
+  packages_business_task_batch_alarm_email_action: '批量設置告警接收人',
+  packages_business_task_batch_alarm_email_title: '批量設置告警接收人',
+  packages_business_task_batch_alarm_email_label: '郵件接收人',
+  packages_business_task_batch_alarm_email_placeholder: '請選擇郵件接收人',
+  packages_business_task_batch_alarm_email_overwrite_tip:
+    '保存後，將覆蓋所選任務原有的告警接收人設置',
+  packages_business_task_batch_alarm_email_empty:
+    '暫無可選郵件接收人，可直接保存以清空所選任務的告警接收人',
+  packages_business_task_batch_alarm_email_no_edit_permission_tip:
+    '以下 {count} 個任務沒有編輯權限，保存時將自動跳過',
   packages_business_dataFlow_addTag: '添加標籤',
   packages_business_dataVerify_dataVerify: '數據校驗',
   packages_business_dataFlow_selectAll: '全選',
@@ -833,9 +843,8 @@ export default {
   packages_business_create_connection_dialog_neirongCho:
     '從下面選擇一個數據源連接器並配置連接和憑據。',
   // 共享挖掘
-  packages_business_shared_cdc_placeholder_task_name: '請輸入挖掘任務名搜索',
-  packages_business_shared_cdc_placeholder_connection_name:
-    '請輸入連接名稱搜索',
+  packages_business_shared_cdc_placeholder_task_name: '任務名稱',
+  packages_business_shared_cdc_placeholder_connection_name: '連接名稱',
   packages_business_shared_cdc_name: '請輸入挖掘名稱',
   packages_business_shared_cdc_setting_select_mode: '存储模式',
   packages_business_shared_cdc_setting_select_mongodb_tip: '請輸入mongodb連接',
@@ -927,6 +936,14 @@ export default {
   packages_business_data_server_drawer_tiaoshi: '調試',
   packages_business_data_server_drawer_peizhi: '配置',
   packages_business_data_server_drawer_refresh_fields: '刷新字段',
+  packages_business_data_server_drawer_refresh_fields_no_change:
+    '字段已刷新，暫無變化',
+  packages_business_data_server_drawer_refresh_fields_added:
+    '字段已刷新，新增 {val} 個字段',
+  packages_business_data_server_drawer_refresh_fields_removed:
+    '字段已刷新，刪除 {val} 個字段',
+  packages_business_data_server_drawer_refresh_fields_changed:
+    '字段已刷新，新增 {val1} 個字段，刪除 {val2} 個字段',
   packages_business_data_server_add_field: '添加字段',
   packages_business_data_server_add_sub_field: '添加子字段',
   packages_business_data_server_drawer_chuangjianfuwu: '創建服務',
@@ -1084,9 +1101,8 @@ export default {
   // 共享緩存
   packages_business_shared_cache_create: '創建緩存',
   packages_business_shared_cache_edit: '編輯緩存',
-  packages_business_shared_cache_placeholder_task_name: '請輸入緩存任務名搜索',
-  packages_business_shared_cache_placeholder_connection_name:
-    '請輸入連接名稱搜索',
+  packages_business_shared_cache_placeholder_task_name: '任務名稱',
+  packages_business_shared_cache_placeholder_connection_name: '連接名稱',
   packages_business_shared_cache_button_create: '新建緩存',
   packages_business_shared_cache_name: '緩存名稱',
   packages_business_shared_cache_status: '緩存狀態',

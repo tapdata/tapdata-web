@@ -420,8 +420,14 @@ const alarmCls = computed(() =>
 )
 
 const wrapClass = computed(() => {
-  if (dataflowStore.selectedNode?.id === props.data.id) return 'border-primary'
-  return ''
+  const list: string[] = []
+  if (dataflowStore.selectedNode?.id === props.data.id) {
+    list.push('border-primary')
+  }
+  if (dataflowStore.locatedNodeId === props.data.id) {
+    list.push('is-locating')
+  }
+  return list
 })
 
 const nodeClass = computed(() => {

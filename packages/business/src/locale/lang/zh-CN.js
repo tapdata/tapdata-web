@@ -232,6 +232,16 @@ export default {
   packages_business_dataFlow_bulkScheuled: '批量启动',
   packages_business_dataFlow_bulkStopping: '批量停止',
   packages_business_dataFlow_taskBulkOperation: '任务操作',
+  packages_business_task_batch_alarm_email_action: '批量设置告警接收人',
+  packages_business_task_batch_alarm_email_title: '批量设置告警接收人',
+  packages_business_task_batch_alarm_email_label: '邮件接收人',
+  packages_business_task_batch_alarm_email_placeholder: '请选择邮件接收人',
+  packages_business_task_batch_alarm_email_overwrite_tip:
+    '保存后，将覆盖所选任务原有的告警接收人设置',
+  packages_business_task_batch_alarm_email_empty:
+    '暂无可选邮件接收人，可直接保存以清空所选任务的告警接收人',
+  packages_business_task_batch_alarm_email_no_edit_permission_tip:
+    '以下 {count} 个任务没有编辑权限，保存时将自动跳过',
   packages_business_dataFlow_addTag: '添加标签',
   packages_business_dataVerify_dataVerify: '数据校验',
   packages_business_dataFlow_selectAll: '全选',
@@ -839,9 +849,8 @@ export default {
   packages_business_create_connection_dialog_neirongCho:
     '从下面选择一个数据源连接器并配置连接和凭据。',
   // 共享挖掘
-  packages_business_shared_cdc_placeholder_task_name: '请输入挖掘任务名搜索',
-  packages_business_shared_cdc_placeholder_connection_name:
-    '请输入连接名称搜索',
+  packages_business_shared_cdc_placeholder_task_name: '任务名称',
+  packages_business_shared_cdc_placeholder_connection_name: '连接名称',
   packages_business_shared_cdc_name: '请输入挖掘名称',
   packages_business_shared_cdc_setting_select_mode: '存储模式',
   packages_business_shared_cdc_setting_select_mongodb_tip: '请输入mongodb连接',
@@ -935,6 +944,14 @@ export default {
   packages_business_data_server_drawer_tiaoshi: '调试',
   packages_business_data_server_drawer_peizhi: '配置',
   packages_business_data_server_drawer_refresh_fields: '刷新字段',
+  packages_business_data_server_drawer_refresh_fields_no_change:
+    '字段已刷新，暂无变化',
+  packages_business_data_server_drawer_refresh_fields_added:
+    '字段已刷新，新增 {val} 个字段',
+  packages_business_data_server_drawer_refresh_fields_removed:
+    '字段已刷新，删除 {val} 个字段',
+  packages_business_data_server_drawer_refresh_fields_changed:
+    '字段已刷新，新增 {val1} 个字段，删除 {val2} 个字段',
   packages_business_data_server_add_field: '添加字段',
   packages_business_data_server_add_sub_field: '添加子字段',
   packages_business_data_server_drawer_chuangjianfuwu: '创建服务',
@@ -1091,9 +1108,8 @@ export default {
   // 共享缓存
   packages_business_shared_cache_create: '创建缓存',
   packages_business_shared_cache_edit: '编辑缓存',
-  packages_business_shared_cache_placeholder_task_name: '请输入缓存任务名搜索',
-  packages_business_shared_cache_placeholder_connection_name:
-    '请输入连接名称搜索',
+  packages_business_shared_cache_placeholder_task_name: '任务名称',
+  packages_business_shared_cache_placeholder_connection_name: '连接名称',
   packages_business_shared_cache_button_create: '新建缓存',
   packages_business_shared_cache_name: '缓存名称',
   packages_business_shared_cache_status: '缓存状态',

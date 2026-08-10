@@ -26,6 +26,7 @@ import { escapeRegExp } from 'lodash-es'
 import { computed, h, onBeforeMount, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ErrorMessage } from '../../components/error-message'
+import BatchTagDialog from '../../components/BatchTagDialog.vue'
 import PageContainer from '../../components/PageContainer.vue'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create.vue'
 import TablePage from '../../components/TablePage.vue'
@@ -70,6 +71,11 @@ interface InspectItem {
   lastStartTime: string
   sourceTotal: string | number
   targetTotal: string | number
+  listtags?: Array<{
+    id: string
+    value: string
+    name?: string
+  }>
   InspectResult?: InspectResult
   errorMsg?: string
   difference_number?: number
@@ -143,6 +149,7 @@ const taskOptionsLoading = ref(false)
 
 // Computed
 const tableRef = computed(() => table.value)
+const batchTagDialog = ref<InstanceType<typeof BatchTagDialog> | null>(null)
 
 // Methods
 const inspectMethodChange = (val: string) => {
@@ -475,22 +482,6 @@ const onImportDialogClosed = () => {
   importForm.value.type = 'task'
 }
 
-const handleSelectTag = () => {
-  const tagList = []
-  const tagMap = {}
-
-  multipleSelection.value.forEach((row) => {
-    row.listtags?.forEach((item) => {
-      if (!tagMap[item.id]) {
-        tagList.push(item)
-        tagMap[item.id] = true
-      }
-    })
-  })
-
-  return tagList
-}
-
 const handleOperationClassify = async (listtags) => {
   if (!listtags.length || !multipleSelection.value.length) {
     return
@@ -508,6 +499,20 @@ const handleOperationClassify = async (listtags) => {
   } catch (error) {
     console.error(error)
   }
+}
+
+const openBatchTagDialog = () => {
+  if (!multipleSelection.value.length) return
+  batchTagDialog.value?.open(multipleSelection.value as any)
+}
+
+const handleBatchTagSaved = () => {
+  table.value?.clearSelection?.()
+  table.value?.fetch()
+}
+
+const handleBatchTagCreated = () => {
+  table.value?.refreshClassifyTags?.()
 }
 // Watchers
 watch(
@@ -689,7 +694,7 @@ onUnmounted(() => {
         <ElButton @click="handlePermissionsSettings">{{
           $t('packages_business_permissionse_settings_create_quanxianshezhi')
         }}</ElButton>
-        <ElButton @click="$refs.table.showClassify(handleSelectTag())">
+        <ElButton @click="openBatchTagDialog">
           <span> {{ $t('public_button_bulk_tag') }}</span>
         </ElButton>
         <ElButton v-if="$has('v2_data_check_export')" @click="handleExport">
@@ -940,6 +945,13 @@ onUnmounted(() => {
         </template>
       </el-table-column>
     </TablePage>
+    <BatchTagDialog
+      ref="batchTagDialog"
+      view-page="inspect"
+      :submit-tags="batchUpdateListtags"
+      @saved="handleBatchTagSaved"
+      @tag-created="handleBatchTagCreated"
+    />
     <PermissionseSettingsCreate ref="permissionseSettingsCreate" />
   </PageContainer>
 </template>

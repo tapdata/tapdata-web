@@ -127,6 +127,14 @@ export function deleteGroupInfo(id: string) {
 export interface ExportGroupInfoBatchParams {
   groupIds: string[]
   groupTransferType: 'FILE' | 'GIT'
+  /**
+   * 是否移除包内的敏感信息（连接凭据）。三态语义与后端 ExportGroupRequest 对齐：
+   * 省略 = 未指定（FILE 按保真、GIT 按脱敏）、true = 要求脱敏、false = 要求保真。
+   *
+   * GIT 路径后端强制脱敏、本字段一律不生效，所以 GIT 导出**不要发送它**：
+   * 发 false 会被后端当成「用户明确要保真却被覆盖」而回告一条告警，而界面上从未给过这个选择。
+   */
+  removeSensitiveData?: boolean
   groupResetTask: {
     [groupId: string]: string[]
   }
