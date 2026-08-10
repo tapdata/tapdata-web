@@ -219,19 +219,28 @@ const handleImportSuccess = () => {
 <template>
   <PageContainer>
     <template #actions>
-      <el-button @click="handleOpenGroupManagement">
+      <el-button
+        v-if="$has('v2_project_management')"
+        @click="handleOpenGroupManagement"
+      >
         <template #icon>
           <i-lucide-layers />
         </template>
         {{ t('data_import_export_group_management') }}
       </el-button>
-      <el-button @click="importDialogVisible = true">
+      <el-button
+        v-if="$has('v2_project_import_and_export_import')"
+        @click="importDialogVisible = true"
+      >
         <template #icon>
           <i-lucide-download />
         </template>
         {{ t('data_import_export_import') }}
       </el-button>
-      <el-button @click="exportDialogVisible = true">
+      <el-button
+        v-if="$has('v2_project_import_and_export_export')"
+        @click="exportDialogVisible = true"
+      >
         <template #icon>
           <i-lucide-upload />
         </template>

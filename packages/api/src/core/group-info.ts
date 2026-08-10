@@ -46,6 +46,7 @@ export interface GroupInfoDto {
   lastUpdAt?: Date | string
   createUser?: string
   lastUpdBy?: string
+  permissionActions?: string[]
   gitInfo?: {
     repoUrl: string
     token: string

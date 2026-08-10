@@ -79,10 +79,17 @@ export const MENU = [
         code: 'v2_log_collector',
         parent: 'sharedMining',
       },
-      { name: 'HeartbeatTableList', code: '', parent: 'heartbeatTable' },
+      {
+        name: 'HeartbeatTableList',
+        code: 'v2_conn_heartbeat',
+        parent: 'heartbeatTable',
+      },
       { name: 'dataEncryption' },
-      { name: 'projectManagement' },
-      { name: 'dataImportExport' },
+      { name: 'projectManagement', code: 'v2_project_management' },
+      {
+        name: 'dataImportExport',
+        code: 'v2_project_import_and_export',
+      },
       {
         name: 'taskRebalanceHistory',
         parent: 'taskRebalance',

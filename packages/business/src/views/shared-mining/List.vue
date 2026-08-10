@@ -38,6 +38,11 @@ const buried =
   inject<(name: string, extra?: string, params?: object) => void>('buried')
 const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 
+const havePermission = (row: any, type: string) => {
+  if (!isDaas) return true
+  return row.permissionActions?.includes(type)
+}
+
 // ── Refs ──────────────────────────────────────────────────────────────────────
 
 const table = ref<any>()
@@ -52,6 +57,7 @@ const searchParams = ref({
 })
 
 const order = ref('createTime DESC')
+const spacer = h(ElDivider, { direction: 'vertical', class: 'mx-1' })
 let timer: ReturnType<typeof setInterval> | null = null
 const taskBuried = { start: 'sharedMiningStart' }
 
@@ -485,10 +491,13 @@ onUnmounted(() => {
         :label="$t('public_operation')"
       >
         <template #default="{ row }">
-          <div class="table-operations">
+          <el-space :spacer="spacer" :size="0" class="flex-wrap">
             <ElButton
-              v-if="row.btnDisabled.stop && row.btnDisabled.forceStop"
-              v-readonlybtn="'SYNC_job_operation'"
+              v-if="
+                row.btnDisabled.stop &&
+                row.btnDisabled.forceStop &&
+                havePermission(row, 'Start')
+              "
               text
               type="primary"
               :disabled="row.btnDisabled.start"
@@ -496,35 +505,28 @@ onUnmounted(() => {
             >
               {{ $t('public_button_start') }}
             </ElButton>
-            <template v-else>
-              <ElButton
-                v-if="row.status === 'stopping'"
-                v-readonlybtn="'SYNC_job_operation'"
-                text
-                type="primary"
-                :disabled="row.btnDisabled.forceStop"
-                @click="forceStop([row.id], row)"
-              >
-                {{ $t('public_button_force_stop') }}
-              </ElButton>
-              <ElButton
-                v-else
-                v-readonlybtn="'SYNC_job_operation'"
-                text
-                type="primary"
-                :disabled="row.btnDisabled.stop"
-                @click="stop([row.id])"
-              >
-                {{ $t('public_button_stop') }}
-              </ElButton>
-            </template>
-            <ElDivider
-              v-readonlybtn="'SYNC_job_operation'"
-              class="mx-1"
-              direction="vertical"
-            />
             <ElButton
-              v-readonlybtn="'SYNC_job_edition'"
+              v-else-if="
+                havePermission(row, 'Stop') && row.status === 'stopping'
+              "
+              text
+              type="primary"
+              :disabled="row.btnDisabled.forceStop"
+              @click="forceStop([row.id], row)"
+            >
+              {{ $t('public_button_force_stop') }}
+            </ElButton>
+            <ElButton
+              v-else-if="havePermission(row, 'Stop')"
+              text
+              type="primary"
+              :disabled="row.btnDisabled.stop"
+              @click="stop([row.id])"
+            >
+              {{ $t('public_button_stop') }}
+            </ElButton>
+            <ElButton
+              v-if="havePermission(row, 'Edit')"
               text
               type="primary"
               :disabled="row.btnDisabled.edit"
@@ -532,13 +534,7 @@ onUnmounted(() => {
             >
               {{ $t('public_button_edit') }}
             </ElButton>
-            <ElDivider
-              v-readonlybtn="'SYNC_job_edition'"
-              class="mx-1"
-              direction="vertical"
-            />
             <ElButton
-              v-readonlybtn="'SYNC_job_edition'"
               text
               type="primary"
               :disabled="row.btnDisabled.monitor && !row.lastStartDate"
@@ -546,13 +542,8 @@ onUnmounted(() => {
             >
               {{ $t('packages_business_task_list_button_monitor') }}
             </ElButton>
-            <ElDivider
-              v-readonlybtn="'SYNC_job_edition'"
-              class="mx-1"
-              direction="vertical"
-            />
             <ElButton
-              v-readonlybtn="'SYNC_job_edition'"
+              v-if="havePermission(row, 'Reset')"
               text
               type="primary"
               :disabled="row.btnDisabled.reset"
@@ -560,13 +551,8 @@ onUnmounted(() => {
             >
               {{ $t('public_button_reset') }}
             </ElButton>
-            <ElDivider
-              v-readonlybtn="'SYNC_job_edition'"
-              class="mx-1"
-              direction="vertical"
-            />
             <ElButton
-              v-readonlybtn="'SYNC_job_edition'"
+              v-if="havePermission(row, 'Delete')"
               text
               type="primary"
               :disabled="row.btnDisabled.delete"
@@ -574,7 +560,7 @@ onUnmounted(() => {
             >
               {{ $t('public_button_delete') }}
             </ElButton>
-          </div>
+          </el-space>
         </template>
       </el-table-column>
     </TablePage>
