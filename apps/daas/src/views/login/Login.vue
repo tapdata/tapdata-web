@@ -1,5 +1,9 @@
 <script>
 import { fetchSettings } from '@tap/api/core/settings'
+import {
+  checkSamlLoginEnable,
+  getSamlLoginUrl,
+} from '@tap/api/src/core/sso'
 import { fetchTimestamp } from '@tap/api/src/core/timestamp'
 import {
   checkLdapLoginEnable,
@@ -28,11 +32,13 @@ export default {
       keepSignIn: true,
       errorMessage: '',
       adEnable: false,
+      samlEnable: false,
     }
   },
   created() {
     useDark()
     this.loadAdEnable()
+    this.loadSamlEnable()
     if (this.$route.query) {
       this.form.email = this.$route.query.email
     }
@@ -41,6 +47,17 @@ export default {
     async loadAdEnable() {
       const data = await checkLdapLoginEnable()
       this.adEnable = data
+    },
+    async loadSamlEnable() {
+      try {
+        this.samlEnable = await checkSamlLoginEnable()
+      } catch {
+        this.samlEnable = false
+      }
+    },
+    loginWithSaml() {
+      // Full browser navigation so the IdP redirect chain runs in the tab.
+      window.location.href = getSamlLoginUrl()
     },
     async submit() {
       const form = this.form
@@ -178,6 +195,15 @@ export default {
             @click="submit"
           >
             {{ $t('app_signIn_signIn') }}
+          </ElButton>
+
+          <ElButton
+            v-if="samlEnable"
+            class="mt-4 w-100"
+            size="large"
+            @click="loginWithSaml"
+          >
+            {{ $t('app_signIn_samlLogin') }}
           </ElButton>
 
           <div class="remember">

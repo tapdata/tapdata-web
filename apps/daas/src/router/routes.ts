@@ -75,6 +75,14 @@ export const routes = [
     title: 'tap.login',
   },
   {
+    path: '/sso-callback',
+    name: 'ssoCallback',
+    component: () => import('@/views/login/SsoCallback.vue'),
+    meta: {
+      title: 'tap.login',
+    },
+  },
+  {
     path: '/verificationEmail',
     name: 'verificationEmail',
     component: () => import('@/views/login/VerificationEmail.vue'),
