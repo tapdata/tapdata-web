@@ -19,6 +19,7 @@ import dayjs from 'dayjs'
 import { ElDivider } from 'element-plus'
 import { escapeRegExp } from 'lodash-es'
 import { h } from 'vue'
+import SsoUserImportDialog from './SsoUserImportDialog.vue'
 
 export default {
   components: {
@@ -26,6 +27,7 @@ export default {
     TablePage,
     FilterBar,
     DownBoldOutlined,
+    SsoUserImportDialog,
   },
   data() {
     return {
@@ -41,6 +43,7 @@ export default {
       multipleSelection: [],
       roleMappding: [],
       createDialogVisible: false,
+      ssoImportVisible: false,
       activePanel: 'all',
       muneList: [
         { name: this.$t('public_select_option_all'), key: 'all' },
@@ -754,6 +757,13 @@ export default {
     <template #actions>
       <el-button
         v-if="$has('v2_user_management_menu_creation')"
+        class="btn"
+        @click="ssoImportVisible = true"
+      >
+        <span>{{ $t('user_import_batch_import') }}</span>
+      </el-button>
+      <el-button
+        v-if="$has('v2_user_management_menu_creation')"
         class="btn btn-create"
         type="primary"
         @click="openCreateDialog"
@@ -1205,6 +1215,11 @@ export default {
         </span>
       </template>
     </el-dialog>
+
+    <SsoUserImportDialog
+      v-model="ssoImportVisible"
+      @success="table.fetch()"
+    />
   </PageContainer>
 </template>
 
