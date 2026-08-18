@@ -1554,6 +1554,7 @@ export default {
               this.$t('packages_form_message_exists_name'),
             )
           }
+          const record = items[$index]
           const params = Object.assign(
             {
               supplierKey: $record.supplierKey,
@@ -1570,7 +1571,7 @@ export default {
             if (/^\/\w+/.test(data.token)) {
               str = `${p.replace(/\/$/, '')}${data.token}`
             }
-            $record.refreshURL = str
+            record.refreshURL = str
           })
         },
         getUid: () => {
