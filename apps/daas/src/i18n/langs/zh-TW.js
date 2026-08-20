@@ -814,6 +814,7 @@ export default {
   setting_SAML_Login_Enable: '使用SAML登入',
   setting_SP_Entity_ID: 'SP Entity ID',
   setting_SP_ACS_URL: 'SP ACS 地址',
+  setting_SP_SLO_URL: 'SP SLO 地址',
   setting_SP_Certificate: 'SP 憑證',
   setting_IdP_Entity_ID: 'IdP Entity ID',
   setting_IdP_SSO_URL: 'IdP SSO 地址',
@@ -836,6 +837,8 @@ export default {
     'SP 唯一標識，建議用 ACS 的基地址。範例：https://tapdata.example.com/api/sso/saml',
   setting_Saml_Sp_Acs_Url_doc:
     'IdP 回發斷言的地址，固定為 https://<你的網域>/api/sso/saml/acs',
+  setting_Saml_Sp_Slo_Url_doc:
+    'SP 中繼資料中公布的單點登出（SLO）地址，用於接收 IdP 的登出請求/回應，固定為 https://<你的網域>/api/sso/saml/slo',
   setting_Saml_Sp_Private_Key_doc:
     '服務提供方私鑰（靜態加密存儲，只寫），與 SP 憑證透過「產生金鑰對」成對產生',
   setting_Saml_Sp_Certificate_doc:
@@ -1313,6 +1316,9 @@ export default {
   app_signIn_samlLogin: '單點登錄 (SAML)',
   app_signIn_ssoProcessing: '正在登錄...',
   app_signIn_ssoFailed: '單點登錄失敗，請重試。',
+  app_signIn_ssoUserDisabled: '帳號已被凍結或停用，請聯絡管理員。',
+  app_signIn_ssoUserPending: '帳號正在等待審批，請聯絡管理員。',
+  app_signIn_ssoUserNotFound: '找不到與此 SSO 身分匹配的 TapData 帳號。',
   app_signIn_keepSignIn: '保持登錄狀態',
   app_signIn_email_placeholder: '請輸入郵箱',
   login_email_and_ad_placeholder: '請輸入郵箱/LDAP 用戶名',

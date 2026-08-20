@@ -872,6 +872,7 @@ export default {
   setting_SAML_Login_Enable: 'Use SAML Login',
   setting_SP_Entity_ID: 'SP Entity ID',
   setting_SP_ACS_URL: 'SP ACS URL',
+  setting_SP_SLO_URL: 'SP SLO URL',
   setting_SP_Certificate: 'SP Certificate',
   setting_IdP_Entity_ID: 'IdP Entity ID',
   setting_IdP_SSO_URL: 'IdP SSO URL',
@@ -895,6 +896,8 @@ export default {
     'Service Provider unique identifier. Recommended to use the ACS base URL, e.g. https://tapdata.example.com/api/sso/saml',
   setting_Saml_Sp_Acs_Url_doc:
     'Assertion Consumer Service URL that receives the SAML response. Fixed as https://<your-domain>/api/sso/saml/acs',
+  setting_Saml_Sp_Slo_Url_doc:
+    'Single Logout (SLO) URL advertised in the SP metadata, used to receive the IdP LogoutRequest/LogoutResponse. Fixed as https://<your-domain>/api/sso/saml/slo',
   setting_Saml_Sp_Private_Key_doc:
     'Service Provider private key (encrypted at rest, write-only). Generated together with the SP certificate via "Generate Key Pair".',
   setting_Saml_Sp_Certificate_doc:
@@ -1400,6 +1403,12 @@ export default {
   app_signIn_samlLogin: 'Single Sign-On (SAML)',
   app_signIn_ssoProcessing: 'Signing you in...',
   app_signIn_ssoFailed: 'Single sign-on failed. Please try again.',
+  app_signIn_ssoUserDisabled:
+    'Your account is disabled or frozen. Please contact an administrator.',
+  app_signIn_ssoUserPending:
+    'Your account is pending approval. Please contact an administrator.',
+  app_signIn_ssoUserNotFound:
+    'No matching TapData account was found for this SSO identity.',
   app_signIn_keepSignIn: 'Keep signed in',
   app_signIn_email_placeholder: 'Enter your email',
   login_email_and_ad_placeholder: 'Enter your email/LDAP username',
