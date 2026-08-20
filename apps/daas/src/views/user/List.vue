@@ -1,6 +1,7 @@
 <script>
 import { fetchRoleMappings } from '@tap/api/src/core/role-mappings'
 import { fetchRoles } from '@tap/api/src/core/roles'
+import { checkSamlLoginEnable } from '@tap/api/src/core/sso'
 import {
   batchUpdateUserListtags,
   countUsers,
@@ -44,6 +45,7 @@ export default {
       roleMappding: [],
       createDialogVisible: false,
       ssoImportVisible: false,
+      samlEnabled: false,
       activePanel: 'all',
       muneList: [
         { name: this.$t('public_select_option_all'), key: 'all' },
@@ -274,8 +276,16 @@ export default {
     this.getDbOptions()
     // this.getCount();
     this.getFilterItems()
+    this.loadSamlEnabled()
   },
   methods: {
+    async loadSamlEnabled() {
+      try {
+        this.samlEnabled = await checkSamlLoginEnable()
+      } catch {
+        this.samlEnabled = false
+      }
+    },
     // 重置
     reset(name) {
       if (name === 'reset') {
@@ -756,7 +766,7 @@ export default {
   >
     <template #actions>
       <el-button
-        v-if="$has('v2_user_management_menu_creation')"
+        v-if="$has('v2_user_management_menu_creation') && samlEnabled"
         class="btn"
         @click="ssoImportVisible = true"
       >

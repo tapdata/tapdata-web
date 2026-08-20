@@ -88,7 +88,6 @@ export interface SsoImportRowResult {
   row: number
   email: string
   username: string
-  displayName: string
   roleNames: string[]
   status: 'CREATE' | 'UPDATE' | 'SKIP' | 'FAILED'
   /** Human-readable reason, primarily for FAILED rows. */
