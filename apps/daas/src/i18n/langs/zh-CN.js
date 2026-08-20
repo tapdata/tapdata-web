@@ -818,6 +818,7 @@ export default {
   setting_SAML_Login_Enable: '使用SAML登录',
   setting_SP_Entity_ID: 'SP Entity ID',
   setting_SP_ACS_URL: 'SP ACS 地址',
+  setting_SP_SLO_URL: 'SP SLO 地址',
   setting_SP_Certificate: 'SP 证书',
   setting_IdP_Entity_ID: 'IdP Entity ID',
   setting_IdP_SSO_URL: 'IdP SSO 地址',
@@ -840,6 +841,8 @@ export default {
     'SP 唯一标识，建议用 ACS 的基地址。示例：https://tapdata.example.com/api/sso/saml',
   setting_Saml_Sp_Acs_Url_doc:
     'IdP 回发断言的地址，固定为 https://<你的域名>/api/sso/saml/acs',
+  setting_Saml_Sp_Slo_Url_doc:
+    'SP 元数据中公布的单点登出（SLO）地址，用于接收 IdP 的登出请求/响应，固定为 https://<你的域名>/api/sso/saml/slo',
   setting_Saml_Sp_Private_Key_doc:
     '服务提供方私钥（静态加密存储，只写），与 SP 证书通过「生成密钥对」成对生成',
   setting_Saml_Sp_Certificate_doc:
@@ -1321,6 +1324,9 @@ export default {
   app_signIn_samlLogin: '单点登录 (SAML)',
   app_signIn_ssoProcessing: '正在登录...',
   app_signIn_ssoFailed: '单点登录失败，请重试。',
+  app_signIn_ssoUserDisabled: '账号已被冻结或禁用，请联系管理员。',
+  app_signIn_ssoUserPending: '账号正在等待审批，请联系管理员。',
+  app_signIn_ssoUserNotFound: '未找到与此 SSO 身份匹配的 TapData 账号。',
   app_signIn_keepSignIn: '保持登录状态',
   app_signIn_email_placeholder: '请输入邮箱',
   login_email_and_ad_placeholder: '请输入邮箱/LDAP 用户名',
