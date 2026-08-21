@@ -14,7 +14,7 @@ import { ElMessage } from 'element-plus'
 import { computed, ref } from 'vue'
 
 const visible = defineModel<boolean>()
-const emit = defineEmits(['success'])
+const emit = defineEmits(['success', 'update:modelValue'])
 
 const fileList = ref<any[]>([])
 const importMode = ref<SsoUserImportMode>('SKIP')
@@ -124,16 +124,17 @@ const confirmImport = async () => {
   importing.value = true
   try {
     const result = await confirmSsoUserImport(file, mode)
+    const failedCount = Number(result.failedCount ?? 0)
     preview.value = result
     previewFile.value = file
     previewMode.value = mode
-    if (result.failedCount > 0) {
+    if (failedCount > 0) {
       ElMessage.warning(
         t('user_import_result_partial', {
           create: result.createCount,
           update: result.updateCount,
           skip: result.skipCount,
-          failed: result.failedCount,
+          failed: failedCount,
         }),
       )
       emit('success')
@@ -143,22 +144,18 @@ const confirmImport = async () => {
           create: result.createCount,
           update: result.updateCount,
           skip: result.skipCount,
-          failed: result.failedCount,
+          failed: failedCount,
         }),
       )
       emit('success')
+      importing.value = false
       visible.value = false
+      emit('update:modelValue', false)
     }
   } catch (error) {
     console.error('Confirm SSO user import failed:', error)
   } finally {
     importing.value = false
-  }
-}
-
-const beforeClose = (done: () => void) => {
-  if (!importing.value) {
-    done()
   }
 }
 </script>
@@ -171,7 +168,6 @@ const beforeClose = (done: () => void) => {
     :close-on-click-modal="false"
     :close-on-press-escape="!importing"
     :show-close="!importing"
-    :before-close="beforeClose"
     @closed="onClosed"
   >
     <div class="flex align-center justify-between mb-4">
