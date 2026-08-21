@@ -157,7 +157,8 @@ export const TableLevelConfigDialog = defineComponent({
                           <OverflowTooltip
                             class="flex-1 min-w-0"
                             text={item}
-                            placement="top"
+                            placement="left"
+                            hide-after={0}
                           />
 
                           <ElButton
