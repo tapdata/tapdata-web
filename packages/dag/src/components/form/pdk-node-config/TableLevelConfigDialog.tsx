@@ -1,4 +1,5 @@
 import { getNodeSchemaPage } from '@tap/api/src/core/metadata-instances'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { computed as reactiveComputed } from '@tap/form'
 import { useI18n } from '@tap/i18n'
 import { cloneDeep } from 'lodash-es'
@@ -153,7 +154,12 @@ export const TableLevelConfigDialog = defineComponent({
                           onClick={() => (selectedTable.value = item)}
                         >
                           <ILucideTable />
-                          {item}
+                          <OverflowTooltip
+                            class="flex-1 min-w-0"
+                            text={item}
+                            placement="left"
+                            hide-after={0}
+                          />
 
                           <ElButton
                             class="ml-auto del-btn"
