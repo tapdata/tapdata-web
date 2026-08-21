@@ -926,6 +926,8 @@ export default {
   user_import_mode_skip: '跳过',
   user_import_mode_update: '更新',
   user_import_validate: '校验',
+  user_import_validating: '正在校验…',
+  user_import_importing: '正在导入…',
   user_import_confirm: '确认导入',
   user_import_preview_title: '校验结果',
   user_import_count_total: '共 {count}',
@@ -942,6 +944,8 @@ export default {
   user_import_status_FAILED: '失败',
   user_import_result_summary:
     '导入完成：新建 {create}，更新 {update}，跳过 {skip}，失败 {failed}',
+  user_import_result_partial:
+    '导入部分失败：新建 {create}，更新 {update}，跳过 {skip}，失败 {failed}',
   user_status_notVerified: '未验证',
   user_status_notActivated: '未激活',
   user_status_activated: '已激活',

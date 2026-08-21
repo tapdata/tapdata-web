@@ -456,7 +456,9 @@ export default {
           }
           Object.keys(mapping).forEach((key) => {
             const item = this.findSamlItem(key)
-            if (item && mapping[key] != null) {
+            // A null value from the metadata explicitly clears an optional
+            // endpoint such as SLO; only an absent field should be ignored.
+            if (item && mapping[key] !== undefined) {
               item.value = mapping[key]
             }
           })

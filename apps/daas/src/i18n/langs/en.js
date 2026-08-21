@@ -986,6 +986,8 @@ export default {
   user_import_mode_skip: 'Skip',
   user_import_mode_update: 'Update',
   user_import_validate: 'Validate',
+  user_import_validating: 'Validating…',
+  user_import_importing: 'Importing…',
   user_import_confirm: 'Confirm Import',
   user_import_preview_title: 'Validation result',
   user_import_count_total: 'Total {count}',
@@ -1002,6 +1004,8 @@ export default {
   user_import_status_FAILED: 'Failed',
   user_import_result_summary:
     'Import finished: created {create}, updated {update}, skipped {skip}, failed {failed}',
+  user_import_result_partial:
+    'Import partially failed: created {create}, updated {update}, skipped {skip}, failed {failed}',
   user_status_notVerified: 'Not Verified',
   user_status_notActivated: 'Not Activated',
   user_status_activated: 'Activated',

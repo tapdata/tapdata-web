@@ -25,6 +25,9 @@ const importing = ref(false)
 
 // Dry-run preview result; null until the file has been validated.
 const preview = ref<SsoImportPreviewResult | null>(null)
+const previewFile = ref<File | null>(null)
+const previewMode = ref<SsoUserImportMode | null>(null)
+let validationRequestId = 0
 
 const currentFile = computed(() => fileList.value[0]?.raw as File | undefined)
 
@@ -35,20 +38,35 @@ const statusType: Record<SsoImportRowResult['status'], string> = {
   FAILED: 'danger',
 }
 
-// A new file selection invalidates the previous preview.
-const handleFileChange = () => {
+const previewIsCurrent = computed(
+  () =>
+    !!preview.value &&
+    previewFile.value === currentFile.value &&
+    previewMode.value === importMode.value,
+)
+
+const invalidatePreview = () => {
+  validationRequestId += 1
   preview.value = null
+  previewFile.value = null
+  previewMode.value = null
+  validating.value = false
+}
+
+const handleFileChange = () => {
+  invalidatePreview()
+  validate()
 }
 
 const handleDelete = () => {
   fileList.value = []
-  preview.value = null
+  invalidatePreview()
 }
 
 const onClosed = () => {
   fileList.value = []
   importMode.value = 'SKIP'
-  preview.value = null
+  invalidatePreview()
 }
 
 const downloadTemplate = async () => {
@@ -65,45 +83,82 @@ const downloadTemplate = async () => {
 }
 
 const validate = async () => {
-  if (!currentFile.value) {
-    ElMessage.error(t('user_import_select_file'))
+  const file = currentFile.value
+  const mode = importMode.value
+  const requestId = ++validationRequestId
+
+  if (!file) {
+    preview.value = null
+    previewFile.value = null
+    previewMode.value = null
     return
   }
+
   validating.value = true
   try {
-    preview.value = await validateSsoUserImport(
-      currentFile.value,
-      importMode.value,
-    )
+    const result = await validateSsoUserImport(file, mode)
+    if (
+      requestId === validationRequestId &&
+      file === currentFile.value &&
+      mode === importMode.value
+    ) {
+      preview.value = result
+      previewFile.value = file
+      previewMode.value = mode
+    }
   } catch (error) {
     console.error('Validate SSO user import failed:', error)
   } finally {
-    validating.value = false
+    if (requestId === validationRequestId) {
+      validating.value = false
+    }
   }
 }
 
 const confirmImport = async () => {
-  if (!currentFile.value) {
-    ElMessage.error(t('user_import_select_file'))
+  const file = currentFile.value
+  const mode = importMode.value
+  if (!file || !previewIsCurrent.value || validating.value) {
     return
   }
   importing.value = true
   try {
-    const result = await confirmSsoUserImport(currentFile.value, importMode.value)
-    ElMessage.success(
-      t('user_import_result_summary', {
-        create: result.createCount,
-        update: result.updateCount,
-        skip: result.skipCount,
-        failed: result.failedCount,
-      }),
-    )
-    emit('success')
-    visible.value = false
+    const result = await confirmSsoUserImport(file, mode)
+    preview.value = result
+    previewFile.value = file
+    previewMode.value = mode
+    if (result.failedCount > 0) {
+      ElMessage.warning(
+        t('user_import_result_partial', {
+          create: result.createCount,
+          update: result.updateCount,
+          skip: result.skipCount,
+          failed: result.failedCount,
+        }),
+      )
+      emit('success')
+    } else {
+      ElMessage.success(
+        t('user_import_result_summary', {
+          create: result.createCount,
+          update: result.updateCount,
+          skip: result.skipCount,
+          failed: result.failedCount,
+        }),
+      )
+      emit('success')
+      visible.value = false
+    }
   } catch (error) {
     console.error('Confirm SSO user import failed:', error)
   } finally {
     importing.value = false
+  }
+}
+
+const beforeClose = (done: () => void) => {
+  if (!importing.value) {
+    done()
   }
 }
 </script>
@@ -114,6 +169,9 @@ const confirmImport = async () => {
     width="720px"
     :title="$t('user_import_dialog_title')"
     :close-on-click-modal="false"
+    :close-on-press-escape="!importing"
+    :show-close="!importing"
+    :before-close="beforeClose"
     @closed="onClosed"
   >
     <div class="flex align-center justify-between mb-4">
@@ -141,6 +199,7 @@ const confirmImport = async () => {
       accept=".xlsx"
       :auto-upload="false"
       :show-file-list="false"
+      :disabled="importing"
       :on-change="handleFileChange"
     >
       <el-icon size="40"><FileAddColorful /></el-icon>
@@ -158,11 +217,19 @@ const confirmImport = async () => {
       <el-icon size="32"><FileDocxColorful /></el-icon>
       <div>
         <div class="font-bold">{{ fileList[0].name }}</div>
-        <div class="fs-8" :style="{ color: 'var(--el-text-color-placeholder)' }">
+        <div
+          class="fs-8"
+          :style="{ color: 'var(--el-text-color-placeholder)' }"
+        >
           {{ calcUnit(fileList[0].size, 1) }}
         </div>
       </div>
-      <el-button class="ml-auto flex-shrink-0" text @click="handleDelete">
+      <el-button
+        class="ml-auto flex-shrink-0"
+        text
+        :disabled="importing"
+        @click="handleDelete"
+      >
         <template #icon>
           <el-icon><i-lucide-trash-2 /></el-icon>
         </template>
@@ -172,9 +239,15 @@ const confirmImport = async () => {
     <!-- Import mode -->
     <el-form class="mt-4" label-position="top">
       <el-form-item :label="$t('user_import_mode')">
-        <el-radio-group v-model="importMode" @change="handleFileChange">
+        <el-radio-group
+          v-model="importMode"
+          :disabled="importing"
+          @change="handleFileChange"
+        >
           <el-radio value="SKIP">{{ $t('user_import_mode_skip') }}</el-radio>
-          <el-radio value="UPDATE">{{ $t('user_import_mode_update') }}</el-radio>
+          <el-radio value="UPDATE">{{
+            $t('user_import_mode_update')
+          }}</el-radio>
         </el-radio-group>
       </el-form-item>
     </el-form>
@@ -200,7 +273,11 @@ const confirmImport = async () => {
         }}</el-tag>
       </div>
       <el-table :data="preview.rows" max-height="280" size="small" border>
-        <el-table-column :label="$t('user_import_col_row')" prop="row" width="60" />
+        <el-table-column
+          :label="$t('user_import_col_row')"
+          prop="row"
+          width="60"
+        />
         <el-table-column
           :label="$t('user_form_email')"
           prop="email"
@@ -231,19 +308,22 @@ const confirmImport = async () => {
 
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="visible = false">
+        <el-button :disabled="importing" @click="visible = false">
           {{ $t('public_button_cancel') }}
-        </el-button>
-        <el-button :loading="validating" @click="validate">
-          {{ $t('user_import_validate') }}
         </el-button>
         <el-button
           type="primary"
-          :loading="importing"
-          :disabled="!preview"
+          :loading="validating || importing"
+          :disabled="!previewIsCurrent || validating || importing"
           @click="confirmImport"
         >
-          {{ $t('user_import_confirm') }}
+          {{
+            importing
+              ? $t('user_import_importing')
+              : validating
+                ? $t('user_import_validating')
+                : $t('user_import_confirm')
+          }}
         </el-button>
       </span>
     </template>
