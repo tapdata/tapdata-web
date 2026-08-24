@@ -868,6 +868,84 @@ export default {
     'The full Distinguished Name (DN) of the user for authentication, i.e., the identity used to log in to the AD server, e.g., user@example.com',
   setting_Ldap_Bind_Password_doc:
     'The password corresponding to the Bind DN, used for authentication',
+  setting_SAML: 'SAML Authentication',
+  setting_SAML_Login_Enable: 'Use SAML Login',
+  setting_SP_Entity_ID: 'SP Entity ID',
+  setting_SP_ACS_URL: 'SP ACS URL',
+  setting_SP_SLO_URL: 'SP SLO URL',
+  setting_SP_Certificate: 'SP Certificate',
+  setting_IdP_Entity_ID: 'IdP Entity ID',
+  setting_IdP_SSO_URL: 'IdP SSO URL',
+  setting_IdP_SLO_URL: 'IdP SLO URL',
+  setting_IdP_Signing_Certificate: 'IdP Signing Certificate',
+  setting_NameID_Format: 'NameID Format',
+  setting_Want_Assertions_Signed: 'Require Signed Assertions',
+  setting_Sign_AuthnRequest: 'Sign AuthnRequest',
+  setting_Signature_Algorithm: 'Signature Algorithm',
+  setting_Clock_Skew_Seconds: 'Clock Skew (seconds)',
+  setting_Claim_Username: 'Username Attribute',
+  setting_Claim_Email: 'Email Attribute',
+  setting_Claim_Display_Name: 'Display Name Attribute',
+  setting_Claim_Groups: 'Groups Attribute',
+  setting_IdP_Initiated_Enabled: 'Allow IdP-Initiated SSO',
+  setting_JIT_Provisioning_Enabled: 'Enable JIT Provisioning',
+  setting_Login_Redirect_URL: 'Post-Login Redirect URL',
+  setting_Saml_Login_Enable_doc:
+    'Enable SAML 2.0 single sign-on login',
+  setting_Saml_Sp_Entity_Id_doc:
+    'Service Provider unique identifier. Recommended to use the ACS base URL, e.g. https://tapdata.example.com/api/sso/saml',
+  setting_Saml_Sp_Acs_Url_doc:
+    'Assertion Consumer Service URL that receives the SAML response. Fixed as https://<your-domain>/api/sso/saml/acs',
+  setting_Saml_Sp_Slo_Url_doc:
+    'Single Logout (SLO) URL advertised in the SP metadata, used to receive the IdP LogoutRequest/LogoutResponse. Fixed as https://<your-domain>/api/sso/saml/slo',
+  setting_Saml_Sp_Private_Key_doc:
+    'Service Provider private key (encrypted at rest, write-only). Generated together with the SP certificate via "Generate Key Pair".',
+  setting_Saml_Sp_Certificate_doc:
+    'Service Provider certificate (public key) in PEM format, included in the exported SP metadata. Generate it via "Generate Key Pair".',
+  setting_Saml_Idp_Entity_Id_doc:
+    'Identity Provider Entity ID. Auto-filled by "Import IdP Metadata".',
+  setting_Saml_Idp_Sso_Url_doc:
+    'Identity Provider SSO (login) URL. ADFS example: https://adfs.example.com/adfs/ls/',
+  setting_Saml_Idp_Slo_Url_doc:
+    'Identity Provider Single Logout (SLO) URL. ADFS example: https://adfs.example.com/adfs/ls/?wa=wsignout1.0',
+  setting_Saml_Idp_Signing_Certificate_doc:
+    'Identity Provider signing certificate used to verify assertions. Auto-filled by "Import IdP Metadata".',
+  setting_Saml_Name_Id_Format_doc:
+    'SAML NameID format; leave blank for the default. Example: urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
+  setting_Saml_Want_Assertions_Signed_doc:
+    'Require the IdP to sign assertions; TapData verifies the signature with the IdP signing certificate and rejects unsigned/tampered assertions. ADFS signs by default, keep this on.',
+  setting_Saml_Sign_Authn_Request_doc:
+    'Sign the SP-generated AuthnRequest with the SP private key. Enable only when the IdP requires SP-signed requests.',
+  setting_Saml_Signature_Algorithm_doc:
+    'XML signature algorithm; leave blank for the default (rsa-sha256). Avoid weak algorithms such as SHA-1/MD5.',
+  setting_Saml_Clock_Skew_Seconds_doc:
+    'Allowed clock skew (seconds) when validating assertion time conditions. Default 120; ensure NTP sync across hosts.',
+  setting_Saml_Claim_Username_doc:
+    'SAML attribute mapped to the username. ADFS example: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name',
+  setting_Saml_Claim_Email_doc:
+    'SAML attribute mapped to the email. ADFS example: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress',
+  setting_Saml_Claim_Display_Name_doc:
+    'SAML attribute mapped to the display name. ADFS example: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname',
+  setting_Saml_Claim_Groups_doc:
+    'SAML attribute mapped to the user groups. ADFS example: http://schemas.xmlsoap.org/claims/Group',
+  setting_Saml_Idp_Initiated_Enabled_doc:
+    'Allow IdP-initiated SSO (disabled by default for security)',
+  setting_Saml_Jit_Provisioning_Enabled_doc:
+    'Just-in-time provisioning: auto-create users on first SSO login (disabled by default)',
+  setting_Saml_Login_Redirect_Url_doc:
+    'Post-login redirect URL after a successful SSO login',
+  setting_saml_generate_keypair: 'Generate Key Pair',
+  setting_saml_export_sp_metadata: 'Export SP Metadata',
+  setting_saml_import_idp_metadata: 'Import IdP Metadata',
+  setting_saml_import_idp_metadata_label: 'Upload the IdP metadata XML file',
+  setting_saml_import_idp_metadata_placeholder:
+    'Or paste the IdP metadata XML here',
+  setting_saml_keypair_generated:
+    'Key pair generated. The private key is stored encrypted; click Save to persist the certificate.',
+  setting_saml_import_success:
+    'IdP metadata parsed. IdP fields have been filled; click Save to persist.',
+  setting_saml_import_empty:
+    'Please upload or paste the IdP metadata XML first',
   setting_Appearance: 'Appearance',
   setting_enableEnvTag: 'Environment Tag',
   setting_envTagContent: 'Custom Text',
@@ -897,6 +975,37 @@ export default {
   user_list_freeze_error: 'Freeze failed',
   user_list_check_success: 'Pass the check',
   user_list_check_error: 'Check failed',
+  user_import_batch_import: 'Batch Import',
+  user_import_dialog_title: 'Batch Import Users',
+  user_import_dialog_tip:
+    'Download the template, fill in the user list, then upload to validate and import.',
+  user_import_download_template: 'Download Template',
+  user_import_template_download_failed: 'Failed to download the template',
+  user_import_select_file: 'Please select a file first',
+  user_import_mode: 'On duplicate user',
+  user_import_mode_skip: 'Skip',
+  user_import_mode_update: 'Update',
+  user_import_validate: 'Validate',
+  user_import_validating: 'Validating…',
+  user_import_importing: 'Importing…',
+  user_import_confirm: 'Confirm Import',
+  user_import_preview_title: 'Validation result',
+  user_import_count_total: 'Total {count}',
+  user_import_count_create: 'Create {count}',
+  user_import_count_update: 'Update {count}',
+  user_import_count_skip: 'Skip {count}',
+  user_import_count_failed: 'Failed {count}',
+  user_import_col_row: 'Row',
+  user_import_col_status: 'Status',
+  user_import_col_message: 'Message',
+  user_import_status_CREATE: 'Create',
+  user_import_status_UPDATE: 'Update',
+  user_import_status_SKIP: 'Skip',
+  user_import_status_FAILED: 'Failed',
+  user_import_result_summary:
+    'Import finished: created {create}, updated {update}, skipped {skip}, failed {failed}',
+  user_import_result_partial:
+    'Import partially failed: created {create}, updated {update}, skipped {skip}, failed {failed}',
   user_status_notVerified: 'Not Verified',
   user_status_notActivated: 'Not Activated',
   user_status_activated: 'Activated',
@@ -1295,6 +1404,15 @@ export default {
     'Any requirement, please contact us by scanning WeChat QR below.',
   app_signIn_slogan: 'Use your data, as easy as water from tap',
   app_signIn_signIn: 'Sign in',
+  app_signIn_samlLogin: 'Single Sign-On (SAML)',
+  app_signIn_ssoProcessing: 'Signing you in...',
+  app_signIn_ssoFailed: 'Single sign-on failed. Please try again.',
+  app_signIn_ssoUserDisabled:
+    'Your account is disabled or frozen. Please contact an administrator.',
+  app_signIn_ssoUserPending:
+    'Your account is pending approval. Please contact an administrator.',
+  app_signIn_ssoUserNotFound:
+    'No matching TapData account was found for this SSO identity.',
   app_signIn_keepSignIn: 'Keep signed in',
   app_signIn_email_placeholder: 'Enter your email',
   login_email_and_ad_placeholder: 'Enter your email/LDAP username',
@@ -2407,13 +2525,13 @@ export default {
   webhook_server_url_empty: 'Please enter the server URL',
   webhook_server_url_error: 'Please enter a valid server URL',
   webhook_custom_template: 'Custom Template',
-  webhook_custom_template_tip: `{'{'} 
+  webhook_custom_template_tip: `{'{'}
     "action": "TaskAlter",
     "hookId": "\${'{'}hookId{'}'}",
     "actionTime": "\${'{'}actionTime{'}'}",
     "title": "\${'{'}title{'}'}",
     "content": "\${'{'}content{'}'}",
-    "actionData": {'{'} 
+    "actionData": {'{'}
         "status": "\${'{'}actionData.status{'}'}", // Indicates the current alarm status: ING (ongoing), RECOVER (recovered), CLOSE (closed)
         "statusTxt": "\${'{'}actionData.statusTxt{'}'}", // Indicates the current alarm status text: ongoing, recovered, closed
         "level": "\${'{'}actionData.level{'}'}", // Alarm level: RECOVERY, NORMAL, WARNING, CRITICAL, EMERGENCY, ERROR, WARN, INFO

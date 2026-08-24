@@ -810,6 +810,79 @@ export default {
   setting_Ldap_Bind_DN_doc:
     '用於進行身份驗證的用戶完整Distinguished Name (DN)，即登入AD伺服器的身份，範例：user@example.com',
   setting_Ldap_Bind_Password_doc: '與Bind DN對應的用戶密碼，用於身份驗證',
+  setting_SAML: 'SAML登入設置',
+  setting_SAML_Login_Enable: '使用SAML登入',
+  setting_SP_Entity_ID: 'SP Entity ID',
+  setting_SP_ACS_URL: 'SP ACS 地址',
+  setting_SP_SLO_URL: 'SP SLO 地址',
+  setting_SP_Certificate: 'SP 憑證',
+  setting_IdP_Entity_ID: 'IdP Entity ID',
+  setting_IdP_SSO_URL: 'IdP SSO 地址',
+  setting_IdP_SLO_URL: 'IdP SLO 地址',
+  setting_IdP_Signing_Certificate: 'IdP 簽名憑證',
+  setting_NameID_Format: 'NameID 格式',
+  setting_Want_Assertions_Signed: '要求斷言簽名',
+  setting_Sign_AuthnRequest: '簽名 AuthnRequest',
+  setting_Signature_Algorithm: '簽名演算法',
+  setting_Clock_Skew_Seconds: '時鐘偏差（秒）',
+  setting_Claim_Username: '用戶名屬性',
+  setting_Claim_Email: '郵箱屬性',
+  setting_Claim_Display_Name: '顯示名屬性',
+  setting_Claim_Groups: '用戶組屬性',
+  setting_IdP_Initiated_Enabled: '允許 IdP 發起的 SSO',
+  setting_JIT_Provisioning_Enabled: '啟用即時（JIT）佈建',
+  setting_Login_Redirect_URL: '登入後跳轉地址',
+  setting_Saml_Login_Enable_doc: '啟用 SAML 2.0 單點登入',
+  setting_Saml_Sp_Entity_Id_doc:
+    'SP 唯一標識，建議用 ACS 的基地址。範例：https://tapdata.example.com/api/sso/saml',
+  setting_Saml_Sp_Acs_Url_doc:
+    'IdP 回發斷言的地址，固定為 https://<你的網域>/api/sso/saml/acs',
+  setting_Saml_Sp_Slo_Url_doc:
+    'SP 中繼資料中公布的單點登出（SLO）地址，用於接收 IdP 的登出請求/回應，固定為 https://<你的網域>/api/sso/saml/slo',
+  setting_Saml_Sp_Private_Key_doc:
+    '服務提供方私鑰（靜態加密存儲，只寫），與 SP 憑證透過「產生金鑰對」成對產生',
+  setting_Saml_Sp_Certificate_doc:
+    'SP 憑證（公鑰，PEM），會被打包進匯出的 SP 中繼資料。請透過「產生金鑰對」產生',
+  setting_Saml_Idp_Entity_Id_doc: '身份提供方（IdP）實體 ID，由「匯入 IdP 中繼資料」自動填充',
+  setting_Saml_Idp_Sso_Url_doc:
+    '身份提供方 SSO（登入）地址。ADFS 範例：https://adfs.example.com/adfs/ls/',
+  setting_Saml_Idp_Slo_Url_doc:
+    '身份提供方單點登出（SLO）地址。ADFS 範例：https://adfs.example.com/adfs/ls/?wa=wsignout1.0',
+  setting_Saml_Idp_Signing_Certificate_doc:
+    '身份提供方簽名憑證，用於驗證斷言簽名，由「匯入 IdP 中繼資料」自動填充',
+  setting_Saml_Name_Id_Format_doc:
+    'SAML NameID 格式；留空用預設。範例：urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
+  setting_Saml_Want_Assertions_Signed_doc:
+    '要求 IdP 對斷言簽名；TapData 會用 IdP 簽名憑證驗簽，簽名不過即拒登，防止偽造/竄改。ADFS 預設簽名，建議保持開啟',
+  setting_Saml_Sign_Authn_Request_doc:
+    '用 SP 私鑰對發給 IdP 的登入請求（AuthnRequest）簽名；僅當 IdP 要求 SP 簽名請求時開啟',
+  setting_Saml_Signature_Algorithm_doc:
+    'XML 簽名演算法；留空用預設（rsa-sha256）。避免使用 SHA-1/MD5 等弱演算法',
+  setting_Saml_Clock_Skew_Seconds_doc:
+    '校驗斷言時間條件時允許的時鐘偏差（秒），預設 120；跨機注意 NTP 同步',
+  setting_Saml_Claim_Username_doc:
+    '映射為用戶名的 SAML 屬性名。ADFS 範例：http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name',
+  setting_Saml_Claim_Email_doc:
+    '映射為郵箱的 SAML 屬性名。ADFS 範例：http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress',
+  setting_Saml_Claim_Display_Name_doc:
+    '映射為顯示名的 SAML 屬性名。ADFS 範例：http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname',
+  setting_Saml_Claim_Groups_doc:
+    '映射為用戶組的 SAML 屬性名。ADFS 範例：http://schemas.xmlsoap.org/claims/Group',
+  setting_Saml_Idp_Initiated_Enabled_doc:
+    '允許 IdP 發起的 SSO（出於安全考慮預設關閉）',
+  setting_Saml_Jit_Provisioning_Enabled_doc:
+    '即時（JIT）佈建：首次 SSO 登入時自動創建用戶（預設關閉）',
+  setting_Saml_Login_Redirect_Url_doc: 'SSO 登入成功後的跳轉地址',
+  setting_saml_generate_keypair: '產生金鑰對',
+  setting_saml_export_sp_metadata: '匯出 SP 中繼資料',
+  setting_saml_import_idp_metadata: '匯入 IdP 中繼資料',
+  setting_saml_import_idp_metadata_label: '上傳 IdP 中繼資料 XML 檔案',
+  setting_saml_import_idp_metadata_placeholder: '或在此貼上 IdP 中繼資料 XML',
+  setting_saml_keypair_generated:
+    '金鑰對已產生，私鑰已加密存儲；點擊「儲存」以持久化憑證',
+  setting_saml_import_success:
+    'IdP 中繼資料已解析，IdP 欄位已回填；點擊「儲存」以持久化',
+  setting_saml_import_empty: '請先上傳或貼上 IdP 中繼資料 XML',
   setting_Appearance: '外觀',
   setting_enableEnvTag: '環境標籤',
   setting_envTagContent: '自定義文字',
@@ -839,6 +912,36 @@ export default {
   user_list_freeze_error: '凍結失敗',
   user_list_check_success: '通過校驗',
   user_list_check_error: '校驗失敗',
+  user_import_batch_import: '批量導入',
+  user_import_dialog_title: '批量導入用戶',
+  user_import_dialog_tip: '下載模板並填寫用戶列表，然後上傳進行校驗和導入。',
+  user_import_download_template: '下載模板',
+  user_import_template_download_failed: '下載模板失敗',
+  user_import_select_file: '請先選擇檔案',
+  user_import_mode: '用戶已存在時',
+  user_import_mode_skip: '跳過',
+  user_import_mode_update: '更新',
+  user_import_validate: '校驗',
+  user_import_validating: '正在校驗…',
+  user_import_importing: '正在導入…',
+  user_import_confirm: '確認導入',
+  user_import_preview_title: '校驗結果',
+  user_import_count_total: '共 {count}',
+  user_import_count_create: '新建 {count}',
+  user_import_count_update: '更新 {count}',
+  user_import_count_skip: '跳過 {count}',
+  user_import_count_failed: '失敗 {count}',
+  user_import_col_row: '行號',
+  user_import_col_status: '狀態',
+  user_import_col_message: '說明',
+  user_import_status_CREATE: '新建',
+  user_import_status_UPDATE: '更新',
+  user_import_status_SKIP: '跳過',
+  user_import_status_FAILED: '失敗',
+  user_import_result_summary:
+    '導入完成：新建 {create}，更新 {update}，跳過 {skip}，失敗 {failed}',
+  user_import_result_partial:
+    '導入部分失敗：新建 {create}，更新 {update}，跳過 {skip}，失敗 {failed}',
   user_status_notVerified: '未驗證',
   user_status_notActivated: '未激活',
   user_status_activated: '已激活',
@@ -1214,6 +1317,12 @@ export default {
   app_customerService_otherDmandsText: '其他需求，請掃描下方企業微信二維碼。',
   app_signIn_slogan: '像自來水一樣方便地使用您的數據',
   app_signIn_signIn: '登錄',
+  app_signIn_samlLogin: '單點登錄 (SAML)',
+  app_signIn_ssoProcessing: '正在登錄...',
+  app_signIn_ssoFailed: '單點登錄失敗，請重試。',
+  app_signIn_ssoUserDisabled: '帳號已被凍結或停用，請聯絡管理員。',
+  app_signIn_ssoUserPending: '帳號正在等待審批，請聯絡管理員。',
+  app_signIn_ssoUserNotFound: '找不到與此 SSO 身分匹配的 TapData 帳號。',
   app_signIn_keepSignIn: '保持登錄狀態',
   app_signIn_email_placeholder: '請輸入郵箱',
   login_email_and_ad_placeholder: '請輸入郵箱/LDAP 用戶名',

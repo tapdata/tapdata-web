@@ -1,5 +1,9 @@
 <script>
 import { fetchSettings } from '@tap/api/core/settings'
+import {
+  checkSamlLoginEnable,
+  getSamlLoginUrl,
+} from '@tap/api/src/core/sso'
 import { fetchTimestamp } from '@tap/api/src/core/timestamp'
 import {
   checkLdapLoginEnable,
@@ -28,19 +32,45 @@ export default {
       keepSignIn: true,
       errorMessage: '',
       adEnable: false,
+      samlEnable: false,
     }
   },
   created() {
     useDark()
     this.loadAdEnable()
+    this.loadSamlEnable()
     if (this.$route.query) {
       this.form.email = this.$route.query.email
+      const ssoError = this.$route.query.sso_error
+      if (ssoError) {
+        this.errorMessage = this.getSsoErrorMessage(ssoError)
+      }
     }
   },
   methods: {
+    getSsoErrorMessage(code) {
+      const messages = {
+        user_disabled: 'app_signIn_ssoUserDisabled',
+        user_pending: 'app_signIn_ssoUserPending',
+        user_not_found: 'app_signIn_ssoUserNotFound',
+        sso_failed: 'app_signIn_ssoFailed',
+      }
+      return this.$t(messages[code] || messages.sso_failed)
+    },
     async loadAdEnable() {
       const data = await checkLdapLoginEnable()
       this.adEnable = data
+    },
+    async loadSamlEnable() {
+      try {
+        this.samlEnable = await checkSamlLoginEnable()
+      } catch {
+        this.samlEnable = false
+      }
+    },
+    loginWithSaml() {
+      // Full browser navigation so the IdP redirect chain runs in the tab.
+      window.location.href = getSamlLoginUrl()
     },
     async submit() {
       const form = this.form
@@ -171,13 +201,22 @@ export default {
           </el-checkbox>
           <ElButton
             id="login-button"
-            class="mt-12 w-100"
+            class="login-action mt-12 w-100"
             size="large"
             type="primary"
             :loading="loading"
             @click="submit"
           >
             {{ $t('app_signIn_signIn') }}
+          </ElButton>
+
+          <ElButton
+            v-if="samlEnable"
+            class="login-action mt-4 w-100"
+            size="large"
+            @click="loginWithSaml"
+          >
+            {{ $t('app_signIn_samlLogin') }}
           </ElButton>
 
           <div class="remember">
@@ -274,6 +313,15 @@ export default {
         cursor: pointer;
         user-select: none;
       }
+    }
+
+    // Element Plus adds a default left margin to adjacent buttons. Since these
+    // actions are stacked and both span the panel width, remove that margin so
+    // their left and right edges stay aligned.
+    .login-action {
+      display: flex;
+      margin-left: 0 !important;
+      box-sizing: border-box;
     }
   }
 }

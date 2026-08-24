@@ -1,6 +1,7 @@
 <script>
 import { fetchRoleMappings } from '@tap/api/src/core/role-mappings'
 import { fetchRoles } from '@tap/api/src/core/roles'
+import { checkSamlLoginEnable } from '@tap/api/src/core/sso'
 import {
   batchUpdateUserListtags,
   countUsers,
@@ -19,6 +20,7 @@ import dayjs from 'dayjs'
 import { ElDivider } from 'element-plus'
 import { escapeRegExp } from 'lodash-es'
 import { h } from 'vue'
+import SsoUserImportDialog from './SsoUserImportDialog.vue'
 
 export default {
   components: {
@@ -26,6 +28,7 @@ export default {
     TablePage,
     FilterBar,
     DownBoldOutlined,
+    SsoUserImportDialog,
   },
   data() {
     return {
@@ -41,6 +44,8 @@ export default {
       multipleSelection: [],
       roleMappding: [],
       createDialogVisible: false,
+      ssoImportVisible: false,
+      samlEnabled: false,
       activePanel: 'all',
       muneList: [
         { name: this.$t('public_select_option_all'), key: 'all' },
@@ -271,8 +276,16 @@ export default {
     this.getDbOptions()
     // this.getCount();
     this.getFilterItems()
+    this.loadSamlEnabled()
   },
   methods: {
+    async loadSamlEnabled() {
+      try {
+        this.samlEnabled = await checkSamlLoginEnable()
+      } catch {
+        this.samlEnabled = false
+      }
+    },
     // 重置
     reset(name) {
       if (name === 'reset') {
@@ -753,6 +766,13 @@ export default {
   >
     <template #actions>
       <el-button
+        v-if="$has('v2_user_management_menu_creation') && samlEnabled"
+        class="btn"
+        @click="ssoImportVisible = true"
+      >
+        <span>{{ $t('user_import_batch_import') }}</span>
+      </el-button>
+      <el-button
         v-if="$has('v2_user_management_menu_creation')"
         class="btn btn-create"
         type="primary"
@@ -1205,6 +1225,11 @@ export default {
         </span>
       </template>
     </el-dialog>
+
+    <SsoUserImportDialog
+      v-model="ssoImportVisible"
+      @success="table.fetch()"
+    />
   </PageContainer>
 </template>
 

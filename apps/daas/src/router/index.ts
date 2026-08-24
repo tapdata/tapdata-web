@@ -64,6 +64,7 @@ router.beforeEach(async (to, from, next) => {
   } else if (
     [
       'login',
+      'ssoCallback',
       'registry',
       'passwordReset',
       'verificationEmail',
