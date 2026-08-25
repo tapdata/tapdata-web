@@ -71,9 +71,21 @@ router.beforeEach(async (to, from, next) => {
       'registyResult',
     ].includes(to.name as string)
   ) {
-    next()
+    if (to.name === 'login' && to.query?.sso === '1') {
+      sessionStorage.setItem('samlManualLogin', '1')
+      next({ name: 'login' })
+    } else {
+      next()
+    }
   } else {
     sessionStorage.setItem('lastLocationHref', location.href)
+    const ssoFromRoute = to.query?.sso === '1'
+    const ssoFromUrl = new URLSearchParams(window.location.search).get('sso') === '1'
+    if (ssoFromRoute || ssoFromUrl) {
+      // Keep the control flag out of the visible login URL. The login page
+      // consumes this one-time flag and stays available for manual SSO.
+      sessionStorage.setItem('samlManualLogin', '1')
+    }
     next('/login')
   }
 })

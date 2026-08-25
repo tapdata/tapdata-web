@@ -935,6 +935,11 @@ export default {
   setting_Saml_Login_Redirect_Url_doc:
     'Post-login redirect URL after a successful SSO login',
   setting_saml_generate_keypair: 'Generate Key Pair',
+  setting_saml_test_config: 'Test Configuration',
+  setting_saml_static_check: 'Static Configuration Check',
+  setting_saml_test_success: 'SAML configuration test passed',
+  setting_saml_test_failed: 'SAML configuration test failed. See the details below.',
+  setting_saml_test_no_result: 'No SAML test result was returned. Please try again.',
   setting_saml_export_sp_metadata: 'Export SP Metadata',
   setting_saml_import_idp_metadata: 'Import IdP Metadata',
   setting_saml_import_idp_metadata_label: 'Upload the IdP metadata XML file',
