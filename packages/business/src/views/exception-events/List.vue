@@ -37,6 +37,9 @@ const selectedRows = ref<DqlEvent[]>([])
 const detailVisible = ref(false)
 const detailLoading = ref(false)
 const detail = ref<DqlEventDetail>()
+const recoveryVisible = ref(false)
+const recoveryLoading = ref(false)
+const recoveryDetail = ref<DqlEventDetail>()
 const previewVisible = ref(false)
 const previewLoading = ref(false)
 const preview = ref<DqlRecoveryPreview>()
@@ -44,6 +47,7 @@ const submitting = ref(false)
 const status = ref<DqlEventStatus>()
 let refreshTimer: ReturnType<typeof setInterval> | undefined
 let detailRefreshTimer: ReturnType<typeof setInterval> | undefined
+let recoveryRefreshTimer: ReturnType<typeof setInterval> | undefined
 
 const filters = ref({
   keyword: '',
@@ -99,7 +103,6 @@ const filterItems = [
   },
 ]
 
-const selectedTaskId = computed(() => selectedRows.value[0]?.taskId)
 const advancedFilterCount = computed(
   () =>
     [
@@ -120,17 +123,34 @@ const failedTimeRange = computed({
 })
 const canReprocess = (event: DqlEvent) =>
   ['PENDING', 'RECOVERY_FAILED'].includes(event.status)
-const selectable = (event: DqlEvent) =>
-  canReprocess(event) &&
-  (!selectedTaskId.value || selectedTaskId.value === event.taskId)
+const hasRecoveryHistory = (event: DqlEvent) =>
+  event.status === 'REPROCESSING' || event.recoveryCount > 0
+const selectable = (event: DqlEvent) => canReprocess(event)
 const recoveryAttemptMeta = (result: DqlRecoveryAttempt['result']) =>
   ({
-    RUNNING: { label: '重放中', type: 'primary' },
-    SUCCESS: { label: '重放成功', type: 'success' },
-    FAILED: { label: '重放失败', type: 'danger' },
+    RUNNING: { label: '处理中', type: 'primary' },
+    SUCCESS: { label: '处理成功', type: 'success' },
+    FAILED: { label: '处理失败', type: 'danger' },
     SKIPPED: { label: '已跳过', type: 'info' },
-    TIMEOUT: { label: '重放超时', type: 'warning' },
+    TIMEOUT: { label: '处理超时', type: 'warning' },
   })[result]
+const recoveryView = {
+  title: '处理记录',
+  sectionTitle: '处理记录',
+  emptyText: '暂无处理记录',
+  refreshLabel: '刷新处理记录',
+}
+const recoveryAttempts = computed(() => {
+  const attempts = [...(recoveryDetail.value?.recoveryAttempts || [])]
+  if (recoveryDetail.value?.status !== 'REPROCESSING') return attempts
+
+  const runningIndex = attempts.findIndex((item) => item.result === 'RUNNING')
+  if (runningIndex <= 0) return attempts
+
+  const [running] = attempts.splice(runningIndex, 1)
+  attempts.unshift(running)
+  return attempts
+})
 const errorTypeLabel = (type: DqlEvent['errorType']) =>
   ({
     MALFORMED_RECORD: '格式错误',
@@ -139,6 +159,8 @@ const errorTypeLabel = (type: DqlEvent['errorType']) =>
     TARGET_WRITE_ERROR: '目标写入失败',
     UNKNOWN_RECORD_ERROR: '未知记录错误',
   })[type]
+const syncTypeLabel = (syncType: DqlEvent['syncType']) =>
+  ({ migrate: '复制任务', sync: '转换任务' })[syncType] || '数据任务'
 const formatKeyValue = (value: unknown) => {
   if (value === null) return 'null'
   if (value === undefined) return '-'
@@ -158,6 +180,43 @@ const formatEventKeys = (keys: DqlEventDetail['eventKeys']) =>
     )
     .filter(Boolean)
     .join('\n\n') || '-'
+const previewTaskGroups = computed(() => {
+  const groups = new Map<
+    string,
+    {
+      taskId: string
+      taskName: string
+      syncType: DqlEvent['syncType']
+      events: DqlEvent[]
+    }
+  >()
+
+  for (const event of preview.value?.orderedEvents || []) {
+    const group = groups.get(event.taskId)
+
+    if (group) {
+      group.events.push(event)
+    } else {
+      groups.set(event.taskId, {
+        taskId: event.taskId,
+        taskName: event.taskName,
+        syncType: event.syncType,
+        events: [event],
+      })
+    }
+  }
+
+  return [...groups.values()].map((group) => ({
+    ...group,
+    routes: [
+      ...new Set(
+        group.events.map(
+          (event) => `${event.sourceTable} → ${event.targetTable}`,
+        ),
+      ),
+    ],
+  }))
+})
 
 const getList = async ({
   page,
@@ -215,12 +274,6 @@ const clearAdvancedFilters = () => {
 }
 
 const handleSelectionChange = (rows: DqlEvent[]) => {
-  if (rows.length > 1 && new Set(rows.map((item) => item.taskId)).size > 1) {
-    ElMessage.warning('一次重处理只能选择同一任务下的异常事件')
-    table.value?.clearSelection()
-    selectedRows.value = []
-    return
-  }
   selectedRows.value = rows
 }
 
@@ -233,6 +286,19 @@ const startDetailPolling = () => {
   if (detailRefreshTimer || !detail.value?.eventId) return
   detailRefreshTimer = setInterval(
     () => refreshDetail(detail.value?.eventId, true),
+    3_000,
+  )
+}
+
+const stopRecoveryPolling = () => {
+  if (recoveryRefreshTimer) clearInterval(recoveryRefreshTimer)
+  recoveryRefreshTimer = undefined
+}
+
+const startRecoveryPolling = () => {
+  if (recoveryRefreshTimer || !recoveryDetail.value?.eventId) return
+  recoveryRefreshTimer = setInterval(
+    () => refreshRecovery(recoveryDetail.value?.eventId, true),
     3_000,
   )
 }
@@ -251,10 +317,31 @@ const refreshDetail = async (eventId?: string, passive = false) => {
   else stopDetailPolling()
 }
 
+const refreshRecovery = async (eventId?: string, passive = false) => {
+  if (!eventId) return
+  if (!passive) recoveryLoading.value = true
+  try {
+    recoveryDetail.value = isMockMode
+      ? await fetchMockDqlEventDetail(eventId)
+      : await fetchDqlEventDetail(eventId)
+  } finally {
+    recoveryLoading.value = false
+  }
+  if (recoveryDetail.value?.status === 'REPROCESSING')
+    startRecoveryPolling()
+  else stopRecoveryPolling()
+}
+
 const openDetail = async (event: DqlEvent) => {
   detailVisible.value = true
   detail.value = undefined
   await refreshDetail(event.eventId)
+}
+
+const openRecovery = async (event: DqlEvent) => {
+  recoveryVisible.value = true
+  recoveryDetail.value = undefined
+  await refreshRecovery(event.eventId)
 }
 
 const openTaskMonitor = (event: DqlEvent) => {
@@ -266,10 +353,6 @@ const openTaskMonitor = (event: DqlEvent) => {
 
 const openPreview = async (events: DqlEvent[]) => {
   if (!events.length) return
-  if (new Set(events.map((item) => item.taskId)).size > 1) {
-    ElMessage.warning('请只选择同一任务下的异常事件')
-    return
-  }
   previewVisible.value = true
   previewLoading.value = true
   try {
@@ -293,7 +376,7 @@ const submitRecovery = async () => {
     previewVisible.value = false
     selectedRows.value = []
     table.value?.clearSelection()
-    ElMessage.success('已提交重处理，可在事件详情的重处理历史查看进度')
+    ElMessage.success('重处理已提交，可在“处理进度”中跟踪状态')
     refresh()
   } finally {
     submitting.value = false
@@ -317,6 +400,7 @@ onMounted(() => {
 onUnmounted(() => {
   if (refreshTimer) clearInterval(refreshTimer)
   stopDetailPolling()
+  stopRecoveryPolling()
 })
 </script>
 
@@ -505,7 +589,7 @@ onUnmounted(() => {
             : '-'
         }}</template>
       </el-table-column>
-      <el-table-column prop="operation" label="操作" width="150" fixed="right">
+      <el-table-column prop="operation" label="操作" width="210" fixed="right">
         <template #default="{ row }">
           <el-button text type="primary" @click="openDetail(row)"
             >详情</el-button
@@ -518,11 +602,11 @@ onUnmounted(() => {
             >重处理</el-button
           >
           <el-button
-            v-else-if="row.status === 'REPROCESSING'"
+            v-if="hasRecoveryHistory(row)"
             text
             type="primary"
-            @click="openDetail(row)"
-            >查看进度</el-button
+            @click="openRecovery(row)"
+            >处理记录</el-button
           >
         </template>
       </el-table-column>
@@ -532,6 +616,7 @@ onUnmounted(() => {
       v-model="detailVisible"
       size="min(720px, 100vw)"
       append-to-body
+      class="exception-detail-drawer"
       @closed="stopDetailPolling"
     >
       <template #header>
@@ -563,11 +648,15 @@ onUnmounted(() => {
           <section class="detail-section detail-overview">
             <div class="detail-section-heading">
               <div>
-                <div class="detail-section-heading__eyebrow">EVENT CONTEXT</div>
-                <h4>基本信息</h4>
+                <h4>事件信息</h4>
               </div>
-              <div class="detail-section-heading__meta">
-                首次失败于 {{ dayjs(detail.failedAt).format('YYYY-MM-DD HH:mm:ss') }}
+              <div class="detail-section-heading__aside">
+                <div class="detail-section-heading__meta">
+                  首次失败于 {{ dayjs(detail.failedAt).format('YYYY-MM-DD HH:mm:ss') }}
+                </div>
+                <span v-if="detail.eventKeyMissing" class="detail-warning">
+                  事件主键缺失，不能安全重处理
+                </span>
               </div>
             </div>
             <div class="event-context">
@@ -598,17 +687,6 @@ onUnmounted(() => {
                 </div>
               </dl>
             </div>
-          </section>
-          <section class="detail-section detail-identifiers">
-            <div class="detail-section-heading">
-              <div>
-                <div class="detail-section-heading__eyebrow">EVENT ATTRIBUTES</div>
-                <h4>事件属性</h4>
-              </div>
-              <span v-if="detail.eventKeyMissing" class="detail-warning">
-                事件主键缺失，不能安全重处理
-              </span>
-            </div>
             <dl class="detail-fact-list">
               <div><dt>源节点</dt><dd>{{ detail.sourceNodeName || '-' }}</dd></div>
               <div><dt>目标节点</dt><dd>{{ detail.targetNodeName || '-' }}</dd></div>
@@ -623,7 +701,6 @@ onUnmounted(() => {
           <section class="detail-section">
             <div class="detail-section-heading">
               <div>
-                <div class="detail-section-heading__eyebrow">FAILURE DETAILS</div>
                 <h4>错误信息</h4>
               </div>
             </div>
@@ -638,7 +715,6 @@ onUnmounted(() => {
           <section class="detail-section">
             <div class="detail-section-heading">
               <div>
-                <div class="detail-section-heading__eyebrow">EVENT PAYLOAD</div>
                 <h4>Payload 预览</h4>
               </div>
             </div>
@@ -660,121 +736,251 @@ onUnmounted(() => {
               JSON.stringify(detail.payloadPreview, null, 2)
             }}</pre>
           </section>
-          <section class="detail-section">
-            <div class="detail-section-heading">
-              <div>
-                <div class="detail-section-heading__eyebrow">RECOVERY HISTORY</div>
-                <h4>重处理历史</h4>
-              </div>
+        </template>
+      </div>
+    </el-drawer>
+
+    <el-drawer
+      v-model="recoveryVisible"
+      size="min(560px, 100vw)"
+      append-to-body
+      class="exception-detail-drawer recovery-drawer"
+      @closed="stopRecoveryPolling"
+    >
+      <template #header>
+        <div class="exception-detail__header">
+          <div class="exception-detail__title">{{ recoveryView.title }}</div>
+          <div class="exception-detail__subtitle">
+            {{
+              recoveryDetail
+                ? `${recoveryDetail.taskName} · ${recoveryDetail.sourceTable}`
+                : '正在加载…'
+            }}
+          </div>
+        </div>
+      </template>
+      <div v-loading="recoveryLoading" class="recovery-drawer__content">
+        <template v-if="recoveryDetail">
+          <div class="recovery-drawer__toolbar">
+            <EventStatusTag :status="recoveryDetail.status" />
+            <el-button
+              :aria-label="recoveryView.refreshLabel"
+              @click="refreshRecovery(recoveryDetail.eventId)"
+            >
+              <template #icon><i-lucide-refresh-cw /></template>
+              刷新记录
+            </el-button>
+          </div>
+          <div class="recovery-drawer__context">
+            <div>
+              <span>任务</span>
+              <strong>{{ recoveryDetail.taskName }}</strong>
             </div>
-            <el-empty
-              v-if="!detail.recoveryAttempts?.length"
-              description="暂无重处理记录"
-              :image-size="64"
-            />
-            <el-timeline v-else>
-              <el-timeline-item
-                v-for="attempt in detail.recoveryAttempts"
-                :key="attempt.attemptId"
-                :timestamp="
-                  dayjs(attempt.startedAt).format('YYYY-MM-DD HH:mm:ss')
-                "
-                :type="recoveryAttemptMeta(attempt.result).type"
-              >
-                <div class="recovery-attempt">
-                  <div class="recovery-attempt__header">
-                    <el-tag :type="recoveryAttemptMeta(attempt.result).type" effect="light">
-                      {{ recoveryAttemptMeta(attempt.result).label }}
-                    </el-tag>
-                    <span v-if="attempt.finishedAt">
-                      完成于 {{ dayjs(attempt.finishedAt).format('YYYY-MM-DD HH:mm:ss') }}
-                    </span>
-                  </div>
-                  <p
-                    v-if="attempt.errorMessage"
-                    class="recovery-attempt__error"
-                  >
-                    <el-icon :size="15"><i-lucide-circle-alert /></el-icon>
-                    {{ attempt.errorMessage }}
-                  </p>
-                  <p v-else-if="attempt.message" class="recovery-attempt__message">
-                    {{ attempt.message }}
-                  </p>
+            <div>
+              <span>来源表</span>
+              <strong>{{ recoveryDetail.sourceTable }}</strong>
+            </div>
+            <div>
+              <span>目标表</span>
+              <strong>{{ recoveryDetail.targetTable }}</strong>
+            </div>
+          </div>
+          <div class="recovery-drawer__heading">
+            <h4>{{ recoveryView.sectionTitle }}</h4>
+            <span>{{ recoveryAttempts.length }} 次</span>
+          </div>
+          <el-empty
+            v-if="!recoveryAttempts.length"
+            :description="recoveryView.emptyText"
+            :image-size="64"
+          />
+          <el-timeline v-else>
+            <el-timeline-item
+              v-for="attempt in recoveryAttempts"
+              :key="attempt.attemptId"
+              :timestamp="dayjs(attempt.startedAt).format('YYYY-MM-DD HH:mm:ss')"
+              :type="recoveryAttemptMeta(attempt.result).type"
+            >
+              <div class="recovery-attempt">
+                <div class="recovery-attempt__header">
+                  <el-tag :type="recoveryAttemptMeta(attempt.result).type" effect="light">
+                    {{ recoveryAttemptMeta(attempt.result).label }}
+                  </el-tag>
+                  <span v-if="attempt.finishedAt">
+                    完成于 {{ dayjs(attempt.finishedAt).format('YYYY-MM-DD HH:mm:ss') }}
+                  </span>
                 </div>
-              </el-timeline-item>
-            </el-timeline>
-          </section>
+                <p
+                  v-if="attempt.errorMessage || (attempt.result === 'FAILED' && attempt.message)"
+                  class="recovery-attempt__error"
+                >
+                  <el-icon :size="15"><i-lucide-circle-alert /></el-icon>
+                  {{ attempt.errorMessage || attempt.message }}
+                </p>
+                <p v-else-if="attempt.message" class="recovery-attempt__message">
+                  {{ attempt.message }}
+                </p>
+              </div>
+            </el-timeline-item>
+          </el-timeline>
         </template>
       </div>
     </el-drawer>
 
     <el-dialog
       v-model="previewVisible"
-      title="确认重处理异常事件"
-      width="min(640px, calc(100vw - 32px))"
+      width="min(820px, calc(100vw - 32px))"
       class="reprocess-modal"
       append-to-body
       destroy-on-close
     >
+      <template #header>
+        <div class="reprocess-dialog__header">
+          <div>
+            <h3>
+              {{ previewTaskGroups.length > 1 ? '确认批量重处理' : '确认重处理' }}
+            </h3>
+            <p>提交前确认任务范围和事件数量</p>
+          </div>
+          <span v-if="preview" class="reprocess-dialog__header-count">
+            {{ preview.orderedEvents.length }} 条事件
+          </span>
+        </div>
+      </template>
       <div v-loading="previewLoading">
         <template v-if="preview">
           <div class="reprocess-dialog">
-          <div class="reprocess-dialog__notice">
-            <el-icon :size="17"><i-lucide-shield-check /></el-icon>
-              <span>将使用当前已发布任务配置重处理原始事件。重处理期间，任务正常同步可能短暂暂停，完成后恢复原状态。Payload 不会被修改。</span>
+            <div class="reprocess-dialog__notice">
+              <el-icon :size="16"><i-lucide-info /></el-icon>
+              <p>
+                将使用各任务当前已发布配置提交原始事件。处理期间，相关任务可能短暂暂停，完成后恢复。原始 Payload 不会被修改。
+              </p>
             </div>
             <div class="reprocess-dialog__summary">
-              <div>
-                <span>目标任务</span>
-                <strong>{{ preview.taskName }}</strong>
-              </div>
-              <div>
+              <div class="reprocess-dialog__summary-item">
                 <span>待提交事件</span>
                 <strong>{{ preview.orderedEvents.length }} <small>条</small></strong>
+              </div>
+              <div class="reprocess-dialog__summary-item">
+                <span>涉及任务</span>
+                <strong>{{ previewTaskGroups.length }} <small>个</small></strong>
+              </div>
+              <div class="reprocess-dialog__summary-item">
+                <span>执行顺序</span>
+                <strong class="reprocess-dialog__summary-copy">按事件时间</strong>
               </div>
             </div>
             <div class="reprocess-dialog__list-heading">
               <div>
-                <span>提交清单</span>
-                <small>按处理顺序执行</small>
+                <h4>提交清单</h4>
+                <p>按任务归类，按事件时间顺序执行</p>
               </div>
-              <span>{{ preview.orderedEvents.length }} EVENTS</span>
+              <span>{{ preview.orderedEvents.length }} 条事件</span>
             </div>
-            <ol class="reprocess-event-list">
-              <li
-                v-for="(event, index) in preview.orderedEvents"
-                :key="event.eventId"
+            <div class="reprocess-task-groups">
+              <section
+                v-for="(group, groupIndex) in previewTaskGroups"
+                :key="group.taskId"
+                class="reprocess-task-group"
               >
-                <span class="reprocess-event-list__index">{{
-                  String(index + 1).padStart(2, '0')
-                }}</span>
-                <div>
-                  <strong>{{ event.sourceTable }} → {{ event.targetTable }}</strong>
-                  <time>{{ event.sourceTable }} · {{ event.dmlType }} · {{ dayjs(event.eventTime).format('YYYY-MM-DD HH:mm:ss') }}</time>
+                <header class="reprocess-task-group__header">
+                  <div class="reprocess-task-group__identity">
+                    <span class="reprocess-task-group__index">
+                      {{ String(groupIndex + 1).padStart(2, '0') }}
+                    </span>
+                    <div>
+                      <div class="reprocess-task-group__title">
+                        <h5>{{ group.taskName }}</h5>
+                        <span>{{ syncTypeLabel(group.syncType) }}</span>
+                      </div>
+                      <p>
+                        {{ group.routes.length }} 条数据链路 · {{ group.events.length }} 条事件
+                      </p>
+                    </div>
+                  </div>
+                </header>
+                <ol class="reprocess-task-group__events">
+                  <li
+                    v-for="(event, eventIndex) in group.events.slice(0, 4)"
+                    :key="event.eventId"
+                    class="reprocess-task-group__event"
+                  >
+                    <span class="reprocess-task-group__event-index">
+                      {{ String(eventIndex + 1).padStart(2, '0') }}
+                    </span>
+                    <div class="reprocess-task-group__event-body">
+                      <div class="reprocess-task-group__route">
+                        <strong>{{ event.sourceTable }}</strong>
+                        <span>→</span>
+                        <strong>{{ event.targetTable }}</strong>
+                      </div>
+                      <div class="reprocess-task-group__event-meta">
+                        <span
+                          class="reprocess-dml"
+                          :class="`is-${event.dmlType.toLowerCase()}`"
+                        >{{ event.dmlType }}</span>
+                        <span>{{ errorTypeLabel(event.errorType) }}</span>
+                        <span class="reprocess-task-group__error-code">
+                          {{ event.errorCode }}
+                        </span>
+                        <time>
+                          失败于 {{ dayjs(event.failedAt).format('YYYY-MM-DD HH:mm') }}
+                        </time>
+                      </div>
+                    </div>
+                  </li>
+                </ol>
+                <div
+                  v-if="group.events.length > 4"
+                  class="reprocess-task-group__more"
+                >
+                  还有 {{ group.events.length - 4 }} 条事件未展开
                 </div>
-              </li>
-            </ol>
-          </div>
-          <div v-if="preview.blockedEvents.length" class="reprocess-blocked">
-            <el-icon :size="17"><i-lucide-circle-x /></el-icon>
-            <div>
-              <strong>{{ preview.message || '存在不可提交的异常事件' }}</strong>
-              <span v-for="item in preview.blockedEvents" :key="item.eventId">
-                {{ item.sourceTable || '所选记录' }}{{ item.targetTable ? ` → ${item.targetTable}` : '' }}：{{ item.message }}
-              </span>
+              </section>
+            </div>
+
+            <div v-if="preview.blockedEvents.length" class="reprocess-blocked">
+              <div class="reprocess-blocked__heading">
+                <div>
+                  <strong>暂不可提交</strong>
+                  <span>这些事件不会被提交</span>
+                </div>
+                <em>{{ preview.blockedEvents.length }} 条</em>
+              </div>
+              <ul>
+                <li v-for="item in preview.blockedEvents" :key="item.eventId">
+                  <strong>
+                    {{ item.sourceTable || '所选记录' }}{{
+                      item.targetTable ? ` → ${item.targetTable}` : ''
+                    }}
+                  </strong>
+                  <span>{{ item.message }}</span>
+                </li>
+              </ul>
             </div>
           </div>
         </template>
+        <div v-else-if="previewLoading" class="reprocess-dialog__loading">
+          <el-skeleton :rows="5" animated />
+        </div>
       </div>
       <template #footer>
-        <el-button @click="previewVisible = false">取消</el-button>
-        <el-button
-          type="primary"
-          :loading="submitting"
-          :disabled="!preview?.canSubmit"
-          @click="submitRecovery"
-          >确认重处理{{ preview?.orderedEvents.length ? ` ${preview.orderedEvents.length} 条` : '' }}</el-button
-        >
+        <div class="reprocess-dialog__footer">
+          <span v-if="preview" class="reprocess-dialog__footer-hint">
+            {{ preview.canSubmit ? '确认后将按顺序提交这些事件' : '请先移除不可提交的事件' }}
+          </span>
+          <div class="reprocess-dialog__footer-actions">
+            <el-button @click="previewVisible = false">取消</el-button>
+            <el-button
+              type="primary"
+              :loading="submitting"
+              :disabled="!preview?.canSubmit"
+              @click="submitRecovery"
+            >
+              确认重处理{{ preview?.orderedEvents.length ? ` ${preview.orderedEvents.length} 条` : '' }}
+            </el-button>
+          </div>
+        </div>
       </template>
     </el-dialog>
 
@@ -864,6 +1070,12 @@ onUnmounted(() => {
 .exception-detail__header {
   padding-right: 24px;
 }
+:global(.exception-detail-drawer .el-drawer__header) {
+  align-items: flex-start;
+}
+:global(.exception-detail-drawer .el-drawer__close-btn) {
+  margin-top: 2px;
+}
 .exception-detail__title {
   color: var(--detail-heading, #111827);
   font-size: 20px;
@@ -885,11 +1097,11 @@ onUnmounted(() => {
   border-top: 1px solid var(--detail-border, #e5e7eb);
 }
 .exception-detail h4 {
-  margin: 4px 0 0;
+  margin: 0;
   color: var(--detail-heading, #111827);
-  font-size: 16px;
-  font-weight: 650;
-  letter-spacing: -0.01em;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
   line-height: 24px;
 }
 .detail-section-heading {
@@ -897,15 +1109,13 @@ onUnmounted(() => {
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 
-  &__eyebrow {
-    color: var(--detail-muted, #7b8494);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.09em;
-    line-height: 16px;
-    text-transform: uppercase;
+  &__aside {
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+    gap: 6px;
   }
 
   &__meta {
@@ -919,8 +1129,6 @@ onUnmounted(() => {
 }
 .event-context {
   background: transparent;
-  border-top: 1px solid var(--detail-border, #e5e7eb);
-  border-bottom: 1px solid var(--detail-border, #e5e7eb);
 
   &__task span,
   &__endpoint span,
@@ -935,8 +1143,7 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 16px 0;
-    border-bottom: 1px solid var(--detail-border, #e5e7eb);
+    padding: 0;
 
     .el-icon {
       display: grid;
@@ -969,8 +1176,8 @@ onUnmounted(() => {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1fr);
     align-items: center;
-    padding: 18px 0;
-    border-bottom: 1px solid var(--detail-border, #e5e7eb);
+    margin-top: 18px;
+    padding: 0;
   }
 
   &__endpoint {
@@ -997,11 +1204,13 @@ onUnmounted(() => {
   &__meta {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    margin: 0;
+    margin: 18px 0 0;
+    padding-top: 18px;
+    border-top: 1px solid var(--detail-border, #e5e7eb);
 
     div {
       min-width: 0;
-      padding: 16px 0;
+      padding: 0;
     }
 
     dt,
@@ -1026,12 +1235,16 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   margin: 0;
-  column-gap: 28px;
+  gap: 0 28px;
+  margin-top: 24px;
 
   div {
     min-width: 0;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--detail-border, #e5e7eb);
+    padding: 0 0 14px;
+
+    &:nth-child(n + 3) {
+      padding-top: 14px;
+    }
   }
 
   dt,
@@ -1063,7 +1276,7 @@ onUnmounted(() => {
   line-height: 18px;
 }
 .detail-event-keys {
-  margin-top: 20px;
+  margin-top: 2px;
 }
 .detail-warning {
   padding: 4px 8px;
@@ -1074,44 +1287,87 @@ onUnmounted(() => {
   border: 1px solid var(--el-color-warning-light-7);
   border-radius: 6px;
 }
+:global(.el-dialog.reprocess-modal) {
+  overflow: hidden;
+  border-radius: 16px;
+}
 .reprocess-dialog {
+  color: var(--text-dark);
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h3 {
+      color: #111827;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 28px;
+    }
+
+    p {
+      margin-top: 4px;
+      color: #667085;
+      font-size: 13px;
+      line-height: 20px;
+    }
+  }
+
+  &__header-count {
+    flex: none;
+    padding-top: 4px;
+    color: #667085;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    line-height: 18px;
+  }
+
   &__notice {
     display: flex;
     align-items: flex-start;
-    gap: 8px;
-    padding: 10px 12px;
-    color: var(--el-color-warning-dark-2);
+    gap: 9px;
+    padding: 11px 13px;
+    color: #8a5a16;
     font-size: 13px;
     line-height: 20px;
-    background: var(--el-color-warning-light-9);
-    border: 1px solid var(--el-color-warning-light-7);
+    background: #fffbeb;
+    border: 1px solid #f5dfad;
     border-radius: 10px;
 
     .el-icon {
       flex: none;
       margin-top: 2px;
     }
+
+    p {
+      margin: 0;
+    }
   }
 
   &__summary {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 132px;
-    margin-top: 18px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 16px;
     overflow: hidden;
-    border: 1px solid var(--el-border-color-light);
+    background: #f8fafc;
+    border: 1px solid #eaecf0;
     border-radius: 12px;
+  }
 
-    div {
-      display: flex;
-      min-width: 0;
-      flex-direction: column;
-      gap: 4px;
-      padding: 13px 16px;
-
-      + div {
-        border-left: 1px solid var(--el-border-color-light);
-      }
-    }
+  &__summary-item {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 4px;
+    padding: 13px 16px 14px;
 
     span {
       color: #667085;
@@ -1121,17 +1377,21 @@ onUnmounted(() => {
 
     strong {
       overflow-wrap: anywhere;
-      color: var(--text-dark);
-      font-size: 14px;
+      color: #111827;
+      font-size: 17px;
       font-weight: 600;
-      line-height: 20px;
+      line-height: 24px;
     }
 
     small {
-      color: #7b8494;
+      color: #667085;
       font-size: 12px;
       font-weight: 500;
     }
+  }
+
+  &__summary-copy {
+    font-size: 14px !important;
   }
 
   &__list-heading {
@@ -1139,122 +1399,326 @@ onUnmounted(() => {
     align-items: flex-end;
     justify-content: space-between;
     gap: 16px;
-    margin: 22px 2px 9px;
+    margin: 24px 1px 10px;
 
-    div {
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
+    h4,
+    p {
+      margin: 0;
     }
 
-    span:first-child {
-      color: var(--text-dark);
-      font-size: 13px;
+    h4 {
+      color: #111827;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 22px;
+    }
+
+    p,
+    > span {
+      color: #667085;
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    p {
+      margin-top: 2px;
+    }
+
+    > span {
+      flex: none;
+      padding-bottom: 2px;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  &__loading {
+    padding: 4px 0;
+  }
+}
+.reprocess-task-groups {
+  display: flex;
+  max-height: 390px;
+  flex-direction: column;
+  gap: 12px;
+  overflow: auto;
+  padding: 1px 2px 1px 1px;
+}
+.reprocess-task-group {
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e4e7ec;
+  border-radius: 12px;
+
+  &__header {
+    padding: 13px 15px;
+    background: #f8fafc;
+    border-bottom: 1px solid #eef0f3;
+  }
+
+  &__identity {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  }
+
+  &__index,
+  &__event-index {
+    display: grid;
+    flex: none;
+    place-items: center;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__index {
+    width: 28px;
+    height: 28px;
+    color: #4f46e5;
+    font-size: 11px;
+    font-weight: 600;
+    background: #eef2ff;
+    border-radius: 8px;
+  }
+
+  &__identity > div {
+    min-width: 0;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+
+    h5,
+    span {
+      margin: 0;
+    }
+
+    h5 {
+      overflow-wrap: anywhere;
+      color: #111827;
+      font-size: 14px;
       font-weight: 600;
       line-height: 20px;
     }
 
-    small,
-    > span {
-      color: #7b8494;
+    span {
+      padding: 1px 6px;
+      color: #667085;
       font-size: 11px;
-      line-height: 16px;
-      letter-spacing: 0.04em;
+      line-height: 17px;
+      background: #fff;
+      border: 1px solid #e4e7ec;
+      border-radius: 999px;
     }
   }
-}
-.reprocess-event-list {
-  max-height: 232px;
-  margin: 0;
-  padding: 0;
-  overflow: auto;
-  list-style: none;
-  border: 1px solid var(--el-border-color-light);
-  border-radius: 12px;
 
-  li {
+  &__identity p {
+    margin: 3px 0 0;
+    color: #667085;
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  &__events {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__event {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 11px 14px;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 12px 15px;
 
     + li {
-      border-top: 1px solid var(--el-border-color-light);
+      border-top: 1px solid #f0f2f5;
     }
   }
 
-  &__index {
-    display: grid;
-    flex: none;
-    width: 26px;
-    height: 26px;
-    color: var(--el-color-primary);
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 11px;
+  &__event-index {
+    width: 24px;
+    height: 24px;
+    margin-top: 1px;
+    color: #98a2b3;
+    font-size: 10px;
     font-weight: 600;
-    background: var(--el-color-primary-light-9);
-    border-radius: 8px;
-    place-items: center;
+    background: #f8fafc;
+    border: 1px solid #eaecf0;
+    border-radius: 7px;
   }
 
-  div {
-    display: flex;
+  &__event-body {
     min-width: 0;
-    flex-direction: column;
-    gap: 2px;
   }
 
-  strong {
-    overflow-wrap: anywhere;
-    color: var(--text-dark);
+  &__route {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px;
+    color: #667085;
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 12px;
-    font-weight: 500;
     line-height: 18px;
+
+    strong {
+      overflow-wrap: anywhere;
+      color: #1f2937;
+      font-weight: 500;
+    }
   }
 
-  time {
-    color: #7b8494;
+  &__event-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 9px;
+    margin-top: 5px;
+    color: #667085;
     font-size: 12px;
     line-height: 18px;
+
+    time {
+      color: #98a2b3;
+    }
+  }
+
+  &__error-code {
+    overflow-wrap: anywhere;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  &__more {
+    padding: 9px 15px 11px;
+    color: #667085;
+    font-size: 12px;
+    line-height: 18px;
+    background: #fcfcfd;
+    border-top: 1px solid #f0f2f5;
+  }
+}
+.reprocess-dml {
+  display: inline-flex;
+  min-width: 20px;
+  justify-content: center;
+  padding: 0 4px;
+  color: #475467;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 17px;
+  background: #f2f4f7;
+  border: 1px solid #eaecf0;
+  border-radius: 5px;
+
+  &.is-i {
+    color: #16803c;
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+  }
+
+  &.is-u {
+    color: #4338ca;
+    background: #eef2ff;
+    border-color: #c7d2fe;
+  }
+
+  &.is-d {
+    color: #c2410c;
+    background: #fff7ed;
+    border-color: #fed7aa;
   }
 }
 .reprocess-blocked {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
   margin-top: 16px;
-  padding: 11px 12px;
-  color: var(--el-color-danger-dark-2);
-  background: var(--el-color-danger-light-9);
-  border: 1px solid var(--el-color-danger-light-7);
+  padding: 12px 14px;
+  color: #b42318;
+  background: #fff7f7;
+  border: 1px solid #fecdca;
   border-radius: 10px;
 
-  .el-icon {
-    flex: none;
-    margin-top: 2px;
+  &__heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+
+    div {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    strong,
+    span,
+    em {
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    strong {
+      font-weight: 600;
+    }
+
+    span,
+    em {
+      color: #b42318;
+      opacity: 0.76;
+    }
+
+    em {
+      flex: none;
+      font-style: normal;
+      font-variant-numeric: tabular-nums;
+    }
   }
 
-  div {
+  ul {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 5px;
+    margin: 9px 0 0;
+    padding: 9px 0 0 16px;
+    border-top: 1px solid #fecdca;
   }
 
-  strong,
-  span {
+  li {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 1px;
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  li strong {
     overflow-wrap: anywhere;
-    font-size: 13px;
-    line-height: 20px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-weight: 500;
   }
 
-  strong {
-    font-weight: 600;
+  li span {
+    opacity: 0.76;
   }
-
-  span {
-    opacity: 0.85;
-  }
+}
+.reprocess-dialog__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.reprocess-dialog__footer-hint {
+  color: #667085;
+  font-size: 12px;
+  line-height: 18px;
+}
+.reprocess-dialog__footer-actions {
+  display: flex;
+  flex: none;
+  gap: 8px;
 }
 .detail-code {
   max-height: 220px;
@@ -1274,6 +1738,69 @@ onUnmounted(() => {
   max-height: 160px;
   color: #344054;
   font-size: 13px;
+  background: #f8fafc;
+  border-color: transparent;
+}
+.recovery-drawer__content {
+  color: var(--detail-heading, #111827);
+}
+.recovery-drawer__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.recovery-drawer__context {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  padding: 16px 0;
+  border-top: 1px solid var(--detail-border, #e5e7eb);
+  border-bottom: 1px solid var(--detail-border, #e5e7eb);
+
+  div {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  span {
+    color: var(--detail-label, #475467);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 18px;
+  }
+
+  strong {
+    overflow-wrap: anywhere;
+    color: var(--text-dark);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+}
+.recovery-drawer__heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 28px 0 16px;
+
+  h4 {
+    margin: 0;
+    color: var(--detail-heading, #111827);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 24px;
+  }
+
+  span {
+    color: var(--detail-muted, #7b8494);
+    font-size: 12px;
+    line-height: 18px;
+  }
 }
 .exception-event-task-link {
   display: inline-flex;
@@ -1337,6 +1864,10 @@ onUnmounted(() => {
       padding-top: 0;
       text-align: left;
     }
+
+    &__aside {
+      align-items: flex-start;
+    }
   }
 
   .event-context {
@@ -1354,8 +1885,9 @@ onUnmounted(() => {
     column-gap: 0;
   }
 
-  .reprocess-dialog__summary {
-    grid-template-columns: minmax(0, 1fr) 104px;
+  .recovery-drawer__context {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   .exception-event-filters {
@@ -1364,6 +1896,57 @@ onUnmounted(() => {
 
     :deep(.filter-form) {
       flex: 1 0 auto;
+    }
+  }
+}
+@media (max-width: 600px) {
+  .reprocess-dialog {
+    &__header {
+      h3 {
+        font-size: 18px;
+        line-height: 26px;
+      }
+    }
+
+    &__header-count {
+      display: none;
+    }
+
+    &__summary {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    &__summary-item:last-child {
+      grid-column: 1 / -1;
+    }
+
+    &__list-heading {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    &__footer {
+      align-items: stretch;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    &__footer-actions {
+      justify-content: flex-end;
+    }
+  }
+
+  .reprocess-task-group {
+    &__event {
+      gap: 9px;
+      padding-right: 12px;
+      padding-left: 12px;
+    }
+
+    &__header {
+      padding-right: 12px;
+      padding-left: 12px;
     }
   }
 }

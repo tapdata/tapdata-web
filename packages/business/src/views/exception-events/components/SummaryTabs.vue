@@ -51,32 +51,53 @@ const items: Array<{
 <style scoped lang="scss">
 .exception-summary-tabs {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 2px;
   overflow-x: auto;
-  padding-bottom: 4px;
+  padding: 0 2px;
+  border-bottom: 1px solid #eaecf0;
 }
 .exception-summary-tab {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   min-width: max-content;
-  padding: 8px 12px;
-  color: var(--text-slight);
-  background: var(--bg-disable, #f7f8fa);
-  border: 1px solid transparent;
-  border-radius: 8px;
+  height: 38px;
+  padding: 0 12px;
+  color: #667085;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 6px 6px 0 0;
   cursor: pointer;
-  strong {
-    color: var(--text-dark);
-    font-size: 16px;
-    font-variant-numeric: tabular-nums;
+
+  &:hover {
+    color: #344054;
+    background: #f8fafc;
   }
+
+  strong {
+    display: inline-grid;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    color: #667085;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    line-height: 20px;
+    background: #f2f4f7;
+    border-radius: 999px;
+    place-items: center;
+  }
+
   &.is-active {
-    color: var(--color-primary);
-    background: rgba(43, 126, 255, 0.08);
-    border-color: rgba(43, 126, 255, 0.2);
+    color: #344054;
+    border-bottom-color: var(--color-primary);
+
     strong {
       color: var(--color-primary);
+      background: var(--el-color-primary-light-9);
     }
   }
 }
