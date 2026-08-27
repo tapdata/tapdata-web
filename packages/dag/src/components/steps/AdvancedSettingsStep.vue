@@ -1127,6 +1127,12 @@ export default defineComponent({
                           ),
                           value: 'SkipData',
                         },
+                        {
+                          label: i18n.t(
+                            'packages_dag_migration_settingpanel_route_to_dlq',
+                          ),
+                          value: 'DLQ',
+                        },
                       ],
                     },
                     limitMode: {

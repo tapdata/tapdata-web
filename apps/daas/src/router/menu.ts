@@ -55,7 +55,6 @@ export const MENU = [
     code: 'v2_data_check',
     parent: 'dataVerification',
   },
-
   {
     name: 'advancedFeatures',
     label: 'page_title_advanced_features',
@@ -63,6 +62,11 @@ export const MENU = [
     group: 'bottom',
     code: 'v2_advanced_features',
     children: [
+      {
+        name: 'exceptionEventsList',
+        code: 'v2_exception_events',
+        parent: 'exceptionEvents',
+      },
       {
         name: 'sharedCacheList',
         code: 'v2_shared_cache',

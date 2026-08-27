@@ -702,6 +702,8 @@ export default {
     '跳过事件超过阈值时停止任务',
   packages_dag_migration_settingpanel_tiaoguoyichangshi:
     '跳过异常事件，任务继续运行',
+  packages_dag_migration_settingpanel_route_to_dlq:
+    '隔离确定性异常到异常事件（DLQ），任务继续运行',
   packages_dag_migration_settingpanel_dangdanbiaotongbu: '事件处理出现异常时',
   packages_dag_migration_settingpanel_anzhaomorenzhong:
     '按照默认重试逻辑进行重试',

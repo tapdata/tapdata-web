@@ -20,6 +20,7 @@ export default {
   page_title_run_monitor: '运行监控',
   page_title_data_develop: '数据转换',
   page_title_data_verify: '数据校验',
+  page_title_exception_events: '异常事件',
   page_title_data_difference_details: '差异详情',
   page_title_data_verification_result: '校验结果',
   page_title_diff_verification_history: '差异校验历史',

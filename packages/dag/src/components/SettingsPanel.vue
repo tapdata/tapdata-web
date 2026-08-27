@@ -1040,6 +1040,12 @@ const schema = {
                                 },
                                 {
                                   label: t(
+                                    'packages_dag_migration_settingpanel_route_to_dlq',
+                                  ),
+                                  value: 'DLQ',
+                                },
+                                {
+                                  label: t(
                                     'packages_dag_SkipTableForMigrateSnapshot',
                                   ),
                                   value: 'SkipTableForMigrateSnapshot',

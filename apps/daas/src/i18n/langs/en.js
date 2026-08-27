@@ -20,6 +20,7 @@ export default {
   page_title_run_monitor: 'Run Monitoring',
   page_title_data_develop: 'Data Transformation',
   page_title_data_verify: 'Data Validation',
+  page_title_exception_events: 'Exception Events',
   page_title_data_difference_details: 'Difference Details',
   page_title_data_verification_result: 'Verification Result',
   page_title_diff_verification_history: 'Diff verification history',

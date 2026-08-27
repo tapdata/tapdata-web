@@ -820,6 +820,8 @@ export default {
     'Stop task when skip event exceeds threshold',
   packages_dag_migration_settingpanel_tiaoguoyichangshi:
     'Skip abnormal events, the task continues to run',
+  packages_dag_migration_settingpanel_route_to_dlq:
+    'Route deterministic record errors to Exception Events (DLQ) and continue the task',
   packages_dag_migration_settingpanel_dangdanbiaotongbu:
     'When the event processing is abnormal',
   packages_dag_migration_settingpanel_anzhaomorenzhong:

@@ -34,6 +34,9 @@ const VerificationHistory = () =>
 const VerificationResult = () =>
   import('@tap/business/src/views/verification/Result.vue')
 
+const ExceptionEvents = () =>
+  import('@tap/business/src/views/exception-events/List.vue')
+
 //告警设置
 const AlarmSetting = () =>
   import('@tap/business/src/views/setting/AlarmSetting.vue')
@@ -416,6 +419,25 @@ export const routes = [
         meta: {
           title: 'page_title_data_verification_result',
           code: 'v2_data_check_result',
+        },
+      },
+    ],
+  },
+
+  {
+    path: '/exception-events',
+    name: 'exceptionEvents',
+    component: Layout,
+    redirect: { name: 'exceptionEventsList' },
+    meta: { title: 'page_title_exception_events' },
+    children: [
+      {
+        path: '',
+        name: 'exceptionEventsList',
+        component: ExceptionEvents,
+        meta: {
+          hideTitle: true,
+          title: 'page_title_exception_events',
         },
       },
     ],

@@ -675,6 +675,8 @@ export default {
     '跳過事件超過閾值時停止任務',
   packages_dag_migration_settingpanel_tiaoguoyichangshi:
     '跳過異常事件，任務繼續運行',
+  packages_dag_migration_settingpanel_route_to_dlq:
+    '隔離確定性異常至異常事件（DLQ），任務繼續運行',
   packages_dag_migration_settingpanel_dangdanbiaotongbu: '事件處理出現異常時',
   packages_dag_migration_settingpanel_anzhaomorenzhong:
     '按照默認重試邏輯進行重試',
