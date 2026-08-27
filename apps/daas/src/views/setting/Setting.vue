@@ -20,7 +20,6 @@ import { TextFileReader } from '@tap/form/src/components/text-file-reader'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 import Cookie from '@tap/shared/src/cookie'
 import { setSettings } from '@tap/shared/src/settings'
-import Time from '@tap/shared/src/time'
 import { downloadJson } from '@tap/shared/src/util'
 import { find, uniq } from 'lodash-es'
 import i18n from '@/i18n'
@@ -95,6 +94,7 @@ export default {
       email: '',
       filterCategory: import.meta.env.VUE_APP_HIDE_SETTINGS_CATEGORY,
       adTesting: false,
+      emailTesting: false,
       appearanceForm: {},
       colorEnum: ['red', 'orange', 'yellow', 'blue', 'green', 'purple'],
       formItems: [],
@@ -334,29 +334,27 @@ export default {
     },
     // 连接测试
     connectAndTest() {
-      const lastTime = localStorage.getItem('Tapdata_settings_email_countdown')
-      const now = Time.now()
-      const duration = Math.floor((now - lastTime) / 1000)
-      if (lastTime && duration < 60) {
-        this.$message.success(
-          `${this.$t('setting_test_email_countdown')}(${60 - duration}s)`,
-        )
+      if (this.emailTesting) {
         return
       }
+
+      this.emailTesting = true
       const params = {
         ...this.SMTP,
         title: `Tapdata Notification:`,
         text: 'This is a test email',
       }
-      testEmail(params).then((data) => {
-        localStorage.setItem('Tapdata_settings_email_countdown', now)
-
-        if (data?.result) {
-          this.$message.success(this.$t('setting_test_email_success'))
-        } else {
-          showErrorMessage(data)
-        }
-      })
+      testEmail(params)
+        .then((data) => {
+          if (data?.result) {
+            this.$message.success(this.$t('setting_test_email_success'))
+          } else {
+            showErrorMessage(data)
+          }
+        })
+        .finally(() => {
+          this.emailTesting = false
+        })
     },
 
     testLdap() {
@@ -793,7 +791,7 @@ export default {
           <el-button @click="checkTemplate">{{
             $t('setting_email_template')
           }}</el-button>
-          <el-button @click="connectAndTest">{{
+          <el-button :loading="emailTesting" @click="connectAndTest">{{
             $t('public_connection_button_test')
           }}</el-button>
         </template>
