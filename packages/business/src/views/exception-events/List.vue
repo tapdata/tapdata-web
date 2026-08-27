@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import {
   fetchDqlEventDetail,
-  fetchDqlEventSummary,
   fetchDqlEvents,
+  fetchDqlEventSummary,
   previewDqlRecovery,
   startDqlRecovery,
   type DqlEvent,
   type DqlEventDetail,
-  type DqlRecoveryAttempt,
+  type DqlEventQueryParams,
   type DqlEventStatus,
+  type DqlRecoveryAttempt,
   type DqlRecoveryPreview,
+  type DqlTaskSyncType,
 } from '@tap/api/src/core/dql-event'
+import { getTaskById } from '@tap/api/src/core/task'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import dayjs from 'dayjs'
 import { ElMessage } from 'element-plus'
@@ -29,7 +32,7 @@ import {
 } from './mock'
 
 const isMockMode =
-  import.meta.env.DEV && import.meta.env.VITE_DQL_EVENT_API !== 'true'
+  import.meta.env.DEV && import.meta.env.VITE_DQL_EVENT_API === 'mock'
 const route = useRoute()
 const router = useRouter()
 const table = ref<InstanceType<typeof TablePage>>()
@@ -49,9 +52,22 @@ let refreshTimer: ReturnType<typeof setInterval> | undefined
 let detailRefreshTimer: ReturnType<typeof setInterval> | undefined
 let recoveryRefreshTimer: ReturnType<typeof setInterval> | undefined
 
-const filters = ref({
+interface DqlEventFilters {
+  keyword: string
+  taskId: string
+  taskName: string
+  sourceTable: string
+  targetTable: string
+  dmlType: '' | 'I' | 'U' | 'D'
+  errorType: '' | DqlEventQueryParams['errorType']
+  startTime: string
+  endTime: string
+}
+
+const filters = ref<DqlEventFilters>({
   keyword: '',
   taskId: '',
+  taskName: '',
   sourceTable: '',
   targetTable: '',
   dmlType: '',
@@ -71,14 +87,9 @@ const summary = ref({
 const filterItems = [
   { placeholder: '任务或错误码', key: 'keyword', type: 'input' },
   {
-    label: '任务',
-    key: 'taskId',
-    type: 'select-inner',
-    items: [
-      { label: '订单同步', value: 'task-orders' },
-      { label: '库存同步', value: 'task-inventory' },
-      { label: '会员数据同步', value: 'task-members' },
-    ],
+    placeholder: '任务名称',
+    key: 'taskName',
+    type: 'input',
   },
   {
     label: 'DML',
@@ -99,6 +110,7 @@ const filterItems = [
       { label: '转换失败', value: 'TRANSFORM_ERROR' },
       { label: '不可处理记录', value: 'POISON_RECORD' },
       { label: '格式错误', value: 'MALFORMED_RECORD' },
+      { label: '未知记录错误', value: 'UNKNOWN_RECORD_ERROR' },
     ],
   },
 ]
@@ -121,19 +133,24 @@ const failedTimeRange = computed({
     filters.value.endTime = value?.[1] || ''
   },
 })
-const canReprocess = (event: DqlEvent) =>
+const canReprocess = (event: any) =>
   ['PENDING', 'RECOVERY_FAILED'].includes(event.status)
-const hasRecoveryHistory = (event: DqlEvent) =>
+const hasRecoveryHistory = (event: any) =>
   event.status === 'REPROCESSING' || event.recoveryCount > 0
-const selectable = (event: DqlEvent) => canReprocess(event)
+const selectedTaskId = computed(() => selectedRows.value[0]?.taskId)
+const selectable = (event: DqlEvent) =>
+  canReprocess(event) &&
+  (!selectedTaskId.value || selectedTaskId.value === event.taskId)
 const recoveryAttemptMeta = (result: DqlRecoveryAttempt['result']) =>
-  ({
-    RUNNING: { label: '处理中', type: 'primary' },
-    SUCCESS: { label: '处理成功', type: 'success' },
-    FAILED: { label: '处理失败', type: 'danger' },
-    SKIPPED: { label: '已跳过', type: 'info' },
-    TIMEOUT: { label: '处理超时', type: 'warning' },
-  })[result]
+  (
+    {
+      RUNNING: { label: '处理中', type: 'primary' },
+      SUCCESS: { label: '处理成功', type: 'success' },
+      FAILED: { label: '处理失败', type: 'danger' },
+      SKIPPED: { label: '已跳过', type: 'info' },
+      TIMEOUT: { label: '处理超时', type: 'warning' },
+    } as const
+  )[result]
 const recoveryView = {
   title: '处理记录',
   sectionTitle: '处理记录',
@@ -147,7 +164,10 @@ const recoveryAttempts = computed(() => {
   const runningIndex = attempts.findIndex((item) => item.result === 'RUNNING')
   if (runningIndex <= 0) return attempts
 
-  const [running] = attempts.splice(runningIndex, 1)
+  const running = attempts[runningIndex]
+  if (!running) return attempts
+
+  attempts.splice(runningIndex, 1)
   attempts.unshift(running)
   return attempts
 })
@@ -159,34 +179,36 @@ const errorTypeLabel = (type: DqlEvent['errorType']) =>
     TARGET_WRITE_ERROR: '目标写入失败',
     UNKNOWN_RECORD_ERROR: '未知记录错误',
   })[type]
-const syncTypeLabel = (syncType: DqlEvent['syncType']) =>
-  ({ migrate: '复制任务', sync: '转换任务' })[syncType] || '数据任务'
 const formatKeyValue = (value: unknown) => {
   if (value === null) return 'null'
   if (value === undefined) return '-'
   if (typeof value === 'object') return JSON.stringify(value)
   return String(value)
 }
-const formatEventKeys = (keys: DqlEventDetail['eventKeys']) =>
-  [...(keys || [])]
-    .sort((a, b) => {
-      const priority = { PRIMARY_KEY: 0, UNIQUE_INDEX: 1 }
-      return (priority[a.type] ?? 2) - (priority[b.type] ?? 2)
-    })
-    .map(({ values }) =>
-      Object.entries(values || {})
+const formatEventKey = (eventKey?: string) => {
+  if (!eventKey) return '-'
+
+  try {
+    const values = JSON.parse(eventKey)
+    if (!values || typeof values !== 'object' || Array.isArray(values)) {
+      return String(eventKey)
+    }
+
+    return (
+      Object.entries(values)
         .map(([key, value]) => [key, formatKeyValue(value)].join('='))
-        .join('\n'),
+        .join('\n') || '-'
     )
-    .filter(Boolean)
-    .join('\n\n') || '-'
+  } catch {
+    return eventKey
+  }
+}
 const previewTaskGroups = computed(() => {
   const groups = new Map<
     string,
     {
       taskId: string
       taskName: string
-      syncType: DqlEvent['syncType']
       events: DqlEvent[]
     }
   >()
@@ -200,7 +222,6 @@ const previewTaskGroups = computed(() => {
       groups.set(event.taskId, {
         taskId: event.taskId,
         taskName: event.taskName,
-        syncType: event.syncType,
         events: [event],
       })
     }
@@ -218,15 +239,18 @@ const previewTaskGroups = computed(() => {
   }))
 })
 
+const getQueryFilters = (): DqlEventQueryParams =>
+  Object.fromEntries(
+    Object.entries(filters.value).filter(([, value]) => value !== ''),
+  ) as DqlEventQueryParams
+
 const getList = async ({
   page,
 }: {
   page: { current: number; size: number }
 }) => {
   const params = {
-    ...Object.fromEntries(
-      Object.entries(filters.value).filter(([, value]) => value !== ''),
-    ),
+    ...getQueryFilters(),
     status: status.value,
     skip: (page.current - 1) * page.size,
     limit: page.size,
@@ -240,8 +264,8 @@ const getList = async ({
 
 const refreshSummary = async () => {
   summary.value = isMockMode
-    ? await fetchMockDqlSummary(filters.value)
-    : await fetchDqlEventSummary(filters.value)
+    ? await fetchMockDqlSummary(getQueryFilters())
+    : await fetchDqlEventSummary(getQueryFilters())
 }
 
 const refresh = (passive = false) => {
@@ -265,6 +289,10 @@ const handleFilterFetch = () => {
   refresh()
 }
 
+const updateFilterBarValue = (value: Partial<DqlEventFilters>) => {
+  filters.value = { ...filters.value, ...value }
+}
+
 const clearAdvancedFilters = () => {
   filters.value.sourceTable = ''
   filters.value.targetTable = ''
@@ -274,6 +302,12 @@ const clearAdvancedFilters = () => {
 }
 
 const handleSelectionChange = (rows: DqlEvent[]) => {
+  if (rows.length > 1 && new Set(rows.map((item) => item.taskId)).size > 1) {
+    ElMessage.warning('一次重处理只能选择同一任务下的异常事件')
+    table.value?.clearSelection()
+    selectedRows.value = []
+    return
+  }
   selectedRows.value = rows
 }
 
@@ -332,27 +366,62 @@ const refreshRecovery = async (eventId?: string, passive = false) => {
   else stopRecoveryPolling()
 }
 
-const openDetail = async (event: DqlEvent) => {
+// TablePage exposes untyped DefaultRow values through its slots; these handlers
+// are the runtime boundary where the DQL row contract is consumed.
+const openDetail = async (event: any) => {
   detailVisible.value = true
   detail.value = undefined
   await refreshDetail(event.eventId)
 }
 
-const openRecovery = async (event: DqlEvent) => {
+const openRecovery = async (event: any) => {
   recoveryVisible.value = true
   recoveryDetail.value = undefined
   await refreshRecovery(event.eventId)
 }
 
-const openTaskMonitor = (event: DqlEvent) => {
+const taskSyncTypeCache = new Map<string, DqlTaskSyncType>()
+
+const resolveTaskSyncType = async (event: DqlEvent) => {
+  if (event.syncType) return event.syncType
+
+  const cached = taskSyncTypeCache.get(event.taskId)
+  if (cached) return cached
+
+  const task = await getTaskById(event.taskId, {
+    fields: JSON.stringify({ syncType: true }),
+  })
+  const syncType = task?.syncType as DqlTaskSyncType | undefined
+  if (syncType) taskSyncTypeCache.set(event.taskId, syncType)
+  return syncType
+}
+
+const openTaskMonitor = async (event: any) => {
+  let syncType: DqlTaskSyncType | undefined
+  try {
+    syncType = await resolveTaskSyncType(event)
+  } catch {
+    ElMessage.error('获取任务类型失败，暂时无法打开任务监控')
+    return
+  }
+
+  if (!syncType) {
+    ElMessage.warning('任务类型缺失，暂时无法打开任务监控')
+    return
+  }
+
   router.push({
-    name: event.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor',
+    name: syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor',
     params: { id: event.taskId },
   })
 }
 
-const openPreview = async (events: DqlEvent[]) => {
+const openPreview = async (events: any[]) => {
   if (!events.length) return
+  if (new Set(events.map((item) => item.taskId)).size > 1) {
+    ElMessage.warning('请只选择同一任务下的异常事件')
+    return
+  }
   previewVisible.value = true
   previewLoading.value = true
   try {
@@ -384,10 +453,14 @@ const submitRecovery = async () => {
 }
 
 onMounted(() => {
+  const routeFilters: Partial<DqlEventFilters> = {}
   Object.entries(filters.value).forEach(([key]) => {
     const value = route.query[key]
-    if (typeof value === 'string') filters.value[key as keyof typeof filters.value] = value
+    if (typeof value === 'string') {
+      routeFilters[key as keyof DqlEventFilters] = value as never
+    }
   })
+  filters.value = { ...filters.value, ...routeFilters }
   const routeStatus = route.query.status
   if (typeof routeStatus === 'string')
     status.value = routeStatus as DqlEventStatus
@@ -435,9 +508,11 @@ onUnmounted(() => {
       <template #search>
         <div class="exception-event-filters">
           <FilterBar
-            v-model:value="filters"
+            :value="filters"
             :items="filterItems"
             :change-route="false"
+            @update:value="updateFilterBarValue"
+            @search="handleFilterFetch"
             @fetch="handleFilterFetch"
           />
           <el-popover placement="bottom-start" :width="360" trigger="click">
@@ -695,7 +770,7 @@ onUnmounted(() => {
             </dl>
             <div class="detail-event-keys">
               <div class="detail-field-label">业务键</div>
-              <pre class="detail-code detail-key-values">{{ formatEventKeys(detail.eventKeys) }}</pre>
+              <pre class="detail-code detail-key-values">{{ formatEventKey(detail.eventKey) }}</pre>
             </div>
           </section>
           <section class="detail-section">
@@ -891,7 +966,6 @@ onUnmounted(() => {
                     <div>
                       <div class="reprocess-task-group__title">
                         <h5>{{ group.taskName }}</h5>
-                        <span>{{ syncTypeLabel(group.syncType) }}</span>
                       </div>
                       <p>
                         {{ group.routes.length }} 条数据链路 · {{ group.events.length }} 条事件

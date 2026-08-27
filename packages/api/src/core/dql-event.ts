@@ -18,6 +18,8 @@ export type DqlErrorType =
 
 export type DqlTaskSyncType = 'migrate' | 'sync'
 
+export type DqlRecoveryMode = 'AUTO'
+
 export type DqlRecoveryBatchStatus =
   | 'CREATED'
   | 'DISPATCHED'
@@ -48,7 +50,12 @@ export interface DqlEvent {
   eventId: string
   taskId: string
   taskName: string
-  syncType: DqlTaskSyncType
+  /**
+   * The TM DQL event API does not include the task sync type. Keep this
+   * optional for local fixtures and older responses; production callers
+   * should resolve it from the task API when it is needed for navigation.
+   */
+  syncType?: DqlTaskSyncType
   sourceTable: string
   targetTable: string
   dmlType: 'I' | 'U' | 'D'
@@ -79,13 +86,11 @@ export interface DqlEventDetail extends DqlEvent {
   stage?: string
   tableId?: string
   captureSeq?: number
-  eventKeys?: Array<{
-    type: 'PRIMARY_KEY' | 'UNIQUE_INDEX'
-    name?: string
-    values: Record<string, unknown>
-  }>
+  /** Canonical JSON string returned by TM's DQL event detail endpoint. */
+  eventKey?: string
   eventKeyMissing?: boolean
   payloadFormat?: string
+  payloadHash?: string
   payloadSize?: number
   payloadComplete?: boolean
   payloadPreview?: Record<string, unknown>
@@ -159,7 +164,7 @@ export function fetchDqlEventSummary(
 export function previewDqlRecovery(eventIds: string[]) {
   return requestClient.post<DqlRecoveryPreview>(
     `${BASE_URL}/recovery/preview`,
-    { eventIds },
+    { eventIds, mode: 'AUTO' satisfies DqlRecoveryMode },
   )
 }
 
@@ -167,5 +172,6 @@ export function startDqlRecovery(eventIds: string[]) {
   return requestClient.post<DqlRecoveryBatch>(`${BASE_URL}/recovery`, {
     eventIds,
     confirm: true,
+    mode: 'AUTO' satisfies DqlRecoveryMode,
   })
 }
