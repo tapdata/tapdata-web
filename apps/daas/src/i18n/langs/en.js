@@ -783,8 +783,6 @@ export default {
   setting_test_email_success:
     'The test email has been sent, please log in to the receiving mailbox to check it',
   setting_test_ldap_success: 'Connected to Ldap service successfully',
-  setting_test_email_countdown:
-    'The operation is too frequent, please try again later',
   setting_email_template_from: 'From',
   setting_email_template_to: 'Recipient',
   setting_email_template_subject: 'Subject',

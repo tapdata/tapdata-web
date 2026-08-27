@@ -744,7 +744,6 @@ export default {
     '当增量同步任务共享模式开启，并且无法找到一个可共享的日志，将会停止任务',
   setting_test_email_success: '测试邮件已发送，请登录接收邮箱查收',
   setting_test_ldap_success: '成功连接Ldap服务',
-  setting_test_email_countdown: '操作太频繁了，请稍后重试',
   setting_email_template_from: '发件人',
   setting_email_template_to: '收件人',
   setting_email_template_subject: '主题',
