@@ -33,3 +33,6 @@ cloud-components.d.ts
 daas-auto-imports.d.ts
 daas-components.d.ts
 
+.omx/
+/.pnpm-store/*
+

@@ -80,6 +80,11 @@ export const MENU = [
         parent: 'sharedMining',
       },
       { name: 'HeartbeatTableList', code: '', parent: 'heartbeatTable' },
+      {
+        name: 'workflowList',
+        parent: 'workflow',
+        hidden: isCommunity,
+      },
       { name: 'dataEncryption' },
       { name: 'projectManagement' },
       { name: 'dataImportExport' },

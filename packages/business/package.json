@@ -31,6 +31,7 @@
     "vue-json-pretty": "catalog:",
     "vue-json-viewer": "catalog:",
     "vue-virtual-scroller": "catalog:",
+    "vuedraggable": "catalog:",
     "vuex": "catalog:"
   }
 }

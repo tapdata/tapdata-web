@@ -67,6 +67,14 @@ const AlarmNotification = () =>
 const DataEncryptionList = () =>
   import('@tap/business/src/views/data-encryption/List.vue')
 
+const WorkflowList = () => import('@tap/business/src/views/workflow/List.vue')
+const WorkflowEditor = () =>
+  import('@tap/business/src/views/workflow/Editor.vue')
+const WorkflowRunList = () =>
+  import('@tap/business/src/views/workflow/RunList.vue')
+const WorkflowRunDetail = () =>
+  import('@tap/business/src/views/workflow/RunDetail.vue')
+
 export const routes = [
   {
     path: '/login',
@@ -601,6 +609,76 @@ export const routes = [
         meta: {
           title: 'page_title_shared_cache_edit',
           code: 'v2_shared_cache_edit',
+        },
+      },
+    ],
+  },
+
+  /* ---------- Workflow  ----------*/
+  {
+    path: '/workflow',
+    name: 'workflow',
+    component: Layout,
+    redirect: {
+      name: 'workflowList',
+    },
+    meta: {
+      title: 'page_title_workflow',
+    },
+    children: [
+      {
+        path: '',
+        name: 'workflowList',
+        component: WorkflowList,
+        meta: {
+          hideTitle: true,
+          title: 'page_title_workflow',
+          code: 'v2_advanced_features',
+        },
+      },
+      {
+        path: 'create',
+        name: 'workflowCreate',
+        component: WorkflowEditor,
+        meta: {
+          title: 'page_title_workflow_create',
+          code: 'v2_advanced_features',
+        },
+      },
+      {
+        path: 'runs',
+        name: 'workflowRunList',
+        component: WorkflowRunList,
+        meta: {
+          title: 'page_title_workflow_runs',
+          code: 'v2_advanced_features',
+        },
+      },
+      {
+        path: 'run/:runId',
+        name: 'workflowRunDetail',
+        component: WorkflowRunDetail,
+        meta: {
+          title: 'page_title_workflow_run_detail',
+          code: 'v2_advanced_features',
+        },
+      },
+      {
+        path: ':id/edit',
+        name: 'workflowEdit',
+        component: WorkflowEditor,
+        meta: {
+          title: 'page_title_workflow_edit',
+          code: 'v2_advanced_features',
+        },
+      },
+      {
+        path: ':id/runs',
+        name: 'workflowRuns',
+        component: WorkflowRunList,
+        meta: {
+          title: 'page_title_workflow_runs',
+          code: 'v2_advanced_features',
         },
       },
     ],
