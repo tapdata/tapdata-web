@@ -84,7 +84,7 @@ export default {
         )
       } else if (
         // eslint-disable-next-line
-        !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email) &&
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) &&
         !this.adEnable
       ) {
         message = this.$t('app_signIn_email_invalid')
