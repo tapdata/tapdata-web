@@ -124,6 +124,9 @@ export default {
     'Resetting task xxx will clear the task synchronization progress and the task will be executed again',
   packages_dag_dataFlow_bulk_initialize_confirm_message:
     'Resetting the task in batches will clear the task synchronization progress, and the task will be executed again',
+  packages_dag_dataFlow_dql_impact_title: 'DQL record warning',
+  packages_dag_dataFlow_dql_reset_impact_message:
+    'The current task has {count} unprocessed exception events. After resetting the task, these exception events cannot be rerun.',
   packages_dag_task_preview_status_error: 'Error',
   packages_dag_task_preview_status_edit: 'Edit',
   packages_dag_task_preview_status_wait_run: 'Scheduling',

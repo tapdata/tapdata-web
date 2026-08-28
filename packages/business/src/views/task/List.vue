@@ -6,6 +6,7 @@ import {
   batchRenewTasks,
   batchStartTasks,
   batchStopTasks,
+  checkTaskDqlImpact,
   copyTask,
   exportTasks,
   fetchTasks,
@@ -39,6 +40,10 @@ import BatchAlarmEmailDialog from './BatchAlarmEmailDialog.vue'
 import EditInfoDialog from './EditInfoDialog.vue'
 import SkipError from './SkipError.vue'
 import TaskName from './TaskName.vue'
+import {
+  confirmTaskOperation as runTaskOperationConfirmation,
+  getTaskDqlImpactMessageKey,
+} from './task-operation-impact'
 
 export default {
   name: 'List',
@@ -725,57 +730,112 @@ export default {
         })
     },
 
-    initialize(ids, item = {}, canNotList) {
+    async initialize(ids, item = {}, canNotList) {
       const msgObj = this.getConfirmMessage(
         'initialize',
         ids.length > 1,
         item.name,
       )
-      this.$confirm(msgObj.title, msgObj.msg, {}).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        this.restLoading = true
-        batchRenewTasks(ids)
-          .then((data) => {
-            this.table.fetch()
-            this.responseHandler(
-              data,
-              this.$t('public_message_operation_success'),
-              canNotList,
-            )
-          })
-          .finally(() => {
-            this.restLoading = false
-          })
-      })
-    },
-
-    del(ids, item = {}, canNotList) {
-      const msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
-      this.$confirm(msgObj.msg).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        batchDeleteTasks(ids).then((data = []) => {
-          const selected = this.multipleSelection.filter(({ id }) =>
-            ids.includes(id),
-          )
-          const { toggleRowSelection } = this.table.$refs.table
-          data.forEach((item) => {
-            const { name, permissionActions = [] } =
-              selected.find((t) => t.id === item.id) || {}
-            item.name = name
-            item.permissionActions = permissionActions
-          })
-          selected.forEach((row) => toggleRowSelection(row, false))
+      const resFlag = await this.confirmTaskOperation(
+        ids,
+        item,
+        'reset',
+        msgObj,
+      )
+      if (!resFlag) {
+        return
+      }
+      this.restLoading = true
+      batchRenewTasks(ids)
+        .then((data) => {
           this.table.fetch()
-          this.responseDelHandler(
+          this.responseHandler(
             data,
-            this.$t('public_message_delete_ok'),
+            this.$t('public_message_operation_success'),
             canNotList,
           )
         })
+        .finally(() => {
+          this.restLoading = false
+        })
+    },
+
+    async del(ids, item = {}, canNotList) {
+      const msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
+      const resFlag = await this.confirmTaskOperation(
+        ids,
+        item,
+        'delete',
+        msgObj,
+      )
+      if (!resFlag) {
+        return
+      }
+      batchDeleteTasks(ids).then((data = []) => {
+        const selected = this.multipleSelection.filter(({ id }) =>
+          ids.includes(id),
+        )
+        const { toggleRowSelection } = this.table.$refs.table
+        data.forEach((item) => {
+          const { name, permissionActions = [] } =
+            selected.find((t) => t.id === item.id) || {}
+          item.name = name
+          item.permissionActions = permissionActions
+        })
+        selected.forEach((row) => toggleRowSelection(row, false))
+        this.table.fetch()
+        this.responseDelHandler(
+          data,
+          this.$t('public_message_delete_ok'),
+          canNotList,
+        )
+      })
+    },
+
+    async confirmTaskOperation(ids, item = {}, operation, msgObj) {
+      const taskMap = new Map(
+        this.multipleSelection.map((task) => [task.id, task]),
+      )
+      if (item?.id) {
+        taskMap.set(item.id, item)
+      }
+      const isBulk = ids.length > 1
+      const messageKey = getTaskDqlImpactMessageKey(operation, isBulk)
+      const confirmImpact = async (affected) => {
+        if (!isBulk) {
+          return this.$confirm(
+            this.$t('packages_business_dataFlow_dql_impact_title'),
+            this.$t(messageKey, {
+              count: affected[0].count,
+            }),
+            {},
+          )
+        }
+        const lines = affected.map((impact) => {
+          const taskName = impact.name || impact.taskId
+          return h('li', { class: 'break-all' }, `${taskName}: ${impact.count}`)
+        })
+        const message = h('div', { class: 'break-all' }, [
+          h('p', this.$t(messageKey)),
+          h('ul', { class: 'pl-5 mt-2' }, lines),
+        ])
+        return this.$confirm(
+          this.$t('packages_business_dataFlow_dql_impact_title'),
+          message,
+          {},
+        )
+      }
+      const confirmOperation = () =>
+        operation === 'reset'
+          ? this.$confirm(msgObj.title, msgObj.msg, {})
+          : this.$confirm(msgObj.msg)
+
+      return runTaskOperationConfirmation({
+        taskIds: ids,
+        taskMap,
+        fetchImpacts: checkTaskDqlImpact,
+        confirmImpact,
+        confirmOperation,
       })
     },
     //删除任务单独提示

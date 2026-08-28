@@ -345,6 +345,15 @@ export default {
     '是否批量重置任務？',
   packages_business_dataFlow_bulk_initialize_confirm_message:
     '批量重置任務將清除任務同步進度，任務將重新執行',
+  packages_business_dataFlow_dql_impact_title: 'DQL 記錄提示',
+  packages_business_dataFlow_dql_delete_impact_message:
+    '當前任務存在{count}條未處理的異常事件，刪除任務後異常事件將無法重新執行',
+  packages_business_dataFlow_dql_reset_impact_message:
+    '當前任務存在{count}條未處理的異常事件，重置任務後異常事件將無法重新執行',
+  packages_business_dataFlow_dql_bulk_delete_impact_message:
+    '以下任務存在未處理的異常事件，批量刪除任務後異常事件將無法重新執行：',
+  packages_business_dataFlow_dql_bulk_reset_impact_message:
+    '以下任務存在未處理的異常事件，批量重置任務後異常事件將無法重新執行：',
   packages_business_connections_databaseform_zidingyi: '自定義',
   packages_business_connections_databaseform_duixiangshouji: '對象收集',
   packages_business_verification_details_yichangshuju: '異常數據',

@@ -5,10 +5,16 @@ import { getExternalStorage } from '@tap/api/src/core/external-storage'
 import { getLogcollectorDetail } from '@tap/api/src/core/logcollector'
 import { batchMeasurements } from '@tap/api/src/core/measurement'
 import { findOneSharedCache } from '@tap/api/src/core/shared-cache'
-import { getTaskRecords, resetTask, startTask } from '@tap/api/src/core/task'
+import {
+  checkTaskDqlImpact,
+  getTaskRecords,
+  resetTask,
+  startTask,
+} from '@tap/api/src/core/task'
 import NodeLog from '@tap/business/src/components/logs/NodeLog.vue'
 import UpgradeCharges from '@tap/business/src/components/UpgradeCharges.vue'
 import UpgradeFee from '@tap/business/src/components/UpgradeFee.vue'
+import { confirmTaskOperation as runTaskOperationConfirmation } from '@tap/business/src/views/task/task-operation-impact'
 import {
   ALARM_LEVEL_SORT,
   EXTERNAL_STORAGE_TYPE_MAP,
@@ -1598,33 +1604,61 @@ export default {
       window.open(routeUrl.href)
     },
 
-    handleReset() {
+    async handleReset() {
       const msg = this.getConfirmMessage('initialize')
-      this.$confirm(msg).then(async (resFlag) => {
-        if (!resFlag) {
-          return
+      const resFlag = await this.confirmTaskOperation(msg)
+      if (!resFlag) {
+        return
+      }
+      try {
+        this.dataflow.disabledData.reset = true
+        this.handleBottomPanel()
+        this.toggleConsole(true)
+        this.$refs.console?.startAuto('reset') // 信息输出自动加载
+        const data = await resetTask(this.dataflow.id)
+        this.responseHandler(
+          data,
+          this.$t('public_message_operation_success'),
+        )
+        if (!data?.fail?.length) {
+          this.isReset = true
         }
+        // this.init()
+        this.loadDataflow(this.dataflow?.id)
+      } catch (error) {
+        this.handleError(
+          error,
+          this.$t('packages_dag_message_operation_error'),
+        )
+      }
+    },
+
+    async confirmTaskOperation(message) {
+      const confirmImpact = async ([impact]) => {
         try {
-          this.dataflow.disabledData.reset = true
-          this.handleBottomPanel()
-          this.toggleConsole(true)
-          this.$refs.console?.startAuto('reset') // 信息输出自动加载
-          const data = await resetTask(this.dataflow.id)
-          this.responseHandler(
-            data,
-            this.$t('public_message_operation_success'),
+          return await this.$confirm(
+            this.$t('packages_dag_dataFlow_dql_reset_impact_message', {
+              count: impact.count,
+            }),
+            this.$t('packages_dag_dataFlow_dql_impact_title'),
+            {},
           )
-          if (!data?.fail?.length) {
-            this.isReset = true
-          }
-          // this.init()
-          this.loadDataflow(this.dataflow?.id)
-        } catch (error) {
-          this.handleError(
-            error,
-            this.$t('packages_dag_message_operation_error'),
-          )
+        } catch {
+          return false
         }
+      }
+      const confirmOperation = async () => {
+        try {
+          return await this.$confirm(message)
+        } catch {
+          return false
+        }
+      }
+      return runTaskOperationConfirmation({
+        taskIds: [this.dataflow.id],
+        fetchImpacts: checkTaskDqlImpact,
+        confirmImpact,
+        confirmOperation,
       })
     },
 

@@ -109,6 +109,9 @@ export default {
     '重置任務 xxx 將清除任務同步進度，任務將重新執行',
   packages_dag_dataFlow_bulk_initialize_confirm_message:
     '批量重置任務將清除任務同步進度，任務將重新執行',
+  packages_dag_dataFlow_dql_impact_title: 'DQL 記錄提示',
+  packages_dag_dataFlow_dql_reset_impact_message:
+    '當前任務存在{count}條未處理的異常事件，重置任務後異常事件將無法重新執行',
   packages_dag_task_preview_status_error: '錯誤',
   packages_dag_task_preview_status_edit: '編輯中',
   packages_dag_task_preview_status_wait_run: '啟動中',

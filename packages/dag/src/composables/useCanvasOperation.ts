@@ -18,6 +18,7 @@ import {
 } from '@tap/api/src/core/task'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
 import { makeStatusAndDisabled } from '@tap/business/src/shared/task'
+import { confirmTaskOperation as runTaskOperationConfirmation } from '@tap/business/src/views/task/task-operation-impact'
 import { getConnectionIcon } from '@tap/business/src/views/connections/util'
 import { Modal } from '@tap/component/src/modal'
 import { computed as reactiveComputed } from '@tap/form/src/shared/reactive'
@@ -1851,6 +1852,38 @@ export function useCanvasOperation() {
     return msg
   }
 
+  const confirmTaskOperation = async (message) => {
+    const confirmImpact = async ([impact]) => {
+      const impactMessage = h('p', { class: 'break-all' }, [
+        t('packages_dag_dataFlow_dql_reset_impact_message', {
+          count: impact.count,
+        }),
+      ])
+      try {
+        return await Modal.confirm(
+          t('packages_dag_dataFlow_dql_impact_title'),
+          impactMessage,
+          {},
+        )
+      } catch {
+        return false
+      }
+    }
+    const confirmOperation = async () => {
+      try {
+        return await Modal.confirm(message)
+      } catch {
+        return false
+      }
+    }
+    return runTaskOperationConfirmation({
+      taskIds: [dataflow.value.id],
+      fetchImpacts: checkTaskDqlImpact,
+      confirmImpact,
+      confirmOperation,
+    })
+  }
+
   const responseHandler = (data: any, msg: string) => {
     const failList = data?.fail || []
     if (failList.length) {
@@ -1917,24 +1950,23 @@ export function useCanvasOperation() {
     })
   }
 
-  const handleReset = () => {
+  const handleReset = async () => {
     const msg = getConfirmMessage('initialize')
-    Modal.confirm(msg).then(async (resFlag) => {
-      if (!resFlag) {
-        return
-      }
-      try {
-        initWS()
-        dataflowStore.dataflow.btnDisabled.reset = true
-        const data = await resetTask(dataflowStore.dataflow.id)
-        responseHandler(data, t('public_message_operation_success'))
-        dataflowStore.showConsole = true
-        dataflowStore.showBottom = false
-        dataflowStore.consoleAutoLoadType = 'reset'
-      } catch (error) {
-        handleError(error, t('packages_dag_message_operation_error'))
-      }
-    })
+    const resFlag = await confirmTaskOperation(msg)
+    if (!resFlag) {
+      return
+    }
+    try {
+      initWS()
+      dataflowStore.dataflow.btnDisabled.reset = true
+      const data = await resetTask(dataflowStore.dataflow.id)
+      responseHandler(data, t('public_message_operation_success'))
+      dataflowStore.showConsole = true
+      dataflowStore.showBottom = false
+      dataflowStore.consoleAutoLoadType = 'reset'
+    } catch (error) {
+      handleError(error, t('packages_dag_message_operation_error'))
+    }
   }
 
   const handleEdit = () => {

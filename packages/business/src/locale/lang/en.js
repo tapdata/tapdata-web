@@ -374,6 +374,15 @@ export default {
     'Do you want to reset tasks in bulk? ',
   packages_business_dataFlow_bulk_initialize_confirm_message:
     "Resetting the task in batches will clear the task's synchronization progress and trigger a fresh execution of the task.",
+  packages_business_dataFlow_dql_impact_title: 'DQL record warning',
+  packages_business_dataFlow_dql_delete_impact_message:
+    'The current task has {count} unprocessed exception events. After deleting the task, these exception events cannot be rerun.',
+  packages_business_dataFlow_dql_reset_impact_message:
+    'The current task has {count} unprocessed exception events. After resetting the task, these exception events cannot be rerun.',
+  packages_business_dataFlow_dql_bulk_delete_impact_message:
+    'The following tasks have unprocessed exception events. After deleting the tasks in bulk, these exception events cannot be rerun:',
+  packages_business_dataFlow_dql_bulk_reset_impact_message:
+    'The following tasks have unprocessed exception events. After resetting the tasks in bulk, these exception events cannot be rerun:',
   packages_business_connections_databaseform_zidingyi: 'Custom',
   packages_business_connections_databaseform_duixiangshouji:
     'Object Collection',
