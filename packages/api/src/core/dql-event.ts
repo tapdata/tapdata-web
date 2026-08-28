@@ -35,6 +35,7 @@ export interface DqlEventQueryParams {
   sourceTable?: string
   targetTable?: string
   keyword?: string
+  errorCode?: string
   dmlType?: 'I' | 'U' | 'D'
   errorType?: DqlErrorType
   status?: DqlEventStatus

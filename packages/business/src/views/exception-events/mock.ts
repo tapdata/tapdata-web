@@ -7,6 +7,7 @@ import type {
   DqlRecoveryBatch,
   DqlRecoveryPreview,
 } from '@tap/api/src/core/dql-event'
+import i18n from '@tap/i18n'
 
 const now = Date.now()
 const date = (minutesAgo: number) =>
@@ -17,7 +18,7 @@ const rows: DqlEventDetail[] = [
     id: 'evt-01',
     eventId: 'dlq_01J8K6CB1A2M04Q9X001',
     taskId: 'task-orders',
-    taskName: '订单同步',
+    taskName: i18n.t('packages_business_exception_events_mock_task_orders'),
     syncType: 'migrate',
     sourceTable: 'mysql.orders',
     targetTable: 'mongo.orders',
@@ -28,9 +29,15 @@ const rows: DqlEventDetail[] = [
     failedAt: date(30),
     status: 'PENDING',
     recoveryCount: 0,
-    sourceNodeName: 'MySQL 订单库',
-    targetNodeName: 'MongoDB 订单集合',
-    failedNodeName: '写入订单',
+    sourceNodeName: i18n.t(
+      'packages_business_exception_events_mock_source_mysql_orders',
+    ),
+    targetNodeName: i18n.t(
+      'packages_business_exception_events_mock_target_mongo_orders',
+    ),
+    failedNodeName: i18n.t(
+      'packages_business_exception_events_mock_failed_node_write_orders',
+    ),
     stage: 'TARGET',
     captureSeq: 821903,
     eventKey: '{"order_id":1009821}',
@@ -51,7 +58,7 @@ const rows: DqlEventDetail[] = [
     id: 'evt-02',
     eventId: 'dlq_01J8K69KKG0ACN5N4Q0B',
     taskId: 'task-orders',
-    taskName: '订单同步',
+    taskName: i18n.t('packages_business_exception_events_mock_task_orders'),
     syncType: 'migrate',
     sourceTable: 'mysql.orders',
     targetTable: 'mongo.orders',
@@ -63,9 +70,15 @@ const rows: DqlEventDetail[] = [
     status: 'RECOVERY_FAILED',
     recoveryCount: 2,
     lastRecoveryTime: date(18),
-    sourceNodeName: 'MySQL 订单库',
-    targetNodeName: 'MongoDB 订单集合',
-    failedNodeName: '字段映射',
+    sourceNodeName: i18n.t(
+      'packages_business_exception_events_mock_source_mysql_orders',
+    ),
+    targetNodeName: i18n.t(
+      'packages_business_exception_events_mock_target_mongo_orders',
+    ),
+    failedNodeName: i18n.t(
+      'packages_business_exception_events_mock_failed_node_field_mapping',
+    ),
     stage: 'TRANSFORM',
     captureSeq: 821876,
     eventKey: '{"order_id":1009819}',
@@ -86,7 +99,9 @@ const rows: DqlEventDetail[] = [
         startedAt: date(20),
         finishedAt: date(18),
         result: 'FAILED',
-        message: '字段 amount 类型不兼容',
+        message: i18n.t(
+          'packages_business_exception_events_mock_attempt_field_type_mismatch',
+        ),
       },
     ],
   },
@@ -94,7 +109,7 @@ const rows: DqlEventDetail[] = [
     id: 'evt-03',
     eventId: 'dlq_01J8K61XR5N2C6NB8KCV',
     taskId: 'task-inventory',
-    taskName: '库存同步',
+    taskName: i18n.t('packages_business_exception_events_mock_task_inventory'),
     syncType: 'sync',
     sourceTable: 'postgres.inventory',
     targetTable: 'es.inventory',
@@ -105,9 +120,13 @@ const rows: DqlEventDetail[] = [
     failedAt: date(68),
     status: 'NOT_REPROCESSABLE',
     recoveryCount: 0,
-    sourceNodeName: 'PostgreSQL 库存库',
+    sourceNodeName: i18n.t(
+      'packages_business_exception_events_mock_source_postgresql_inventory',
+    ),
     targetNodeName: 'Elasticsearch inventory',
-    failedNodeName: '主键解析',
+    failedNodeName: i18n.t(
+      'packages_business_exception_events_mock_failed_node_primary_key',
+    ),
     stage: 'SOURCE',
     eventKeyMissing: true,
     payloadFormat: 'JSON',
@@ -122,7 +141,7 @@ const rows: DqlEventDetail[] = [
     id: 'evt-04',
     eventId: 'dlq_01J8K5PCKPAF0V87ZQ8H',
     taskId: 'task-members',
-    taskName: '会员数据同步',
+    taskName: i18n.t('packages_business_exception_events_mock_task_members'),
     syncType: 'sync',
     sourceTable: 'mysql.members',
     targetTable: 'mongo.members',
@@ -134,9 +153,15 @@ const rows: DqlEventDetail[] = [
     status: 'REPROCESSING',
     recoveryCount: 1,
     lastRecoveryTime: date(4),
-    sourceNodeName: 'MySQL 会员库',
-    targetNodeName: 'MongoDB 会员集合',
-    failedNodeName: '写入会员',
+    sourceNodeName: i18n.t(
+      'packages_business_exception_events_mock_source_mysql_members',
+    ),
+    targetNodeName: i18n.t(
+      'packages_business_exception_events_mock_target_mongo_members',
+    ),
+    failedNodeName: i18n.t(
+      'packages_business_exception_events_mock_failed_node_write_members',
+    ),
     stage: 'TARGET',
     captureSeq: 88211,
     eventKey: '{"mobile":"***0921"}',
@@ -151,7 +176,9 @@ const rows: DqlEventDetail[] = [
         batchId: 'batch-active-01',
         startedAt: date(4),
         result: 'RUNNING',
-        message: '重处理任务正在执行，完成后会自动更新状态。',
+        message: i18n.t(
+          'packages_business_exception_events_mock_attempt_recovery_running',
+        ),
       },
     ],
   },
@@ -159,7 +186,7 @@ const rows: DqlEventDetail[] = [
     id: 'evt-05',
     eventId: 'dlq_01J8K4WEQYAX58VPYME6',
     taskId: 'task-orders',
-    taskName: '订单同步',
+    taskName: i18n.t('packages_business_exception_events_mock_task_orders'),
     syncType: 'migrate',
     sourceTable: 'mysql.order_items',
     targetTable: 'mongo.order_items',
@@ -171,9 +198,15 @@ const rows: DqlEventDetail[] = [
     status: 'RECOVERED',
     recoveryCount: 1,
     lastRecoveryTime: date(88),
-    sourceNodeName: 'MySQL 订单库',
-    targetNodeName: 'MongoDB 订单集合',
-    failedNodeName: '反序列化',
+    sourceNodeName: i18n.t(
+      'packages_business_exception_events_mock_source_mysql_orders',
+    ),
+    targetNodeName: i18n.t(
+      'packages_business_exception_events_mock_target_mongo_orders',
+    ),
+    failedNodeName: i18n.t(
+      'packages_business_exception_events_mock_failed_node_deserialize',
+    ),
     stage: 'TRANSFORM',
     captureSeq: 821102,
     eventKey: '{"item_id":900112}',
@@ -201,7 +234,7 @@ const rows: DqlEventDetail[] = [
     id: 'evt-06',
     eventId: 'dlq_01J8K3Q4VY0M6J2R7P8S',
     taskId: 'task-inventory',
-    taskName: '库存同步',
+    taskName: i18n.t('packages_business_exception_events_mock_task_inventory'),
     syncType: 'sync',
     sourceTable: 'postgres.inventory',
     targetTable: 'es.inventory',
@@ -212,9 +245,13 @@ const rows: DqlEventDetail[] = [
     failedAt: date(82),
     status: 'PENDING',
     recoveryCount: 0,
-    sourceNodeName: 'PostgreSQL 库存库',
+    sourceNodeName: i18n.t(
+      'packages_business_exception_events_mock_source_postgresql_inventory',
+    ),
     targetNodeName: 'Elasticsearch inventory',
-    failedNodeName: '写入库存',
+    failedNodeName: i18n.t(
+      'packages_business_exception_events_mock_failed_node_write_inventory',
+    ),
     stage: 'TARGET',
     captureSeq: 44821,
     eventKey: '{"sku":"SKU-2048"}',
@@ -243,8 +280,16 @@ export function fetchMockDqlEvents(params: DqlEventQueryParams) {
   advanceMockBatch()
   let list = rows.slice()
   const keyword = params.keyword?.toLowerCase().trim()
+  const taskName = params.taskName?.toLowerCase().trim()
+  const errorCode = params.errorCode?.toLowerCase().trim()
   if (params.status) list = list.filter((item) => item.status === params.status)
   if (params.taskId) list = list.filter((item) => item.taskId === params.taskId)
+  if (keyword)
+    list = list.filter((item) =>
+      item.errorDetails?.toLowerCase().includes(keyword),
+    )
+  if (taskName)
+    list = list.filter((item) => item.taskName.toLowerCase().includes(taskName))
   if (params.sourceTable)
     list = list.filter((item) => item.sourceTable.includes(params.sourceTable!))
   if (params.targetTable)
@@ -253,12 +298,9 @@ export function fetchMockDqlEvents(params: DqlEventQueryParams) {
     list = list.filter((item) => item.dmlType === params.dmlType)
   if (params.errorType)
     list = list.filter((item) => item.errorType === params.errorType)
-  if (keyword)
+  if (errorCode)
     list = list.filter((item) =>
-      [item.eventId, item.taskName, item.errorCode]
-        .join(' ')
-        .toLowerCase()
-        .includes(keyword),
+      item.errorCode.toLowerCase().includes(errorCode),
     )
   const skip = params.skip || 0
   const limit = params.limit || 20
@@ -310,9 +352,13 @@ export function fetchMockDqlEventDetail(eventId: string) {
       startedAt: batch.startedAt || new Date().toISOString(),
       finishedAt: isRunning ? undefined : batch.finishedAt,
       result: isRunning ? 'RUNNING' : failed ? 'FAILED' : 'SUCCESS',
-      message: isRunning ? '重放已提交，正在按顺序执行。' : undefined,
+      message: isRunning
+        ? i18n.t('packages_business_exception_events_mock_attempt_replay_running')
+        : undefined,
       errorMessage: failed
-        ? '目标端返回 DuplicateKey，当前记录未能完成重放。'
+        ? i18n.t(
+            'packages_business_exception_events_mock_attempt_replay_failed',
+          )
         : undefined,
     })
   }
@@ -345,8 +391,12 @@ export function previewMockDqlRecovery(
       captureSeq: item.captureSeq,
       message:
         item.payloadComplete === false
-          ? '事件 payload 不完整，不能安全重处理'
-          : '当前状态不支持重处理',
+          ? i18n.t(
+              'packages_business_exception_events_mock_blocked_payload_incomplete',
+            )
+          : i18n.t(
+              'packages_business_exception_events_mock_blocked_status_unsupported',
+            ),
     }))
   return Promise.resolve({
     taskId: selected[0]?.taskId,
@@ -354,7 +404,9 @@ export function previewMockDqlRecovery(
     canSubmit: !!orderedEvents.length && !blockedEvents.length,
     orderedEvents: orderedEvents.map(toListEvent),
     blockedEvents,
-    message: blockedEvents.length ? '请先移除不可重处理的异常事件' : undefined,
+    message: blockedEvents.length
+      ? i18n.t('packages_business_exception_events_mock_blocked_events')
+      : undefined,
   })
 }
 
@@ -377,7 +429,7 @@ export function startMockDqlRecovery(eventIds: string[]) {
     eventIds,
     orderedEventIds: eventIds,
     startedAt: new Date().toISOString(),
-    message: '模拟批次正在受控重处理。',
+    message: i18n.t('packages_business_exception_events_mock_batch_running'),
   }
   return Promise.resolve(batch)
 }

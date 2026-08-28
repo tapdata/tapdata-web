@@ -1595,7 +1595,7 @@ export default {
   packages_business_column_reset: '重置',
   packages_business_api_server_connection_pool_deficiency_warn: '当任一API Server 连接池资源紧张触发告警阈值时',
   packages_business_api_server_connection_pool_idle_warn: '当任一API Server 连接池连接数低于告警阈值时',
-  packages_business_exception_events_search_placeholder: '任务或错误码',
+  packages_business_exception_events_search_placeholder: '异常内容',
   packages_business_exception_events_task_name: '任务名称',
   packages_business_exception_events_dml_insert: '新增',
   packages_business_exception_events_dml_update: '更新',
@@ -1626,6 +1626,38 @@ export default {
     '重处理已提交，可在“处理进度”中跟踪状态',
   packages_business_exception_events_title: '异常事件',
   packages_business_exception_events_mock_data: '模拟数据',
+  packages_business_exception_events_mock_task_orders: '订单同步',
+  packages_business_exception_events_mock_task_inventory: '库存同步',
+  packages_business_exception_events_mock_task_members: '会员数据同步',
+  packages_business_exception_events_mock_source_mysql_orders: 'MySQL 订单库',
+  packages_business_exception_events_mock_target_mongo_orders:
+    'MongoDB 订单集合',
+  packages_business_exception_events_mock_source_postgresql_inventory:
+    'PostgreSQL 库存库',
+  packages_business_exception_events_mock_source_mysql_members: 'MySQL 会员库',
+  packages_business_exception_events_mock_target_mongo_members:
+    'MongoDB 会员集合',
+  packages_business_exception_events_mock_failed_node_write_orders: '写入订单',
+  packages_business_exception_events_mock_failed_node_field_mapping: '字段映射',
+  packages_business_exception_events_mock_failed_node_primary_key: '主键解析',
+  packages_business_exception_events_mock_failed_node_write_members: '写入会员',
+  packages_business_exception_events_mock_failed_node_deserialize: '反序列化',
+  packages_business_exception_events_mock_failed_node_write_inventory: '写入库存',
+  packages_business_exception_events_mock_attempt_field_type_mismatch:
+    '字段 amount 类型不兼容',
+  packages_business_exception_events_mock_attempt_recovery_running:
+    '重处理任务正在执行，完成后会自动更新状态。',
+  packages_business_exception_events_mock_attempt_replay_running:
+    '重放已提交，正在按顺序执行。',
+  packages_business_exception_events_mock_attempt_replay_failed:
+    '目标端返回 DuplicateKey，当前记录未能完成重放。',
+  packages_business_exception_events_mock_blocked_payload_incomplete:
+    '事件 payload 不完整，不能安全重处理',
+  packages_business_exception_events_mock_blocked_status_unsupported:
+    '当前状态不支持重处理',
+  packages_business_exception_events_mock_blocked_events:
+    '请先移除不可重处理的异常事件',
+  packages_business_exception_events_mock_batch_running: '模拟批次正在受控重处理。',
   packages_business_exception_events_more_filters: '更多筛选',
   packages_business_exception_events_more_filters_description:
     '按表名或失败时间进一步缩小范围',

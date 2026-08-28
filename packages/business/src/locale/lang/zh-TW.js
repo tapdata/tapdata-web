@@ -1580,7 +1580,7 @@ export default {
   packages_business_column_reset: '重置',
   packages_business_api_server_connection_pool_deficiency_warn: '當任一API Server 連接池資源緊張触发告警閾值時',
   packages_business_api_server_connection_pool_idle_warn: '當任一API Server 連接池連接數低於告警閾值時',
-  packages_business_exception_events_search_placeholder: '任務或錯誤碼',
+  packages_business_exception_events_search_placeholder: '異常內容',
   packages_business_exception_events_task_name: '任務名稱',
   packages_business_exception_events_dml_insert: '新增',
   packages_business_exception_events_dml_update: '更新',
@@ -1611,6 +1611,38 @@ export default {
     '重處理已提交，可在「處理進度」中追蹤狀態',
   packages_business_exception_events_title: '異常事件',
   packages_business_exception_events_mock_data: '模擬資料',
+  packages_business_exception_events_mock_task_orders: '訂單同步',
+  packages_business_exception_events_mock_task_inventory: '庫存同步',
+  packages_business_exception_events_mock_task_members: '會員資料同步',
+  packages_business_exception_events_mock_source_mysql_orders: 'MySQL 訂單庫',
+  packages_business_exception_events_mock_target_mongo_orders:
+    'MongoDB 訂單集合',
+  packages_business_exception_events_mock_source_postgresql_inventory:
+    'PostgreSQL 庫存庫',
+  packages_business_exception_events_mock_source_mysql_members: 'MySQL 會員庫',
+  packages_business_exception_events_mock_target_mongo_members:
+    'MongoDB 會員集合',
+  packages_business_exception_events_mock_failed_node_write_orders: '寫入訂單',
+  packages_business_exception_events_mock_failed_node_field_mapping: '欄位映射',
+  packages_business_exception_events_mock_failed_node_primary_key: '主鍵解析',
+  packages_business_exception_events_mock_failed_node_write_members: '寫入會員',
+  packages_business_exception_events_mock_failed_node_deserialize: '反序列化',
+  packages_business_exception_events_mock_failed_node_write_inventory: '寫入庫存',
+  packages_business_exception_events_mock_attempt_field_type_mismatch:
+    '欄位 amount 類型不相容',
+  packages_business_exception_events_mock_attempt_recovery_running:
+    '重處理任務正在執行，完成後會自動更新狀態。',
+  packages_business_exception_events_mock_attempt_replay_running:
+    '重放已提交，正在按順序執行。',
+  packages_business_exception_events_mock_attempt_replay_failed:
+    '目標端返回 DuplicateKey，當前記錄未能完成重放。',
+  packages_business_exception_events_mock_blocked_payload_incomplete:
+    '事件 payload 不完整，不能安全重處理',
+  packages_business_exception_events_mock_blocked_status_unsupported:
+    '當前狀態不支援重處理',
+  packages_business_exception_events_mock_blocked_events:
+    '請先移除不可重處理的異常事件',
+  packages_business_exception_events_mock_batch_running: '模擬批次正在受控重處理。',
   packages_business_exception_events_more_filters: '更多篩選',
   packages_business_exception_events_more_filters_description:
     '按表名或失敗時間進一步縮小範圍',

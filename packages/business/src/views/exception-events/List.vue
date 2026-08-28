@@ -50,12 +50,14 @@ const previewLoading = ref(false)
 const preview = ref<DqlRecoveryPreview>()
 const submitting = ref(false)
 const status = ref<DqlEventStatus>()
+const order = ref('failedAt DESC')
 let refreshTimer: ReturnType<typeof setInterval> | undefined
 let detailRefreshTimer: ReturnType<typeof setInterval> | undefined
 let recoveryRefreshTimer: ReturnType<typeof setInterval> | undefined
 
 interface DqlEventFilters {
   keyword: string
+  errorCode: string
   taskId: string
   taskName: string
   sourceTable: string
@@ -68,6 +70,7 @@ interface DqlEventFilters {
 
 const filters = ref<DqlEventFilters>({
   keyword: '',
+  errorCode: '',
   taskId: '',
   taskName: '',
   sourceTable: '',
@@ -86,16 +89,50 @@ const summary = ref({
   notReprocessable: 0,
 })
 
+const errorTypeOptions = [
+  {
+    label: t('packages_business_exception_events_error_target_write'),
+    value: 'TARGET_WRITE_ERROR',
+  },
+  {
+    label: t('packages_business_exception_events_error_transform'),
+    value: 'TRANSFORM_ERROR',
+  },
+  {
+    label: t('packages_business_exception_events_error_poison_record'),
+    value: 'POISON_RECORD',
+  },
+  {
+    label: t('packages_business_exception_events_error_malformed_record'),
+    value: 'MALFORMED_RECORD',
+  },
+  {
+    label: t('packages_business_exception_events_error_unknown_record'),
+    value: 'UNKNOWN_RECORD_ERROR',
+  },
+] as const
+
 const filterItems = [
   {
     placeholder: t('packages_business_exception_events_search_placeholder'),
     key: 'keyword',
     type: 'input',
+    debounce: 0,
+    searchOnBlur: true,
+  },
+  {
+    placeholder: t('packages_business_exception_events_error_code'),
+    key: 'errorCode',
+    type: 'input',
+    debounce: 0,
+    searchOnBlur: true,
   },
   {
     placeholder: t('packages_business_exception_events_task_name'),
     key: 'taskName',
     type: 'input',
+    debounce: 0,
+    searchOnBlur: true,
   },
   {
     label: 'DML',
@@ -116,33 +153,6 @@ const filterItems = [
       },
     ],
   },
-  {
-    label: t('packages_business_exception_events_error_type'),
-    key: 'errorType',
-    type: 'select-inner',
-    items: [
-      {
-        label: t('packages_business_exception_events_error_target_write'),
-        value: 'TARGET_WRITE_ERROR',
-      },
-      {
-        label: t('packages_business_exception_events_error_transform'),
-        value: 'TRANSFORM_ERROR',
-      },
-      {
-        label: t('packages_business_exception_events_error_poison_record'),
-        value: 'POISON_RECORD',
-      },
-      {
-        label: t('packages_business_exception_events_error_malformed_record'),
-        value: 'MALFORMED_RECORD',
-      },
-      {
-        label: t('packages_business_exception_events_error_unknown_record'),
-        value: 'UNKNOWN_RECORD_ERROR',
-      },
-    ],
-  },
 ]
 
 const advancedFilterCount = computed(
@@ -150,14 +160,15 @@ const advancedFilterCount = computed(
     [
       filters.value.sourceTable,
       filters.value.targetTable,
+      filters.value.errorType,
       filters.value.startTime || filters.value.endTime,
     ].filter(Boolean).length,
 )
 const failedTimeRange = computed({
-  get: () =>
-    filters.value.startTime && filters.value.endTime
-      ? [filters.value.startTime, filters.value.endTime]
-      : undefined,
+  get: () => {
+    const { startTime, endTime } = filters.value
+    return startTime || endTime ? [startTime, endTime] : undefined
+  },
   set: (value?: string[]) => {
     filters.value.startTime = value?.[0] || ''
     filters.value.endTime = value?.[1] || ''
@@ -307,7 +318,7 @@ const getList = async ({
     status: status.value,
     skip: (page.current - 1) * page.size,
     limit: page.size,
-    order: '-failedAt',
+    order: order.value,
   }
   const data = isMockMode
     ? await fetchMockDqlEvents(params)
@@ -342,13 +353,31 @@ const handleFilterFetch = () => {
   refresh()
 }
 
+const handleSortTable = ({
+  order: sortOrder,
+  prop,
+}: {
+  order: string | null
+  prop: string
+}) => {
+  order.value = `${sortOrder ? prop : 'failedAt'} ${sortOrder === 'ascending' ? 'ASC' : 'DESC'}`
+  table.value?.fetch(1)
+}
+
+const filterBarKeys = ['keyword', 'errorCode', 'taskName', 'dmlType'] as const
+
 const updateFilterBarValue = (value: Partial<DqlEventFilters>) => {
-  filters.value = { ...filters.value, ...value }
+  const nextFilters = { ...filters.value }
+  filterBarKeys.forEach((key) => {
+    nextFilters[key] = value[key] || ''
+  })
+  filters.value = nextFilters
 }
 
 const clearAdvancedFilters = () => {
   filters.value.sourceTable = ''
   filters.value.targetTable = ''
+  filters.value.errorType = ''
   filters.value.startTime = ''
   filters.value.endTime = ''
   handleFilterFetch()
@@ -443,7 +472,7 @@ const resolveTaskSyncType = async (event: DqlEvent) => {
   if (cached) return cached
 
   const task = await getTaskById(event.taskId, {
-    fields: JSON.stringify({ syncType: true }),
+    fields: JSON.stringify({ name: true, syncType: true }),
   })
   const syncType = task?.syncType as DqlTaskSyncType | undefined
   if (syncType) taskSyncTypeCache.set(event.taskId, syncType)
@@ -466,10 +495,11 @@ const openTaskMonitor = async (event: any) => {
     return
   }
 
-  router.push({
+  const { href } = router.resolve({
     name: syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor',
     params: { id: event.taskId },
   })
+  window.open(href, '_blank')
 }
 
 const openPreview = async (events: any[]) => {
@@ -559,6 +589,7 @@ onUnmounted(() => {
       :locked-columns="['operation']"
       :default-hidden-columns="['targetTable', 'eventTime', 'lastRecoveryTime']"
       @selection-change="handleSelectionChange"
+      @sort-change="handleSortTable"
     >
       <template #nav>
         <SummaryTabs
@@ -572,6 +603,7 @@ onUnmounted(() => {
           <FilterBar
             :value="filters"
             :items="filterItems"
+            hide-refresh
             :change-route="false"
             @update:value="updateFilterBarValue"
             @search="handleFilterFetch"
@@ -626,11 +658,26 @@ onUnmounted(() => {
                 "
                 clearable
               />
+              <el-select
+                v-model="filters.errorType"
+                :placeholder="
+                  t('packages_business_exception_events_error_type')
+                "
+                clearable
+              >
+                <el-option
+                  v-for="item in errorTypeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
               <el-date-picker
                 v-model="failedTimeRange"
                 class="advanced-filters__time"
                 type="datetimerange"
                 value-format="x"
+                clearable
                 :start-placeholder="
                   t('packages_business_exception_events_failure_start_time')
                 "
@@ -1097,13 +1144,19 @@ onUnmounted(() => {
                   class="recovery-attempt__error"
                 >
                   <el-icon :size="15"><i-lucide-circle-alert /></el-icon>
-                  {{ attempt.errorMessage || attempt.message }}
+                  <span
+                    class="recovery-attempt__text"
+                    v-text="attempt.errorMessage || attempt.message"
+                  />
                 </p>
                 <p
                   v-else-if="attempt.message"
                   class="recovery-attempt__message"
                 >
-                  {{ attempt.message }}
+                  <span
+                    class="recovery-attempt__text"
+                    v-text="attempt.message"
+                  />
                 </p>
               </div>
             </el-timeline-item>
@@ -1406,6 +1459,11 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 10px;
+
+  :deep(.el-date-editor) {
+    width: 100%;
+    min-width: 0;
+  }
 
   &__heading {
     display: flex;
@@ -2214,10 +2272,22 @@ onUnmounted(() => {
 
   p {
     display: flex;
+    min-width: 0;
+    max-width: 100%;
     align-items: flex-start;
     gap: 6px;
     margin: 8px 0 0;
     line-height: 20px;
+  }
+
+  &__text {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
+    max-height: 160px;
+    overflow: auto;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
   }
 
   &__message {

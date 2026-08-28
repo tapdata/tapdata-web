@@ -1795,7 +1795,7 @@ export default {
     'When any API Server connection pool resource is tight and triggers the alarm threshold',
   packages_business_api_server_connection_pool_idle_warn:
     'When the number of connections in the connection pool of any API Server falls below the alarm threshold',
-  packages_business_exception_events_search_placeholder: 'Task or error code',
+  packages_business_exception_events_search_placeholder: 'Exception content',
   packages_business_exception_events_task_name: 'Task name',
   packages_business_exception_events_dml_insert: 'Insert',
   packages_business_exception_events_dml_update: 'Update',
@@ -1832,6 +1832,47 @@ export default {
     'Recovery submitted. Track its status in “Processing progress”.',
   packages_business_exception_events_title: 'Exception events',
   packages_business_exception_events_mock_data: 'Mock data',
+  packages_business_exception_events_mock_task_orders: 'Order sync',
+  packages_business_exception_events_mock_task_inventory: 'Inventory sync',
+  packages_business_exception_events_mock_task_members: 'Member data sync',
+  packages_business_exception_events_mock_source_mysql_orders:
+    'MySQL orders database',
+  packages_business_exception_events_mock_target_mongo_orders:
+    'MongoDB orders collection',
+  packages_business_exception_events_mock_source_postgresql_inventory:
+    'PostgreSQL inventory database',
+  packages_business_exception_events_mock_source_mysql_members:
+    'MySQL members database',
+  packages_business_exception_events_mock_target_mongo_members:
+    'MongoDB members collection',
+  packages_business_exception_events_mock_failed_node_write_orders:
+    'Write orders',
+  packages_business_exception_events_mock_failed_node_field_mapping:
+    'Field mapping',
+  packages_business_exception_events_mock_failed_node_primary_key:
+    'Primary key parsing',
+  packages_business_exception_events_mock_failed_node_write_members:
+    'Write members',
+  packages_business_exception_events_mock_failed_node_deserialize:
+    'Deserialization',
+  packages_business_exception_events_mock_failed_node_write_inventory:
+    'Write inventory',
+  packages_business_exception_events_mock_attempt_field_type_mismatch:
+    'Field amount type mismatch',
+  packages_business_exception_events_mock_attempt_recovery_running:
+    'The recovery task is running and will update the status automatically when complete.',
+  packages_business_exception_events_mock_attempt_replay_running:
+    'Replay submitted and running in order.',
+  packages_business_exception_events_mock_attempt_replay_failed:
+    'The target returned DuplicateKey, and the current record could not be replayed.',
+  packages_business_exception_events_mock_blocked_payload_incomplete:
+    'The event payload is incomplete and cannot be safely replayed.',
+  packages_business_exception_events_mock_blocked_status_unsupported:
+    'The current status does not support replay.',
+  packages_business_exception_events_mock_blocked_events:
+    'Remove events that cannot be replayed before continuing.',
+  packages_business_exception_events_mock_batch_running:
+    'The mock batch is being replayed under controlled execution.',
   packages_business_exception_events_more_filters: 'More filters',
   packages_business_exception_events_more_filters_description:
     'Narrow the results by table name or failure time',
