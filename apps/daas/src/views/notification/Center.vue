@@ -92,7 +92,7 @@ export default {
           >
             <VIcon size="14">notice-user</VIcon>
             <span class="content ml-2">{{
-              $t('daas_notification_center_yonghucaozuo')
+              $t('audit_log')
             }}</span>
           </li>
           <li

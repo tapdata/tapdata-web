@@ -88,6 +88,11 @@ export const MENU = [
         code: 'v2_conn_heartbeat',
         parent: 'heartbeatTable',
       },
+      {
+        name: 'workflowList',
+        parent: 'workflow',
+        hidden: isCommunity,
+      },
       { name: 'dataEncryption' },
       { name: 'projectManagement', code: 'v2_project_management' },
       {

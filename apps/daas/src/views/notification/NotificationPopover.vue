@@ -329,7 +329,7 @@ export default {
       </el-tab-pane>
       <el-tab-pane v-loading="loading" class="tab-item" name="user">
         <template #label>
-          <span>{{ $t('daas_notification_center_yonghucaozuo') }}</span>
+          <span>{{ $t('audit_log') }}</span>
         </template>
         <div class="tab-item-container">
           <ul v-if="userOperations.length" class="tab-list notification-list">
