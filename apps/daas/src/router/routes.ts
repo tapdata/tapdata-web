@@ -1059,7 +1059,7 @@ export const routes = [
         path: 'userNotification',
         name: 'userNotification',
         component: () => import('@/views/notification/UserNotification.vue'),
-        meta: { title: 'daas_notification_center_yonghucaozuo' },
+        meta: { title: 'audit_log' },
       },
       {
         path: 'alarmNotification',
