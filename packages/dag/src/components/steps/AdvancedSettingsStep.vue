@@ -20,6 +20,7 @@ import { computed, defineComponent, inject, onBeforeUnmount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import SchemaForm from '../SchemaForm.vue'
+import { createTaskErrorModeOptions } from '../task-error-mode-options'
 
 // 自定义 Dialog 表单内的 value 变化事件
 const onDialogFormValuesChange = createEffectHook(
@@ -1110,30 +1111,7 @@ export default defineComponent({
                         placeholder: i18n.t('public_select_placeholder'),
                       },
                       default: 'Disable',
-                      enum: [
-                        // {
-                        //   label: '直接跳过异常的表，任务继续运行 ',
-                        //   value: 'SkipTable'
-                        // },
-                        {
-                          label: i18n.t(
-                            'packages_dag_migration_settingpanel_anzhaomorenzhong',
-                          ),
-                          value: 'Disable',
-                        },
-                        {
-                          label: i18n.t(
-                            'packages_dag_migration_settingpanel_tiaoguoyichangshi',
-                          ),
-                          value: 'SkipData',
-                        },
-                        {
-                          label: i18n.t(
-                            'packages_dag_migration_settingpanel_route_to_dlq',
-                          ),
-                          value: 'DLQ',
-                        },
-                      ],
+                      enum: createTaskErrorModeOptions(i18n.t),
                     },
                     limitMode: {
                       type: 'string',
