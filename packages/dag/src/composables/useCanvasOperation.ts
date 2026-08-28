@@ -6,6 +6,7 @@ import { callProxy } from '@tap/api/src/core/proxy'
 import { fetchSharedCache } from '@tap/api/src/core/shared-cache'
 import {
   batchStartTasks,
+  checkTaskDqlImpact,
   checkTaskMemoryHeap,
   deleteTask,
   fetchMergeTaskCache,
@@ -18,8 +19,8 @@ import {
 } from '@tap/api/src/core/task'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
 import { makeStatusAndDisabled } from '@tap/business/src/shared/task'
-import { confirmTaskOperation as runTaskOperationConfirmation } from '@tap/business/src/views/task/task-operation-impact'
 import { getConnectionIcon } from '@tap/business/src/views/connections/util'
+import { confirmTaskOperation as runTaskOperationConfirmation } from '@tap/business/src/views/task/task-operation-impact'
 import { Modal } from '@tap/component/src/modal'
 import { computed as reactiveComputed } from '@tap/form/src/shared/reactive'
 import {
@@ -1852,7 +1853,7 @@ export function useCanvasOperation() {
     return msg
   }
 
-  const confirmTaskOperation = async (message) => {
+  const confirmTaskOperation = (message) => {
     const confirmImpact = async ([impact]) => {
       const impactMessage = h('p', { class: 'break-all' }, [
         t('packages_dag_dataFlow_dql_reset_impact_message', {
