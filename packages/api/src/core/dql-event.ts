@@ -31,6 +31,7 @@ export type DqlRecoveryBatchStatus =
 
 export interface DqlEventQueryParams {
   taskId?: string
+  eventId?: string
   taskName?: string
   sourceTable?: string
   targetTable?: string

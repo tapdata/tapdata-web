@@ -47,6 +47,10 @@ export function getAlarmKeyMap() {
     ),
     TASK_INSPECT_DIFFERENCE: t('packages_dag_task_inspect_difference_alarm'),
     TASK_RETRY_WARN: t('packages_dag_task_retry_alert'),
+    TASK_DQL_EVENT: t('packages_business_task_dql_event'),
+    TASK_DQL_SAVE_FAILED: t('packages_business_task_dql_save_failed'),
+    TASK_DQL_RECOVERY_FAILED: t('packages_business_task_dql_recovery_failed'),
+    TASK_DQL_STORM_GUARD: t('packages_business_task_dql_storm_guard'),
     API_SERVER_WORKER_DELAY_P50_WARN: t(
       'packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn',
     ),

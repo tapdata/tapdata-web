@@ -58,6 +58,7 @@ let recoveryRefreshTimer: ReturnType<typeof setInterval> | undefined
 interface DqlEventFilters {
   keyword: string
   errorCode: string
+  eventId: string
   taskId: string
   taskName: string
   sourceTable: string
@@ -71,6 +72,7 @@ interface DqlEventFilters {
 const filters = ref<DqlEventFilters>({
   keyword: '',
   errorCode: '',
+  eventId: '',
   taskId: '',
   taskName: '',
   sourceTable: '',
@@ -369,7 +371,7 @@ const filterBarKeys = ['keyword', 'errorCode', 'taskName', 'dmlType'] as const
 const updateFilterBarValue = (value: Partial<DqlEventFilters>) => {
   const nextFilters = { ...filters.value }
   filterBarKeys.forEach((key) => {
-    nextFilters[key] = value[key] || ''
+    nextFilters[key] = (value[key] || '') as never
   })
   filters.value = nextFilters
 }
