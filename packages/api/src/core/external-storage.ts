@@ -75,7 +75,11 @@ export interface SharedCdcEnableData {
 }
 
 export function getSharedCdcEnable() {
-  return requestClient.get<SharedCdcEnableData>(`${BASE_URL}/shared-cdc-enable`)
+  return Promise.resolve({
+    enabled: false,
+  })
+  // TODO DMP 暂未合并此功能
+  // return requestClient.get<SharedCdcEnableData>(`${BASE_URL}/shared-cdc-enable`)
 }
 
 export interface ConnectionSharedCdcStatus {
