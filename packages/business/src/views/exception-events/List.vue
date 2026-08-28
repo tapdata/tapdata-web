@@ -15,6 +15,7 @@ import {
 } from '@tap/api/src/core/dql-event'
 import { getTaskById } from '@tap/api/src/core/task'
 import { FilterBar } from '@tap/component/src/filter-bar'
+import { useI18n } from '@tap/i18n'
 import dayjs from 'dayjs'
 import { ElMessage } from 'element-plus'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
@@ -31,6 +32,7 @@ import {
   startMockDqlRecovery,
 } from './mock'
 
+const { t } = useI18n()
 const isMockMode =
   import.meta.env.DEV && import.meta.env.VITE_DQL_EVENT_API === 'mock'
 const route = useRoute()
@@ -85,9 +87,13 @@ const summary = ref({
 })
 
 const filterItems = [
-  { placeholder: '任务或错误码', key: 'keyword', type: 'input' },
   {
-    placeholder: '任务名称',
+    placeholder: t('packages_business_exception_events_search_placeholder'),
+    key: 'keyword',
+    type: 'input',
+  },
+  {
+    placeholder: t('packages_business_exception_events_task_name'),
     key: 'taskName',
     type: 'input',
   },
@@ -96,21 +102,45 @@ const filterItems = [
     key: 'dmlType',
     type: 'select-inner',
     items: [
-      { label: '新增', value: 'I' },
-      { label: '更新', value: 'U' },
-      { label: '删除', value: 'D' },
+      {
+        label: t('packages_business_exception_events_dml_insert'),
+        value: 'I',
+      },
+      {
+        label: t('packages_business_exception_events_dml_update'),
+        value: 'U',
+      },
+      {
+        label: t('packages_business_exception_events_dml_delete'),
+        value: 'D',
+      },
     ],
   },
   {
-    label: '错误类型',
+    label: t('packages_business_exception_events_error_type'),
     key: 'errorType',
     type: 'select-inner',
     items: [
-      { label: '目标写入失败', value: 'TARGET_WRITE_ERROR' },
-      { label: '转换失败', value: 'TRANSFORM_ERROR' },
-      { label: '不可处理记录', value: 'POISON_RECORD' },
-      { label: '格式错误', value: 'MALFORMED_RECORD' },
-      { label: '未知记录错误', value: 'UNKNOWN_RECORD_ERROR' },
+      {
+        label: t('packages_business_exception_events_error_target_write'),
+        value: 'TARGET_WRITE_ERROR',
+      },
+      {
+        label: t('packages_business_exception_events_error_transform'),
+        value: 'TRANSFORM_ERROR',
+      },
+      {
+        label: t('packages_business_exception_events_error_poison_record'),
+        value: 'POISON_RECORD',
+      },
+      {
+        label: t('packages_business_exception_events_error_malformed_record'),
+        value: 'MALFORMED_RECORD',
+      },
+      {
+        label: t('packages_business_exception_events_error_unknown_record'),
+        value: 'UNKNOWN_RECORD_ERROR',
+      },
     ],
   },
 ]
@@ -143,19 +173,36 @@ const selectable = (event: DqlEvent) =>
   (!selectedTaskId.value || selectedTaskId.value === event.taskId)
 const recoveryAttemptMeta = (result: DqlRecoveryAttempt['result']) =>
   (
-    {
-      RUNNING: { label: '处理中', type: 'primary' },
-      SUCCESS: { label: '处理成功', type: 'success' },
-      FAILED: { label: '处理失败', type: 'danger' },
-      SKIPPED: { label: '已跳过', type: 'info' },
-      TIMEOUT: { label: '处理超时', type: 'warning' },
-    } as const
+    ({
+      RUNNING: {
+        label: t('packages_business_exception_events_recovery_running'),
+        type: 'primary',
+      },
+      SUCCESS: {
+        label: t('packages_business_exception_events_recovery_success'),
+        type: 'success',
+      },
+      FAILED: {
+        label: t('packages_business_exception_events_recovery_failed'),
+        type: 'danger',
+      },
+      SKIPPED: {
+        label: t('packages_business_exception_events_recovery_skipped'),
+        type: 'info',
+      },
+      TIMEOUT: {
+        label: t('packages_business_exception_events_recovery_timeout'),
+        type: 'warning',
+      },
+    }) as const
   )[result]
 const recoveryView = {
-  title: '处理记录',
-  sectionTitle: '处理记录',
-  emptyText: '暂无处理记录',
-  refreshLabel: '刷新处理记录',
+  title: t('packages_business_exception_events_recovery_records'),
+  sectionTitle: t('packages_business_exception_events_recovery_records'),
+  emptyText: t('packages_business_exception_events_recovery_records_empty'),
+  refreshLabel: t(
+    'packages_business_exception_events_refresh_recovery_records',
+  ),
 }
 const recoveryAttempts = computed(() => {
   const attempts = [...(recoveryDetail.value?.recoveryAttempts || [])]
@@ -173,11 +220,17 @@ const recoveryAttempts = computed(() => {
 })
 const errorTypeLabel = (type: DqlEvent['errorType']) =>
   ({
-    MALFORMED_RECORD: '格式错误',
-    POISON_RECORD: '不可处理记录',
-    TRANSFORM_ERROR: '转换失败',
-    TARGET_WRITE_ERROR: '目标写入失败',
-    UNKNOWN_RECORD_ERROR: '未知记录错误',
+    MALFORMED_RECORD: t(
+      'packages_business_exception_events_error_malformed_record',
+    ),
+    POISON_RECORD: t('packages_business_exception_events_error_poison_record'),
+    TRANSFORM_ERROR: t('packages_business_exception_events_error_transform'),
+    TARGET_WRITE_ERROR: t(
+      'packages_business_exception_events_error_target_write',
+    ),
+    UNKNOWN_RECORD_ERROR: t(
+      'packages_business_exception_events_error_unknown_record',
+    ),
   })[type]
 const formatKeyValue = (value: unknown) => {
   if (value === null) return 'null'
@@ -303,7 +356,9 @@ const clearAdvancedFilters = () => {
 
 const handleSelectionChange = (rows: DqlEvent[]) => {
   if (rows.length > 1 && new Set(rows.map((item) => item.taskId)).size > 1) {
-    ElMessage.warning('一次重处理只能选择同一任务下的异常事件')
+    ElMessage.warning(
+      t('packages_business_exception_events_same_task_selection_warning'),
+    )
     table.value?.clearSelection()
     selectedRows.value = []
     return
@@ -361,8 +416,7 @@ const refreshRecovery = async (eventId?: string, passive = false) => {
   } finally {
     recoveryLoading.value = false
   }
-  if (recoveryDetail.value?.status === 'REPROCESSING')
-    startRecoveryPolling()
+  if (recoveryDetail.value?.status === 'REPROCESSING') startRecoveryPolling()
   else stopRecoveryPolling()
 }
 
@@ -401,12 +455,14 @@ const openTaskMonitor = async (event: any) => {
   try {
     syncType = await resolveTaskSyncType(event)
   } catch {
-    ElMessage.error('获取任务类型失败，暂时无法打开任务监控')
+    ElMessage.error(
+      t('packages_business_exception_events_task_type_fetch_error'),
+    )
     return
   }
 
   if (!syncType) {
-    ElMessage.warning('任务类型缺失，暂时无法打开任务监控')
+    ElMessage.warning(t('packages_business_exception_events_task_type_missing'))
     return
   }
 
@@ -419,7 +475,9 @@ const openTaskMonitor = async (event: any) => {
 const openPreview = async (events: any[]) => {
   if (!events.length) return
   if (new Set(events.map((item) => item.taskId)).size > 1) {
-    ElMessage.warning('请只选择同一任务下的异常事件')
+    ElMessage.warning(
+      t('packages_business_exception_events_same_task_selection_required'),
+    )
     return
   }
   previewVisible.value = true
@@ -445,7 +503,9 @@ const submitRecovery = async () => {
     previewVisible.value = false
     selectedRows.value = []
     table.value?.clearSelection()
-    ElMessage.success('重处理已提交，可在“处理进度”中跟踪状态')
+    ElMessage.success(
+      t('packages_business_exception_events_recovery_submitted'),
+    )
     refresh()
   } finally {
     submitting.value = false
@@ -481,9 +541,11 @@ onUnmounted(() => {
   <PageContainer>
     <template #title>
       <div class="flex align-center gap-2">
-        <span class="fs-5 font-color-dark lh-8">异常事件</span>
+        <span class="fs-5 font-color-dark lh-8">
+          {{ t('packages_business_exception_events_title') }}
+        </span>
         <el-tag v-if="isMockMode" size="small" type="info" effect="plain">
-          模拟数据
+          {{ t('packages_business_exception_events_mock_data') }}
         </el-tag>
       </div>
     </template>
@@ -519,8 +581,11 @@ onUnmounted(() => {
             <template #reference>
               <el-button class="exception-event-filters__more">
                 <template #icon><i-lucide-sliders-horizontal /></template>
-                更多筛选
-                <span v-if="advancedFilterCount" class="exception-event-filters__count">
+                {{ t('packages_business_exception_events_more_filters') }}
+                <span
+                  v-if="advancedFilterCount"
+                  class="exception-event-filters__count"
+                >
                   {{ advancedFilterCount }}
                 </span>
               </el-button>
@@ -528,23 +593,55 @@ onUnmounted(() => {
             <div class="advanced-filters">
               <div class="advanced-filters__heading">
                 <div>
-                  <strong>更多筛选</strong>
-                  <span>按表名或失败时间进一步缩小范围</span>
+                  <strong>
+                    {{ t('packages_business_exception_events_more_filters') }}
+                  </strong>
+                  <span>
+                    {{
+                      t(
+                        'packages_business_exception_events_more_filters_description',
+                      )
+                    }}
+                  </span>
                 </div>
-                <el-button text @click="clearAdvancedFilters">清除</el-button>
+                <el-button text @click="clearAdvancedFilters">
+                  {{ t('packages_business_exception_events_clear') }}
+                </el-button>
               </div>
-              <el-input v-model="filters.sourceTable" placeholder="来源表，例如 mysql.orders" clearable />
-              <el-input v-model="filters.targetTable" placeholder="目标表，例如 mongo.orders" clearable />
+              <el-input
+                v-model="filters.sourceTable"
+                :placeholder="
+                  t(
+                    'packages_business_exception_events_source_table_placeholder',
+                  )
+                "
+                clearable
+              />
+              <el-input
+                v-model="filters.targetTable"
+                :placeholder="
+                  t(
+                    'packages_business_exception_events_target_table_placeholder',
+                  )
+                "
+                clearable
+              />
               <el-date-picker
                 v-model="failedTimeRange"
                 class="advanced-filters__time"
                 type="datetimerange"
                 value-format="x"
-                start-placeholder="失败开始时间"
-                end-placeholder="失败结束时间"
+                :start-placeholder="
+                  t('packages_business_exception_events_failure_start_time')
+                "
+                :end-placeholder="
+                  t('packages_business_exception_events_failure_end_time')
+                "
               />
               <div class="advanced-filters__actions">
-                <el-button type="primary" @click="handleFilterFetch">应用筛选</el-button>
+                <el-button type="primary" @click="handleFilterFetch">{{
+                  t('packages_business_exception_events_apply_filters')
+                }}</el-button>
               </div>
             </div>
           </el-popover>
@@ -553,13 +650,13 @@ onUnmounted(() => {
       <template #operation>
         <el-button @click="refresh()">
           <template #icon><i-lucide-refresh-cw /></template>
-          刷新
+          {{ t('packages_business_exception_events_refresh') }}
         </el-button>
       </template>
       <template #multipleSelectionActions>
         <el-button type="primary" @click="openPreview(selectedRows)">
           <template #icon><i-lucide-rotate-cw /></template>
-          重处理
+          {{ t('packages_business_exception_events_reprocess') }}
         </el-button>
       </template>
 
@@ -571,7 +668,7 @@ onUnmounted(() => {
       />
       <el-table-column
         prop="taskName"
-        label="任务"
+        :label="t('packages_business_exception_events_task')"
         min-width="130"
         show-overflow-tooltip
       >
@@ -588,13 +685,13 @@ onUnmounted(() => {
       </el-table-column>
       <el-table-column
         prop="sourceTable"
-        label="来源表"
+        :label="t('packages_business_exception_events_source_table')"
         min-width="170"
         show-overflow-tooltip
       />
       <el-table-column
         prop="targetTable"
-        label="目标表"
+        :label="t('packages_business_exception_events_target_table')"
         min-width="170"
         show-overflow-tooltip
       />
@@ -615,26 +712,32 @@ onUnmounted(() => {
       </el-table-column>
       <el-table-column
         prop="errorType"
-        label="错误类型"
+        :label="t('packages_business_exception_events_error_type')"
         min-width="145"
         show-overflow-tooltip
       >
-        <template #default="{ row }">{{ errorTypeLabel(row.errorType) }}</template>
+        <template #default="{ row }">{{
+          errorTypeLabel(row.errorType)
+        }}</template>
       </el-table-column>
       <el-table-column
         prop="errorCode"
-        label="错误码"
+        :label="t('packages_business_exception_events_error_code')"
         min-width="145"
         show-overflow-tooltip
       />
-      <el-table-column prop="eventTime" label="事件时间" min-width="165">
+      <el-table-column
+        prop="eventTime"
+        :label="t('packages_business_exception_events_event_time')"
+        min-width="165"
+      >
         <template #default="{ row }">{{
           dayjs(row.eventTime).format('YYYY-MM-DD HH:mm:ss')
         }}</template>
       </el-table-column>
       <el-table-column
         prop="failedAt"
-        label="失败时间"
+        :label="t('packages_business_exception_events_failure_time')"
         min-width="165"
         sortable="custom"
       >
@@ -642,20 +745,24 @@ onUnmounted(() => {
           dayjs(row.failedAt).format('YYYY-MM-DD HH:mm:ss')
         }}</template>
       </el-table-column>
-      <el-table-column prop="status" label="状态" min-width="118">
+      <el-table-column
+        prop="status"
+        :label="t('packages_business_exception_events_status')"
+        min-width="118"
+      >
         <template #default="{ row }"
           ><EventStatusTag :status="row.status"
         /></template>
       </el-table-column>
       <el-table-column
         prop="recoveryCount"
-        label="重处理次数"
+        :label="t('packages_business_exception_events_reprocess_count')"
         width="108"
         align="right"
       />
       <el-table-column
         prop="lastRecoveryTime"
-        label="最近重处理"
+        :label="t('packages_business_exception_events_last_reprocess_time')"
         min-width="165"
       >
         <template #default="{ row }">{{
@@ -664,24 +771,31 @@ onUnmounted(() => {
             : '-'
         }}</template>
       </el-table-column>
-      <el-table-column prop="operation" label="操作" width="210" fixed="right">
+      <el-table-column
+        prop="operation"
+        :label="t('packages_business_exception_events_operation')"
+        width="210"
+        fixed="right"
+      >
         <template #default="{ row }">
-          <el-button text type="primary" @click="openDetail(row)"
-            >详情</el-button
-          >
+          <el-button text type="primary" @click="openDetail(row)">{{
+            t('packages_business_exception_events_details')
+          }}</el-button>
           <el-button
             v-if="canReprocess(row)"
             text
             type="primary"
             @click="openPreview([row])"
-            >重处理</el-button
+            >{{ t('packages_business_exception_events_reprocess') }}</el-button
           >
           <el-button
             v-if="hasRecoveryHistory(row)"
             text
             type="primary"
             @click="openRecovery(row)"
-            >处理记录</el-button
+            >{{
+              t('packages_business_exception_events_recovery_records')
+            }}</el-button
           >
         </template>
       </el-table-column>
@@ -696,9 +810,15 @@ onUnmounted(() => {
     >
       <template #header>
         <div class="exception-detail__header">
-          <div class="exception-detail__title">异常事件详情</div>
+          <div class="exception-detail__title">
+            {{ t('packages_business_exception_events_event_details') }}
+          </div>
           <div class="exception-detail__subtitle">
-            {{ detail ? `${detail.taskName} · ${detail.sourceTable}` : '正在加载…' }}
+            {{
+              detail
+                ? `${detail.taskName} · ${detail.sourceTable}`
+                : t('packages_business_exception_events_loading')
+            }}
           </div>
         </div>
       </template>
@@ -707,7 +827,12 @@ onUnmounted(() => {
           <div class="flex justify-content-between align-center mb-5">
             <EventStatusTag :status="detail.status" />
             <div class="flex align-center gap-2">
-              <el-button aria-label="刷新事件详情" @click="refreshDetail(detail.eventId)">
+              <el-button
+                :aria-label="
+                  t('packages_business_exception_events_refresh_event_details')
+                "
+                @click="refreshDetail(detail.eventId)"
+              >
                 <template #icon><i-lucide-refresh-cw /></template>
               </el-button>
               <el-button
@@ -716,21 +841,31 @@ onUnmounted(() => {
                 @click="openPreview([detail])"
               >
                 <template #icon><i-lucide-rotate-cw /></template>
-                重处理
+                {{ t('packages_business_exception_events_reprocess') }}
               </el-button>
             </div>
           </div>
           <section class="detail-section detail-overview">
             <div class="detail-section-heading">
               <div>
-                <h4>事件信息</h4>
+                <h4>
+                  {{ t('packages_business_exception_events_event_info') }}
+                </h4>
               </div>
               <div class="detail-section-heading__aside">
                 <div class="detail-section-heading__meta">
-                  首次失败于 {{ dayjs(detail.failedAt).format('YYYY-MM-DD HH:mm:ss') }}
+                  {{
+                    t('packages_business_exception_events_first_failed_at', {
+                      time: dayjs(detail.failedAt).format(
+                        'YYYY-MM-DD HH:mm:ss',
+                      ),
+                    })
+                  }}
                 </div>
                 <span v-if="detail.eventKeyMissing" class="detail-warning">
-                  事件主键缺失，不能安全重处理
+                  {{
+                    t('packages_business_exception_events_event_key_missing')
+                  }}
                 </span>
               </div>
             </div>
@@ -738,45 +873,85 @@ onUnmounted(() => {
               <div class="event-context__task">
                 <el-icon :size="16"><i-lucide-workflow /></el-icon>
                 <div>
-                  <span>所属任务</span>
+                  <span>
+                    {{ t('packages_business_exception_events_belonging_task') }}
+                  </span>
                   <strong>{{ detail.taskName }}</strong>
                 </div>
               </div>
               <div class="event-context__flow">
                 <div class="event-context__endpoint">
-                  <span>来源表</span>
+                  <span>
+                    {{ t('packages_business_exception_events_source_table') }}
+                  </span>
                   <strong>{{ detail.sourceTable }}</strong>
                 </div>
                 <el-icon class="event-context__arrow" :size="16"
                   ><i-lucide-arrow-right
                 /></el-icon>
                 <div class="event-context__endpoint">
-                  <span>目标表</span>
+                  <span>
+                    {{ t('packages_business_exception_events_target_table') }}
+                  </span>
                   <strong>{{ detail.targetTable }}</strong>
                 </div>
               </div>
               <dl class="event-context__meta">
                 <div>
-                  <dt>失败节点</dt>
-                  <dd>{{ detail.failedNodeName || '-' }}</dd>
+                  <dt>
+                    {{ t('packages_business_exception_events_failed_node') }}
+                  </dt>
+                  <dd>
+                    {{ detail.failedNodeName }}
+                  </dd>
                 </div>
               </dl>
             </div>
             <dl class="detail-fact-list">
-              <div><dt>源节点</dt><dd>{{ detail.sourceNodeName || '-' }}</dd></div>
-              <div><dt>目标节点</dt><dd>{{ detail.targetNodeName || '-' }}</dd></div>
-              <div><dt>DML</dt><dd>{{ detail.dmlType }}</dd></div>
-              <div><dt>事件时间</dt><dd>{{ dayjs(detail.eventTime).format('YYYY-MM-DD HH:mm:ss') }}</dd></div>
+              <div>
+                <dt>
+                  {{ t('packages_business_exception_events_source_node') }}
+                </dt>
+                <dd>
+                  {{ detail.sourceNodeName }}
+                </dd>
+              </div>
+              <div>
+                <dt>
+                  {{ t('packages_business_exception_events_target_node') }}
+                </dt>
+                <dd>
+                  {{ detail.targetNodeName }}
+                </dd>
+              </div>
+              <div>
+                <dt>DML</dt>
+                <dd>{{ detail.dmlType }}</dd>
+              </div>
+              <div>
+                <dt>
+                  {{ t('packages_business_exception_events_event_time') }}
+                </dt>
+                <dd>
+                  {{ dayjs(detail.eventTime).format('YYYY-MM-DD HH:mm:ss') }}
+                </dd>
+              </div>
             </dl>
             <div class="detail-event-keys">
-              <div class="detail-field-label">业务键</div>
-              <pre class="detail-code detail-key-values">{{ formatEventKey(detail.eventKey) }}</pre>
+              <div class="detail-field-label">
+                {{ t('packages_business_exception_events_business_key') }}
+              </div>
+              <pre class="detail-code detail-key-values">{{
+                formatEventKey(detail.eventKey)
+              }}</pre>
             </div>
           </section>
           <section class="detail-section">
             <div class="detail-section-heading">
               <div>
-                <h4>错误信息</h4>
+                <h4>
+                  {{ t('packages_business_exception_events_error_info') }}
+                </h4>
               </div>
             </div>
             <el-alert
@@ -790,19 +965,27 @@ onUnmounted(() => {
           <section class="detail-section">
             <div class="detail-section-heading">
               <div>
-                <h4>Payload 预览</h4>
+                <h4>
+                  {{ t('packages_business_exception_events_payload_preview') }}
+                </h4>
               </div>
             </div>
             <el-alert
               v-if="detail.payloadPreviewTruncated"
-              title="Payload 预览已截断，仅展示服务端返回的安全预览。"
+              :title="
+                t(
+                  'packages_business_exception_events_payload_preview_truncated',
+                )
+              "
               type="warning"
               :closable="false"
               class="mb-3"
             />
             <el-alert
               v-if="detail.payloadComplete === false"
-              title="Payload 不完整，当前事件不可重处理。"
+              :title="
+                t('packages_business_exception_events_payload_incomplete')
+              "
               type="error"
               :closable="false"
               class="mb-3"
@@ -829,7 +1012,7 @@ onUnmounted(() => {
             {{
               recoveryDetail
                 ? `${recoveryDetail.taskName} · ${recoveryDetail.sourceTable}`
-                : '正在加载…'
+                : t('packages_business_exception_events_loading')
             }}
           </div>
         </div>
@@ -843,26 +1026,36 @@ onUnmounted(() => {
               @click="refreshRecovery(recoveryDetail.eventId)"
             >
               <template #icon><i-lucide-refresh-cw /></template>
-              刷新记录
+              {{ t('packages_business_exception_events_refresh_records') }}
             </el-button>
           </div>
           <div class="recovery-drawer__context">
             <div>
-              <span>任务</span>
+              <span>{{ t('packages_business_exception_events_task') }}</span>
               <strong>{{ recoveryDetail.taskName }}</strong>
             </div>
             <div>
-              <span>来源表</span>
+              <span>
+                {{ t('packages_business_exception_events_source_table') }}
+              </span>
               <strong>{{ recoveryDetail.sourceTable }}</strong>
             </div>
             <div>
-              <span>目标表</span>
+              <span>
+                {{ t('packages_business_exception_events_target_table') }}
+              </span>
               <strong>{{ recoveryDetail.targetTable }}</strong>
             </div>
           </div>
           <div class="recovery-drawer__heading">
             <h4>{{ recoveryView.sectionTitle }}</h4>
-            <span>{{ recoveryAttempts.length }} 次</span>
+            <span>
+              {{
+                t('packages_business_exception_events_attempt_count', {
+                  count: recoveryAttempts.length,
+                })
+              }}
+            </span>
           </div>
           <el-empty
             v-if="!recoveryAttempts.length"
@@ -873,26 +1066,43 @@ onUnmounted(() => {
             <el-timeline-item
               v-for="attempt in recoveryAttempts"
               :key="attempt.attemptId"
-              :timestamp="dayjs(attempt.startedAt).format('YYYY-MM-DD HH:mm:ss')"
+              :timestamp="
+                dayjs(attempt.startedAt).format('YYYY-MM-DD HH:mm:ss')
+              "
               :type="recoveryAttemptMeta(attempt.result).type"
             >
               <div class="recovery-attempt">
                 <div class="recovery-attempt__header">
-                  <el-tag :type="recoveryAttemptMeta(attempt.result).type" effect="light">
+                  <el-tag
+                    :type="recoveryAttemptMeta(attempt.result).type"
+                    effect="light"
+                  >
                     {{ recoveryAttemptMeta(attempt.result).label }}
                   </el-tag>
                   <span v-if="attempt.finishedAt">
-                    完成于 {{ dayjs(attempt.finishedAt).format('YYYY-MM-DD HH:mm:ss') }}
+                    {{
+                      t('packages_business_exception_events_finished_at', {
+                        time: dayjs(attempt.finishedAt).format(
+                          'YYYY-MM-DD HH:mm:ss',
+                        ),
+                      })
+                    }}
                   </span>
                 </div>
                 <p
-                  v-if="attempt.errorMessage || (attempt.result === 'FAILED' && attempt.message)"
+                  v-if="
+                    attempt.errorMessage ||
+                    (attempt.result === 'FAILED' && attempt.message)
+                  "
                   class="recovery-attempt__error"
                 >
                   <el-icon :size="15"><i-lucide-circle-alert /></el-icon>
                   {{ attempt.errorMessage || attempt.message }}
                 </p>
-                <p v-else-if="attempt.message" class="recovery-attempt__message">
+                <p
+                  v-else-if="attempt.message"
+                  class="recovery-attempt__message"
+                >
                   {{ attempt.message }}
                 </p>
               </div>
@@ -913,12 +1123,28 @@ onUnmounted(() => {
         <div class="reprocess-dialog__header">
           <div>
             <h3>
-              {{ previewTaskGroups.length > 1 ? '确认批量重处理' : '确认重处理' }}
+              {{
+                previewTaskGroups.length > 1
+                  ? t(
+                      'packages_business_exception_events_confirm_batch_reprocess',
+                    )
+                  : t('packages_business_exception_events_confirm_reprocess')
+              }}
             </h3>
-            <p>提交前确认任务范围和事件数量</p>
+            <p>
+              {{
+                t(
+                  'packages_business_exception_events_reprocess_confirm_description',
+                )
+              }}
+            </p>
           </div>
           <span v-if="preview" class="reprocess-dialog__header-count">
-            {{ preview.orderedEvents.length }} 条事件
+            {{
+              t('packages_business_exception_events_event_count', {
+                count: preview.orderedEvents.length,
+              })
+            }}
           </span>
         </div>
       </template>
@@ -928,29 +1154,59 @@ onUnmounted(() => {
             <div class="reprocess-dialog__notice">
               <el-icon :size="16"><i-lucide-info /></el-icon>
               <p>
-                将使用各任务当前已发布配置提交原始事件。处理期间，相关任务可能短暂暂停，完成后恢复。原始 Payload 不会被修改。
+                {{ t('packages_business_exception_events_reprocess_notice') }}
               </p>
             </div>
             <div class="reprocess-dialog__summary">
               <div class="reprocess-dialog__summary-item">
-                <span>待提交事件</span>
-                <strong>{{ preview.orderedEvents.length }} <small>条</small></strong>
+                <span>
+                  {{ t('packages_business_exception_events_events_to_submit') }}
+                </span>
+                <strong>{{
+                  t('packages_business_exception_events_event_count', {
+                    count: preview.orderedEvents.length,
+                  })
+                }}</strong>
               </div>
               <div class="reprocess-dialog__summary-item">
-                <span>涉及任务</span>
-                <strong>{{ previewTaskGroups.length }} <small>个</small></strong>
+                <span>
+                  {{ t('packages_business_exception_events_tasks_involved') }}
+                </span>
+                <strong>{{
+                  t('packages_business_exception_events_task_count', {
+                    count: previewTaskGroups.length,
+                  })
+                }}</strong>
               </div>
               <div class="reprocess-dialog__summary-item">
-                <span>执行顺序</span>
-                <strong class="reprocess-dialog__summary-copy">按事件时间</strong>
+                <span>
+                  {{ t('packages_business_exception_events_execution_order') }}
+                </span>
+                <strong class="reprocess-dialog__summary-copy">{{
+                  t('packages_business_exception_events_event_time_order')
+                }}</strong>
               </div>
             </div>
             <div class="reprocess-dialog__list-heading">
               <div>
-                <h4>提交清单</h4>
-                <p>按任务归类，按事件时间顺序执行</p>
+                <h4>
+                  {{ t('packages_business_exception_events_submission_list') }}
+                </h4>
+                <p>
+                  {{
+                    t(
+                      'packages_business_exception_events_submission_list_description',
+                    )
+                  }}
+                </p>
               </div>
-              <span>{{ preview.orderedEvents.length }} 条事件</span>
+              <span>
+                {{
+                  t('packages_business_exception_events_event_count', {
+                    count: preview.orderedEvents.length,
+                  })
+                }}
+              </span>
             </div>
             <div class="reprocess-task-groups">
               <section
@@ -968,7 +1224,15 @@ onUnmounted(() => {
                         <h5>{{ group.taskName }}</h5>
                       </div>
                       <p>
-                        {{ group.routes.length }} 条数据链路 · {{ group.events.length }} 条事件
+                        {{
+                          t(
+                            'packages_business_exception_events_data_routes_events_count',
+                            {
+                              routeCount: group.routes.length,
+                              eventCount: group.events.length,
+                            },
+                          )
+                        }}
                       </p>
                     </div>
                   </div>
@@ -992,13 +1256,20 @@ onUnmounted(() => {
                         <span
                           class="reprocess-dml"
                           :class="`is-${event.dmlType.toLowerCase()}`"
-                        >{{ event.dmlType }}</span>
+                          >{{ event.dmlType }}</span
+                        >
                         <span>{{ errorTypeLabel(event.errorType) }}</span>
                         <span class="reprocess-task-group__error-code">
                           {{ event.errorCode }}
                         </span>
                         <time>
-                          失败于 {{ dayjs(event.failedAt).format('YYYY-MM-DD HH:mm') }}
+                          {{
+                            t('packages_business_exception_events_failed_at', {
+                              time: dayjs(event.failedAt).format(
+                                'YYYY-MM-DD HH:mm',
+                              ),
+                            })
+                          }}
                         </time>
                       </div>
                     </div>
@@ -1008,7 +1279,12 @@ onUnmounted(() => {
                   v-if="group.events.length > 4"
                   class="reprocess-task-group__more"
                 >
-                  还有 {{ group.events.length - 4 }} 条事件未展开
+                  {{
+                    t(
+                      'packages_business_exception_events_more_events_not_expanded',
+                      { count: group.events.length - 4 },
+                    )
+                  }}
                 </div>
               </section>
             </div>
@@ -1016,17 +1292,36 @@ onUnmounted(() => {
             <div v-if="preview.blockedEvents.length" class="reprocess-blocked">
               <div class="reprocess-blocked__heading">
                 <div>
-                  <strong>暂不可提交</strong>
-                  <span>这些事件不会被提交</span>
+                  <strong>
+                    {{
+                      t(
+                        'packages_business_exception_events_temporarily_unavailable',
+                      )
+                    }}
+                  </strong>
+                  <span>
+                    {{
+                      t(
+                        'packages_business_exception_events_blocked_events_description',
+                      )
+                    }}
+                  </span>
                 </div>
-                <em>{{ preview.blockedEvents.length }} 条</em>
+                <em>
+                  {{
+                    t('packages_business_exception_events_event_count', {
+                      count: preview.blockedEvents.length,
+                    })
+                  }}
+                </em>
               </div>
               <ul>
                 <li v-for="item in preview.blockedEvents" :key="item.eventId">
                   <strong>
-                    {{ item.sourceTable || '所选记录' }}{{
-                      item.targetTable ? ` → ${item.targetTable}` : ''
-                    }}
+                    {{
+                      item.sourceTable ||
+                      t('packages_business_exception_events_selected_record')
+                    }}{{ item.targetTable ? ` → ${item.targetTable}` : '' }}
                   </strong>
                   <span>{{ item.message }}</span>
                 </li>
@@ -1041,23 +1336,37 @@ onUnmounted(() => {
       <template #footer>
         <div class="reprocess-dialog__footer">
           <span v-if="preview" class="reprocess-dialog__footer-hint">
-            {{ preview.canSubmit ? '确认后将按顺序提交这些事件' : '请先移除不可提交的事件' }}
+            {{
+              preview.canSubmit
+                ? t('packages_business_exception_events_submit_in_order')
+                : t('packages_business_exception_events_remove_blocked_events')
+            }}
           </span>
           <div class="reprocess-dialog__footer-actions">
-            <el-button @click="previewVisible = false">取消</el-button>
+            <el-button @click="previewVisible = false">
+              {{ t('packages_business_exception_events_cancel') }}
+            </el-button>
             <el-button
               type="primary"
               :loading="submitting"
               :disabled="!preview?.canSubmit"
               @click="submitRecovery"
             >
-              确认重处理{{ preview?.orderedEvents.length ? ` ${preview.orderedEvents.length} 条` : '' }}
+              {{
+                preview?.orderedEvents.length
+                  ? t(
+                      'packages_business_exception_events_confirm_reprocess_with_count',
+                      {
+                        count: preview.orderedEvents.length,
+                      },
+                    )
+                  : t('packages_business_exception_events_confirm_reprocess')
+              }}
             </el-button>
           </div>
         </div>
       </template>
     </el-dialog>
-
   </PageContainer>
 </template>
 

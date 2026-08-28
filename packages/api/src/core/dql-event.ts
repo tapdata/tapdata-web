@@ -80,8 +80,11 @@ export interface DqlRecoveryAttempt {
 }
 
 export interface DqlEventDetail extends DqlEvent {
+  sourceNodeId?: string
   sourceNodeName?: string
+  targetNodeId?: string
   targetNodeName?: string
+  failedNodeId?: string
   failedNodeName?: string
   stage?: string
   tableId?: string
