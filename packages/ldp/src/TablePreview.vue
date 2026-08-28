@@ -835,9 +835,10 @@ export default {
             >
               {{ $t('packages_business_publish_api') }}
             </ElButton>
-            <ElButton @click="handleDataTrace">{{
+            <!-- TODO DMP 暂未合并此功能 -->
+            <!-- <ElButton @click="handleDataTrace">{{
               $t('packages_ldp_trace_flow')
-            }}</ElButton>
+            }}</ElButton> -->
             <ElDropdown
               v-if="swimType === 'mdm'"
               trigger="click"
