@@ -22,6 +22,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
+import { getDqlEventStatusWarning } from './components/event-status-presentation'
 import EventStatusTag from './components/EventStatusTag.vue'
 import SummaryTabs from './components/SummaryTabs.vue'
 import {
@@ -31,6 +32,17 @@ import {
   previewMockDqlRecovery,
   startMockDqlRecovery,
 } from './mock'
+import {
+  canSubmitRecoveryPreview,
+  getRecoveryPreviewIssueGroups,
+  removeRecoveryPreviewEvent,
+} from './recovery-preview-presentation'
+import {
+  displayDqlTaskName,
+  DQL_TASK_NAME_LIST_MAX_LENGTH,
+  getDqlTaskNameTooltipContent,
+  shouldShowDqlTaskNameTooltip,
+} from './task-name-presentation'
 
 const { t } = useI18n()
 const isMockMode =
@@ -42,12 +54,33 @@ const selectedRows = ref<DqlEvent[]>([])
 const detailVisible = ref(false)
 const detailLoading = ref(false)
 const detail = ref<DqlEventDetail>()
+const detailStatusWarning = computed(() =>
+  detail.value
+    ? getDqlEventStatusWarning(
+        detail.value.status,
+        detail.value.notReprocessableReason,
+      )
+    : undefined,
+)
 const recoveryVisible = ref(false)
 const recoveryLoading = ref(false)
 const recoveryDetail = ref<DqlEventDetail>()
 const previewVisible = ref(false)
 const previewLoading = ref(false)
 const preview = ref<DqlRecoveryPreview>()
+const previewEventIds = ref<string[]>([])
+const previewIssueGroups = computed(() => {
+  if (!preview.value) return { riskyEvents: [], blockedEvents: [] }
+  return getRecoveryPreviewIssueGroups(preview.value)
+})
+const previewCanSubmit = computed(() => {
+  if (!preview.value) return false
+  return canSubmitRecoveryPreview({
+    canSubmit: preview.value.canSubmit,
+    orderedEvents: preview.value.orderedEvents,
+    blockedEvents: previewIssueGroups.value.blockedEvents,
+  })
+})
 const submitting = ref(false)
 const status = ref<DqlEventStatus>()
 const order = ref('failedAt DESC')
@@ -504,6 +537,17 @@ const openTaskMonitor = async (event: any) => {
   window.open(href, '_blank')
 }
 
+const loadPreview = async (eventIds: string[]) => {
+  previewLoading.value = true
+  try {
+    preview.value = isMockMode
+      ? await previewMockDqlRecovery(eventIds)
+      : await previewDqlRecovery(eventIds)
+  } finally {
+    previewLoading.value = false
+  }
+}
+
 const openPreview = async (events: any[]) => {
   if (!events.length) return
   if (new Set(events.map((item) => item.taskId)).size > 1) {
@@ -512,23 +556,42 @@ const openPreview = async (events: any[]) => {
     )
     return
   }
+  const ids = events.map((item) => item.eventId)
+  previewEventIds.value = ids
+  preview.value = undefined
   previewVisible.value = true
-  previewLoading.value = true
-  try {
-    const ids = events.map((item) => item.eventId)
-    preview.value = isMockMode
-      ? await previewMockDqlRecovery(ids)
-      : await previewDqlRecovery(ids)
-  } finally {
-    previewLoading.value = false
+  await loadPreview(ids)
+}
+
+const removePreviewEvent = async (eventId: string) => {
+  const nextEventIds = removeRecoveryPreviewEvent(
+    previewEventIds.value,
+    eventId,
+  )
+  const selectedEvent = selectedRows.value.find(
+    (event) => event.eventId === eventId,
+  )
+  if (selectedEvent) table.value?.toggleRowSelection(selectedEvent, false)
+  selectedRows.value = selectedRows.value.filter(
+    (event) => event.eventId !== eventId,
+  )
+  previewEventIds.value = nextEventIds
+
+  if (!nextEventIds.length) {
+    previewVisible.value = false
+    preview.value = undefined
+    return
   }
+
+  await loadPreview(nextEventIds)
 }
 
 const submitRecovery = async () => {
-  if (!preview.value?.canSubmit) return
+  const currentPreview = preview.value
+  if (!currentPreview || !previewCanSubmit.value) return
   submitting.value = true
   try {
-    const ids = preview.value.orderedEvents.map((item) => item.eventId)
+    const ids = currentPreview.orderedEvents.map((item) => item.eventId)
     await (isMockMode
       ? await startMockDqlRecovery(ids)
       : await startDqlRecovery(ids))
@@ -718,8 +781,9 @@ onUnmounted(() => {
       <el-table-column
         prop="taskName"
         :label="t('packages_business_exception_events_task')"
-        min-width="130"
+        min-width="200"
         show-overflow-tooltip
+        fixed="left"
       >
         <template #default="{ row }">
           <el-link
@@ -728,7 +792,25 @@ onUnmounted(() => {
             :underline="false"
             @click.stop="openTaskMonitor(row)"
           >
-            <span class="ellipsis">{{ row.taskName }}</span>
+            <el-tooltip
+              placement="top"
+              :content="getDqlTaskNameTooltipContent(row.taskName)"
+              :disabled="
+                !shouldShowDqlTaskNameTooltip(
+                  row.taskName,
+                  DQL_TASK_NAME_LIST_MAX_LENGTH,
+                )
+              "
+            >
+              <span class="ellipsis">
+                {{
+                  displayDqlTaskName(
+                    row.taskName,
+                    DQL_TASK_NAME_LIST_MAX_LENGTH,
+                  )
+                }}
+              </span>
+            </el-tooltip>
           </el-link>
         </template>
       </el-table-column>
@@ -772,7 +854,7 @@ onUnmounted(() => {
       <el-table-column
         prop="errorCode"
         :label="t('packages_business_exception_events_error_code')"
-        min-width="145"
+        min-width="115"
         show-overflow-tooltip
       />
       <el-table-column
@@ -785,30 +867,14 @@ onUnmounted(() => {
         }}</template>
       </el-table-column>
       <el-table-column
-        prop="failedAt"
-        :label="t('packages_business_exception_events_failure_time')"
-        min-width="165"
-        sortable="custom"
-      >
-        <template #default="{ row }">{{
-          dayjs(row.failedAt).format('YYYY-MM-DD HH:mm:ss')
-        }}</template>
-      </el-table-column>
-      <el-table-column
         prop="status"
         :label="t('packages_business_exception_events_status')"
-        min-width="118"
+        min-width="150"
       >
         <template #default="{ row }"
           ><EventStatusTag :status="row.status"
         /></template>
       </el-table-column>
-      <el-table-column
-        prop="recoveryCount"
-        :label="t('packages_business_exception_events_reprocess_count')"
-        width="108"
-        align="right"
-      />
       <el-table-column
         prop="lastRecoveryTime"
         :label="t('packages_business_exception_events_last_reprocess_time')"
@@ -820,6 +886,21 @@ onUnmounted(() => {
             : '-'
         }}</template>
       </el-table-column>
+      <el-table-column
+          prop="failedAt"
+          :label="t('packages_business_exception_events_failure_time')"
+          min-width="200"
+          sortable="custom"
+      >
+        <template #default="{ row }">{{
+            dayjs(row.failedAt).format('YYYY-MM-DD HH:mm:ss')
+          }}</template>
+      </el-table-column>
+      <el-table-column
+          prop="recoveryCount"
+          :label="t('packages_business_exception_events_reprocess_count')"
+          width="100"
+      />
       <el-table-column
         prop="operation"
         :label="t('packages_business_exception_events_operation')"
@@ -862,10 +943,10 @@ onUnmounted(() => {
           <div class="exception-detail__title">
             {{ t('packages_business_exception_events_event_details') }}
           </div>
-          <div class="exception-detail__subtitle">
+          <div class="exception-detail__subtitle" :title="detail?.taskName">
             {{
               detail
-                ? `${detail.taskName} · ${detail.sourceTable}`
+                ? `${displayDqlTaskName(detail.taskName)} · ${detail.sourceTable}`
                 : t('packages_business_exception_events_loading')
             }}
           </div>
@@ -874,7 +955,15 @@ onUnmounted(() => {
       <div v-loading="detailLoading" class="exception-detail">
         <template v-if="detail">
           <div class="flex justify-content-between align-center mb-5">
-            <EventStatusTag :status="detail.status" />
+            <div class="exception-detail__status">
+              <EventStatusTag :status="detail.status" />
+              <span
+                v-if="detailStatusWarning"
+                class="exception-detail__status-warning"
+              >
+                {{ detailStatusWarning }}
+              </span>
+            </div>
             <div class="flex align-center gap-2">
               <el-button
                 :aria-label="
@@ -925,7 +1014,9 @@ onUnmounted(() => {
                   <span>
                     {{ t('packages_business_exception_events_belonging_task') }}
                   </span>
-                  <strong>{{ detail.taskName }}</strong>
+                  <strong :title="detail.taskName">
+                    {{ displayDqlTaskName(detail.taskName) }}
+                  </strong>
                 </div>
               </div>
               <div class="event-context__flow">
@@ -1057,10 +1148,13 @@ onUnmounted(() => {
       <template #header>
         <div class="exception-detail__header">
           <div class="exception-detail__title">{{ recoveryView.title }}</div>
-          <div class="exception-detail__subtitle">
+          <div
+            class="exception-detail__subtitle"
+            :title="recoveryDetail?.taskName"
+          >
             {{
               recoveryDetail
-                ? `${recoveryDetail.taskName} · ${recoveryDetail.sourceTable}`
+                ? `${displayDqlTaskName(recoveryDetail.taskName)} · ${recoveryDetail.sourceTable}`
                 : t('packages_business_exception_events_loading')
             }}
           </div>
@@ -1081,7 +1175,9 @@ onUnmounted(() => {
           <div class="recovery-drawer__context">
             <div>
               <span>{{ t('packages_business_exception_events_task') }}</span>
-              <strong>{{ recoveryDetail.taskName }}</strong>
+              <strong :title="recoveryDetail.taskName">
+                {{ displayDqlTaskName(recoveryDetail.taskName) }}
+              </strong>
             </div>
             <div>
               <span>
@@ -1276,7 +1372,9 @@ onUnmounted(() => {
                     </span>
                     <div>
                       <div class="reprocess-task-group__title">
-                        <h5>{{ group.taskName }}</h5>
+                        <h5 :title="group.taskName">
+                          {{ displayDqlTaskName(group.taskName) }}
+                        </h5>
                       </div>
                       <p>
                         {{
@@ -1344,8 +1442,54 @@ onUnmounted(() => {
               </section>
             </div>
 
-            <div v-if="preview.blockedEvents.length" class="reprocess-blocked">
-              <div class="reprocess-blocked__heading">
+            <div
+              v-if="previewIssueGroups.riskyEvents.length"
+              class="reprocess-issue reprocess-issue--risk"
+            >
+              <div class="reprocess-issue__heading">
+                <div>
+                  <strong>
+                    {{
+                      t('packages_business_exception_events_risky_submission')
+                    }}
+                  </strong>
+                  <span>
+                    {{
+                      t(
+                        'packages_business_exception_events_risky_submission_description',
+                      )
+                    }}
+                  </span>
+                </div>
+                <em>
+                  {{
+                    t('packages_business_exception_events_event_count', {
+                      count: previewIssueGroups.riskyEvents.length,
+                    })
+                  }}
+                </em>
+              </div>
+              <ul>
+                <li
+                  v-for="item in previewIssueGroups.riskyEvents"
+                  :key="item.eventId"
+                >
+                  <strong>
+                    {{
+                      item.sourceTable ||
+                      t('packages_business_exception_events_selected_record')
+                    }}{{ item.targetTable ? ` → ${item.targetTable}` : '' }}
+                  </strong>
+                  <span>{{ item.message }}</span>
+                </li>
+              </ul>
+            </div>
+
+            <div
+              v-if="previewIssueGroups.blockedEvents.length"
+              class="reprocess-issue reprocess-issue--blocked"
+            >
+              <div class="reprocess-issue__heading">
                 <div>
                   <strong>
                     {{
@@ -1365,20 +1509,34 @@ onUnmounted(() => {
                 <em>
                   {{
                     t('packages_business_exception_events_event_count', {
-                      count: preview.blockedEvents.length,
+                      count: previewIssueGroups.blockedEvents.length,
                     })
                   }}
                 </em>
               </div>
               <ul>
-                <li v-for="item in preview.blockedEvents" :key="item.eventId">
-                  <strong>
-                    {{
-                      item.sourceTable ||
-                      t('packages_business_exception_events_selected_record')
-                    }}{{ item.targetTable ? ` → ${item.targetTable}` : '' }}
-                  </strong>
-                  <span>{{ item.message }}</span>
+                <li
+                  v-for="item in previewIssueGroups.blockedEvents"
+                  :key="item.eventId"
+                  class="reprocess-issue__event"
+                >
+                  <div class="reprocess-issue__event-content">
+                    <strong>
+                      {{
+                        item.sourceTable ||
+                        t('packages_business_exception_events_selected_record')
+                      }}{{ item.targetTable ? ` → ${item.targetTable}` : '' }}
+                    </strong>
+                    <span>{{ item.message }}</span>
+                  </div>
+                  <el-button
+                    text
+                    type="danger"
+                    :disabled="previewLoading || submitting"
+                    @click="removePreviewEvent(item.eventId)"
+                  >
+                    {{ t('packages_business_exception_events_remove_event') }}
+                  </el-button>
                 </li>
               </ul>
             </div>
@@ -1392,7 +1550,7 @@ onUnmounted(() => {
         <div class="reprocess-dialog__footer">
           <span v-if="preview" class="reprocess-dialog__footer-hint">
             {{
-              preview.canSubmit
+              previewCanSubmit
                 ? t('packages_business_exception_events_submit_in_order')
                 : t('packages_business_exception_events_remove_blocked_events')
             }}
@@ -1404,7 +1562,7 @@ onUnmounted(() => {
             <el-button
               type="primary"
               :loading="submitting"
-              :disabled="!preview?.canSubmit"
+              :disabled="!previewCanSubmit"
               @click="submitRecovery"
             >
               {{
@@ -1533,6 +1691,20 @@ onUnmounted(() => {
   font-size: 13px;
   font-weight: 500;
   line-height: 20px;
+}
+.exception-detail__status {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+.exception-detail__status-warning {
+  max-width: min(520px, 100%);
+  overflow-wrap: anywhere;
+  color: var(--el-color-warning-dark-2);
+  font-size: 12px;
+  line-height: 18px;
 }
 .exception-detail section + section {
   margin-top: 32px;
@@ -2075,13 +2247,26 @@ onUnmounted(() => {
     border-color: #fed7aa;
   }
 }
-.reprocess-blocked {
+.reprocess-issue {
   margin-top: 16px;
   padding: 12px 14px;
-  color: #b42318;
-  background: #fff7f7;
-  border: 1px solid #fecdca;
   border-radius: 10px;
+
+  &--risk {
+    --reprocess-border-color: #fedf89;
+
+    color: #b54708;
+    background: #fffaeb;
+    border: 1px solid #fedf89;
+  }
+
+  &--blocked {
+    --reprocess-border-color: #fecdca;
+
+    color: #b42318;
+    background: #fff7f7;
+    border: 1px solid #fecdca;
+  }
 
   &__heading {
     display: flex;
@@ -2108,7 +2293,6 @@ onUnmounted(() => {
 
     span,
     em {
-      color: #b42318;
       opacity: 0.76;
     }
 
@@ -2125,7 +2309,7 @@ onUnmounted(() => {
     gap: 5px;
     margin: 9px 0 0;
     padding: 9px 0 0 16px;
-    border-top: 1px solid #fecdca;
+    border-top: 1px solid var(--reprocess-border-color);
   }
 
   li {
@@ -2135,6 +2319,27 @@ onUnmounted(() => {
     gap: 1px;
     font-size: 12px;
     line-height: 18px;
+  }
+
+  &__event {
+    align-items: flex-start;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  &__event-content {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  &__event > .el-button {
+    flex: none;
+    min-height: 18px;
+    padding: 0;
+    font-size: 12px;
   }
 
   li strong {

@@ -82,6 +82,8 @@ export interface DqlRecoveryAttempt {
 }
 
 export interface DqlEventDetail extends DqlEvent {
+  /** Localized reason returned by TM when the event cannot be reprocessed. */
+  notReprocessableReason?: string
   sourceNodeId?: string
   sourceNodeName?: string
   targetNodeId?: string
@@ -124,6 +126,16 @@ export interface DqlRecoveryPreview {
   taskName?: string
   canSubmit: boolean
   orderedEvents: DqlEvent[]
+  riskyEvents?: Array<{
+    eventId: string
+    sourceTable?: string
+    targetTable?: string
+    dmlType?: DqlEvent['dmlType']
+    eventTime?: string
+    captureSeq?: number
+    messageCode?: string
+    message: string
+  }>
   blockedEvents: Array<{
     eventId: string
     sourceTable?: string
@@ -131,6 +143,7 @@ export interface DqlRecoveryPreview {
     dmlType?: DqlEvent['dmlType']
     eventTime?: string
     captureSeq?: number
+    messageCode?: string
     message: string
   }>
   message?: string

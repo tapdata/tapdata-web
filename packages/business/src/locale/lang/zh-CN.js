@@ -1650,6 +1650,12 @@ export default {
   packages_business_exception_events_recovery_failed: '处理失败',
   packages_business_exception_events_recovery_skipped: '已跳过',
   packages_business_exception_events_recovery_timeout: '处理超时',
+  packages_business_exception_events_status_all: '全部',
+  packages_business_exception_events_status_pending: '待处理',
+  packages_business_exception_events_status_reprocessing: '处理中',
+  packages_business_exception_events_status_recovered: '已恢复',
+  packages_business_exception_events_status_recovery_failed: '恢复失败',
+  packages_business_exception_events_status_not_reprocessable: '不可重处理',
   packages_business_exception_events_recovery_records: '处理记录',
   packages_business_exception_events_recovery_records_empty: '暂无处理记录',
   packages_business_exception_events_refresh_recovery_records: '刷新处理记录',
@@ -1765,10 +1771,16 @@ export default {
   packages_business_exception_events_temporarily_unavailable: '暂不可提交',
   packages_business_exception_events_blocked_events_description:
     '这些事件不会被提交',
+  packages_business_exception_events_risky_submission: '具有风险提交',
+  packages_business_exception_events_risky_submission_description:
+    '这些事件缺少业务键，重处理前请确认风险',
+  packages_business_exception_events_business_key_missing_risk:
+    '缺少业务键，可能无法准确定位目标记录，存在重复或覆盖风险',
   packages_business_exception_events_selected_record: '所选记录',
   packages_business_exception_events_submit_in_order: '确认后将按顺序提交这些事件',
   packages_business_exception_events_remove_blocked_events:
     '请先移除不可提交的事件',
+  packages_business_exception_events_remove_event: '移除',
   packages_business_exception_events_cancel: '取消',
   packages_business_exception_events_confirm_reprocess_with_count:
     '确认重处理 {count} 条',

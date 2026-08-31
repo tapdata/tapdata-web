@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useI18n } from '@tap/i18n'
+import { dqlEventStatusLabelKeys } from './event-status-presentation'
 import type {
   DqlEventStatus,
   DqlEventSummary,
@@ -11,27 +13,51 @@ const props = defineProps<{
 const emit = defineEmits<{
   (event: 'update:modelValue', value?: DqlEventStatus): void
 }>()
+const { t } = useI18n()
 
 const items: Array<{
   key?: DqlEventStatus
-  label: string
+  labelKey: string
   summaryKey: keyof DqlEventSummary
 }> = [
-  { label: '全部', summaryKey: 'total' },
-  { key: 'PENDING', label: '待处理', summaryKey: 'pending' },
-  { key: 'REPROCESSING', label: '处理中', summaryKey: 'reprocessing' },
-  { key: 'RECOVERED', label: '已恢复', summaryKey: 'recovered' },
-  { key: 'RECOVERY_FAILED', label: '恢复失败', summaryKey: 'recoveryFailed' },
+  {
+    labelKey: 'packages_business_exception_events_status_all',
+    summaryKey: 'total',
+  },
+  {
+    key: 'PENDING',
+    labelKey: dqlEventStatusLabelKeys.PENDING,
+    summaryKey: 'pending',
+  },
+  {
+    key: 'REPROCESSING',
+    labelKey: dqlEventStatusLabelKeys.REPROCESSING,
+    summaryKey: 'reprocessing',
+  },
+  {
+    key: 'RECOVERED',
+    labelKey: dqlEventStatusLabelKeys.RECOVERED,
+    summaryKey: 'recovered',
+  },
+  {
+    key: 'RECOVERY_FAILED',
+    labelKey: dqlEventStatusLabelKeys.RECOVERY_FAILED,
+    summaryKey: 'recoveryFailed',
+  },
   {
     key: 'NOT_REPROCESSABLE',
-    label: '不可重处理',
+    labelKey: dqlEventStatusLabelKeys.NOT_REPROCESSABLE,
     summaryKey: 'notReprocessable',
   },
 ]
 </script>
 
 <template>
-  <div class="exception-summary-tabs" role="tablist" aria-label="异常事件状态">
+  <div
+    class="exception-summary-tabs"
+    role="tablist"
+    :aria-label="t('packages_business_exception_events_status')"
+  >
     <button
       v-for="item in items"
       :key="item.key || 'all'"
@@ -42,7 +68,7 @@ const items: Array<{
       :aria-selected="props.modelValue === item.key"
       @click="emit('update:modelValue', item.key)"
     >
-      <span>{{ item.label }}</span
+      <span>{{ t(item.labelKey) }}</span
       ><strong>{{ props.summary[item.summaryKey] }}</strong>
     </button>
   </div>
