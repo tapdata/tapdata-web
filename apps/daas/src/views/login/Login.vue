@@ -1,9 +1,6 @@
 <script>
 import { fetchSettings } from '@tap/api/core/settings'
-import {
-  checkSamlLoginEnable,
-  getSamlLoginUrl,
-} from '@tap/api/src/core/sso'
+import { checkSamlLoginEnable, getSamlLoginUrl } from '@tap/api/src/core/sso'
 import { fetchTimestamp } from '@tap/api/src/core/timestamp'
 import {
   checkLdapLoginEnable,

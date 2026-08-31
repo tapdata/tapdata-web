@@ -761,7 +761,8 @@ export default {
     '切換到cdc中的批量插入模式間隔。 ',
   setting_share_cdc: '共享增量',
   setting_global_share_cdc_enable: '默認全域開啟共亯增量',
-  setting_global_share_cdc_enable_doc: '默認開啟時，使用外存清單中指定的默認外存，並且作為默認設置應用於後續新建的連接和任務。（開啟後才能在數據追溯中査詢變更日誌）',
+  setting_global_share_cdc_enable_doc:
+    '默認開啟時，使用外存清單中指定的默認外存，並且作為默認設置應用於後續新建的連接和任務。（開啟後才能在數據追溯中査詢變更日誌）',
   setting_share_cdc_persistence_mode: '共享增量存儲模式',
   setting_share_cdc_persistence_memory_size: '共享增量內存緩存行數',
   setting_share_cdc_persistence_memory_size_doc:
@@ -778,7 +779,8 @@ export default {
   setting_share_cdc_persistence_rocksdb_path_doc:
     '該項配置只有模式選擇RocksDB時生效，RocksDB存儲的本地路徑',
   setting_task_start_transform_wait_seconds: '任務啓動推演等待時長(秒)',
-  setting_task_start_transform_wait_seconds_doc: '任務點擊啓動後會進行推演或試運行，當超出設置的等待時長後，此次啓動會失敗，需要再次點擊啓動，或者調大推演等待時長即可，默認等待時長爲60s',
+  setting_task_start_transform_wait_seconds_doc:
+    '任務點擊啓動後會進行推演或試運行，當超出設置的等待時長後，此次啓動會失敗，需要再次點擊啓動，或者調大推演等待時長即可，默認等待時長爲60s',
   setting_task_log_file_save_time: '任務日誌留存時長(天)',
   setting_task_log_file_save_size: '任務日誌留存大小(MB)',
   setting_task_log_file_save_count: '任務日誌留存份數',
@@ -792,7 +794,8 @@ export default {
   setting_Login_Brief_Tips: '登錄簡要提示',
   setting_Login_Brief_Tips_doc: '開啟後，登錄提示將簡化',
   setting_Access_Token_Idle_Timeout_Minutes: '會話空閑超時時間（單位：分鍾）',
-  setting_Access_Token_Idle_Timeout_Minutes_doc: '當會話不活躍時間超過設置的值時，會話失效需重新登錄',
+  setting_Access_Token_Idle_Timeout_Minutes_doc:
+    '當會話不活躍時間超過設置的值時，會話失效需重新登錄',
   setting_LDAP: 'LDAP登入設置',
   setting_Ldap_Login_Enable: '使用LDAP登入',
   setting_Ldap_Server_Host: 'LDAP伺服器地址',
@@ -843,7 +846,8 @@ export default {
     '服務提供方私鑰（靜態加密存儲，只寫），與 SP 憑證透過「產生金鑰對」成對產生',
   setting_Saml_Sp_Certificate_doc:
     'SP 憑證（公鑰，PEM），會被打包進匯出的 SP 中繼資料。請透過「產生金鑰對」產生',
-  setting_Saml_Idp_Entity_Id_doc: '身份提供方（IdP）實體 ID，由「匯入 IdP 中繼資料」自動填充',
+  setting_Saml_Idp_Entity_Id_doc:
+    '身份提供方（IdP）實體 ID，由「匯入 IdP 中繼資料」自動填充',
   setting_Saml_Idp_Sso_Url_doc:
     '身份提供方 SSO（登入）地址。ADFS 範例：https://adfs.example.com/adfs/ls/',
   setting_Saml_Idp_Slo_Url_doc:

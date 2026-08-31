@@ -80,7 +80,8 @@ router.beforeEach(async (to, from, next) => {
   } else {
     sessionStorage.setItem('lastLocationHref', location.href)
     const ssoFromRoute = to.query?.sso === '1'
-    const ssoFromUrl = new URLSearchParams(window.location.search).get('sso') === '1'
+    const ssoFromUrl =
+      new URLSearchParams(window.location.search).get('sso') === '1'
     if (ssoFromRoute || ssoFromUrl) {
       // Keep the control flag out of the visible login URL. The login page
       // consumes this one-time flag and stays available for manual SSO.

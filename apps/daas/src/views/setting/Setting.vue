@@ -446,7 +446,7 @@ export default {
       ;(category?.items || []).forEach((item) => {
         const field = fields[item.key]
         if (!field) return
-        const value = item.value
+        const value = 'open' in item ? item.open : item.value
         form[field] = ['true', 'false'].includes(String(value))
           ? String(value) === 'true'
           : value
@@ -456,7 +456,7 @@ export default {
 
     testSaml() {
       this.samlTesting = true
-        this.samlTestResult = null
+      this.samlTestResult = null
       testSamlConfig(this.getSamlConfigForm())
         .then((data) => {
           const result = data?.valid !== undefined ? data : data?.data
@@ -854,10 +854,20 @@ export default {
           :closable="false"
         />
         <ul v-if="samlTestResult.errors?.length" class="mt-2 text-danger">
-          <li v-for="error in samlTestResult.errors" :key="`saml-error-${error}`">{{ error }}</li>
+          <li
+            v-for="error in samlTestResult.errors"
+            :key="`saml-error-${error}`"
+          >
+            {{ error }}
+          </li>
         </ul>
         <ul v-if="samlTestResult.warnings?.length" class="mt-2 text-warning">
-          <li v-for="warning in samlTestResult.warnings" :key="`saml-warning-${warning}`">{{ warning }}</li>
+          <li
+            v-for="warning in samlTestResult.warnings"
+            :key="`saml-warning-${warning}`"
+          >
+            {{ warning }}
+          </li>
         </ul>
       </div>
 
@@ -888,11 +898,9 @@ export default {
         </template>
 
         <template v-else-if="activePanel === 'SAML'">
-          <el-button
-            :loading="samlTesting"
-            @click="testSaml"
-            >{{ $t('setting_saml_test_config') }}</el-button
-          >
+          <el-button :loading="samlTesting" @click="testSaml">{{
+            $t('setting_saml_test_config')
+          }}</el-button>
           <el-button
             :loading="samlKeyPairGenerating"
             @click="generateSamlKeyPair"

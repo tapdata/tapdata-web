@@ -890,8 +890,7 @@ export default {
   setting_IdP_Initiated_Enabled: 'Allow IdP-Initiated SSO',
   setting_JIT_Provisioning_Enabled: 'Enable JIT Provisioning',
   setting_Login_Redirect_URL: 'Post-Login Redirect URL',
-  setting_Saml_Login_Enable_doc:
-    'Enable SAML 2.0 single sign-on login',
+  setting_Saml_Login_Enable_doc: 'Enable SAML 2.0 single sign-on login',
   setting_Saml_Sp_Entity_Id_doc:
     'Service Provider unique identifier. Recommended to use the ACS base URL, e.g. https://tapdata.example.com/api/sso/saml',
   setting_Saml_Sp_Acs_Url_doc:
@@ -938,8 +937,10 @@ export default {
   setting_saml_test_config: 'Test Configuration',
   setting_saml_static_check: 'Static Configuration Check',
   setting_saml_test_success: 'SAML configuration test passed',
-  setting_saml_test_failed: 'SAML configuration test failed. See the details below.',
-  setting_saml_test_no_result: 'No SAML test result was returned. Please try again.',
+  setting_saml_test_failed:
+    'SAML configuration test failed. See the details below.',
+  setting_saml_test_no_result:
+    'No SAML test result was returned. Please try again.',
   setting_saml_export_sp_metadata: 'Export SP Metadata',
   setting_saml_import_idp_metadata: 'Import IdP Metadata',
   setting_saml_import_idp_metadata_label: 'Upload the IdP metadata XML file',
