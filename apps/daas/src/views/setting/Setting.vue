@@ -9,6 +9,7 @@ import {
   exportSpMetadata,
   generateSamlKeyPair,
   importIdpMetadata,
+  testSamlConfig,
 } from '@tap/api/src/core/sso'
 import { testLdapLogin } from '@tap/api/src/core/users'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
@@ -104,6 +105,8 @@ export default {
       samlImportXml: '',
       samlImportFileName: '',
       samlImporting: false,
+      samlTesting: false,
+      samlTestResult: null,
     }
   },
   computed: {
@@ -405,6 +408,78 @@ export default {
         })
         .finally(() => {
           this.samlKeyPairGenerating = false
+        })
+    },
+
+    getSamlConfigForm() {
+      const category = find(
+        this.formData.items,
+        (item) => item.category === 'SAML',
+      )
+      const fields = {
+        'saml.login.enable': 'enabled',
+        'saml.sp.entityId': 'spEntityId',
+        'saml.sp.acsUrl': 'spAcsUrl',
+        'saml.sp.sloUrl': 'spSloUrl',
+        'saml.sp.privateKey': 'spPrivateKey',
+        'saml.sp.certificate': 'spCertificate',
+        'saml.idp.entityId': 'idpEntityId',
+        'saml.idp.ssoUrl': 'idpSsoUrl',
+        'saml.idp.sloUrl': 'idpSloUrl',
+        'saml.idp.signingCertificate': 'idpSigningCertificate',
+        'saml.nameIdFormat': 'nameIdFormat',
+        'saml.wantAssertionsSigned': 'wantAssertionsSigned',
+        'saml.signAuthnRequest': 'signAuthnRequest',
+        'saml.signatureAlgorithm': 'signatureAlgorithm',
+        'saml.clockSkewSeconds': 'clockSkewSeconds',
+        'saml.idpInitiatedEnabled': 'idpInitiatedEnabled',
+        'saml.jitProvisioningEnabled': 'jitProvisioningEnabled',
+        'saml.loginRedirectUrl': 'loginRedirectUrl',
+        'saml.claim.username': 'claimUsername',
+        'saml.claim.email': 'claimEmail',
+        'saml.claim.displayName': 'claimDisplayName',
+        'saml.claim.groups': 'claimGroups',
+      }
+      const form = {}
+      ;(category?.items || []).forEach((item) => {
+        const field = fields[item.key]
+        if (!field) return
+        const value = 'open' in item ? item.open : item.value
+        form[field] = ['true', 'false'].includes(String(value))
+          ? String(value) === 'true'
+          : value
+      })
+      return form
+    },
+
+    testSaml() {
+      this.samlTesting = true
+      this.samlTestResult = null
+      testSamlConfig(this.getSamlConfigForm())
+        .then((data) => {
+          const result = data?.valid !== undefined ? data : data?.data
+          this.samlTestResult = result || {
+            valid: false,
+            errors: [this.$t('setting_saml_test_no_result')],
+            warnings: [],
+            details: [],
+          }
+          const passed = this.samlTestResult.valid === true
+          if (passed) {
+            this.$message.success(this.$t('setting_saml_test_success'))
+          } else {
+            this.$message.error(this.$t('setting_saml_test_failed'))
+            const errors = this.samlTestResult.errors || []
+            if (errors.length) {
+              this.$message.error(errors.join('; '))
+            }
+          }
+        })
+        .catch((error) => {
+          showErrorMessage(error)
+        })
+        .finally(() => {
+          this.samlTesting = false
         })
     },
 
@@ -770,6 +845,30 @@ export default {
         </div>
       </div>
 
+      <div v-if="activePanel === 'SAML' && samlTestResult" class="px-6 pb-4">
+        <el-alert
+          :title="$t('setting_saml_static_check')"
+          :type="samlTestResult.valid ? 'success' : 'error'"
+          :closable="false"
+        />
+        <ul v-if="samlTestResult.errors?.length" class="mt-2 text-danger">
+          <li
+            v-for="error in samlTestResult.errors"
+            :key="`saml-error-${error}`"
+          >
+            {{ error }}
+          </li>
+        </ul>
+        <ul v-if="samlTestResult.warnings?.length" class="mt-2 text-warning">
+          <li
+            v-for="warning in samlTestResult.warnings"
+            :key="`saml-warning-${warning}`"
+          >
+            {{ warning }}
+          </li>
+        </ul>
+      </div>
+
       <div
         class="footer border-top position-sticky py-6 bottom-0 bg-white z-10 dark:bg-transparent dark:backdrop-blur-md"
       >
@@ -797,6 +896,9 @@ export default {
         </template>
 
         <template v-else-if="activePanel === 'SAML'">
+          <el-button :loading="samlTesting" @click="testSaml">{{
+            $t('setting_saml_test_config')
+          }}</el-button>
           <el-button
             :loading="samlKeyPairGenerating"
             @click="generateSamlKeyPair"

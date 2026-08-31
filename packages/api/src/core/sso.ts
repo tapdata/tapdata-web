@@ -52,6 +52,12 @@ export interface SamlValidationResult {
   valid: boolean
   errors: string[]
   warnings: string[]
+  details: string[]
+}
+
+/** Run static SAML configuration validation without saving or enabling it. */
+export function testSamlConfig(config: Record<string, unknown>) {
+  return requestClient.post<SamlValidationResult>(`${BASE_URL}/test`, config)
 }
 
 /**
