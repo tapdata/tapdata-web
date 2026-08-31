@@ -5,6 +5,11 @@ import {
   saveSettings,
   testEmail,
 } from '@tap/api/src/core/settings'
+import {
+  exportSpMetadata,
+  generateSamlKeyPair,
+  importIdpMetadata,
+} from '@tap/api/src/core/sso'
 import { testLdapLogin } from '@tap/api/src/core/users'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
@@ -14,7 +19,9 @@ import { AdminOutlined } from '@tap/component/src/icon'
 import { TextFileReader } from '@tap/form/src/components/text-file-reader'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 import Cookie from '@tap/shared/src/cookie'
+import { setSettings } from '@tap/shared/src/settings'
 import Time from '@tap/shared/src/time'
+import { downloadJson } from '@tap/shared/src/util'
 import { find, uniq } from 'lodash-es'
 import i18n from '@/i18n'
 
@@ -91,6 +98,12 @@ export default {
       appearanceForm: {},
       colorEnum: ['red', 'orange', 'yellow', 'blue', 'green', 'purple'],
       formItems: [],
+      samlKeyPairGenerating: false,
+      samlMetadataExporting: false,
+      samlImportDialog: false,
+      samlImportXml: '',
+      samlImportFileName: '',
+      samlImporting: false,
     }
   },
   computed: {
@@ -299,12 +312,15 @@ export default {
     // 保存
     save() {
       const settingData = []
-      this.formData.items.filter((item) => {
+      this.formData.items.forEach((item) => {
         item.items.forEach((childItem) => {
           settingData.push(childItem)
         })
       })
-      saveSettings(settingData).then(() => {
+      saveSettings(settingData).then(async () => {
+        const settings = await fetchSettings()
+        setSettings(settings)
+        localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(settings))
         this.$message.success(this.$t('public_message_save_ok'))
 
         if (this.appearanceForm && Object.keys(this.appearanceForm).length) {
@@ -355,6 +371,105 @@ export default {
         })
         .finally(() => {
           this.adTesting = false
+        })
+    },
+
+    // 证书类字段统一用文件上传控件(LDAP SSL 证书 + SAML SP/IdP 证书)
+    isCertField(childItem) {
+      return (
+        childItem.key_label === 'Ldap SSL Cert' ||
+        childItem.key === 'saml.sp.certificate' ||
+        childItem.key === 'saml.idp.signingCertificate'
+      )
+    },
+
+    // 按 key 定位 SAML 分类里的某个配置行,用于回填 metadata / 证书
+    findSamlItem(key) {
+      const category = find(this.formData.items, (item) => {
+        return item.category === 'SAML'
+      })
+      return category ? find(category.items, (it) => it.key === key) : null
+    },
+
+    // 生成 SP 密钥对:私钥加密存于后端,仅返回证书,回填到 SP Certificate 行
+    generateSamlKeyPair() {
+      this.samlKeyPairGenerating = true
+      generateSamlKeyPair()
+        .then((data) => {
+          const certItem = this.findSamlItem('saml.sp.certificate')
+          if (certItem) {
+            certItem.value = data?.spCertificate || ''
+          }
+          this.$message.success(this.$t('setting_saml_keypair_generated'))
+        })
+        .catch((error) => {
+          showErrorMessage(error)
+        })
+        .finally(() => {
+          this.samlKeyPairGenerating = false
+        })
+    },
+
+    // 导出 SP 元数据 XML 供 IdP 导入
+    exportSpMetadata() {
+      this.samlMetadataExporting = true
+      exportSpMetadata()
+        .then((xml) => {
+          downloadJson(xml, 'tapdata-sp-metadata.xml')
+        })
+        .catch((error) => {
+          showErrorMessage(error)
+        })
+        .finally(() => {
+          this.samlMetadataExporting = false
+        })
+    },
+
+    openSamlImportDialog() {
+      this.samlImportXml = ''
+      this.samlImportFileName = ''
+      this.samlImportDialog = true
+    },
+
+    handleChangeSamlImportXml(value) {
+      this.samlImportXml = value || ''
+    },
+
+    handleChangeSamlImportName(name) {
+      this.samlImportFileName = name || ''
+    },
+
+    // 解析 IdP 元数据并回填 IdP 分组的四个字段(保存后才落库)
+    confirmImportIdpMetadata() {
+      if (!this.samlImportXml) {
+        this.$message.warning(this.$t('setting_saml_import_empty'))
+        return
+      }
+      this.samlImporting = true
+      importIdpMetadata(this.samlImportXml)
+        .then((data) => {
+          const mapping = {
+            'saml.idp.entityId': data?.idpEntityId,
+            'saml.idp.ssoUrl': data?.idpSsoUrl,
+            'saml.idp.sloUrl': data?.idpSloUrl,
+            'saml.idp.signingCertificate': data?.idpSigningCertificate,
+          }
+          Object.keys(mapping).forEach((key) => {
+            const item = this.findSamlItem(key)
+            // A null value from the metadata explicitly clears an optional
+            // endpoint such as SLO; only an absent field should be ignored.
+            if (item && mapping[key] !== undefined) {
+              item.value = mapping[key]
+            }
+          })
+          this.samlImportDialog = false
+          this.$message.success(this.$t('setting_saml_import_success'))
+        })
+        .catch((error) => {
+          showErrorMessage(error)
+        })
+        .finally(() => {
+          this.samlImporting = false
         })
     },
 
@@ -537,14 +652,14 @@ export default {
                     </template>
 
                     <TextFileReader
-                      v-if="childItem.key_label === 'Ldap SSL Cert'"
+                      v-if="isCertField(childItem)"
                       :value="childItem.value"
                       :file-name="childItem.fileName"
                       @change="handleChangeCert(childItem, $event)"
                       @update:file-name="handleChangeName(childItem, $event)"
                     />
 
-                    <template v-if="childItem.key === 'license_rule'">
+                    <template v-else-if="childItem.key === 'license_rule'">
                       <div
                         class="flex flex-column gap-2 w-100 align-items-start"
                       >
@@ -682,8 +797,60 @@ export default {
             $t('public_connection_button_test')
           }}</el-button>
         </template>
+
+        <template v-else-if="activePanel === 'SAML'">
+          <el-button
+            :loading="samlKeyPairGenerating"
+            @click="generateSamlKeyPair"
+            >{{ $t('setting_saml_generate_keypair') }}</el-button
+          >
+          <el-button
+            :loading="samlMetadataExporting"
+            @click="exportSpMetadata"
+            >{{ $t('setting_saml_export_sp_metadata') }}</el-button
+          >
+          <el-button @click="openSamlImportDialog">{{
+            $t('setting_saml_import_idp_metadata')
+          }}</el-button>
+        </template>
       </div>
     </el-form>
+
+    <el-dialog
+      v-model="samlImportDialog"
+      :title="$t('setting_saml_import_idp_metadata')"
+      :close-on-click-modal="false"
+      width="600px"
+    >
+      <el-form label-position="top">
+        <el-form-item :label="$t('setting_saml_import_idp_metadata_label')">
+          <TextFileReader
+            accept=".xml"
+            :value="samlImportXml"
+            :file-name="samlImportFileName"
+            @change="handleChangeSamlImportXml"
+            @update:file-name="handleChangeSamlImportName"
+          />
+        </el-form-item>
+        <el-input
+          v-model="samlImportXml"
+          type="textarea"
+          :rows="8"
+          :placeholder="$t('setting_saml_import_idp_metadata_placeholder')"
+        />
+      </el-form>
+      <template #footer>
+        <el-button @click="samlImportDialog = false">{{
+          $t('public_button_cancel')
+        }}</el-button>
+        <el-button
+          type="primary"
+          :loading="samlImporting"
+          @click="confirmImportIdpMetadata"
+          >{{ $t('public_button_confirm') }}</el-button
+        >
+      </template>
+    </el-dialog>
 
     <el-dialog
       v-model="emailTemplateDialog"

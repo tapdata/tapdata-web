@@ -1,6 +1,7 @@
 <script>
 import { fetchRoleMappings } from '@tap/api/src/core/role-mappings'
 import { fetchRoles } from '@tap/api/src/core/roles'
+import { checkSamlLoginEnable } from '@tap/api/src/core/sso'
 import {
   batchUpdateUserListtags,
   countUsers,
@@ -16,7 +17,10 @@ import TablePage from '@tap/business/src/components/TablePage.vue'
 import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import dayjs from 'dayjs'
+import { ElDivider } from 'element-plus'
 import { escapeRegExp } from 'lodash-es'
+import { h } from 'vue'
+import SsoUserImportDialog from './SsoUserImportDialog.vue'
 
 export default {
   components: {
@@ -24,6 +28,7 @@ export default {
     TablePage,
     FilterBar,
     DownBoldOutlined,
+    SsoUserImportDialog,
   },
   data() {
     return {
@@ -34,10 +39,13 @@ export default {
       },
       showTooltip: false,
       order: 'last_updated DESC',
+      spacer: h(ElDivider, { direction: 'vertical', class: 'mx-1' }),
       list: null,
       multipleSelection: [],
       roleMappding: [],
       createDialogVisible: false,
+      ssoImportVisible: false,
+      samlEnabled: false,
       activePanel: 'all',
       muneList: [
         { name: this.$t('public_select_option_all'), key: 'all' },
@@ -268,8 +276,16 @@ export default {
     this.getDbOptions()
     // this.getCount();
     this.getFilterItems()
+    this.loadSamlEnabled()
   },
   methods: {
+    async loadSamlEnabled() {
+      try {
+        this.samlEnabled = await checkSamlLoginEnable()
+      } catch {
+        this.samlEnabled = false
+      }
+    },
     // 重置
     reset(name) {
       if (name === 'reset') {
@@ -385,15 +401,10 @@ export default {
       fetchRoles(filter).then((data) => {
         const items = data?.items || []
         this.roleList = items
-        const options = []
-        items.forEach((db) => {
-          if (db.name !== 'admin') {
-            options.push({
-              label: db.name,
-              value: db.id,
-            })
-          }
-        })
+        const options = items.map((db) => ({
+          label: db.name,
+          value: db.id,
+        }))
         this.createFormConfig.items[3].options = options
       })
     },
@@ -408,6 +419,17 @@ export default {
     // 选中数据
     handleSelectionChange(val) {
       this.multipleSelection = val
+    },
+
+    havePermission(item, type) {
+      return item.permissionActions?.includes(type)
+    },
+
+    hasSelectedPermission(type) {
+      return (
+        this.multipleSelection.length > 0 &&
+        this.multipleSelection.every((item) => this.havePermission(item, type))
+      )
     },
 
     // 选择分类
@@ -744,7 +766,14 @@ export default {
   >
     <template #actions>
       <el-button
-        v-readonlybtn="'new_model_creation'"
+        v-if="$has('v2_user_management_menu_creation') && samlEnabled"
+        class="btn"
+        @click="ssoImportVisible = true"
+      >
+        <span>{{ $t('user_import_batch_import') }}</span>
+      </el-button>
+      <el-button
+        v-if="$has('v2_user_management_menu_creation')"
         class="btn btn-create"
         type="primary"
         @click="openCreateDialog"
@@ -844,7 +873,7 @@ export default {
           <span> {{ $t('public_set_user_group') }}</span>
         </el-button>
         <el-dropdown
-          v-readonlybtn="'user_edition'"
+          v-if="hasSelectedPermission('Edit')"
           @command="handleCommand($event)"
         >
           <el-button class="btn btn-dropdowm">
@@ -855,18 +884,13 @@ export default {
           </el-button>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item v-if="$has('user_edition')" command="activated">
+              <el-dropdown-item command="activated">
                 {{ $t('user_list_bulk_activation') }}
               </el-dropdown-item>
-              <el-dropdown-item
-                v-if="$has('user_edition')"
-                command="rejected"
-                >{{ $t('user_list_bulk_freeze') }}</el-dropdown-item
-              >
-              <el-dropdown-item
-                v-if="$has('user_edition')"
-                command="notActivated"
-              >
+              <el-dropdown-item command="rejected">{{
+                $t('user_list_bulk_freeze')
+              }}</el-dropdown-item>
+              <el-dropdown-item command="notActivated">
                 {{ $t('user_list_bulk_check') }}
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -954,96 +978,57 @@ export default {
       </el-table-column>
       <el-table-column :label="$t('public_operation')" width="210">
         <template #default="scope">
-          <div>
+          <el-space :spacer="spacer" :size="0" class="flex-wrap">
             <el-button
-              v-if="['rejected', 'notActivated'].includes(scope.row.status)"
-              v-readonlybtn="'user_edition'"
+              v-if="
+                ['rejected', 'notActivated'].includes(scope.row.status) &&
+                havePermission(scope.row, 'Edit')
+              "
               text
               type="primary"
-              :disabled="
-                $disabledByPermission(
-                  'user_edition_all_data',
-                  scope.row.user_id,
-                )
-              "
               @click="handleActive(scope.row)"
             >
               {{ $t('user_list_activation') }}
             </el-button>
-            <ElDivider
-              v-if="['rejected', 'notActivated'].includes(scope.row.status)"
-              class="mx-1"
-              direction="vertical"
-            />
             <el-button
-              v-if="!['rejected'].includes(scope.row.status)"
-              v-readonlybtn="'user_edition'"
+              v-if="
+                !['rejected'].includes(scope.row.status) &&
+                havePermission(scope.row, 'Edit')
+              "
               text
               type="primary"
-              :disabled="
-                $disabledByPermission(
-                  'user_edition_all_data',
-                  scope.row.user_id,
-                )
-              "
               @click="handleFreeze(scope.row)"
             >
               {{ $t('user_list_freeze') }}
             </el-button>
-            <ElDivider
-              v-if="!['rejected'].includes(scope.row.status)"
-              class="mx-1"
-              direction="vertical"
-            />
             <el-button
-              v-if="['notVerified'].includes(scope.row.status)"
-              v-readonlybtn="'user_edition'"
+              v-if="
+                ['notVerified'].includes(scope.row.status) &&
+                havePermission(scope.row, 'Edit')
+              "
               text
               type="primary"
-              :disabled="
-                $disabledByPermission(
-                  'user_edition_all_data',
-                  scope.row.user_id,
-                )
-              "
               @click="handleCheck(scope.row)"
               >{{ $t('user_list_check') }}</el-button
             >
-            <ElDivider
-              v-if="['notVerified'].includes(scope.row.status)"
-              class="mx-1"
-              direction="vertical"
-            />
             <el-button
-              v-if="['activated', 'rejected'].includes(scope.row.status)"
-              v-readonlybtn="'user_edition'"
+              v-if="
+                ['activated', 'rejected'].includes(scope.row.status) &&
+                havePermission(scope.row, 'Edit')
+              "
               text
               type="primary"
-              :disabled="
-                $disabledByPermission(
-                  'user_edition_all_data',
-                  scope.row.user_id,
-                )
-              "
               @click="edit(scope.row)"
               >{{ $t('public_button_edit') }}</el-button
             >
-            <ElDivider
-              v-if="['activated', 'rejected'].includes(scope.row.status)"
-              class="mx-1"
-              direction="vertical"
-            />
             <el-button
-              v-readonlybtn="'user_delete'"
+              v-if="havePermission(scope.row, 'Delete')"
               text
               type="primary"
-              :disabled="
-                $disabledByPermission('user_delete_all_data', scope.row.user_id)
-              "
               @click="remove(scope.row)"
               >{{ $t('public_button_delete') }}</el-button
             >
-          </div>
+          </el-space>
         </template>
       </el-table-column>
     </TablePage>
@@ -1240,6 +1225,11 @@ export default {
         </span>
       </template>
     </el-dialog>
+
+    <SsoUserImportDialog
+      v-model="ssoImportVisible"
+      @success="table.fetch()"
+    />
   </PageContainer>
 </template>
 

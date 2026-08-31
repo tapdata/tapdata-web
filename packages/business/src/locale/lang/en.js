@@ -258,6 +258,17 @@ export default {
   packages_business_dataFlow_bulkScheuled: 'Batch Start',
   packages_business_dataFlow_bulkStopping: 'Batch Stop',
   packages_business_dataFlow_taskBulkOperation: 'Batch Operation',
+  packages_business_task_batch_alarm_email_action: 'Batch Set Alert Receivers',
+  packages_business_task_batch_alarm_email_title: 'Batch Set Alert Receivers',
+  packages_business_task_batch_alarm_email_label: 'Email Receivers',
+  packages_business_task_batch_alarm_email_placeholder:
+    'Select email receivers',
+  packages_business_task_batch_alarm_email_overwrite_tip:
+    "After saving, the selected tasks' existing alert receiver settings will be overwritten.",
+  packages_business_task_batch_alarm_email_empty:
+    'No email receivers available. Save directly to clear alert receivers from the selected tasks.',
+  packages_business_task_batch_alarm_email_no_edit_permission_tip:
+    '{count} tasks do not have edit permission and will be skipped.',
   packages_business_dataFlow_addTag: 'Add Tag',
   packages_business_dataVerify_dataVerify: 'Data Verify',
   packages_business_dataFlow_selectAll: 'Select All',
@@ -363,6 +374,15 @@ export default {
     'Do you want to reset tasks in bulk? ',
   packages_business_dataFlow_bulk_initialize_confirm_message:
     "Resetting the task in batches will clear the task's synchronization progress and trigger a fresh execution of the task.",
+  packages_business_dataFlow_dql_impact_title: 'DQL record warning',
+  packages_business_dataFlow_dql_delete_impact_message:
+    'The current task has {count} unprocessed exception events. After deleting the task, these exception events cannot be rerun.',
+  packages_business_dataFlow_dql_reset_impact_message:
+    'The current task has {count} unprocessed exception events. After resetting the task, these exception events cannot be rerun.',
+  packages_business_dataFlow_dql_bulk_delete_impact_message:
+    'The following tasks have unprocessed exception events. After deleting the tasks in bulk, these exception events cannot be rerun:',
+  packages_business_dataFlow_dql_bulk_reset_impact_message:
+    'The following tasks have unprocessed exception events. After resetting the tasks in bulk, these exception events cannot be rerun:',
   packages_business_connections_databaseform_zidingyi: 'Custom',
   packages_business_connections_databaseform_duixiangshouji:
     'Object Collection',
@@ -752,8 +772,10 @@ export default {
     'When the task encounters an error',
   packages_business_setting_alarmnotification_dangrenwustop:
     'When the Agent service stops',
-  packages_business_setting_alarmnotification_dangyinqinglixian: 'When the engine stops',
-  packages_business_setting_alarmnotification_dangyinqinghuifu: 'When the engine starts',
+  packages_business_setting_alarmnotification_dangyinqinglixian:
+    'When the engine stops',
+  packages_business_setting_alarmnotification_dangyinqinghuifu:
+    'When the engine starts',
   packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn:
     'When APIServer worker P50 per minute exceeding threshold',
   packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn:
@@ -1759,6 +1781,36 @@ export default {
   packages_business_monitor_cron_tip: `Syntax: seconds * minutes * hours * days * months * weeks ? years *\nExample: 0 */1 * * * ? Run every minute 0 0 2 * * ? Run every day at 2am`,
   packages_business_datasource_monitor_alter: 'Data Source Monitor Alert',
   packages_business_task_ddl_warning: 'Task Dangerous DDL Alert',
+  packages_business_task_dql_event: 'DQL exception event entered DLQ',
+  packages_business_task_dql_save_failed: 'DQL exception event failed to enter DLQ',
+  packages_business_task_dql_recovery_failed: 'DQL manual recovery batch failed',
+  packages_business_task_dql_storm_guard: 'DQL exception storm guard activated',
+  packages_business_dql_source_table: 'Source table',
+  packages_business_dql_target_table: 'Target table',
+  packages_business_dql_event_id: 'Exception event ID',
+  packages_business_dql_dml_type: 'DML type',
+  packages_business_dql_error_type: 'Error type',
+  packages_business_dql_error_code: 'Error code',
+  packages_business_dql_classification_reason: 'Classification reason',
+  packages_business_dql_safe_reason: 'Safe error reason',
+  packages_business_dql_pending_count: 'Pending count',
+  packages_business_dql_task_id: 'Task ID',
+  packages_business_dql_batch_id: 'Recovery batch ID',
+  packages_business_dql_operator: 'Operator',
+  packages_business_dql_recovery_status: 'Recovery status',
+  packages_business_dql_selected_count: 'Selected count',
+  packages_business_dql_success_count: 'Success count',
+  packages_business_dql_failed_count: 'Failed count',
+  packages_business_dql_skipped_count: 'Skipped count',
+  packages_business_dql_remaining_count: 'Remaining pending count',
+  packages_business_dql_failed_at: 'First failure time',
+  packages_business_dql_page_url: 'Exception events page',
+  packages_business_dql_alarm_date: 'Alarm time',
+  packages_business_dql_guard_key: 'Guard key',
+  packages_business_dql_guard_window: 'Guard window',
+  packages_business_dql_guard_threshold: 'Guard threshold',
+  packages_business_dql_suppressed_count: 'Estimated suppressed count',
+  packages_business_dql_route_decision: 'Route decision',
   packages_business_import_mode: 'Handling for Name Conflicts',
   packages_business_import_as_copy: 'Import as Copy',
   packages_business_import_replace: 'Replace Existing',
@@ -2011,4 +2063,165 @@ export default {
   packages_business_workflow_step_output: 'Return value',
   packages_business_workflow_timeline: 'Step timeline',
   packages_business_workflow_suppressed_triggers: 'Suppressed triggers',
+  packages_business_api_server_connection_pool_deficiency_warn:
+    'When any API Server connection pool resource is tight and triggers the alarm threshold',
+  packages_business_api_server_connection_pool_idle_warn:
+    'When the number of connections in the connection pool of any API Server falls below the alarm threshold',
+  packages_business_exception_events_search_placeholder: 'Exception content',
+  packages_business_exception_events_task_name: 'Task name',
+  packages_business_exception_events_dml_insert: 'Insert',
+  packages_business_exception_events_dml_update: 'Update',
+  packages_business_exception_events_dml_delete: 'Delete',
+  packages_business_exception_events_error_type: 'Error type',
+  packages_business_exception_events_error_target_write: 'Target write failed',
+  packages_business_exception_events_error_transform: 'Transformation failed',
+  packages_business_exception_events_error_poison_record:
+    'Unprocessable record',
+  packages_business_exception_events_error_malformed_record:
+    'Malformed record',
+  packages_business_exception_events_error_unknown_record:
+    'Unknown record error',
+  packages_business_exception_events_recovery_running: 'Processing',
+  packages_business_exception_events_recovery_success:
+    'Processed successfully',
+  packages_business_exception_events_recovery_failed: 'Processing failed',
+  packages_business_exception_events_recovery_skipped: 'Skipped',
+  packages_business_exception_events_recovery_timeout: 'Processing timed out',
+  packages_business_exception_events_recovery_records: 'Processing records',
+  packages_business_exception_events_recovery_records_empty:
+    'No processing records',
+  packages_business_exception_events_refresh_recovery_records:
+    'Refresh processing records',
+  packages_business_exception_events_same_task_selection_warning:
+    'A recovery operation can only include exception events from the same task',
+  packages_business_exception_events_task_type_fetch_error:
+    'Failed to get the task type. Task monitoring cannot be opened for now.',
+  packages_business_exception_events_task_type_missing:
+    'Task type is missing. Task monitoring cannot be opened for now.',
+  packages_business_exception_events_same_task_selection_required:
+    'Please select exception events from the same task only',
+  packages_business_exception_events_recovery_submitted:
+    'Recovery submitted. Track its status in “Processing progress”.',
+  packages_business_exception_events_title: 'Exception events',
+  packages_business_exception_events_mock_data: 'Mock data',
+  packages_business_exception_events_mock_task_orders: 'Order sync',
+  packages_business_exception_events_mock_task_inventory: 'Inventory sync',
+  packages_business_exception_events_mock_task_members: 'Member data sync',
+  packages_business_exception_events_mock_source_mysql_orders:
+    'MySQL orders database',
+  packages_business_exception_events_mock_target_mongo_orders:
+    'MongoDB orders collection',
+  packages_business_exception_events_mock_source_postgresql_inventory:
+    'PostgreSQL inventory database',
+  packages_business_exception_events_mock_source_mysql_members:
+    'MySQL members database',
+  packages_business_exception_events_mock_target_mongo_members:
+    'MongoDB members collection',
+  packages_business_exception_events_mock_failed_node_write_orders:
+    'Write orders',
+  packages_business_exception_events_mock_failed_node_field_mapping:
+    'Field mapping',
+  packages_business_exception_events_mock_failed_node_primary_key:
+    'Primary key parsing',
+  packages_business_exception_events_mock_failed_node_write_members:
+    'Write members',
+  packages_business_exception_events_mock_failed_node_deserialize:
+    'Deserialization',
+  packages_business_exception_events_mock_failed_node_write_inventory:
+    'Write inventory',
+  packages_business_exception_events_mock_attempt_field_type_mismatch:
+    'Field amount type mismatch',
+  packages_business_exception_events_mock_attempt_recovery_running:
+    'The recovery task is running and will update the status automatically when complete.',
+  packages_business_exception_events_mock_attempt_replay_running:
+    'Replay submitted and running in order.',
+  packages_business_exception_events_mock_attempt_replay_failed:
+    'The target returned DuplicateKey, and the current record could not be replayed.',
+  packages_business_exception_events_mock_blocked_payload_incomplete:
+    'The event payload is incomplete and cannot be safely replayed.',
+  packages_business_exception_events_mock_blocked_status_unsupported:
+    'The current status does not support replay.',
+  packages_business_exception_events_mock_blocked_events:
+    'Remove events that cannot be replayed before continuing.',
+  packages_business_exception_events_mock_batch_running:
+    'The mock batch is being replayed under controlled execution.',
+  packages_business_exception_events_more_filters: 'More filters',
+  packages_business_exception_events_more_filters_description:
+    'Narrow the results by table name or failure time',
+  packages_business_exception_events_clear: 'Clear',
+  packages_business_exception_events_source_table_placeholder:
+    'Source table, e.g. mysql.orders',
+  packages_business_exception_events_target_table_placeholder:
+    'Target table, e.g. mongo.orders',
+  packages_business_exception_events_failure_start_time: 'Failure start time',
+  packages_business_exception_events_failure_end_time: 'Failure end time',
+  packages_business_exception_events_apply_filters: 'Apply filters',
+  packages_business_exception_events_refresh: 'Refresh',
+  packages_business_exception_events_reprocess: 'Reprocess',
+  packages_business_exception_events_task: 'Task',
+  packages_business_exception_events_belonging_task: 'Task',
+  packages_business_exception_events_source_table: 'Source table',
+  packages_business_exception_events_target_table: 'Target table',
+  packages_business_exception_events_error_code: 'Error code',
+  packages_business_exception_events_event_time: 'Event time',
+  packages_business_exception_events_failure_time: 'Failure time',
+  packages_business_exception_events_status: 'Status',
+  packages_business_exception_events_reprocess_count: 'Reprocess count',
+  packages_business_exception_events_last_reprocess_time: 'Last reprocess',
+  packages_business_exception_events_operation: 'Operation',
+  packages_business_exception_events_details: 'Details',
+  packages_business_exception_events_event_details: 'Exception event details',
+  packages_business_exception_events_loading: 'Loading…',
+  packages_business_exception_events_refresh_event_details:
+    'Refresh event details',
+  packages_business_exception_events_event_info: 'Event information',
+  packages_business_exception_events_first_failed_at: 'First failed at {time}',
+  packages_business_exception_events_event_key_missing:
+    'Event key is missing; this event cannot be safely reprocessed',
+  packages_business_exception_events_failed_node: 'Failed node',
+  packages_business_exception_events_source_node: 'Source node',
+  packages_business_exception_events_target_node: 'Target node',
+  packages_business_exception_events_business_key: 'Business key',
+  packages_business_exception_events_error_info: 'Error information',
+  packages_business_exception_events_payload_preview: 'Payload preview',
+  packages_business_exception_events_payload_preview_truncated:
+    'Payload preview is truncated. Only the safe preview returned by the server is shown.',
+  packages_business_exception_events_payload_incomplete:
+    'Payload is incomplete; this event cannot be reprocessed.',
+  packages_business_exception_events_refresh_records: 'Refresh records',
+  packages_business_exception_events_attempt_count: '{count} attempts',
+  packages_business_exception_events_finished_at: 'Finished at {time}',
+  packages_business_exception_events_confirm_batch_reprocess:
+    'Confirm batch reprocess',
+  packages_business_exception_events_confirm_reprocess: 'Confirm reprocess',
+  packages_business_exception_events_reprocess_confirm_description:
+    'Confirm the task scope and event count before submitting',
+  packages_business_exception_events_event_count: '{count} events',
+  packages_business_exception_events_reprocess_notice:
+    'The original events will be submitted using each task’s current published configuration. Related tasks may pause briefly during processing and resume afterward. Original Payload will not be modified.',
+  packages_business_exception_events_events_to_submit: 'Events to submit',
+  packages_business_exception_events_tasks_involved: 'Tasks involved',
+  packages_business_exception_events_task_count: '{count} tasks',
+  packages_business_exception_events_execution_order: 'Execution order',
+  packages_business_exception_events_event_time_order: 'Event time',
+  packages_business_exception_events_submission_list: 'Submission list',
+  packages_business_exception_events_submission_list_description:
+    'Grouped by task and executed in event-time order',
+  packages_business_exception_events_data_routes_events_count:
+    '{routeCount} data routes · {eventCount} events',
+  packages_business_exception_events_failed_at: 'Failed at {time}',
+  packages_business_exception_events_more_events_not_expanded:
+    '{count} more events not expanded',
+  packages_business_exception_events_temporarily_unavailable:
+    'Temporarily unavailable for submission',
+  packages_business_exception_events_blocked_events_description:
+    'These events will not be submitted',
+  packages_business_exception_events_selected_record: 'Selected record',
+  packages_business_exception_events_submit_in_order:
+    'These events will be submitted in order after confirmation',
+  packages_business_exception_events_remove_blocked_events:
+    'Remove unsubmitable events first',
+  packages_business_exception_events_cancel: 'Cancel',
+  packages_business_exception_events_confirm_reprocess_with_count:
+    'Confirm reprocess {count}',
 }

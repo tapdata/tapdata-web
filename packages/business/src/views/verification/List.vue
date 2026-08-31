@@ -23,9 +23,10 @@ import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
-import { computed, onBeforeMount, onUnmounted, ref, watch } from 'vue'
+import { computed, h, onBeforeMount, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ErrorMessage } from '../../components/error-message'
+import BatchTagDialog from '../../components/BatchTagDialog.vue'
 import PageContainer from '../../components/PageContainer.vue'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create.vue'
 import TablePage from '../../components/TablePage.vue'
@@ -70,6 +71,11 @@ interface InspectItem {
   lastStartTime: string
   sourceTotal: string | number
   targetTotal: string | number
+  listtags?: Array<{
+    id: string
+    value: string
+    name?: string
+  }>
   InspectResult?: InspectResult
   errorMsg?: string
   difference_number?: number
@@ -109,6 +115,7 @@ const importLoading = ref(false)
 // Reactive data
 const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 const order = ref('last_updated DESC')
+const spacer = h(ElDivider, { direction: 'vertical', class: 'mx-1' })
 const multipleSelection = ref<InspectItem[]>([])
 
 const searchParams = ref<SearchParams>({
@@ -142,6 +149,7 @@ const taskOptionsLoading = ref(false)
 
 // Computed
 const tableRef = computed(() => table.value)
+const batchTagDialog = ref<InstanceType<typeof BatchTagDialog> | null>(null)
 
 // Methods
 const inspectMethodChange = (val: string) => {
@@ -474,22 +482,6 @@ const onImportDialogClosed = () => {
   importForm.value.type = 'task'
 }
 
-const handleSelectTag = () => {
-  const tagList = []
-  const tagMap = {}
-
-  multipleSelection.value.forEach((row) => {
-    row.listtags?.forEach((item) => {
-      if (!tagMap[item.id]) {
-        tagList.push(item)
-        tagMap[item.id] = true
-      }
-    })
-  })
-
-  return tagList
-}
-
 const handleOperationClassify = async (listtags) => {
   if (!listtags.length || !multipleSelection.value.length) {
     return
@@ -507,6 +499,20 @@ const handleOperationClassify = async (listtags) => {
   } catch (error) {
     console.error(error)
   }
+}
+
+const openBatchTagDialog = () => {
+  if (!multipleSelection.value.length) return
+  batchTagDialog.value?.open(multipleSelection.value as any)
+}
+
+const handleBatchTagSaved = () => {
+  table.value?.clearSelection?.()
+  table.value?.fetch()
+}
+
+const handleBatchTagCreated = () => {
+  table.value?.refreshClassifyTags?.()
 }
 // Watchers
 watch(
@@ -540,11 +546,15 @@ onUnmounted(() => {
 <template>
   <PageContainer>
     <template #actions>
-      <ElButton :icon="ImportOutlined" @click="handleImport">
+      <ElButton
+        v-if="$has('v2_data_check_import')"
+        :icon="ImportOutlined"
+        @click="handleImport"
+      >
         {{ $t('public_task_import') }}
       </ElButton>
       <ElButton
-        v-readonlybtn="'datasource_creation'"
+        v-if="$has('v2_data_check_creation')"
         class="btn btn-create"
         type="primary"
         @click="handleCreate('pipeline')"
@@ -554,7 +564,7 @@ onUnmounted(() => {
         }}</span>
       </ElButton>
       <ElButton
-        v-readonlybtn="'datasource_creation'"
+        v-if="$has('v2_data_check_creation')"
         class="btn btn-create"
         type="primary"
         @click="handleCreate('random')"
@@ -684,10 +694,10 @@ onUnmounted(() => {
         <ElButton @click="handlePermissionsSettings">{{
           $t('packages_business_permissionse_settings_create_quanxianshezhi')
         }}</ElButton>
-        <ElButton @click="$refs.table.showClassify(handleSelectTag())">
+        <ElButton @click="openBatchTagDialog">
           <span> {{ $t('public_button_bulk_tag') }}</span>
         </ElButton>
-        <ElButton @click="handleExport">
+        <ElButton v-if="$has('v2_data_check_export')" @click="handleExport">
           <el-icon><ExportOutlined /></el-icon>
           <span> {{ $t('public_button_export') }}</span>
         </ElButton>
@@ -873,109 +883,75 @@ onUnmounted(() => {
         </template>
 
         <template #default="{ row }">
-          <ElButton
-            text
-            type="primary"
-            :disabled="!row.InspectResult"
-            @click="toTableInfo(row.id)"
-            >{{ $t('packages_business_verification_result_title') }}
-          </ElButton>
-
-          <template
-            v-if="
-              havePermission(row.permissionActions, 'Stop') &&
-              row.status === 'running'
-            "
-          >
-            <ElDivider
-              v-readonlybtn="'verify_job_edition'"
-              class="mx-1"
-              direction="vertical"
-            />
+          <el-space :spacer="spacer" :size="0" class="flex-wrap">
             <ElButton
-              v-readonlybtn="'verify_job_edition'"
               text
               type="primary"
-              :disabled="
-                $disabledByPermission(
-                  'verify_job_edition_all_data',
-                  row.user_id,
-                )
+              :disabled="!row.InspectResult"
+              @click="toTableInfo(row.id)"
+              >{{ $t('packages_business_verification_result_title') }}
+            </ElButton>
+
+            <ElButton
+              v-if="
+                havePermission(row.permissionActions, 'Stop') &&
+                row.status === 'running'
               "
+              text
+              type="primary"
               @click="stop(row.id)"
               >{{ $t('public_button_stop') }}
             </ElButton>
-          </template>
 
-          <template
-            v-if="
-              havePermission(row.permissionActions, 'Start') &&
-              row.status !== 'running'
-            "
-          >
-            <ElDivider class="mx-1" direction="vertical" />
             <ElButton
-              v-readonlybtn="'verify_job_edition'"
+              v-if="
+                havePermission(row.permissionActions, 'Start') &&
+                row.status !== 'running'
+              "
               text
               type="primary"
               :disabled="
-                $disabledByPermission(
-                  'verify_job_edition_all_data',
-                  row.user_id,
-                ) || ['running', 'scheduling', 'stopping'].includes(row.status)
+                ['running', 'scheduling', 'stopping'].includes(row.status)
               "
               @click="startTask(row.id)"
               >{{ $t('packages_business_verification_executeVerifyTip') }}
             </ElButton>
-          </template>
 
-          <ElDivider class="mx-1" direction="vertical" />
-          <ElButton
-            v-readonlybtn="'verify_job_edition'"
-            text
-            type="primary"
-            :disabled="!row.InspectResult"
-            @click="history(row.id)"
-            >{{ $t('packages_business_verification_historyTip') }}
-          </ElButton>
-
-          <template v-if="havePermission(row.permissionActions, 'Edit')">
-            <ElDivider
-              v-readonlybtn="'verify_job_edition'"
-              class="mx-1"
-              direction="vertical"
-            />
             <ElButton
-              v-readonlybtn="'verify_job_edition'"
               text
               type="primary"
-              :disabled="
-                $disabledByPermission(
-                  'verify_job_edition_all_data',
-                  row.user_id,
-                ) || ['running', 'scheduling'].includes(row.status)
-              "
+              :disabled="!row.InspectResult"
+              @click="history(row.id)"
+              >{{ $t('packages_business_verification_historyTip') }}
+            </ElButton>
+
+            <ElButton
+              v-if="havePermission(row.permissionActions, 'Edit')"
+              text
+              type="primary"
+              :disabled="['running', 'scheduling'].includes(row.status)"
               @click="goEdit(row.id, row.flowId)"
               >{{ $t('packages_business_verification_configurationTip') }}
             </ElButton>
-          </template>
 
-          <template v-if="havePermission(row.permissionActions, 'Delete')">
-            <ElDivider class="mx-1" direction="vertical" />
             <ElButton
-              v-readonlybtn="'verify_job_edition'"
+              v-if="havePermission(row.permissionActions, 'Delete')"
               text
               type="primary"
-              :disabled="
-                $disabledByPermission('verify_job_delete_all_data', row.user_id)
-              "
               @click="remove(row.id, row)"
               >{{ $t('public_button_delete') }}
             </ElButton>
-          </template>
+          </el-space>
         </template>
       </el-table-column>
     </TablePage>
+    <BatchTagDialog
+      ref="batchTagDialog"
+      view-page="inspect"
+      :submit-tags="batchUpdateListtags"
+      @saved="handleBatchTagSaved"
+      @tag-created="handleBatchTagCreated"
+    />
     <PermissionseSettingsCreate ref="permissionseSettingsCreate" />
   </PageContainer>
 </template>

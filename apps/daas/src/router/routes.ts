@@ -34,6 +34,9 @@ const VerificationHistory = () =>
 const VerificationResult = () =>
   import('@tap/business/src/views/verification/Result.vue')
 
+const ExceptionEvents = () =>
+  import('@tap/business/src/views/exception-events/List.vue')
+
 //告警设置
 const AlarmSetting = () =>
   import('@tap/business/src/views/setting/AlarmSetting.vue')
@@ -81,6 +84,14 @@ export const routes = [
     name: 'login',
     component: () => import('@/views/login/Login.vue'),
     title: 'tap.login',
+  },
+  {
+    path: '/sso-callback',
+    name: 'ssoCallback',
+    component: () => import('@/views/login/SsoCallback.vue'),
+    meta: {
+      title: 'tap.login',
+    },
   },
   {
     path: '/verificationEmail',
@@ -420,6 +431,25 @@ export const routes = [
       },
     ],
   },
+
+  {
+    path: '/exception-events',
+    name: 'exceptionEvents',
+    component: Layout,
+    redirect: { name: 'exceptionEventsList' },
+    meta: { title: 'page_title_exception_events' },
+    children: [
+      {
+        path: '',
+        name: 'exceptionEventsList',
+        component: ExceptionEvents,
+        meta: {
+          hideTitle: true,
+          title: 'page_title_exception_events',
+        },
+      },
+    ],
+  },
   /* ---------- 共享挖掘  ----------*/
   {
     path: '/shared-mining',
@@ -461,7 +491,7 @@ export const routes = [
         meta: {
           hideTitle: true,
           title: 'page_title_heartbeat_table',
-          code: 'v2_log_collector',
+          code: 'v2_conn_heartbeat',
         },
       },
     ],

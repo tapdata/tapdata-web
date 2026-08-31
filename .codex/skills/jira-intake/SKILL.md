@@ -58,6 +58,7 @@ Repository-specific `AGENTS.md` instructions override this section when they are
 ## Error Handling
 
 - If `mcp__atlassian.search` fails with 403 or says the app is not installed, do not treat that as proof Jira access is unavailable. Fall back to direct `getJiraIssue` by key.
+- If the Atlassian MCP reports OAuth expiry or token refresh failure, instruct the user to run `codex mcp login atlassian`, open the newly launched browser page, complete re-authentication, and then retry the Jira operation.
 - If `getAccessibleAtlassianResources` or `authv2` transport fails, explain that the current session's Atlassian MCP connection is unhealthy or unavailable. A skill cannot grant missing tools or repair a broken MCP auth transport.
 - If direct `getJiraIssue` fails with permission denied, ask the user to confirm the Jira site/account access or open a session where Atlassian MCP is connected.
 - If attachments cannot be downloaded through the tool, summarize the attachment metadata and ask the user to provide the file only when the attachment content is necessary.

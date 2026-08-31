@@ -6,7 +6,7 @@ import {
   batchRenewTasks,
   batchStartTasks,
   batchStopTasks,
-  batchUpdateTaskListtags,
+  checkTaskDqlImpact,
   copyTask,
   exportTasks,
   fetchTasks,
@@ -24,6 +24,7 @@ import dayjs from 'dayjs'
 import { escapeRegExp, isNumber, uniqBy } from 'lodash-es'
 import { h } from 'vue'
 
+import BatchTagDialog from '../../components/BatchTagDialog.vue'
 import { DatabaseIcon } from '../../components/DatabaseIcon'
 import { showErrorMessage } from '../../components/error-message'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
@@ -35,9 +36,14 @@ import UpgradeFee from '../../components/UpgradeFee.vue'
 import Upload from '../../components/UploadDialog.vue'
 import syncTaskAgent from '../../mixins/syncTaskAgent'
 import { makeStatusAndDisabled, MILESTONE_TYPE, STATUS_MAP } from '../../shared'
+import BatchAlarmEmailDialog from './BatchAlarmEmailDialog.vue'
 import EditInfoDialog from './EditInfoDialog.vue'
 import SkipError from './SkipError.vue'
 import TaskName from './TaskName.vue'
+import {
+  confirmTaskOperation as runTaskOperationConfirmation,
+  getTaskDqlImpactMessageKey,
+} from './task-operation-impact'
 
 export default {
   name: 'List',
@@ -50,6 +56,7 @@ export default {
     TablePage,
     SkipError,
     Upload,
+    BatchTagDialog,
     TaskStatus,
     PermissionseSettingsCreate,
     UpgradeCharges,
@@ -57,6 +64,7 @@ export default {
     SyncStatus,
     EditInfoDialog,
     TaskName,
+    BatchAlarmEmailDialog,
   },
 
   mixins: [syncTaskAgent],
@@ -82,7 +90,6 @@ export default {
       STATUS_MAP,
       isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       showInstanceInfo: import.meta.env.VUE_APP_LICENSE_TYPE === 'PIPELINE',
-      dataFlowId: '',
       isShowDetails: false,
       previewLoading: false,
       previewData: null,
@@ -234,8 +241,7 @@ export default {
     getData({ page, tags, isSelectedNoTag }) {
       const { current, size } = page
       const { syncType } = this
-      const { keyword, status, type, agentId, syncStatus, id } =
-        this.searchParams
+      const { keyword, status, type, agentId, syncStatus } = this.searchParams
       const fields = {
         id: true,
         name: true,
@@ -272,6 +278,7 @@ export default {
         taskIncrementDelay: true,
         taskIncrementDelayThreshold: true,
         heartbeatTaskRunning: true,
+        emailReceivers: true,
       }
       const where = {
         syncType,
@@ -391,6 +398,26 @@ export default {
 
     formatTime(time) {
       return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+    },
+
+    formatEmailReceivers(receivers) {
+      return Array.isArray(receivers)
+        ? receivers.map((receiver) => receiver.trim()).filter(Boolean)
+        : []
+    },
+
+    getEmailLocalPart(email = '') {
+      return email.split('@')[0] || email
+    },
+
+    getEmailDomain(email = '') {
+      const domain = email.split('@')[1]
+
+      return domain ? `@${domain}` : ''
+    },
+
+    getEmailInitial(email = '') {
+      return email.trim().charAt(0).toUpperCase() || '@'
     },
 
     getFilterItems() {
@@ -591,37 +618,18 @@ export default {
       this.changeStatus([id], { status: 'scheduled', errorEvents })
     },
 
-    handleOperationClassify(listtags) {
-      let ids = []
-      if (this.dataFlowId) {
-        ids = [this.dataFlowId]
-      } else {
-        ids = this.multipleSelection.map((r) => r.id)
-      }
-      const attributes = {
-        id: ids,
-        listtags,
-      }
-      batchUpdateTaskListtags(attributes).then(() => {
-        this.dataFlowId = ''
-        this.table.fetch()
-      })
+    openBatchTagDialog() {
+      if (!this.multipleSelection.length) return
+      this.$refs.batchTagDialog?.open(this.multipleSelection)
     },
 
-    handleSelectTag() {
-      const tagList = []
-      const tagMap = {}
+    handleBatchTagSaved() {
+      this.table.clearSelection()
+      this.table.fetch()
+    },
 
-      this.multipleSelection.forEach((row) => {
-        row.listtags?.forEach((item) => {
-          if (!tagMap[item.id]) {
-            tagList.push(item)
-            tagMap[item.id] = true
-          }
-        })
-      })
-
-      return tagList
+    handleBatchTagCreated() {
+      this.table.refreshClassifyTags()
     },
 
     create() {
@@ -722,57 +730,112 @@ export default {
         })
     },
 
-    initialize(ids, item = {}, canNotList) {
+    async initialize(ids, item = {}, canNotList) {
       const msgObj = this.getConfirmMessage(
         'initialize',
         ids.length > 1,
         item.name,
       )
-      this.$confirm(msgObj.title, msgObj.msg, {}).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        this.restLoading = true
-        batchRenewTasks(ids)
-          .then((data) => {
-            this.table.fetch()
-            this.responseHandler(
-              data,
-              this.$t('public_message_operation_success'),
-              canNotList,
-            )
-          })
-          .finally(() => {
-            this.restLoading = false
-          })
-      })
-    },
-
-    del(ids, item = {}, canNotList) {
-      const msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
-      this.$confirm(msgObj.msg).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        batchDeleteTasks(ids).then((data = []) => {
-          const selected = this.multipleSelection.filter(({ id }) =>
-            ids.includes(id),
-          )
-          const { toggleRowSelection } = this.table.$refs.table
-          data.forEach((item) => {
-            const { name, permissionActions = [] } =
-              selected.find((t) => t.id === item.id) || {}
-            item.name = name
-            item.permissionActions = permissionActions
-          })
-          selected.forEach((row) => toggleRowSelection(row, false))
+      const resFlag = await this.confirmTaskOperation(
+        ids,
+        item,
+        'reset',
+        msgObj,
+      )
+      if (!resFlag) {
+        return
+      }
+      this.restLoading = true
+      batchRenewTasks(ids)
+        .then((data) => {
           this.table.fetch()
-          this.responseDelHandler(
+          this.responseHandler(
             data,
-            this.$t('public_message_delete_ok'),
+            this.$t('public_message_operation_success'),
             canNotList,
           )
         })
+        .finally(() => {
+          this.restLoading = false
+        })
+    },
+
+    async del(ids, item = {}, canNotList) {
+      const msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
+      const resFlag = await this.confirmTaskOperation(
+        ids,
+        item,
+        'delete',
+        msgObj,
+      )
+      if (!resFlag) {
+        return
+      }
+      batchDeleteTasks(ids).then((data = []) => {
+        const selected = this.multipleSelection.filter(({ id }) =>
+          ids.includes(id),
+        )
+        const { toggleRowSelection } = this.table.$refs.table
+        data.forEach((item) => {
+          const { name, permissionActions = [] } =
+            selected.find((t) => t.id === item.id) || {}
+          item.name = name
+          item.permissionActions = permissionActions
+        })
+        selected.forEach((row) => toggleRowSelection(row, false))
+        this.table.fetch()
+        this.responseDelHandler(
+          data,
+          this.$t('public_message_delete_ok'),
+          canNotList,
+        )
+      })
+    },
+
+    async confirmTaskOperation(ids, item = {}, operation, msgObj) {
+      const taskMap = new Map(
+        this.multipleSelection.map((task) => [task.id, task]),
+      )
+      if (item?.id) {
+        taskMap.set(item.id, item)
+      }
+      const isBulk = ids.length > 1
+      const messageKey = getTaskDqlImpactMessageKey(operation, isBulk)
+      const confirmImpact = async (affected) => {
+        if (!isBulk) {
+          return this.$confirm(
+            this.$t('packages_business_dataFlow_dql_impact_title'),
+            this.$t(messageKey, {
+              count: affected[0].count,
+            }),
+            {},
+          )
+        }
+        const lines = affected.map((impact) => {
+          const taskName = impact.name || impact.taskId
+          return h('li', { class: 'break-all' }, `${taskName}: ${impact.count}`)
+        })
+        const message = h('div', { class: 'break-all' }, [
+          h('p', this.$t(messageKey)),
+          h('ul', { class: 'pl-5 mt-2' }, lines),
+        ])
+        return this.$confirm(
+          this.$t('packages_business_dataFlow_dql_impact_title'),
+          message,
+          {},
+        )
+      }
+      const confirmOperation = () =>
+        operation === 'reset'
+          ? this.$confirm(msgObj.title, msgObj.msg, {})
+          : this.$confirm(msgObj.msg)
+
+      return runTaskOperationConfirmation({
+        taskIds: ids,
+        taskMap,
+        fetchImpacts: checkTaskDqlImpact,
+        confirmImpact,
+        confirmOperation,
       })
     },
     //删除任务单独提示
@@ -865,6 +928,18 @@ export default {
 
     export(ids) {
       exportTasks(ids)
+    },
+
+    batchUpdateAlarmEmailReceivers(ids, item = {}) {
+      const tasks = item?.id
+        ? [item]
+        : this.multipleSelection.filter(({ id }) => ids.includes(id))
+      this.$refs.batchAlarmEmailDialog.open(tasks)
+    },
+
+    handleBatchAlarmEmailSuccess() {
+      this.table.fetch()
+      this.table.clearSelection()
     },
 
     handleCommand(command, node) {
@@ -1036,7 +1111,7 @@ export default {
               }),
             )}`,
           )
-          .then(async (data) => {
+          .then((data) => {
             const { items = [] } = data
 
             if (items.some((t) => t.status === 'Stopped')) {
@@ -1067,8 +1142,8 @@ export default {
       })
     },
 
-    handlePipelineSelectVisible(val) {
-      if (val) {
+    handlePipelineSelectVisible() {
+      if (this.pipelineSelected) {
         this.loadPipelineOptions()
       }
     },
@@ -1093,6 +1168,7 @@ export default {
       class="data-flow-list"
       :enable-custom-columns="syncType"
       :locked-columns="['name', 'operation']"
+      :default-hidden-columns="['emailReceivers']"
       :classify="{
         authority: 'SYNC_category_management',
         types: ['dataflow'],
@@ -1106,7 +1182,6 @@ export default {
           multipleSelection = val
         }
       "
-      @classify-submit="handleOperationClassify"
       @sort-change="handleSortTable"
     >
       <template #search>
@@ -1188,7 +1263,7 @@ export default {
         </ElButton>
         <ElButton
           v-readonlybtn="'SYNC_category_application'"
-          @click="$refs.table.showClassify(handleSelectTag())"
+          @click="openBatchTagDialog"
         >
           <span> {{ $t('public_button_bulk_tag') }}</span>
         </ElButton>
@@ -1206,20 +1281,44 @@ export default {
               <ElDropdownItem
                 v-readonlybtn="'SYNC_job_operation'"
                 command="start"
-                >{{ $t('packages_business_dataFlow_bulkScheuled') }}
+              >
+                <el-icon :size="14" class="mr-2">
+                  <i-lucide-play />
+                </el-icon>
+                {{ $t('packages_business_dataFlow_bulkScheuled') }}
               </ElDropdownItem>
               <ElDropdownItem
                 v-readonlybtn="'SYNC_job_operation'"
                 command="stop"
-                >{{ $t('packages_business_dataFlow_bulkStopping') }}
+              >
+                <el-icon :size="14" class="mr-2">
+                  <i-lucide-square />
+                </el-icon>
+                {{ $t('packages_business_dataFlow_bulkStopping') }}
               </ElDropdownItem>
               <ElDropdownItem
                 v-readonlybtn="'SYNC_job_operation'"
                 command="initialize"
-                >{{ $t('packages_business_dataFlow_batchRest') }}
+              >
+                <el-icon :size="14" class="mr-2">
+                  <i-lucide-rotate-ccw />
+                </el-icon>
+                {{ $t('packages_business_dataFlow_batchRest') }}
               </ElDropdownItem>
-              <ElDropdownItem v-readonlybtn="'SYNC_job_delete'" command="del"
-                >{{ $t('packages_business_dataFlow_batchDelete') }}
+              <ElDropdownItem v-readonlybtn="'SYNC_job_delete'" command="del">
+                <el-icon :size="14" class="mr-2">
+                  <i-lucide-trash-2 />
+                </el-icon>
+                {{ $t('packages_business_dataFlow_batchDelete') }}
+              </ElDropdownItem>
+              <ElDropdownItem
+                v-readonlybtn="'SYNC_job_operation'"
+                command="batchUpdateAlarmEmailReceivers"
+              >
+                <el-icon :size="14" class="mr-2">
+                  <i-lucide-mail />
+                </el-icon>
+                {{ $t('packages_business_task_batch_alarm_email_action') }}
               </ElDropdownItem>
             </ElDropdownMenu>
           </template>
@@ -1371,6 +1470,101 @@ export default {
         </template>
       </el-table-column>
       <el-table-column
+        prop="emailReceivers"
+        :label="$t('packages_dag_email_receivers')"
+        min-width="260"
+      >
+        <template #header>
+          <div class="email-receiver-header">
+            <el-icon :size="14" class="email-receiver-header-icon">
+              <i-lucide-mail />
+            </el-icon>
+            <span>{{ $t('packages_dag_email_receivers') }}</span>
+          </div>
+        </template>
+        <template #default="{ row }">
+          <el-popover
+            v-if="formatEmailReceivers(row.emailReceivers).length > 1"
+            trigger="hover"
+            placement="top"
+            :width="280"
+            popper-class="email-receiver-popover"
+            :hide-after="100"
+          >
+            <div class="email-receiver-popover-content">
+              <div class="email-receiver-popover-header">
+                <div class="email-receiver-popover-title">
+                  <el-icon :size="14" class="email-receiver-popover-icon">
+                    <i-lucide-mail />
+                  </el-icon>
+                  <span>{{ $t('packages_dag_email_receivers') }}</span>
+                </div>
+                <span class="email-receiver-popover-count">
+                  {{ formatEmailReceivers(row.emailReceivers).length }}
+                </span>
+              </div>
+              <div
+                v-for="receiver in formatEmailReceivers(row.emailReceivers)"
+                :key="receiver"
+                class="email-receiver-popover-item"
+              >
+                <span class="email-receiver-avatar">
+                  {{ getEmailInitial(receiver) }}
+                </span>
+                <span class="email-receiver-popover-email">
+                  <span>{{ getEmailLocalPart(receiver) }}</span>
+                  <span class="email-receiver-domain">{{
+                    getEmailDomain(receiver)
+                  }}</span>
+                </span>
+              </div>
+            </div>
+            <template #reference>
+              <div class="email-receiver-card is-multiple">
+                <span class="email-receiver-avatar">
+                  {{
+                    getEmailInitial(formatEmailReceivers(row.emailReceivers)[0])
+                  }}
+                </span>
+                <span class="email-receiver-primary">
+                  <span>{{
+                    getEmailLocalPart(
+                      formatEmailReceivers(row.emailReceivers)[0],
+                    )
+                  }}</span>
+                  <span class="email-receiver-domain">{{
+                    getEmailDomain(formatEmailReceivers(row.emailReceivers)[0])
+                  }}</span>
+                </span>
+                <span class="email-receiver-count">
+                  <el-icon :size="12">
+                    <i-lucide-users />
+                  </el-icon>
+                  {{ formatEmailReceivers(row.emailReceivers).length }}
+                </span>
+              </div>
+            </template>
+          </el-popover>
+          <div
+            v-else-if="formatEmailReceivers(row.emailReceivers).length === 1"
+            class="email-receiver-card"
+          >
+            <span class="email-receiver-avatar">
+              {{ getEmailInitial(formatEmailReceivers(row.emailReceivers)[0]) }}
+            </span>
+            <span class="email-receiver-primary">
+              <span>{{
+                getEmailLocalPart(formatEmailReceivers(row.emailReceivers)[0])
+              }}</span>
+              <span class="email-receiver-domain">{{
+                getEmailDomain(formatEmailReceivers(row.emailReceivers)[0])
+              }}</span>
+            </span>
+          </div>
+          <span v-else class="font-color-light">-</span>
+        </template>
+      </el-table-column>
+      <el-table-column
         prop="operation"
         fixed="right"
         :label="$t('public_operation')"
@@ -1409,29 +1603,29 @@ export default {
             >
               {{ $t('public_button_start') }}
             </ElButton>
-            <template v-else>
-              <ElButton
-                v-if="row.status === 'stopping' && havePermission(row, 'Stop')"
-                text
-                type="primary"
-                data-testid="force-stop-task"
-                :disabled="row.btnDisabled.forceStop"
-                @click="forceStop([row.id], row)"
-              >
-                {{ $t('public_button_force_stop') }}
-              </ElButton>
-              <ElButton
-                v-else-if="havePermission(row, 'Stop')"
-                text
-                type="primary"
-                name="stop-task-btn"
-                data-testid="stop-task"
-                :disabled="row.btnDisabled.stop"
-                @click="stop([row.id], row)"
-              >
-                {{ $t('public_button_stop') }}
-              </ElButton>
-            </template>
+            <ElButton
+              v-else-if="
+                row.status === 'stopping' && havePermission(row, 'Stop')
+              "
+              text
+              type="primary"
+              data-testid="force-stop-task"
+              :disabled="row.btnDisabled.forceStop"
+              @click="forceStop([row.id], row)"
+            >
+              {{ $t('public_button_force_stop') }}
+            </ElButton>
+            <ElButton
+              v-else-if="havePermission(row, 'Stop')"
+              text
+              type="primary"
+              name="stop-task-btn"
+              data-testid="stop-task"
+              :disabled="row.btnDisabled.stop"
+              @click="stop([row.id], row)"
+            >
+              {{ $t('public_button_stop') }}
+            </ElButton>
             <ElButton
               v-if="havePermission(row, 'Edit')"
               text
@@ -1489,7 +1683,17 @@ export default {
         </template>
       </el-table-column>
     </TablePage>
+    <BatchTagDialog
+      ref="batchTagDialog"
+      view-page="dataflow"
+      @saved="handleBatchTagSaved"
+      @tag-created="handleBatchTagCreated"
+    />
     <SkipError ref="skipError" @skip="handleSkipAndRun" />
+    <BatchAlarmEmailDialog
+      ref="batchAlarmEmailDialog"
+      @success="handleBatchAlarmEmailSuccess"
+    />
     <!-- 导入 -->
     <Upload ref="upload" :type="uploadType" @success="table.fetch()" />
     <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
@@ -1676,5 +1880,151 @@ export default {
   :deep(.task-status-cell .cell) {
     overflow: visible;
   }
+
+  .email-receiver-header,
+  .email-receiver-card,
+  .email-receiver-count {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .email-receiver-header-icon {
+    flex: 0 0 auto;
+    color: var(--icon-n2);
+  }
+
+  .email-receiver-card {
+    width: fit-content;
+    max-width: 100%;
+    height: 28px;
+    padding: 0 8px 0 4px;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    background: rgba(129, 139, 152, 0.08);
+  }
+
+  .email-receiver-card.is-multiple {
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--color-primary);
+      background: rgba(44, 101, 255, 0.08);
+    }
+  }
+
+  .email-receiver-avatar {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .email-receiver-primary {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--text-normal);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .email-receiver-domain {
+    color: var(--text-light);
+  }
+
+  .email-receiver-count {
+    flex: 0 0 auto;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 10px;
+    background: #fff;
+    color: var(--color-primary);
+    font-size: 12px;
+    font-weight: 600;
+  }
+}
+
+:global(.email-receiver-popover-content) {
+  max-width: 320px;
+  padding: 2px;
+}
+
+:global(.email-receiver-popover-header),
+:global(.email-receiver-popover-title),
+:global(.email-receiver-popover-item) {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+:global(.email-receiver-popover-header) {
+  justify-content: space-between;
+  margin-bottom: 6px;
+  padding: 0 2px 6px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+:global(.email-receiver-popover-title) {
+  color: var(--text-normal);
+  font-weight: 600;
+}
+
+:global(.email-receiver-popover-icon) {
+  color: var(--icon-n2);
+}
+
+:global(.email-receiver-popover-count) {
+  min-width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background: rgba(44, 101, 255, 0.1);
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+  text-align: center;
+}
+
+:global(.email-receiver-avatar) {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+:global(.email-receiver-popover-item) {
+  padding: 5px 2px;
+}
+
+:global(.email-receiver-domain) {
+  color: var(--text-light);
+}
+
+:global(.email-receiver-popover-email) {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-normal);
+  line-height: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-break: break-all;
 }
 </style>

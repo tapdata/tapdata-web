@@ -8,6 +8,7 @@ import { debounce } from 'lodash-es'
 import { defineComponent, ref } from 'vue'
 import { useStore } from 'vuex'
 import SchemaForm from '../SchemaForm.vue'
+import { createTaskErrorModeOptions } from '../task-error-mode-options'
 
 export default defineComponent({
   name: 'TaskReadPretty',
@@ -886,24 +887,7 @@ export default defineComponent({
                         placeholder: i18n.t('public_select_placeholder'),
                       },
                       default: 'Disable',
-                      enum: [
-                        // {
-                        //   label: '直接跳过异常的表，任务继续运行 ',
-                        //   value: 'SkipTable'
-                        // },
-                        {
-                          label: i18n.t(
-                            'packages_dag_migration_settingpanel_anzhaomorenzhong',
-                          ),
-                          value: 'Disable',
-                        },
-                        {
-                          label: i18n.t(
-                            'packages_dag_migration_settingpanel_tiaoguoyichangshi',
-                          ),
-                          value: 'SkipData',
-                        },
-                      ],
+                      enum: createTaskErrorModeOptions(i18n.t),
                     },
                     limitMode: {
                       type: 'string',

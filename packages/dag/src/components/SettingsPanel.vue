@@ -39,6 +39,7 @@ import { FormTab } from '../../../form'
 import * as _components from '../components/form'
 import { alarmSettingKeys, type AlarmSettingKey } from '../constants'
 import { useDataflowStore } from '../stores/dataflow.store'
+import { createTaskErrorModeOptions } from './task-error-mode-options'
 
 const dataflowStore = useDataflowStore()
 const scope = inject('formScope')
@@ -1025,26 +1026,7 @@ const schema = {
                                 placeholder: t('public_select_placeholder'),
                               },
                               default: 'Disable',
-                              enum: [
-                                {
-                                  label: t(
-                                    'packages_dag_migration_settingpanel_anzhaomorenzhong',
-                                  ),
-                                  value: 'Disable',
-                                },
-                                {
-                                  label: t(
-                                    'packages_dag_migration_settingpanel_tiaoguoyichangshi',
-                                  ),
-                                  value: 'SkipData',
-                                },
-                                {
-                                  label: t(
-                                    'packages_dag_SkipTableForMigrateSnapshot',
-                                  ),
-                                  value: 'SkipTableForMigrateSnapshot',
-                                },
-                              ],
+                              enum: createTaskErrorModeOptions(t, true),
                               'x-reactions': {
                                 dependencies: ['type'],
                                 fulfill: {

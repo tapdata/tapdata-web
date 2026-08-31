@@ -34,6 +34,12 @@ export interface Task {
   dag: Dag
 }
 
+export interface TaskDqlImpact {
+  taskId: string
+  exists: boolean
+  count: number
+}
+
 export interface TaskChart {
   chart1: {
     total: number
@@ -94,6 +100,14 @@ export function batchRenewTasks(ids: string[]) {
   )
 }
 
+export function checkTaskDqlImpact(taskIds: string[]) {
+  return requestClient.post<TaskDqlImpact[]>(
+    `${BASE_URL}/dql-event-impact`,
+    { taskIds },
+    { skipErrorHandler: true },
+  )
+}
+
 export function batchStopTasks(ids: string[]) {
   return requestClient.put(
     `${BASE_URL}/batchStop?taskIds=${ids.join('&taskIds=')}`,
@@ -141,6 +155,10 @@ export function checkTaskRun(id: string) {
 
 export function batchUpdateTaskListtags(params: any) {
   return requestClient.patch(`${BASE_URL}/batchUpdateListtags`, params)
+}
+
+export function batchApplyTaskListtags(params: any) {
+  return requestClient.patch(`${BASE_URL}/batchApplyListtags`, params)
 }
 
 export function saveTask(params: any, config?: any) {

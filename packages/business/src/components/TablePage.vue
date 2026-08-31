@@ -399,6 +399,10 @@ export default defineComponent({
       classifyRef.value?.show(tagList)
     }
 
+    const refreshClassifyTags = () => {
+      classification.value?.getData?.()
+    }
+
     const getData = () => {
       return list.value
     }
@@ -695,6 +699,7 @@ export default defineComponent({
       nodeChecked,
       handleSelectionChange,
       showClassify,
+      refreshClassifyTags,
       getData,
       clearSelection,
       toggleRowSelection,

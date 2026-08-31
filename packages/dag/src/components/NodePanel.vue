@@ -225,13 +225,15 @@ function onDescChange() {
         @change="onNameChange"
       />
       <template v-if="node.type === 'table' || node.type === 'database'">
-        <el-tag class="px-1" :disable-transitions="true">
-          <div class="flex align-center gap-0.5">
-            <span class="flex align-center gap-0.5">
+        <el-tag class="px-1 min-w-0 connection-tag" :disable-transitions="true">
+          <div class="flex align-center gap-0.5 min-w-0">
+            <span class="flex align-center gap-0.5 min-w-0">
               <el-icon>
                 <i-lucide-database />
               </el-icon>
-              {{ node.attrs.connectionName }}
+              <span class="text-truncate min-w-0">
+                {{ node.attrs.connectionName }}
+              </span>
             </span>
             <el-button
               text
@@ -320,6 +322,18 @@ function onDescChange() {
 
 .node-panel {
   $tabHeight: 40px;
+
+  :deep(.connection-tag) {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  :deep(.connection-tag .el-tag__content) {
+    display: flex;
+    max-width: 100%;
+    min-width: 0;
+  }
+
   :deep(.form-wrap) {
     &,
     > form,

@@ -109,6 +109,9 @@ export default {
     '重置任务 xxx 将清除任务同步进度，任务将重新执行',
   packages_dag_dataFlow_bulk_initialize_confirm_message:
     '批量重置任务将清除任务同步进度，任务将重新执行',
+  packages_dag_dataFlow_dql_impact_title: 'DQL 记录提示',
+  packages_dag_dataFlow_dql_reset_impact_message:
+    '当前任务存在{count}条未处理的异常事件，重置任务后异常事件将无法重运行',
   packages_dag_task_preview_status_error: '错误',
   packages_dag_task_preview_status_edit: '编辑中',
   packages_dag_task_preview_status_wait_run: '启动中',
@@ -702,6 +705,8 @@ export default {
     '跳过事件超过阈值时停止任务',
   packages_dag_migration_settingpanel_tiaoguoyichangshi:
     '跳过异常事件，任务继续运行',
+  packages_dag_migration_settingpanel_route_to_dlq:
+    '隔离确定性异常到异常事件（DLQ），任务继续运行',
   packages_dag_migration_settingpanel_dangdanbiaotongbu: '事件处理出现异常时',
   packages_dag_migration_settingpanel_anzhaomorenzhong:
     '按照默认重试逻辑进行重试',
