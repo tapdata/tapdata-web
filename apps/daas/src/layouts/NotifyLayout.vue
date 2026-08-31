@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import Cookie from '@tap/shared/src/cookie'
 import { useRoute, useRouter } from 'vue-router'
 import Wrapper from './Wrapper.vue'
 
 const router = useRouter()
 const route = useRoute()
-
-const isAdmin = Cookie.get('isAdmin') === '1'
 
 const menus = [
   {
@@ -20,7 +17,6 @@ const menus = [
     name: 'audit_log',
     key: 'userNotification',
     size: 20,
-    adminOnly: true,
   },
   {
     icon: 'warning',
@@ -34,7 +30,7 @@ const menus = [
     key: 'systemAlarm',
     size: 20,
   },
-].filter((menu) => !menu.adminOnly || isAdmin)
+]
 
 const handleSelectMenu = (name: string) => {
   router.push({
