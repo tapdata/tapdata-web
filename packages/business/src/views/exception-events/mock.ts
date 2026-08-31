@@ -119,6 +119,9 @@ const rows: DqlEventDetail[] = [
     eventTime: date(70),
     failedAt: date(68),
     status: 'NOT_REPROCESSABLE',
+    notReprocessableReason: i18n.t(
+      'packages_business_exception_events_payload_incomplete',
+    ),
     recoveryCount: 0,
     sourceNodeName: i18n.t(
       'packages_business_exception_events_mock_source_postgresql_inventory',

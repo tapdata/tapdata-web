@@ -1,36 +1,39 @@
 <script setup lang="ts">
+import { useI18n } from '@tap/i18n'
+import { dqlEventStatusLabelKeys } from './event-status-presentation'
 import type { DqlEventStatus } from '@tap/api/src/core/dql-event'
 
-defineProps<{ status: DqlEventStatus }>()
+const props = defineProps<{ status: DqlEventStatus }>()
+const { t } = useI18n()
 
 const config = {
-  PENDING: { label: '待处理', type: 'warning' },
-  REPROCESSING: { label: '处理中', type: 'primary' },
-  RECOVERED: { label: '已恢复', type: 'success' },
-  RECOVERY_FAILED: { label: '恢复失败', type: 'danger' },
-  NOT_REPROCESSABLE: { label: '不可重处理', type: 'info' },
+  PENDING: { type: 'warning' },
+  REPROCESSING: { type: 'primary' },
+  RECOVERED: { type: 'success' },
+  RECOVERY_FAILED: { type: 'danger' },
+  NOT_REPROCESSABLE: { type: 'info' },
 } as const
 </script>
 
 <template>
   <el-tag
     class="exception-status-tag"
-    :type="config[status].type"
+    :type="config[props.status].type"
     effect="light"
     disable-transitions
   >
     <el-icon
-      :class="{ 'is-loading': status === 'REPROCESSING' }"
+      :class="{ 'is-loading': props.status === 'REPROCESSING' }"
       class="exception-status-tag__icon"
       :size="14"
     >
-      <i-lucide-circle-alert v-if="status === 'PENDING'" />
-      <i-lucide-loader-circle v-else-if="status === 'REPROCESSING'" />
-      <i-lucide-circle-check v-else-if="status === 'RECOVERED'" />
-      <i-lucide-circle-x v-else-if="status === 'RECOVERY_FAILED'" />
+      <i-lucide-circle-alert v-if="props.status === 'PENDING'" />
+      <i-lucide-loader-circle v-else-if="props.status === 'REPROCESSING'" />
+      <i-lucide-circle-check v-else-if="props.status === 'RECOVERED'" />
+      <i-lucide-circle-x v-else-if="props.status === 'RECOVERY_FAILED'" />
       <i-lucide-ban v-else />
     </el-icon>
-    <span>{{ config[status].label }}</span>
+    <span>{{ t(dqlEventStatusLabelKeys[props.status]) }}</span>
   </el-tag>
 </template>
 

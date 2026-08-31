@@ -1854,6 +1854,13 @@ export default {
   packages_business_exception_events_recovery_failed: 'Processing failed',
   packages_business_exception_events_recovery_skipped: 'Skipped',
   packages_business_exception_events_recovery_timeout: 'Processing timed out',
+  packages_business_exception_events_status_all: 'All',
+  packages_business_exception_events_status_pending: 'Pending',
+  packages_business_exception_events_status_reprocessing: 'Processing',
+  packages_business_exception_events_status_recovered: 'Recovered',
+  packages_business_exception_events_status_recovery_failed: 'Recovery failed',
+  packages_business_exception_events_status_not_reprocessable:
+    'Not reprocessable',
   packages_business_exception_events_recovery_records: 'Processing records',
   packages_business_exception_events_recovery_records_empty:
     'No processing records',
@@ -1983,11 +1990,17 @@ export default {
     'Temporarily unavailable for submission',
   packages_business_exception_events_blocked_events_description:
     'These events will not be submitted',
+  packages_business_exception_events_risky_submission: 'Risky to submit',
+  packages_business_exception_events_risky_submission_description:
+    'These events have no business key; review the risk before reprocessing',
+  packages_business_exception_events_business_key_missing_risk:
+    'No business key may prevent accurate target-record matching and cause duplicates or overwrites',
   packages_business_exception_events_selected_record: 'Selected record',
   packages_business_exception_events_submit_in_order:
     'These events will be submitted in order after confirmation',
   packages_business_exception_events_remove_blocked_events:
     'Remove unsubmitable events first',
+  packages_business_exception_events_remove_event: 'Remove',
   packages_business_exception_events_cancel: 'Cancel',
   packages_business_exception_events_confirm_reprocess_with_count:
     'Confirm reprocess {count}',
