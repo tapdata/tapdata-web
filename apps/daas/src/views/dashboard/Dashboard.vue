@@ -27,6 +27,7 @@ const loading = ref(false)
 const lastUpdated = ref(t('dashboard_odh_just_now'))
 const dashboardData = ref<TaskDashboardVo | null>(null)
 let refreshTimer: ReturnType<typeof setInterval> | null = null
+let isRefreshing = false
 
 // API Requests card time range
 const apiTimeRange = ref<'5m' | '1h' | '24h'>('1h')
@@ -287,8 +288,9 @@ function rangeToTimeParams(range: string): {
 // ── Data fetching ──────────────────────────────────────
 async function fetchClusterData() {
   const clusterData = await fetchClusterStates({ type: 'dashboard' }).catch(
-    () => ({ items: [] }),
+    () => null,
   )
+  if (!clusterData) return
 
   const processIds: string[] = []
   const items: AgentNode[] = (clusterData?.items || []).map((item: any) => {
@@ -355,7 +357,7 @@ async function fetchClusterData() {
 async function fetchDashboardData() {
   loading.value = true
   try {
-    await Promise.all([refreshAll(), fetchClusterData()])
+    await refreshAll()
     lastUpdated.value = new Date().toLocaleTimeString()
   } finally {
     loading.value = false
@@ -446,14 +448,21 @@ function formatNum(val: any) {
 
 // ── Refresh ────────────────────────────────────────────
 async function refreshAll() {
-  await Promise.all([
-    fetchPartial('activeTasks', trendsTimeRange.value),
-    fetchPartial('totalThroughput', trendsTimeRange.value),
-    fetchPartial('connectedDbs', trendsTimeRange.value),
-    fetchPartial('apiRequests', apiTimeRange.value),
-    fetchPartial('trends', trendsTimeRange.value),
-    fetchPartial('tops', trendsTimeRange.value, topTaskLimit.value),
-  ])
+  if (isRefreshing) return
+  isRefreshing = true
+  try {
+    await Promise.all([
+      fetchPartial('activeTasks', trendsTimeRange.value),
+      fetchPartial('totalThroughput', trendsTimeRange.value),
+      fetchPartial('connectedDbs', trendsTimeRange.value),
+      fetchPartial('apiRequests', apiTimeRange.value),
+      fetchPartial('trends', trendsTimeRange.value),
+      fetchPartial('tops', trendsTimeRange.value, topTaskLimit.value),
+      fetchClusterData(),
+    ])
+  } finally {
+    isRefreshing = false
+  }
 }
 
 // ── Lifecycle ──────────────────────────────────────────
