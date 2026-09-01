@@ -48,8 +48,10 @@ When taking over a Jira issue for code work:
 2. Get available transitions with `mcp__atlassian.getTransitionsForJiraIssue`.
 3. If a transition to `In Progress` is available and the user asked to start work, call `mcp__atlassian.transitionJiraIssue`.
 4. Before editing code, follow the repository's local instructions. In Tapdata frontend repos this usually means:
-   - run `git status --short --branch`
-   - create a branch containing the Jira key, such as `feat/TAP-12273-short-description`
+   - run `git status --short --branch` in the starting checkout and identify unrelated user changes
+   - create a dedicated Git worktree from the selected base branch, using `fix/TAP-12345-short-description` for Bug issues and `feat/TAP-12273-short-description` for features or other development tasks; prefer a sibling path such as `<repo-name>.worktrees/TAP-12273` and do not use the main checkout for implementation
+   - enter the new worktree before inspecting or editing project files; run tests, commits, and other development commands from that worktree
+   - keep the starting checkout and its unrelated changes untouched
    - keep changes scoped to the card
    - push the branch to associate it with Jira
 
