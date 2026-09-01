@@ -78,7 +78,7 @@ export default {
   packages_dag_editor_cell_validate_empty_name: '名称必填.',
   packages_dag_editor_cell_validate_none_data_node: '至少有两个数据节点',
   packages_dag_join_node_limit:
-    '当前任务仅支持一个 Join 节点；如需多层 Join，请将第一层 Join 结果写入中间表，再创建第二个任务读取中间表并执行下一层 Join。',
+    '一个任务最多只能添加一个 Join 节点。如需多级 Join，请先将结果写入中间表，再新建任务继续处理。',
   packages_dag_dag_save_fail: '保存出错，请检查节点',
   packages_dag_message_operation_error: '操作失败',
   packages_dag_message_resetOk: '重置成功',

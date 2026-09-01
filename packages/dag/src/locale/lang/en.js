@@ -89,7 +89,7 @@ export default {
   packages_dag_editor_cell_validate_none_data_node:
     'At least 2 data node in graph',
   packages_dag_join_node_limit:
-    'This task supports only one Join node. For multi-level Joins, write the first Join result to an intermediate table, then create a second task to read the intermediate table and perform the next Join.',
+    'A task can contain only one Join node. For multi-level Joins, write the result to an intermediate table and continue in a new task.',
   packages_dag_dag_save_fail: 'Failed to save, please check the node.',
   packages_dag_message_operation_error: 'Operation Failed',
   packages_dag_message_resetOk: 'Reset Success',
