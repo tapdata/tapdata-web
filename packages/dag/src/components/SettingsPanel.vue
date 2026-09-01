@@ -37,7 +37,11 @@ import {
 import { useStore } from 'vuex'
 import { FormTab } from '../../../form'
 import * as _components from '../components/form'
-import { alarmSettingKeys, type AlarmSettingKey } from '../constants'
+import {
+  alarmSettingKeys,
+  alignAlarmSettings,
+  type AlarmSettingKey,
+} from '../constants'
 import { useDataflowStore } from '../stores/dataflow.store'
 
 const dataflowStore = useDataflowStore()
@@ -185,22 +189,27 @@ const alarmSettingSchemaConfigMap: Record<
   TASK_DDL_WARNING: {
     title: t('packages_dag_migration_alarmpanel_renwufengxianddl'),
   },
+  TASK_DATA_INTEGRITY_RISK: {
+    title: t('packages_dag_migration_alarmpanel_renwushujuwanzhengxing'),
+  },
+}
+
+function createDefaultAlarmSetting(key: AlarmSettingKey) {
+  const config = alarmSettingSchemaConfigMap[key]
+
+  return {
+    type: 'TASK',
+    open: isDaas,
+    key,
+    sort: config.sort,
+    notify: config.notify ?? ['SYSTEM', 'EMAIL'],
+    interval: config.interval ?? 300,
+    unit: 'SECOND',
+  }
 }
 
 function getAlarmSettingsDefault() {
-  return alarmSettingKeys.map((key) => {
-    const config = alarmSettingSchemaConfigMap[key]
-
-    return {
-      type: 'TASK',
-      open: isDaas,
-      key,
-      sort: config.sort,
-      notify: config.notify ?? ['SYSTEM', 'EMAIL'],
-      interval: config.interval ?? 300,
-      unit: 'SECOND',
-    }
-  })
+  return alignAlarmSettings([], createDefaultAlarmSetting)
 }
 
 function getAlarmSettingSchema(
@@ -724,7 +733,10 @@ function saveAlarmConfig() {
 
   updateTaskAlarm({
     taskId: values.id,
-    alarmSettings: values.alarmSettings,
+    alarmSettings: alignAlarmSettings(
+      values.alarmSettings,
+      createDefaultAlarmSetting,
+    ),
     alarmRules: values.alarmRules,
     emailReceivers: values.emailReceivers,
   })

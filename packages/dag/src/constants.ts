@@ -122,6 +122,20 @@ export const alarmSettingKeys = [
   'TASK_RETRY_WARN',
   'TASK_SOURCE_NO_INCREMENTAL_EVENT',
   'TASK_DDL_WARNING',
+  'TASK_DATA_INTEGRITY_RISK',
 ] as const
 
 export type AlarmSettingKey = (typeof alarmSettingKeys)[number]
+
+export function alignAlarmSettings<T extends { key?: string }>(
+  alarmSettings: T[] | null | undefined,
+  createDefault: (key: AlarmSettingKey) => T,
+): T[] {
+  const byKey = new Map<string, T>()
+  for (const setting of alarmSettings || []) {
+    if (setting?.key) {
+      byKey.set(setting.key, setting)
+    }
+  }
+  return alarmSettingKeys.map((key) => byKey.get(key) ?? createDefault(key))
+}

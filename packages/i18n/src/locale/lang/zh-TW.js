@@ -463,6 +463,10 @@ export default {
 
   public_error_time: '錯誤時間',
   public_error_log: '錯誤日誌',
+  public_task_id: '任務 ID',
+  public_alert_message: '告警詳情',
+  public_occurred_time: '發生時間',
+  public_occurrence_count: '發生次數',
   public_complete_time: '完成時間',
   public_cdc_time: 'CDC 時間',
   public_stop_time: '停止時間',

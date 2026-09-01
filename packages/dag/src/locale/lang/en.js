@@ -601,6 +601,8 @@ export default {
   packages_dag_migration_alarmpanel_renwujiaoyanchu: 'Task validation error',
   packages_dag_migration_alarmpanel_renwuyunxingchu: 'Task running error alert',
   packages_dag_migration_alarmpanel_renwufengxianddl: 'Task risk DDL alert',
+  packages_dag_migration_alarmpanel_renwushujuwanzhengxing:
+    'Task data integrity risk alert',
   packages_dag_migration_alarmpanel_jiedianpingjunchu:
     'Node average processing time alert',
   packages_dag_migration_alarmpanel_shujuyuanxieyi:

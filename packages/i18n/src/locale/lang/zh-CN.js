@@ -466,6 +466,10 @@ export default {
 
   public_error_time: '错误时间',
   public_error_log: '错误日志',
+  public_task_id: '任务 ID',
+  public_alert_message: '告警详情',
+  public_occurred_time: '发生时间',
+  public_occurrence_count: '发生次数',
   public_complete_time: '完成时间',
   public_cdc_time: 'CDC 时间',
   public_stop_time: '停止时间',

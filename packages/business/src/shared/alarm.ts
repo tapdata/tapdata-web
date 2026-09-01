@@ -106,6 +106,9 @@ export function getAlarmKeyMap() {
     ),
     DATASOURCE_MONITOR_ALTER: t('packages_business_datasource_monitor_alter'),
     TASK_DDL_WARNING: t('packages_business_task_ddl_warning'),
+    TASK_DATA_INTEGRITY_RISK: t(
+      'packages_business_task_data_integrity_risk',
+    ),
     API_SERVER_P95_WARN: t('packages_business_api_server_p95_warn'),
     API_SERVER_P99_WARN: t('packages_business_api_server_p99_warn'),
     API_SERVER_ERROR_RATE_WARN: t(

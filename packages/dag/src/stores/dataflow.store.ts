@@ -21,7 +21,11 @@ import { isObject } from '@tap/shared'
 import { debounce, isString } from 'lodash-es'
 import { defineStore } from 'pinia'
 import { markRaw, reactive, ref, shallowRef } from 'vue'
-import { alarmSettingKeys, DEFAULT_SETTINGS } from '../constants'
+import {
+  alignAlarmSettings,
+  DEFAULT_SETTINGS,
+  type AlarmSettingKey,
+} from '../constants'
 import { CustomProcessor } from '../nodes/extends/CustomProcessor'
 import { allResourceIns as resourceIns } from '../nodes/loader'
 
@@ -77,14 +81,16 @@ function hasCycle(
 function sortAlarmSettings<T extends { key?: string }>(alarmSettings?: T[]) {
   if (!Array.isArray(alarmSettings)) return alarmSettings
 
-  return [...alarmSettings].sort((a, b) => {
-    const aIndex = (alarmSettingKeys as readonly string[]).indexOf(a.key || '')
-    const bIndex = (alarmSettingKeys as readonly string[]).indexOf(b.key || '')
-
-    return (
-      (aIndex === -1 ? Number.MAX_SAFE_INTEGER : aIndex) -
-      (bIndex === -1 ? Number.MAX_SAFE_INTEGER : bIndex)
-    )
+  return alignAlarmSettings(alarmSettings, (key: AlarmSettingKey) => {
+    return {
+      type: 'TASK',
+      open: isDaas,
+      key,
+      sort: 0,
+      notify: ['SYSTEM', 'EMAIL'],
+      interval: 300,
+      unit: 'SECOND',
+    } as T
   })
 }
 

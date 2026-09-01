@@ -507,6 +507,8 @@ export default {
   packages_dag_migration_alarmpanel_renwujiaoyanchu: '任务校验出错告警',
   packages_dag_migration_alarmpanel_renwuyunxingchu: '任务运行出错告警',
   packages_dag_migration_alarmpanel_renwufengxianddl: '任务风险DDL告警',
+  packages_dag_migration_alarmpanel_renwushujuwanzhengxing:
+    '任务数据完整性风险告警',
   packages_dag_migration_alarmpanel_jiedianpingjunchu: '节点平均处理耗时告警',
   packages_dag_migration_alarmpanel_shujuyuanxieyi: '数据源协议连接耗时告警',
   packages_dag_migration_alarmpanel_shujuyuanwangluo: '数据源网络连接耗时告警',
