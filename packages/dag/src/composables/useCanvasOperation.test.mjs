@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 
-test('task operation confirmation imports the DQL impact checker', async () => {
+test('task operation confirmation imports the DLQ impact checker', async () => {
   const source = await readFile(
     new URL('./useCanvasOperation.ts', import.meta.url),
     'utf8',
@@ -10,6 +10,6 @@ test('task operation confirmation imports the DQL impact checker', async () => {
 
   assert.match(
     source,
-    /import\s*\{[\s\S]*\bcheckTaskDqlImpact\b[\s\S]*\}\s*from '@tap\/api\/src\/core\/task'/,
+    /import\s*\{[\s\S]*\bcheckTaskDlqImpact\b[\s\S]*\}\s*from '@tap\/api\/src\/core\/task'/,
   )
 })

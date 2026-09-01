@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useI18n } from '@tap/i18n'
-import { dqlEventStatusLabelKeys } from './event-status-presentation'
-import type { DqlEventStatus } from '@tap/api/src/core/dql-event'
+import { dlqEventStatusLabelKeys } from './event-status-presentation'
+import type { DlqEventStatus } from '@tap/api/src/core/dlq-event'
 
-const props = defineProps<{ status: DqlEventStatus }>()
+const props = defineProps<{ status: DlqEventStatus }>()
 const { t } = useI18n()
 
 const config = {
@@ -33,7 +33,7 @@ const config = {
       <i-lucide-circle-x v-else-if="props.status === 'RECOVERY_FAILED'" />
       <i-lucide-ban v-else />
     </el-icon>
-    <span>{{ t(dqlEventStatusLabelKeys[props.status]) }}</span>
+    <span>{{ t(dlqEventStatusLabelKeys[props.status]) }}</span>
   </el-tag>
 </template>
 

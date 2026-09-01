@@ -6,7 +6,7 @@ import { getLogcollectorDetail } from '@tap/api/src/core/logcollector'
 import { batchMeasurements } from '@tap/api/src/core/measurement'
 import { findOneSharedCache } from '@tap/api/src/core/shared-cache'
 import {
-  checkTaskDqlImpact,
+  checkTaskDlqImpact,
   getTaskRecords,
   resetTask,
   startTask,
@@ -1637,10 +1637,10 @@ export default {
       const confirmImpact = async ([impact]) => {
         try {
           return await this.$confirm(
-            this.$t('packages_dag_dataFlow_dql_reset_impact_message', {
+            this.$t('packages_dag_dataFlow_dlq_reset_impact_message', {
               count: impact.count,
             }),
-            this.$t('packages_dag_dataFlow_dql_impact_title'),
+            this.$t('packages_dag_dataFlow_dlq_impact_title'),
             {},
           )
         } catch {
@@ -1656,7 +1656,7 @@ export default {
       }
       return runTaskOperationConfirmation({
         taskIds: [this.dataflow.id],
-        fetchImpacts: checkTaskDqlImpact,
+        fetchImpacts: checkTaskDlqImpact,
         confirmImpact,
         confirmOperation,
       })

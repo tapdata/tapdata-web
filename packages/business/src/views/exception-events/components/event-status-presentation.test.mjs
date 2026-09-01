@@ -2,12 +2,12 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 
 import {
-  dqlEventStatusLabelKeys,
-  getDqlEventStatusWarning,
+  dlqEventStatusLabelKeys,
+  getDlqEventStatusWarning,
 } from './event-status-presentation.ts'
 
-test('provides a localized label key for every DQL event status', () => {
-  assert.deepEqual(dqlEventStatusLabelKeys, {
+test('provides a localized label key for every DLQ event status', () => {
+  assert.deepEqual(dlqEventStatusLabelKeys, {
     PENDING: 'packages_business_exception_events_status_pending',
     REPROCESSING: 'packages_business_exception_events_status_reprocessing',
     RECOVERED: 'packages_business_exception_events_status_recovered',
@@ -20,14 +20,14 @@ test('provides a localized label key for every DQL event status', () => {
 
 test('shows the backend-provided warning only for non-reprocessable details', () => {
   assert.equal(
-    getDqlEventStatusWarning(
+    getDlqEventStatusWarning(
       'NOT_REPROCESSABLE',
       'Payload 不完整，当前事件不可重处理。',
     ),
     'Payload 不完整，当前事件不可重处理。',
   )
   assert.equal(
-    getDqlEventStatusWarning('PENDING', 'should not be shown'),
+    getDlqEventStatusWarning('PENDING', 'should not be shown'),
     undefined,
   )
 })

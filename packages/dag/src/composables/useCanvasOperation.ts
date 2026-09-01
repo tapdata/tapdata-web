@@ -6,7 +6,7 @@ import { callProxy } from '@tap/api/src/core/proxy'
 import { fetchSharedCache } from '@tap/api/src/core/shared-cache'
 import {
   batchStartTasks,
-  checkTaskDqlImpact,
+  checkTaskDlqImpact,
   checkTaskMemoryHeap,
   deleteTask,
   fetchMergeTaskCache,
@@ -1856,13 +1856,13 @@ export function useCanvasOperation() {
   const confirmTaskOperation = (message) => {
     const confirmImpact = async ([impact]) => {
       const impactMessage = h('p', { class: 'break-all' }, [
-        t('packages_dag_dataFlow_dql_reset_impact_message', {
+        t('packages_dag_dataFlow_dlq_reset_impact_message', {
           count: impact.count,
         }),
       ])
       try {
         return await Modal.confirm(
-          t('packages_dag_dataFlow_dql_impact_title'),
+          t('packages_dag_dataFlow_dlq_impact_title'),
           impactMessage,
           {},
         )
@@ -1879,7 +1879,7 @@ export function useCanvasOperation() {
     }
     return runTaskOperationConfirmation({
       taskIds: [dataflow.value.id],
-      fetchImpacts: checkTaskDqlImpact,
+      fetchImpacts: checkTaskDlqImpact,
       confirmImpact,
       confirmOperation,
     })

@@ -51,7 +51,7 @@ export default class Task extends Http {
       `${this.url}/batchRenew?taskIds=${ids.join('&taskIds=')}`,
     )
   }
-  checkDqlImpact(taskIds) {
+  checkDlqImpact(taskIds) {
     return this.axios.post(
       `${this.url}/dql-event-impact`,
       { taskIds },

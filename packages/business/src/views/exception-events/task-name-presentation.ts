@@ -1,20 +1,20 @@
-export const DQL_TASK_NAME_MAX_LENGTH = 64
-export const DQL_TASK_NAME_LIST_MAX_LENGTH = 15
+export const DLQ_TASK_NAME_MAX_LENGTH = 64
+export const DLQ_TASK_NAME_LIST_MAX_LENGTH = 15
 
-export function getDqlTaskNameTooltipContent(taskName?: string): string {
+export function getDlqTaskNameTooltipContent(taskName?: string): string {
   return taskName ?? ''
 }
 
-export function shouldShowDqlTaskNameTooltip(
+export function shouldShowDlqTaskNameTooltip(
   taskName?: string,
-  maxLength = DQL_TASK_NAME_LIST_MAX_LENGTH,
+  maxLength = DLQ_TASK_NAME_LIST_MAX_LENGTH,
 ): boolean {
   return Array.from(taskName ?? '').length > maxLength
 }
 
-export function displayDqlTaskName(
+export function displayDlqTaskName(
   taskName?: string,
-  maxLength = DQL_TASK_NAME_MAX_LENGTH,
+  maxLength = DLQ_TASK_NAME_MAX_LENGTH,
 ) {
   if (!taskName) return taskName ?? ''
 

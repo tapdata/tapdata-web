@@ -2,25 +2,25 @@ import { requestClient } from '../request'
 
 const BASE_URL = '/api/dql-events'
 
-export type DqlEventStatus =
+export type DlqEventStatus =
   | 'PENDING'
   | 'REPROCESSING'
   | 'RECOVERED'
   | 'RECOVERY_FAILED'
   | 'NOT_REPROCESSABLE'
 
-export type DqlErrorType =
+export type DlqErrorType =
   | 'MALFORMED_RECORD'
   | 'POISON_RECORD'
   | 'TRANSFORM_ERROR'
   | 'TARGET_WRITE_ERROR'
   | 'UNKNOWN_RECORD_ERROR'
 
-export type DqlTaskSyncType = 'migrate' | 'sync'
+export type DlqTaskSyncType = 'migrate' | 'sync'
 
-export type DqlRecoveryMode = 'AUTO'
+export type DlqRecoveryMode = 'AUTO'
 
-export type DqlRecoveryBatchStatus =
+export type DlqRecoveryBatchStatus =
   | 'CREATED'
   | 'DISPATCHED'
   | 'RUNNING'
@@ -29,7 +29,7 @@ export type DqlRecoveryBatchStatus =
   | 'FAILED'
   | 'CANCELED'
 
-export interface DqlEventQueryParams {
+export interface DlqEventQueryParams {
   taskId?: string
   eventId?: string
   taskName?: string
@@ -38,8 +38,8 @@ export interface DqlEventQueryParams {
   keyword?: string
   errorCode?: string
   dmlType?: 'I' | 'U' | 'D'
-  errorType?: DqlErrorType
-  status?: DqlEventStatus
+  errorType?: DlqErrorType
+  status?: DlqEventStatus
   startTime?: string
   endTime?: string
   skip?: number
@@ -47,7 +47,7 @@ export interface DqlEventQueryParams {
   order?: string
 }
 
-export interface DqlEvent {
+export interface DlqEvent {
   id: string
   eventId: string
   taskId: string
@@ -57,21 +57,21 @@ export interface DqlEvent {
    * optional for local fixtures and older responses; production callers
    * should resolve it from the task API when it is needed for navigation.
    */
-  syncType?: DqlTaskSyncType
+  syncType?: DlqTaskSyncType
   sourceTable: string
   targetTable: string
   dmlType: 'I' | 'U' | 'D'
-  errorType: DqlErrorType
+  errorType: DlqErrorType
   errorCode: string
   eventTime: string
   failedAt: string
   captureSeq?: number
-  status: DqlEventStatus
+  status: DlqEventStatus
   recoveryCount: number
   lastRecoveryTime?: string
 }
 
-export interface DqlRecoveryAttempt {
+export interface DlqRecoveryAttempt {
   attemptId: string
   batchId: string
   startedAt: string
@@ -81,7 +81,7 @@ export interface DqlRecoveryAttempt {
   errorMessage?: string
 }
 
-export interface DqlEventDetail extends DqlEvent {
+export interface DlqEventDetail extends DlqEvent {
   /** Localized reason returned by TM when the event cannot be reprocessed. */
   notReprocessableReason?: string
   sourceNodeId?: string
@@ -104,15 +104,15 @@ export interface DqlEventDetail extends DqlEvent {
   payloadPreviewTruncated?: boolean
   errorDetails?: string
   rawErrorRef?: string
-  recoveryAttempts?: DqlRecoveryAttempt[]
+  recoveryAttempts?: DlqRecoveryAttempt[]
 }
 
-export interface DqlEventListResult {
-  items: DqlEvent[]
+export interface DlqEventListResult {
+  items: DlqEvent[]
   total: number
 }
 
-export interface DqlEventSummary {
+export interface DlqEventSummary {
   total: number
   pending: number
   reprocessing: number
@@ -121,16 +121,16 @@ export interface DqlEventSummary {
   notReprocessable: number
 }
 
-export interface DqlRecoveryPreview {
+export interface DlqRecoveryPreview {
   taskId?: string
   taskName?: string
   canSubmit: boolean
-  orderedEvents: DqlEvent[]
+  orderedEvents: DlqEvent[]
   riskyEvents?: Array<{
     eventId: string
     sourceTable?: string
     targetTable?: string
-    dmlType?: DqlEvent['dmlType']
+    dmlType?: DlqEvent['dmlType']
     eventTime?: string
     captureSeq?: number
     messageCode?: string
@@ -140,7 +140,7 @@ export interface DqlRecoveryPreview {
     eventId: string
     sourceTable?: string
     targetTable?: string
-    dmlType?: DqlEvent['dmlType']
+    dmlType?: DlqEvent['dmlType']
     eventTime?: string
     captureSeq?: number
     messageCode?: string
@@ -149,11 +149,11 @@ export interface DqlRecoveryPreview {
   message?: string
 }
 
-export interface DqlRecoveryBatch {
+export interface DlqRecoveryBatch {
   batchId: string
   taskId: string
   taskName: string
-  status: DqlRecoveryBatchStatus
+  status: DlqRecoveryBatchStatus
   selectedCount: number
   successCount: number
   failedCount: number
@@ -165,31 +165,31 @@ export interface DqlRecoveryBatch {
   message?: string
 }
 
-export function fetchDqlEvents(params: DqlEventQueryParams) {
-  return requestClient.get<DqlEventListResult>(BASE_URL, { params })
+export function fetchDlqEvents(params: DlqEventQueryParams) {
+  return requestClient.get<DlqEventListResult>(BASE_URL, { params })
 }
 
-export function fetchDqlEventDetail(eventId: string) {
-  return requestClient.get<DqlEventDetail>(`${BASE_URL}/${eventId}`)
+export function fetchDlqEventDetail(eventId: string) {
+  return requestClient.get<DlqEventDetail>(`${BASE_URL}/${eventId}`)
 }
 
-export function fetchDqlEventSummary(
-  params: Omit<DqlEventQueryParams, 'status' | 'skip' | 'limit' | 'order'>,
+export function fetchDlqEventSummary(
+  params: Omit<DlqEventQueryParams, 'status' | 'skip' | 'limit' | 'order'>,
 ) {
-  return requestClient.get<DqlEventSummary>(`${BASE_URL}/summary`, { params })
+  return requestClient.get<DlqEventSummary>(`${BASE_URL}/summary`, { params })
 }
 
-export function previewDqlRecovery(eventIds: string[]) {
-  return requestClient.post<DqlRecoveryPreview>(
+export function previewDlqRecovery(eventIds: string[]) {
+  return requestClient.post<DlqRecoveryPreview>(
     `${BASE_URL}/recovery/preview`,
-    { eventIds, mode: 'AUTO' satisfies DqlRecoveryMode },
+    { eventIds, mode: 'AUTO' satisfies DlqRecoveryMode },
   )
 }
 
 export function startDqlRecovery(eventIds: string[]) {
-  return requestClient.post<DqlRecoveryBatch>(`${BASE_URL}/recovery`, {
+  return requestClient.post<DlqRecoveryBatch>(`${BASE_URL}/recovery`, {
     eventIds,
     confirm: true,
-    mode: 'AUTO' satisfies DqlRecoveryMode,
+    mode: 'AUTO' satisfies DlqRecoveryMode,
   })
 }

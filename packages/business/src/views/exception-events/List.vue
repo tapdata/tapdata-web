@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import {
-  fetchDqlEventDetail,
-  fetchDqlEvents,
-  fetchDqlEventSummary,
-  previewDqlRecovery,
-  startDqlRecovery,
-  type DqlEvent,
-  type DqlEventDetail,
-  type DqlEventQueryParams,
-  type DqlEventStatus,
-  type DqlRecoveryAttempt,
-  type DqlRecoveryPreview,
-  type DqlTaskSyncType,
-} from '@tap/api/src/core/dql-event'
+  fetchDlqEventDetail,
+  fetchDlqEvents,
+  fetchDlqEventSummary,
+  previewDlqRecovery,
+  startDlqRecovery,
+  type DlqEvent,
+  type DlqEventDetail,
+  type DlqEventQueryParams,
+  type DlqEventStatus,
+  type DlqRecoveryAttempt,
+  type DlqRecoveryPreview,
+  type DlqTaskSyncType,
+} from '@tap/api/src/core/dlq-event'
 import { getTaskById } from '@tap/api/src/core/task'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import { useI18n } from '@tap/i18n'
@@ -22,15 +22,15 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
-import { getDqlEventStatusWarning } from './components/event-status-presentation'
+import { getDlqEventStatusWarning } from './components/event-status-presentation'
 import EventStatusTag from './components/EventStatusTag.vue'
 import SummaryTabs from './components/SummaryTabs.vue'
 import {
-  fetchMockDqlEventDetail,
-  fetchMockDqlEvents,
-  fetchMockDqlSummary,
-  previewMockDqlRecovery,
-  startMockDqlRecovery,
+  fetchMockDlqEventDetail,
+  fetchMockDlqEvents,
+  fetchMockDlqSummary,
+  previewMockDlqRecovery,
+  startMockDlqRecovery,
 } from './mock'
 import {
   canSubmitRecoveryPreview,
@@ -38,25 +38,25 @@ import {
   removeRecoveryPreviewEvent,
 } from './recovery-preview-presentation'
 import {
-  displayDqlTaskName,
-  DQL_TASK_NAME_LIST_MAX_LENGTH,
-  getDqlTaskNameTooltipContent,
-  shouldShowDqlTaskNameTooltip,
+  displayDlqTaskName,
+  DLQ_TASK_NAME_LIST_MAX_LENGTH,
+  getDlqTaskNameTooltipContent,
+  shouldShowDlqTaskNameTooltip,
 } from './task-name-presentation'
 
 const { t } = useI18n()
 const isMockMode =
-  import.meta.env.DEV && import.meta.env.VITE_DQL_EVENT_API === 'mock'
+  import.meta.env.DEV && import.meta.env.VITE_DLQ_EVENT_API === 'mock'
 const route = useRoute()
 const router = useRouter()
 const table = ref<InstanceType<typeof TablePage>>()
-const selectedRows = ref<DqlEvent[]>([])
+const selectedRows = ref<DlqEvent[]>([])
 const detailVisible = ref(false)
 const detailLoading = ref(false)
-const detail = ref<DqlEventDetail>()
+const detail = ref<DlqEventDetail>()
 const detailStatusWarning = computed(() =>
   detail.value
-    ? getDqlEventStatusWarning(
+    ? getDlqEventStatusWarning(
         detail.value.status,
         detail.value.notReprocessableReason,
       )
@@ -64,10 +64,10 @@ const detailStatusWarning = computed(() =>
 )
 const recoveryVisible = ref(false)
 const recoveryLoading = ref(false)
-const recoveryDetail = ref<DqlEventDetail>()
+const recoveryDetail = ref<DlqEventDetail>()
 const previewVisible = ref(false)
 const previewLoading = ref(false)
-const preview = ref<DqlRecoveryPreview>()
+const preview = ref<DlqRecoveryPreview>()
 const previewEventIds = ref<string[]>([])
 const previewIssueGroups = computed(() => {
   if (!preview.value) return { riskyEvents: [], blockedEvents: [] }
@@ -82,13 +82,13 @@ const previewCanSubmit = computed(() => {
   })
 })
 const submitting = ref(false)
-const status = ref<DqlEventStatus>()
+const status = ref<DlqEventStatus>()
 const order = ref('failedAt DESC')
 let refreshTimer: ReturnType<typeof setInterval> | undefined
 let detailRefreshTimer: ReturnType<typeof setInterval> | undefined
 let recoveryRefreshTimer: ReturnType<typeof setInterval> | undefined
 
-interface DqlEventFilters {
+interface DlqEventFilters {
   keyword: string
   errorCode: string
   eventId: string
@@ -97,12 +97,12 @@ interface DqlEventFilters {
   sourceTable: string
   targetTable: string
   dmlType: '' | 'I' | 'U' | 'D'
-  errorType: '' | DqlEventQueryParams['errorType']
+  errorType: '' | DlqEventQueryParams['errorType']
   startTime: string
   endTime: string
 }
 
-const filters = ref<DqlEventFilters>({
+const filters = ref<DlqEventFilters>({
   keyword: '',
   errorCode: '',
   eventId: '',
@@ -214,10 +214,10 @@ const canReprocess = (event: any) =>
 const hasRecoveryHistory = (event: any) =>
   event.status === 'REPROCESSING' || event.recoveryCount > 0
 const selectedTaskId = computed(() => selectedRows.value[0]?.taskId)
-const selectable = (event: DqlEvent) =>
+const selectable = (event: DlqEvent) =>
   canReprocess(event) &&
   (!selectedTaskId.value || selectedTaskId.value === event.taskId)
-const recoveryAttemptMeta = (result: DqlRecoveryAttempt['result']) =>
+const recoveryAttemptMeta = (result: DlqRecoveryAttempt['result']) =>
   (
     ({
       RUNNING: {
@@ -264,7 +264,7 @@ const recoveryAttempts = computed(() => {
   attempts.unshift(running)
   return attempts
 })
-const errorTypeLabel = (type: DqlEvent['errorType']) =>
+const errorTypeLabel = (type: DlqEvent['errorType']) =>
   ({
     MALFORMED_RECORD: t(
       'packages_business_exception_events_error_malformed_record',
@@ -308,7 +308,7 @@ const previewTaskGroups = computed(() => {
     {
       taskId: string
       taskName: string
-      events: DqlEvent[]
+      events: DlqEvent[]
     }
   >()
 
@@ -338,10 +338,10 @@ const previewTaskGroups = computed(() => {
   }))
 })
 
-const getQueryFilters = (): DqlEventQueryParams =>
+const getQueryFilters = (): DlqEventQueryParams =>
   Object.fromEntries(
     Object.entries(filters.value).filter(([, value]) => value !== ''),
-  ) as DqlEventQueryParams
+  ) as DlqEventQueryParams
 
 const getList = async ({
   page,
@@ -356,15 +356,15 @@ const getList = async ({
     order: order.value,
   }
   const data = isMockMode
-    ? await fetchMockDqlEvents(params)
-    : await fetchDqlEvents(params)
+    ? await fetchMockDlqEvents(params)
+    : await fetchDlqEvents(params)
   return { data: data?.items || [], total: data?.total || 0 }
 }
 
 const refreshSummary = async () => {
   summary.value = isMockMode
-    ? await fetchMockDqlSummary(getQueryFilters())
-    : await fetchDqlEventSummary(getQueryFilters())
+    ? await fetchMockDlqSummary(getQueryFilters())
+    : await fetchDlqEventSummary(getQueryFilters())
 }
 
 const refresh = (passive = false) => {
@@ -372,7 +372,7 @@ const refresh = (passive = false) => {
   refreshSummary()
 }
 
-const handleStatusChange = (value?: DqlEventStatus) => {
+const handleStatusChange = (value?: DlqEventStatus) => {
   status.value = value
   router.replace({ query: { ...route.query, status: value || undefined } })
   refresh()
@@ -401,7 +401,7 @@ const handleSortTable = ({
 
 const filterBarKeys = ['keyword', 'errorCode', 'taskName', 'dmlType'] as const
 
-const updateFilterBarValue = (value: Partial<DqlEventFilters>) => {
+const updateFilterBarValue = (value: Partial<DlqEventFilters>) => {
   const nextFilters = { ...filters.value }
   filterBarKeys.forEach((key) => {
     nextFilters[key] = (value[key] || '') as never
@@ -418,7 +418,7 @@ const clearAdvancedFilters = () => {
   handleFilterFetch()
 }
 
-const handleSelectionChange = (rows: DqlEvent[]) => {
+const handleSelectionChange = (rows: DlqEvent[]) => {
   if (rows.length > 1 && new Set(rows.map((item) => item.taskId)).size > 1) {
     ElMessage.warning(
       t('packages_business_exception_events_same_task_selection_warning'),
@@ -461,8 +461,8 @@ const refreshDetail = async (eventId?: string, passive = false) => {
   if (!passive) detailLoading.value = true
   try {
     detail.value = isMockMode
-      ? await fetchMockDqlEventDetail(eventId)
-      : await fetchDqlEventDetail(eventId)
+      ? await fetchMockDlqEventDetail(eventId)
+      : await fetchDlqEventDetail(eventId)
   } finally {
     detailLoading.value = false
   }
@@ -475,8 +475,8 @@ const refreshRecovery = async (eventId?: string, passive = false) => {
   if (!passive) recoveryLoading.value = true
   try {
     recoveryDetail.value = isMockMode
-      ? await fetchMockDqlEventDetail(eventId)
-      : await fetchDqlEventDetail(eventId)
+      ? await fetchMockDlqEventDetail(eventId)
+      : await fetchDlqEventDetail(eventId)
   } finally {
     recoveryLoading.value = false
   }
@@ -485,7 +485,7 @@ const refreshRecovery = async (eventId?: string, passive = false) => {
 }
 
 // TablePage exposes untyped DefaultRow values through its slots; these handlers
-// are the runtime boundary where the DQL row contract is consumed.
+// are the runtime boundary where the DLQ row contract is consumed.
 const openDetail = async (event: any) => {
   detailVisible.value = true
   detail.value = undefined
@@ -498,9 +498,9 @@ const openRecovery = async (event: any) => {
   await refreshRecovery(event.eventId)
 }
 
-const taskSyncTypeCache = new Map<string, DqlTaskSyncType>()
+const taskSyncTypeCache = new Map<string, DlqTaskSyncType>()
 
-const resolveTaskSyncType = async (event: DqlEvent) => {
+const resolveTaskSyncType = async (event: DlqEvent) => {
   if (event.syncType) return event.syncType
 
   const cached = taskSyncTypeCache.get(event.taskId)
@@ -509,13 +509,13 @@ const resolveTaskSyncType = async (event: DqlEvent) => {
   const task = await getTaskById(event.taskId, {
     fields: JSON.stringify({ name: true, syncType: true }),
   })
-  const syncType = task?.syncType as DqlTaskSyncType | undefined
+  const syncType = task?.syncType as DlqTaskSyncType | undefined
   if (syncType) taskSyncTypeCache.set(event.taskId, syncType)
   return syncType
 }
 
 const openTaskMonitor = async (event: any) => {
-  let syncType: DqlTaskSyncType | undefined
+  let syncType: DlqTaskSyncType | undefined
   try {
     syncType = await resolveTaskSyncType(event)
   } catch {
@@ -541,8 +541,8 @@ const loadPreview = async (eventIds: string[]) => {
   previewLoading.value = true
   try {
     preview.value = isMockMode
-      ? await previewMockDqlRecovery(eventIds)
-      : await previewDqlRecovery(eventIds)
+      ? await previewMockDlqRecovery(eventIds)
+      : await previewDlqRecovery(eventIds)
   } finally {
     previewLoading.value = false
   }
@@ -593,8 +593,8 @@ const submitRecovery = async () => {
   try {
     const ids = currentPreview.orderedEvents.map((item) => item.eventId)
     await (isMockMode
-      ? await startMockDqlRecovery(ids)
-      : await startDqlRecovery(ids))
+      ? await startMockDlqRecovery(ids)
+      : await startDlqRecovery(ids))
     previewVisible.value = false
     selectedRows.value = []
     table.value?.clearSelection()
@@ -608,17 +608,17 @@ const submitRecovery = async () => {
 }
 
 onMounted(() => {
-  const routeFilters: Partial<DqlEventFilters> = {}
+  const routeFilters: Partial<DlqEventFilters> = {}
   Object.entries(filters.value).forEach(([key]) => {
     const value = route.query[key]
     if (typeof value === 'string') {
-      routeFilters[key as keyof DqlEventFilters] = value as never
+      routeFilters[key as keyof DlqEventFilters] = value as never
     }
   })
   filters.value = { ...filters.value, ...routeFilters }
   const routeStatus = route.query.status
   if (typeof routeStatus === 'string')
-    status.value = routeStatus as DqlEventStatus
+    status.value = routeStatus as DlqEventStatus
   refreshSummary()
   refreshTimer = setInterval(() => {
     if (summary.value.reprocessing) refresh(true)
@@ -794,19 +794,19 @@ onUnmounted(() => {
           >
             <el-tooltip
               placement="top"
-              :content="getDqlTaskNameTooltipContent(row.taskName)"
+              :content="getDlqTaskNameTooltipContent(row.taskName)"
               :disabled="
-                !shouldShowDqlTaskNameTooltip(
+                !shouldShowDlqTaskNameTooltip(
                   row.taskName,
-                  DQL_TASK_NAME_LIST_MAX_LENGTH,
+                  DLQ_TASK_NAME_LIST_MAX_LENGTH,
                 )
               "
             >
               <span class="ellipsis">
                 {{
-                  displayDqlTaskName(
+                  displayDlqTaskName(
                     row.taskName,
-                    DQL_TASK_NAME_LIST_MAX_LENGTH,
+                    DLQ_TASK_NAME_LIST_MAX_LENGTH,
                   )
                 }}
               </span>
@@ -946,7 +946,7 @@ onUnmounted(() => {
           <div class="exception-detail__subtitle" :title="detail?.taskName">
             {{
               detail
-                ? `${displayDqlTaskName(detail.taskName)} · ${detail.sourceTable}`
+                ? `${displayDlqTaskName(detail.taskName)} · ${detail.sourceTable}`
                 : t('packages_business_exception_events_loading')
             }}
           </div>
@@ -1015,7 +1015,7 @@ onUnmounted(() => {
                     {{ t('packages_business_exception_events_belonging_task') }}
                   </span>
                   <strong :title="detail.taskName">
-                    {{ displayDqlTaskName(detail.taskName) }}
+                    {{ displayDlqTaskName(detail.taskName) }}
                   </strong>
                 </div>
               </div>
@@ -1154,7 +1154,7 @@ onUnmounted(() => {
           >
             {{
               recoveryDetail
-                ? `${displayDqlTaskName(recoveryDetail.taskName)} · ${recoveryDetail.sourceTable}`
+                ? `${displayDlqTaskName(recoveryDetail.taskName)} · ${recoveryDetail.sourceTable}`
                 : t('packages_business_exception_events_loading')
             }}
           </div>
@@ -1176,7 +1176,7 @@ onUnmounted(() => {
             <div>
               <span>{{ t('packages_business_exception_events_task') }}</span>
               <strong :title="recoveryDetail.taskName">
-                {{ displayDqlTaskName(recoveryDetail.taskName) }}
+                {{ displayDlqTaskName(recoveryDetail.taskName) }}
               </strong>
             </div>
             <div>
@@ -1373,7 +1373,7 @@ onUnmounted(() => {
                     <div>
                       <div class="reprocess-task-group__title">
                         <h5 :title="group.taskName">
-                          {{ displayDqlTaskName(group.taskName) }}
+                          {{ displayDlqTaskName(group.taskName) }}
                         </h5>
                       </div>
                       <p>

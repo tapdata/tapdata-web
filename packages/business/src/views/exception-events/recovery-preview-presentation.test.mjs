@@ -13,7 +13,7 @@ test('separates missing business key events into risk items', () => {
     {
       eventId: 'business-key-missing',
       message: '事件缺少业务键',
-      messageCode: 'DqlRecovery.Preview.EventNoBusinessKey',
+      messageCode: 'DlqRecovery.Preview.EventNoBusinessKey',
     },
     {
       eventId: 'payload-incomplete',
@@ -38,7 +38,7 @@ test('recognizes the business key risk by the backend message code', () => {
     {
       eventId: 'business-key-missing',
       message: '事件缺少业务键',
-      messageCode: 'DqlRecovery.Preview.EventNoBusinessKey',
+      messageCode: 'DlqRecovery.Preview.EventNoBusinessKey',
     },
   ])
 
@@ -64,7 +64,7 @@ test('keeps backend risk items separate from truly blocked items', () => {
       {
         eventId: 'business-key-missing',
         message: '事件缺少业务键',
-        messageCode: 'DqlRecovery.Preview.EventNoBusinessKey',
+        messageCode: 'DlqRecovery.Preview.EventNoBusinessKey',
       },
     ],
     blockedEvents: [

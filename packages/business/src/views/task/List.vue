@@ -6,7 +6,7 @@ import {
   batchRenewTasks,
   batchStartTasks,
   batchStopTasks,
-  checkTaskDqlImpact,
+  checkTaskDlqImpact,
   copyTask,
   exportTasks,
   fetchTasks,
@@ -42,7 +42,7 @@ import SkipError from './SkipError.vue'
 import TaskName from './TaskName.vue'
 import {
   confirmTaskOperation as runTaskOperationConfirmation,
-  getTaskDqlImpactMessageKey,
+  getTaskDlqImpactMessageKey,
 } from './task-operation-impact'
 
 export default {
@@ -800,11 +800,11 @@ export default {
         taskMap.set(item.id, item)
       }
       const isBulk = ids.length > 1
-      const messageKey = getTaskDqlImpactMessageKey(operation, isBulk)
+      const messageKey = getTaskDlqImpactMessageKey(operation, isBulk)
       const confirmImpact = async (affected) => {
         if (!isBulk) {
           return this.$confirm(
-            this.$t('packages_business_dataFlow_dql_impact_title'),
+            this.$t('packages_business_dataFlow_dlq_impact_title'),
             this.$t(messageKey, {
               count: affected[0].count,
             }),
@@ -820,7 +820,7 @@ export default {
           h('ul', { class: 'pl-5 mt-2' }, lines),
         ])
         return this.$confirm(
-          this.$t('packages_business_dataFlow_dql_impact_title'),
+          this.$t('packages_business_dataFlow_dlq_impact_title'),
           message,
           {},
         )
@@ -833,7 +833,7 @@ export default {
       return runTaskOperationConfirmation({
         taskIds: ids,
         taskMap,
-        fetchImpacts: checkTaskDqlImpact,
+        fetchImpacts: checkTaskDlqImpact,
         confirmImpact,
         confirmOperation,
       })
