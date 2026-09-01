@@ -667,7 +667,10 @@ function loadEmailReceivers() {
   const str = getSettingByKey('email.receivers')
   const receivers = str ? str.split(',').filter(Boolean) : []
   const taskReceivers = dataflowStore.dataflow.emailReceivers
-  const value = Array.isArray(taskReceivers) ? taskReceivers : receivers
+  const value =
+    Array.isArray(taskReceivers) && taskReceivers.length
+      ? taskReceivers
+      : receivers
   const options = [...new Set([...receivers, ...value])]
 
   form.setFieldState('emailReceivers', {
