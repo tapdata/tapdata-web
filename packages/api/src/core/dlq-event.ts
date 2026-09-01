@@ -186,7 +186,7 @@ export function previewDlqRecovery(eventIds: string[]) {
   )
 }
 
-export function startDqlRecovery(eventIds: string[]) {
+export function startDlqRecovery(eventIds: string[]) {
   return requestClient.post<DlqRecoveryBatch>(`${BASE_URL}/recovery`, {
     eventIds,
     confirm: true,
