@@ -69,6 +69,7 @@ const {
   onDeleteNode,
   onDeleteNodes,
   onAddNode,
+  canAddNode,
   onMoveNodePosition,
   onUpdateNodesPosition,
   onClickNode,
@@ -641,6 +642,7 @@ provide('buttonShowMap', buttonShowMap)
 provide('dataflow', dataflow)
 provide('dataflowName', dataflowName)
 provide('dataflowDesc', dataflowDesc)
+provide('canAddNode', canAddNode)
 provide('onNameInputChange', onNameInputChange)
 provide('formScope', formScope)
 provide('isSaving', isSaving)
