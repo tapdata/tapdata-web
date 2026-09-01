@@ -3,14 +3,14 @@ import test from 'node:test'
 
 import { createTaskErrorModeOptions } from './src/components/task-error-mode-options.ts'
 
-test('the DQL display option submits the DQL task mode', () => {
+test('the DLQ display option submits the DLQ task mode', () => {
   const options = createTaskErrorModeOptions((key) => key)
-  const dqlOption = options.find(
+  const dlqOption = options.find(
     ({ label }) => label === 'packages_dag_migration_settingpanel_route_to_dlq',
   )
 
-  assert.ok(dqlOption)
-  assert.equal(dqlOption.value, 'DQL')
+  assert.ok(dlqOption)
+  assert.equal(dlqOption.value, 'DLQ')
 })
 
 test('task error mode values are unique', () => {

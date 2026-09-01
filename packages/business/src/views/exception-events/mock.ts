@@ -1,19 +1,19 @@
 import type {
-  DqlEvent,
-  DqlEventDetail,
-  DqlEventQueryParams,
-  DqlEventStatus,
-  DqlEventSummary,
-  DqlRecoveryBatch,
-  DqlRecoveryPreview,
-} from '@tap/api/src/core/dql-event'
+  DlqEvent,
+  DlqEventDetail,
+  DlqEventQueryParams,
+  DlqEventStatus,
+  DlqEventSummary,
+  DlqRecoveryBatch,
+  DlqRecoveryPreview,
+} from '@tap/api/src/core/dlq-event'
 import i18n from '@tap/i18n'
 
 const now = Date.now()
 const date = (minutesAgo: number) =>
   new Date(now - minutesAgo * 60_000).toISOString()
 
-const rows: DqlEventDetail[] = [
+const rows: DlqEventDetail[] = [
   {
     id: 'evt-01',
     eventId: 'dlq_01J8K6CB1A2M04Q9X001',
@@ -272,14 +272,14 @@ const rows: DqlEventDetail[] = [
   },
 ]
 
-let batch: DqlRecoveryBatch | undefined
+let batch: DlqRecoveryBatch | undefined
 
-const toListEvent = (item: DqlEventDetail): DqlEvent => {
+const toListEvent = (item: DlqEventDetail): DlqEvent => {
   const { payloadPreview, recoveryAttempts, errorDetails, ...event } = item
   return event
 }
 
-export function fetchMockDqlEvents(params: DqlEventQueryParams) {
+export function fetchMockDlqEvents(params: DlqEventQueryParams) {
   advanceMockBatch()
   let list = rows.slice()
   const keyword = params.keyword?.toLowerCase().trim()
@@ -313,15 +313,15 @@ export function fetchMockDqlEvents(params: DqlEventQueryParams) {
   })
 }
 
-export function fetchMockDqlSummary(
-  params: DqlEventQueryParams = {},
-): Promise<DqlEventSummary> {
-  const matches = (status: DqlEventStatus) =>
-    fetchMockDqlEvents({ ...params, status, limit: rows.length }).then(
+export function fetchMockDlqSummary(
+  params: DlqEventQueryParams = {},
+): Promise<DlqEventSummary> {
+  const matches = (status: DlqEventStatus) =>
+    fetchMockDlqEvents({ ...params, status, limit: rows.length }).then(
       (result) => result.total,
     )
   return Promise.all([
-    fetchMockDqlEvents({ ...params, limit: rows.length }),
+    fetchMockDlqEvents({ ...params, limit: rows.length }),
     matches('PENDING'),
     matches('REPROCESSING'),
     matches('RECOVERED'),
@@ -339,7 +339,7 @@ export function fetchMockDqlSummary(
   )
 }
 
-export function fetchMockDqlEventDetail(eventId: string) {
+export function fetchMockDlqEventDetail(eventId: string) {
   advanceMockBatch()
   const event = rows.find((item) => item.eventId === eventId)
   if (!event) return Promise.resolve(undefined)
@@ -369,11 +369,11 @@ export function fetchMockDqlEventDetail(eventId: string) {
   return Promise.resolve({ ...event, recoveryAttempts })
 }
 
-export function previewMockDqlRecovery(
+export function previewMockDlqRecovery(
   eventIds: string[],
-): Promise<DqlRecoveryPreview> {
+): Promise<DlqRecoveryPreview> {
   const selected = rows.filter((item) => eventIds.includes(item.eventId))
-  const canRecover = (item: DqlEventDetail) =>
+  const canRecover = (item: DlqEventDetail) =>
     ['PENDING', 'RECOVERY_FAILED'].includes(item.status) &&
     item.payloadComplete !== false
   const orderedEvents = selected
@@ -413,7 +413,7 @@ export function previewMockDqlRecovery(
   })
 }
 
-export function startMockDqlRecovery(eventIds: string[]) {
+export function startMockDlqRecovery(eventIds: string[]) {
   const selected = rows.filter((item) => eventIds.includes(item.eventId))
   selected.forEach((item) => {
     item.status = 'REPROCESSING'

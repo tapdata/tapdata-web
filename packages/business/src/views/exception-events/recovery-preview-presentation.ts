@@ -24,7 +24,7 @@ export interface RecoveryPreviewSubmissionState {
   blockedEvents: readonly RecoveryPreviewBlockedEvent[]
 }
 
-const BUSINESS_KEY_MISSING_CODE = 'DqlRecovery.Preview.EventNoBusinessKey'
+const BUSINESS_KEY_MISSING_CODE = 'DlqRecovery.Preview.EventNoBusinessKey'
 
 export function isBusinessKeyRisk(event: RecoveryPreviewBlockedEvent) {
   return event.messageCode === BUSINESS_KEY_MISSING_CODE

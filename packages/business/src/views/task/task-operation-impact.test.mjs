@@ -3,12 +3,12 @@ import test from 'node:test'
 
 import {
   confirmTaskOperation,
-  getAffectedTaskDqlImpacts,
-  getTaskDqlImpactMessageKey,
+  getAffectedTaskDlqImpacts,
+  getTaskDlqImpactMessageKey,
 } from './task-operation-impact.js'
 
-test('sorts affected task DQL impacts by count descending', () => {
-  const result = getAffectedTaskDqlImpacts(
+test('sorts affected task DLQ impacts by count descending', () => {
+  const result = getAffectedTaskDlqImpacts(
     [
       { taskId: 'task-a', exists: true, count: 2 },
       { taskId: 'task-b', exists: true, count: 9 },
@@ -85,15 +85,15 @@ test('confirms the original operation when no impacts exist or the check fails',
 
 test('uses a separate message key for bulk task operations', () => {
   assert.equal(
-    getTaskDqlImpactMessageKey('reset', false),
-    'packages_business_dataFlow_dql_reset_impact_message',
+    getTaskDlqImpactMessageKey('reset', false),
+    'packages_business_dataFlow_dlq_reset_impact_message',
   )
   assert.equal(
-    getTaskDqlImpactMessageKey('reset', true),
-    'packages_business_dataFlow_dql_bulk_reset_impact_message',
+    getTaskDlqImpactMessageKey('reset', true),
+    'packages_business_dataFlow_dlq_bulk_reset_impact_message',
   )
   assert.equal(
-    getTaskDqlImpactMessageKey('delete', true),
-    'packages_business_dataFlow_dql_bulk_delete_impact_message',
+    getTaskDlqImpactMessageKey('delete', true),
+    'packages_business_dataFlow_dlq_bulk_delete_impact_message',
   )
 })

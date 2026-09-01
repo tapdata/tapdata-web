@@ -1,24 +1,24 @@
 <script setup lang="ts">
 import { useI18n } from '@tap/i18n'
-import { dqlEventStatusLabelKeys } from './event-status-presentation'
+import { dlqEventStatusLabelKeys } from './event-status-presentation'
 import type {
-  DqlEventStatus,
-  DqlEventSummary,
-} from '@tap/api/src/core/dql-event'
+  DlqEventStatus,
+  DlqEventSummary,
+} from '@tap/api/src/core/dlq-event'
 
 const props = defineProps<{
-  modelValue?: DqlEventStatus
-  summary: DqlEventSummary
+  modelValue?: DlqEventStatus
+  summary: DlqEventSummary
 }>()
 const emit = defineEmits<{
-  (event: 'update:modelValue', value?: DqlEventStatus): void
+  (event: 'update:modelValue', value?: DlqEventStatus): void
 }>()
 const { t } = useI18n()
 
 const items: Array<{
-  key?: DqlEventStatus
+  key?: DlqEventStatus
   labelKey: string
-  summaryKey: keyof DqlEventSummary
+  summaryKey: keyof DlqEventSummary
 }> = [
   {
     labelKey: 'packages_business_exception_events_status_all',
@@ -26,27 +26,27 @@ const items: Array<{
   },
   {
     key: 'PENDING',
-    labelKey: dqlEventStatusLabelKeys.PENDING,
+    labelKey: dlqEventStatusLabelKeys.PENDING,
     summaryKey: 'pending',
   },
   {
     key: 'REPROCESSING',
-    labelKey: dqlEventStatusLabelKeys.REPROCESSING,
+    labelKey: dlqEventStatusLabelKeys.REPROCESSING,
     summaryKey: 'reprocessing',
   },
   {
     key: 'RECOVERED',
-    labelKey: dqlEventStatusLabelKeys.RECOVERED,
+    labelKey: dlqEventStatusLabelKeys.RECOVERED,
     summaryKey: 'recovered',
   },
   {
     key: 'RECOVERY_FAILED',
-    labelKey: dqlEventStatusLabelKeys.RECOVERY_FAILED,
+    labelKey: dlqEventStatusLabelKeys.RECOVERY_FAILED,
     summaryKey: 'recoveryFailed',
   },
   {
     key: 'NOT_REPROCESSABLE',
-    labelKey: dqlEventStatusLabelKeys.NOT_REPROCESSABLE,
+    labelKey: dlqEventStatusLabelKeys.NOT_REPROCESSABLE,
     summaryKey: 'notReprocessable',
   },
 ]

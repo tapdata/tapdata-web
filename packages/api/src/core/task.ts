@@ -34,7 +34,7 @@ export interface Task {
   dag: Dag
 }
 
-export interface TaskDqlImpact {
+export interface TaskDlqImpact {
   taskId: string
   exists: boolean
   count: number
@@ -100,8 +100,8 @@ export function batchRenewTasks(ids: string[]) {
   )
 }
 
-export function checkTaskDqlImpact(taskIds: string[]) {
-  return requestClient.post<TaskDqlImpact[]>(
+export function checkTaskDlqImpact(taskIds: string[]) {
+  return requestClient.post<TaskDlqImpact[]>(
     `${BASE_URL}/dql-event-impact`,
     { taskIds },
     { skipErrorHandler: true },

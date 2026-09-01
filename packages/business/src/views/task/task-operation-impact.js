@@ -1,4 +1,4 @@
-export function getAffectedTaskDqlImpacts(impacts, taskMap = new Map()) {
+export function getAffectedTaskDlqImpacts(impacts, taskMap = new Map()) {
   return (Array.isArray(impacts) ? impacts : [])
     .filter((impact) => impact?.exists && Number(impact.count) > 0)
     .map((impact) => ({
@@ -9,15 +9,15 @@ export function getAffectedTaskDqlImpacts(impacts, taskMap = new Map()) {
     .sort((a, b) => b.count - a.count)
 }
 
-export function getTaskDqlImpactMessageKey(operation, isBulk) {
+export function getTaskDlqImpactMessageKey(operation, isBulk) {
   if (isBulk) {
     return operation === 'delete'
-      ? 'packages_business_dataFlow_dql_bulk_delete_impact_message'
-      : 'packages_business_dataFlow_dql_bulk_reset_impact_message'
+      ? 'packages_business_dataFlow_dlq_bulk_delete_impact_message'
+      : 'packages_business_dataFlow_dlq_bulk_reset_impact_message'
   }
   return operation === 'delete'
-    ? 'packages_business_dataFlow_dql_delete_impact_message'
-    : 'packages_business_dataFlow_dql_reset_impact_message'
+    ? 'packages_business_dataFlow_dlq_delete_impact_message'
+    : 'packages_business_dataFlow_dlq_reset_impact_message'
 }
 
 export async function confirmTaskOperation({
@@ -34,6 +34,6 @@ export async function confirmTaskOperation({
     return confirmOperation()
   }
 
-  const affected = getAffectedTaskDqlImpacts(impacts, taskMap)
+  const affected = getAffectedTaskDlqImpacts(impacts, taskMap)
   return affected.length ? confirmImpact(affected) : confirmOperation()
 }
