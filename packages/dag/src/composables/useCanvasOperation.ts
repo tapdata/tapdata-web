@@ -548,7 +548,32 @@ export function useCanvasOperation() {
     historyStore.stopRecordingUndo()
   }
 
+  const isEnabledJoinNode = (node: any) =>
+    node?.type === 'join_processor' && !node.disabled && !node.attrs?.disabled
+
+  const getEnabledJoinNodeCount = () =>
+    dataflowStore.dag.nodes.filter(isEnabledJoinNode).length
+
+  const showJoinNodeLimitMessage = () => {
+    ElMessage.error(t('packages_dag_join_node_limit'))
+  }
+
+  const canAddJoinNodes = (count = 1) => {
+    if (!count) return true
+    return getEnabledJoinNodeCount() + count <= 1
+  }
+
+  const canAddNode = (node: any) => {
+    if (isEnabledJoinNode(node) && !canAddJoinNodes()) {
+      showJoinNodeLimitMessage()
+      return false
+    }
+    return true
+  }
+
   const onAddNode = (node: any, { trackHistory = true } = {}) => {
+    if (!canAddNode(node)) return false
+
     if (
       (node.type === 'table' || node.type === 'database') &&
       node.attrs?.pdkHash
@@ -587,6 +612,8 @@ export function useCanvasOperation() {
     if (trackHistory) {
       historyStore.pushCommandToUndo(new AddNodeCommand(node, Date.now()))
     }
+
+    return true
   }
 
   // ========== Copy / Paste ==========
@@ -686,6 +713,11 @@ export function useCanvasOperation() {
     const nodes: any[] = cloneDeep(data.nodes)
     const edges: any[] = cloneDeep(data.edges || [])
     if (!nodes.length) return []
+
+    if (!canAddJoinNodes(nodes.filter(isEnabledJoinNode).length)) {
+      showJoinNodeLimitMessage()
+      return []
+    }
 
     // 计算原始节点组的包围盒左上角
     let origMinX = Infinity
@@ -905,6 +937,13 @@ export function useCanvasOperation() {
 
   const validateAllNodes = async (nodes: any[]) => {
     await Promise.all(nodes.map((node) => validateNode(node)))
+  }
+
+  // --- Join 节点数量校验 ---
+  const validateJoin = () => {
+    return getEnabledJoinNodeCount() > 1
+      ? t('packages_dag_join_node_limit')
+      : ''
   }
 
   // --- DAG 结构校验 ---
@@ -1456,6 +1495,7 @@ export function useCanvasOperation() {
     await validateAllNodes(nodes)
 
     return await eachValidate(
+      validateJoin,
       validateSetting,
       validateDag,
       validateAgent,
@@ -2140,6 +2180,7 @@ export function useCanvasOperation() {
     onDeleteNode,
     onDeleteNodes,
     onAddNode,
+    canAddNode,
     onCopyNodes,
     onPasteNodes,
     validate,

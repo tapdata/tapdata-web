@@ -35,6 +35,7 @@ const historyStore = useHistoryStore()
 // Inject tracking functions for history support
 const dataflow = inject<Ref<any>>('dataflow')!
 const onAddNode = inject<(node: any) => void>('onAddNode')
+const canAddNode = inject<(node: any) => boolean>('canAddNode')
 const onCreateConnection =
   inject<(connection: any) => void>('onCreateConnection')
 const onDeleteConnection =
@@ -300,6 +301,10 @@ const handleAddNode = (node: any) => {
 
   // 开始批量记录 - 所有操作作为一个 BulkCommand
   historyStore.startRecordingUndo()
+  if (canAddNode && !canAddNode(node)) {
+    historyStore.stopRecordingUndo()
+    return
+  }
 
   if (nextNodeId && prevNodeId) {
     // 在两个节点之间添加
@@ -315,7 +320,6 @@ const handleAddNode = (node: any) => {
       historyStore.stopRecordingUndo()
       return
     }
-
     const afterNodes = dataflowStore.getAfterNodesInSameBranch(nextNodeId)
     const nextNode = findNode(nextNodeId)!
     const prevCanvasNode = findNode(prevNodeId)!
@@ -353,9 +357,7 @@ const handleAddNode = (node: any) => {
       target: nextNodeId,
     })
 
-    // 添加新节点
     onAddNode?.(node)
-
     // 添加新连线
     onCreateConnection?.({
       source: prevNodeId,
