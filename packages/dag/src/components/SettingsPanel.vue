@@ -37,7 +37,11 @@ import {
 import { useStore } from 'vuex'
 import { FormTab } from '../../../form'
 import * as _components from '../components/form'
-import { alarmSettingKeys, type AlarmSettingKey } from '../constants'
+import {
+  alarmSettingKeys,
+  getDefaultAlarmSettings,
+  type AlarmSettingKey,
+} from '../constants'
 import { useDataflowStore } from '../stores/dataflow.store'
 
 const dataflowStore = useDataflowStore()
@@ -187,22 +191,6 @@ const alarmSettingSchemaConfigMap: Record<
   },
 }
 
-function getAlarmSettingsDefault() {
-  return alarmSettingKeys.map((key) => {
-    const config = alarmSettingSchemaConfigMap[key]
-
-    return {
-      type: 'TASK',
-      open: isDaas,
-      key,
-      sort: config.sort,
-      notify: config.notify ?? ['SYSTEM', 'EMAIL'],
-      interval: config.interval ?? 300,
-      unit: 'SECOND',
-    }
-  })
-}
-
 function getAlarmSettingSchema(
   key: AlarmSettingKey,
   index: number,
@@ -210,7 +198,7 @@ function getAlarmSettingSchema(
   const config = alarmSettingSchemaConfigMap[key]
   const openSchema: SchemaProperties = {
     type: 'boolean',
-    default: true,
+    default: false,
     'x-editable': true,
     'x-component': 'Switch',
     'x-component-props': {
@@ -678,28 +666,19 @@ const lazySavePermissionsConfig = debounce(savePermissionsConfig, 300)
 function loadEmailReceivers() {
   const str = getSettingByKey('email.receivers')
   const receivers = str ? str.split(',').filter(Boolean) : []
-  let value = dataflowStore.dataflow.emailReceivers || []
-  const size = value.length
-
-  if (size) {
-    const filter = value.filter((email: string) => receivers.includes(email))
-
-    if (size !== filter.length) {
-      value = [...filter]
-    }
-  } else {
-    value = receivers
-  }
+  const taskReceivers = dataflowStore.dataflow.emailReceivers
+  const value = Array.isArray(taskReceivers) ? taskReceivers : receivers
+  const options = [...new Set([...receivers, ...value])]
 
   form.setFieldState('emailReceivers', {
-    value,
-    dataSource: receivers.map((receiver: string) => {
+    dataSource: options.map((receiver: string) => {
       return {
         label: receiver,
         value: receiver,
       }
     }),
   })
+  form.setValues({ emailReceivers: value })
 }
 
 function useFormEffects() {
@@ -1616,7 +1595,7 @@ const schema = {
             alarmSettings: {
               type: 'array',
               'x-index': 0,
-              default: getAlarmSettingsDefault(),
+              default: getDefaultAlarmSettings(isDaas),
             },
             alarmRules: {
               type: 'array',

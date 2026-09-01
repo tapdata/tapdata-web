@@ -43,6 +43,7 @@ import {
 } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { normalizeAlarmSettings } from '../constants'
 import { useDataflowStore } from '../stores/dataflow.store'
 import {
   AddConnectionCommand,
@@ -1496,11 +1497,15 @@ export function useCanvasOperation() {
       data.autoIncrementalBatchSize
     dataflowStore.dataflow.attrs = data.attrs
 
-    delete data.dag
-
     if (!fromWS) {
-      Object.keys(data).forEach((key) => {
-        dataflowStore.dataflow[key] = data[key]
+      const dataflowData = {
+        ...data,
+        alarmSettings: normalizeAlarmSettings(data.alarmSettings, isDaas),
+      }
+      delete dataflowData.dag
+
+      Object.keys(dataflowData).forEach((key) => {
+        dataflowStore.dataflow[key] = dataflowData[key]
       })
     }
   }
