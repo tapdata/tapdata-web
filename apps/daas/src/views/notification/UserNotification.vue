@@ -2,7 +2,6 @@
 import { fetchUserLogs } from '@tap/api/src/core/userlogs'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import DatetimeRange from '@tap/component/src/filter-bar/DatetimeRange.vue'
-import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
 import UserOperation from './UserOperation'
@@ -16,7 +15,6 @@ export default {
   data() {
     return {
       loading: false,
-      isAdmin: Cookie.get('isAdmin') === '1',
       search: {
         keyword: '',
         range: [],
@@ -46,10 +44,6 @@ export default {
     }
   },
   created() {
-    if (!this.isAdmin) {
-      this.$router.replace({ name: 'dashboard' })
-      return
-    }
     this.getData()
   },
   methods: {
@@ -177,12 +171,18 @@ export default {
         service_stop_failed: 'audit_service_failure_stop',
         service_status_update_failed: 'audit_service_failure_status_update',
       }
+      const connectionReasonKeyMap = {
+        connection_test_failed: 'audit_connection_failure_test',
+        schema_load_failed: 'audit_connection_failure_load_schema',
+        connection_agent_unavailable:
+          'audit_connection_failure_agent_unavailable',
+      }
       const reasonKeyMap =
         record.eventType === 'login'
           ? loginReasonKeyMap
           : record.eventType === 'serviceLifecycle'
             ? serviceReasonKeyMap
-            : {}
+            : connectionReasonKeyMap
       const key = reasonKeyMap[reason]
       return key ? this.$t(key) : reason
     },

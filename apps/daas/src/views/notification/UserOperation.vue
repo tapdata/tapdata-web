@@ -65,6 +65,12 @@ const SERVICE_FAILURE_REASON_KEYS: Record<string, string> = {
   service_status_update_failed: 'audit_service_failure_status_update',
 }
 
+const CONNECTION_FAILURE_REASON_KEYS: Record<string, string> = {
+  connection_test_failed: 'audit_connection_failure_test',
+  schema_load_failed: 'audit_connection_failure_load_schema',
+  connection_agent_unavailable: 'audit_connection_failure_agent_unavailable',
+}
+
 const CONFIGURATION_OBJECT_KEYS: Record<string, string> = {
   systemSettings: 'audit_system_configuration',
   alarmSettings: 'audit_alarm_configuration',
@@ -102,6 +108,8 @@ const auditValues = computed(() => {
     enableUser: 'audit_action_enable_user',
     grantRole: 'audit_action_grant_role',
     revokeRole: 'audit_action_revoke_role',
+    testConnection: 'audit_action_test_connection',
+    loadSchema: 'audit_action_load_schema',
     abnormalStop: 'audit_action_abnormal_stop',
     restart: 'audit_action_restart_service',
   }
@@ -331,7 +339,7 @@ function getFailureReasonLabel(reason: unknown) {
       ? LOGIN_FAILURE_REASON_KEYS
       : props.record.eventType === 'serviceLifecycle'
         ? SERVICE_FAILURE_REASON_KEYS
-        : undefined
+        : CONNECTION_FAILURE_REASON_KEYS
   const key = reasonKeys?.[value]
   return key ? t(key) : value
 }

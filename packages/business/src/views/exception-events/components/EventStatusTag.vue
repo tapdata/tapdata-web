@@ -6,6 +6,7 @@ import type { DlqEventStatus } from '@tap/api/src/core/dlq-event'
 const props = defineProps<{ status: DlqEventStatus }>()
 const { t } = useI18n()
 const { t } = useI18n()
+const { t } = useI18n()
 
 const config = {
   PENDING: { type: 'warning' },
