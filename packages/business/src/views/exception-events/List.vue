@@ -62,54 +62,12 @@ const detailStatusWarning = computed(() =>
       )
     : undefined,
 )
-const detailStatusWarning = computed(() =>
-  detail.value
-    ? getDqlEventStatusWarning(
-        detail.value.status,
-        detail.value.notReprocessableReason,
-      )
-    : undefined,
-)
-const detailStatusWarning = computed(() =>
-  detail.value
-    ? getDqlEventStatusWarning(
-        detail.value.status,
-        detail.value.notReprocessableReason,
-      )
-    : undefined,
-)
 const recoveryVisible = ref(false)
 const recoveryLoading = ref(false)
 const recoveryDetail = ref<DlqEventDetail>()
 const previewVisible = ref(false)
 const previewLoading = ref(false)
 const preview = ref<DlqRecoveryPreview>()
-const previewEventIds = ref<string[]>([])
-const previewIssueGroups = computed(() => {
-  if (!preview.value) return { riskyEvents: [], blockedEvents: [] }
-  return getRecoveryPreviewIssueGroups(preview.value)
-})
-const previewCanSubmit = computed(() => {
-  if (!preview.value) return false
-  return canSubmitRecoveryPreview({
-    canSubmit: preview.value.canSubmit,
-    orderedEvents: preview.value.orderedEvents,
-    blockedEvents: previewIssueGroups.value.blockedEvents,
-  })
-})
-const previewEventIds = ref<string[]>([])
-const previewIssueGroups = computed(() => {
-  if (!preview.value) return { riskyEvents: [], blockedEvents: [] }
-  return getRecoveryPreviewIssueGroups(preview.value)
-})
-const previewCanSubmit = computed(() => {
-  if (!preview.value) return false
-  return canSubmitRecoveryPreview({
-    canSubmit: preview.value.canSubmit,
-    orderedEvents: preview.value.orderedEvents,
-    blockedEvents: previewIssueGroups.value.blockedEvents,
-  })
-})
 const previewEventIds = ref<string[]>([])
 const previewIssueGroups = computed(() => {
   if (!preview.value) return { riskyEvents: [], blockedEvents: [] }
