@@ -125,3 +125,52 @@ export const alarmSettingKeys = [
 ] as const
 
 export type AlarmSettingKey = (typeof alarmSettingKeys)[number]
+
+export type AlarmSetting = {
+  key?: string
+  type?: string
+  open?: boolean
+  notify?: string[]
+  interval?: number
+  unit?: string
+  [key: string]: unknown
+}
+
+export function getDefaultAlarmSettings(
+  isDaas: boolean,
+  defaultOpen = isDaas,
+): AlarmSetting[] {
+  return alarmSettingKeys.map((key) => ({
+    type: 'TASK',
+    open: defaultOpen,
+    key,
+    notify: ['SYSTEM', 'EMAIL'],
+    interval: 300,
+    unit: 'SECOND',
+  }))
+}
+
+export function normalizeAlarmSettings(
+  alarmSettings: AlarmSetting[] | undefined,
+  isDaas: boolean,
+): AlarmSetting[] {
+  const defaults = getDefaultAlarmSettings(isDaas, false)
+
+  if (!Array.isArray(alarmSettings)) return defaults
+
+  const settingsByKey = new Map(
+    alarmSettings
+      .filter((setting) => setting?.key)
+      .map((setting) => [setting.key, setting]),
+  )
+
+  const normalized = alarmSettingKeys.map((key, index) => ({
+    ...defaults[index],
+    ...settingsByKey.get(key),
+  }))
+  const knownKeys = new Set<string>(alarmSettingKeys)
+
+  return normalized.concat(
+    alarmSettings.filter((setting) => !knownKeys.has(setting?.key || '')),
+  )
+}

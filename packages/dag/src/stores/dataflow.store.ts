@@ -21,7 +21,11 @@ import { isObject } from '@tap/shared'
 import { debounce, isString } from 'lodash-es'
 import { defineStore } from 'pinia'
 import { markRaw, reactive, ref, shallowRef } from 'vue'
-import { alarmSettingKeys, DEFAULT_SETTINGS } from '../constants'
+import {
+  alarmSettingKeys,
+  DEFAULT_SETTINGS,
+  normalizeAlarmSettings,
+} from '../constants'
 import { CustomProcessor } from '../nodes/extends/CustomProcessor'
 import { allResourceIns as resourceIns } from '../nodes/loader'
 
@@ -248,8 +252,15 @@ export const useDataflowStore = defineStore('dataflow', () => {
     }
   }
 
-  function setDataflow(data: any) {
-    Object.assign(dataflow, data)
+  function setDataflow(data: any, defaultAlarmOpen = false) {
+    Object.assign(dataflow, {
+      ...data,
+      alarmSettings: normalizeAlarmSettings(
+        data.alarmSettings,
+        isDaas,
+        defaultAlarmOpen,
+      ),
+    })
     makeStatusAndDisabled(dataflow)
   }
 
@@ -277,7 +288,9 @@ export const useDataflowStore = defineStore('dataflow', () => {
       dataflowData.syncType = dataflowData.shareCache
         ? 'shareCache'
         : dataflowData.syncType
-      dataflowData.alarmSettings = sortAlarmSettings(dataflowData.alarmSettings)
+      dataflowData.alarmSettings = sortAlarmSettings(
+        normalizeAlarmSettings(dataflowData.alarmSettings, isDaas),
+      )
 
       setDataflow(dataflowData)
       getTaskPermissions()
@@ -317,7 +330,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
 
     delete data.dag
 
-    setDataflow(data)
+    setDataflow(data, isDaas)
   }
 
   const taskSaving = ref(false)

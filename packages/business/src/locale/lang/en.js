@@ -923,10 +923,8 @@ export default {
   packages_business_create_connection_dialog_neirongCho:
     'Choose a data source connector from below and configure the connection & credentials.',
   // 共享挖掘
-  packages_business_shared_cdc_placeholder_task_name:
-    'Task name',
-  packages_business_shared_cdc_placeholder_connection_name:
-    'Connection name',
+  packages_business_shared_cdc_placeholder_task_name: 'Task name',
+  packages_business_shared_cdc_placeholder_connection_name: 'Connection name',
   packages_business_shared_cdc_name: 'Please enter the task name ',
   packages_business_shared_cdc_setting_select_mode: 'Storage mode',
   packages_business_shared_cdc_setting_select_mongodb_tip:
@@ -1218,10 +1216,8 @@ export default {
   // 共享緩存
   packages_business_shared_cache_create: 'Create Cache',
   packages_business_shared_cache_edit: 'Edit Cache',
-  packages_business_shared_cache_placeholder_task_name:
-    'Task name',
-  packages_business_shared_cache_placeholder_connection_name:
-    'Connection name',
+  packages_business_shared_cache_placeholder_task_name: 'Task name',
+  packages_business_shared_cache_placeholder_connection_name: 'Connection name',
   packages_business_shared_cache_button_create: 'New Cache',
   packages_business_shared_cache_name: 'Name',
   packages_business_shared_cache_status: 'Cache Status',
@@ -1553,7 +1549,7 @@ export default {
   packages_business_api_server_error_rate_warn:
     'When the error rate of any API Server request exceeds the alarm threshold',
   packages_business_task_source_no_incremental_event:
-    'When the source heartbeat table is enabled and no incremental events are received for 60 consecutive seconds',
+    'No Incremental Events for 60 Seconds',
   packages_business_use_ssl: 'Use SSL',
   packages_business_certificate_authority: 'CA File',
   packages_business_client_certificate: 'Client Certificate File',
