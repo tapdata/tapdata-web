@@ -707,7 +707,7 @@ export default {
     'Doris is not supported yet.',
   packages_business_verification_form_task_alarm: 'Validation task alert',
   packages_business_verification_form_task_alarm_when_error:
-    'Alert when the validation task fails',
+    'Alert when the validation task encounters an error',
   packages_business_verification_form_task_alarm_when_diff_result_over_count1:
     'When the number of difference rows of the count validation result is greater than',
   packages_business_verification_form_task_alarm_when_diff_result_over_count2:
