@@ -57,9 +57,6 @@ export const JsNodeConfigEditor = defineComponent({
 
     return () => (
       <div class="js-node-config-editor">
-        <div class="js-node-config-editor__hint">
-          {t('packages_form_js_node_config_hint')}
-        </div>
         {rows.value.map((row, index) => (
           <div
             class={[

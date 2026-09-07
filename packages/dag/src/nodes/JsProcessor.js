@@ -100,6 +100,11 @@ export class JavaScript extends NodeType {
                 title: i18n.t('packages_form_js_node_config_title'),
                 default: [],
                 'x-decorator': 'FormItem',
+                'x-decorator-props': {
+                  className: 'js-node-config-editor__form-item',
+                  tooltip: i18n.t('packages_form_js_node_config_hint'),
+                  tooltipLayout: 'icon',
+                },
                 'x-component': 'JsNodeConfigEditor',
               },
               script: {
