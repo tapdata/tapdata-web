@@ -400,11 +400,12 @@ export default {
         if (el.ldpType === 'target') {
           if (el.type === 'apiserverLineage') {
             const { table, modules = {} } = el || {}
-            const { appName, name } = Object.values(modules)[0] || {}
+            const { appName, name, id } = Object.values(modules)[0] || {}
             keywordOptions[el.ldpType].push({
               table,
               appName,
-              serverName: name,
+              apiName: name,
+              apiId: id,
               type: el.type,
             })
           }
@@ -449,7 +450,7 @@ export default {
           const sDom = sourceNode.dom || map[sourceNode.ldpType](sourceNode)
           const tDom = targetNode.dom || map[targetNode.ldpType](targetNode)
           // 过滤掉source节点连线到source节点的情况
-          if (targetNode.ldpType !== 'source') {
+          if (targetNode.ldpType !== 'source' && sDom && tDom) {
             el.leaderLine = new LeaderLine(sDom, tDom, {
               color: 'var(--color-primary)',
               dash: {
