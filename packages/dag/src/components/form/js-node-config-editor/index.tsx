@@ -60,88 +60,117 @@ export const JsNodeConfigEditor = defineComponent({
 
     return () => (
       <div class="js-node-config-editor">
-        {rows.value.map((row, index) => (
-          <div
-            class={[
-              'js-node-config-editor__row',
-              duplicateKeys.value.has(row.key.trim()) && 'has-error',
-            ]}
-            key={`${index}-${row.key}`}
-          >
-            <ElInput
-              class="js-node-config-editor__key"
-              modelValue={row.key}
-              disabled={props.disabled}
-              placeholder={t('packages_form_js_node_config_key')}
-              onUpdate:modelValue={(value: string) =>
-                updateRow(index, { key: value })
-              }
-            />
-            {duplicateKeys.value.has(row.key.trim()) && (
-              <div class="js-node-config-editor__error">
-                {t('packages_form_js_node_config_duplicate')}
-              </div>
-            )}
-            <ElSelectV2
-              class="js-node-config-editor__type"
-              modelValue={row.type}
-              disabled={props.disabled}
-              options={SCRIPT_PARAM_TYPES}
-              onUpdate:modelValue={(value: string) =>
-                updateRow(index, { type: value })
-              }
-            />
-            <ElInput
-              class="js-node-config-editor__value"
-              modelValue={row.value}
-              disabled={props.disabled}
-              type={
-                row.encrypted
-                  ? 'password'
-                  : row.type === 'json'
-                    ? 'textarea'
-                    : 'text'
-              }
-              showPassword={row.encrypted}
-              autosize={
-                row.type === 'json' ? { minRows: 1, maxRows: 4 } : undefined
-              }
-              placeholder={t('packages_form_js_node_config_value')}
-              onUpdate:modelValue={(value: string) =>
-                updateRow(index, { value })
-              }
-            />
-            <span class="js-node-config-editor__encrypted-label">
-              {t('packages_form_js_node_config_encrypted')}
-            </span>
-            <ElSwitch
-              class="js-node-config-editor__encrypted"
-              modelValue={row.encrypted}
-              disabled={props.disabled}
-              onUpdate:modelValue={(value: string | number | boolean) =>
-                updateRow(index, { encrypted: Boolean(value) })
-              }
-            />
-            <ElInput
-              class="js-node-config-editor__description"
-              modelValue={row.description}
-              disabled={props.disabled}
-              placeholder={t('packages_form_js_node_config_description')}
-              onUpdate:modelValue={(value: string) =>
-                updateRow(index, { description: value })
-              }
-            />
-            <ElButton
-              class="js-node-config-editor__remove"
-              text
-              type="danger"
-              disabled={props.disabled}
-              onClick={() => removeRow(index)}
-            >
-              ×
-            </ElButton>
-          </div>
-        ))}
+        <table class="js-node-config-editor__table">
+          <colgroup>
+            <col class="js-node-config-editor__column-key" />
+            <col class="js-node-config-editor__column-type" />
+            <col class="js-node-config-editor__column-value" />
+            <col class="js-node-config-editor__column-encrypted" />
+            <col class="js-node-config-editor__column-description" />
+            <col class="js-node-config-editor__column-actions" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th scope="col">{t('packages_form_js_node_config_key')}</th>
+              <th scope="col">{t('packages_form_js_node_config_type')}</th>
+              <th scope="col">{t('packages_form_js_node_config_value')}</th>
+              <th scope="col">{t('packages_form_js_node_config_encrypted')}</th>
+              <th scope="col">
+                {t('packages_form_js_node_config_description')}
+              </th>
+              <th scope="col">{t('packages_form_js_node_config_actions')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.value.map((row, index) => (
+              <tr
+                class={duplicateKeys.value.has(row.key.trim()) && 'has-error'}
+                key={`${index}-${row.key}`}
+              >
+                <td class="js-node-config-editor__cell-key">
+                  <ElInput
+                    class="js-node-config-editor__key"
+                    modelValue={row.key}
+                    disabled={props.disabled}
+                    onUpdate:modelValue={(value: string) =>
+                      updateRow(index, { key: value })
+                    }
+                  />
+                  {duplicateKeys.value.has(row.key.trim()) && (
+                    <div class="js-node-config-editor__error">
+                      {t('packages_form_js_node_config_duplicate')}
+                    </div>
+                  )}
+                </td>
+                <td>
+                  <ElSelectV2
+                    class="js-node-config-editor__type"
+                    modelValue={row.type}
+                    disabled={props.disabled}
+                    options={SCRIPT_PARAM_TYPES}
+                    onUpdate:modelValue={(value: string) =>
+                      updateRow(index, { type: value })
+                    }
+                  />
+                </td>
+                <td>
+                  <ElInput
+                    class="js-node-config-editor__value"
+                    modelValue={row.value}
+                    disabled={props.disabled}
+                    type={
+                      row.encrypted
+                        ? 'password'
+                        : row.type === 'json'
+                          ? 'textarea'
+                          : 'text'
+                    }
+                    showPassword={row.encrypted}
+                    autosize={
+                      row.type === 'json'
+                        ? { minRows: 1, maxRows: 4 }
+                        : undefined
+                    }
+                    onUpdate:modelValue={(value: string) =>
+                      updateRow(index, { value })
+                    }
+                  />
+                </td>
+                <td class="js-node-config-editor__cell-encrypted">
+                  <ElSwitch
+                    class="js-node-config-editor__encrypted"
+                    modelValue={row.encrypted}
+                    disabled={props.disabled}
+                    onUpdate:modelValue={(value: string | number | boolean) =>
+                      updateRow(index, { encrypted: Boolean(value) })
+                    }
+                  />
+                </td>
+                <td>
+                  <ElInput
+                    class="js-node-config-editor__description"
+                    modelValue={row.description}
+                    disabled={props.disabled}
+                    onUpdate:modelValue={(value: string) =>
+                      updateRow(index, { description: value })
+                    }
+                  />
+                </td>
+                <td class="js-node-config-editor__cell-actions">
+                  <ElButton
+                    class="js-node-config-editor__remove"
+                    text
+                    type="danger"
+                    disabled={props.disabled}
+                    onClick={() => removeRow(index)}
+                  >
+                    ×
+                  </ElButton>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
         <ElButton
           text
           type="primary"

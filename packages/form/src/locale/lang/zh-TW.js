@@ -133,9 +133,11 @@ export default {
   packages_form_js_node_config_hint:
     '參數可在 JavaScript 中透過 jsNodeConfig.get(key) 取得。',
   packages_form_js_node_config_key: '參數名',
+  packages_form_js_node_config_type: '類型',
   packages_form_js_node_config_value: '參數值',
   packages_form_js_node_config_encrypted: '加密',
   packages_form_js_node_config_description: '說明',
+  packages_form_js_node_config_actions: '操作',
   packages_form_js_node_config_add: '新增參數',
   packages_form_js_node_config_duplicate: '參數名重複',
   packages_form_js_node_config_insert_get: '插入設定 API',

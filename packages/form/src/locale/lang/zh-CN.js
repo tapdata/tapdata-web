@@ -133,9 +133,11 @@ export default {
   packages_form_js_node_config_hint:
     '参数可在 JavaScript 中通过 jsNodeConfig.get(key) 获取。',
   packages_form_js_node_config_key: '参数名',
+  packages_form_js_node_config_type: '类型',
   packages_form_js_node_config_value: '参数值',
   packages_form_js_node_config_encrypted: '加密',
   packages_form_js_node_config_description: '说明',
+  packages_form_js_node_config_actions: '操作',
   packages_form_js_node_config_add: '添加参数',
   packages_form_js_node_config_duplicate: '参数名重复',
   packages_form_js_node_config_insert_get: '插入配置 API',

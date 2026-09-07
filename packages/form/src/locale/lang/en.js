@@ -154,9 +154,11 @@ export default {
   packages_form_js_node_config_hint:
     'Parameters are available in JavaScript through jsNodeConfig.get(key).',
   packages_form_js_node_config_key: 'Key',
+  packages_form_js_node_config_type: 'Type',
   packages_form_js_node_config_value: 'Value',
   packages_form_js_node_config_encrypted: 'Encrypted',
   packages_form_js_node_config_description: 'Description',
+  packages_form_js_node_config_actions: 'Actions',
   packages_form_js_node_config_add: 'Add parameter',
   packages_form_js_node_config_duplicate: 'Duplicate key',
   packages_form_js_node_config_insert_get: 'Insert config API',
