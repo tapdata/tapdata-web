@@ -35,27 +35,23 @@
   }
 
   &__column-key {
-    width: 18%;
+    width: 22%;
   }
 
   &__column-type {
-    width: 14%;
+    width: 15%;
   }
 
   &__column-value {
-    width: 27%;
+    width: 43%;
   }
 
   &__column-encrypted {
-    width: 11%;
-  }
-
-  &__column-description {
-    width: 24%;
+    width: 12%;
   }
 
   &__column-actions {
-    width: 6%;
+    width: 8%;
   }
 
   &__error {
@@ -84,10 +80,6 @@
 
   &__encrypted {
     margin-top: 4px;
-  }
-
-  &__description {
-    width: 100%;
   }
 
   &__remove {

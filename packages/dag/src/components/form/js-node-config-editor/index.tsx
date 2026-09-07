@@ -66,7 +66,6 @@ export const JsNodeConfigEditor = defineComponent({
             <col class="js-node-config-editor__column-type" />
             <col class="js-node-config-editor__column-value" />
             <col class="js-node-config-editor__column-encrypted" />
-            <col class="js-node-config-editor__column-description" />
             <col class="js-node-config-editor__column-actions" />
           </colgroup>
           <thead>
@@ -75,9 +74,6 @@ export const JsNodeConfigEditor = defineComponent({
               <th scope="col">{t('packages_form_js_node_config_type')}</th>
               <th scope="col">{t('packages_form_js_node_config_value')}</th>
               <th scope="col">{t('packages_form_js_node_config_encrypted')}</th>
-              <th scope="col">
-                {t('packages_form_js_node_config_description')}
-              </th>
               <th scope="col">{t('packages_form_js_node_config_actions')}</th>
             </tr>
           </thead>
@@ -143,16 +139,6 @@ export const JsNodeConfigEditor = defineComponent({
                     disabled={props.disabled}
                     onUpdate:modelValue={(value: string | number | boolean) =>
                       updateRow(index, { encrypted: Boolean(value) })
-                    }
-                  />
-                </td>
-                <td>
-                  <ElInput
-                    class="js-node-config-editor__description"
-                    modelValue={row.description}
-                    disabled={props.disabled}
-                    onUpdate:modelValue={(value: string) =>
-                      updateRow(index, { description: value })
                     }
                   />
                 </td>
