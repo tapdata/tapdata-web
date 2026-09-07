@@ -159,6 +159,8 @@ export default {
   packages_form_js_node_config_description: 'Description',
   packages_form_js_node_config_add: 'Add parameter',
   packages_form_js_node_config_duplicate: 'Duplicate key',
+  packages_form_js_node_config_insert_get: 'Insert config API',
+  packages_form_js_node_config_insert_copy: 'Insert file copy API',
   packages_form_js_processor_index_tooltip1:
     'Standard JS nodes can only process and operate data records. If you want to use all system built-in functions and realize external calls (such as network, database, etc.), you can use enhanced JS nodes. ',
   packages_form_js_processor_index_tooltip2:

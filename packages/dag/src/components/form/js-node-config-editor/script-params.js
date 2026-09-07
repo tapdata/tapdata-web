@@ -44,6 +44,14 @@ export const duplicateScriptParamKeys = (params) => {
   )
 }
 
+export const insertScriptApiTemplate = (script, template) => {
+  const current = script || ''
+  const closingBrace = current.lastIndexOf('}')
+  if (closingBrace === -1) return `${current}\n${template}`
+  const prefix = current.slice(0, closingBrace).replace(/\n$/, '')
+  return `${prefix}\n\t${template}\n${current.slice(closingBrace)}`
+}
+
 const convertValue = (param) => {
   const rawValue = param.value
   if (param.encrypted || rawValue === '') return rawValue

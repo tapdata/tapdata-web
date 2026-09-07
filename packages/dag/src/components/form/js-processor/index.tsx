@@ -31,7 +31,10 @@ import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 import { useDataflowStore } from '../../../stores/dataflow.store'
 import BaseNodeIcon from '../../BaseNodeIcon.vue'
 import { JsDeclare } from '../js-declare'
-import { serializeScriptParams } from '../js-node-config-editor/script-params.js'
+import {
+  insertScriptApiTemplate,
+  serializeScriptParams,
+} from '../js-node-config-editor/script-params.js'
 import AiCodeDialog from './AiCodeDialog.vue'
 import { useVirtualLogScroller } from './useVirtualLogScroller'
 import './style.scss'
@@ -470,6 +473,10 @@ export const JsProcessor = observer(
         emit('change', generatedCode)
       }
 
+      const insertApiTemplate = (template: string) => {
+        emit('change', insertScriptApiTemplate(props.value, template))
+      }
+
       function getPrefix(line, index) {
         let prefix = ''
         let i = index - 1
@@ -601,6 +608,30 @@ export const JsProcessor = observer(
               <ElButton text tag="a" onClick={toggleDoc} type="primary">
                 {t('packages_dag_api_docs')}
               </ElButton>
+              <ElButton
+                text
+                tag="a"
+                type="primary"
+                onClick={() =>
+                  insertApiTemplate("const value = jsNodeConfig.get('key')")
+                }
+              >
+                {t('packages_form_js_node_config_insert_get')}
+              </ElButton>
+              {!props.isStandard && (
+                <ElButton
+                  text
+                  tag="a"
+                  type="primary"
+                  onClick={() =>
+                    insertApiTemplate(
+                      "return ftp.copyByConfig({ sourcePrefix: 'mgm.in', targetPrefix: 'mgm.out', sourcePath: 'source.txt', targetPath: 'target.txt' })",
+                    )
+                  }
+                >
+                  {t('packages_form_js_node_config_insert_copy')}
+                </ElButton>
+              )}
             </div>
           </div>
         )

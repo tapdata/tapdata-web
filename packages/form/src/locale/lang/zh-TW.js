@@ -138,6 +138,8 @@ export default {
   packages_form_js_node_config_description: '說明',
   packages_form_js_node_config_add: '新增參數',
   packages_form_js_node_config_duplicate: '參數名重複',
+  packages_form_js_node_config_insert_get: '插入設定 API',
+  packages_form_js_node_config_insert_copy: '插入檔案複製 API',
   packages_form_js_processor_index_tooltip1:
     '標準 JS 節點只能對數據記錄進行處理和運算，如需使用所有的系統內置函數，實現外部調用（如網絡、數據庫等），可使用增強 JS 節點。 ',
   packages_form_js_processor_index_tooltip2:

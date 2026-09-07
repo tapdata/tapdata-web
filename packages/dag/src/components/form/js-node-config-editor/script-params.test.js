@@ -3,6 +3,7 @@ import test from 'node:test'
 
 import {
   duplicateScriptParamKeys,
+  insertScriptApiTemplate,
   normalizeScriptParams,
   serializeScriptParams,
 } from './script-params.js'
@@ -79,5 +80,15 @@ test('duplicateScriptParamKeys ignores blank rows and returns repeated keys', ()
       ]),
     ],
     ['ftp.host'],
+  )
+})
+
+test('insertScriptApiTemplate inserts before the function closing brace', () => {
+  assert.equal(
+    insertScriptApiTemplate(
+      'function process(record) {\n\treturn record\n}',
+      'const value = 1',
+    ),
+    'function process(record) {\n\treturn record\n\tconst value = 1\n}',
   )
 })
