@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { CaretRight, Loading } from '@element-plus/icons-vue'
+import { CaretRight } from '@element-plus/icons-vue'
 import {
   ElCheckbox,
   ElIcon,
@@ -12,9 +12,8 @@ import {
   treeNodeEmits,
   treeNodeProps,
 } from 'element-plus/es/components/tree-v2/src/virtual-tree'
-// import ElNodeContent from 'element-plus/es/components/tree-v2/src/tree-node-content'
-import ElNodeContent from 'element-plus/es/components/tree/src/tree-node-content.mjs'
-import { computed, getCurrentInstance, inject, provide, ref } from 'vue'
+import ElNodeContent from 'element-plus/es/components/tree-v2/src/tree-node-content.mjs'
+import { computed, inject, ref } from 'vue'
 import { dragEventsKey } from './composables/useDragNode'
 
 defineOptions({
@@ -23,70 +22,96 @@ defineOptions({
 
 const props = defineProps(treeNodeProps)
 const emit = defineEmits(treeNodeEmits)
-
 const tree = inject(ROOT_TREE_INJECTION_KEY)
 const ns = useNamespace('tree')
-const instance = getCurrentInstance()
-const node$ = ref<Nullable<HTMLElement>>(null)
+const node$ = ref<HTMLElement | null>(null)
+const dragEvents = inject(dragEventsKey)
 
-provide('NodeInstance', instance)
+const indent = computed(() => tree?.props.indent ?? 16)
+const icon = computed(() => tree?.props.icon ?? CaretRight)
+const draggable = computed(() => Boolean((tree?.props as any)?.draggable))
 
-const loading = ref(false)
+const getNodeClass = (node: any) => {
+  const nodeClassFunc = (tree?.props as any)?.props?.class
+  if (!nodeClassFunc) return {}
 
-const indent = computed(() => {
-  return tree?.props.indent ?? 16
-})
-
-const icon = computed(() => {
-  return tree?.props.icon ?? CaretRight
-})
-
-const handleClick = (e: MouseEvent) => {
-  emit('click', props.node, e)
+  const className =
+    typeof nodeClassFunc === 'function'
+      ? nodeClassFunc(node.data, node)
+      : nodeClassFunc
+  return typeof className === 'string' ? { [className]: true } : className
 }
+
+const handleClick = (event: MouseEvent) => {
+  emit('click', props.node, event)
+}
+
+const handleDrop = (event: DragEvent) => {
+  emit('drop', props.node, event)
+  dragEvents?.treeNodeDrop({
+    event,
+    treeNode: {
+      node: props.node,
+      $el: node$.value,
+    },
+  })
+}
+
 const handleExpandIconClick = () => {
-  emit('toggle', props.node, instance)
+  emit('toggle', props.node)
 }
+
 const handleCheckChange = (value: CheckboxValueType) => {
   emit('check', props.node, value)
 }
+
 const handleContextMenu = (event: Event) => {
-  if (tree?.instance?.vnode?.props?.onNodeContextmenu) {
+  if (tree?.instance?.vnode?.props?.['onNodeContextmenu']) {
     event.stopPropagation()
     event.preventDefault()
   }
   tree?.ctx.emit(NODE_CONTEXTMENU, event, props.node?.data, props.node)
 }
 
-const dragEvents = inject(dragEventsKey)
-
 const handleDragStart = (event: DragEvent) => {
-  console.log('handleDragStart', event)
-  if (!tree.props.draggable) return
-  dragEvents.treeNodeDragStart({ event, treeNode: props })
-}
-
-const handleDragOver = (event: DragEvent) => {
-  event.preventDefault()
-  if (!tree.props.draggable) return
-  dragEvents.treeNodeDragOver({
+  if (!draggable.value) return
+  dragEvents?.treeNodeDragStart({
     event,
-    treeNode: { $el: node$.value, node: props.node },
+    treeNode: {
+      node: props.node,
+      $el: node$.value,
+    },
   })
 }
 
-const handleDrop = (event: DragEvent) => {
+const handleDragOver = (event: DragEvent) => {
+  if (!draggable.value) return
   event.preventDefault()
+  dragEvents?.treeNodeDragOver({
+    event,
+    treeNode: {
+      node: props.node,
+      $el: node$.value,
+    },
+  })
+}
+
+const handleDragEnter = (event: DragEvent) => {
+  if (!draggable.value) return
+  event.preventDefault()
+  dragEvents?.treeNodeDragOver({
+    event,
+    treeNode: {
+      node: props.node,
+      $el: node$.value,
+    },
+  })
 }
 
 const handleDragEnd = (event: DragEvent) => {
-  if (!tree.props.draggable) return
-  dragEvents.treeNodeDragEnd(event)
+  if (!draggable.value) return
+  dragEvents?.treeNodeDragEnd(event)
 }
-
-defineExpose({
-  loading,
-})
 </script>
 
 <template>
@@ -98,10 +123,11 @@ defineExpose({
       ns.is('current', current),
       ns.is('focusable', !disabled),
       ns.is('checked', !disabled && checked),
+      getNodeClass(node),
     ]"
     role="treeitem"
     tabindex="-1"
-    :draggable="tree.props.draggable"
+    :draggable="draggable"
     :aria-expanded="expanded"
     :aria-disabled="disabled"
     :aria-checked="checked"
@@ -110,6 +136,7 @@ defineExpose({
     @contextmenu="handleContextMenu"
     @dragstart.stop="handleDragStart"
     @dragover.stop="handleDragOver"
+    @dragenter.stop="handleDragEnter"
     @dragend.stop="handleDragEnd"
     @drop.stop="handleDrop"
   >
@@ -121,13 +148,7 @@ defineExpose({
       }"
     >
       <el-icon
-        v-if="loading"
-        :class="[ns.be('node', 'loading-icon'), ns.is('loading')]"
-      >
-        <Loading />
-      </el-icon>
-      <el-icon
-        v-else-if="icon"
+        v-if="icon"
         :class="[
           ns.is('leaf', !!node?.isLeaf),
           ns.is('hidden', hiddenExpandIcon),
@@ -148,27 +169,9 @@ defineExpose({
         @change="handleCheckChange"
         @click.stop
       />
-      <el-node-content
-        :node="node"
-        :render-content="tree?.props?.renderContent"
-      />
+      <el-node-content :node="{ ...node, expanded }" />
     </div>
   </div>
 </template>
 
-<style lang="scss" scoped>
-$namespace: 'el';
-
-.#{$namespace}-tree-node {
-  .el-tree-node__loading-icon {
-    margin-right: 0;
-    width: 24px;
-    height: 24px;
-    line-height: 24px;
-    text-align: center;
-  }
-  .el-tree-node__content {
-    position: relative;
-  }
-}
-</style>
+<style scoped lang="scss"></style>

@@ -11,11 +11,7 @@ import {
   TreeOptionsEnum,
   treeProps,
 } from 'element-plus/es/components/tree-v2/src/virtual-tree'
-import {
-  definePropType,
-  mutable,
-  type Nullable,
-} from 'element-plus/es/utils/index.mjs'
+import { definePropType, mutable } from 'element-plus/es/utils/index.mjs'
 import { computed, getCurrentInstance, provide, ref, useSlots } from 'vue'
 import { useDragNodeHandler } from './composables/useDragNode'
 import { useTree } from './composables/useTree'
@@ -36,10 +32,10 @@ const props = defineProps({
       mutable({
         children: TreeOptionsEnum.CHILDREN,
         label: TreeOptionsEnum.LABEL,
-        disabled: TreeOptionsEnum.DISABLED,
         value: TreeOptionsEnum.KEY,
-        isLeaf: undefined,
-      } as const),
+        disabled: TreeOptionsEnum.DISABLED,
+        class: TreeOptionsEnum.CLASS,
+      }),
   },
   draggable: {
     type: Boolean,
@@ -49,50 +45,58 @@ const props = defineProps({
   allowDrop: Function,
 })
 
-// const props = defineProps(treeProps)
-
-const emit = defineEmits(treeEmits)
-
+const emit = defineEmits({
+  ...treeEmits,
+  'node-drag-start': (node: any, event: DragEvent) => Boolean(node && event),
+  'node-drag-enter': (draggingNode: any, dropNode: any, event: DragEvent) =>
+    Boolean(draggingNode && dropNode && event),
+  'node-drag-leave': (draggingNode: any, dropNode: any, event: DragEvent) =>
+    Boolean(draggingNode && dropNode && event),
+  'node-drag-over': (draggingNode: any, dropNode: any, event: DragEvent) =>
+    Boolean(draggingNode && dropNode && event),
+  'node-drag-end': (
+    draggingNode: any,
+    _dropNode: any,
+    _dropType: any,
+    event: DragEvent,
+  ) => Boolean(draggingNode && event),
+  'node-drop': (
+    draggingNode: any,
+    _dropNode: any,
+    _dropType: any,
+    event: DragEvent,
+  ) => Boolean(draggingNode && _dropNode && _dropType && event),
+})
 const slots = useSlots()
-
 const treeNodeSize = computed(() => props.itemSize)
-
-const el$ = ref<Nullable<HTMLElement>>(null)
-const dropIndicator$ = ref<Nullable<HTMLElement>>(null)
-const nodeRef = ref<Nullable<HTMLElement>>(null)
+const el$ = ref<HTMLElement | null>(null)
+const dropIndicator$ = ref<HTMLElement | null>(null)
 
 provide(ROOT_TREE_INJECTION_KEY, {
   ctx: {
-    emit,
+    emit: emit as any,
     slots,
   },
   props,
   instance: getCurrentInstance()!,
 })
-provide('RootTree', {
-  ctx: {
-    emit,
-    slots,
-  },
-  props,
-  instance: getCurrentInstance(),
-} as any)
 provide(formItemContextKey, undefined)
+
 const { t } = useLocale()
 const ns = useNamespace('tree')
 const {
   flattenTree,
   isNotEmpty,
+  listRef,
   toggleExpand,
-  isExpanded,
   isIndeterminate,
   isChecked,
   isDisabled,
   isCurrent,
   isForceHiddenExpandIcon,
   handleNodeClick,
+  handleNodeDrop,
   handleNodeCheck,
-  // expose
   toggleCheckbox,
   getCurrentNode,
   getCurrentKey,
@@ -109,7 +113,9 @@ const {
   expandNode,
   collapseNode,
   setExpandedKeys,
-} = useTree(props, emit)
+  scrollToNode,
+  scrollTo,
+} = useTree(props, emit as any)
 
 defineExpose({
   toggleCheckbox,
@@ -128,12 +134,14 @@ defineExpose({
   expandNode,
   collapseNode,
   setExpandedKeys,
+  scrollToNode,
+  scrollTo,
 })
 
 const { dragState } = useDragNodeHandler({
   props,
   ctx: {
-    emit,
+    emit: emit as any,
     slots,
   },
   el$,
@@ -149,20 +157,21 @@ const { dragState } = useDragNodeHandler({
   >
     <fixed-size-list
       v-if="isNotEmpty"
+      ref="listRef"
       :class-name="ns.b('virtual-list')"
       :data="flattenTree"
       :total="flattenTree.length"
       :height="height"
       :item-size="treeNodeSize"
       :perf-mode="perfMode"
+      :scrollbar-always-on="scrollbarAlwaysOn"
     >
       <template #default="{ data, index, style }">
         <VirtualTreeNode
-          ref="nodeRef"
           :key="data[index].key"
           :style="style"
           :node="data[index]"
-          :expanded="isExpanded(data[index])"
+          :expanded="data[index].expanded"
           :show-checkbox="showCheckbox"
           :checked="isChecked(data[index])"
           :indeterminate="isIndeterminate(data[index])"
@@ -173,15 +182,17 @@ const { dragState } = useDragNodeHandler({
           @click="handleNodeClick"
           @toggle="toggleExpand"
           @check="handleNodeCheck"
+          @drop="handleNodeDrop"
         />
       </template>
     </fixed-size-list>
     <div v-else :class="ns.e('empty-block')">
-      <span :class="ns.e('empty-text')">{{
-        emptyText ?? t('el.tree.emptyText')
-      }}</span>
+      <slot name="empty">
+        <span :class="ns.e('empty-text')">{{
+          emptyText ?? t('el.tree.emptyText')
+        }}</span>
+      </slot>
     </div>
-
     <div
       v-show="dragState.showDropIndicator"
       ref="dropIndicator$"
