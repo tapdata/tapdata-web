@@ -161,6 +161,8 @@ export const JsNodeConfigFormItem = connect(
       const field = useField()
       const itemProps: Record<string, any> = { ...attrs }
       const tooltip = itemProps.tooltip
+      delete itemProps.title
+      delete itemProps.label
       delete itemProps.tooltip
       delete itemProps.tooltipLayout
 
