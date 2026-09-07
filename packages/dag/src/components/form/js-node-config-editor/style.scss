@@ -1,44 +1,6 @@
 .js-node-config-editor {
   width: 100%;
 
-  &__form-item {
-    > .formily-element-plus-form-item-label {
-      > .formily-element-plus-form-item-label-tooltip {
-        margin-left: 4px;
-
-        > .el-tooltip__trigger {
-          position: relative;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 14px;
-          height: 14px;
-          color: transparent;
-          font-size: 0;
-
-          svg {
-            display: none;
-          }
-
-          &::after {
-            content: '!';
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 14px;
-            height: 14px;
-            border: 1px solid currentColor;
-            border-radius: 50%;
-            color: var(--color-primary);
-            font-size: 10px;
-            font-weight: 600;
-            line-height: 1;
-          }
-        }
-      }
-    }
-  }
-
   &__row {
     display: flex;
     align-items: flex-start;

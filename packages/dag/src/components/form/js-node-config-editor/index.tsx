@@ -1,3 +1,6 @@
+import { connect, mapProps } from '@formily/vue'
+import VIcon from '@tap/component/src/base/VIcon.vue'
+import { FormItem, useField } from '@tap/form'
 import { useI18n } from '@tap/i18n'
 import { computed, defineComponent, ref, watch } from 'vue'
 import {
@@ -151,5 +154,39 @@ export const JsNodeConfigEditor = defineComponent({
     )
   },
 })
+
+export const JsNodeConfigFormItem = connect(
+  defineComponent({
+    setup(_, { attrs, slots }) {
+      const field = useField()
+      const itemProps: Record<string, any> = { ...attrs }
+      const tooltip = itemProps.tooltip
+      delete itemProps.tooltip
+      delete itemProps.tooltipLayout
+
+      return () => {
+        const label = (
+          <div class="position-absolute flex justify-content-between w-100">
+            <div class="flex align-center">
+              <span>{field.value.title}</span>
+              <ElTooltip content={tooltip} placement="top">
+                <VIcon size="14" class="color-primary">
+                  info
+                </VIcon>
+              </ElTooltip>
+            </div>
+          </div>
+        )
+
+        return (
+          <FormItem.BaseItem {...itemProps} label={label}>
+            {slots.default?.()}
+          </FormItem.BaseItem>
+        )
+      }
+    },
+  }),
+  mapProps({ disabled: true }),
+)
 
 export default JsNodeConfigEditor
