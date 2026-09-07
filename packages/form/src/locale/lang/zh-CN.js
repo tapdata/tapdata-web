@@ -131,7 +131,7 @@ export default {
   packages_form_js_processor_index_jiaoben: '脚本',
   packages_form_js_node_config_title: '脚本参数',
   packages_form_js_node_config_hint:
-    '参数可在 JavaScript 中通过 jsNodeConfig.get(key) 获取。',
+    '参数可在 JavaScript 中通过 jsNodeConfig.get(key) 获取',
   packages_form_js_node_config_key: '参数名',
   packages_form_js_node_config_type: '类型',
   packages_form_js_node_config_value: '参数值',

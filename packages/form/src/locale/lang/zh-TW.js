@@ -131,7 +131,7 @@ export default {
   packages_form_js_processor_index_jiaoben: '腳本',
   packages_form_js_node_config_title: '腳本參數',
   packages_form_js_node_config_hint:
-    '參數可在 JavaScript 中透過 jsNodeConfig.get(key) 取得。',
+    '參數可在 JavaScript 中透過 jsNodeConfig.get(key) 取得',
   packages_form_js_node_config_key: '參數名',
   packages_form_js_node_config_type: '類型',
   packages_form_js_node_config_value: '參數值',

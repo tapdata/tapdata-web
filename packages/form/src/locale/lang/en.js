@@ -152,7 +152,7 @@ export default {
   packages_form_js_processor_index_jiaoben: 'Script',
   packages_form_js_node_config_title: 'Script parameters',
   packages_form_js_node_config_hint:
-    'Parameters are available in JavaScript through jsNodeConfig.get(key).',
+    'Parameters are available in JavaScript through jsNodeConfig.get(key)',
   packages_form_js_node_config_key: 'Key',
   packages_form_js_node_config_type: 'Type',
   packages_form_js_node_config_value: 'Value',
