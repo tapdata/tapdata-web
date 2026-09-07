@@ -129,6 +129,14 @@ export default {
   packages_form_js_processor_index_xuanzebiao: '選擇表',
   packages_form_js_processor_index_moxingshengming: '模型聲明',
   packages_form_js_processor_index_jiaoben: '腳本',
+  packages_form_js_node_config_title: '腳本參數',
+  packages_form_js_node_config_hint:
+    '參數可在 JavaScript 中透過 jsNodeConfig.get(key) 取得。',
+  packages_form_js_node_config_key: '參數名',
+  packages_form_js_node_config_value: '參數值',
+  packages_form_js_node_config_encrypted: '加密',
+  packages_form_js_node_config_description: '說明',
+  packages_form_js_node_config_add: '新增參數',
   packages_form_js_processor_index_tooltip1:
     '標準 JS 節點只能對數據記錄進行處理和運算，如需使用所有的系統內置函數，實現外部調用（如網絡、數據庫等），可使用增強 JS 節點。 ',
   packages_form_js_processor_index_tooltip2:

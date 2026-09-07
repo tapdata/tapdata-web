@@ -95,6 +95,13 @@ export class JavaScript extends NodeType {
                 'x-decorator': 'FormItem',
                 'x-component': 'Radio.Group',
               },
+              scriptParams: {
+                type: 'array',
+                title: i18n.t('packages_form_js_node_config_title'),
+                default: [],
+                'x-decorator': 'FormItem',
+                'x-component': 'JsNodeConfigEditor',
+              },
               script: {
                 type: 'string',
                 required: true,

@@ -31,6 +31,7 @@ import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 import { useDataflowStore } from '../../../stores/dataflow.store'
 import BaseNodeIcon from '../../BaseNodeIcon.vue'
 import { JsDeclare } from '../js-declare'
+import { serializeScriptParams } from '../js-node-config-editor/script-params.js'
 import AiCodeDialog from './AiCodeDialog.vue'
 import { useVirtualLogScroller } from './useVirtualLogScroller'
 import './style.scss'
@@ -289,6 +290,7 @@ export const JsProcessor = observer(
             version,
             script: props.value,
             jsType,
+            scriptParams: serializeScriptParams(form.values.scriptParams),
             testRunInputEventJson,
           })
           const elapsed = Date.now() - startTime

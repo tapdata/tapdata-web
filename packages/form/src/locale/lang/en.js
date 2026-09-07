@@ -150,6 +150,14 @@ export default {
   packages_form_js_processor_index_xuanzebiao: 'Select Form',
   packages_form_js_processor_index_moxingshengming: 'Model declaration',
   packages_form_js_processor_index_jiaoben: 'Script',
+  packages_form_js_node_config_title: 'Script parameters',
+  packages_form_js_node_config_hint:
+    'Parameters are available in JavaScript through jsNodeConfig.get(key).',
+  packages_form_js_node_config_key: 'Key',
+  packages_form_js_node_config_value: 'Value',
+  packages_form_js_node_config_encrypted: 'Encrypted',
+  packages_form_js_node_config_description: 'Description',
+  packages_form_js_node_config_add: 'Add parameter',
   packages_form_js_processor_index_tooltip1:
     'Standard JS nodes can only process and operate data records. If you want to use all system built-in functions and realize external calls (such as network, database, etc.), you can use enhanced JS nodes. ',
   packages_form_js_processor_index_tooltip2:

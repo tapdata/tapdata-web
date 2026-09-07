@@ -16,6 +16,7 @@ import { debounce } from 'lodash-es'
 import { inject, nextTick, onUnmounted, shallowRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import * as _components from '../components/form'
+import { serializeScriptParams } from '../components/form/js-node-config-editor/script-params.js'
 import { useDataflowStore } from '../stores/dataflow.store'
 import { getSchema } from '../util'
 import BaseNodeIcon from './BaseNodeIcon.vue'
@@ -58,6 +59,9 @@ const updateNodeProps = (form: any) => {
   updateNodePropsDebounce.cancel()
 
   const formValues = toJS(form.values)
+  if (Array.isArray(formValues.scriptParams)) {
+    formValues.scriptParams = serializeScriptParams(formValues.scriptParams)
+  }
   const filterProps = [
     'id',
     'isSource',
