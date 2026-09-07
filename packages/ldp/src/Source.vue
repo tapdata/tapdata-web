@@ -1,4 +1,4 @@
-<script lang="tsx">
+<script setup lang="ts">
 import { fetchConnections } from '@tap/api/src/core/connections'
 import { searchLDPSources } from '@tap/api/src/core/ldp'
 import { getTablesValue } from '@tap/api/src/core/metadata-instances'
@@ -11,420 +11,563 @@ import VirtualTree from '@tap/component/src/virtual-tree'
 import NodeIcon from '@tap/dag/src/components/NodeIcon.vue'
 import { useResizeObserver } from '@vueuse/core'
 import { debounce } from 'lodash-es'
-import { defineComponent } from 'vue'
-import commonMix from './mixins/common'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+// @ts-ignore - vuex type issue
+import { useStore } from 'vuex'
 
-export default defineComponent({
-  name: 'Source',
-  components: {
-    NodeIcon,
-    VirtualTree,
-    StageButton,
-    IconButton,
-    VEmpty,
-  },
-  mixins: [commonMix],
-  props: {
-    dragState: Object,
-    eventDriver: Object,
-    fdmAndMdmId: Array,
-    showParentLineage: Boolean,
-  },
-  data() {
-    return {
-      keyword: '',
-      treeData: [],
-      treeHeight: 0,
-      expandedKeys: [],
-      props: {
-        isLeaf: 'isLeaf',
-        disabled: 'disabled',
-        children: 'children',
+type TreeKey = string | number
+
+interface SourceNode {
+  [key: string]: any
+  id: TreeKey
+  name: string
+  children?: SourceNode[]
+  isLeaf?: boolean
+  isObject?: boolean
+  isEmpty?: boolean
+  loading?: boolean
+  tablesLoaded?: boolean
+}
+
+interface DragState {
+  isDragging: boolean
+  draggingObjects: any[]
+  from?: string
+}
+
+interface Props {
+  dragState?: DragState
+  eventDriver?: any
+  fdmAndMdmId?: Array<TreeKey | undefined>
+  showParentLineage?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  dragState: () => ({
+    isDragging: false,
+    draggingObjects: [],
+  }),
+  eventDriver: undefined,
+  fdmAndMdmId: () => [],
+  showParentLineage: false,
+})
+
+const emit = defineEmits<{
+  preview: [data: SourceNode, parent?: SourceNode]
+  createConnection: [type: 'source']
+  nodeDragEnd: [event: DragEvent]
+  handleConnection: []
+  onScroll: []
+}>()
+
+const store = useStore()
+const tree = ref<any>(null)
+const searchInput = ref<any>(null)
+const treeContainer = ref<HTMLElement | null>(null)
+
+const treeData = ref<SourceNode[]>([])
+const filterTreeData = ref<SourceNode[]>([])
+const connectionMap = ref<Record<string, SourceNode>>({})
+const treeHeight = ref(200)
+const expandedKeys = ref<TreeKey[]>([])
+const searchExpandedKeys = ref<TreeKey[]>([])
+const search = ref('')
+const enableSearch = ref(false)
+const searchIng = ref(false)
+const loading = ref(false)
+const newConnectionId = ref<TreeKey>()
+const cancelSource = ref<any>()
+const sourceDragState = props.dragState
+
+const treeProps = {
+  children: 'children',
+  label: 'name',
+  value: 'id',
+  disabled: 'disabled',
+  isLeaf: 'isLeaf',
+}
+
+const startingTour = computed(() => store.getters.startingTour)
+const highlightBoard = computed(() => (store.state as any).highlightBoard)
+const showSearch = computed(() => Boolean(search.value || searchIng.value))
+const displayTreeData = computed(() => {
+  return showSearch.value || props.showParentLineage
+    ? filterTreeData.value
+    : treeData.value
+})
+const displayExpandedKeys = computed(() => {
+  return showSearch.value || props.showParentLineage
+    ? searchExpandedKeys.value
+    : expandedKeys.value
+})
+const displayTreeKey = computed(() => {
+  if (props.showParentLineage) return 'lineage-tree'
+  return showSearch.value ? 'search-tree' : 'source-tree'
+})
+
+let destroyed = false
+let connectionRequestId = 0
+let searchRequestId = 0
+let refreshTimer: ReturnType<typeof setTimeout> | undefined
+const pendingTableRequests = new Map<string, Promise<SourceNode[]>>()
+
+function getNodeKey(id: TreeKey) {
+  return String(id)
+}
+
+function isExcluded(id: TreeKey) {
+  return props.fdmAndMdmId.some(
+    (excludedId) =>
+      excludedId != null && getNodeKey(excludedId) === getNodeKey(id),
+  )
+}
+
+function mapConnection(
+  connection: Record<string, any>,
+  children: SourceNode[] = [],
+  tablesLoaded = false,
+  previous?: SourceNode,
+): SourceNode {
+  const { status, loadCount = 0, tableCount = 0 } = connection
+  return {
+    ...connection,
+    id: connection.id,
+    name: connection.name,
+    progress: !tableCount
+      ? 0
+      : Math.round((loadCount / tableCount) * 10000) / 100,
+    children,
+    tablesLoaded,
+    loading: previous?.loading ?? false,
+    isLeaf: false,
+    disabled: status !== 'ready',
+    type: 'connection',
+    LDP_TYPE: 'connection',
+  }
+}
+
+function updateDisplayedTree() {
+  if (showSearch.value || props.showParentLineage) {
+    filterTreeData.value = [...filterTreeData.value]
+  } else {
+    treeData.value = [...treeData.value]
+  }
+}
+
+async function refreshConnections() {
+  const requestId = ++connectionRequestId
+  const filter = {
+    limit: 999,
+    order: 'createTime DESC',
+    where: {
+      connection_type: {
+        in: ['source_and_target', 'source'],
       },
-      data: [
-        {
-          label: 'Level one 1',
-          children: [],
-        },
-        {
-          label: 'Level one 2',
-          children: [
-            {
-              label: 'Level two 2-1',
-              children: [
-                {
-                  label: 'Level three 2-1-1',
-                },
-              ],
-            },
-            {
-              label: 'Level two 2-2',
-              children: [
-                {
-                  label: 'Level three 2-2-1',
-                },
-              ],
-            },
-          ],
-        },
-        {
-          label: 'Level one 3',
-          children: [
-            {
-              label: 'Level two 3-1',
-              children: [
-                {
-                  label: 'Level three 3-1-1',
-                },
-              ],
-            },
-            {
-              label: 'Level two 3-2',
-              children: [
-                {
-                  label: 'Level three 3-2-1',
-                },
-              ],
-            },
-          ],
-        },
-      ],
-      loading: false,
-      searchExpandedKeys: [],
-      searchIng: false,
-      search: '',
-      enableSearch: false,
-      filterTreeData: [],
+      createType: {
+        $ne: 'System',
+      },
+    },
+  }
+  const res = await fetchConnections(filter)
+  if (destroyed || requestId !== connectionRequestId) return
+
+  const previousMap = connectionMap.value
+  const nextMap: Record<string, SourceNode> = {}
+  const nextTreeData: SourceNode[] = []
+
+  for (const item of res?.items || []) {
+    if (isExcluded(item.id)) continue
+
+    const key = getNodeKey(item.id)
+    const previous = previousMap[key]
+    const connection = mapConnection(
+      item,
+      previous?.children || [],
+      previous?.tablesLoaded || false,
+      previous,
+    )
+    nextMap[key] = connection
+    nextTreeData.push(connection)
+  }
+
+  connectionMap.value = nextMap
+  treeData.value = nextTreeData
+}
+
+async function initTree() {
+  clearTimeout(refreshTimer)
+  if (destroyed) return
+
+  loading.value = treeData.value.length === 0
+  try {
+    await refreshConnections()
+
+    const newConnection = newConnectionId.value
+      ? connectionMap.value[getNodeKey(newConnectionId.value)]
+      : undefined
+    if (
+      startingTour.value &&
+      newConnection &&
+      newConnection.status === 'ready' &&
+      newConnection.loadFieldsStatus === 'finished' &&
+      !newConnection.tablesLoaded
+    ) {
+      await handleNodeExpand(newConnection)
     }
-  },
-  computed: {
-    showSearch() {
-      return this.search || this.searchIng
-    },
-  },
-  created() {
-    this.debouncedSearch = debounce(async (search) => {
-      this.cancelSource?.cancel()
-      this.cancelSource = CancelToken.source()
-      this.searchIng = true
-      const result = await searchLDPSources(
-        {
-          key: search,
-          connectionType: ['source', 'source_and_target'].join(','),
-        },
-        {
-          cancelToken: this.cancelSource.token,
-        },
-      )
-      this.searchIng = false
-      const tableMap = {}
-      const connectionList = []
-      let firstExpand
-
-      result.forEach((item) => {
-        const { conId } = item
-        let children = tableMap[conId]
-
-        if (this.fdmAndMdmId.includes(conId)) return
-
-        if (item.type === 'metadata') {
-          children = children || []
-          children.push({
-            id: item.dto.id,
-            name: item.dto.name,
-            connectionId: conId,
-            isLeaf: true,
-            isObject: true,
-            type: 'table',
-            LDP_TYPE: 'table',
-          })
-          tableMap[conId] = children
-        } else if (item.type === 'connection' && !children) tableMap[conId] = []
-      })
-
-      Object.keys(tableMap).forEach((conId) => {
-        const connection = this.connectionMap[conId]
-        if (connection) {
-          const children = tableMap[conId]
-
-          if (!firstExpand && children.length) {
-            firstExpand = conId
-          }
-
-          connectionList.push({
-            ...connection,
-            children,
-          })
-        }
-      })
-      this.filterTreeData = connectionList
-      this.searchExpandedKeys = firstExpand ? [firstExpand] : []
-    }, 300)
-
-    this.initTree()
-  },
-  mounted() {
-    useResizeObserver(this.$refs.treeContainer, () => {
-      if (this.$refs.treeContainer) {
-        this.treeHeight =
-          this.$refs.treeContainer.getBoundingClientRect().height - 8
-      }
-    })
-  },
-  beforeUnmount() {
-    this.isDestroyed = true
-    clearTimeout(this.treeTimer)
-    this.unwatchFdmAndMdm?.()
-  },
-  methods: {
-    handleAdd() {
-      this.$emit('create-connection', 'source')
-    },
-
-    async initTree() {
-      clearTimeout(this.treeTimer)
-      if (this.isDestroyed) return
-      this.treeData = await this.getConnectionList()
-
-      if (this.startingTour && this.newConnectionId) {
-        const connection = this.connectionMap[this.newConnectionId]
-
-        if (
-          connection &&
-          connection.status === 'ready' &&
-          connection.loadFieldsStatus === 'finished' &&
-          !connection.children.length
-        ) {
-          const node = this.$refs.tree.getNode(this.newConnectionId)
-          this.handleNodeExpand(connection, node)
-        }
-      }
-
-      this.treeTimer = setTimeout(() => {
-        this.initTree()
+  } finally {
+    loading.value = false
+    if (!destroyed) {
+      refreshTimer = setTimeout(() => {
+        initTree()
       }, 5000)
-    },
+    }
+  }
+}
 
-    async getConnectionList() {
-      const filter = {
-        limit: 999,
-        order: 'createTime DESC',
-        where: {
-          connection_type: {
-            in: ['source_and_target', 'source'],
-          },
-          createType: {
-            $ne: 'System',
-          },
-        },
-      }
-      const res = await fetchConnections(filter)
-      // this.connectionMap = {}
-      const items = []
-      const map = {}
-      const _map = this.connectionMap || {}
+async function getTableList(id: TreeKey): Promise<SourceNode[]> {
+  const res = await getTablesValue({ connectionId: id })
+  const data = (res || []).map((table: any) => ({
+    id: table.tableId,
+    name: table.tableName,
+    comment: table.tableComment,
+    connectionId: id,
+    isLeaf: true,
+    isObject: true,
+    type: 'table',
+    LDP_TYPE: 'table',
+    SWIM_TYPE: 'source',
+    meta_type: table.meta_type,
+  }))
 
-      this.watchFdmAndMdm()
-      res.items.forEach((t) => {
-        if (this.fdmAndMdmId.includes(t.id)) return
-
-        const { status, loadCount = 0, tableCount = 0 } = t
-        const disabled = status !== 'ready'
-        const connection = this.mapConnection(t)
-        map[t.id] = connection
-
-        connection.children = _map[t.id] ? [..._map[t.id].children] : []
-
-        items.push(connection)
-      })
-      this.connectionMap = map
-      return items
-    },
-
-    mapConnection(connection) {
-      const { status, loadCount = 0, tableCount = 0 } = connection
-      const disabled = status !== 'ready'
-      return {
-        ...connection,
-        progress: !tableCount
-          ? 0
-          : Math.round((loadCount / tableCount) * 10000) / 100,
-        children: [],
-        isLeaf: false,
-        disabled,
-        type: 'connection',
-        LDP_TYPE: 'connection',
-      }
-    },
-
-    async getTableList(id) {
-      const res = await getTablesValue({
-        connectionId: id,
-      })
-      const data = res.map((t) => {
-        return {
-          id: t.tableId,
-          name: t.tableName,
-          comment: t.tableComment,
+  return data.length
+    ? data
+    : [
+        {
+          id: `${id}-empty`,
+          name: '',
+          comment: '',
           connectionId: id,
           isLeaf: true,
-          isObject: true,
-          type: 'table',
-          LDP_TYPE: 'table',
-          SWIM_TYPE: 'source',
-          meta_type: t.meta_type,
-        }
-      })
-      return data.length
-        ? data
-        : [
-            {
-              id: '',
-              name: '',
-              comment: '',
-              isLeaf: true,
-              isEmpty: true,
-            },
-          ]
-    },
+          isEmpty: true,
+        },
+      ]
+}
 
-    /*handleSearch: debounce(function (val) {
-    this.$refs.tree.filter(val)
-  }, 300),*/
+function loadTables(connection: SourceNode) {
+  const key = getNodeKey(connection.id)
+  const pendingRequest = pendingTableRequests.get(key)
+  if (pendingRequest) return pendingRequest
 
-    filterNode(value, data) {
-      if (!value) return true
-      return data.name.includes(value)
-    },
+  connection.loading = true
+  const request = getTableList(connection.id)
+    .then((tables) => {
+      if (destroyed) return tables
 
-    handleDragStart(draggingNode, ev) {
-      this.draggingNode = draggingNode
-      this.draggingNodeImage = makeDragNodeImage(
-        ev.currentTarget.querySelector('.tree-item-icon'),
-        draggingNode.data.name,
-      )
-      ev.dataTransfer.setDragImage(this.draggingNodeImage, 0, 0)
-      ev.dataTransfer.effectAllowed = 'copy'
-      this.dragState.isDragging = true
-      this.dragState.draggingObjects = [draggingNode]
-      this.dragState.from = 'SOURCE'
-    },
-
-    handleDragEnd(draggingNode, dropNode, dropType, ev) {
-      this.$emit('node-drag-end', ev)
-      // this.eventDriver.emit('source-drag-end', ev)
-    },
-
-    async loadNode(node, resolve) {
-      if (node.level === 0) {
-        const data = await this.getConnectionList()
-        this.loading = false
-        return resolve(data)
+      connection.children = tables
+      connection.tablesLoaded = true
+      const currentConnection = connectionMap.value[key]
+      if (currentConnection && currentConnection !== connection) {
+        currentConnection.children = tables
+        currentConnection.tablesLoaded = true
       }
-      const data = await this.getTableList(node.data?.id)
-      this.loading = false
-      return resolve(data)
-    },
+      updateDisplayedTree()
+      return tables
+    })
+    .finally(() => {
+      connection.loading = false
+      pendingTableRequests.delete(key)
+      updateDisplayedTree()
+    })
 
-    getConnectionId(node) {
-      return node.parent.data?.id
-    },
+  pendingTableRequests.set(key, request)
+  return request
+}
 
-    getPercentage(node = {}) {
-      return node.data?.progress || 0
-    },
+function setExpand(id: TreeKey, expanded: boolean) {
+  const key = getNodeKey(id)
+  const keys =
+    showSearch.value || props.showParentLineage
+      ? searchExpandedKeys
+      : expandedKeys
+  if (expanded) {
+    if (!keys.value.some((item) => getNodeKey(item) === key)) {
+      keys.value = [...keys.value, id]
+    }
+  } else {
+    keys.value = keys.value.filter((item) => getNodeKey(item) !== key)
+  }
+}
 
-    addItem(data) {
-      data.loadFieldsStatus = 'loading' // 显示加载schema的状态
-      const connection = this.mapConnection(data)
-      this.newConnectionId = data.id
-      this.connectionMap[data.id] = connection
+async function handleNodeExpand(data: SourceNode) {
+  if (!data || data.isLeaf || data.LDP_TYPE !== 'connection') return
 
-      if (this.showSearch && !connection.name.includes(this.search)) return
+  setExpand(data.id, true)
+  if (data.tablesLoaded || data.children?.some((child) => !child.isEmpty)) {
+    data.tablesLoaded = true
+    data.loading = false
+    return
+  }
 
-      this.treeData.unshift(connection)
-      this.$refs.tree.setData(this.treeData)
-    },
+  await loadTables(data)
+}
 
-    async handleNodeExpand(data, node, nodeInstance) {
-      console.log('handleNodeExpand', nodeInstance)
-      nodeInstance.exposed.loading.value = true
-      this.setExpand(data.id, true)
+function handleNodeCollapse(data: SourceNode) {
+  if (data?.id != null) setExpand(data.id, false)
+}
 
-      if (data.children.some((child) => !child.isEmpty)) return
+function getConnectionId(node: any) {
+  return node?.parent?.data?.id
+}
 
-      node.loadTime = Date.now()
-      node.loading = true
-      const tableList = await this.getTableList(data.id)
-      data.children = tableList
-      this.$refs.tree.setData(this.treeData)
-      node.loading = false
-      nodeInstance.exposed.loading.value = false
-    },
+function handleAdd() {
+  emit('createConnection', 'source')
+}
 
-    watchFdmAndMdm() {
-      // 用于监听FDM/MDM的设置变化,删除掉已经渲染的连接节点
-      this.unwatchFdmAndMdm?.()
-      this.unwatchFdmAndMdm = this.$watch('fdmAndMdmId', (val) => {
-        const fdmIndex = this.treeData.findIndex((item) => item.id === val[0])
-        if (~fdmIndex) {
-          this.treeData.splice(fdmIndex, 1)
-        }
+function handleDragStart(draggingNode: any, event: DragEvent) {
+  const target = event.currentTarget as HTMLElement | null
+  const icon = target?.querySelector('.tree-item-icon') || target
+  if (icon) {
+    const image = makeDragNodeImage(icon, draggingNode.data.name)
+    event.dataTransfer?.setDragImage(image, 0, 0)
+  }
+  if (event.dataTransfer) event.dataTransfer.effectAllowed = 'copy'
 
-        const mdmIndex = this.treeData.findIndex((item) => item.id === val[1])
-        if (~mdmIndex) {
-          this.treeData.splice(mdmIndex, 1)
-        }
-      })
-    },
+  sourceDragState.isDragging = true
+  sourceDragState.draggingObjects = [draggingNode]
+  sourceDragState.from = 'SOURCE'
+}
 
-    handleFindTreeDom(val = {}) {
-      const el = document.getElementById(
-        `ldp_source_table_${val.connectionId}_${val.table}`,
-      )
-      return el
-    },
+function handleDragEnd(
+  _draggingNode: any,
+  _dropNode: any,
+  _dropType: any,
+  event: DragEvent,
+) {
+  emit('nodeDragEnd', event)
+}
 
-    handleScroll: debounce(function () {
-      this.$emit('on-scroll')
-    }, 200),
+function handlePreview(data: SourceNode, parent?: SourceNode) {
+  if (!data.isObject) return
+  emit('preview', data, parent)
+}
 
-    searchByKeywordList(val = []) {
-      const searchExpandedKeys: string[] = []
-      const connectionMap = new Map()
+const handleScroll = debounce(() => {
+  emit('onScroll')
+}, 200)
 
-      val.forEach((t: any) => {
-        if (!connectionMap.has(t.connectionId)) {
-          searchExpandedKeys.push(t.connectionId)
-          connectionMap.set(t.connectionId, {
-            LDP_TYPE: 'connection',
-            id: t.connectionId,
-            name: t.connectionName,
-            pdkHash: t.pdkHash,
-            status: 'ready',
-            isLeaf: false,
-            level: 0,
-            disabled: false,
-            children: [],
+function buildSearchTree(result: any[]) {
+  const grouped = new Map<string, SourceNode>()
+
+  for (const item of result) {
+    const connectionId = item?.conId
+    if (connectionId == null || isExcluded(connectionId)) continue
+
+    const key = getNodeKey(connectionId)
+    let connection = grouped.get(key)
+    if (!connection) {
+      const existing = connectionMap.value[key]
+      const dto = item?.dto || {}
+      connection = existing
+        ? { ...existing, children: [], tablesLoaded: false }
+        : mapConnection({
+            ...dto,
+            id: connectionId,
+            name: dto.name || item.connectionName || String(connectionId),
           })
-        }
+      grouped.set(key, connection)
+    }
 
-        connectionMap.get(t.connectionId).children.push({
-          id: t.tableId,
-          name: t.table,
-          connectionId: t.connectionId,
-          isLeaf: true,
-          isObject: true,
-          type: 'table',
-          LDP_TYPE: 'table',
-        })
+    if (item.type === 'metadata') {
+      const table = item.dto || {}
+      connection.children?.push({
+        id: table.id || table.tableId,
+        name: table.name || table.tableName,
+        connectionId,
+        isLeaf: true,
+        isObject: true,
+        type: 'table',
+        LDP_TYPE: 'table',
       })
+      connection.tablesLoaded = true
+    }
+  }
 
-      this.searchExpandedKeys = searchExpandedKeys
-      this.filterTreeData = [...connectionMap.values()]
-    },
+  const connections = [...grouped.values()]
+  const firstExpanded = connections.find(
+    (connection) => connection.children?.length,
+  )
+  return {
+    data: connections,
+    expandedKeys: firstExpanded ? [firstExpanded.id] : [],
+  }
+}
+
+async function searchSources(value: string) {
+  const requestId = ++searchRequestId
+  cancelSource.value?.cancel()
+  cancelSource.value = CancelToken.source()
+  searchIng.value = true
+
+  try {
+    if (!Object.keys(connectionMap.value).length) {
+      await refreshConnections().catch(() => undefined)
+    }
+
+    const result = await searchLDPSources(
+      {
+        key: value,
+        connectionType: ['source', 'source_and_target'].join(','),
+      },
+      {
+        cancelToken: cancelSource.value.token,
+      },
+    )
+    if (destroyed || requestId !== searchRequestId) return
+
+    const searchTree = buildSearchTree(result || [])
+    filterTreeData.value = searchTree.data
+    searchExpandedKeys.value = searchTree.expandedKeys
+  } finally {
+    if (requestId === searchRequestId) {
+      searchIng.value = false
+      cancelSource.value = undefined
+    }
+  }
+}
+
+const debouncedSearch = debounce((value: string) => {
+  searchSources(value.trim())
+}, 300)
+
+function clearSearch() {
+  searchRequestId += 1
+  cancelSource.value?.cancel()
+  cancelSource.value = undefined
+  debouncedSearch.cancel()
+  searchIng.value = false
+  filterTreeData.value = []
+  searchExpandedKeys.value = []
+}
+
+function toggleEnableSearch() {
+  if (enableSearch.value) {
+    search.value = ''
+    clearSearch()
+    enableSearch.value = false
+    return
+  }
+
+  enableSearch.value = true
+  nextTick(() => searchInput.value?.focus())
+}
+
+function handleSearch(value: string) {
+  search.value = value
+  if (!value.trim()) {
+    clearSearch()
+    return
+  }
+
+  searchRequestId += 1
+  searchIng.value = true
+  debouncedSearch(value)
+}
+
+function addItem(data: Record<string, any>) {
+  const connection = mapConnection(data)
+  connection.loadFieldsStatus = 'loading'
+  newConnectionId.value = data.id
+  connectionMap.value = {
+    ...connectionMap.value,
+    [getNodeKey(data.id)]: connection,
+  }
+
+  if (isExcluded(data.id) || showSearch.value) return
+  treeData.value = [connection, ...treeData.value]
+}
+
+function handleFindTreeDom(value: Record<string, any> = {}) {
+  return document.querySelector(
+    `#ldp_source_table_${value.connectionId}_${value.table}`,
+  )
+}
+
+function searchByKeywordList(value: any[] = []) {
+  const grouped = new Map<string, SourceNode>()
+
+  for (const item of value) {
+    if (item?.connectionId == null || isExcluded(item.connectionId)) continue
+
+    const key = getNodeKey(item.connectionId)
+    let connection = grouped.get(key)
+    if (!connection) {
+      const existing = connectionMap.value[key]
+      connection = existing
+        ? { ...existing, children: [], tablesLoaded: true }
+        : mapConnection({
+            id: item.connectionId,
+            name: item.connectionName || String(item.connectionId),
+            pdkHash: item.pdkHash,
+            status: 'ready',
+          })
+      grouped.set(key, connection)
+    }
+
+    connection.children?.push({
+      id: item.tableId,
+      name: item.table,
+      connectionId: item.connectionId,
+      isLeaf: true,
+      isObject: true,
+      type: 'table',
+      LDP_TYPE: 'table',
+    })
+  }
+
+  filterTreeData.value = [...grouped.values()]
+  searchExpandedKeys.value = [...grouped.values()].map((item) => item.id)
+}
+
+watch(
+  () => props.fdmAndMdmId,
+  () => {
+    for (const id of props.fdmAndMdmId) {
+      if (id == null) continue
+      const key = getNodeKey(id)
+      delete connectionMap.value[key]
+      treeData.value = treeData.value.filter(
+        (connection) => getNodeKey(connection.id) !== key,
+      )
+      filterTreeData.value = filterTreeData.value.filter(
+        (connection) => getNodeKey(connection.id) !== key,
+      )
+    }
   },
-  emits: ['preview', 'create-connection', 'node-drag-end', 'handle-connection'],
+  { deep: true },
+)
+
+useResizeObserver(treeContainer, ([entry]) => {
+  if (!entry) return
+  treeHeight.value = Math.max(entry.contentRect.height - 8, 1)
+})
+
+onMounted(() => {
+  initTree()
+})
+
+onBeforeUnmount(() => {
+  destroyed = true
+  clearTimeout(refreshTimer)
+  debouncedSearch.cancel()
+  cancelSource.value?.cancel()
+  handleScroll.cancel()
+})
+
+defineExpose({
+  addItem,
+  handleFindTreeDom,
+  initTree,
+  searchByKeywordList,
 })
 </script>
 
@@ -439,20 +582,21 @@ export default defineComponent({
         id="btn-add-source"
         :disabled="highlightBoard"
         @click="handleAdd"
-        >add</IconButton
       >
+        add
+      </IconButton>
       <IconButton
         :disabled="highlightBoard"
         :class="{ active: enableSearch }"
         @click="toggleEnableSearch"
-        >search-outline
+      >
+        search-outline
       </IconButton>
-      <!--<IconButton>more</IconButton>-->
     </div>
     <div class="flex-1 min-h-0 flex flex-column">
       <div v-if="enableSearch" class="px-2 pt-2">
         <ElInput
-          ref="search"
+          ref="searchInput"
           v-model="search"
           clearable
           autofocus
@@ -467,123 +611,56 @@ export default defineComponent({
         </ElInput>
       </div>
       <div
-        v-if="!showParentLineage"
         ref="treeContainer"
         v-loading="loading || searchIng"
         class="flex-fill min-h-0 p-1"
       >
         <VirtualTree
-          v-if="showSearch"
+          v-if="displayTreeData.length || showSearch || props.showParentLineage"
+          :key="displayTreeKey"
           ref="tree"
           class="ldp-tree h-100"
-          :indent="0"
-          :keeps="60"
-          node-key="id"
-          :props="props"
           :height="treeHeight"
+          :item-size="32"
+          :indent="0"
+          :props="treeProps"
           draggable
           wrapper-class-name="p-2"
-          :default-expanded-keys="searchExpandedKeys"
-          :data="filterTreeData"
-          :expand-on-click-node="false"
+          :default-expanded-keys="displayExpandedKeys"
+          :data="displayTreeData"
+          :expand-on-click-node="true"
           :allow-drop="() => false"
+          @node-expand="handleNodeExpand"
+          @node-collapse="handleNodeCollapse"
           @node-drag-start="handleDragStart"
           @node-drag-end="handleDragEnd"
-          @node-expand="handleNodeExpand"
           @handle-scroll="handleScroll"
         >
           <template #default="{ node, data }">
-            <span
+            <div
               class="custom-tree-node flex align-items-center position-relative"
               :class="{
                 grabbable: data.isObject,
                 'opacity-50': data.disabled,
               }"
-              @click="$emit('preview', data, node.parent?.data)"
+              @click="handlePreview(data, node.parent?.data)"
             >
-              <VIcon
-                v-if="node.data.loadFieldsStatus === 'loading'"
-                class="v-icon animation-rotate"
-                size="14"
-                color="rgb(61, 156, 64)"
-                >loading-circle</VIcon
-              >
-              <NodeIcon
-                v-if="!node.data.isLeaf"
-                :node="node.data"
-                :size="18"
-                class="tree-item-icon mr-2"
-              />
               <div
-                v-else-if="node.data.isEmpty"
-                class="flex align-items-center"
-              >
-                <span class="mr-1">{{ $t('public_data_no_data') }}</span>
-                <StageButton :connection-id="getConnectionId(node)" />
-              </div>
-              <el-icon
-                v-else-if="data.meta_type === 'view'"
-                :size="18"
-                class="mr-2"
-              >
-                <i-lucide-eye />
-              </el-icon>
-              <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
-              <span class="table-label" :title="data.name">
-                {{ data.name }}
-                <span v-if="data.comment" class="font-color-sslight">{{
-                  `(${data.comment})`
-                }}</span>
-                <ElTag v-if="data.disabled" disable-transitions type="info">{{
-                  $t('public_status_invalid')
-                }}</ElTag>
-              </span>
-            </span>
-          </template>
-        </VirtualTree>
-        <template v-else>
-          <VirtualTree
-            v-show="treeData.length > 0"
-            key="tree"
-            ref="tree"
-            class="ldp-tree h-100"
-            empty-text=""
-            :height="treeHeight"
-            :item-size="32"
-            :indent="0"
-            :keeps="60"
-            node-key="id"
-            :props="props"
-            draggable
-            wrapper-class-name="p-2"
-            :default-expanded-keys="expandedKeys"
-            :data="treeData"
-            :filter-node-method="filterNode"
-            :render-after-expand="false"
-            :expand-on-click-node="false"
-            :allow-drop="() => false"
-            @node-expand="handleNodeExpand"
-            @node-collapse="handeNodeCollapse"
-            @node-drag-start="handleDragStart"
-            @node-drag-end="handleDragEnd"
-            @handle-scroll="handleScroll"
-          >
-            <template #default="{ node, data }">
-              <span
-                class="custom-tree-node flex align-items-center position-relative"
-                :class="{
-                  grabbable: data.isObject,
-                  'opacity-50': data.disabled,
-                }"
-                @click="$emit('preview', data, node.parent?.data)"
+                :id="
+                  data.isObject
+                    ? `ldp_source_table_${data.connectionId}_${data.name}`
+                    : `connection_${data.id}`
+                "
+                class="inline-flex align-items-center overflow-hidden"
               >
                 <VIcon
-                  v-if="node.data.loadFieldsStatus === 'loading'"
+                  v-if="data.loading || data.loadFieldsStatus === 'loading'"
                   class="v-icon animation-rotate"
                   size="14"
                   color="rgb(61, 156, 64)"
-                  >loading-circle</VIcon
                 >
+                  loading-circle
+                </VIcon>
                 <NodeIcon
                   v-if="!node.data.isLeaf"
                   :node="node.data"
@@ -609,80 +686,20 @@ export default defineComponent({
                 >
                 <span class="table-label" :title="data.name">
                   {{ data.name }}
-                  <span v-if="data.comment" class="font-color-sslight">{{
-                    `(${data.comment})`
-                  }}</span>
-                  <ElTag v-if="data.disabled" disable-transitions type="info">{{
-                    $t('public_status_invalid')
-                  }}</ElTag>
+                  <span v-if="data.comment" class="font-color-sslight">
+                    ({{ data.comment }})
+                  </span>
+                  <ElTag v-if="data.disabled" disable-transitions type="info">
+                    {{ $t('public_status_invalid') }}
+                  </ElTag>
                 </span>
-              </span>
-            </template>
-          </VirtualTree>
-          <div
-            v-if="!treeData.length"
-            class="h-100 flex align-center justify-center"
-          >
-            <VEmpty :description="$t('packages_ldp_source_empty_text')" />
-          </div>
-        </template>
-      </div>
-      <div
-        v-else
-        v-loading="loading || searchIng"
-        class="flex-fill min-h-0 p-1"
-      >
-        <el-tree-v2
-          key="searchTree"
-          ref="tree"
-          class="ldp-tree h-100"
-          node-key="id"
-          :props="props"
-          :keeps="60"
-          draggable
-          :height="treeHeight"
-          wrapper-class-name="p-2"
-          :data="filterTreeData"
-          :default-expanded-keys="searchExpandedKeys"
-          :expand-on-click-node="false"
-          @node-drag-start="handleDragStart"
-          @node-drag-end="handleDragEnd"
-          @handle-scroll="handleScroll"
-        >
-          <template #default="{ node, data }">
-            <div
-              class="custom-tree-node"
-              :class="{
-                'opacity-50': data.disabled,
-              }"
-            >
-              <div
-                :id="
-                  data.isObject
-                    ? `ldp_source_table_${data.connectionId}_${data.name}`
-                    : `connection_${data.id}`
-                "
-                class="inline-flex align-items-center overflow-hidden"
-              >
-                <NodeIcon
-                  v-if="!data.isObject"
-                  :node="data"
-                  :size="18"
-                  class="tree-item-icon mr-2"
-                />
-                <VIcon v-else class="tree-item-icon mr-2" size="18">
-                  table
-                </VIcon>
-                <span class="table-label" :title="data.name">
-                  {{ data.name }}
-                </span>
-                <ElTag v-if="data.disabled" disable-transitions type="info">
-                  {{ $t('public_status_invalid') }}
-                </ElTag>
               </div>
             </div>
           </template>
-        </el-tree-v2>
+        </VirtualTree>
+        <div v-else class="h-100 flex align-center justify-center">
+          <VEmpty :description="$t('packages_ldp_source_empty_text')" />
+        </div>
       </div>
     </div>
   </div>
