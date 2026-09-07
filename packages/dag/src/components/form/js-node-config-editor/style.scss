@@ -12,6 +12,19 @@
     align-items: flex-start;
     gap: 8px;
     margin-bottom: 8px;
+    position: relative;
+
+    &.has-error {
+      margin-bottom: 24px;
+    }
+  }
+
+  &__error {
+    position: absolute;
+    top: 32px;
+    left: 0;
+    color: var(--color-danger);
+    font-size: 12px;
   }
 
   &__key {

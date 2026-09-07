@@ -137,6 +137,7 @@ export default {
   packages_form_js_node_config_encrypted: '加密',
   packages_form_js_node_config_description: '说明',
   packages_form_js_node_config_add: '添加参数',
+  packages_form_js_node_config_duplicate: '参数名重复',
   packages_form_js_processor_index_tooltip1:
     '标准 JS 节点只能对数据记录进行处理和运算，如需使用所有的系统内置函数，实现外部调用（如网络、数据库等），可使用增强 JS 节点。',
   packages_form_js_processor_index_tooltip2:

@@ -1,7 +1,8 @@
 import { useI18n } from '@tap/i18n'
-import { defineComponent, ref, watch } from 'vue'
+import { computed, defineComponent, ref, watch } from 'vue'
 import {
   createDefaultScriptParam,
+  duplicateScriptParamKeys,
   normalizeScriptParams,
   SCRIPT_PARAM_TYPES,
   type ScriptParam,
@@ -20,6 +21,7 @@ export const JsNodeConfigEditor = defineComponent({
   setup(props, { emit }) {
     const { t } = useI18n()
     const rows = ref<ScriptParam[]>(normalizeScriptParams(props.value))
+    const duplicateKeys = computed(() => duplicateScriptParamKeys(rows.value))
 
     watch(
       () => props.value,
@@ -59,7 +61,13 @@ export const JsNodeConfigEditor = defineComponent({
           {t('packages_form_js_node_config_hint')}
         </div>
         {rows.value.map((row, index) => (
-          <div class="js-node-config-editor__row" key={`${index}-${row.key}`}>
+          <div
+            class={[
+              'js-node-config-editor__row',
+              duplicateKeys.value.has(row.key.trim()) && 'has-error',
+            ]}
+            key={`${index}-${row.key}`}
+          >
             <ElInput
               class="js-node-config-editor__key"
               modelValue={row.key}
@@ -69,6 +77,11 @@ export const JsNodeConfigEditor = defineComponent({
                 updateRow(index, { key: value })
               }
             />
+            {duplicateKeys.value.has(row.key.trim()) && (
+              <div class="js-node-config-editor__error">
+                {t('packages_form_js_node_config_duplicate')}
+              </div>
+            )}
             <ElSelectV2
               class="js-node-config-editor__type"
               modelValue={row.type}

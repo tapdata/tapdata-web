@@ -33,6 +33,17 @@ export const normalizeScriptParams = (params) => {
   }))
 }
 
+export const duplicateScriptParamKeys = (params) => {
+  const counts = new Map()
+  for (const param of Array.isArray(params) ? params : []) {
+    const key = String(param?.key ?? '').trim()
+    if (key) counts.set(key, (counts.get(key) || 0) + 1)
+  }
+  return new Set(
+    [...counts].filter(([, count]) => count > 1).map(([key]) => key),
+  )
+}
+
 const convertValue = (param) => {
   const rawValue = param.value
   if (param.encrypted || rawValue === '') return rawValue

@@ -12,6 +12,7 @@ export const SCRIPT_PARAM_TYPES: Array<{
 }>
 export function createDefaultScriptParam(): ScriptParam
 export function normalizeScriptParams(params: unknown): ScriptParam[]
+export function duplicateScriptParamKeys(params: unknown): Set<string>
 export function serializeScriptParams(
   params: unknown,
 ): Array<Omit<ScriptParam, 'value'> & { value: unknown }>

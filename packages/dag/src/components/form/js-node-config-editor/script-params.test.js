@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 
 import {
+  duplicateScriptParamKeys,
   normalizeScriptParams,
   serializeScriptParams,
 } from './script-params.js'
@@ -65,4 +66,18 @@ test('serializeScriptParams keeps invalid JSON for backend validation', () => {
     { key: 'options', type: 'json', value: '{invalid' },
   ])
   assert.equal(param.value, '{invalid')
+})
+
+test('duplicateScriptParamKeys ignores blank rows and returns repeated keys', () => {
+  assert.deepEqual(
+    [
+      ...duplicateScriptParamKeys([
+        { key: 'ftp.host' },
+        { key: ' ftp.host ' },
+        { key: '' },
+        { key: 'ftp.port' },
+      ]),
+    ],
+    ['ftp.host'],
+  )
 })
