@@ -95,8 +95,14 @@ export const JsNodeConfigEditor = defineComponent({
               class="js-node-config-editor__value"
               modelValue={row.value}
               disabled={props.disabled}
-              type={row.type === 'json' ? 'textarea' : 'text'}
-              showPassword={row.encrypted && row.type !== 'json'}
+              type={
+                row.encrypted
+                  ? 'password'
+                  : row.type === 'json'
+                    ? 'textarea'
+                    : 'text'
+              }
+              showPassword={row.encrypted}
               autosize={
                 row.type === 'json' ? { minRows: 1, maxRows: 4 } : undefined
               }
