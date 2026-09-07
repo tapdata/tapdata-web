@@ -90,7 +90,6 @@ export default {
         :loading="materializedViewLoading"
         @click="refFn('handleCreateMaterializedView')"
       >
-        <VIcon size="28">beta</VIcon>
         {{ $t('packages_dag_build_materialized_view') }}</ElButton
       >
       <el-button

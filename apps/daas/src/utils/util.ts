@@ -1,3 +1,4 @@
+import { getSamlLogoutUrl } from '@tap/api/src/core/sso'
 import { getUserInfoByToken } from '@tap/api/src/core/users'
 import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'
@@ -148,13 +149,24 @@ export function ensurePermissions() {
 }
 
 export function signOut() {
+  // Capture SSO state before clearing cookies so a SAML session can trigger
+  // SP-initiated Single Logout at the IdP.
+  const isSamlSession = Cookie.get('auth_method') === 'saml'
+  const accessToken = Cookie.get('access_token')
   Cookie.remove('access_token')
   Cookie.remove('email')
   Cookie.remove('username')
   Cookie.remove('isAdmin')
   Cookie.remove('user_id')
-  sessionStorage.setItem('lastLocationHref', location.href)
+  Cookie.remove('auth_method')
   clearPermissions()
+  if (isSamlSession) {
+    // The backend terminates the local session, then redirects to the IdP SLO
+    // endpoint (or straight back to the login page when SLO is not configured).
+    window.location.href = getSamlLogoutUrl(accessToken)
+    return null
+  }
+  sessionStorage.setItem('lastLocationHref', location.href)
   location.href = `${location.href.split('#')[0]}#/login`
   return null
 }

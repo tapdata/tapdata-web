@@ -183,16 +183,20 @@ export default {
         const result = []
         this.searchKeywordList.forEach((item) => {
           if (item.type === 'apiserverLineage') {
-            // item的数据结构：appName,serverName,table,type
             const appList = cloneDeep(
               this.list.filter((item) => item.LDP_TYPE === 'app'),
             )
-            const findApp = appList.find((t) => t.value === item.appName)
-            const findServer = findApp?.modules?.find(
-              (t) => t.name === item.serverName,
-            )
+            let findApp = null
+            let findServer = null
+            for (const app of appList) {
+              findServer = app.modules?.find((t) => t.id === item.apiId)
+              if (findServer) {
+                findApp = app
+                break
+              }
+            }
             if (!findServer) return
-            const findOne = result.find((t) => t.value === item.appName)
+            const findOne = result.find((t) => t.id === findApp.id)
             if (findOne) {
               findOne.modules.push(findServer)
             } else {

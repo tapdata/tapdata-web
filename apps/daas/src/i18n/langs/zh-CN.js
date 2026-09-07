@@ -762,7 +762,8 @@ export default {
   setting_Switch_to_batch_insert_mode_interval__s__in_cdc_:
     '切换到cdc中的批量插入模式间隔。',
   setting_share_cdc: '共享增量',
-  setting_global_share_cdc_enable_doc: '默认开启时，使用外存列表中指定的默认外存，并且作为默认设置应用于后续新建的连接和任务。（开启后才能在数据追溯中查询变更日志）',
+  setting_global_share_cdc_enable_doc:
+    '默认开启时，使用外存列表中指定的默认外存，并且作为默认设置应用于后续新建的连接和任务。（开启后才能在数据追溯中查询变更日志）',
   setting_global_share_cdc_enable: '默认全局开启共享增量',
   setting_share_cdc_persistence_mode: '共享增量存储模式',
   setting_share_cdc_persistence_memory_size: '共享增量内存缓存行数',
@@ -780,7 +781,8 @@ export default {
   setting_share_cdc_persistence_rocksdb_path_doc:
     '该项配置只有模式选择RocksDB时生效，RocksDB存储的本地路径',
   setting_task_start_transform_wait_seconds: '任务启动推演等待时长(秒)',
-  setting_task_start_transform_wait_seconds_doc: '任务点击启动后会进行推演或试运行，当超出设置的等待时长后，此次启动会失败，需要再次点击启动，或者调大推演等待时长即可，默认等待时长为60s',
+  setting_task_start_transform_wait_seconds_doc:
+    '任务点击启动后会进行推演或试运行，当超出设置的等待时长后，此次启动会失败，需要再次点击启动，或者调大推演等待时长即可，默认等待时长为60s',
   setting_task_log_file_save_time: '任务日志留存时长(天)',
   setting_task_log_file_save_size: '任务日志留存大小(MB)',
   setting_task_log_file_save_count: '任务日志保留份数',
@@ -794,7 +796,8 @@ export default {
   setting_Login_Brief_Tips: '登录简要提示',
   setting_Login_Brief_Tips_doc: '开启后，登录提示将简化',
   setting_Access_Token_Idle_Timeout_Minutes: '会话空闲超时时间（单位：分钟）',
-  setting_Access_Token_Idle_Timeout_Minutes_doc: '当会话不活跃时间超过设置的值时，会话失效需重新登录',
+  setting_Access_Token_Idle_Timeout_Minutes_doc:
+    '当会话不活跃时间超过设置的值时，会话失效需重新登录',
   setting_LDAP: 'LDAP登录设置',
   setting_Ldap_Login_Enable: '使用LDAP登录',
   setting_Ldap_Server_Host: 'LDAP服务器地址',
@@ -813,6 +816,85 @@ export default {
   setting_Ldap_Bind_DN_doc:
     '用于进行身份验证的用户的完整Distinguished Name (DN)，即登录AD服务器的身份，示例：user@example.com',
   setting_Ldap_Bind_Password_doc: '与Bind DN对应的用户密码，用于身份验证',
+  setting_SAML: 'SAML登录设置',
+  setting_SAML_Login_Enable: '使用SAML登录',
+  setting_SP_Entity_ID: 'SP Entity ID',
+  setting_SP_ACS_URL: 'SP ACS 地址',
+  setting_SP_SLO_URL: 'SP SLO 地址',
+  setting_SP_Certificate: 'SP 证书',
+  setting_IdP_Entity_ID: 'IdP Entity ID',
+  setting_IdP_SSO_URL: 'IdP SSO 地址',
+  setting_IdP_SLO_URL: 'IdP SLO 地址',
+  setting_IdP_Signing_Certificate: 'IdP 签名证书',
+  setting_NameID_Format: 'NameID 格式',
+  setting_Want_Assertions_Signed: '要求断言签名',
+  setting_Sign_AuthnRequest: '签名 AuthnRequest',
+  setting_Signature_Algorithm: '签名算法',
+  setting_Clock_Skew_Seconds: '时钟偏差（秒）',
+  setting_Claim_Username: '用户名属性',
+  setting_Claim_Email: '邮箱属性',
+  setting_Claim_Display_Name: '显示名属性',
+  setting_Claim_Groups: '用户组属性',
+  setting_IdP_Initiated_Enabled: '允许 IdP 发起的 SSO',
+  setting_JIT_Provisioning_Enabled: '启用即时（JIT）预配',
+  setting_Login_Redirect_URL: '登录后跳转地址',
+  setting_Saml_Login_Enable_doc: '启用 SAML 2.0 单点登录',
+  setting_Saml_Sp_Entity_Id_doc:
+    'SP 唯一标识，建议用 ACS 的基地址。示例：https://tapdata.example.com/api/sso/saml',
+  setting_Saml_Sp_Acs_Url_doc:
+    'IdP 回发断言的地址，固定为 https://<你的域名>/api/sso/saml/acs',
+  setting_Saml_Sp_Slo_Url_doc:
+    'SP 元数据中公布的单点登出（SLO）地址，用于接收 IdP 的登出请求/响应，固定为 https://<你的域名>/api/sso/saml/slo',
+  setting_Saml_Sp_Private_Key_doc:
+    '服务提供方私钥（静态加密存储，只写），与 SP 证书通过「生成密钥对」成对生成',
+  setting_Saml_Sp_Certificate_doc:
+    'SP 证书（公钥，PEM），会被打包进导出的 SP 元数据。请通过「生成密钥对」生成',
+  setting_Saml_Idp_Entity_Id_doc:
+    '身份提供方（IdP）实体 ID，由「导入 IdP 元数据」自动填充',
+  setting_Saml_Idp_Sso_Url_doc:
+    '身份提供方 SSO（登录）地址。ADFS 示例：https://adfs.example.com/adfs/ls/',
+  setting_Saml_Idp_Slo_Url_doc:
+    '身份提供方单点登出（SLO）地址。ADFS 示例：https://adfs.example.com/adfs/ls/?wa=wsignout1.0',
+  setting_Saml_Idp_Signing_Certificate_doc:
+    '身份提供方签名证书，用于验证断言签名，由「导入 IdP 元数据」自动填充',
+  setting_Saml_Name_Id_Format_doc:
+    'SAML NameID 格式；留空用默认。示例：urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
+  setting_Saml_Want_Assertions_Signed_doc:
+    '要求 IdP 对断言签名；TapData 会用 IdP 签名证书验签，签名不过即拒登，防止伪造/篡改。ADFS 默认签名，建议保持开启',
+  setting_Saml_Sign_Authn_Request_doc:
+    '用 SP 私钥对发给 IdP 的登录请求（AuthnRequest）签名；仅当 IdP 要求 SP 签名请求时开启',
+  setting_Saml_Signature_Algorithm_doc:
+    'XML 签名算法；留空用默认（rsa-sha256）。避免使用 SHA-1/MD5 等弱算法',
+  setting_Saml_Clock_Skew_Seconds_doc:
+    '校验断言时间条件时允许的时钟偏差（秒），默认 120；跨机注意 NTP 同步',
+  setting_Saml_Claim_Username_doc:
+    '映射为用户名的 SAML 属性名。ADFS 示例：http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name',
+  setting_Saml_Claim_Email_doc:
+    '映射为邮箱的 SAML 属性名。ADFS 示例：http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress',
+  setting_Saml_Claim_Display_Name_doc:
+    '映射为显示名的 SAML 属性名。ADFS 示例：http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname',
+  setting_Saml_Claim_Groups_doc:
+    '映射为用户组的 SAML 属性名。ADFS 示例：http://schemas.xmlsoap.org/claims/Group',
+  setting_Saml_Idp_Initiated_Enabled_doc:
+    '允许 IdP 发起的 SSO（出于安全考虑默认关闭）',
+  setting_Saml_Jit_Provisioning_Enabled_doc:
+    '即时（JIT）预配：首次 SSO 登录时自动创建用户（默认关闭）',
+  setting_Saml_Login_Redirect_Url_doc: 'SSO 登录成功后的跳转地址',
+  setting_saml_generate_keypair: '生成密钥对',
+  setting_saml_test_config: '测试配置',
+  setting_saml_static_check: '配置静态检查',
+  setting_saml_test_success: 'SAML 配置测试通过',
+  setting_saml_test_failed: 'SAML 配置测试失败，请查看详细提示',
+  setting_saml_test_no_result: '未获取到 SAML 测试结果，请稍后重试',
+  setting_saml_export_sp_metadata: '导出 SP 元数据',
+  setting_saml_import_idp_metadata: '导入 IdP 元数据',
+  setting_saml_import_idp_metadata_label: '上传 IdP 元数据 XML 文件',
+  setting_saml_import_idp_metadata_placeholder: '或在此粘贴 IdP 元数据 XML',
+  setting_saml_keypair_generated:
+    '密钥对已生成，私钥已加密存储；点击「保存」以持久化证书',
+  setting_saml_import_success:
+    'IdP 元数据已解析，IdP 字段已回填；点击「保存」以持久化',
+  setting_saml_import_empty: '请先上传或粘贴 IdP 元数据 XML',
   setting_Appearance: '外观',
   setting_enableEnvTag: '环境标签',
   setting_envTagContent: '自定义文字',
@@ -842,6 +924,36 @@ export default {
   user_list_freeze_error: '冻结失败',
   user_list_check_success: '通过校验',
   user_list_check_error: '校验失败',
+  user_import_batch_import: '批量导入',
+  user_import_dialog_title: '批量导入用户',
+  user_import_dialog_tip: '下载模板并填写用户列表，然后上传进行校验和导入。',
+  user_import_download_template: '下载模板',
+  user_import_template_download_failed: '下载模板失败',
+  user_import_select_file: '请先选择文件',
+  user_import_mode: '用户已存在时',
+  user_import_mode_skip: '跳过',
+  user_import_mode_update: '更新',
+  user_import_validate: '校验',
+  user_import_validating: '正在校验…',
+  user_import_importing: '正在导入…',
+  user_import_confirm: '确认导入',
+  user_import_preview_title: '校验结果',
+  user_import_count_total: '共 {count}',
+  user_import_count_create: '新建 {count}',
+  user_import_count_update: '更新 {count}',
+  user_import_count_skip: '跳过 {count}',
+  user_import_count_failed: '失败 {count}',
+  user_import_col_row: '行号',
+  user_import_col_status: '状态',
+  user_import_col_message: '说明',
+  user_import_status_CREATE: '新建',
+  user_import_status_UPDATE: '更新',
+  user_import_status_SKIP: '跳过',
+  user_import_status_FAILED: '失败',
+  user_import_result_summary:
+    '导入完成：新建 {create}，更新 {update}，跳过 {skip}，失败 {failed}',
+  user_import_result_partial:
+    '导入部分失败：新建 {create}，更新 {update}，跳过 {skip}，失败 {failed}',
   user_status_notVerified: '未验证',
   user_status_notActivated: '未激活',
   user_status_activated: '已激活',
@@ -1221,6 +1333,12 @@ export default {
     '请扫描下方企业微信二维码, 联系我们获取支持',
   app_signIn_slogan: '像自来水一样方便地使用您的数据',
   app_signIn_signIn: '登录',
+  app_signIn_samlLogin: '单点登录 (SAML)',
+  app_signIn_ssoProcessing: '正在登录...',
+  app_signIn_ssoFailed: '单点登录失败，请重试。',
+  app_signIn_ssoUserDisabled: '账号已被冻结或禁用，请联系管理员。',
+  app_signIn_ssoUserPending: '账号正在等待审批，请联系管理员。',
+  app_signIn_ssoUserNotFound: '未找到与此 SSO 身份匹配的 TapData 账号。',
   app_signIn_keepSignIn: '保持登录状态',
   app_signIn_email_placeholder: '请输入邮箱',
   login_email_and_ad_placeholder: '请输入邮箱/LDAP 用户名',
