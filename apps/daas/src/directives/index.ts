@@ -1,18 +1,41 @@
 import { ClipboardPlugin, Cookie } from '@tap/shared'
 import { getCachedPermissions } from '@/utils/util'
 
-export function hasPermissionByCode(code) {
-  const permissions = getCachedPermissions()
+// Remove these once the backend starts returning the TAP-12273 permission codes.
+const PENDING_PERMISSION_CODES = new Set([
+  'v2_conn_heartbeat',
+  'v2_project_management',
+  'v2_project_management_creation',
+  'v2_project_management_git_config',
+  'v2_project_import_and_export',
+  'v2_project_import_and_export_import',
+  'v2_project_import_and_export_export',
+  'v2_user_management_menu_creation',
+  'v2_shared_cache_creation',
+  'v2_shared_cache_import',
+  'v2_shared_cache_export',
+  'v2_data_check_creation',
+  'v2_data_check_import',
+  'v2_data_check_export',
+])
 
-  if (!permissions || permissions.length === 0) {
-    return false
-  }
+export function hasPermissionByCode(code) {
   let _codes = []
   if (typeof code === 'string') {
     _codes.push(code)
   } else if (Object.prototype.toString.call(code) === '[object Array]') {
     _codes = code
   }
+
+  if (_codes.some((item) => PENDING_PERMISSION_CODES.has(item))) {
+    return true
+  }
+
+  const permissions = getCachedPermissions()
+  if (!permissions || permissions.length === 0) {
+    return false
+  }
+
   const pList = permissions.filter((resource) => _codes.includes(resource.code))
   if (pList && pList.length > 0) {
     return true
