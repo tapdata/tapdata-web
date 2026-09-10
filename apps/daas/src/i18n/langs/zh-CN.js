@@ -762,7 +762,8 @@ export default {
   setting_Switch_to_batch_insert_mode_interval__s__in_cdc_:
     '切换到cdc中的批量插入模式间隔。',
   setting_share_cdc: '共享增量',
-  setting_global_share_cdc_enable_doc: '默认开启时，使用外存列表中指定的默认外存，并且作为默认设置应用于后续新建的连接和任务。（开启后才能在数据追溯中查询变更日志）',
+  setting_global_share_cdc_enable_doc:
+    '默认开启时，使用外存列表中指定的默认外存，并且作为默认设置应用于后续新建的连接和任务。（开启后才能在数据追溯中查询变更日志）',
   setting_global_share_cdc_enable: '默认全局开启共享增量',
   setting_share_cdc_persistence_mode: '共享增量存储模式',
   setting_share_cdc_persistence_memory_size: '共享增量内存缓存行数',
@@ -780,7 +781,8 @@ export default {
   setting_share_cdc_persistence_rocksdb_path_doc:
     '该项配置只有模式选择RocksDB时生效，RocksDB存储的本地路径',
   setting_task_start_transform_wait_seconds: '任务启动推演等待时长(秒)',
-  setting_task_start_transform_wait_seconds_doc: '任务点击启动后会进行推演或试运行，当超出设置的等待时长后，此次启动会失败，需要再次点击启动，或者调大推演等待时长即可，默认等待时长为60s',
+  setting_task_start_transform_wait_seconds_doc:
+    '任务点击启动后会进行推演或试运行，当超出设置的等待时长后，此次启动会失败，需要再次点击启动，或者调大推演等待时长即可，默认等待时长为60s',
   setting_task_log_file_save_time: '任务日志留存时长(天)',
   setting_task_log_file_save_size: '任务日志留存大小(MB)',
   setting_task_log_file_save_count: '任务日志保留份数',
@@ -794,7 +796,8 @@ export default {
   setting_Login_Brief_Tips: '登录简要提示',
   setting_Login_Brief_Tips_doc: '开启后，登录提示将简化',
   setting_Access_Token_Idle_Timeout_Minutes: '会话空闲超时时间（单位：分钟）',
-  setting_Access_Token_Idle_Timeout_Minutes_doc: '当会话不活跃时间超过设置的值时，会话失效需重新登录',
+  setting_Access_Token_Idle_Timeout_Minutes_doc:
+    '当会话不活跃时间超过设置的值时，会话失效需重新登录',
   setting_LDAP: 'LDAP登录设置',
   setting_Ldap_Login_Enable: '使用LDAP登录',
   setting_Ldap_Server_Host: 'LDAP服务器地址',
@@ -846,7 +849,8 @@ export default {
     '服务提供方私钥（静态加密存储，只写），与 SP 证书通过「生成密钥对」成对生成',
   setting_Saml_Sp_Certificate_doc:
     'SP 证书（公钥，PEM），会被打包进导出的 SP 元数据。请通过「生成密钥对」生成',
-  setting_Saml_Idp_Entity_Id_doc: '身份提供方（IdP）实体 ID，由「导入 IdP 元数据」自动填充',
+  setting_Saml_Idp_Entity_Id_doc:
+    '身份提供方（IdP）实体 ID，由「导入 IdP 元数据」自动填充',
   setting_Saml_Idp_Sso_Url_doc:
     '身份提供方 SSO（登录）地址。ADFS 示例：https://adfs.example.com/adfs/ls/',
   setting_Saml_Idp_Slo_Url_doc:
@@ -877,6 +881,11 @@ export default {
     '即时（JIT）预配：首次 SSO 登录时自动创建用户（默认关闭）',
   setting_Saml_Login_Redirect_Url_doc: 'SSO 登录成功后的跳转地址',
   setting_saml_generate_keypair: '生成密钥对',
+  setting_saml_test_config: '测试配置',
+  setting_saml_static_check: '配置静态检查',
+  setting_saml_test_success: 'SAML 配置测试通过',
+  setting_saml_test_failed: 'SAML 配置测试失败，请查看详细提示',
+  setting_saml_test_no_result: '未获取到 SAML 测试结果，请稍后重试',
   setting_saml_export_sp_metadata: '导出 SP 元数据',
   setting_saml_import_idp_metadata: '导入 IdP 元数据',
   setting_saml_import_idp_metadata_label: '上传 IdP 元数据 XML 文件',

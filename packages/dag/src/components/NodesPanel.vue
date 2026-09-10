@@ -26,8 +26,15 @@ const pageSize = 20
 const dataflow = inject<any>('dataflow')
 const isSyncTask = inject<any>('isSyncTask')
 const onAddNode = inject<(node: any) => void>('onAddNode')
+const canAddNode = inject<(node: any) => boolean>('canAddNode')
 const onCreateConnection =
   inject<(connection: any) => void>('onCreateConnection')
+
+const addNode = (node: any) => {
+  if (canAddNode && !canAddNode(node)) return false
+  onAddNode?.(node)
+  return true
+}
 
 const {
   dragNode,
@@ -37,7 +44,7 @@ const {
   onDragMove,
   onDragStop,
   onDrop,
-} = useDnD({ emit, onAddNode })
+} = useDnD({ emit, onAddNode: addNode })
 
 const showConnectionSearch = ref(false)
 const connectionSearchRef = ref<InstanceType<
@@ -297,7 +304,7 @@ const handleAddTable = async () => {
       node.attrs.position = [maxX + maxNodeWidth + X_OFFSET, maxY]
     }
 
-    onAddNode?.(node)
+    addNode(node)
   }
 }
 
@@ -396,13 +403,17 @@ const handleDblClickAddNode = (node: any) => {
   if (dataflowStore.stateIsReadonly) return
 
   historyStore.startRecordingUndo()
+  if (canAddNode && !canAddNode(node)) {
+    historyStore.stopRecordingUndo()
+    return
+  }
 
   const allNodes = dataflowStore.dag.nodes
 
   if (!allNodes.length) {
     // 画布为空，放到视口中心
     node.attrs.position = getViewportCenterPosition()
-    onAddNode?.(node)
+    addNode(node)
   } else {
     // 找到一个没有输出的节点作为上游
     const source = allNodes.find((n) => !n.$outputs || n.$outputs.length === 0)
@@ -427,12 +438,12 @@ const handleDblClickAddNode = (node: any) => {
       node.attrs.position = findNonOverlappingPosition(
         position as [number, number],
       )
-      onAddNode?.(node)
+      addNode(node)
       onCreateConnection?.({ source: source.id, target: node.id })
     } else {
       // 不能连线或没有可用上游：放到最右侧节点右边
       node.attrs.position = findNonOverlappingPosition(getRightmostPosition())
-      onAddNode?.(node)
+      addNode(node)
     }
   }
 

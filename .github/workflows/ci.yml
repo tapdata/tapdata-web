@@ -15,6 +15,8 @@ jobs:
     outputs:
       i18n_files: ${{ steps.changed.outputs.i18n_files }}
       has_i18n_files: ${{ steps.changed.outputs.has_i18n_files }}
+      format_files: ${{ steps.changed.outputs.format_files }}
+      has_format_files: ${{ steps.changed.outputs.has_format_files }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -35,6 +37,38 @@ jobs:
             echo "i18n_files=" >> $GITHUB_OUTPUT
           fi
 
+          FORMAT_FILES=$(echo "$FILES" | grep -E '\.(vue|js|jsx|cjs|mjs|ts|tsx|cts|mts|json|json5|css|scss|less|html|md|mdx|yaml|yml)$' || true)
+          if [ -n "$FORMAT_FILES" ]; then
+            echo "has_format_files=true" >> $GITHUB_OUTPUT
+            echo "format_files=$(echo "$FORMAT_FILES" | tr '\n' ' ')" >> $GITHUB_OUTPUT
+          else
+            echo "has_format_files=false" >> $GITHUB_OUTPUT
+            echo "format_files=" >> $GITHUB_OUTPUT
+          fi
+
+  check-format:
+    name: Check formatting
+    runs-on: ubuntu-latest
+    needs: changed-files
+    if: needs.changed-files.outputs.has_format_files == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.32.1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check formatting
+        run: pnpm format:check -- ${{ needs.changed-files.outputs.format_files }}
+
   check-i18n:
     name: Check i18n
     runs-on: ubuntu-latest
@@ -45,4 +79,3 @@ jobs:
 
       - name: Check for hardcoded Chinese text
         run: node scripts/check-i18n.js ${{ needs.changed-files.outputs.i18n_files }}
-

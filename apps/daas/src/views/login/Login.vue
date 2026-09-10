@@ -1,9 +1,6 @@
 <script>
 import { fetchSettings } from '@tap/api/core/settings'
-import {
-  checkSamlLoginEnable,
-  getSamlLoginUrl,
-} from '@tap/api/src/core/sso'
+import { checkSamlLoginEnable, getSamlLoginUrl } from '@tap/api/src/core/sso'
 import { fetchTimestamp } from '@tap/api/src/core/timestamp'
 import {
   checkLdapLoginEnable,
@@ -33,12 +30,13 @@ export default {
       errorMessage: '',
       adEnable: false,
       samlEnable: false,
+      samlChecking: true,
+      samlRedirecting: false,
     }
   },
   created() {
     useDark()
     this.loadAdEnable()
-    this.loadSamlEnable()
     if (this.$route.query) {
       this.form.email = this.$route.query.email
       const ssoError = this.$route.query.sso_error
@@ -46,6 +44,12 @@ export default {
         this.errorMessage = this.getSsoErrorMessage(ssoError)
       }
     }
+  },
+  mounted() {
+    // Wait until the login route has finished mounting before starting the
+    // browser redirect. This keeps the automatic flow aligned with the
+    // existing button flow and avoids navigating during router resolution.
+    this.loadSamlEnable()
   },
   methods: {
     getSsoErrorMessage(code) {
@@ -64,9 +68,37 @@ export default {
     async loadSamlEnable() {
       try {
         this.samlEnable = await checkSamlLoginEnable()
+        if (this.samlEnable && this.shouldRedirectToSaml()) {
+          this.samlRedirecting = true
+          this.loginWithSaml()
+          return
+        }
       } catch {
         this.samlEnable = false
+      } finally {
+        if (!this.samlRedirecting) {
+          this.samlChecking = false
+        }
       }
+    },
+    shouldRedirectToSaml() {
+      const routeQuery = this.$route.query || {}
+      const ssoError = routeQuery.sso_error
+
+      // sso=1 is used to bring an admin to the login page. It must not start
+      // an IdP redirect automatically; the SSO button remains available there.
+      if (sessionStorage.getItem('samlManualLogin') === '1') {
+        sessionStorage.removeItem('samlManualLogin')
+        return false
+      }
+
+      // Keep the login page visible after an SSO failure so the user can read
+      // the error and use the original password login flow if needed.
+      if (ssoError) {
+        return false
+      }
+
+      return true
     },
     loginWithSaml() {
       // Full browser navigation so the IdP redirect chain runs in the tab.
@@ -160,7 +192,15 @@ export default {
 <template>
   <LoginPage>
     <template #main>
-      <section class="page-sign-in">
+      <section
+        v-if="samlChecking || samlRedirecting"
+        class="page-sign-in saml-auto-login"
+      >
+        <div class="saml-auto-login-message">
+          {{ $t('app_signIn_ssoProcessing') }}
+        </div>
+      </section>
+      <section v-else class="page-sign-in">
         <div class="sign-in-panel">
           <div class="title">
             {{ $t('app_signIn_signIn') }}
@@ -324,5 +364,10 @@ export default {
       box-sizing: border-box;
     }
   }
+}
+
+.saml-auto-login-message {
+  color: var(--text-light);
+  font-size: 16px;
 }
 </style>
