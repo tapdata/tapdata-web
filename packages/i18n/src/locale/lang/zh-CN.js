@@ -466,6 +466,10 @@ export default {
 
   public_error_time: '错误时间',
   public_error_log: '错误日志',
+  public_task_id: '任务 ID',
+  public_alert_message: '告警详情',
+  public_occurred_time: '发生时间',
+  public_occurrence_count: '发生次数',
   public_complete_time: '完成时间',
   public_cdc_time: 'CDC 时间',
   public_stop_time: '停止时间',
@@ -680,5 +684,6 @@ export default {
   public_last_capture_time: '最近观测时间',
   public_alarm_date: '告警时间',
   public_duration: '时长',
-  packages_dag_validate_shared_cdc_title: '以下连接尚未开启共享挖掘，运行任务将会出错',
+  packages_dag_validate_shared_cdc_title:
+    '以下连接尚未开启共享挖掘，运行任务将会出错',
 }

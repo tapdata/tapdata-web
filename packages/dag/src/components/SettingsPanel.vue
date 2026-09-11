@@ -189,6 +189,9 @@ const alarmSettingSchemaConfigMap: Record<
   TASK_DDL_WARNING: {
     title: t('packages_dag_migration_alarmpanel_renwufengxianddl'),
   },
+  TASK_DATA_INTEGRITY_RISK: {
+    title: t('packages_dag_migration_alarmpanel_renwushujuwanzhengxing'),
+  },
 }
 
 function getAlarmSettingSchema(

@@ -470,6 +470,10 @@ export default {
 
   public_error_time: 'Error Time',
   public_error_log: 'Error Log',
+  public_task_id: 'Task ID',
+  public_alert_message: 'Alert Details',
+  public_occurred_time: 'Occurred Time',
+  public_occurrence_count: 'Occurrence Count',
   public_complete_time: 'Complete Time',
   public_cdc_time: 'CDC Time',
   public_stop_time: 'Stop Time',
@@ -688,5 +692,6 @@ export default {
   public_last_capture_time: 'Last Capture Time',
   public_alarm_date: 'Alarm Time',
   public_duration: 'Duration',
-  packages_dag_validate_shared_cdc_title: 'The following connections have not enabled Shared Mining. Running the task will cause errors.',
+  packages_dag_validate_shared_cdc_title:
+    'The following connections have not enabled Shared Mining. Running the task will cause errors.',
 }
