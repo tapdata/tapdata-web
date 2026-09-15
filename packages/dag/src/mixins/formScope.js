@@ -15,12 +15,13 @@ import {
   getNodeSchemaPage,
 } from '@tap/api/src/core/metadata-instances'
 import { commandProxy } from '@tap/api/src/core/proxy'
+import { downloadAuthenticated } from '@tap/api/src/download'
 import { getNodeTableInfo } from '@tap/api/src/core/task'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { mapFieldsData } from '@tap/form/src/components/field-select'
 import { FormTab } from '@tap/form/src/components/form-tab'
 import i18n from '@tap/i18n'
-import { Cookie, isPlainObj } from '@tap/shared'
+import { isPlainObj } from '@tap/shared'
 import axios from 'axios'
 import { isEmpty, isEqual, merge } from 'lodash-es'
 import { mapGetters, mapState } from 'vuex'
@@ -177,7 +178,10 @@ export default {
           while (parentId) {
             parent = this.scope.findNodeById(parentId)
             if (!parent) {
-              console.error(i18n.t('packages_dag_mixins_formscope_liuyipar'), parentId) // eslint-disable-line
+              console.error(
+                i18n.t('packages_dag_mixins_formscope_liuyipar'),
+                parentId,
+              ) // eslint-disable-line
             }
             parentId = parent?.$inputs?.[0]
           }
@@ -1276,9 +1280,10 @@ export default {
           let url = `${axios.defaults.baseURL}api/foreignKeyConstraint/load?taskId=${this.dataflow.id}`
 
           if (this.isDaas) {
-            const accessToken = Cookie.get('access_token')
-            url += `&access_token=${accessToken}`
-          } else if (TAP_ACCESS_TOKEN) {
+            downloadAuthenticated(url)
+            return
+          }
+          if (TAP_ACCESS_TOKEN) {
             url += `&__token=${TAP_ACCESS_TOKEN}`
           }
 

@@ -467,7 +467,6 @@ export default defineComponent({
     }
 
     const closeCapture = () => {
-      // 使用 sendBeacon 发送请求
       const body = {
         className: 'CatchDataService',
         method: 'closeCatchData',
@@ -479,11 +478,18 @@ export default defineComponent({
       }
       const blob = new Blob([JSON.stringify(body)], headers)
       const accessToken = Cookie.get('access_token')
-
-      return navigator.sendBeacon(
-        `${axios.defaults.baseURL}api/proxy/call?access_token=${accessToken}`,
-        blob,
-      )
+      const headersInit = {
+        'Content-Type': 'application/json',
+      }
+      if (accessToken) {
+        headersInit.Authorization = `Bearer ${accessToken}`
+      }
+      return fetch(`${axios.defaults.baseURL}api/proxy/call`, {
+        method: 'POST',
+        body: blob,
+        keepalive: true,
+        headers: headersInit,
+      })
     }
 
     const { run, cancel, loading } = usePollingRequest(loadData, {

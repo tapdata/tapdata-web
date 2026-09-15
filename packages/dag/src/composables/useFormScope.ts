@@ -15,12 +15,13 @@ import {
   getNodeSchemaPage,
 } from '@tap/api/src/core/metadata-instances'
 import { commandProxy } from '@tap/api/src/core/proxy'
+import { downloadAuthenticated } from '@tap/api/src/download'
 import { getNodeTableInfo } from '@tap/api/src/core/task'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { mapFieldsData } from '@tap/form/src/components/field-select'
 import { FormTab } from '@tap/form/src/components/form-tab'
 import { useI18n } from '@tap/i18n'
-import { Cookie, isPlainObj } from '@tap/shared'
+import { isPlainObj } from '@tap/shared'
 import axios from 'axios'
 import { isEmpty, merge } from 'lodash-es'
 import { computed, reactive, watch } from 'vue'
@@ -1233,9 +1234,10 @@ export function useFormScope({ canvasRef }) {
       let url = `${axios.defaults.baseURL}api/foreignKeyConstraint/load?taskId=${this.dataflow.id}`
 
       if (isDaas) {
-        const accessToken = Cookie.get('access_token')
-        url += `&access_token=${accessToken}`
-      } else if (TAP_ACCESS_TOKEN) {
+        downloadAuthenticated(url)
+        return
+      }
+      if (TAP_ACCESS_TOKEN) {
         url += `&__token=${TAP_ACCESS_TOKEN}`
       }
 

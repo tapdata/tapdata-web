@@ -1,5 +1,6 @@
 <script>
 import { fetchSettings } from '@tap/api/core/settings'
+import { exchangeSsoLoginCode } from '@tap/api/src/core/sso'
 import { getUserInfoByToken } from '@tap/api/src/core/users'
 import Cookie from '@tap/shared/src/cookie'
 import { setSettings } from '@tap/shared/src/settings'
@@ -21,15 +22,24 @@ export default {
   },
   methods: {
     async handleCallback() {
-      // The SAML ACS success redirect lands here with ?access_token=XXX appended
-      // to the hash route. Convert that URL token into a cookie and run the same
-      // post-login bootstrap as the password path before the router guard runs.
-      const accessToken = getUrlSearch('access_token')
-      if (!accessToken) {
-        this.redirectToLogin()
-        return
-      }
+      // SAML ACS redirects here with a one-time login_code (TAP-11883).
+      // COMPAT: still accept a legacy ?access_token= and immediately move it into a cookie.
+      const loginCode = getUrlSearch('login_code')
+      const legacyToken = getUrlSearch('access_token')
+      let accessToken = ''
       try {
+        if (loginCode) {
+          const exchanged = await exchangeSsoLoginCode(loginCode)
+          accessToken =
+            typeof exchanged === 'string' ? exchanged : exchanged?.id
+        } else if (legacyToken) {
+          accessToken = legacyToken
+        }
+        if (!accessToken) {
+          this.redirectToLogin()
+          return
+        }
+        this.stripAuthParamsFromUrl()
         Cookie.set('access_token', accessToken)
         Cookie.set('tem_token', accessToken)
         // Mark the session so logout can trigger SP-initiated SLO.
@@ -59,6 +69,21 @@ export default {
       } catch (error) {
         this.redirectToLogin(error?.message)
       }
+    },
+    stripAuthParamsFromUrl() {
+      const [hashPath, hashQuery] = location.hash.split('?')
+      if (!hashQuery) {
+        return
+      }
+      const params = new URLSearchParams(hashQuery)
+      params.delete('access_token')
+      params.delete('login_code')
+      const nextHash = params.toString() ? `${hashPath}?${params}` : hashPath
+      history.replaceState(
+        null,
+        '',
+        `${location.pathname}${location.search}${nextHash}`,
+      )
     },
     redirectToLogin(message) {
       Cookie.remove('access_token')
