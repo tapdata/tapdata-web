@@ -19,19 +19,12 @@ export function checkSamlLoginEnable() {
  * Absolute URL that starts SP-initiated SAML login. The browser must navigate
  * to it directly (window.location) so the IdP redirect chain runs in the tab;
  * on success the backend redirects back to the SSO_CALLBACK_RELAY_STATE route
- * with a one-time login_code query param (TAP-11883).
+ * with an access_token query param appended.
  */
 export function getSamlLoginUrl() {
   return `${SSO_BASE_URL}/login?relayState=${encodeURIComponent(
     SSO_CALLBACK_RELAY_STATE,
   )}`
-}
-
-/** Exchange the one-time SSO login_code for a session access token. */
-export function exchangeSsoLoginCode(loginCode: string) {
-  return requestClient.post<{ id: string }>(`${SSO_BASE_URL}/exchange`, {
-    login_code: loginCode,
-  })
 }
 
 /**
