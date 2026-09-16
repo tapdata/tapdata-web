@@ -30,7 +30,6 @@ export default {
         return
       }
       try {
-        this.stripAuthParamsFromUrl()
         Cookie.set('access_token', accessToken)
         Cookie.set('tem_token', accessToken)
         // Mark the session so logout can trigger SP-initiated SLO.
@@ -60,20 +59,6 @@ export default {
       } catch (error) {
         this.redirectToLogin(error?.message)
       }
-    },
-    stripAuthParamsFromUrl() {
-      const [hashPath, hashQuery] = location.hash.split('?')
-      if (!hashQuery) {
-        return
-      }
-      const params = new URLSearchParams(hashQuery)
-      params.delete('access_token')
-      const nextHash = params.toString() ? `${hashPath}?${params}` : hashPath
-      history.replaceState(
-        null,
-        '',
-        `${location.pathname}${location.search}${nextHash}`,
-      )
     },
     redirectToLogin(message) {
       Cookie.remove('access_token')

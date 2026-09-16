@@ -34,8 +34,6 @@ export function getSamlLoginUrl() {
  */
 export function getSamlLogoutUrl(accessToken?: string) {
   const relay = `relayState=${encodeURIComponent(SSO_LOGOUT_RELAY_STATE)}`
-  // Browser navigation cannot set Authorization. TM GET /logout still reads
-  // optional access_token to find the SAML session for IdP SLO (COMPAT).
   return accessToken
     ? `${SSO_BASE_URL}/logout?access_token=${encodeURIComponent(accessToken)}&${relay}`
     : `${SSO_BASE_URL}/logout?${relay}`
