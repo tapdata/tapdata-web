@@ -129,6 +129,43 @@ const variablesMap = reactive({
       icon: IconLucideFileText,
     },
   ],
+  TASK_DATA_INTEGRITY_RISK: [
+    {
+      name: 'taskName',
+      label: t('public_task_name'),
+      icon: IconLucideFileText,
+    },
+    {
+      name: 'taskId',
+      label: t('public_task_id'),
+      icon: IconLucideHash,
+    },
+    {
+      name: 'taskDesc',
+      label: t('public_task_desc'),
+      icon: IconLucideFileText,
+    },
+    {
+      name: 'nodeName',
+      label: t('public_node_name'),
+      icon: IconLucideFileText,
+    },
+    {
+      name: 'alertMessage',
+      label: t('public_alert_message'),
+      icon: IconLucideTriangleAlert,
+    },
+    {
+      name: 'occurredTime',
+      label: t('public_occurred_time'),
+      icon: IconLucideClock,
+    },
+    {
+      name: 'occurrenceCount',
+      label: t('public_occurrence_count'),
+      icon: IconLucideHash,
+    },
+  ],
   DATANODE_CANNOT_CONNECT: [
     {
       name: 'taskName',

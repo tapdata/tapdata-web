@@ -719,7 +719,7 @@ type TaskType =
 const TASK_TYPE_ROUTE_MAP: Record<TaskType, string> = {
   migrate: 'migrateList',
   sync: 'dataflowList',
-  logCollector: 'HeartbeatTableList',
+  logCollector: 'sharedMiningList',
   mem_cache: 'sharedCacheList',
   connHeartbeat: 'HeartbeatTableList',
 }

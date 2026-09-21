@@ -122,6 +122,7 @@ export const alarmSettingKeys = [
   'TASK_RETRY_WARN',
   'TASK_SOURCE_NO_INCREMENTAL_EVENT',
   'TASK_DDL_WARNING',
+  'TASK_DATA_INTEGRITY_RISK',
 ] as const
 
 export type AlarmSettingKey = (typeof alarmSettingKeys)[number]

@@ -32,6 +32,7 @@ export enum Key {
   TaskIncrementDelay = 'TASK_INCREMENT_DELAY',
   TaskIncrementStart = 'TASK_INCREMENT_START',
   TaskDdlWarning = 'TASK_DDL_WARNING',
+  TaskDataIntegrityRisk = 'TASK_DATA_INTEGRITY_RISK',
   TaskInspectError = 'TASK_INSPECT_ERROR',
   TaskStatusError = 'TASK_STATUS_ERROR',
   TaskStatusStop = 'TASK_STATUS_STOP',

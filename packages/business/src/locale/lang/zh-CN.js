@@ -1576,6 +1576,7 @@ export default {
   packages_business_monitor_cron_tip: `语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 ? 年 *\n举例：0 */1 * * * ? 每分钟运行一次 0 0 2 * * ? 每天2点运行`,
   packages_business_datasource_monitor_alter: '数据源监控告警',
   packages_business_task_ddl_warning: '任务风险DDL告警',
+  packages_business_task_data_integrity_risk: '任务数据完整性风险告警',
   packages_business_import_mode: '同名处理方式',
   packages_business_import_as_copy: '以副本导入',
   packages_business_import_replace: '覆盖导入',
@@ -1593,6 +1594,8 @@ export default {
   public_connector_alpha_tip: '正在持续开发中，部分功能可能还在完善',
   packages_business_column_setting: '显示设置',
   packages_business_column_reset: '重置',
-  packages_business_api_server_connection_pool_deficiency_warn: '当任一API Server 连接池资源紧张触发告警阈值时',
-  packages_business_api_server_connection_pool_idle_warn: '当任一API Server 连接池连接数低于告警阈值时',
+  packages_business_api_server_connection_pool_deficiency_warn:
+    '当任一API Server 连接池资源紧张触发告警阈值时',
+  packages_business_api_server_connection_pool_idle_warn:
+    '当任一API Server 连接池连接数低于告警阈值时',
 }
