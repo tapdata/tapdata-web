@@ -1,4 +1,4 @@
-import Cookie from '@tap/shared/src/cookie'
+import { downloadAuthenticated } from '../download'
 import { requestClient, type Filter } from '../request'
 
 const BASE_URL = '/api/Connections'
@@ -115,8 +115,9 @@ export function findOneConnection(params: any) {
 }
 
 export function exportConnections(ids: string[]) {
-  const href = `${BASE_URL}/batch/load?connectionId=${ids.join('&connectionId=')}&access_token=${Cookie.get('access_token')}`
-  window.open(href)
+  return downloadAuthenticated(
+    `${BASE_URL}/batch/load?connectionId=${ids.join('&connectionId=')}`,
+  )
 }
 
 export function uploadConnections(data: any) {

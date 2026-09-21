@@ -19,6 +19,7 @@ import { signOut } from '../utils/util'
 
 type AxiosRequestConfigPro = AxiosRequestConfig & {
   silenceMessage?: boolean
+  skipAuthExpire?: boolean
 }
 
 // Pending requests map for cancellation
@@ -60,6 +61,9 @@ const errorCallback = (error: any): Promise<any> => {
     switch (rsp.status) {
       // 用户无权限访问接口
       case 401: {
+        if ((error.config as AxiosRequestConfigPro)?.skipAuthExpire) {
+          break
+        }
         const isSingleSession = getSettingByKey('login.single.session', 'open')
 
         signOut()
@@ -114,6 +118,35 @@ const errorCallback = (error: any): Promise<any> => {
   return Promise.reject(error)
 }
 
+function stripUrlAccessToken(url?: string) {
+  if (!url) {
+    return url
+  }
+  let next = url.replaceAll(/([?&])access_token=[^&]*/gi, '$1')
+  next = next.replaceAll('?&', '?').replaceAll('&&', '&')
+  if (next.endsWith('?') || next.endsWith('&')) {
+    next = next.slice(0, -1)
+  }
+  return next
+}
+
+function applyBearerAuth(config: InternalAxiosRequestConfig) {
+  const accessToken = Cookie.get('access_token')
+  if (accessToken) {
+    config.headers = config.headers || {}
+    if (!config.headers.Authorization) {
+      config.headers.Authorization = `Bearer ${accessToken}`
+    }
+  }
+  if (config.url) {
+    config.url = stripUrlAccessToken(config.url)
+  }
+  if (config.params && typeof config.params === 'object') {
+    delete (config.params as Record<string, unknown>).access_token
+  }
+  return config
+}
+
 axios.interceptors.request.use(function (
   config: InternalAxiosRequestConfig,
 ): InternalAxiosRequestConfig {
@@ -123,16 +156,7 @@ axios.interceptors.request.use(function (
       encoder: (str) => window.encodeURIComponent(str),
     })
   }
-  const accessToken = Cookie.get('access_token')
-  if (accessToken && config.url) {
-    if (~config.url.indexOf('?')) {
-      if (!~config.url.indexOf('access_token')) {
-        config.url = `${config.url}&access_token=${accessToken}`
-      }
-    } else {
-      config.url = `${config.url}?access_token=${accessToken}`
-    }
-  }
+  applyBearerAuth(config)
   if (config.headers) {
     config.headers['x-requested-with'] = 'XMLHttpRequest'
   }
@@ -170,16 +194,7 @@ export function initRequestClient() {
   requestClient.addRequestInterceptor({
     synchronous: true,
     fulfilled: (config) => {
-      const accessToken = Cookie.get('access_token')
-      if (accessToken) {
-        if (config.url?.indexOf?.('?') !== -1) {
-          if (config.url?.indexOf?.('access_token') === -1) {
-            config.url = `${config.url}&access_token=${accessToken}`
-          }
-        } else {
-          config.url = `${config.url}?access_token=${accessToken}`
-        }
-      }
+      applyBearerAuth(config)
       if (isPassiveScope()) {
         config.headers = config.headers || {}
         config.headers['X-User-Activity'] = '0'

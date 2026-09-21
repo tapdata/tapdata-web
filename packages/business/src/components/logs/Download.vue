@@ -1,8 +1,8 @@
 <script>
 import { callProxy } from '@tap/api/src/core/proxy'
+import { downloadAuthenticated } from '@tap/api/src/download'
 import i18n from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
-import Cookie from '@tap/shared/src/cookie'
 import axios from 'axios'
 import { dayjs } from '../../shared'
 
@@ -53,9 +53,10 @@ export default {
         )
 
       if (this.isDaas) {
-        const accessToken = Cookie.get('access_token')
-        url += `&access_token=${accessToken}`
-      } else if (TAP_ACCESS_TOKEN) {
+        downloadAuthenticated(url)
+        return
+      }
+      if (TAP_ACCESS_TOKEN) {
         url += `&__token=${TAP_ACCESS_TOKEN}`
       }
 

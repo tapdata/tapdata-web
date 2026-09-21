@@ -71,6 +71,17 @@ const URL_LANG = getUrlSearch('lang')
 
 if (TOKEN) {
   Cookie.set('access_token', TOKEN)
+  const [hashPath, hashQuery] = location.hash.split('?')
+  if (hashQuery) {
+    const params = new URLSearchParams(hashQuery)
+    params.delete('token')
+    const nextHash = params.toString() ? `${hashPath}?${params}` : hashPath
+    history.replaceState(
+      null,
+      '',
+      `${location.pathname}${location.search}${nextHash}`,
+    )
+  }
 }
 
 const token = Cookie.get('access_token')
@@ -100,9 +111,8 @@ const init = () => {
 
   app.config.globalProperties.$ws = new WSClient(wsUrl, undefined, {
     getQuery: () => {
-      return {
-        access_token: Cookie.get('access_token'),
-      }
+      // Same-origin WS sends the access_token cookie; do not put the token in the URL (TAP-11883).
+      return {}
     },
   })
 

@@ -1,8 +1,7 @@
-import Cookie from '@tap/shared/src/cookie'
+import { downloadAuthenticated } from '../download'
 
 const BASE_URL = '/api/Javascript_functions'
 
 export function exportJavascriptFunctions(ids: string[]) {
-  const href = `${BASE_URL}/batch/load?id=${ids.join('&id=')}&access_token=${Cookie.get('access_token')}`
-  window.open(href)
+  return downloadAuthenticated(`${BASE_URL}/batch/load?id=${ids.join('&id=')}`)
 }

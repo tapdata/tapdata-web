@@ -45,9 +45,9 @@ export function checkToken() {
 }
 
 export function newResetPassword(token: string) {
-  return requestClient.post(
-    `${BASE_URL}/newResetPassword?access_token=${token}`,
-  )
+  return requestClient.post(`${BASE_URL}/newResetPassword`, undefined, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
 }
 
 export function confirmUser(id: string, token: string) {

@@ -1,6 +1,6 @@
 import { isPlainObj } from '@tap/shared'
-import Cookie from '@tap/shared/src/cookie'
 import qs from 'qs'
+import { downloadAuthenticated } from './download'
 import Http from './Http'
 
 export default class Task extends Http {
@@ -81,10 +81,9 @@ export default class Task extends Http {
   }
 
   export(ids) {
-    const href = `${
-      this.url
-    }/batch/load?taskId=${ids.join('&taskId=')}&access_token=${Cookie.get('access_token')}`
-    window.open(href)
+    return downloadAuthenticated(
+      `${this.url}/batch/load?taskId=${ids.join('&taskId=')}`,
+    )
   }
   checkRun(id) {
     return this.axios.get(`${this.url}/checkRun/${id}`)
