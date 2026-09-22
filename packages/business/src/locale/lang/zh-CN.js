@@ -47,8 +47,12 @@ export default {
   packages_business_connection_form_source_and_target_tip: `此数据连接在 ${
     import.meta.env.VUE_APP_PAGE_TITLE
   } 中能同时作为源和目标使用`,
-  packages_business_connection_form_source_tip: `此数据连接在 ${import.meta.env.VUE_APP_PAGE_TITLE} 中只能作为源使用，不能作用为目标`,
-  packages_business_connection_form_target_tip: `此数据连接在 ${import.meta.env.VUE_APP_PAGE_TITLE} 中只能作为目标使用，不能作用为源`,
+  packages_business_connection_form_source_tip: `此数据连接在 ${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } 中只能作为源使用，不能作用为目标`,
+  packages_business_connection_form_target_tip: `此数据连接在 ${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } 中只能作为目标使用，不能作用为源`,
   packages_business_connection_form_shared_mining: '使用共享挖掘',
   packages_business_connection_form_shared_mining_tip:
     '共享挖掘会挖掘增量日志，当有多个增量任务时不需要重复开启日志采集进程，能极大缓解源库资源的占用和浪费',
@@ -232,8 +236,8 @@ export default {
   packages_business_dataFlow_bulkScheuled: '批量启动',
   packages_business_dataFlow_bulkStopping: '批量停止',
   packages_business_dataFlow_taskBulkOperation: '任务操作',
-  packages_business_task_batch_alarm_email_action: '批量设置告警接收人',
-  packages_business_task_batch_alarm_email_title: '批量设置告警接收人',
+  packages_business_task_batch_alarm_email_action: '批量设置告警',
+  packages_business_task_batch_alarm_email_title: '批量设置告警',
   packages_business_task_batch_alarm_email_label: '邮件接收人',
   packages_business_task_batch_alarm_email_placeholder: '请选择邮件接收人',
   packages_business_task_batch_alarm_email_overwrite_tip:
@@ -242,6 +246,43 @@ export default {
     '暂无可选邮件接收人，可直接保存以清空所选任务的告警接收人',
   packages_business_task_batch_alarm_email_no_edit_permission_tip:
     '以下 {count} 个任务没有编辑权限，保存时将自动跳过',
+  packages_business_task_batch_alarm_rules: '告警规则',
+  packages_business_task_batch_alarm_rules_hint: '告警项开关与通知间隔',
+  packages_business_task_batch_alarm_rules_overwrite:
+    '保存后将覆盖所选任务的告警规则',
+  packages_business_task_batch_alarm_rules_clear:
+    '保存后将清空所选任务的告警规则',
+  packages_business_task_batch_alarm_thresholds: '告警阈值',
+  packages_business_task_batch_alarm_thresholds_hint: '增量延迟和重试次数',
+  packages_business_task_batch_alarm_thresholds_overwrite:
+    '保存后将覆盖所选任务的告警阈值',
+  packages_business_task_batch_alarm_thresholds_clear:
+    '保存后将清空所选任务的告警阈值',
+  packages_business_task_batch_alarm_receivers: '接收对象',
+  packages_business_task_batch_alarm_keep: '不修改',
+  packages_business_task_batch_alarm_set: '设置',
+  packages_business_task_batch_alarm_clear: '清空',
+  packages_business_task_batch_alarm_edit: '修改',
+  packages_business_task_batch_alarm_mode: '操作模式',
+  packages_business_task_batch_alarm_mode_append: '追加',
+  packages_business_task_batch_alarm_mode_replace: '替换',
+  packages_business_task_batch_alarm_mode_remove: '移除',
+  packages_business_task_batch_alarm_interval: '通知间隔（秒）',
+  packages_business_task_batch_alarm_replace_warning:
+    '原接收对象将被覆盖，将影响 {count} 个任务',
+  packages_business_task_batch_alarm_result_title: '批量设置结果',
+  packages_business_task_batch_alarm_result_summary:
+    '成功 {succeeded}，失败 {failed}，跳过 {skipped}',
+  packages_business_task_batch_alarm_only_failed: '只看失败',
+  packages_business_task_batch_alarm_retry_failed: '重试失败项',
+  packages_business_task_batch_alarm_back: '返回修改',
+  packages_business_task_batch_alarm_col_task: '任务',
+  packages_business_task_batch_alarm_col_result: '结果',
+  packages_business_task_batch_alarm_col_message: '说明',
+  packages_business_task_batch_alarm_result_ok: '成功',
+  packages_business_task_batch_alarm_result_failed: '失败',
+  packages_business_task_batch_alarm_result_skipped: '跳过',
+  packages_business_task_batch_alarm_no_edit_result: '没有编辑权限，已跳过',
   packages_business_dataFlow_addTag: '添加标签',
   packages_business_dataVerify_dataVerify: '数据校验',
   packages_business_dataFlow_selectAll: '全选',
@@ -387,10 +428,16 @@ export default {
     '选用RocksDB作为共享挖掘外存时，需要手动指定一个Agent',
   packages_business_components_connectiontypeselectorsort_wodeshujuyuan:
     '我的数据源',
-  packages_business_components_connectiontypeselectorsort_jiaoyouTap: `交由 ${import.meta.env.VUE_APP_PAGE_TITLE} 进行全面的质量测试，以保证插件的稳定性和质量`,
+  packages_business_components_connectiontypeselectorsort_jiaoyouTap: `交由 ${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } 进行全面的质量测试，以保证插件的稳定性和质量`,
   packages_business_components_connectiontypeselectorsort_zhuyizhelishi:
     '注意：这里是您自己上传的数据源插件，如果要用于生产任务，请在GitHub上提交源代码',
-  packages_business_components_connectiontypeselectorsort_zhuyiBet: `注意：Beta 数据源尚未通过 ${import.meta.env.VUE_APP_PAGE_TITLE} 的认证测试流程，${import.meta.env.VUE_APP_PAGE_TITLE} 暂不保证这些数据源的稳定运行`,
+  packages_business_components_connectiontypeselectorsort_zhuyiBet: `注意：Beta 数据源尚未通过 ${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } 的认证测试流程，${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } 暂不保证这些数据源的稳定运行`,
   packages_business_components_connectiontypeselectorsort_shiyongbanzanbu:
     '敬请期待以下数据源开放',
   packages_business_components_connectiontypeselectorsort_betashu: 'Beta数据源',
@@ -1050,7 +1097,9 @@ export default {
   packages_business_task_created_success: '任务创建成功，点击查看',
   packages_business_task_created_fail_no_primary_key:
     '任务已经创建，但由于您的表没有主键，需要进入任务编辑手动设置更新条件字段，点击查看任务',
-  packages_business_fdm_create_task_dialog_desc_prefix: `${import.meta.env.VUE_APP_PAGE_TITLE} 将自动创建一个数据复制管道任务，将您选择的`,
+  packages_business_fdm_create_task_dialog_desc_prefix: `${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } 将自动创建一个数据复制管道任务，将您选择的`,
   packages_business_fdm_create_task_dialog_desc_suffix:
     '的结构和数据自动复制到数据平台的 Cache 层并保持源库和Cache 层数据的准实时同步及自动校验。在大部分时候源库的结构改动(DDL)也会被复制到Cache 层。您可以在通过点击Cache 层里面的库名右侧的ICON来监控该管道任务的运行状态。您也可以选择现在修改在 Cache 层的物理表名前缀。',
   packages_business_mdm_create_task_dialog_desc_prefix:
@@ -1067,8 +1116,12 @@ export default {
     '请输入打算新构建在Curated 层里面的表名。如果该表名已经存在，默认将覆盖已有的数据',
   packages_business_save_and_run_now: '保存并运行',
   packages_business_save_only: '仅保存',
-  packages_business_target_create_task_dialog_desc_prefix_clone: `${import.meta.env.VUE_APP_PAGE_TITLE} 将创建一个数据复制任务，将`,
-  packages_business_target_create_task_dialog_desc_prefix_sync: `${import.meta.env.VUE_APP_PAGE_TITLE} 将创建一个数据开发任务，将`,
+  packages_business_target_create_task_dialog_desc_prefix_clone: `${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } 将创建一个数据复制任务，将`,
+  packages_business_target_create_task_dialog_desc_prefix_sync: `${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } 将创建一个数据开发任务，将`,
   packages_business_target_create_task_dialog_desc_to: '同步到',
   packages_business_target_create_task_dialog_desc_suffix:
     '请点击下面的按钮继续,您也可以更改任务名称。',
@@ -1403,7 +1456,11 @@ export default {
   packages_business_relmig_import: 'MongoDB Relmig 导入',
   packages_business_api_import: 'API 导入',
   packages_business_functions_import: '函数导入',
-  packages_business_relmig_import_desc: `这个功能旨在无缝导入 MongoDB 关系迁移器导出的 relmig 项目文件到 ${import.meta.env.VUE_APP_PAGE_TITLE}。在 relmig 文件被导入后， ${import.meta.env.VUE_APP_PAGE_TITLE} 将自动创建一个任务来执行源数据库的实时数据同步，并将其转换为 MongoDB 数据库中的 JSON 数据格式。`,
+  packages_business_relmig_import_desc: `这个功能旨在无缝导入 MongoDB 关系迁移器导出的 relmig 项目文件到 ${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  }。在 relmig 文件被导入后， ${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } 将自动创建一个任务来执行源数据库的实时数据同步，并将其转换为 MongoDB 数据库中的 JSON 数据格式。`,
   packages_business_relmig_upload: '上传 relmig 文件',
   packages_business__relmig_import_connection_tip:
     '如果您还没有创建，请点击这里',

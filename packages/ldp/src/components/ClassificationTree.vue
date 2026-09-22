@@ -8,6 +8,7 @@ import {
 import {
   createUserGroup,
   deleteUserGroupById,
+  fetchUserGroupAlarmImpact,
   patchUserGroupById,
 } from '@tap/api/core/user-groups'
 import { fetchConnections } from '@tap/api/src/core/connections'
@@ -449,7 +450,7 @@ export default {
           this.showDialog(node, command)
           break
         case 'delete':
-          this.deleteNode(node.key)
+          this.deleteNode(node)
       }
     },
     showDialog(node, dialogType) {
@@ -551,14 +552,39 @@ export default {
           })
       }
     },
-    deleteNode(id) {
+    countOf(value) {
+      if (Array.isArray(value)) return value.length
+      const numberValue = Number(value)
+      return Number.isFinite(numberValue) ? numberValue : 0
+    },
+    async deleteNode(node) {
+      const id = node?.key || node
+      const name = node?.label || node?.data?.name || node?.data?.value || ''
+      let message = this.$t('packages_component_classification_deteleMessage')
+      if (this.types[0] === 'user') {
+        try {
+          const impact = await fetchUserGroupAlarmImpact(id)
+          message = this.$t(
+            'packages_component_classification_delete_user_group_alarm',
+            {
+              name: impact?.name || name,
+              n: this.countOf(impact?.totalMemberCount),
+              t: this.countOf(impact?.affectedTasks),
+              h: this.countOf(impact?.highRiskTasks),
+            },
+          )
+        } catch (error) {
+          console.error(error)
+          this.$message.error(
+            this.$t('packages_component_classification_alarm_impact_failed'),
+          )
+          return
+        }
+      }
       const that = this
-      this.$confirm(
-        this.$t('packages_component_classification_deteleMessage'),
-        {
-          confirmButtonText: this.$t('public_button_delete'),
-        },
-      ).then((resFlag) => {
+      this.$confirm(message, {
+        confirmButtonText: this.$t('public_button_delete'),
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }

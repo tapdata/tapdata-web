@@ -10,6 +10,7 @@ import {
 import {
   createUserGroup,
   deleteUserGroupById,
+  fetchUserGroupAlarmImpact,
   fetchUserGroups,
   patchUserGroupById,
 } from '@tap/api/core/user-groups'
@@ -526,21 +527,45 @@ const dialogSubmit = async () => {
   }
 }
 
+const countOf = (value: unknown) => {
+  if (Array.isArray(value)) return value.length
+  const numberValue = Number(value)
+  return Number.isFinite(numberValue) ? numberValue : 0
+}
+
 const deleteNode = async (node: Node) => {
   const id = node.key
-  const resFlag = await Modal.confirm(
-    $t(
-      isUser.value
-        ? 'packages_component_classification_deteleMessage_user'
-        : 'packages_component_classification_deteleMessage',
-      {
-        val: node.label,
-      },
-    ),
+  let message = $t(
+    isUser.value
+      ? 'packages_component_classification_deteleMessage_user'
+      : 'packages_component_classification_deteleMessage',
     {
-      confirmButtonText: $t('public_button_delete'),
+      val: node.label,
     },
   )
+  if (isUser.value) {
+    try {
+      const impact = await fetchUserGroupAlarmImpact(String(id))
+      message = $t(
+        'packages_component_classification_delete_user_group_alarm',
+        {
+          name: impact?.name || node.label,
+          n: countOf(impact?.totalMemberCount),
+          t: countOf(impact?.affectedTasks),
+          h: countOf(impact?.highRiskTasks),
+        },
+      )
+    } catch (error) {
+      console.error(error)
+      ElMessage.error(
+        $t('packages_component_classification_alarm_impact_failed'),
+      )
+      return
+    }
+  }
+  const resFlag = await Modal.confirm(message, {
+    confirmButtonText: $t('public_button_delete'),
+  })
   if (!resFlag) return
   if (isUser.value) {
     const params = {
@@ -673,6 +698,7 @@ const handleTreeDrop = async (ev: DragEvent, data: TreeNode) => {
         {
           id: data.id,
           value: data.value,
+          ...(isUser.value ? { gid: data.gid } : {}),
         },
       ],
     })
@@ -966,7 +992,7 @@ defineExpose({
         <el-icon>
           <i-lucide-inbox />
         </el-icon>
-        <span>无标签</span>
+        <span>{{ $t('packages_component_classification_no_tag') }}</span>
       </div>
     </div>
 

@@ -718,7 +718,9 @@ export default {
   setting_License_expiry_email_reminder_: 'license 到期提前几天提醒设置',
   setting_newMongodbChangeStream: '111111',
   setting_flow_engine_version: ' 流程引擎版本',
-  setting_tapdata_agent_version: `${import.meta.env.VUE_APP_PAGE_TITLE} Agent 版本`,
+  setting_tapdata_agent_version: `${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } Agent 版本`,
   setting_doc_base_url: ' 帮助文档URL',
   setting_help: ' 帮助文档',
   setting_Ip_addresses: ' Ipv4地址(多个逗号分隔)',
@@ -915,8 +917,16 @@ export default {
   user_list_bulk_freeze: '批量冻结',
   user_list_bulk_check: '批量校验',
   user_list_del_user: '删除用户 {0} 后，此用户将无法恢复',
-  user_list_activetion_user: `激活用户 {0} 后，此用户将可以使用 ${import.meta.env.VUE_APP_PAGE_TITLE} 系统`,
-  user_list_freeze_user: `冻结用户 {0} 后，此用户将不可以使用 ${import.meta.env.VUE_APP_PAGE_TITLE} 系统`,
+  user_list_delete_alarm_confirm:
+    '删除用户「{username}」（{email}）？该用户直接作为告警接收对象的任务有 {count} 个，所属用户组：{groups}。删除后，将不再通过该用户本人或所属用户组接收告警。',
+  user_list_delete_alarm_no_group: '无',
+  user_list_alarm_impact_failed: '无法获取告警影响范围，请稍后重试',
+  user_list_activetion_user: `激活用户 {0} 后，此用户将可以使用 ${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } 系统`,
+  user_list_freeze_user: `冻结用户 {0} 后，此用户将不可以使用 ${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } 系统`,
   user_list_check_user: '通过校验用户 {0} 的邮箱后，此用户可以被激活',
   user_list_activetion_success: '激活成功',
   user_list_activetion_error: '激活失败',
@@ -2041,6 +2051,29 @@ export default {
   notification_modular_user: '用户',
   notification_modular_role: '角色',
   notification_modular_accessCode: '访问码',
+  notification_modular_alarmReceiver: '告警接收对象',
+  notification_modular_userGroup: '用户组',
+  notification_operation_batch_update: ' 批量修改了 ',
+  notification_alarm_receiver_update:
+    '修改了任务【{parameter1}】的告警接收对象',
+  notification_alarm_receiver_update_mode:
+    '修改了任务【{parameter1}】的告警接收对象，操作模式【{parameter2}】',
+  notification_alarm_receiver_update_change:
+    '修改了任务【{parameter1}】的告警接收对象，{parameter3}',
+  notification_alarm_receiver_update_mode_change:
+    '修改了任务【{parameter1}】的告警接收对象，操作模式【{parameter2}】，{parameter3}',
+  notification_alarm_receiver_batch_update:
+    '以【{parameter2}】批量修改了任务【{parameter1}】的告警接收对象',
+  notification_alarm_receiver_batch_update_change:
+    '以【{parameter2}】批量修改了任务【{parameter1}】的告警接收对象，{parameter3}',
+  notification_user_group_delete: '删除了用户组【{parameter1}】',
+  notification_user_group_delete_mode:
+    '删除了用户组【{parameter1}】，操作模式【{parameter2}】',
+  notification_user_group_delete_change:
+    '删除了用户组【{parameter1}】，{parameter3}',
+  notification_user_group_delete_mode_change:
+    '删除了用户组【{parameter1}】，操作模式【{parameter2}】，{parameter3}',
+  notification_alarm_receiver_before_after: '修改前：{before}，修改后：{after}',
   notification_modular_message: '',
   queryBuilder_addCond: '字段条件',
   account_accountSettings: '个人设置 ',
@@ -2295,9 +2328,15 @@ export default {
   daas_feature_unavailable_upgrade_dec_li3: '告警设置',
   daas_feature_unavailable_upgrade_dec_li4: '权限管理（仅企业版）',
   daas_feature_unavailable_upgrade_dec_li5: '更多数据源',
-  daas_feature_unavailable_upgrade_dec_li1_desc: `基于自研技术，${import.meta.env.VUE_APP_PAGE_TITLE} 能最大程度保障数据一致性，还支持数据表数据校验，以验证和确保数据流转正确，满足生产环境要求。`,
-  daas_feature_unavailable_upgrade_dec_li2_desc: `为减轻源端数据库压力，${import.meta.env.VUE_APP_PAGE_TITLE} 支持共享挖掘增量日志缓存，开启此功能的任务可直接从缓存中获取增量事件，无需重复读取源库增量日志。`,
-  daas_feature_unavailable_upgrade_dec_li3_desc: `${import.meta.env.VUE_APP_PAGE_TITLE}支持通过 SMTP 协议发告警邮件，让用户在常用邮箱及时接收异常通知，助其感知异常，保障任务运行稳定可靠。`,
+  daas_feature_unavailable_upgrade_dec_li1_desc: `基于自研技术，${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } 能最大程度保障数据一致性，还支持数据表数据校验，以验证和确保数据流转正确，满足生产环境要求。`,
+  daas_feature_unavailable_upgrade_dec_li2_desc: `为减轻源端数据库压力，${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } 支持共享挖掘增量日志缓存，开启此功能的任务可直接从缓存中获取增量事件，无需重复读取源库增量日志。`,
+  daas_feature_unavailable_upgrade_dec_li3_desc: `${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  }支持通过 SMTP 协议发告警邮件，让用户在常用邮箱及时接收异常通知，助其感知异常，保障任务运行稳定可靠。`,
   daas_feature_unavailable_upgrade_dec_li4_desc:
     '角色是权限合集，可为其授予多权限并授予用户，用户继承所有权限，依此设计可先创角色再赋予用户，无需为每个用户配置权限，以简化运维管理和提升安全性。',
   daas_feature_unavailable_upgrade_dec_li5_desc: '',

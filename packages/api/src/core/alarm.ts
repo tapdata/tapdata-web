@@ -97,10 +97,74 @@ export function getAlarmChannels() {
   return requestClient.get(`${BASE_URL}/channels`)
 }
 
+export type AlarmReceiverType = 'USER' | 'USER_GROUP' | 'EMAIL'
+
+export type AlarmReceiverStatus = 'SYSTEM_DEFAULT' | 'CUSTOM' | 'NONE'
+
+export type AlarmReceiverMode = 'APPEND' | 'REPLACE' | 'REMOVE'
+
+export interface AlarmReceiver {
+  type: AlarmReceiverType
+  id?: string
+  email?: string
+}
+
+export interface AlarmReceiverCandidateUser {
+  id: string
+  username: string
+  email?: string
+}
+
+export interface AlarmReceiverCandidateGroup {
+  id: string
+  name: string
+  gid?: string
+  parentId?: string
+  validEmailCount?: number
+}
+
+export interface AlarmReceiverCandidates {
+  users?: AlarmReceiverCandidateUser[]
+  groups?: AlarmReceiverCandidateGroup[]
+}
+
+export interface AlarmReceiverPreviewEmail {
+  email: string
+  sources?: string[]
+}
+
+export interface AlarmReceiverPreviewInvalid {
+  type?: string
+  id?: string
+  reason?: string
+}
+
+export interface AlarmReceiverPreview {
+  mode?: string
+  status?: AlarmReceiverStatus
+  emails?: AlarmReceiverPreviewEmail[]
+  invalid?: AlarmReceiverPreviewInvalid[]
+}
+
+export interface BatchUpdateTaskAlarmDetail {
+  id: string
+  name?: string
+  code: string
+  message?: string
+}
+
+export interface BatchUpdateTaskAlarmResult {
+  succeeded?: number
+  failed?: number
+  skipped?: number
+  details?: BatchUpdateTaskAlarmDetail[]
+}
+
 export function updateTaskAlarm(params: {
   alarmRules?: AlarmRuleVO[] | null
   alarmSettings?: AlarmSettingVO[] | null
-  emailReceivers?: string[] | null
+  alarmReceivers?: AlarmReceiver[] | null
+  useSystemDefaultReceivers?: boolean
   nodeId?: null | string
   taskId?: null | string
 }) {
@@ -111,7 +175,35 @@ export function batchUpdateTaskAlarm(params: {
   taskIds: string[]
   alarmRules?: AlarmRuleVO[] | null
   alarmSettings?: AlarmSettingVO[] | null
-  emailReceivers?: string[] | null
+  alarmReceivers?: AlarmReceiver[] | null
+  receiverMode?: AlarmReceiverMode
 }) {
-  return requestClient.post('/api/task/alarm/batch-update', params)
+  return requestClient.post<BatchUpdateTaskAlarmResult>(
+    '/api/task/alarm/batch-update',
+    params,
+  )
+}
+
+export function fetchAlarmReceiverCandidates(params?: {
+  taskId?: string
+  taskIds?: string[] | string
+}) {
+  const query: Record<string, string> = {}
+  if (params?.taskId) query.taskId = params.taskId
+  if (params?.taskIds) {
+    query.taskIds = Array.isArray(params.taskIds)
+      ? params.taskIds.filter(Boolean).join(',')
+      : params.taskIds
+  }
+  return requestClient.get<AlarmReceiverCandidates>(
+    `${BASE_URL}/receiverCandidates`,
+    { params: query },
+  )
+}
+
+export function fetchAlarmReceiverPreview(taskId: string) {
+  return requestClient.get<AlarmReceiverPreview>(
+    `${BASE_URL}/receiverPreview`,
+    { params: { taskId } },
+  )
 }

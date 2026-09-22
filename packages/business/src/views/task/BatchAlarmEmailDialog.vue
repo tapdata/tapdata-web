@@ -1,20 +1,78 @@
 <script setup lang="ts">
-import { batchUpdateTaskAlarm } from '@tap/api/src/core/alarm'
+import {
+  batchUpdateTaskAlarm,
+  type AlarmReceiver,
+  type AlarmSettingVO,
+  type AlarmRuleVO,
+  type BatchUpdateTaskAlarmResult,
+} from '@tap/api/src/core/alarm'
 import { useI18n } from '@tap/i18n'
-import { getSettingByKey } from '@tap/shared/src/settings'
 import { ElMessage } from 'element-plus'
 import { computed, ref } from 'vue'
+import AlarmReceiverSelector from '../../components/AlarmReceiverSelector.vue'
 
-type EmailOption = {
-  label: string
-  value: string
-}
+type DimensionAction = 'keep' | 'set' | 'clear'
+type ReceiverAction = 'keep' | 'edit'
+type ReceiverMode = 'APPEND' | 'REPLACE' | 'REMOVE'
 
 type BatchAlarmTask = {
   id: string
   name?: string
   permissionActions?: string[]
 }
+
+type ResultDetail = {
+  id: string
+  name?: string
+  code: string
+  message?: string
+}
+
+type ThresholdItem = {
+  key: string
+  label: string
+  open: boolean
+  interval: number
+}
+
+const ALARM_SETTING_DEFS = [
+  {
+    key: 'TASK_STATUS_ERROR',
+    label: 'packages_dag_migration_alarmpanel_renwuyunxingchu',
+  },
+  {
+    key: 'TASK_FULL_COMPLETE',
+    label: 'packages_dag_migration_alarmpanel_renwuquanliangwan',
+  },
+  {
+    key: 'TASK_INCREMENT_START',
+    label: 'packages_dag_migration_alarmpanel_renwuzengliangkai',
+  },
+  {
+    key: 'TASK_INCREMENT_DELAY',
+    label: 'packages_dag_migration_alarmpanel_renwuzengliangyan',
+  },
+  {
+    key: 'TASK_INSPECT_DIFFERENCE',
+    label: 'packages_dag_task_inspect_difference_alarm',
+  },
+  {
+    key: 'TASK_RETRY_WARN',
+    label: 'packages_dag_task_retry_alert',
+  },
+  {
+    key: 'TASK_SOURCE_NO_INCREMENTAL_EVENT',
+    label: 'packages_business_task_source_no_incremental_event',
+  },
+  {
+    key: 'TASK_DDL_WARNING',
+    label: 'packages_dag_migration_alarmpanel_renwufengxianddl',
+  },
+  {
+    key: 'TASK_DATA_INTEGRITY_RISK',
+    label: 'packages_dag_migration_alarmpanel_renwushujuwanzhengxing',
+  },
+]
 
 const emit = defineEmits<{
   (event: 'success'): void
@@ -23,40 +81,99 @@ const emit = defineEmits<{
 const { t } = useI18n()
 
 const visible = ref(false)
+const page = ref<'form' | 'result'>('form')
 const saveLoading = ref(false)
 const taskIds = ref<string[]>([])
 const noEditTasks = ref<BatchAlarmTask[]>([])
-const emailReceivers = ref<string[]>([])
-const emailOptions = ref<EmailOption[]>([])
+const rulesAction = ref<DimensionAction>('keep')
+const thresholdsAction = ref<DimensionAction>('keep')
+const receiversAction = ref<ReceiverAction>('keep')
+const receiverMode = ref<ReceiverMode>('APPEND')
+const receivers = ref<AlarmReceiver[]>([])
+const invalidReceivers = ref(false)
+const thresholdItems = ref<ThresholdItem[]>([])
+const delayMinutes = ref(5)
+const delaySeconds = ref(60)
+const delayEqualsFlag = ref(1)
+const retryTimes = ref(10)
+const onlyFailed = ref(false)
+const resultDetails = ref<ResultDetail[]>([])
+const resultCountOverride = ref<{
+  succeeded: number
+  failed: number
+  skipped: number
+} | null>(null)
 
-const saveDisabled = computed(() => !taskIds.value.length)
+const saveDisabled = computed(() => {
+  if (!taskIds.value.length || saveLoading.value) return true
+  const changingRules = rulesAction.value !== 'keep'
+  const changingThresholds = thresholdsAction.value !== 'keep'
+  const changingReceivers = receiversAction.value !== 'keep'
+  if (!changingRules && !changingThresholds && !changingReceivers) return true
+  if (changingReceivers && invalidReceivers.value) return true
+  if (
+    changingReceivers &&
+    !receivers.value.length &&
+    receiverMode.value !== 'REPLACE'
+  ) {
+    return true
+  }
+  return false
+})
 
-function loadEmailReceivers() {
-  const str = getSettingByKey('email.receivers')
-  const receivers = str
-    ? str
-        .split(',')
-        .map((email: string) => email.trim())
-        .filter(Boolean)
-    : []
+const failedDetails = computed(() =>
+  resultDetails.value.filter((item) => isFailed(item.code)),
+)
 
-  emailOptions.value = receivers.map((receiver: string) => ({
-    label: receiver,
-    value: receiver,
+const visibleDetails = computed(() =>
+  onlyFailed.value ? failedDetails.value : resultDetails.value,
+)
+
+const resultCounts = computed(() => {
+  if (resultCountOverride.value) return resultCountOverride.value
+  return {
+    succeeded: resultDetails.value.filter((item) => item.code === 'ok').length,
+    skipped: resultDetails.value.filter((item) => isSkipped(item.code)).length,
+    failed: failedDetails.value.length,
+  }
+})
+
+function createThresholdItems() {
+  return ALARM_SETTING_DEFS.map((item) => ({
+    key: item.key,
+    label: item.label,
+    open: true,
+    interval: 300,
   }))
-  emailReceivers.value = receivers
+}
+
+function resetForm() {
+  page.value = 'form'
+  rulesAction.value = 'keep'
+  thresholdsAction.value = 'keep'
+  receiversAction.value = 'keep'
+  receiverMode.value = 'APPEND'
+  receivers.value = []
+  invalidReceivers.value = false
+  thresholdItems.value = createThresholdItems()
+  delayMinutes.value = 5
+  delaySeconds.value = 60
+  delayEqualsFlag.value = 1
+  retryTimes.value = 10
+  onlyFailed.value = false
+  resultDetails.value = []
+  resultCountOverride.value = null
 }
 
 function open(tasks: BatchAlarmTask[]) {
   const editableTasks = tasks.filter((task) =>
     task.permissionActions?.includes('Edit'),
   )
-
   taskIds.value = editableTasks.map((task) => task.id)
   noEditTasks.value = tasks.filter(
     (task) => !task.permissionActions?.includes('Edit'),
   )
-  loadEmailReceivers()
+  resetForm()
   visible.value = true
 }
 
@@ -64,24 +181,145 @@ function close() {
   visible.value = false
 }
 
-async function save() {
-  if (saveDisabled.value) return
+function isSkipped(code: string) {
+  return code === 'insufficient.permissions' || code === 'SYSTEM_DEFAULT'
+}
 
+function isFailed(code: string) {
+  return code !== 'ok' && !isSkipped(code)
+}
+
+function resultLabel(code: string) {
+  if (code === 'ok') return t('packages_business_task_batch_alarm_result_ok')
+  if (isSkipped(code)) {
+    return t('packages_business_task_batch_alarm_result_skipped')
+  }
+  return t('packages_business_task_batch_alarm_result_failed')
+}
+
+function cleanReceivers(list: AlarmReceiver[]) {
+  return list
+    .map((item) => {
+      if (item.type === 'EMAIL') {
+        const email = item.email?.trim()
+        return email ? { type: 'EMAIL' as const, email } : null
+      }
+      return item.id ? { type: item.type, id: item.id } : null
+    })
+    .filter((item): item is AlarmReceiver => !!item)
+}
+
+function buildAlarmSettings() {
+  return thresholdItems.value.map((item) => ({
+    type: 'TASK',
+    key: item.key,
+    open: item.open,
+    notify: item.open ? ['SYSTEM', 'EMAIL'] : [],
+    interval: Math.max(1, Number(item.interval) || 1),
+    unit: 'SECOND',
+  })) as AlarmSettingVO[]
+}
+
+function buildAlarmRules() {
+  const minutes = Math.max(1, Number(delayMinutes.value) || 1)
+  const seconds = Math.max(0, Number(delaySeconds.value) || 0)
+  // The task alarm form stores "continuous minutes" as point = minutes * 12.
+  return [
+    {
+      key: 'TASK_INCREMENT_DELAY',
+      point: Math.max(1, Math.ceil(minutes * 12)),
+      equalsFlag: delayEqualsFlag.value,
+      ms: seconds * 1000,
+    },
+    {
+      key: 'TASK_RETRY_WARN',
+      point: 12,
+      equalsFlag: 0,
+      ms: 1000,
+      times: Math.max(1, Number(retryTimes.value) || 1),
+    },
+  ] as AlarmRuleVO[]
+}
+
+// 规则写入 alarmSettings，阈值写入 alarmRules。不修改的维度不能传空数组。
+function buildPayload(ids: string[]) {
+  const payload: {
+    taskIds: string[]
+    alarmSettings?: AlarmSettingVO[] | null
+    alarmRules?: AlarmRuleVO[] | null
+    alarmReceivers?: AlarmReceiver[] | null
+    receiverMode?: ReceiverMode
+  } = {
+    taskIds: ids,
+  }
+  if (rulesAction.value === 'clear') payload.alarmSettings = []
+  if (rulesAction.value === 'set') payload.alarmSettings = buildAlarmSettings()
+  if (thresholdsAction.value === 'clear') payload.alarmRules = []
+  if (thresholdsAction.value === 'set') payload.alarmRules = buildAlarmRules()
+  if (receiversAction.value === 'edit') {
+    payload.alarmReceivers = cleanReceivers(receivers.value)
+    payload.receiverMode = receiverMode.value
+  }
+  return payload
+}
+
+function permissionDetails(): ResultDetail[] {
+  return noEditTasks.value.map((task) => ({
+    id: task.id,
+    name: task.name || task.id,
+    code: 'insufficient.permissions',
+    message: t('packages_business_task_batch_alarm_no_edit_result'),
+  }))
+}
+
+function countValue(value: unknown) {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null
+}
+
+function showResult(data?: BatchUpdateTaskAlarmResult) {
+  const details = Array.isArray(data?.details) ? data.details : []
+  const extras = permissionDetails().filter(
+    (task) => !details.some((item) => item.id === task.id),
+  )
+  resultDetails.value = [...details, ...extras]
+  const succeeded = countValue(data?.succeeded)
+  const failed = countValue(data?.failed)
+  const skipped = countValue(data?.skipped)
+  resultCountOverride.value =
+    details.length || succeeded == null || failed == null || skipped == null
+      ? null
+      : {
+          succeeded,
+          failed,
+          skipped: skipped + extras.length,
+        }
+  page.value = 'result'
+}
+
+async function submit(ids: string[]) {
+  if (!ids.length) return
   saveLoading.value = true
   try {
-    await batchUpdateTaskAlarm({
-      taskIds: taskIds.value,
-      emailReceivers: emailReceivers.value,
-    })
-    ElMessage.success(t('public_message_save_ok'))
-    visible.value = false
+    const data = await batchUpdateTaskAlarm(buildPayload(ids))
+    showResult(data)
     emit('success')
   } catch (error) {
-    console.error('Failed to batch update task alarm email receivers:', error)
+    console.error(error)
     ElMessage.error(t('public_message_save_fail'))
   } finally {
     saveLoading.value = false
   }
+}
+
+async function save() {
+  if (saveDisabled.value) return
+  await submit(taskIds.value)
+}
+
+async function retryFailed() {
+  const ids = failedDetails.value.map((item) => item.id)
+  if (!ids.length) return
+  await submit(ids)
 }
 
 defineExpose({
@@ -91,107 +329,350 @@ defineExpose({
 
 <template>
   <ElDialog
-    :title="$t('packages_business_task_batch_alarm_email_title')"
+    :title="
+      page === 'result'
+        ? $t('packages_business_task_batch_alarm_result_title')
+        : $t('packages_business_task_batch_alarm_email_title')
+    "
     :model-value="visible"
     :append-to-body="true"
-    width="520px"
+    width="760px"
     class="batch-alarm-email-dialog"
     :close-on-click-modal="false"
     @close="close"
   >
-    <ElAlert
-      v-if="noEditTasks.length"
-      class="batch-alarm-email-permission-alert align-items-start"
-      type="warning"
-      :closable="false"
-      show-icon
-    >
-      <template #icon>
-        <el-icon :size="20">
-          <i-lucide-triangle-alert />
-        </el-icon>
-      </template>
-      <template #title>
-        <span class="fs-7 lh-sm">
-          {{
-            $t(
-              'packages_business_task_batch_alarm_email_no_edit_permission_tip',
-              {
-                count: noEditTasks.length,
-              },
-            )
-          }}
-        </span>
-      </template>
-      <div class="batch-alarm-email-no-permission-list">
-        <ElTag
-          v-for="task in noEditTasks"
-          :key="task.id"
-          type="warning"
-          effect="plain"
-          class="batch-alarm-email-no-permission-item wrap-tag rounded-lg"
-          :title="task.name || task.id"
-        >
-          {{ task.name || task.id }}
-        </ElTag>
-      </div>
-    </ElAlert>
-    <ElForm label-position="top">
-      <ElFormItem :label="$t('packages_business_task_batch_alarm_email_label')">
-        <ElSelect
-          v-model="emailReceivers"
-          class="w-100"
-          multiple
-          filterable
-          collapse-tags
-          collapse-tags-tooltip
-          :max-collapse-tags="4"
-          :placeholder="
-            $t('packages_business_task_batch_alarm_email_placeholder')
-          "
-          :disabled="!emailOptions.length"
-        >
-          <template #prefix>
-            <el-icon :size="16">
-              <i-lucide-user />
-            </el-icon>
-          </template>
-          <ElOption
-            v-for="item in emailOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </ElSelect>
-        <div class="batch-alarm-email-tip w-100 rounded-xl">
-          <el-icon :size="16" class="batch-alarm-email-tip-icon">
-            <i-lucide-info />
+    <div v-if="page === 'form'" class="batch-alarm-dialog-body">
+      <ElAlert
+        v-if="noEditTasks.length"
+        class="batch-alarm-email-permission-alert align-items-start"
+        type="warning"
+        :closable="false"
+        show-icon
+      >
+        <template #icon>
+          <el-icon :size="20">
+            <i-lucide-triangle-alert />
           </el-icon>
-          <span>
-            {{ $t('packages_business_task_batch_alarm_email_overwrite_tip') }}
+        </template>
+        <template #title>
+          <span class="fs-7 lh-sm">
+            {{
+              $t(
+                'packages_business_task_batch_alarm_email_no_edit_permission_tip',
+                {
+                  count: noEditTasks.length,
+                },
+              )
+            }}
           </span>
+        </template>
+        <div class="batch-alarm-email-no-permission-list">
+          <ElTag
+            v-for="task in noEditTasks"
+            :key="task.id"
+            type="warning"
+            effect="plain"
+            class="batch-alarm-email-no-permission-item wrap-tag rounded-lg"
+            :title="task.name || task.id"
+          >
+            {{ task.name || task.id }}
+          </ElTag>
         </div>
-        <div v-if="!emailOptions.length" class="color-warning fs-7 mt-2">
-          {{ $t('packages_business_task_batch_alarm_email_empty') }}
-        </div>
-      </ElFormItem>
-    </ElForm>
+      </ElAlert>
+
+      <ElForm label-position="top">
+        <ElFormItem :label="$t('packages_business_task_batch_alarm_rules')">
+          <ElRadioGroup v-model="rulesAction">
+            <ElRadio label="keep">
+              {{ $t('packages_business_task_batch_alarm_keep') }}
+            </ElRadio>
+            <ElRadio label="set">
+              {{ $t('packages_business_task_batch_alarm_set') }}
+            </ElRadio>
+            <ElRadio label="clear">
+              {{ $t('packages_business_task_batch_alarm_clear') }}
+            </ElRadio>
+          </ElRadioGroup>
+          <div class="batch-alarm-hint">
+            {{ $t('packages_business_task_batch_alarm_rules_hint') }}
+          </div>
+          <div v-if="rulesAction === 'set'" class="batch-alarm-editor">
+            <div
+              v-for="item in thresholdItems"
+              :key="item.key"
+              class="batch-alarm-setting-row"
+            >
+              <ElSwitch v-model="item.open" />
+              <span class="batch-alarm-setting-label">{{
+                $t(item.label)
+              }}</span>
+              <ElInputNumber
+                v-model="item.interval"
+                :min="1"
+                :precision="0"
+                controls-position="right"
+                :disabled="!item.open"
+              />
+              <span class="batch-alarm-setting-unit">
+                {{ $t('packages_business_task_batch_alarm_interval') }}
+              </span>
+            </div>
+            <div class="batch-alarm-email-tip">
+              <el-icon :size="16" class="batch-alarm-email-tip-icon">
+                <i-lucide-info />
+              </el-icon>
+              <span>
+                {{ $t('packages_business_task_batch_alarm_rules_overwrite') }}
+              </span>
+            </div>
+          </div>
+          <div v-else-if="rulesAction === 'clear'" class="color-warning fs-7">
+            {{ $t('packages_business_task_batch_alarm_rules_clear') }}
+          </div>
+        </ElFormItem>
+
+        <ElFormItem
+          :label="$t('packages_business_task_batch_alarm_thresholds')"
+        >
+          <ElRadioGroup v-model="thresholdsAction">
+            <ElRadio label="keep">
+              {{ $t('packages_business_task_batch_alarm_keep') }}
+            </ElRadio>
+            <ElRadio label="set">
+              {{ $t('packages_business_task_batch_alarm_set') }}
+            </ElRadio>
+            <ElRadio label="clear">
+              {{ $t('packages_business_task_batch_alarm_clear') }}
+            </ElRadio>
+          </ElRadioGroup>
+          <div class="batch-alarm-hint">
+            {{ $t('packages_business_task_batch_alarm_thresholds_hint') }}
+          </div>
+          <div v-if="thresholdsAction === 'set'" class="batch-alarm-editor">
+            <div class="batch-alarm-threshold-row">
+              <span>{{
+                $t('packages_dag_migration_alarmpanel_renwuzengliangyan')
+              }}</span>
+              <span>{{ $t('packages_dag_migration_alarmpanel_lianxu') }}</span>
+              <ElInputNumber
+                v-model="delayMinutes"
+                :min="1"
+                :precision="0"
+                controls-position="right"
+              />
+              <span>{{ $t('public_time_m') }}</span>
+              <ElSelect v-model="delayEqualsFlag" class="batch-alarm-operator">
+                <ElOption label=">=" :value="1" />
+                <ElOption label="<=" :value="-1" />
+              </ElSelect>
+              <ElInputNumber
+                v-model="delaySeconds"
+                :min="0"
+                :precision="0"
+                controls-position="right"
+              />
+              <span>{{ $t('public_time_s') }}</span>
+            </div>
+            <div class="batch-alarm-threshold-row">
+              <span>{{ $t('packages_dag_task_retry_alert') }}</span>
+              <ElInputNumber
+                v-model="retryTimes"
+                :min="1"
+                :precision="0"
+                controls-position="right"
+              />
+            </div>
+            <div class="batch-alarm-hint">
+              {{
+                $t('packages_dag_task_retry_alert_desc', { count: retryTimes })
+              }}
+            </div>
+            <div class="batch-alarm-email-tip">
+              <el-icon :size="16" class="batch-alarm-email-tip-icon">
+                <i-lucide-info />
+              </el-icon>
+              <span>
+                {{
+                  $t('packages_business_task_batch_alarm_thresholds_overwrite')
+                }}
+              </span>
+            </div>
+          </div>
+          <div
+            v-else-if="thresholdsAction === 'clear'"
+            class="color-warning fs-7"
+          >
+            {{ $t('packages_business_task_batch_alarm_thresholds_clear') }}
+          </div>
+        </ElFormItem>
+
+        <ElFormItem :label="$t('packages_business_task_batch_alarm_receivers')">
+          <ElRadioGroup v-model="receiversAction">
+            <ElRadio label="keep">
+              {{ $t('packages_business_task_batch_alarm_keep') }}
+            </ElRadio>
+            <ElRadio label="edit">
+              {{ $t('packages_business_task_batch_alarm_edit') }}
+            </ElRadio>
+          </ElRadioGroup>
+          <div v-if="receiversAction === 'edit'" class="batch-alarm-editor">
+            <div class="mb-2">
+              {{ $t('packages_business_task_batch_alarm_mode') }}
+            </div>
+            <ElRadioGroup v-model="receiverMode">
+              <ElRadio label="APPEND">
+                {{ $t('packages_business_task_batch_alarm_mode_append') }}
+              </ElRadio>
+              <ElRadio label="REPLACE">
+                {{ $t('packages_business_task_batch_alarm_mode_replace') }}
+              </ElRadio>
+              <ElRadio label="REMOVE">
+                {{ $t('packages_business_task_batch_alarm_mode_remove') }}
+              </ElRadio>
+            </ElRadioGroup>
+            <ElAlert
+              v-if="receiverMode === 'REPLACE'"
+              class="mt-3"
+              type="warning"
+              :closable="false"
+              show-icon
+            >
+              {{
+                $t('packages_business_task_batch_alarm_replace_warning', {
+                  count: taskIds.length,
+                })
+              }}
+            </ElAlert>
+            <div v-if="!receivers.length" class="color-warning fs-7 mt-2">
+              {{ $t('packages_dag_alarm_receiver_empty_warning') }}
+            </div>
+            <AlarmReceiverSelector
+              v-model="receivers"
+              class="mt-3"
+              :task-ids="taskIds"
+              @invalid-change="invalidReceivers = $event"
+            />
+          </div>
+        </ElFormItem>
+      </ElForm>
+    </div>
+
+    <div v-else class="batch-alarm-dialog-body">
+      <div class="batch-alarm-result-summary">
+        {{
+          $t('packages_business_task_batch_alarm_result_summary', resultCounts)
+        }}
+      </div>
+      <ElCheckbox v-model="onlyFailed" class="mb-3">
+        {{ $t('packages_business_task_batch_alarm_only_failed') }}
+      </ElCheckbox>
+      <ElTable :data="visibleDetails" max-height="360">
+        <ElTableColumn
+          prop="name"
+          min-width="180"
+          :label="$t('packages_business_task_batch_alarm_col_task')"
+        >
+          <template #default="{ row }">
+            {{ row.name || row.id }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn
+          min-width="100"
+          :label="$t('packages_business_task_batch_alarm_col_result')"
+        >
+          <template #default="{ row }">
+            {{ resultLabel(row.code) }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn
+          min-width="220"
+          prop="message"
+          :label="$t('packages_business_task_batch_alarm_col_message')"
+        >
+          <template #default="{ row }">
+            {{ row.message || row.code }}
+          </template>
+        </ElTableColumn>
+      </ElTable>
+    </div>
 
     <template #footer>
-      <ElButton @click="close">{{ $t('public_button_cancel') }}</ElButton>
-      <ElButton
-        type="primary"
-        :disabled="saveDisabled"
-        :loading="saveLoading"
-        @click="save"
-      >
-        {{ $t('public_button_save') }}
-      </ElButton>
+      <template v-if="page === 'form'">
+        <ElButton @click="close">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton
+          type="primary"
+          :disabled="saveDisabled"
+          :loading="saveLoading"
+          @click="save"
+        >
+          {{ $t('public_button_save') }}
+        </ElButton>
+      </template>
+      <template v-else>
+        <ElButton @click="page = 'form'">
+          {{ $t('packages_business_task_batch_alarm_back') }}
+        </ElButton>
+        <ElButton
+          type="primary"
+          :disabled="!failedDetails.length"
+          :loading="saveLoading"
+          @click="retryFailed"
+        >
+          {{ $t('packages_business_task_batch_alarm_retry_failed') }}
+        </ElButton>
+      </template>
     </template>
   </ElDialog>
 </template>
 
 <style scoped lang="scss">
+.batch-alarm-dialog-body {
+  max-height: 62vh;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.batch-alarm-hint {
+  width: 100%;
+  margin-top: 4px;
+  color: var(--el-text-color-secondary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.batch-alarm-editor {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.batch-alarm-setting-row,
+.batch-alarm-threshold-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.batch-alarm-setting-label {
+  flex: 1;
+  min-width: 160px;
+}
+
+.batch-alarm-setting-unit {
+  color: var(--el-text-color-secondary);
+  font-size: 12px;
+}
+
+.batch-alarm-operator {
+  width: 88px;
+}
+
+.batch-alarm-result-summary {
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
 .batch-alarm-email-tip {
   display: flex;
   align-items: flex-start;

@@ -24,6 +24,11 @@ export default {
     'This operation will remove all sub-categories currently present in this category. Are you sure you want to proceed with the deletion?',
   packages_component_classification_deteleMessage_user:
     'This action will delete the user group "{val}" and all of its subgroups. Are you sure you want to proceed?',
+  packages_component_classification_delete_user_group_alarm:
+    'Delete user group "{name}"? This group currently contains {n} users, including subgroups, and is used as an alert receiver by {t} tasks. After deletion, those tasks will no longer send alerts through this group, and {h} of them will have no valid receiver. The tasks themselves will not be deleted or stopped. This action cannot be undone.',
+  packages_component_classification_alarm_impact_failed:
+    'Unable to load the alert impact. Please try again later.',
+  packages_component_classification_no_tag: 'No tags',
   packages_component_formBuilder_file_placeholder: 'Please select a file',
   packages_component_formBuilder_file_button: 'Select',
   packages_component_src_discoveryclassification_qingshurumulu:

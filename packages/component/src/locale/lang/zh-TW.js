@@ -23,6 +23,11 @@ export default {
     '此操作會將該標籤下存在的子標籤都刪除，是否刪除',
   packages_component_classification_deteleMessage_user:
     '此操作會將用戶組「{val}」及其下的所有子用戶組刪除，是否刪除',
+  packages_component_classification_delete_user_group_alarm:
+    '刪除用戶組「{name}」？該組目前包含 {n} 名用戶，並被 {t} 個任務用作告警接收對象。刪除後，這些任務將不再通過該組發送告警，其中 {h} 個任務將沒有任何有效接收人。任務本身不會被刪除或停止。操作不可恢復。',
+  packages_component_classification_alarm_impact_failed:
+    '無法取得告警影響範圍，請稍後重試',
+  packages_component_classification_no_tag: '無標籤',
   packages_component_formBuilder_file_placeholder: '請選擇文件',
   packages_component_formBuilder_file_button: '選擇文件',
   packages_component_src_discoveryclassification_qingshurumulu:
