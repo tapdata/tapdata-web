@@ -54,8 +54,7 @@ const loadError = ref(false)
 const candidatesLoaded = ref(false)
 const users = ref<AlarmReceiverCandidateUser[]>([])
 const groups = ref<AlarmReceiverCandidateGroup[]>([])
-const groupKeyword = ref('')
-const userKeyword = ref('')
+const keyword = ref('')
 const emailDraft = ref('')
 const invalidTokens = ref<string[]>([])
 const treeRef = ref()
@@ -81,12 +80,12 @@ const groupMap = computed(() => {
   )
 })
 const filteredUsers = computed(() => {
-  const keyword = userKeyword.value.trim().toLowerCase()
-  if (!keyword) return users.value
+  const text = keyword.value.trim().toLowerCase()
+  if (!text) return users.value
   return users.value.filter((user) => {
     return [user.username, user.email]
       .filter(Boolean)
-      .some((value) => String(value).toLowerCase().includes(keyword))
+      .some((value) => String(value).toLowerCase().includes(text))
   })
 })
 const selectedUserIds = computed(() => {
@@ -105,7 +104,7 @@ watch(
   { immediate: true },
 )
 
-watch(groupKeyword, (value) => {
+watch(keyword, (value) => {
   treeRef.value?.filter(value)
 })
 
@@ -234,21 +233,65 @@ function removeReceiver(index: number) {
   )
 }
 
+function parentIdOf(group?: AlarmReceiverCandidateGroup) {
+  if (!group) return ''
+  return (
+    group.parentId ||
+    (group as AlarmReceiverCandidateGroup & { parent_id?: string }).parent_id ||
+    ''
+  )
+}
+
+function groupPath(id?: string) {
+  const names: string[] = []
+  const seen = new Set<string>()
+  let current = id ? groupMap.value[id] : undefined
+  while (current && !seen.has(current.id)) {
+    seen.add(current.id)
+    names.unshift(current.name || current.id)
+    const parentId = parentIdOf(current)
+    current = parentId ? groupMap.value[parentId] : undefined
+  }
+  return names.join(' / ')
+}
+
+function directChildCount(id?: string) {
+  if (!id) return 0
+  return groups.value.filter((group) => parentIdOf(group) === id).length
+}
+
 function tagLabel(item: AlarmReceiver) {
   if (item.type === 'USER_GROUP') {
-    return groupMap.value[item.id || '']?.name || item.id || ''
+    const name = groupMap.value[item.id || '']?.name || item.id || ''
+    return t('packages_dag_alarm_receiver_group_chip', { name })
   }
   if (item.type === 'USER') {
     const user = userMap.value[item.id || '']
-    if (!user) return item.id || ''
-    if (!user.email) return user.username || user.id
-    return t('packages_dag_alarm_receiver_user_with_email', {
-      username: user.username || user.id,
-      email: user.email,
-    })
+    return user?.username || user?.email || item.id || ''
   }
   return item.email || ''
 }
+
+function groupTip(item: AlarmReceiver) {
+  const id = item.id || ''
+  const path = groupPath(id) || tagLabel(item)
+  return t('packages_dag_alarm_receiver_group_tip', {
+    path,
+    count: groupMap.value[id]?.validEmailCount || 0,
+    children: directChildCount(id),
+  })
+}
+
+function receiverNames() {
+  return props.modelValue
+    .map((item) => tagLabel(item))
+    .filter(Boolean)
+    .join('、')
+}
+
+defineExpose({
+  receiverNames,
+})
 
 function tagKey(item: AlarmReceiver, index: number) {
   return `${item.type}-${item.id || item.email || index}`
@@ -363,16 +406,58 @@ function userLabel(user: AlarmReceiverCandidateUser) {
 <template>
   <div class="alarm-receiver-selector">
     <div v-if="modelValue.length" class="alarm-receiver-tags">
-      <ElTag
+      <span
         v-for="(item, index) in modelValue"
         :key="tagKey(item, index)"
-        :closable="!disabled"
-        :type="item.type === 'EMAIL' ? 'info' : undefined"
-        @close="removeReceiver(index)"
+        class="alarm-receiver-chip"
+        :class="`is-${item.type}`"
       >
-        {{ tagLabel(item) }}
-      </ElTag>
+        <svg
+          v-if="item.type === 'USER_GROUP'"
+          viewBox="0 0 16 16"
+          aria-hidden="true"
+        >
+          <circle cx="5.5" cy="6" r="2" />
+          <circle cx="10.5" cy="6.5" r="1.6" />
+          <path d="M1.5 13c.4-2 2-3 4-3s3.6 1 4 3" />
+          <path d="M9 13c.3-1.4 1.4-2.2 2.8-2.2 1.2 0 2.2.6 2.7 2.2" />
+        </svg>
+        <svg
+          v-else-if="item.type === 'USER'"
+          viewBox="0 0 16 16"
+          aria-hidden="true"
+        >
+          <circle cx="8" cy="5.5" r="2.2" />
+          <path d="M3 13.2c.6-2.3 2.4-3.4 5-3.4s4.4 1.1 5 3.4" />
+        </svg>
+        <svg v-else viewBox="0 0 16 16" aria-hidden="true">
+          <rect x="2" y="4" width="12" height="8" rx="1.2" />
+          <path d="M2.5 4.8 8 9l5.5-4.2" />
+        </svg>
+        <ElTooltip
+          v-if="item.type === 'USER_GROUP'"
+          :content="groupTip(item)"
+          placement="top"
+        >
+          <span>{{ tagLabel(item) }}</span>
+        </ElTooltip>
+        <span v-else>{{ tagLabel(item) }}</span>
+        <button
+          v-if="!disabled"
+          type="button"
+          class="alarm-receiver-chip-remove"
+          @click="removeReceiver(index)"
+        >
+          ×
+        </button>
+      </span>
     </div>
+
+    <ElInput
+      v-model="keyword"
+      clearable
+      :placeholder="$t('packages_dag_alarm_receiver_search')"
+    />
 
     <ElAlert v-if="loadError" type="error" :closable="false" show-icon>
       <div class="alarm-receiver-alert">
@@ -383,115 +468,113 @@ function userLabel(user: AlarmReceiverCandidateUser) {
       </div>
     </ElAlert>
 
-    <div v-loading="loading">
-      <ElTabs v-model="activeTab">
-        <ElTabPane
-          :label="$t('packages_dag_alarm_receiver_tab_group')"
-          name="group"
+    <div v-loading="loading" class="alarm-receiver-picker">
+      <div class="alarm-receiver-tabs">
+        <button
+          v-for="tab in ['group', 'user', 'email']"
+          :key="tab"
+          type="button"
+          :class="{ 'is-active': activeTab === tab }"
+          @click="activeTab = tab"
         >
-          <ElInput
-            v-model="groupKeyword"
-            class="mb-2"
-            clearable
-            :placeholder="$t('packages_dag_alarm_receiver_search_group')"
-          />
-          <div class="alarm-receiver-panel">
-            <ElTree
-              v-if="groupTree.length"
-              ref="treeRef"
-              :class="{ 'is-locked': disabled }"
-              :data="groupTree"
-              node-key="id"
-              show-checkbox
-              check-strictly
-              default-expand-all
-              :props="{ label: 'name', children: 'children' }"
-              :filter-node-method="filterGroup"
-              @check="onGroupCheck"
-            >
-              <template #default="{ data }">
-                <div class="alarm-receiver-group-node">
-                  <span>{{ data.name }}</span>
-                  <span class="alarm-receiver-group-meta">
-                    {{
-                      $t('packages_dag_alarm_receiver_group_meta', {
-                        count: data.validEmailCount || 0,
-                      })
-                    }}
-                  </span>
-                  <span
-                    v-if="!data.validEmailCount"
-                    class="alarm-receiver-group-warning"
-                  >
-                    {{ $t('packages_dag_alarm_receiver_no_valid_email') }}
-                  </span>
-                </div>
-              </template>
-            </ElTree>
-            <div v-else class="alarm-receiver-empty">
-              {{ $t('packages_dag_alarm_receiver_no_group') }}
-            </div>
-          </div>
-        </ElTabPane>
-        <ElTabPane
-          :label="$t('packages_dag_alarm_receiver_tab_user')"
-          name="user"
+          {{ $t(`packages_dag_alarm_receiver_tab_${tab}`) }}
+        </button>
+      </div>
+
+      <div v-show="activeTab === 'group'" class="alarm-receiver-panel">
+        <ElTree
+          v-if="groupTree.length"
+          ref="treeRef"
+          :class="{ 'is-locked': disabled }"
+          :data="groupTree"
+          node-key="id"
+          show-checkbox
+          check-strictly
+          default-expand-all
+          :props="{ label: 'name', children: 'children' }"
+          :filter-node-method="filterGroup"
+          @check="onGroupCheck"
         >
-          <ElInput
-            v-model="userKeyword"
-            class="mb-2"
-            clearable
-            :placeholder="$t('packages_dag_alarm_receiver_search_user')"
-          />
-          <div class="alarm-receiver-panel">
-            <ElCheckbox
-              v-for="user in filteredUsers"
-              :key="user.id"
-              class="alarm-receiver-user"
-              :model-value="isUserSelected(user.id)"
-              :disabled="disabled"
-              @change="(checked) => toggleUser(user, !!checked)"
-            >
-              {{ userLabel(user) }}
-            </ElCheckbox>
-            <div v-if="!filteredUsers.length" class="alarm-receiver-empty">
-              {{ $t('packages_dag_alarm_receiver_no_user') }}
+          <template #default="{ data }">
+            <div class="alarm-receiver-group-node">
+              <span>{{ data.name }}</span>
+              <span class="alarm-receiver-group-meta">
+                {{
+                  $t('packages_dag_alarm_receiver_group_emails', {
+                    count: data.validEmailCount || 0,
+                  })
+                }}
+                <template v-if="data.children?.length">
+                  ·
+                  {{
+                    $t('packages_dag_alarm_receiver_group_children', {
+                      count: data.children.length,
+                    })
+                  }}
+                </template>
+                <span
+                  v-if="!data.validEmailCount"
+                  class="alarm-receiver-group-warning"
+                >
+                  {{ $t('packages_dag_alarm_receiver_no_valid_email') }}
+                </span>
+              </span>
             </div>
-          </div>
-        </ElTabPane>
-        <ElTabPane
-          :label="$t('packages_dag_alarm_receiver_tab_email')"
-          name="email"
+          </template>
+        </ElTree>
+        <div v-else class="alarm-receiver-empty">
+          {{ $t('packages_dag_alarm_receiver_no_group') }}
+        </div>
+      </div>
+
+      <div v-show="activeTab === 'user'" class="alarm-receiver-panel">
+        <ElCheckbox
+          v-for="user in filteredUsers"
+          :key="user.id"
+          class="alarm-receiver-user"
+          :model-value="isUserSelected(user.id)"
+          :disabled="disabled"
+          @change="(checked) => toggleUser(user, !!checked)"
         >
-          <ElInput
-            :model-value="emailDraft"
-            type="textarea"
-            :rows="3"
-            :disabled="disabled"
-            :placeholder="$t('packages_dag_alarm_receiver_email_placeholder')"
-            @update:model-value="onEmailInput"
-            @blur="onEmailBlur"
-          />
-          <div v-if="invalidTokens.length" class="alarm-receiver-invalid-list">
-            <div
-              v-for="token in invalidTokens"
-              :key="token"
-              class="alarm-receiver-invalid"
+          <span>{{ user.username || user.id }}</span>
+          <span v-if="user.email" class="alarm-receiver-user-email">
+            {{ user.email }}
+          </span>
+        </ElCheckbox>
+        <div v-if="!filteredUsers.length" class="alarm-receiver-empty">
+          {{ $t('packages_dag_alarm_receiver_no_user') }}
+        </div>
+      </div>
+
+      <div v-show="activeTab === 'email'" class="alarm-receiver-panel">
+        <ElInput
+          :model-value="emailDraft"
+          type="textarea"
+          :rows="3"
+          :disabled="disabled"
+          :placeholder="$t('packages_dag_alarm_receiver_email_placeholder')"
+          @update:model-value="onEmailInput"
+          @blur="onEmailBlur"
+        />
+        <div v-if="invalidTokens.length" class="alarm-receiver-invalid-list">
+          <div
+            v-for="token in invalidTokens"
+            :key="token"
+            class="alarm-receiver-invalid"
+          >
+            <span>{{ token }}</span>
+            <span>{{ $t('packages_dag_alarm_receiver_email_invalid') }}</span>
+            <ElButton
+              v-if="!disabled"
+              text
+              type="danger"
+              @click="removeInvalid(token)"
             >
-              <span>{{ token }}</span>
-              <span>{{ $t('packages_dag_alarm_receiver_email_invalid') }}</span>
-              <ElButton
-                v-if="!disabled"
-                text
-                type="danger"
-                @click="removeInvalid(token)"
-              >
-                {{ $t('public_button_delete') }}
-              </ElButton>
-            </div>
+              {{ $t('public_button_delete') }}
+            </ElButton>
           </div>
-        </ElTabPane>
-      </ElTabs>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -507,7 +590,68 @@ function userLabel(user: AlarmReceiverCandidateUser) {
 .alarm-receiver-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
+}
+
+.alarm-receiver-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #eef5ff;
+  color: var(--el-color-primary);
+  font-size: 13px;
+  line-height: 22px;
+}
+
+.alarm-receiver-chip svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  flex: none;
+}
+
+.alarm-receiver-chip.is-EMAIL {
+  background: #f4f4f5;
+  color: var(--el-text-color-regular);
+}
+
+.alarm-receiver-chip-remove {
+  border: 0;
+  padding: 0 0 0 2px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.alarm-receiver-picker {
+  border: 1px solid var(--el-border-color-lighter);
+  border-radius: 8px;
+  padding: 8px 12px 12px;
+}
+
+.alarm-receiver-tabs {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.alarm-receiver-tabs button {
+  border: 0;
+  padding: 4px 0;
+  background: transparent;
+  color: var(--el-text-color-secondary);
+  cursor: pointer;
+}
+
+.alarm-receiver-tabs button.is-active {
+  color: var(--el-color-primary);
+  box-shadow: inset 0 -2px 0 var(--el-color-primary);
 }
 
 .alarm-receiver-alert {
@@ -524,12 +668,13 @@ function userLabel(user: AlarmReceiverCandidateUser) {
 
 .alarm-receiver-group-node {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
   min-width: 0;
+  padding-right: 8px;
   line-height: 1.4;
-  white-space: normal;
 }
 
 .alarm-receiver-group-meta {
@@ -548,6 +693,11 @@ function userLabel(user: AlarmReceiverCandidateUser) {
   margin-right: 0;
   padding: 4px 0;
   white-space: normal;
+}
+
+.alarm-receiver-user-email {
+  margin-left: 8px;
+  color: var(--el-text-color-secondary);
 }
 
 .alarm-receiver-empty {

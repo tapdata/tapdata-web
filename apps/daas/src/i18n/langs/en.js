@@ -974,6 +974,12 @@ export default {
   user_list_del_user: 'After deleting user {0}, this user cannot be recovered',
   user_list_delete_alarm_confirm:
     'Delete user "{username}" ({email})? This user is a direct alert receiver for {count} tasks and belongs to these user groups: {groups}. After deletion, alerts will no longer be sent to this user directly or through those user groups.',
+  user_list_delete_alarm_title: 'Delete user "{username}" ({email})?',
+  user_list_delete_alarm_body:
+    'This user is a direct alert receiver for {count} tasks. User groups: {groups}.',
+  user_list_delete_alarm_warn:
+    'After deletion, alerts will no longer be sent to this user directly or through those user groups.',
+  user_list_delete_alarm_irreversible: 'This action cannot be undone.',
   user_list_delete_alarm_no_group: 'None',
   user_list_alarm_impact_failed:
     'Unable to load the alert impact. Please try again later.',

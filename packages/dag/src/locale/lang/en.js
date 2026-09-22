@@ -1041,6 +1041,8 @@ export default {
   packages_dag_alarm_receiver_custom: 'Custom receivers',
   packages_dag_alarm_receiver_preview:
     'Alerts will be sent to {count} email addresses',
+  packages_dag_alarm_receiver_system_empty:
+    'No system default recipient is configured, so no alert email will be sent.',
   packages_dag_alarm_receiver_empty_warning: 'No valid receiver',
   packages_dag_alarm_receiver_status_system: 'System default',
   packages_dag_alarm_receiver_status_custom: 'Custom · {count} valid emails',
@@ -1063,7 +1065,26 @@ export default {
   packages_dag_alarm_receiver_preview_failed:
     'Failed to load the recipient preview',
   packages_dag_alarm_receiver_search_group: 'Search user groups',
+  packages_dag_alarm_receiver_search: 'Search users, emails, or groups',
   packages_dag_alarm_receiver_search_user: 'Search users',
+  packages_dag_alarm_receiver_group_chip: '{name} (includes subgroups)',
+  packages_dag_alarm_receiver_group_emails: '{count} valid emails',
+  packages_dag_alarm_receiver_group_children: 'Includes {count} subgroups',
+  packages_dag_alarm_receiver_group_tip:
+    '{path}, {count} valid emails, {children} subgroups',
+  packages_dag_alarm_receiver_preview_detail: 'View details',
+  packages_dag_alarm_receiver_preview_hide: 'Hide details',
+  packages_dag_alarm_receiver_deleted_hint:
+    'A receiver is no longer valid. This task will not send email and will not fall back to the system default.',
+  packages_dag_alarm_receiver_empty_keep:
+    'This task will not send email and will not fall back to the system default.',
+  packages_dag_alarm_receiver_col_object: 'Receiver',
+  packages_dag_alarm_receiver_col_type: 'Type',
+  packages_dag_alarm_receiver_col_status: 'Status',
+  packages_dag_alarm_receiver_deleted: 'Deleted',
+  packages_dag_alarm_receiver_type_user: 'User',
+  packages_dag_alarm_receiver_type_group: 'User group',
+  packages_dag_alarm_receiver_type_email: 'Email',
   packages_dag_alarm_receiver_user_with_email: '{username} ({email})',
   packages_dag_alarm_receiver_no_group: 'No user groups',
   packages_dag_alarm_receiver_no_user: 'No users',

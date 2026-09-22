@@ -564,15 +564,51 @@ export default {
       if (this.types[0] === 'user') {
         try {
           const impact = await fetchUserGroupAlarmImpact(id)
-          message = this.$t(
-            'packages_component_classification_delete_user_group_alarm',
-            {
-              name: impact?.name || name,
-              n: this.countOf(impact?.totalMemberCount),
-              t: this.countOf(impact?.affectedTasks),
-              h: this.countOf(impact?.highRiskTasks),
-            },
+          const memberCount = this.countOf(impact?.totalMemberCount)
+          const taskCount = this.countOf(impact?.affectedTasks)
+          const highRiskCount = this.countOf(impact?.highRiskTasks)
+          const title = this.$t(
+            'packages_component_classification_delete_group_title',
+            { name: impact?.name || name },
           )
+          const warnStyle =
+            'margin-top:8px;padding:10px 12px;border-radius:8px;background:#fdf6ec;color:#b88230;line-height:1.6;'
+          const dangerStyle =
+            'margin-top:8px;padding:10px 12px;border-radius:8px;background:#fef0f0;color:#c45656;line-height:1.6;'
+          message = [
+            this.$t('packages_component_classification_delete_group_body', {
+              n: memberCount,
+              t: taskCount,
+            }),
+            `<div style="${warnStyle}">${this.$t(
+              'packages_component_classification_delete_group_warn',
+              { t: taskCount, h: highRiskCount },
+            )}</div>`,
+            `<div style="${dangerStyle}">${this.$t(
+              'packages_component_classification_delete_irreversible',
+            )}</div>`,
+          ].join('')
+          this.$confirm(message, title, {
+            dangerouslyUseHTMLString: true,
+            confirmButtonText: this.$t(
+              'packages_component_classification_delete_group_button',
+            ),
+            type: 'warning',
+          })
+            .then((resFlag) => {
+              if (!resFlag) return
+              const params = {
+                id,
+                headers: {
+                  gid: id,
+                },
+              }
+              deleteUserGroupById(params).then(() => {
+                this.getData()
+              })
+            })
+            .catch(() => {})
+          return
         } catch (error) {
           console.error(error)
           this.$message.error(

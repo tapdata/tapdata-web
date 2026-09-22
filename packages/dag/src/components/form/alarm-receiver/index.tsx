@@ -4,6 +4,8 @@ import {
   fetchAlarmReceiverPreview,
   updateTaskAlarm,
   type AlarmReceiver,
+  type AlarmReceiverPreviewEmail,
+  type AlarmReceiverPreviewInvalid,
   type AlarmReceiverStatus,
 } from '@tap/api/src/core/alarm'
 import AlarmReceiverSelector from '@tap/business/src/components/AlarmReceiverSelector.vue'
@@ -12,6 +14,7 @@ import { ElMessage } from 'element-plus'
 import { debounce } from 'lodash-es'
 import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useDataflowStore } from '../../../stores/dataflow.store'
+import './index.scss'
 
 type ReceiverMode = 'SYSTEM_DEFAULT' | 'CUSTOM'
 
@@ -104,8 +107,11 @@ const AlarmReceiverFieldComponent = defineComponent({
     const receivers = ref<AlarmReceiver[]>([])
     const invalid = ref(false)
     const previewCount = ref<number | null>(null)
+    const previewEmails = ref<AlarmReceiverPreviewEmail[]>([])
+    const previewInvalid = ref<AlarmReceiverPreviewInvalid[]>([])
     const previewFailed = ref(false)
     const previewStale = ref(false)
+    const detailOpen = ref(false)
     let persistVersion = 0
 
     const hydrate = () => {
@@ -125,9 +131,9 @@ const AlarmReceiverFieldComponent = defineComponent({
       if (!taskId) return
       try {
         const data = await fetchAlarmReceiverPreview(String(taskId))
-        previewCount.value = Array.isArray(data?.emails)
-          ? data.emails.length
-          : 0
+        previewEmails.value = Array.isArray(data?.emails) ? data.emails : []
+        previewInvalid.value = Array.isArray(data?.invalid) ? data.invalid : []
+        previewCount.value = previewEmails.value.length
         previewFailed.value = false
         previewStale.value = false
       } catch (error) {
@@ -194,24 +200,36 @@ const AlarmReceiverFieldComponent = defineComponent({
         fieldRef.value?.pattern === 'editable' ? false : !!props.disabled
       const showEmptyWarning =
         mode.value === 'CUSTOM' &&
-        (!receivers.value.length ||
-          (!previewStale.value && previewCount.value === 0))
+        !previewStale.value &&
+        previewCount.value === 0
+      const showSystemDefaultEmpty =
+        mode.value === 'SYSTEM_DEFAULT' &&
+        !previewStale.value &&
+        previewCount.value === 0
+      const typeLabel = (type?: string) => {
+        if (type === 'USER') return t('packages_dag_alarm_receiver_type_user')
+        if (type === 'USER_GROUP')
+          return t('packages_dag_alarm_receiver_type_group')
+        if (type === 'EMAIL') return t('packages_dag_alarm_receiver_type_email')
+        return type || '-'
+      }
 
       return (
         <div class="alarm-receiver-field flex flex-column gap-3">
           <div>
             <div class="mb-2">{t('packages_dag_alarm_receiver_mode')}</div>
             <ElRadioGroup
+              class="alarm-receiver-mode"
               modelValue={mode.value}
               disabled={disabled}
               onUpdate:modelValue={(value: ReceiverMode) => {
                 mode.value = value
               }}
             >
-              <ElRadio label="SYSTEM_DEFAULT">
+              <ElRadio label="SYSTEM_DEFAULT" border>
                 {t('packages_dag_alarm_receiver_system_default')}
               </ElRadio>
-              <ElRadio label="CUSTOM">
+              <ElRadio label="CUSTOM" border>
                 {t('packages_dag_alarm_receiver_custom')}
               </ElRadio>
             </ElRadioGroup>
@@ -219,6 +237,7 @@ const AlarmReceiverFieldComponent = defineComponent({
           <div
             style={{ display: mode.value === 'CUSTOM' ? undefined : 'none' }}
           >
+            <div class="mb-2">{t('packages_dag_alarm_receivers')}</div>
             <AlarmReceiverSelector
               modelValue={receivers.value}
               taskId={props.taskId || dataflowStore.dataflow?.id}
@@ -236,11 +255,79 @@ const AlarmReceiverFieldComponent = defineComponent({
               }}
             />
           </div>
+          {showEmptyWarning && (
+            <div class="alarm-receiver-empty-banner">
+              <div>{t('packages_dag_alarm_receiver_empty_warning')}</div>
+              <div>
+                {previewInvalid.value.length
+                  ? t('packages_dag_alarm_receiver_deleted_hint')
+                  : t('packages_dag_alarm_receiver_empty_keep')}
+              </div>
+            </div>
+          )}
+          {showEmptyWarning && previewInvalid.value.length > 0 && (
+            <table class="alarm-receiver-invalid-table">
+              <thead>
+                <tr>
+                  <th>{t('packages_dag_alarm_receiver_col_object')}</th>
+                  <th>{t('packages_dag_alarm_receiver_col_type')}</th>
+                  <th>{t('packages_dag_alarm_receiver_col_status')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {previewInvalid.value.map((item, index) => (
+                  <tr key={`${item.type || ''}-${item.id || index}`}>
+                    <td>{item.id || '-'}</td>
+                    <td>{typeLabel(item.type)}</td>
+                    <td class="is-danger">
+                      {t('packages_dag_alarm_receiver_deleted')}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          {showSystemDefaultEmpty && (
+            <div class="alarm-receiver-empty-banner">
+              {t('packages_dag_alarm_receiver_system_empty')}
+            </div>
+          )}
           {previewCount.value !== null && (
-            <div class="fs-7 font-color-light">
-              {t('packages_dag_alarm_receiver_preview', {
-                count: previewCount.value,
-              })}
+            <div class="alarm-receiver-preview-bar">
+              <span>
+                {t('packages_dag_alarm_receiver_preview', {
+                  count: previewCount.value,
+                })}
+              </span>
+              <ElButton
+                text
+                type="primary"
+                onClick={() => {
+                  detailOpen.value = !detailOpen.value
+                }}
+              >
+                {detailOpen.value
+                  ? t('packages_dag_alarm_receiver_preview_hide')
+                  : t('packages_dag_alarm_receiver_preview_detail')}
+              </ElButton>
+            </div>
+          )}
+          {detailOpen.value && (
+            <div class="alarm-receiver-preview-detail">
+              {previewEmails.value.length ? (
+                previewEmails.value.map((item) => (
+                  <div key={item.email} class="alarm-receiver-preview-email">
+                    <span>{item.email}</span>
+                    <span>{(item.sources || []).join('、')}</span>
+                  </div>
+                ))
+              ) : (
+                <div>
+                  {mode.value === 'SYSTEM_DEFAULT'
+                    ? t('packages_dag_alarm_receiver_system_empty')
+                    : t('packages_dag_alarm_receiver_empty_warning')}
+                </div>
+              )}
             </div>
           )}
           {previewFailed.value && (
@@ -249,11 +336,6 @@ const AlarmReceiverFieldComponent = defineComponent({
               <ElButton text type="primary" onClick={() => loadPreview()}>
                 {t('public_button_retry')}
               </ElButton>
-            </div>
-          )}
-          {showEmptyWarning && (
-            <div class="color-warning fs-7">
-              {t('packages_dag_alarm_receiver_empty_warning')}
             </div>
           )}
         </div>

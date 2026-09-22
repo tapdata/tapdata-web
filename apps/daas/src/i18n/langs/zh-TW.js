@@ -915,6 +915,12 @@ export default {
   user_list_del_user: '刪除用戶 {0} 後，此用戶將無法恢復',
   user_list_delete_alarm_confirm:
     '刪除用戶「{username}」（{email}）？該用戶直接作為告警接收對象的任務有 {count} 個，所屬用戶組：{groups}。刪除後，將不再通過該用戶本人或所屬用戶組接收告警。',
+  user_list_delete_alarm_title: '刪除用戶「{username}」（{email}）？',
+  user_list_delete_alarm_body:
+    '該用戶直接作為告警接收對象的任務有 {count} 個，所屬用戶組：{groups}。',
+  user_list_delete_alarm_warn:
+    '刪除後，將不再通過該用戶本人或所屬用戶組接收告警。',
+  user_list_delete_alarm_irreversible: '此操作不可恢復。',
   user_list_delete_alarm_no_group: '無',
   user_list_alarm_impact_failed: '無法取得告警影響範圍，請稍後重試',
   user_list_activetion_user: `激活用戶 {0} 後，此用戶將可以使用 ${

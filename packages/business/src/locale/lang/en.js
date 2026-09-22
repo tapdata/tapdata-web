@@ -310,6 +310,20 @@ export default {
   packages_business_task_batch_alarm_result_skipped: 'Skipped',
   packages_business_task_batch_alarm_no_edit_result:
     'No edit permission, skipped',
+  packages_business_task_batch_alarm_selected: '{count} tasks selected',
+  packages_business_task_batch_alarm_selected_objects: 'selected receivers',
+  packages_business_task_batch_alarm_mode_append_recommend:
+    'Append (recommended)',
+  packages_business_task_batch_alarm_summary_append:
+    'Append "{names}" to the existing receivers of {count} tasks. Existing receivers stay.',
+  packages_business_task_batch_alarm_summary_replace:
+    'Replace the receivers of {count} tasks with "{names}". Existing receivers will be overwritten.',
+  packages_business_task_batch_alarm_summary_remove:
+    'Remove "{names}" from the receivers of {count} tasks.',
+  packages_business_task_batch_alarm_stat_change: 'To update',
+  packages_business_task_batch_alarm_stat_permission: 'No permission',
+  packages_business_task_batch_alarm_stat_overwrite: 'Overwrite',
+  packages_business_task_batch_alarm_confirm: 'Apply',
   packages_business_dataFlow_addTag: 'Add Tag',
   packages_business_dataVerify_dataVerify: 'Data Verify',
   packages_business_dataFlow_selectAll: 'Select All',

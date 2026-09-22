@@ -1430,7 +1430,7 @@ export default {
         <template #default="{ row }">
           <ElButton
             text
-            :type="row.alarmReceiverStatus === 'NONE' ? 'warning' : 'primary'"
+            :type="row.alarmReceiverStatus === 'NONE' ? 'danger' : 'primary'"
             @click="openAlarmSettings(row)"
           >
             {{ formatAlarmReceiverStatus(row) }}

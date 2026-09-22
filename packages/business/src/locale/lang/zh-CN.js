@@ -283,6 +283,19 @@ export default {
   packages_business_task_batch_alarm_result_failed: '失败',
   packages_business_task_batch_alarm_result_skipped: '跳过',
   packages_business_task_batch_alarm_no_edit_result: '没有编辑权限，已跳过',
+  packages_business_task_batch_alarm_selected: '已选择 {count} 个任务',
+  packages_business_task_batch_alarm_selected_objects: '所选接收对象',
+  packages_business_task_batch_alarm_mode_append_recommend: '追加（推荐）',
+  packages_business_task_batch_alarm_summary_append:
+    '将在 {count} 个任务原接收对象基础上追加「{names}」，原配置保持不变。',
+  packages_business_task_batch_alarm_summary_replace:
+    '将用「{names}」替换 {count} 个任务的原接收对象，原配置会被覆盖。',
+  packages_business_task_batch_alarm_summary_remove:
+    '将从 {count} 个任务的原接收对象中移除「{names}」。',
+  packages_business_task_batch_alarm_stat_change: '预计修改',
+  packages_business_task_batch_alarm_stat_permission: '权限不足',
+  packages_business_task_batch_alarm_stat_overwrite: '原配置覆盖',
+  packages_business_task_batch_alarm_confirm: '确认设置',
   packages_business_dataFlow_addTag: '添加标签',
   packages_business_dataVerify_dataVerify: '数据校验',
   packages_business_dataFlow_selectAll: '全选',

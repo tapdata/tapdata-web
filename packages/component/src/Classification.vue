@@ -533,6 +533,14 @@ const countOf = (value: unknown) => {
   return Number.isFinite(numberValue) ? numberValue : 0
 }
 
+const alarmNotice = (tone: 'warn' | 'danger', text: string) => {
+  const style =
+    tone === 'warn'
+      ? 'margin-top:8px;padding:10px 12px;border-radius:8px;background:#fdf6ec;color:#b88230;line-height:1.6;'
+      : 'margin-top:8px;padding:10px 12px;border-radius:8px;background:#fef0f0;color:#c45656;line-height:1.6;'
+  return `<div style="${style}">${text}</div>`
+}
+
 const deleteNode = async (node: Node) => {
   const id = node.key
   let message = $t(
@@ -544,17 +552,32 @@ const deleteNode = async (node: Node) => {
     },
   )
   if (isUser.value) {
+    let title = ''
     try {
       const impact = await fetchUserGroupAlarmImpact(String(id))
-      message = $t(
-        'packages_component_classification_delete_user_group_alarm',
-        {
-          name: impact?.name || node.label,
-          n: countOf(impact?.totalMemberCount),
-          t: countOf(impact?.affectedTasks),
-          h: countOf(impact?.highRiskTasks),
-        },
-      )
+      const memberCount = countOf(impact?.totalMemberCount)
+      const taskCount = countOf(impact?.affectedTasks)
+      const highRiskCount = countOf(impact?.highRiskTasks)
+      title = $t('packages_component_classification_delete_group_title', {
+        name: impact?.name || node.label,
+      })
+      message = [
+        $t('packages_component_classification_delete_group_body', {
+          n: memberCount,
+          t: taskCount,
+        }),
+        alarmNotice(
+          'warn',
+          $t('packages_component_classification_delete_group_warn', {
+            t: taskCount,
+            h: highRiskCount,
+          }),
+        ),
+        alarmNotice(
+          'danger',
+          $t('packages_component_classification_delete_irreversible'),
+        ),
+      ].join('')
     } catch (error) {
       console.error(error)
       ElMessage.error(
@@ -562,6 +585,33 @@ const deleteNode = async (node: Node) => {
       )
       return
     }
+    const resFlag = await Modal.confirm(title, message, {
+      dangerouslyUseHTMLString: true,
+      confirmButtonText: $t(
+        'packages_component_classification_delete_group_button',
+      ),
+      type: 'warning',
+    })
+    if (!resFlag) return
+    const params = {
+      id,
+      headers: {
+        gid: id,
+      },
+    }
+    await deleteUserGroupById(params)
+    getData()
+    let checkedNodes = tree.value?.getCheckedKeys() || []
+    if (checkedNodes.includes(id as TreeKey)) {
+      checkedNodes = checkedNodes.filter((item) => item !== id)
+      emit('nodeChecked', checkedNodes)
+      setTag({
+        value: checkedNodes,
+        type: props.viewPage,
+      })
+    }
+    expandedKeys.value = expandedKeys.value.filter((item) => item !== id)
+    return
   }
   const resFlag = await Modal.confirm(message, {
     confirmButtonText: $t('public_button_delete'),

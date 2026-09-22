@@ -607,17 +607,37 @@ export default {
         this.$message.error(this.$t('user_list_alarm_impact_failed'))
         return
       }
+      const escapeHtml = (value) =>
+        String(value ?? '')
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
       const groups = (impact?.groups || [])
-        .map((group) => group?.name)
+        .map((group) => escapeHtml(group?.name))
         .filter(Boolean)
-        .join(', ')
-      const message = this.$t('user_list_delete_alarm_confirm', {
-        username: impact?.username || item.username || '',
-        email: impact?.email || item.email || '-',
-        count: this.countOf(impact?.directTaskCount),
-        groups: groups || this.$t('user_list_delete_alarm_no_group'),
+        .join('、')
+      const username = impact?.username || item.username || ''
+      const email = impact?.email || item.email || '-'
+      const title = this.$t('user_list_delete_alarm_title', {
+        username,
+        email,
       })
-      this.$confirm(message, {
+      const warnStyle =
+        'margin-top:8px;padding:10px 12px;border-radius:8px;background:#fdf6ec;color:#b88230;line-height:1.6;'
+      const dangerStyle =
+        'margin-top:8px;padding:10px 12px;border-radius:8px;background:#fef0f0;color:#c45656;line-height:1.6;'
+      const message = [
+        this.$t('user_list_delete_alarm_body', {
+          count: this.countOf(impact?.directTaskCount),
+          groups: groups || this.$t('user_list_delete_alarm_no_group'),
+        }),
+        `<div style="${warnStyle}">${this.$t('user_list_delete_alarm_warn')}</div>`,
+        `<div style="${dangerStyle}">${this.$t('user_list_delete_alarm_irreversible')}</div>`,
+      ].join('')
+      this.$confirm(message, title, {
+        dangerouslyUseHTMLString: true,
+        confirmButtonText: this.$t('public_button_delete'),
+        type: 'warning',
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true

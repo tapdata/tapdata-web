@@ -282,6 +282,19 @@ export default {
   packages_business_task_batch_alarm_result_failed: '失敗',
   packages_business_task_batch_alarm_result_skipped: '跳過',
   packages_business_task_batch_alarm_no_edit_result: '沒有編輯權限，已跳過',
+  packages_business_task_batch_alarm_selected: '已選擇 {count} 個任務',
+  packages_business_task_batch_alarm_selected_objects: '所選接收對象',
+  packages_business_task_batch_alarm_mode_append_recommend: '追加（推薦）',
+  packages_business_task_batch_alarm_summary_append:
+    '將在 {count} 個任務原接收對象基礎上追加「{names}」，原配置保持不變。',
+  packages_business_task_batch_alarm_summary_replace:
+    '將用「{names}」替換 {count} 個任務的原接收對象，原配置會被覆蓋。',
+  packages_business_task_batch_alarm_summary_remove:
+    '將從 {count} 個任務的原接收對象中移除「{names}」。',
+  packages_business_task_batch_alarm_stat_change: '預計修改',
+  packages_business_task_batch_alarm_stat_permission: '權限不足',
+  packages_business_task_batch_alarm_stat_overwrite: '原配置覆蓋',
+  packages_business_task_batch_alarm_confirm: '確認設定',
   packages_business_dataFlow_addTag: '添加標籤',
   packages_business_dataVerify_dataVerify: '數據校驗',
   packages_business_dataFlow_selectAll: '全選',

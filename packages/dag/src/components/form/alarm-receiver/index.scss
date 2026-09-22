@@ -1,0 +1,66 @@
+.alarm-receiver-mode {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.alarm-receiver-empty-banner {
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #fef0f0;
+  color: var(--el-color-danger);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.alarm-receiver-invalid-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.alarm-receiver-invalid-table th,
+.alarm-receiver-invalid-table td {
+  padding: 8px 4px;
+  border-bottom: 1px solid var(--el-border-color-lighter);
+  text-align: left;
+  font-weight: 400;
+}
+
+.alarm-receiver-invalid-table th {
+  color: var(--el-text-color-secondary);
+}
+
+.alarm-receiver-invalid-table .is-danger {
+  color: var(--el-color-danger);
+}
+
+.alarm-receiver-preview-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #f4f8ff;
+  color: var(--el-text-color-regular);
+  font-size: 13px;
+}
+
+.alarm-receiver-preview-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 12px 4px;
+  font-size: 13px;
+}
+
+.alarm-receiver-preview-email {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.alarm-receiver-preview-email span:last-child {
+  color: var(--el-text-color-secondary);
+}

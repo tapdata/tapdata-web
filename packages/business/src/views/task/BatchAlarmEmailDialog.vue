@@ -138,6 +138,46 @@ const resultCounts = computed(() => {
   }
 })
 
+const selectorRef = ref<{ receiverNames?: () => string } | null>(null)
+
+const selectedCount = computed(
+  () => taskIds.value.length + noEditTasks.value.length,
+)
+
+const overwriteCount = computed(() =>
+  receiversAction.value === 'edit' && receiverMode.value === 'REPLACE'
+    ? taskIds.value.length
+    : 0,
+)
+
+const receiverSummary = computed(() => {
+  const selected = receivers.value
+  const names =
+    (selected.length ? selectorRef.value?.receiverNames?.() : '') ||
+    t('packages_business_task_batch_alarm_selected_objects')
+  const count = taskIds.value.length
+  const key =
+    receiverMode.value === 'REPLACE'
+      ? 'packages_business_task_batch_alarm_summary_replace'
+      : receiverMode.value === 'REMOVE'
+        ? 'packages_business_task_batch_alarm_summary_remove'
+        : 'packages_business_task_batch_alarm_summary_append'
+  return t(key, { count, names })
+})
+
+function onRulesSwitch(value: boolean | string | number) {
+  rulesAction.value = value ? 'set' : 'keep'
+}
+
+function onThresholdsSwitch(value: boolean | string | number) {
+  thresholdsAction.value = value ? 'set' : 'keep'
+}
+
+function onReceiversSwitch(value: boolean | string | number) {
+  receiversAction.value = value ? 'edit' : 'keep'
+  if (value) receiverMode.value = 'APPEND'
+}
+
 function createThresholdItems() {
   return ALARM_SETTING_DEFS.map((item) => ({
     key: item.key,
@@ -342,6 +382,13 @@ defineExpose({
     @close="close"
   >
     <div v-if="page === 'form'" class="batch-alarm-dialog-body">
+      <div class="batch-alarm-selected">
+        {{
+          $t('packages_business_task_batch_alarm_selected', {
+            count: selectedCount,
+          })
+        }}
+      </div>
       <ElAlert
         v-if="noEditTasks.length"
         class="batch-alarm-email-permission-alert align-items-start"
@@ -381,19 +428,22 @@ defineExpose({
       </ElAlert>
 
       <ElForm label-position="top">
-        <ElFormItem :label="$t('packages_business_task_batch_alarm_rules')">
-          <ElRadioGroup v-model="rulesAction">
-            <ElRadio label="keep">
-              {{ $t('packages_business_task_batch_alarm_keep') }}
-            </ElRadio>
-            <ElRadio label="set">
-              {{ $t('packages_business_task_batch_alarm_set') }}
-            </ElRadio>
-            <ElRadio label="clear">
-              {{ $t('packages_business_task_batch_alarm_clear') }}
-            </ElRadio>
-          </ElRadioGroup>
-          <div class="batch-alarm-hint">
+        <ElFormItem class="batch-alarm-card">
+          <div class="batch-alarm-card-head">
+            <span>{{ $t('packages_business_task_batch_alarm_rules') }}</span>
+            <span class="batch-alarm-card-switch">
+              {{
+                rulesAction === 'keep'
+                  ? $t('packages_business_task_batch_alarm_keep')
+                  : $t('packages_business_task_batch_alarm_edit')
+              }}
+              <ElSwitch
+                :model-value="rulesAction !== 'keep'"
+                @change="onRulesSwitch"
+              />
+            </span>
+          </div>
+          <div v-if="rulesAction !== 'keep'" class="batch-alarm-hint">
             {{ $t('packages_business_task_batch_alarm_rules_hint') }}
           </div>
           <div v-if="rulesAction === 'set'" class="batch-alarm-editor">
@@ -429,23 +479,38 @@ defineExpose({
           <div v-else-if="rulesAction === 'clear'" class="color-warning fs-7">
             {{ $t('packages_business_task_batch_alarm_rules_clear') }}
           </div>
+          <ElButton
+            v-if="rulesAction !== 'keep'"
+            text
+            type="primary"
+            @click="rulesAction = rulesAction === 'clear' ? 'set' : 'clear'"
+          >
+            {{
+              rulesAction === 'clear'
+                ? $t('packages_business_task_batch_alarm_set')
+                : $t('packages_business_task_batch_alarm_clear')
+            }}
+          </ElButton>
         </ElFormItem>
 
-        <ElFormItem
-          :label="$t('packages_business_task_batch_alarm_thresholds')"
-        >
-          <ElRadioGroup v-model="thresholdsAction">
-            <ElRadio label="keep">
-              {{ $t('packages_business_task_batch_alarm_keep') }}
-            </ElRadio>
-            <ElRadio label="set">
-              {{ $t('packages_business_task_batch_alarm_set') }}
-            </ElRadio>
-            <ElRadio label="clear">
-              {{ $t('packages_business_task_batch_alarm_clear') }}
-            </ElRadio>
-          </ElRadioGroup>
-          <div class="batch-alarm-hint">
+        <ElFormItem class="batch-alarm-card">
+          <div class="batch-alarm-card-head">
+            <span>{{
+              $t('packages_business_task_batch_alarm_thresholds')
+            }}</span>
+            <span class="batch-alarm-card-switch">
+              {{
+                thresholdsAction === 'keep'
+                  ? $t('packages_business_task_batch_alarm_keep')
+                  : $t('packages_business_task_batch_alarm_edit')
+              }}
+              <ElSwitch
+                :model-value="thresholdsAction !== 'keep'"
+                @change="onThresholdsSwitch"
+              />
+            </span>
+          </div>
+          <div v-if="thresholdsAction !== 'keep'" class="batch-alarm-hint">
             {{ $t('packages_business_task_batch_alarm_thresholds_hint') }}
           </div>
           <div v-if="thresholdsAction === 'set'" class="batch-alarm-editor">
@@ -504,57 +569,98 @@ defineExpose({
           >
             {{ $t('packages_business_task_batch_alarm_thresholds_clear') }}
           </div>
+          <ElButton
+            v-if="thresholdsAction !== 'keep'"
+            text
+            type="primary"
+            @click="
+              thresholdsAction = thresholdsAction === 'clear' ? 'set' : 'clear'
+            "
+          >
+            {{
+              thresholdsAction === 'clear'
+                ? $t('packages_business_task_batch_alarm_set')
+                : $t('packages_business_task_batch_alarm_clear')
+            }}
+          </ElButton>
         </ElFormItem>
 
-        <ElFormItem :label="$t('packages_business_task_batch_alarm_receivers')">
-          <ElRadioGroup v-model="receiversAction">
-            <ElRadio label="keep">
-              {{ $t('packages_business_task_batch_alarm_keep') }}
-            </ElRadio>
-            <ElRadio label="edit">
-              {{ $t('packages_business_task_batch_alarm_edit') }}
-            </ElRadio>
-          </ElRadioGroup>
+        <ElFormItem class="batch-alarm-card">
+          <div class="batch-alarm-card-head">
+            <span>{{
+              $t('packages_business_task_batch_alarm_receivers')
+            }}</span>
+            <span class="batch-alarm-card-switch">
+              {{
+                receiversAction === 'keep'
+                  ? $t('packages_business_task_batch_alarm_keep')
+                  : $t('packages_business_task_batch_alarm_edit')
+              }}
+              <ElSwitch
+                :model-value="receiversAction === 'edit'"
+                @change="onReceiversSwitch"
+              />
+            </span>
+          </div>
           <div v-if="receiversAction === 'edit'" class="batch-alarm-editor">
             <div class="mb-2">
               {{ $t('packages_business_task_batch_alarm_mode') }}
             </div>
-            <ElRadioGroup v-model="receiverMode">
-              <ElRadio label="APPEND">
-                {{ $t('packages_business_task_batch_alarm_mode_append') }}
-              </ElRadio>
-              <ElRadio label="REPLACE">
-                {{ $t('packages_business_task_batch_alarm_mode_replace') }}
-              </ElRadio>
-              <ElRadio label="REMOVE">
-                {{ $t('packages_business_task_batch_alarm_mode_remove') }}
-              </ElRadio>
-            </ElRadioGroup>
-            <ElAlert
-              v-if="receiverMode === 'REPLACE'"
-              class="mt-3"
-              type="warning"
-              :closable="false"
-              show-icon
-            >
-              {{
-                $t('packages_business_task_batch_alarm_replace_warning', {
-                  count: taskIds.length,
-                })
-              }}
-            </ElAlert>
-            <div v-if="!receivers.length" class="color-warning fs-7 mt-2">
-              {{ $t('packages_dag_alarm_receiver_empty_warning') }}
+            <div class="batch-alarm-modes">
+              <button
+                v-for="mode in ['APPEND', 'REPLACE', 'REMOVE']"
+                :key="mode"
+                type="button"
+                :class="{ 'is-active': receiverMode === mode }"
+                @click="receiverMode = mode"
+              >
+                {{
+                  mode === 'APPEND'
+                    ? $t(
+                        'packages_business_task_batch_alarm_mode_append_recommend',
+                      )
+                    : $t(
+                        `packages_business_task_batch_alarm_mode_${mode.toLowerCase()}`,
+                      )
+                }}
+              </button>
             </div>
             <AlarmReceiverSelector
+              ref="selectorRef"
               v-model="receivers"
               class="mt-3"
               :task-ids="taskIds"
               @invalid-change="invalidReceivers = $event"
             />
+            <div
+              class="batch-alarm-summary"
+              :class="{ 'is-replace': receiverMode === 'REPLACE' }"
+            >
+              {{ receiverSummary }}
+            </div>
           </div>
         </ElFormItem>
       </ElForm>
+      <div class="batch-alarm-stats">
+        <div>
+          <span>{{
+            $t('packages_business_task_batch_alarm_stat_change')
+          }}</span>
+          <strong>{{ taskIds.length }}</strong>
+        </div>
+        <div>
+          <span>{{
+            $t('packages_business_task_batch_alarm_stat_permission')
+          }}</span>
+          <strong>{{ noEditTasks.length }}</strong>
+        </div>
+        <div>
+          <span>{{
+            $t('packages_business_task_batch_alarm_stat_overwrite')
+          }}</span>
+          <strong>{{ overwriteCount }}</strong>
+        </div>
+      </div>
     </div>
 
     <div v-else class="batch-alarm-dialog-body">
@@ -605,7 +711,7 @@ defineExpose({
           :loading="saveLoading"
           @click="save"
         >
-          {{ $t('public_button_save') }}
+          {{ $t('packages_business_task_batch_alarm_confirm') }}
         </ElButton>
       </template>
       <template v-else>
@@ -630,6 +736,93 @@ defineExpose({
   max-height: 62vh;
   overflow: auto;
   padding-right: 4px;
+}
+
+.batch-alarm-selected {
+  margin-bottom: 12px;
+  color: var(--el-text-color-secondary);
+  font-size: 13px;
+}
+
+.batch-alarm-card {
+  margin-bottom: 12px;
+  padding: 12px 14px 4px;
+  border: 1px solid var(--el-border-color-lighter);
+  border-radius: 8px;
+}
+
+.batch-alarm-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.batch-alarm-card-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--el-color-primary);
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.batch-alarm-modes {
+  display: flex;
+  gap: 8px;
+}
+
+.batch-alarm-modes button {
+  padding: 4px 12px;
+  border: 1px solid var(--el-border-color);
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.batch-alarm-modes button.is-active {
+  border-color: var(--el-color-primary);
+  color: var(--el-color-primary);
+}
+
+.batch-alarm-summary {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fdf6ec;
+  color: #b88230;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.batch-alarm-summary.is-replace {
+  background: #fef0f0;
+  color: var(--el-color-danger);
+}
+
+.batch-alarm-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.batch-alarm-stats div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--el-fill-color-light);
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+}
+
+.batch-alarm-stats strong {
+  color: var(--el-text-color-primary);
+  font-size: 20px;
 }
 
 .batch-alarm-hint {
