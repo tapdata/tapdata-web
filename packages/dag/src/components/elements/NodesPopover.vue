@@ -94,7 +94,7 @@ const isCopyTask = computed(() => dataflow.value.syncType !== 'sync')
 
 const showCreateTable = computed(() => {
   const conn = currentConnection.value as any
-  return conn && conn.connection_type?.includes('source_and_target')
+  return conn && conn.connection_type?.includes('target')
 })
 
 const showConnectionList = computed(
