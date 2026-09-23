@@ -9,11 +9,14 @@ import { fetchRoles } from '@tap/api/src/core/roles'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import { useHas } from '@tap/business/src/composables'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import i18n from '@tap/i18n'
 import { cloneDeep, escapeRegExp } from 'lodash-es'
-import { h, nextTick, reactive, ref } from 'vue'
+import { h, nextTick, reactive, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
 const { t } = i18n.global
+const route = useRoute()
 
 interface CreateForm {
   id?: string
@@ -35,6 +38,14 @@ const formRef = ref()
 const searchParams = ref({
   keyword: '',
 })
+const filterItems = ref([
+  {
+    placeholder: t('modules_name_placeholder'),
+    key: 'keyword',
+    type: 'input',
+    width: '240px',
+  },
+])
 const order = ref('clientName DESC')
 const createDialogVisible = ref(false)
 const roles = ref<any[]>([])
@@ -183,6 +194,15 @@ const handleSortTable = ({
   order.value = `${sortOrder ? prop : 'last_updated'} ${sortOrder === 'ascending' ? 'ASC' : 'DESC'}`
   table.value?.fetch(1)
 }
+
+// Watchers
+watch(
+  () => route.query,
+  () => {
+    searchParams.value.keyword = route.query.keyword as string
+    table.value?.fetch(1)
+  },
+)
 </script>
 
 <template>
@@ -205,6 +225,15 @@ const handleSortTable = ({
       :remote-method="getData"
       @sort-change="handleSortTable"
     >
+      <template #search>
+        <div class="search-bar">
+          <FilterBar
+            v-model:value="searchParams"
+            :items="filterItems"
+            @fetch="table?.fetch(1)"
+          />
+        </div>
+      </template>
       <el-table-column
         :label="$t('application_header_id')"
         :show-overflow-tooltip="true"
