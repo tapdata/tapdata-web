@@ -313,7 +313,7 @@ export default {
   modules_api_server_status: 'API 服務狀態',
   modules_sure: '你確定要',
   modules_cancel_failed: '取消發布API失敗',
-  modules_name_placeholder: '請輸入表名/數據庫名',
+  modules_name_placeholder: '搜尋客戶端名稱',
   module_form_connection: '數據庫',
   module_form_tablename: '表名稱',
   module_form_default_Api: '默認CURD API',

@@ -322,7 +322,7 @@ export default {
   modules_api_server_status: 'API Service Status',
   modules_sure: 'Are you sure you want',
   modules_cancel_failed: 'Unpublished API failed',
-  modules_name_placeholder: 'Please enter the table name/database name',
+  modules_name_placeholder: 'Search client name',
   module_form_connection: 'Database',
   module_form_tablename: 'table name',
   module_form_default_Api: 'Default CURD API',
