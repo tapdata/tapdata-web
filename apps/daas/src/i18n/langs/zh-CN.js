@@ -313,7 +313,7 @@ export default {
   modules_api_server_status: 'API 服务状态',
   modules_sure: '你确定要',
   modules_cancel_failed: '取消发布API失败',
-  modules_name_placeholder: '请输入表名/数据库名',
+  modules_name_placeholder: '搜索客户端名称',
   module_form_connection: '数据库',
   module_form_tablename: '表名称',
   module_form_default_Api: '默认CURD API',
