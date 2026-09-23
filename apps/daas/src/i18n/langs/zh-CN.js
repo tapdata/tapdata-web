@@ -306,7 +306,7 @@ export default {
   modules_api_server_status: 'API 服务状态',
   modules_sure: '你确定要',
   modules_cancel_failed: '取消发布API失败',
-  modules_name_placeholder: '请输入表名/数据库名',
+  modules_name_placeholder: '搜索客户端名称',
   module_form_connection: '数据库',
   module_form_tablename: '表名称',
   module_form_default_Api: '默认CURD API',
@@ -749,7 +749,8 @@ export default {
   setting_Switch_to_batch_insert_mode_interval__s__in_cdc_:
     '切换到cdc中的批量插入模式间隔。',
   setting_share_cdc: '共享增量',
-  setting_global_share_cdc_enable_doc: '默认开启时，使用外存列表中指定的默认外存，并且作为默认设置应用于后续新建的连接和任务。（开启后才能在数据追溯中查询变更日志）',
+  setting_global_share_cdc_enable_doc:
+    '默认开启时，使用外存列表中指定的默认外存，并且作为默认设置应用于后续新建的连接和任务。（开启后才能在数据追溯中查询变更日志）',
   setting_global_share_cdc_enable: '默认全局开启共享增量',
   setting_share_cdc_persistence_mode: '共享增量存储模式',
   setting_share_cdc_persistence_memory_size: '共享增量内存缓存行数',
@@ -767,7 +768,8 @@ export default {
   setting_share_cdc_persistence_rocksdb_path_doc:
     '该项配置只有模式选择RocksDB时生效，RocksDB存储的本地路径',
   setting_task_start_transform_wait_seconds: '任务启动推演等待时长(秒)',
-  setting_task_start_transform_wait_seconds_doc: '任务点击启动后会进行推演或试运行，当超出设置的等待时长后，此次启动会失败，需要再次点击启动，或者调大推演等待时长即可，默认等待时长为60s',
+  setting_task_start_transform_wait_seconds_doc:
+    '任务点击启动后会进行推演或试运行，当超出设置的等待时长后，此次启动会失败，需要再次点击启动，或者调大推演等待时长即可，默认等待时长为60s',
   setting_task_log_file_save_time: '任务日志留存时长(天)',
   setting_task_log_file_save_size: '任务日志留存大小(MB)',
   setting_task_log_file_save_count: '任务日志保留份数',
@@ -781,7 +783,8 @@ export default {
   setting_Login_Brief_Tips: '登录简要提示',
   setting_Login_Brief_Tips_doc: '开启后，登录提示将简化',
   setting_Access_Token_Idle_Timeout_Minutes: '会话空闲超时时间（单位：分钟）',
-  setting_Access_Token_Idle_Timeout_Minutes_doc: '当会话不活跃时间超过设置的值时，会话失效需重新登录',
+  setting_Access_Token_Idle_Timeout_Minutes_doc:
+    '当会话不活跃时间超过设置的值时，会话失效需重新登录',
   setting_LDAP: 'LDAP登录设置',
   setting_Ldap_Login_Enable: '使用LDAP登录',
   setting_Ldap_Server_Host: 'LDAP服务器地址',
