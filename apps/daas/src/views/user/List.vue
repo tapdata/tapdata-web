@@ -634,7 +634,7 @@ export default {
         `<div style="${warnStyle}">${this.$t('user_list_delete_alarm_warn')}</div>`,
         `<div style="${dangerStyle}">${this.$t('user_list_delete_alarm_irreversible')}</div>`,
       ].join('')
-      this.$confirm(message, title, {
+      this.$confirm(title, message, {
         dangerouslyUseHTMLString: true,
         confirmButtonText: this.$t('public_button_delete'),
         type: 'warning',

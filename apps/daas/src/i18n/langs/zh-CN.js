@@ -2080,6 +2080,10 @@ export default {
   notification_user_group_delete_mode_change:
     '删除了用户组【{parameter1}】，操作模式【{parameter2}】，{parameter3}',
   notification_alarm_receiver_before_after: '修改前：{before}，修改后：{after}',
+  notification_alarm_receiver_system_default: '系统默认',
+  notification_alarm_receiver_none: '无',
+  notification_alarm_receiver_user_group: '用户组',
+  notification_alarm_receiver_user: '用户',
   notification_modular_message: '',
   queryBuilder_addCond: '字段条件',
   account_accountSettings: '个人设置 ',

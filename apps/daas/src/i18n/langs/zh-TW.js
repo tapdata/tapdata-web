@@ -2068,6 +2068,10 @@ export default {
   notification_user_group_delete_mode_change:
     '刪除了用戶組【{parameter1}】，操作模式【{parameter2}】，{parameter3}',
   notification_alarm_receiver_before_after: '修改前：{before}，修改後：{after}',
+  notification_alarm_receiver_system_default: '系統默認',
+  notification_alarm_receiver_none: '無',
+  notification_alarm_receiver_user_group: '使用者群組',
+  notification_alarm_receiver_user: '使用者',
   notification_operation_readnotification_modular_message: '',
   dialog_placeholderTable:
     '僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許 system 開頭',

@@ -61,14 +61,14 @@ const RECEIVER_MODE_KEYS: Record<string, string> = {
 }
 
 const message = computed(() => {
-  if (props.record.i18nMessage) {
-    return props.record.i18nMessage
-  }
-
   const modular =
     props.record.modular === 'migrate' ? 'migration' : props.record.modular
   const specialMessage = buildSpecialMessage(modular)
   if (specialMessage) return specialMessage
+
+  if (props.record.i18nMessage) {
+    return props.record.i18nMessage
+  }
 
   return [
     `${t('notification_account')} `,
@@ -84,27 +84,29 @@ function buildSpecialMessage(modular: unknown) {
   const hasMode = toText(props.record.parameter2) !== ''
   const hasChange = formatChange(props.record.parameter3) !== ''
 
+  const params = {
+    parameter1: '{parameter1}',
+    parameter2: '{parameter2}',
+    parameter3: '{parameter3}',
+  }
+
   if (modular === 'alarmReceiver' && operation === 'update') {
     if (hasMode && hasChange) {
-      return t('notification_alarm_receiver_update_mode_change')
+      return t('notification_alarm_receiver_update_mode_change', params)
     }
-    if (hasMode) return t('notification_alarm_receiver_update_mode')
-    if (hasChange) return t('notification_alarm_receiver_update_change')
-    return t('notification_alarm_receiver_update')
+    if (hasMode) return t('notification_alarm_receiver_update_mode', params)
+    if (hasChange) return t('notification_alarm_receiver_update_change', params)
+    return t('notification_alarm_receiver_update', params)
   }
 
   if (modular === 'alarmReceiver' && operation === 'batch_update') {
-    if (hasChange) return t('notification_alarm_receiver_batch_update_change')
-    return t('notification_alarm_receiver_batch_update')
+    if (hasChange)
+      return t('notification_alarm_receiver_batch_update_change', params)
+    return t('notification_alarm_receiver_batch_update', params)
   }
 
   if (modular === 'userGroup' && operation === 'delete') {
-    if (hasMode && hasChange) {
-      return t('notification_user_group_delete_mode_change')
-    }
-    if (hasMode) return t('notification_user_group_delete_mode')
-    if (hasChange) return t('notification_user_group_delete_change')
-    return t('notification_user_group_delete')
+    return t('notification_user_group_delete', params)
   }
 
   return ''
@@ -114,6 +116,80 @@ function formatMode(value: unknown) {
   const text = toText(value)
   const key = RECEIVER_MODE_KEYS[text]
   return key ? t(key) : text
+}
+
+function resolveRef(item: unknown, rootObj: any): unknown {
+  if (item && typeof item === 'object' && '$ref' in item) {
+    const ref = (item as any)['$ref']
+    if (typeof ref === 'string') {
+      const beforeMatch = ref.match(/^\$\.before\[(\d+)\]$/)
+      if (beforeMatch && Array.isArray(rootObj?.before)) {
+        const idx = Number.parseInt(beforeMatch[1], 10)
+        return rootObj.before[idx] ?? item
+      }
+      const afterMatch = ref.match(/^\$\.after\[(\d+)\]$/)
+      if (afterMatch && Array.isArray(rootObj?.after)) {
+        const idx = Number.parseInt(afterMatch[1], 10)
+        return rootObj.after[idx] ?? item
+      }
+    }
+  }
+  return item
+}
+
+function formatSingleReceiver(receiver: unknown): string {
+  if (receiver == null) return ''
+  if (typeof receiver === 'string') return receiver
+  if (typeof receiver === 'object') {
+    const r = receiver as Record<string, any>
+    const type = r.type
+    if (type === 'EMAIL' || (!type && r.email && !r.id)) {
+      return r.name ? `${r.name} (${r.email})` : String(r.email)
+    }
+    if (type === 'USER_GROUP') {
+      const groupLabel = t('notification_alarm_receiver_user_group') || '用户组'
+      const name = r.name || r.label
+      if (name) return `${groupLabel}「${name}」`
+      const id = String(r.id || '')
+      return id
+        ? `${groupLabel}（${id.length > 8 ? id.slice(-6) : id}）`
+        : groupLabel
+    }
+    if (type === 'USER') {
+      const userLabel = t('notification_alarm_receiver_user') || '用户'
+      const name = r.username || r.name
+      if (name) return `${userLabel}「${name}」`
+      if (r.email) return `${userLabel}「${r.email}」`
+      const id = String(r.id || '')
+      return id
+        ? `${userLabel}（${id.length > 8 ? id.slice(-6) : id}）`
+        : userLabel
+    }
+    if (r.name) return String(r.name)
+    if (r.username) return String(r.username)
+    if (r.email) return String(r.email)
+    if (r.id) return String(r.id)
+  }
+  return String(receiver)
+}
+
+function formatReceiverList(value: unknown, rootObj?: any): string {
+  if (value === null || value === undefined) {
+    return t('notification_alarm_receiver_system_default') || '系统默认'
+  }
+  if (Array.isArray(value)) {
+    if (value.length === 0) {
+      return t('notification_alarm_receiver_none') || '无'
+    }
+    return value
+      .map((item) => {
+        const resolved = resolveRef(item, rootObj)
+        return formatSingleReceiver(resolved)
+      })
+      .filter(Boolean)
+      .join('、')
+  }
+  return stringifyChange(value)
 }
 
 function stringifyChange(value: unknown): string {
@@ -129,6 +205,7 @@ function stringifyChange(value: unknown): string {
 
 function formatChange(value: unknown): string {
   if (value == null || value === '') return ''
+  let parsed = value
   if (typeof value === 'string') {
     const trimmed = value.trim()
     if (
@@ -136,28 +213,38 @@ function formatChange(value: unknown): string {
       (trimmed.startsWith('[') && trimmed.endsWith(']'))
     ) {
       try {
-        return formatChange(JSON.parse(trimmed))
+        parsed = JSON.parse(trimmed)
       } catch {
         return value
       }
+    } else {
+      return value
     }
-    return value
   }
-  if (typeof value === 'number' || typeof value === 'boolean') {
-    return String(value)
+
+  if (typeof parsed === 'number' || typeof parsed === 'boolean') {
+    return String(parsed)
   }
-  if (typeof value === 'object') {
-    const record = value as Record<string, unknown>
-    const before = record.before ?? record.beforeValue ?? record.old
-    const after = record.after ?? record.afterValue ?? record.new
-    if (before !== undefined || after !== undefined) {
+
+  if (typeof parsed === 'object' && parsed !== null) {
+    const record = parsed as Record<string, unknown>
+    const hasBefore =
+      'before' in record || 'beforeValue' in record || 'old' in record
+    const hasAfter =
+      'after' in record || 'afterValue' in record || 'new' in record
+    if (hasBefore || hasAfter) {
+      const before = record.before ?? record.beforeValue ?? record.old
+      const after = record.after ?? record.afterValue ?? record.new
       return t('notification_alarm_receiver_before_after', {
-        before: stringifyChange(before),
-        after: stringifyChange(after),
+        before: formatReceiverList(before, record),
+        after: formatReceiverList(after, record),
       })
     }
+    if ('affectedTasks' in record || 'descendantGroupCount' in record) {
+      return ''
+    }
   }
-  return stringifyChange(value)
+  return stringifyChange(parsed)
 }
 
 const UserOperationContent = () => renderMessage()
@@ -216,12 +303,11 @@ function getPlaceholderText(key: string) {
     return formatMode(props.record.parameter2)
   }
 
-  if (
-    key === 'parameter3' &&
-    (props.record.modular === 'alarmReceiver' ||
-      props.record.modular === 'userGroup')
-  ) {
-    return formatChange(props.record.parameter3) || ' '
+  if (key === 'parameter3') {
+    if (props.record.modular === 'alarmReceiver') {
+      return formatChange(props.record.parameter3) || ' '
+    }
+    return ''
   }
 
   return toText(props.record[key])

@@ -2185,6 +2185,10 @@ export default {
   notification_user_group_delete_mode_change:
     'Deleted user group [{parameter1}], operation mode [{parameter2}], {parameter3}',
   notification_alarm_receiver_before_after: 'Before: {before}, After: {after}',
+  notification_alarm_receiver_system_default: 'System Default',
+  notification_alarm_receiver_none: 'None',
+  notification_alarm_receiver_user_group: 'User Group',
+  notification_alarm_receiver_user: 'User',
   notification_operation_readnotification_modular_message: '',
   dialog_placeholderTable:
     'Only supports English, numbers, underscores, minus signs, dots, and starts with English letter',
