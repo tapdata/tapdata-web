@@ -10,6 +10,7 @@ import {
 import {
   createUserGroup,
   deleteUserGroupById,
+  fetchUserGroupAlarmImpact,
   fetchUserGroups,
   patchUserGroupById,
 } from '@tap/api/core/user-groups'
@@ -526,21 +527,95 @@ const dialogSubmit = async () => {
   }
 }
 
+const countOf = (value: unknown) => {
+  if (Array.isArray(value)) return value.length
+  const numberValue = Number(value)
+  return Number.isFinite(numberValue) ? numberValue : 0
+}
+
+const alarmNotice = (tone: 'warn' | 'danger', text: string) => {
+  const style =
+    tone === 'warn'
+      ? 'margin-top:8px;padding:10px 12px;border-radius:8px;background:#fdf6ec;color:#b88230;line-height:1.6;'
+      : 'margin-top:8px;padding:10px 12px;border-radius:8px;background:#fef0f0;color:#c45656;line-height:1.6;'
+  return `<div style="${style}">${text}</div>`
+}
+
 const deleteNode = async (node: Node) => {
   const id = node.key
-  const resFlag = await Modal.confirm(
-    $t(
-      isUser.value
-        ? 'packages_component_classification_deteleMessage_user'
-        : 'packages_component_classification_deteleMessage',
-      {
-        val: node.label,
-      },
-    ),
+  let message = $t(
+    isUser.value
+      ? 'packages_component_classification_deteleMessage_user'
+      : 'packages_component_classification_deteleMessage',
     {
-      confirmButtonText: $t('public_button_delete'),
+      val: node.label,
     },
   )
+  if (isUser.value) {
+    let title = ''
+    try {
+      const impact = await fetchUserGroupAlarmImpact(String(id))
+      const memberCount = countOf(impact?.totalMemberCount)
+      const taskCount = countOf(impact?.affectedTasks)
+      const highRiskCount = countOf(impact?.highRiskTasks)
+      title = $t('packages_component_classification_delete_group_title', {
+        name: impact?.name || node.label,
+      })
+      message = [
+        $t('packages_component_classification_delete_group_body', {
+          n: memberCount,
+          t: taskCount,
+        }),
+        alarmNotice(
+          'warn',
+          $t('packages_component_classification_delete_group_warn', {
+            t: taskCount,
+            h: highRiskCount,
+          }),
+        ),
+        alarmNotice(
+          'danger',
+          $t('packages_component_classification_delete_irreversible'),
+        ),
+      ].join('')
+    } catch (error) {
+      console.error(error)
+      ElMessage.error(
+        $t('packages_component_classification_alarm_impact_failed'),
+      )
+      return
+    }
+    const resFlag = await Modal.confirm(title, message, {
+      dangerouslyUseHTMLString: true,
+      confirmButtonText: $t(
+        'packages_component_classification_delete_group_button',
+      ),
+      type: 'warning',
+    })
+    if (!resFlag) return
+    const params = {
+      id,
+      headers: {
+        gid: id,
+      },
+    }
+    await deleteUserGroupById(params)
+    getData()
+    let checkedNodes = tree.value?.getCheckedKeys() || []
+    if (checkedNodes.includes(id as TreeKey)) {
+      checkedNodes = checkedNodes.filter((item) => item !== id)
+      emit('nodeChecked', checkedNodes)
+      setTag({
+        value: checkedNodes,
+        type: props.viewPage,
+      })
+    }
+    expandedKeys.value = expandedKeys.value.filter((item) => item !== id)
+    return
+  }
+  const resFlag = await Modal.confirm(message, {
+    confirmButtonText: $t('public_button_delete'),
+  })
   if (!resFlag) return
   if (isUser.value) {
     const params = {
@@ -673,6 +748,7 @@ const handleTreeDrop = async (ev: DragEvent, data: TreeNode) => {
         {
           id: data.id,
           value: data.value,
+          ...(isUser.value ? { gid: data.gid } : {}),
         },
       ],
     })
@@ -966,7 +1042,7 @@ defineExpose({
         <el-icon>
           <i-lucide-inbox />
         </el-icon>
-        <span>无标签</span>
+        <span>{{ $t('packages_component_classification_no_tag') }}</span>
       </div>
     </div>
 

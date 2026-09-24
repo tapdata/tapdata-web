@@ -713,7 +713,9 @@ export default {
   setting_license_alarm: ' license 到期提前提醒（天）',
   setting_License_expiry_email_reminder_: 'license 到期提前幾天提醒設置',
   setting_flow_engine_version: ' 流程引擎版本',
-  setting_tapdata_agent_version: `${import.meta.env.VUE_APP_PAGE_TITLE}  agent版本`,
+  setting_tapdata_agent_version: `${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  }  agent版本`,
   setting_doc_base_url: ' 幫助文檔URL',
   setting_help: ' 幫助文檔',
   setting_Ip_addresses: ' Ipv4地址(多個逗號分隔)',
@@ -911,8 +913,22 @@ export default {
   user_list_bulk_freeze: '批量凍結',
   user_list_bulk_check: '批量校驗',
   user_list_del_user: '刪除用戶 {0} 後，此用戶將無法恢復',
-  user_list_activetion_user: `激活用戶 {0} 後，此用戶將可以使用 ${import.meta.env.VUE_APP_PAGE_TITLE} 系統`,
-  user_list_freeze_user: `凍結用戶 {0} 後，此用戶將不可以使用 ${import.meta.env.VUE_APP_PAGE_TITLE} 系統`,
+  user_list_delete_alarm_confirm:
+    '刪除用戶「{username}」（{email}）？該用戶直接作為告警接收對象的任務有 {count} 個，所屬用戶組：{groups}。刪除後，將不再通過該用戶本人或所屬用戶組接收告警。',
+  user_list_delete_alarm_title: '刪除用戶「{username}」（{email}）？',
+  user_list_delete_alarm_body:
+    '該用戶直接作為告警接收對象的任務有 {count} 個，所屬用戶組：{groups}。',
+  user_list_delete_alarm_warn:
+    '刪除後，將不再通過該用戶本人或所屬用戶組接收告警。',
+  user_list_delete_alarm_irreversible: '此操作不可恢復。',
+  user_list_delete_alarm_no_group: '無',
+  user_list_alarm_impact_failed: '無法取得告警影響範圍，請稍後重試',
+  user_list_activetion_user: `激活用戶 {0} 後，此用戶將可以使用 ${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } 系統`,
+  user_list_freeze_user: `凍結用戶 {0} 後，此用戶將不可以使用 ${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } 系統`,
   user_list_check_user: '通過校驗用戶 {0} 的郵箱後，此用戶可以被激活',
   user_list_activetion_success: '激活成功',
   user_list_activetion_error: '激活失敗',
@@ -2029,6 +2045,33 @@ export default {
   notification_modular_user: '用戶',
   notification_modular_role: '角色',
   notification_modular_accessCode: '訪問碼',
+  notification_modular_alarmReceiver: '告警接收對象',
+  notification_modular_userGroup: '用戶組',
+  notification_operation_batch_update: ' 批量修改了 ',
+  notification_alarm_receiver_update:
+    '修改了任務【{parameter1}】的告警接收對象',
+  notification_alarm_receiver_update_mode:
+    '修改了任務【{parameter1}】的告警接收對象，操作模式【{parameter2}】',
+  notification_alarm_receiver_update_change:
+    '修改了任務【{parameter1}】的告警接收對象，{parameter3}',
+  notification_alarm_receiver_update_mode_change:
+    '修改了任務【{parameter1}】的告警接收對象，操作模式【{parameter2}】，{parameter3}',
+  notification_alarm_receiver_batch_update:
+    '以【{parameter2}】批量修改了任務【{parameter1}】的告警接收對象',
+  notification_alarm_receiver_batch_update_change:
+    '以【{parameter2}】批量修改了任務【{parameter1}】的告警接收對象，{parameter3}',
+  notification_user_group_delete: '刪除了用戶組【{parameter1}】',
+  notification_user_group_delete_mode:
+    '刪除了用戶組【{parameter1}】，操作模式【{parameter2}】',
+  notification_user_group_delete_change:
+    '刪除了用戶組【{parameter1}】，{parameter3}',
+  notification_user_group_delete_mode_change:
+    '刪除了用戶組【{parameter1}】，操作模式【{parameter2}】，{parameter3}',
+  notification_alarm_receiver_before_after: '修改前：{before}，修改後：{after}',
+  notification_alarm_receiver_system_default: '系統默認',
+  notification_alarm_receiver_none: '無',
+  notification_alarm_receiver_user_group: '使用者群組',
+  notification_alarm_receiver_user: '使用者',
   notification_operation_readnotification_modular_message: '',
   dialog_placeholderTable:
     '僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許 system 開頭',
@@ -2280,9 +2323,15 @@ export default {
   daas_feature_unavailable_upgrade_dec_li3: '告警設置',
   daas_feature_unavailable_upgrade_dec_li4: '權限管理（僅企業版）',
   daas_feature_unavailable_upgrade_dec_li5: '更多數據源',
-  daas_feature_unavailable_upgrade_dec_li1_desc: `基於自研技術，${import.meta.env.VUE_APP_PAGE_TITLE} 能最大程度保障數據一致性，還支持數據表數據校驗，以驗證和確保數據流轉正確，滿足生產環境要求。`,
-  daas_feature_unavailable_upgrade_dec_li2_desc: `為減輕源端數據庫壓力，${import.meta.env.VUE_APP_PAGE_TITLE} 支持共享挖掘增量日誌緩存，開啓此功能的任務可直接從緩存中獲取增量事件，無需重復讀取源庫增量日誌。`,
-  daas_feature_unavailable_upgrade_dec_li3_desc: `${import.meta.env.VUE_APP_PAGE_TITLE} 支持通過 SMTP 協議發告警郵件，讓用戶在常用郵箱及時接收異常通知，助其感知異常，保障任務運行穩定可靠。`,
+  daas_feature_unavailable_upgrade_dec_li1_desc: `基於自研技術，${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } 能最大程度保障數據一致性，還支持數據表數據校驗，以驗證和確保數據流轉正確，滿足生產環境要求。`,
+  daas_feature_unavailable_upgrade_dec_li2_desc: `為減輕源端數據庫壓力，${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } 支持共享挖掘增量日誌緩存，開啓此功能的任務可直接從緩存中獲取增量事件，無需重復讀取源庫增量日誌。`,
+  daas_feature_unavailable_upgrade_dec_li3_desc: `${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } 支持通過 SMTP 協議發告警郵件，讓用戶在常用郵箱及時接收異常通知，助其感知異常，保障任務運行穩定可靠。`,
   daas_feature_unavailable_upgrade_dec_li4_desc:
     '角色是權限合集，可為其授予多權限並授予用戶，用戶繼承所有權限，依此設計可先創角色再賦予用戶，無需為每個用戶配置權限，以簡化運維管理和提升安全性。',
   daas_feature_unavailable_upgrade_dec_li5_desc: '',

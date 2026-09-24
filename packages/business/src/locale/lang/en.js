@@ -258,8 +258,8 @@ export default {
   packages_business_dataFlow_bulkScheuled: 'Batch Start',
   packages_business_dataFlow_bulkStopping: 'Batch Stop',
   packages_business_dataFlow_taskBulkOperation: 'Batch Operation',
-  packages_business_task_batch_alarm_email_action: 'Batch Set Alert Receivers',
-  packages_business_task_batch_alarm_email_title: 'Batch Set Alert Receivers',
+  packages_business_task_batch_alarm_email_action: 'Batch Set Alerts',
+  packages_business_task_batch_alarm_email_title: 'Batch Set Alerts',
   packages_business_task_batch_alarm_email_label: 'Email Receivers',
   packages_business_task_batch_alarm_email_placeholder:
     'Select email receivers',
@@ -269,6 +269,61 @@ export default {
     'No email receivers available. Save directly to clear alert receivers from the selected tasks.',
   packages_business_task_batch_alarm_email_no_edit_permission_tip:
     '{count} tasks do not have edit permission and will be skipped.',
+  packages_business_task_batch_alarm_rules: 'Alert Rules',
+  packages_business_task_batch_alarm_rules_hint:
+    'Alert switches and notification interval',
+  packages_business_task_batch_alarm_rules_overwrite:
+    'Saving will overwrite the alert rules of the selected tasks',
+  packages_business_task_batch_alarm_rules_clear:
+    'Saving will clear the alert rules of the selected tasks',
+  packages_business_task_batch_alarm_thresholds: 'Alert Thresholds',
+  packages_business_task_batch_alarm_thresholds_hint:
+    'Incremental delay and retry count',
+  packages_business_task_batch_alarm_thresholds_overwrite:
+    'Saving will overwrite the alert thresholds of the selected tasks',
+  packages_business_task_batch_alarm_thresholds_clear:
+    'Saving will clear the alert thresholds of the selected tasks',
+  packages_business_task_batch_alarm_receivers: 'Receivers',
+  packages_business_task_batch_alarm_keep: 'Do not change',
+  packages_business_task_batch_alarm_set: 'Set',
+  packages_business_task_batch_alarm_clear: 'Clear',
+  packages_business_task_batch_alarm_edit: 'Edit',
+  packages_business_task_batch_alarm_mode: 'Operation Mode',
+  packages_business_task_batch_alarm_mode_append: 'Append',
+  packages_business_task_batch_alarm_mode_replace: 'Replace',
+  packages_business_task_batch_alarm_mode_remove: 'Remove',
+  packages_business_task_batch_alarm_interval:
+    'Notification interval (seconds)',
+  packages_business_task_batch_alarm_replace_warning:
+    'Existing receivers will be overwritten. {count} tasks will be affected.',
+  packages_business_task_batch_alarm_result_title: 'Batch Update Result',
+  packages_business_task_batch_alarm_result_summary:
+    'Succeeded {succeeded}, failed {failed}, skipped {skipped}',
+  packages_business_task_batch_alarm_only_failed: 'Failed only',
+  packages_business_task_batch_alarm_retry_failed: 'Retry failed items',
+  packages_business_task_batch_alarm_back: 'Back to edit',
+  packages_business_task_batch_alarm_col_task: 'Task',
+  packages_business_task_batch_alarm_col_result: 'Result',
+  packages_business_task_batch_alarm_col_message: 'Message',
+  packages_business_task_batch_alarm_result_ok: 'Succeeded',
+  packages_business_task_batch_alarm_result_failed: 'Failed',
+  packages_business_task_batch_alarm_result_skipped: 'Skipped',
+  packages_business_task_batch_alarm_no_edit_result:
+    'No edit permission, skipped',
+  packages_business_task_batch_alarm_selected: '{count} tasks selected',
+  packages_business_task_batch_alarm_selected_objects: 'selected receivers',
+  packages_business_task_batch_alarm_mode_append_recommend:
+    'Append (recommended)',
+  packages_business_task_batch_alarm_summary_append:
+    'Append "{names}" to the existing receivers of {count} tasks. Existing receivers stay.',
+  packages_business_task_batch_alarm_summary_replace:
+    'Replace the receivers of {count} tasks with "{names}". Existing receivers will be overwritten.',
+  packages_business_task_batch_alarm_summary_remove:
+    'Remove "{names}" from the receivers of {count} tasks.',
+  packages_business_task_batch_alarm_stat_change: 'To update',
+  packages_business_task_batch_alarm_stat_permission: 'No permission',
+  packages_business_task_batch_alarm_stat_overwrite: 'Overwrite',
+  packages_business_task_batch_alarm_confirm: 'Apply',
   packages_business_dataFlow_addTag: 'Add Tag',
   packages_business_dataVerify_dataVerify: 'Data Verify',
   packages_business_dataFlow_selectAll: 'Select All',
@@ -423,10 +478,16 @@ export default {
     'When using RocksDB as the shared mining storage, you need to manually specify an agent.',
   packages_business_components_connectiontypeselectorsort_wodeshujuyuan:
     'My Data Source',
-  packages_business_components_connectiontypeselectorsort_jiaoyouTap: `Let ${import.meta.env.VUE_APP_PAGE_TITLE} conduct a comprehensive quality test to ensure the stability and quality of the plugin`,
+  packages_business_components_connectiontypeselectorsort_jiaoyouTap: `Let ${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } conduct a comprehensive quality test to ensure the stability and quality of the plugin`,
   packages_business_components_connectiontypeselectorsort_zhuyizhelishi:
     'Note: here is the data source plugin uploaded by yourself, if you want to use it for production tasks, please submit the source code on GitHub',
-  packages_business_components_connectiontypeselectorsort_zhuyiBet: `Note: Beta data sources have not passed ${import.meta.env.VUE_APP_PAGE_TITLE}'s certification testing process, and ${import.meta.env.VUE_APP_PAGE_TITLE} does not guarantee the stable operation of these data sources for the time being`,
+  packages_business_components_connectiontypeselectorsort_zhuyiBet: `Note: Beta data sources have not passed ${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  }'s certification testing process, and ${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } does not guarantee the stable operation of these data sources for the time being`,
   packages_business_components_connectiontypeselectorsort_shiyongbanzanbu:
     'Stay tuned for the following data sources to open',
   packages_business_components_connectiontypeselectorsort_betashu:
@@ -1157,7 +1218,9 @@ export default {
     'Task created successfully, click to view',
   packages_business_task_created_fail_no_primary_key:
     'The task has been created, but since your table does not have a primary key, you need to enter the task editor to manually set the update condition field. Click to view the task.',
-  packages_business_fdm_create_task_dialog_desc_prefix: `${import.meta.env.VUE_APP_PAGE_TITLE}  will automatically create a cloning pipeline task, which will automatically copy the structure and data of the selected`,
+  packages_business_fdm_create_task_dialog_desc_prefix: `${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  }  will automatically create a cloning pipeline task, which will automatically copy the structure and data of the selected`,
   packages_business_fdm_create_task_dialog_desc_suffix:
     'to the Foundational Data Model layer of the data platform and keep the source database and Foundational Data Model layer data in real-time synchronization and automatic validation. In most cases, the structure changes (DDL) of the source database will also be copied to the Foundational Data Model layer. You can monitor the running status of the pipeline task by clicking the ICON on the right side of the database name in the Foundational Data Model layer. You can also choose to modify the physical table name prefix in the Foundational Data Model layer now.',
   packages_business_mdm_create_task_dialog_desc_prefix:
@@ -1174,8 +1237,12 @@ export default {
     'Please enter the table name to be newly constructed in the Curated layer. If the table name already exists, the existing data will be overwritten by default.',
   packages_business_save_and_run_now: 'Save and Run',
   packages_business_save_only: 'Only Save',
-  packages_business_target_create_task_dialog_desc_prefix_clone: `${import.meta.env.VUE_APP_PAGE_TITLE}  will create a cloning pipeline task to sync`,
-  packages_business_target_create_task_dialog_desc_prefix_sync: `${import.meta.env.VUE_APP_PAGE_TITLE}  will create a sync pipeline task to sync`,
+  packages_business_target_create_task_dialog_desc_prefix_clone: `${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  }  will create a cloning pipeline task to sync`,
+  packages_business_target_create_task_dialog_desc_prefix_sync: `${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  }  will create a sync pipeline task to sync`,
   packages_business_target_create_task_dialog_desc_to: 'to',
   packages_business_target_create_task_dialog_desc_suffix:
     'Please click button below to continue. You can also change the task name',
@@ -1565,7 +1632,11 @@ export default {
   packages_business_relmig_import: 'MongoDB Relmig Import',
   packages_business_api_import: 'API Import',
   packages_business_functions_import: 'Functions Import',
-  packages_business_relmig_import_desc: `This feature is designed to seamlessly import MongoDB Relational Migrator-exportd relmig project files into ${import.meta.env.VUE_APP_PAGE_TITLE}. After the relmig file is imported, ${import.meta.env.VUE_APP_PAGE_TITLE} will automatically create a task to  perform real time data synchronization from source database and transform into JSON data format in MongoDB database.`,
+  packages_business_relmig_import_desc: `This feature is designed to seamlessly import MongoDB Relational Migrator-exportd relmig project files into ${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  }. After the relmig file is imported, ${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } will automatically create a task to  perform real time data synchronization from source database and transform into JSON data format in MongoDB database.`,
   packages_business_relmig_upload: 'Upload relmig file',
   packages_business__relmig_import_connection_tip:
     "Click here to create one if you haven't done so already.",

@@ -1035,6 +1035,59 @@ export default {
     'Huawei DRS Kafka Message Converter',
   packages_dag_field_path: 'Field Path',
   packages_dag_email_receivers: 'Email Receivers',
+  packages_dag_alarm_receivers: 'Alert Receivers',
+  packages_dag_alarm_receiver_mode: 'Receiver Mode',
+  packages_dag_alarm_receiver_system_default: 'Use system default receivers',
+  packages_dag_alarm_receiver_custom: 'Custom receivers',
+  packages_dag_alarm_receiver_preview:
+    'Alerts will be sent to {count} email addresses',
+  packages_dag_alarm_receiver_system_empty:
+    'No system default recipient is configured, so no alert email will be sent.',
+  packages_dag_alarm_receiver_empty_warning: 'No valid receiver',
+  packages_dag_alarm_receiver_status_system: 'System default',
+  packages_dag_alarm_receiver_status_custom: 'Custom · {count} valid emails',
+  packages_dag_alarm_receiver_status_none: 'No valid receiver',
+  packages_dag_alarm_receiver_tab_group: 'User Groups',
+  packages_dag_alarm_receiver_tab_user: 'Users',
+  packages_dag_alarm_receiver_tab_email: 'Emails',
+  packages_dag_alarm_receiver_group_meta:
+    'Includes subgroups, {count} valid emails',
+  packages_dag_alarm_receiver_no_valid_email: 'No valid email',
+  packages_dag_alarm_receiver_email_invalid: 'Invalid email address',
+  packages_dag_alarm_receiver_email_placeholder:
+    'Enter emails separated by commas, semicolons, or new lines',
+  packages_dag_alarm_receiver_external_email:
+    'Task names and error details may be sent to an external email',
+  packages_dag_alarm_receiver_external_email_named:
+    'The name and error details of task "{name}" may be sent to an external email',
+  packages_dag_alarm_receiver_candidates_failed:
+    'Failed to load receiver candidates',
+  packages_dag_alarm_receiver_preview_failed:
+    'Failed to load the recipient preview',
+  packages_dag_alarm_receiver_search_group: 'Search user groups',
+  packages_dag_alarm_receiver_search: 'Search users, emails, or groups',
+  packages_dag_alarm_receiver_search_user: 'Search users',
+  packages_dag_alarm_receiver_group_chip: '{name} (includes subgroups)',
+  packages_dag_alarm_receiver_group_emails: '{count} valid emails',
+  packages_dag_alarm_receiver_group_children: 'Includes {count} subgroups',
+  packages_dag_alarm_receiver_group_tip:
+    '{path}, {count} valid emails, {children} subgroups',
+  packages_dag_alarm_receiver_preview_detail: 'View details',
+  packages_dag_alarm_receiver_preview_hide: 'Hide details',
+  packages_dag_alarm_receiver_deleted_hint:
+    'A receiver is no longer valid. This task will not send email and will not fall back to the system default.',
+  packages_dag_alarm_receiver_empty_keep:
+    'This task will not send email and will not fall back to the system default.',
+  packages_dag_alarm_receiver_col_object: 'Receiver',
+  packages_dag_alarm_receiver_col_type: 'Type',
+  packages_dag_alarm_receiver_col_status: 'Status',
+  packages_dag_alarm_receiver_deleted: 'Deleted',
+  packages_dag_alarm_receiver_type_user: 'User',
+  packages_dag_alarm_receiver_type_group: 'User group',
+  packages_dag_alarm_receiver_type_email: 'Email',
+  packages_dag_alarm_receiver_user_with_email: '{username} ({email})',
+  packages_dag_alarm_receiver_no_group: 'No user groups',
+  packages_dag_alarm_receiver_no_user: 'No users',
   packages_dag_merge_table_js_node_error:
     'Merge table node cannot have JS node after it',
   packages_dag_merge_table_table_not_allow_target:
