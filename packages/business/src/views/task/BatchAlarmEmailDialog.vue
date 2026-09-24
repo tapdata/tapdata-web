@@ -28,10 +28,11 @@ type ResultDetail = {
   message?: string
 }
 
-type ThresholdItem = {
+type AlarmSettingItem = {
   key: string
   label: string
   open: boolean
+  notify: ('SYSTEM' | 'EMAIL')[]
   interval: number
 }
 
@@ -86,16 +87,15 @@ const saveLoading = ref(false)
 const taskIds = ref<string[]>([])
 const noEditTasks = ref<BatchAlarmTask[]>([])
 const rulesAction = ref<DimensionAction>('keep')
-const thresholdsAction = ref<DimensionAction>('keep')
 const receiversAction = ref<ReceiverAction>('keep')
 const receiverMode = ref<ReceiverMode>('APPEND')
 const receivers = ref<AlarmReceiver[]>([])
 const invalidReceivers = ref(false)
-const thresholdItems = ref<ThresholdItem[]>([])
+const alarmSettingItems = ref<AlarmSettingItem[]>([])
 const delayMinutes = ref(5)
 const delaySeconds = ref(60)
 const delayEqualsFlag = ref(1)
-const retryTimes = ref(10)
+const retryTimes = ref(2)
 const onlyFailed = ref(false)
 const resultDetails = ref<ResultDetail[]>([])
 const resultCountOverride = ref<{
@@ -107,9 +107,8 @@ const resultCountOverride = ref<{
 const saveDisabled = computed(() => {
   if (!taskIds.value.length || saveLoading.value) return true
   const changingRules = rulesAction.value !== 'keep'
-  const changingThresholds = thresholdsAction.value !== 'keep'
   const changingReceivers = receiversAction.value !== 'keep'
-  if (!changingRules && !changingThresholds && !changingReceivers) return true
+  if (!changingRules && !changingReceivers) return true
   if (changingReceivers && invalidReceivers.value) return true
   if (
     changingReceivers &&
@@ -169,8 +168,16 @@ function onRulesSwitch(value: boolean | string | number) {
   rulesAction.value = value ? 'set' : 'keep'
 }
 
-function onThresholdsSwitch(value: boolean | string | number) {
-  thresholdsAction.value = value ? 'set' : 'keep'
+function onSettingOpenChange(item: AlarmSettingItem) {
+  if (item.open && !item.notify.length) {
+    item.notify = ['SYSTEM', 'EMAIL']
+  }
+}
+
+function onSettingNotifyChange(item: AlarmSettingItem) {
+  if (!item.notify.length) {
+    item.open = false
+  }
 }
 
 function onReceiversSwitch(value: boolean | string | number) {
@@ -178,11 +185,12 @@ function onReceiversSwitch(value: boolean | string | number) {
   if (value) receiverMode.value = 'APPEND'
 }
 
-function createThresholdItems() {
+function createAlarmSettingItems() {
   return ALARM_SETTING_DEFS.map((item) => ({
     key: item.key,
     label: item.label,
     open: true,
+    notify: ['SYSTEM', 'EMAIL'] as ('SYSTEM' | 'EMAIL')[],
     interval: 300,
   }))
 }
@@ -190,16 +198,15 @@ function createThresholdItems() {
 function resetForm() {
   page.value = 'form'
   rulesAction.value = 'keep'
-  thresholdsAction.value = 'keep'
   receiversAction.value = 'keep'
   receiverMode.value = 'APPEND'
   receivers.value = []
   invalidReceivers.value = false
-  thresholdItems.value = createThresholdItems()
+  alarmSettingItems.value = createAlarmSettingItems()
   delayMinutes.value = 5
   delaySeconds.value = 60
   delayEqualsFlag.value = 1
-  retryTimes.value = 10
+  retryTimes.value = 2
   onlyFailed.value = false
   resultDetails.value = []
   resultCountOverride.value = null
@@ -250,12 +257,12 @@ function cleanReceivers(list: AlarmReceiver[]) {
 }
 
 function buildAlarmSettings() {
-  return thresholdItems.value.map((item) => ({
+  return alarmSettingItems.value.map((item) => ({
     type: 'TASK',
     key: item.key,
     open: item.open,
-    notify: item.open ? ['SYSTEM', 'EMAIL'] : [],
-    interval: Math.max(1, Number(item.interval) || 1),
+    notify: item.open ? item.notify : [],
+    interval: Math.max(1, Number(item.interval) || 300),
     unit: 'SECOND',
   })) as AlarmSettingVO[]
 }
@@ -281,7 +288,7 @@ function buildAlarmRules() {
   ] as AlarmRuleVO[]
 }
 
-// 规则写入 alarmSettings，阈值写入 alarmRules。不修改的维度不能传空数组。
+// 规则与阈值合并写入 alarmSettings 和 alarmRules。不修改的维度不能传空数组。
 function buildPayload(ids: string[]) {
   const payload: {
     taskIds: string[]
@@ -292,10 +299,14 @@ function buildPayload(ids: string[]) {
   } = {
     taskIds: ids,
   }
-  if (rulesAction.value === 'clear') payload.alarmSettings = []
-  if (rulesAction.value === 'set') payload.alarmSettings = buildAlarmSettings()
-  if (thresholdsAction.value === 'clear') payload.alarmRules = []
-  if (thresholdsAction.value === 'set') payload.alarmRules = buildAlarmRules()
+  if (rulesAction.value === 'clear') {
+    payload.alarmSettings = []
+    payload.alarmRules = []
+  }
+  if (rulesAction.value === 'set') {
+    payload.alarmSettings = buildAlarmSettings()
+    payload.alarmRules = buildAlarmRules()
+  }
   if (receiversAction.value === 'edit') {
     payload.alarmReceivers = cleanReceivers(receivers.value)
     payload.receiverMode = receiverMode.value
@@ -448,25 +459,91 @@ defineExpose({
           </div>
           <div v-if="rulesAction === 'set'" class="batch-alarm-editor">
             <div
-              v-for="item in thresholdItems"
+              v-for="item in alarmSettingItems"
               :key="item.key"
-              class="batch-alarm-setting-row"
+              class="batch-alarm-rule-item"
             >
-              <ElSwitch v-model="item.open" />
-              <span class="batch-alarm-setting-label">{{
-                $t(item.label)
-              }}</span>
-              <ElInputNumber
-                v-model="item.interval"
-                :min="1"
-                :precision="0"
-                controls-position="right"
-                :disabled="!item.open"
-              />
-              <span class="batch-alarm-setting-unit">
-                {{ $t('packages_business_task_batch_alarm_interval') }}
-              </span>
+              <div class="batch-alarm-rule-title">
+                {{ $t(item.label) }}
+              </div>
+              <div class="batch-alarm-rule-controls">
+                <ElSwitch
+                  v-model="item.open"
+                  @change="onSettingOpenChange(item)"
+                />
+                <span v-if="item.open" class="batch-alarm-divider">|</span>
+                <ElCheckboxGroup
+                  v-if="item.open"
+                  v-model="item.notify"
+                  class="batch-alarm-notify-group"
+                  @change="onSettingNotifyChange(item)"
+                >
+                  <ElCheckbox label="SYSTEM">
+                    {{ $t('packages_dag_migration_alarmpanel_xitongtongzhi') }}
+                  </ElCheckbox>
+                  <ElCheckbox label="EMAIL">
+                    {{ $t('packages_dag_migration_alarmpanel_youjiantongzhi') }}
+                  </ElCheckbox>
+                </ElCheckboxGroup>
+              </div>
+
+              <!-- 任务增量延迟告警内嵌阈值 -->
+              <div
+                v-if="item.key === 'TASK_INCREMENT_DELAY' && item.open"
+                class="batch-alarm-threshold-row"
+              >
+                <span>{{
+                  $t('packages_dag_migration_alarmpanel_lianxu')
+                }}</span>
+                <ElInputNumber
+                  v-model="delayMinutes"
+                  :min="1"
+                  :precision="0"
+                  controls-position="right"
+                  style="width: 100px"
+                />
+                <span>{{ $t('public_time_m') }}</span>
+                <ElSelect
+                  v-model="delayEqualsFlag"
+                  class="batch-alarm-operator"
+                  style="width: 80px"
+                >
+                  <ElOption label=">=" :value="1" />
+                  <ElOption label="<=" :value="-1" />
+                </ElSelect>
+                <ElInputNumber
+                  v-model="delaySeconds"
+                  :min="0"
+                  :precision="0"
+                  controls-position="right"
+                  style="width: 100px"
+                />
+                <span>s</span>
+              </div>
+
+              <!-- 任务重试告警内嵌阈值 -->
+              <div
+                v-if="item.key === 'TASK_RETRY_WARN' && item.open"
+                class="batch-alarm-threshold-row"
+              >
+                <i18n-t
+                  tag="div"
+                  class="flex align-center gap-2"
+                  keypath="packages_dag_task_retry_alert_desc"
+                >
+                  <template #count>
+                    <ElInputNumber
+                      v-model="retryTimes"
+                      :min="1"
+                      :precision="0"
+                      controls-position="right"
+                      style="width: 100px"
+                    />
+                  </template>
+                </i18n-t>
+              </div>
             </div>
+
             <div class="batch-alarm-email-tip">
               <el-icon :size="16" class="batch-alarm-email-tip-icon">
                 <i-lucide-info />
@@ -487,98 +564,6 @@ defineExpose({
           >
             {{
               rulesAction === 'clear'
-                ? $t('packages_business_task_batch_alarm_set')
-                : $t('packages_business_task_batch_alarm_clear')
-            }}
-          </ElButton>
-        </ElFormItem>
-
-        <ElFormItem class="batch-alarm-card">
-          <div class="batch-alarm-card-head">
-            <span>{{
-              $t('packages_business_task_batch_alarm_thresholds')
-            }}</span>
-            <span class="batch-alarm-card-switch">
-              {{
-                thresholdsAction === 'keep'
-                  ? $t('packages_business_task_batch_alarm_keep')
-                  : $t('packages_business_task_batch_alarm_edit')
-              }}
-              <ElSwitch
-                :model-value="thresholdsAction !== 'keep'"
-                @change="onThresholdsSwitch"
-              />
-            </span>
-          </div>
-          <div v-if="thresholdsAction !== 'keep'" class="batch-alarm-hint">
-            {{ $t('packages_business_task_batch_alarm_thresholds_hint') }}
-          </div>
-          <div v-if="thresholdsAction === 'set'" class="batch-alarm-editor">
-            <div class="batch-alarm-threshold-row">
-              <span>{{
-                $t('packages_dag_migration_alarmpanel_renwuzengliangyan')
-              }}</span>
-              <span>{{ $t('packages_dag_migration_alarmpanel_lianxu') }}</span>
-              <ElInputNumber
-                v-model="delayMinutes"
-                :min="1"
-                :precision="0"
-                controls-position="right"
-              />
-              <span>{{ $t('public_time_m') }}</span>
-              <ElSelect v-model="delayEqualsFlag" class="batch-alarm-operator">
-                <ElOption label=">=" :value="1" />
-                <ElOption label="<=" :value="-1" />
-              </ElSelect>
-              <ElInputNumber
-                v-model="delaySeconds"
-                :min="0"
-                :precision="0"
-                controls-position="right"
-              />
-              <span>{{ $t('public_time_s') }}</span>
-            </div>
-            <div class="batch-alarm-threshold-row">
-              <span>{{ $t('packages_dag_task_retry_alert') }}</span>
-              <ElInputNumber
-                v-model="retryTimes"
-                :min="1"
-                :precision="0"
-                controls-position="right"
-              />
-            </div>
-            <div class="batch-alarm-hint">
-              {{
-                $t('packages_dag_task_retry_alert_desc', { count: retryTimes })
-              }}
-            </div>
-            <div class="batch-alarm-email-tip">
-              <el-icon :size="16" class="batch-alarm-email-tip-icon">
-                <i-lucide-info />
-              </el-icon>
-              <span>
-                {{
-                  $t('packages_business_task_batch_alarm_thresholds_overwrite')
-                }}
-              </span>
-            </div>
-          </div>
-          <div
-            v-else-if="thresholdsAction === 'clear'"
-            class="color-warning fs-7"
-          >
-            {{ $t('packages_business_task_batch_alarm_thresholds_clear') }}
-          </div>
-          <ElButton
-            v-if="thresholdsAction !== 'keep'"
-            text
-            type="primary"
-            @click="
-              thresholdsAction = thresholdsAction === 'clear' ? 'set' : 'clear'
-            "
-          >
-            {{
-              thresholdsAction === 'clear'
                 ? $t('packages_business_task_batch_alarm_set')
                 : $t('packages_business_task_batch_alarm_clear')
             }}
@@ -838,27 +823,49 @@ defineExpose({
   margin-top: 10px;
 }
 
-.batch-alarm-setting-row,
+.batch-alarm-rule-item {
+  margin-bottom: 16px;
+
+  &:last-of-type {
+    margin-bottom: 12px;
+  }
+}
+
+.batch-alarm-rule-title {
+  font-size: 14px;
+  color: var(--el-text-color-primary);
+  margin-bottom: 8px;
+  line-height: 20px;
+}
+
+.batch-alarm-rule-controls {
+  display: flex;
+  align-items: center;
+}
+
+.batch-alarm-divider {
+  margin: 0 12px;
+  color: var(--el-border-color);
+  font-weight: 300;
+}
+
+.batch-alarm-notify-group {
+  display: inline-flex;
+  align-items: center;
+}
+
 .batch-alarm-threshold-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  margin-bottom: 8px;
-}
-
-.batch-alarm-setting-label {
-  flex: 1;
-  min-width: 160px;
-}
-
-.batch-alarm-setting-unit {
-  color: var(--el-text-color-secondary);
-  font-size: 12px;
+  margin-top: 8px;
+  color: var(--el-text-color-regular);
+  font-size: 13px;
 }
 
 .batch-alarm-operator {
-  width: 88px;
+  width: 80px;
 }
 
 .batch-alarm-result-summary {
