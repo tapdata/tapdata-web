@@ -750,6 +750,7 @@ export default {
   setting_job_cdc_record_ttl_doc: ' 增量事件保存時長(天)',
   setting_lagTime: '增量滯後判定時間(秒)',
   setting_Task_CPU_and_Memory_Metrics_Statistics: '任務CPU&記憶體名額統計',
+  setting_Monitoring_task_upper_limit: '任務CPU&記憶體名額統計的監控任務上限',
   setting_connection_schema_update_hour: '數據源schema更新時間',
   setting_connection_schema_update_interval: '數據源schema更新周期（天）',
   setting_creatDuplicateSource: ' 允許創建重複數據源',

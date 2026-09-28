@@ -24,6 +24,10 @@ import { setSettings } from '@tap/shared/src/settings'
 import { downloadJson } from '@tap/shared/src/util'
 import { find, uniq } from 'lodash-es'
 import i18n from '@/i18n'
+import {
+  isSettingDependencyVisible,
+  orderSettingsByDependency,
+} from '@/utils/setting-dependency'
 
 export default {
   name: 'Setting',
@@ -41,6 +45,7 @@ export default {
       formData: {
         items: [],
       },
+      allSettings: [],
       activeTab: 0,
       activePanel: 'Log',
       lang: getCurrentLanguage(),
@@ -142,6 +147,15 @@ export default {
       }
       return result
     },
+
+    settingsByKey() {
+      return this.allSettings.reduce((result, item) => {
+        if (item.key) {
+          result[item.key] = item
+        }
+        return result
+      }, {})
+    },
   },
   watch: {
     formData: {
@@ -185,6 +199,9 @@ export default {
       this.activePanel = item.category
       this.formItems = item.items || []
     },
+    isSettingVisible(setting) {
+      return isSettingDependencyVisible(setting, this.settingsByKey)
+    },
     // 获取设置数据
     getData() {
       let auth_data = []
@@ -196,6 +213,7 @@ export default {
         const itemsCategories = []
         const cat = []
         data = data || []
+        this.allSettings = data
         items = data.map((item) => {
           if (item.documentation) {
             item.documentationKey = item.documentation
@@ -238,8 +256,9 @@ export default {
           values.sort((a, b) => {
             return a.sort < b.sort ? -1 : 1
           })
+          const orderedValues = orderSettingsByDependency(values)
           if (values.length > 0) {
-            itemsCategories.push({ category: item, items: values })
+            itemsCategories.push({ category: item, items: orderedValues })
             cat.push(item)
           }
         })
@@ -694,8 +713,9 @@ export default {
                 <el-col :span="24">
                   <el-form-item
                     v-if="
-                      childItem.key_label !== 'Ldap SSL Cert' ||
-                      ldapForm.Ldap_SSL_Enable
+                      (childItem.key_label !== 'Ldap SSL Cert' ||
+                        ldapForm.Ldap_SSL_Enable) &&
+                      isSettingVisible(childItem)
                     "
                   >
                     <template #label>
