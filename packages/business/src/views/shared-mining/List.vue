@@ -19,7 +19,7 @@ import { requestClient, withPassive } from '@tap/api/src/request'
 import { VTable } from '@tap/component/src/base/v-table'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import { useI18n } from '@tap/i18n'
-import { calcTimeUnit, openUrl } from '@tap/shared'
+import { calcTimeUnit, calcUnit, openUrl } from '@tap/shared'
 import dayjs from 'dayjs'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { escapeRegExp, uniqBy } from 'lodash-es'
@@ -37,6 +37,7 @@ import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
 import TaskStatus from '../../components/TaskStatus.vue'
 import { makeStatusAndDisabled } from '../../shared'
+import { formatTaskMetricInfo } from '../../shared/task-metric'
 import Editor from './Editor.vue'
 
 const { t } = useI18n()
@@ -207,6 +208,9 @@ const getData = async ({
       makeStatusAndDisabled(item)
       if (item.status === 'edit') {
         item.btnDisabled.start = false
+      }
+      if (item.metricInfo) {
+        item.metricInfo = formatTaskMetricInfo(item.metricInfo, t, calcUnit)
       }
       return item
     }),
@@ -433,7 +437,34 @@ onUnmounted(() => {
         :show-overflow-tooltip="true"
       >
         <template #default="scope">
-          {{ scope.row.name }}
+          <div>{{ scope.row.name }}</div>
+          <div class="fs-8 font-color-sslight lh-base flex align-center">
+            <template
+              v-if="scope.row.status === 'running' && scope.row.metricInfo"
+            >
+              <el-tooltip
+                :content="scope.row.metricInfo.lastUpdateTime"
+                :enterable="false"
+                :disabled="!scope.row.metricInfo.hasWarning"
+              >
+                <div class="flex align-center gap-1">
+                  <el-icon
+                    v-if="scope.row.metricInfo.hasWarning"
+                    class="color-warning"
+                    ><i-lucide-triangle-alert
+                  /></el-icon>
+                  <span class="font-color-sslight">CPU:</span>
+                  <span class="fw-sub">{{
+                    scope.row.metricInfo.cpuUsage
+                  }}</span>
+                  <span class="font-color-sslight ml-2">MEM:</span>
+                  <span class="fw-sub">{{
+                    scope.row.metricInfo.memoryUsage
+                  }}</span>
+                </div>
+              </el-tooltip>
+            </template>
+          </div>
         </template>
       </el-table-column>
       <el-table-column

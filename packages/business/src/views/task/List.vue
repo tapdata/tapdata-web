@@ -35,6 +35,7 @@ import UpgradeFee from '../../components/UpgradeFee.vue'
 import Upload from '../../components/UploadDialog.vue'
 import syncTaskAgent from '../../mixins/syncTaskAgent'
 import { makeStatusAndDisabled, MILESTONE_TYPE, STATUS_MAP } from '../../shared'
+import { formatTaskMetricInfo } from '../../shared/task-metric'
 import BatchAlarmEmailDialog from './BatchAlarmEmailDialog.vue'
 import EditInfoDialog from './EditInfoDialog.vue'
 import SkipError from './SkipError.vue'
@@ -340,20 +341,11 @@ export default {
           }
 
           if (item.metricInfo) {
-            const day = dayjs(item.metricInfo.lastUpdateTime)
-            item.metricInfo.cpuUsage = isNumber(item.metricInfo.cpuUsage)
-              ? `${Number(item.metricInfo.cpuUsage.toFixed(2))}%`
-              : '--'
-            item.metricInfo.memoryUsage = isNumber(item.metricInfo.memoryUsage)
-              ? calcUnit(item.metricInfo.memoryUsage, 'b', 2)
-              : '--'
-            item.metricInfo.lastUpdateTime = this.$t(
-              'public_updated_from_now',
-              {
-                time: day.fromNow(),
-              },
+            item.metricInfo = formatTaskMetricInfo(
+              item.metricInfo,
+              this.$t,
+              calcUnit,
             )
-            item.metricInfo.hasWarning = Date.now() - day.valueOf() > 60000
           }
           return item
         })
