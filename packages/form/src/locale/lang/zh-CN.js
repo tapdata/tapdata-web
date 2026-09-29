@@ -144,8 +144,12 @@ export default {
   packages_form_js_processor_mock_log: '日志',
   packages_form_js_processor_mock_log_clear: '清空',
   packages_form_js_processor_mock_sql_query: 'SQL 查询',
+  packages_form_js_processor_mock_filter_query: '条件查询',
   packages_form_js_processor_mock_get_sample: '获取样本',
   packages_form_js_processor_mock_sql_dialog_title: 'SQL 查询获取数据',
+  packages_form_js_processor_mock_filter_dialog_title: '条件查询获取数据',
+  packages_form_js_processor_mock_filter_placeholder:
+    '请输入查询 JSON，例如：\n{\n  "filter": {"age": {"$gt": 10}},\n  "sort": {"age": -1},\n  "limit": 10\n}',
   packages_form_js_processor_mock_sql_preview: '执行预览',
   packages_form_js_processor_mock_sql_use_data: '使用此数据',
   packages_form_js_processor_mock_json_valid: '格式正确',
@@ -173,7 +177,10 @@ export default {
   packages_form_js_processor_mock_log_no_more: '没有更多日志了',
   packages_form_js_processor_mock_log_sql_import:
     '从 SQL 查询导入 {val1} 条数据',
+  packages_form_js_processor_mock_log_filter_import:
+    '从条件查询导入 {val1} 条数据',
   packages_form_js_processor_mock_sql_query_fail: 'SQL 查询失败',
+  packages_form_js_processor_mock_filter_query_fail: '条件查询失败',
   packages_form_js_processor_mock_unknown_error: '未知错误',
   packages_form_js_processor_mock_event_insert: '插入',
   packages_form_js_processor_mock_event_update: '更新',
