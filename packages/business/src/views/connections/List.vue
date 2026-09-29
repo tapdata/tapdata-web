@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   batchUpdateConnectionTags,
+  batchUpdateConnectionAgentSettings,
   checkConnectionTask,
   copyConnection,
   deleteConnection,
@@ -37,6 +38,8 @@ import SchemaProgress from '../../components/SchemaProgress.vue'
 import TablePage from '../../components/TablePage.vue'
 import UploadDialog from '../../components/UploadDialog.vue'
 import BatchTagDialog from '../../components/BatchTagDialog.vue'
+import BatchAgentSettingsDialog from './BatchAgentSettingsDialog.vue'
+import type { BatchAgentSettingsPayload } from './agentSettingsSchema'
 import { useHas } from '../../composables'
 import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '../../shared'
 import Preview from './Preview.vue'
@@ -90,6 +93,9 @@ const test = ref()
 const dialog = ref()
 const permissionseSettingsCreate = ref()
 const batchTagDialog = ref<InstanceType<typeof BatchTagDialog> | null>(null)
+const batchAgentSettingsDialog = ref<InstanceType<
+  typeof BatchAgentSettingsDialog
+> | null>(null)
 
 // State
 let timeout: NodeJS.Timeout | null = null
@@ -455,6 +461,26 @@ const openBatchTagDialog = () => {
   batchTagDialog.value?.open(multipleSelection.value as any)
 }
 
+const openBatchAgentSettingsDialog = () => {
+  if (!multipleSelection.value.length) return
+  batchAgentSettingsDialog.value?.open(multipleSelection.value as any)
+}
+
+const handleBatchAgentSettingsSubmit = async (
+  payload: BatchAgentSettingsPayload,
+) => {
+  try {
+    await batchUpdateConnectionAgentSettings(payload)
+    batchAgentSettingsDialog.value?.close()
+    table.value?.clearSelection?.()
+    await table.value?.fetch()
+    ElMessage.success(i18n.t('public_message_save_ok'))
+  } catch (error) {
+    console.error(error)
+    ElMessage.error(i18n.t('packages_business_message_saveFail'))
+  }
+}
+
 const handleBatchTagSaved = () => {
   table.value?.clearSelection?.()
   table.value?.fetch()
@@ -786,26 +812,29 @@ onUnmounted(() => {
           </template>
         </FilterBar>
       </template>
-      <template v-if="isDaas" #multipleSelectionActions>
-        <ElButton @click="handlePermissionsSettings"
+      <template #multipleSelectionActions>
+        <ElButton v-if="isDaas" @click="handlePermissionsSettings"
           >{{
             $t('packages_business_permissionse_settings_create_quanxianshezhi')
           }}
         </ElButton>
+        <ElButton @click="openBatchAgentSettingsDialog">
+          {{ $t('packages_business_connections_list_batch_agent_settings') }}
+        </ElButton>
         <ElButton
+          v-if="isDaas"
           v-readonlybtn="'datasource_category_application'"
           class="btn"
           @click="openBatchTagDialog"
         >
           <span> {{ $t('public_button_bulk_tag') }}</span>
         </ElButton>
-        <ElButton @click="handleExport">
+        <ElButton v-if="isDaas" @click="handleExport">
           <el-icon><i-lucide-download /></el-icon>
           <span> {{ $t('public_button_export') }}</span>
         </ElButton>
       </template>
       <ElTableColumn
-        v-if="isDaas"
         type="selection"
         width="32"
         align="center"
@@ -1012,6 +1041,10 @@ onUnmounted(() => {
       :submit-tags="batchUpdateConnectionTags"
       @saved="handleBatchTagSaved"
       @tag-created="handleBatchTagCreated"
+    />
+    <BatchAgentSettingsDialog
+      ref="batchAgentSettingsDialog"
+      @submit="handleBatchAgentSettingsSubmit"
     />
     <Preview
       ref="previewRef"
