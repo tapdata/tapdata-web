@@ -171,7 +171,7 @@ export default {
   packages_form_js_processor_mock_sql_dialog_title: 'SQL Query Data',
   packages_form_js_processor_mock_filter_dialog_title: 'Filter Query Data',
   packages_form_js_processor_mock_filter_placeholder:
-    'Enter a query JSON, for example:\n{\n  "filter": {"age": {"$gt": 10}},\n  "sort": {"age": -1},\n  "limit": 10\n}',
+    'Enter a MongoDB filter, for example {"status": "PAID"}. To also sort or limit, wrap it in $find (at most 100 rows):\n{\n  "$find": {\n    "filter": {"age": {"$gt": 10}},\n    "sort": {"age": -1},\n    "limit": 10\n  }\n}',
   packages_form_js_processor_mock_sql_preview: 'Preview',
   packages_form_js_processor_mock_sql_use_data: 'Use This Data',
   packages_form_js_processor_mock_json_valid: 'Valid',

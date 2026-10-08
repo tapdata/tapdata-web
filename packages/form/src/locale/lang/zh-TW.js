@@ -149,7 +149,7 @@ export default {
   packages_form_js_processor_mock_sql_dialog_title: 'SQL 查詢獲取數據',
   packages_form_js_processor_mock_filter_dialog_title: '條件查詢獲取數據',
   packages_form_js_processor_mock_filter_placeholder:
-    '請輸入查詢 JSON，例如：\n{\n  "filter": {"age": {"$gt": 10}},\n  "sort": {"age": -1},\n  "limit": 10\n}',
+    '請輸入 MongoDB 查詢條件，例如 {"status": "PAID"}。如需排序或限制條數，請用 $find 包裝（最多返回 100 條）：\n{\n  "$find": {\n    "filter": {"age": {"$gt": 10}},\n    "sort": {"age": -1},\n    "limit": 10\n  }\n}',
   packages_form_js_processor_mock_sql_preview: '執行預覽',
   packages_form_js_processor_mock_sql_use_data: '使用此數據',
   packages_form_js_processor_mock_json_valid: '格式正確',
