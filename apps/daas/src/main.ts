@@ -18,7 +18,12 @@ import App from '@/App.vue'
 import { installOEM } from '@/oem'
 import { installAllPlugins } from '@/plugins'
 import { initRequestClient } from '@/plugins/axios'
-import { configUser, getUrlSearch, signOut } from '@/utils/util'
+import {
+  configUser,
+  getUrlSearch,
+  removeUrlParams,
+  signOut,
+} from '@/utils/util'
 import store from '@/vuex' // 引入全局数据控制
 import { installDirectives } from './directives'
 import i18n from './i18n'
@@ -71,17 +76,7 @@ const URL_LANG = getUrlSearch('lang')
 
 if (TOKEN) {
   Cookie.set('access_token', TOKEN)
-  const [hashPath, hashQuery] = location.hash.split('?')
-  if (hashQuery) {
-    const params = new URLSearchParams(hashQuery)
-    params.delete('token')
-    const nextHash = params.toString() ? `${hashPath}?${params}` : hashPath
-    history.replaceState(
-      null,
-      '',
-      `${location.pathname}${location.search}${nextHash}`,
-    )
-  }
+  removeUrlParams('token')
 }
 
 const token = Cookie.get('access_token')
