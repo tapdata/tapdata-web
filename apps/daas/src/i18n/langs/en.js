@@ -2463,6 +2463,10 @@ export default {
   daas_task_rebalance_type_initial_sync: 'Full',
   daas_task_rebalance_type_cdc: 'Incremental',
   daas_task_rebalance_type_full_cdc: 'Full + Incremental',
+  daas_task_rebalance_target_not_allowed:
+    'The target agent is not allowed for this task.',
+  daas_task_rebalance_reason_invalid_agent_group:
+    'No online agents are available in the task’s agent group.',
   daas_task_rebalance_reason_only_one_agent:
     'At least two available engines are required',
   daas_task_rebalance_reason_agent_offline: 'The current engine is offline',

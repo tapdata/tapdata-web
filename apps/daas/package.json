@@ -12,7 +12,8 @@
     "start:dev": "cross-env SERVE_ENV=dev vite --open",
     "start:local": "cross-env SERVE_ENV=local vite --open",
     "start:test": "cross-env SERVE_ENV=test vite --open",
-    "taptest": "cross-env SERVE_ENV=taptest vite --open"
+    "taptest": "cross-env SERVE_ENV=taptest vite --open",
+    "test:rebalance": "node --experimental-strip-types --test src/views/cluster/rebalance-constraints.test.mjs"
   },
   "dependencies": {
     "@element-plus/icons-vue": "catalog:",

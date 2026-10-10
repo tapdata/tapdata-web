@@ -22,6 +22,7 @@ export type SchedulableStatus =
   | 'STATUS_ERROR'
   | 'MANUAL_AGENT'
   | 'INCREMENTAL_NOT_STARTED'
+  | 'INVALID_AGENT_GROUP'
 
 export interface TaskPreview {
   taskId: string
@@ -31,6 +32,7 @@ export interface TaskPreview {
   status: string
   sourceAgentId: string
   targetAgentId: string
+  allowedAgentIds?: string[]
   movable: boolean
   schedulableStatus: SchedulableStatus
   changed: boolean
@@ -46,6 +48,7 @@ export interface TaskPreview {
 }
 
 export interface TaskRebalancePreviewVo {
+  agentIds?: string[]
   tasks?: TaskPreview[]
   moveCount?: number
   reason?: string | null

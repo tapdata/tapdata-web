@@ -2313,6 +2313,10 @@ export default {
   daas_task_rebalance_type_initial_sync: '全量',
   daas_task_rebalance_type_cdc: '增量',
   daas_task_rebalance_type_full_cdc: '全量+增量',
+  daas_task_rebalance_target_not_allowed:
+    '目標節點不屬於任務允許的節點組，無法遷移',
+  daas_task_rebalance_reason_invalid_agent_group:
+    '任務指定的節點組沒有可用在線節點',
   daas_task_rebalance_reason_only_one_agent: '可用引擎不足 2 個，無法均衡',
   daas_task_rebalance_reason_agent_offline: '當前引擎已離線',
   daas_task_rebalance_reason_status_error: '任務非運行中，無法遷移',
