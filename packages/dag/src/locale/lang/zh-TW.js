@@ -902,6 +902,8 @@ export default {
   packages_dag_alarm_receiver_preview_hide: '收起明細',
   packages_dag_alarm_receiver_deleted_hint:
     '原接收對象已失效。目前任務不會發送郵件告警，也不會自動退回系統預設接收人。',
+  packages_dag_alarm_receiver_partial_invalid_hint:
+    '以下 {count} 個接收對象已失效，發送告警時將被略過。',
   packages_dag_alarm_receiver_empty_keep:
     '目前任務不會發送郵件告警，也不會自動退回系統預設接收人。',
   packages_dag_alarm_receiver_col_object: '接收對象',

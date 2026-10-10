@@ -13,6 +13,12 @@
   line-height: 1.6;
 }
 
+.alarm-receiver-invalid-hint {
+  color: var(--el-color-warning);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
 .alarm-receiver-invalid-table {
   width: 100%;
   border-collapse: collapse;

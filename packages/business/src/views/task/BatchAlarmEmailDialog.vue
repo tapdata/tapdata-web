@@ -2,6 +2,7 @@
 import {
   batchUpdateTaskAlarm,
   type AlarmReceiver,
+  type AlarmReceiverStatus,
   type AlarmSettingVO,
   type AlarmRuleVO,
   type BatchUpdateTaskAlarmResult,
@@ -19,6 +20,10 @@ type BatchAlarmTask = {
   id: string
   name?: string
   permissionActions?: string[]
+  alarmReceivers?: AlarmReceiver[]
+  alarmReceiverStatus?: AlarmReceiverStatus
+  effectiveEmailCount?: number
+  emailReceivers?: string[]
 }
 
 type ResultDetail = {
@@ -81,10 +86,14 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
+const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+
 const visible = ref(false)
 const page = ref<'form' | 'result'>('form')
 const saveLoading = ref(false)
 const taskIds = ref<string[]>([])
+const editableTasks = ref<BatchAlarmTask[]>([])
+const currentOpen = ref(true)
 const noEditTasks = ref<BatchAlarmTask[]>([])
 const rulesAction = ref<DimensionAction>('keep')
 const receiversAction = ref<ReceiverAction>('keep')
@@ -137,7 +146,10 @@ const resultCounts = computed(() => {
   }
 })
 
-const selectorRef = ref<{ receiverNames?: () => string } | null>(null)
+const selectorRef = ref<{
+  receiverNames?: () => string
+  labelOf?: (item: AlarmReceiver) => string
+} | null>(null)
 
 const selectedCount = computed(
   () => taskIds.value.length + noEditTasks.value.length,
@@ -163,6 +175,39 @@ const receiverSummary = computed(() => {
         : 'packages_business_task_batch_alarm_summary_append'
   return t(key, { count, names })
 })
+
+function currentStatusLabel(task: BatchAlarmTask) {
+  if (task.alarmReceiverStatus === 'SYSTEM_DEFAULT') {
+    return t('packages_dag_alarm_receiver_status_system')
+  }
+  if (task.alarmReceiverStatus === 'CUSTOM') {
+    return t('packages_dag_alarm_receiver_status_custom', {
+      count: task.effectiveEmailCount || 0,
+    })
+  }
+  if (task.alarmReceiverStatus === 'NONE') {
+    return t('packages_dag_alarm_receiver_status_none')
+  }
+  return '-'
+}
+
+// REPLACE 前展示所选任务现有的接收对象，存量任务回落到 emailReceivers
+function currentReceiverNames(task: BatchAlarmTask) {
+  if (task.alarmReceiverStatus === 'SYSTEM_DEFAULT') return ''
+  const list = Array.isArray(task.alarmReceivers)
+    ? task.alarmReceivers
+    : (task.emailReceivers || []).map((email) => ({
+        type: 'EMAIL' as const,
+        email,
+      }))
+  return list
+    .map(
+      (item) =>
+        selectorRef.value?.labelOf?.(item) || item.email || item.id || '',
+    )
+    .filter(Boolean)
+    .join('、')
+}
 
 function onRulesSwitch(value: boolean | string | number) {
   rulesAction.value = value ? 'set' : 'keep'
@@ -202,6 +247,7 @@ function resetForm() {
   receiverMode.value = 'APPEND'
   receivers.value = []
   invalidReceivers.value = false
+  currentOpen.value = true
   alarmSettingItems.value = createAlarmSettingItems()
   delayMinutes.value = 5
   delaySeconds.value = 60
@@ -212,14 +258,16 @@ function resetForm() {
   resultCountOverride.value = null
 }
 
+// 与列表的 havePermission 保持一致：仅 DaaS 且行上带权限元数据时才按 Edit 权限过滤
+function canEdit(task: BatchAlarmTask) {
+  if (!isDaas || !Array.isArray(task.permissionActions)) return true
+  return task.permissionActions.includes('Edit')
+}
+
 function open(tasks: BatchAlarmTask[]) {
-  const editableTasks = tasks.filter((task) =>
-    task.permissionActions?.includes('Edit'),
-  )
-  taskIds.value = editableTasks.map((task) => task.id)
-  noEditTasks.value = tasks.filter(
-    (task) => !task.permissionActions?.includes('Edit'),
-  )
+  editableTasks.value = tasks.filter(canEdit)
+  taskIds.value = editableTasks.value.map((task) => task.id)
+  noEditTasks.value = tasks.filter((task) => !canEdit(task))
   resetForm()
   visible.value = true
 }
@@ -610,6 +658,56 @@ defineExpose({
                 }}
               </button>
             </div>
+            <div
+              v-if="receiverMode === 'REPLACE' && editableTasks.length"
+              class="batch-alarm-current mt-3"
+            >
+              <div class="batch-alarm-current-head">
+                <span>{{
+                  $t('packages_business_task_batch_alarm_current_title', {
+                    count: editableTasks.length,
+                  })
+                }}</span>
+                <ElButton
+                  text
+                  type="primary"
+                  @click="currentOpen = !currentOpen"
+                >
+                  {{
+                    currentOpen
+                      ? $t('packages_dag_alarm_receiver_preview_hide')
+                      : $t('packages_dag_alarm_receiver_preview_detail')
+                  }}
+                </ElButton>
+              </div>
+              <div v-if="currentOpen" class="batch-alarm-current-list">
+                <div
+                  v-for="task in editableTasks"
+                  :key="task.id"
+                  class="batch-alarm-current-item"
+                >
+                  <span
+                    class="batch-alarm-current-name"
+                    :title="task.name || task.id"
+                  >
+                    {{ task.name || task.id }}
+                  </span>
+                  <span
+                    :class="{
+                      'color-danger': task.alarmReceiverStatus === 'NONE',
+                    }"
+                  >
+                    {{ currentStatusLabel(task) }}
+                  </span>
+                  <span
+                    class="batch-alarm-current-receivers"
+                    :title="currentReceiverNames(task)"
+                  >
+                    {{ currentReceiverNames(task) || '-' }}
+                  </span>
+                </div>
+              </div>
+            </div>
             <AlarmReceiverSelector
               ref="selectorRef"
               v-model="receivers"
@@ -786,6 +884,45 @@ defineExpose({
 .batch-alarm-summary.is-replace {
   background: #fef0f0;
   color: var(--el-color-danger);
+}
+
+.batch-alarm-current {
+  padding: 8px 12px;
+  border: 1px solid var(--el-color-danger-light-7);
+  border-radius: 8px;
+  background: var(--el-color-danger-light-9);
+  font-size: 13px;
+}
+
+.batch-alarm-current-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--el-color-danger);
+}
+
+.batch-alarm-current-list {
+  max-height: 180px;
+  overflow: auto;
+  margin-top: 4px;
+}
+
+.batch-alarm-current-item {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1.5fr) minmax(0, 3fr);
+  gap: 8px;
+  padding: 6px 0;
+  border-top: 1px solid var(--el-border-color-lighter);
+  color: var(--el-text-color-regular);
+  line-height: 18px;
+}
+
+.batch-alarm-current-name,
+.batch-alarm-current-receivers {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .batch-alarm-stats {

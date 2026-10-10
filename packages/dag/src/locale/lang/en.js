@@ -1076,6 +1076,8 @@ export default {
   packages_dag_alarm_receiver_preview_hide: 'Hide details',
   packages_dag_alarm_receiver_deleted_hint:
     'A receiver is no longer valid. This task will not send email and will not fall back to the system default.',
+  packages_dag_alarm_receiver_partial_invalid_hint:
+    '{count} receiver(s) below are no longer valid and will be skipped when sending alarms.',
   packages_dag_alarm_receiver_empty_keep:
     'This task will not send email and will not fall back to the system default.',
   packages_dag_alarm_receiver_col_object: 'Receiver',

@@ -929,6 +929,8 @@ export default {
   packages_dag_alarm_receiver_preview_hide: '收起明细',
   packages_dag_alarm_receiver_deleted_hint:
     '原接收对象已失效。当前任务不会发送邮件告警，也不会自动回退至系统默认接收人。',
+  packages_dag_alarm_receiver_partial_invalid_hint:
+    '以下 {count} 个接收对象已失效，发送告警时将被跳过。',
   packages_dag_alarm_receiver_empty_keep:
     '当前任务不会发送邮件告警，也不会自动回退至系统默认接收人。',
   packages_dag_alarm_receiver_col_object: '接收对象',

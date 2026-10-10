@@ -294,6 +294,10 @@ export default {
   packages_business_task_batch_alarm_stat_change: '預計修改',
   packages_business_task_batch_alarm_stat_permission: '權限不足',
   packages_business_task_batch_alarm_stat_overwrite: '原配置覆蓋',
+  packages_business_task_batch_alarm_current_title:
+    '所選 {count} 個任務目前的接收對象',
+  packages_business_task_alarm_receiver_form_editor_tip:
+    '舊版表單任務暫不支援在編輯器中設定接收對象，請在列表中勾選任務後使用「批量設置告警」修改',
   packages_business_task_batch_alarm_confirm: '確認設定',
   packages_business_dataFlow_addTag: '添加標籤',
   packages_business_dataVerify_dataVerify: '數據校驗',

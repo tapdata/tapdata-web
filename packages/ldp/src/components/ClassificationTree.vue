@@ -588,7 +588,7 @@ export default {
               'packages_component_classification_delete_irreversible',
             )}</div>`,
           ].join('')
-          this.$confirm(message, title, {
+          this.$confirm(title, message, {
             dangerouslyUseHTMLString: true,
             confirmButtonText: this.$t(
               'packages_component_classification_delete_group_button',

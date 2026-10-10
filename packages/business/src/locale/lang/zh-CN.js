@@ -295,6 +295,10 @@ export default {
   packages_business_task_batch_alarm_stat_change: '预计修改',
   packages_business_task_batch_alarm_stat_permission: '权限不足',
   packages_business_task_batch_alarm_stat_overwrite: '原配置覆盖',
+  packages_business_task_batch_alarm_current_title:
+    '所选 {count} 个任务当前的接收对象',
+  packages_business_task_alarm_receiver_form_editor_tip:
+    '旧版表单任务暂不支持在编辑器中设置接收对象，请在列表中勾选任务后使用「批量设置告警」修改',
   packages_business_task_batch_alarm_confirm: '确认设置',
   packages_business_dataFlow_addTag: '添加标签',
   packages_business_dataVerify_dataVerify: '数据校验',

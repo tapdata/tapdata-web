@@ -323,6 +323,10 @@ export default {
   packages_business_task_batch_alarm_stat_change: 'To update',
   packages_business_task_batch_alarm_stat_permission: 'No permission',
   packages_business_task_batch_alarm_stat_overwrite: 'Overwrite',
+  packages_business_task_batch_alarm_current_title:
+    'Current receivers of the {count} selected tasks',
+  packages_business_task_alarm_receiver_form_editor_tip:
+    'Receivers of form-based tasks cannot be edited in the editor. Select the task in the list and use "Batch Set Alerts" instead.',
   packages_business_task_batch_alarm_confirm: 'Apply',
   packages_business_dataFlow_addTag: 'Add Tag',
   packages_business_dataVerify_dataVerify: 'Data Verify',

@@ -413,14 +413,14 @@ export default {
       return '-'
     },
 
+    // 旧版表单编辑器未接入接收对象配置，列表中不提供跳转入口，改用批量设置告警修改
     openAlarmSettings(row) {
-      const isFormEditor = row.attrs?.editorType === 'form'
       this.openRoute({
-        name: isFormEditor ? 'MigrateForm' : this.route.editor,
+        name: this.route.editor,
         params: {
           id: row.id,
         },
-        query: isFormEditor ? {} : { settingsTab: 'tab3' },
+        query: { settingsTab: 'tab3' },
       })
     },
 
@@ -1428,7 +1428,21 @@ export default {
         min-width="220"
       >
         <template #default="{ row }">
+          <ElTooltip
+            v-if="row.attrs?.editorType === 'form'"
+            :content="
+              $t('packages_business_task_alarm_receiver_form_editor_tip')
+            "
+            placement="top"
+          >
+            <span
+              :class="{ 'color-danger': row.alarmReceiverStatus === 'NONE' }"
+            >
+              {{ formatAlarmReceiverStatus(row) }}
+            </span>
+          </ElTooltip>
           <ElButton
+            v-else
             text
             :type="row.alarmReceiverStatus === 'NONE' ? 'danger' : 'primary'"
             @click="openAlarmSettings(row)"

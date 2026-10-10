@@ -62,7 +62,7 @@ function readInitialMode(
   },
   receivers: AlarmReceiver[],
 ): ReceiverMode {
-  if (Array.isArray(dataflow?.alarmReceivers)) return 'CUSTOM'
+  // 优先按明确的状态判定，数组字段只用于推断旧数据。
   const status = dataflow?.alarmReceiverStatus as
     | AlarmReceiverStatus
     | undefined
@@ -70,6 +70,7 @@ function readInitialMode(
   if (status === 'CUSTOM' || status === 'NONE') return 'CUSTOM'
   if (dataflow?.useSystemDefaultReceivers === true) return 'SYSTEM_DEFAULT'
   if (dataflow?.useSystemDefaultReceivers === false) return 'CUSTOM'
+  if (Array.isArray(dataflow?.alarmReceivers)) return 'CUSTOM'
   return receivers.length ? 'CUSTOM' : 'SYSTEM_DEFAULT'
 }
 
@@ -202,6 +203,10 @@ const AlarmReceiverFieldComponent = defineComponent({
         mode.value === 'CUSTOM' &&
         !previewStale.value &&
         previewCount.value === 0
+      const showInvalid =
+        mode.value === 'CUSTOM' &&
+        !previewStale.value &&
+        previewInvalid.value.length > 0
       const showSystemDefaultEmpty =
         mode.value === 'SYSTEM_DEFAULT' &&
         !previewStale.value &&
@@ -265,7 +270,14 @@ const AlarmReceiverFieldComponent = defineComponent({
               </div>
             </div>
           )}
-          {showEmptyWarning && previewInvalid.value.length > 0 && (
+          {showInvalid && !showEmptyWarning && (
+            <div class="alarm-receiver-invalid-hint">
+              {t('packages_dag_alarm_receiver_partial_invalid_hint', {
+                count: previewInvalid.value.length,
+              })}
+            </div>
+          )}
+          {showInvalid && (
             <table class="alarm-receiver-invalid-table">
               <thead>
                 <tr>

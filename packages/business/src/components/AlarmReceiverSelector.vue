@@ -291,6 +291,7 @@ function receiverNames() {
 
 defineExpose({
   receiverNames,
+  labelOf: tagLabel,
 })
 
 function tagKey(item: AlarmReceiver, index: number) {
