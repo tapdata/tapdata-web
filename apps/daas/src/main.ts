@@ -18,7 +18,12 @@ import App from '@/App.vue'
 import { installOEM } from '@/oem'
 import { installAllPlugins } from '@/plugins'
 import { initRequestClient } from '@/plugins/axios'
-import { configUser, getUrlSearch, signOut } from '@/utils/util'
+import {
+  configUser,
+  getUrlSearch,
+  removeUrlParams,
+  signOut,
+} from '@/utils/util'
 import store from '@/vuex' // 引入全局数据控制
 import { installDirectives } from './directives'
 import i18n from './i18n'
@@ -71,6 +76,7 @@ const URL_LANG = getUrlSearch('lang')
 
 if (TOKEN) {
   Cookie.set('access_token', TOKEN)
+  removeUrlParams('token')
 }
 
 const token = Cookie.get('access_token')
@@ -100,9 +106,8 @@ const init = () => {
 
   app.config.globalProperties.$ws = new WSClient(wsUrl, undefined, {
     getQuery: () => {
-      return {
-        access_token: Cookie.get('access_token'),
-      }
+      // Same-origin WS sends the access_token cookie; do not put the token in the URL (TAP-11883).
+      return {}
     },
   })
 

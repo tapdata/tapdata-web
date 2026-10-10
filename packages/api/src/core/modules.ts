@@ -1,4 +1,4 @@
-import Cookie from '@tap/shared/src/cookie'
+import { downloadAuthenticated } from '../download'
 import { requestClient } from '../request'
 
 const BASE_URL = '/api/Modules'
@@ -148,16 +148,16 @@ export function getApiModuleList(params: any) {
  * 导出 API 模块 - 批量导出模块配置
  */
 export function exportApiModules(ids: string[]) {
-  const href = `${BASE_URL}/batch/load?id=${ids.join('&id=')}&access_token=${Cookie.get('access_token')}`
-  window.open(href)
+  return downloadAuthenticated(`${BASE_URL}/batch/load?id=${ids.join('&id=')}`)
 }
 
 /**
  * 导出 API 文档 - 导出 API 接口文档
  */
 export function exportApiDocumentation(ids: string[], ip: string) {
-  const href = `${BASE_URL}/api/export?id=${ids.join('&id=')}&access_token=${Cookie.get('access_token')}&ip=${ip}`
-  window.open(href)
+  return downloadAuthenticated(
+    `${BASE_URL}/api/export?id=${ids.join('&id=')}&ip=${ip}`,
+  )
 }
 
 /**

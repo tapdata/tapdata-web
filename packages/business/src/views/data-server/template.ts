@@ -51,11 +51,11 @@ export default function ({ urlList, token }: TemplateParams) {
 public static String doGet(String url, String access_token, String param) {
   try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
     StringBuilder urlBuilder = new StringBuilder(url);
-    urlBuilder.append("?access_token=").append(access_token);
     if (param != null && !param.isEmpty()) {
-      urlBuilder.append("&filter=").append(URLEncoder.encode(param, StandardCharsets.UTF_8.name()));
+      urlBuilder.append("?filter=").append(URLEncoder.encode(param, StandardCharsets.UTF_8.name()));
     }
     HttpGet httpGet = new HttpGet(urlBuilder.toString());
+    httpGet.setHeader("Authorization", "Bearer " + access_token);
     RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(5000)
       .setConnectionRequestTimeout(5000)
       .setSocketTimeout(15000).build();
@@ -79,12 +79,11 @@ public static String doGet(String url, String access_token, String param) {
 
 public static String doPost(String url, String access_token, String reqBody) {
   try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-    StringBuilder urlBuilder = new StringBuilder(url);
-    urlBuilder.append("?access_token=").append(access_token);
     RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(5000)
       .setConnectionRequestTimeout(5000)
       .setSocketTimeout(15000).build();
-    HttpPost httpPost = new HttpPost(urlBuilder.toString());
+    HttpPost httpPost = new HttpPost(url);
+    httpPost.setHeader("Authorization", "Bearer " + access_token);
     httpPost.setHeader("content-type", "application/json;charset=UTF-8");
     httpPost.setConfig(requestConfig);
     httpPost.setEntity(new StringEntity(reqBody, Charset.defaultCharset()));
@@ -160,17 +159,22 @@ async function getAccessToken(clientId, clientSecret) {
 
 // GET request
 async function get(url, token) {
-  const response = await fetch(url + '?access_token=' + token);
+  const response = await fetch(url, {
+    headers: { Authorization: 'Bearer ' + token }
+  });
   const data = await response.json();
   return data;
 }
 
 // POST request
 async function post(url, token, body) {
-  const response = await fetch(url + '?access_token=' + token, {
+  const response = await fetch(url, {
     method: 'POST',
     body: JSON.stringify(body),
-    headers: { 'Content-Type': 'application/json' }
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + token
+    }
   });
   const data = await response.json();
   return data;
@@ -222,18 +226,18 @@ def get_access_token(client_id, client_secret):
 
 # GET request example
 params = {'page': 1, 'limit': 20}  # Optional query parameters
-headers = {'access_token': access_token}
+headers = {'Authorization': 'Bearer ' + access_token}
 result1 = requests.get(get_url, params=params, headers=headers)
 print('GET result:', result1.text)
 
 # POST request example
 body = {'page': 1, 'limit': 20}
-result2 = requests.post(post_url + '?access_token=' + access_token, json=body)
+result2 = requests.post(post_url, json=body, headers=headers)
 print('POST result:', result2.text)
 
 # Example: Get new token and make request
 # new_token = get_access_token('your_client_id', 'your_client_secret')
-# result = requests.get(get_url, headers={'access_token': new_token})
+# result = requests.get(get_url, headers={'Authorization': 'Bearer ' + new_token})
 # print('Result with new token:', result.text)`
 
   return {
