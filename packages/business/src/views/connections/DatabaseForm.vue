@@ -1,6 +1,5 @@
 <script>
 import { action } from '@formily/reactive'
-import { findAccessNodeInfo } from '@tap/api/src/core/cluster'
 import {
   createConnection,
   getUsingDigginTaskByConnectionId,
@@ -35,6 +34,10 @@ import PageContainer from '../../components/PageContainer.vue'
 import { ConnectionDebug } from './ConnectionDebug'
 import { JsDebug } from './JsDebug'
 import Test from './Test.vue'
+import {
+  createAgentSettingsProperties,
+  loadAccessNodeOptions,
+} from './agentSettingsSchema'
 import UsedTaskDialog from './UsedTaskDialog.vue'
 import { getConnectionIcon } from './util'
 
@@ -652,214 +655,7 @@ export default {
       }
 
       Object.assign(endProperties, {
-        accessNodeType: {
-          type: 'string',
-          title: this.$t('packages_business_connection_form_access_node'),
-          default: 'AUTOMATIC_PLATFORM_ALLOCATION',
-          'x-decorator': 'FormItem',
-          'x-decorator-props': {
-            tooltip: this.$t(
-              'packages_business_connection_form_access_node_tip',
-            ),
-          },
-          'x-component': 'Select',
-          enum: [
-            {
-              label: this.$t('packages_business_connection_form_automatic'),
-              value: 'AUTOMATIC_PLATFORM_ALLOCATION',
-            },
-            {
-              label: this.$t('packages_business_connection_form_manual'),
-              value: 'MANUALLY_SPECIFIED_BY_THE_USER',
-            },
-          ],
-          'x-reactions': [
-            {
-              dependencies: ['__TAPDATA.shareCdcEnable'],
-              fulfill: {
-                state: {
-                  value: `{{!$isDaas && $deps[0] ? 'MANUALLY_SPECIFIED_BY_THE_USER' : $self.value}}`,
-                  dataSource: `{{!$isDaas && $deps[0] ? [
-                    { label: '${this.$t(
-                      'packages_business_connection_form_automatic',
-                    )}', value: 'AUTOMATIC_PLATFORM_ALLOCATION', disabled: true },
-                    { label: '${this.$t(
-                      'packages_business_connection_form_manual',
-                    )}', value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
-                  ] : !$isDaas ? [
-                    { label: '${this.$t(
-                      'packages_business_connection_form_automatic',
-                    )}', value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
-                    { label: '${this.$t(
-                      'packages_business_connection_form_manual',
-                    )}', value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
-                  ] : [
-                    { label: '${this.$t(
-                      'packages_business_connection_form_automatic',
-                    )}', value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
-                    { label: '${this.$t(
-                      'packages_business_connection_form_manual',
-                    )}', value: 'MANUALLY_SPECIFIED_BY_THE_USER' },
-                    {
-                      label: '${this.$t('packages_business_connection_form_group')}',
-                      value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
-                    }
-                  ]}}`,
-                },
-              },
-            },
-            {
-              target: '__TAPDATA.accessNodeProcessId',
-              effects: ['onFieldInputValueChange'],
-              fulfill: {
-                state: {
-                  value: '',
-                  // value: `{{console.log("$target.dataSource", $target.dataSource), $target.value ? '' : $target.dataSource && $target.dataSource[0] ? $target.dataSource[0].value : ''}}`
-                },
-              },
-            },
-          ],
-        },
-        accessNodeOption: {
-          type: 'string',
-          'x-display': 'hidden',
-          'x-reactions': [
-            {
-              dependencies: ['.accessNodeType'],
-              fulfill: {
-                state: {
-                  visible:
-                    "{{['MANUALLY_SPECIFIED_BY_THE_USER', 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'].includes($deps[0])}}",
-                },
-              },
-            },
-            '{{useAsyncDataSource(loadAccessNode, "dataSource", {value: $self.value})}}',
-          ],
-        },
-        agentWrap: {
-          type: 'void',
-          'x-component': 'Space',
-          'x-component-props': {
-            class: 'w-100 align-items-start',
-          },
-          'x-reactions': {
-            dependencies: ['.accessNodeType'],
-            fulfill: {
-              state: {
-                visible:
-                  "{{['MANUALLY_SPECIFIED_BY_THE_USER', 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'].includes($deps[0])}}",
-              },
-            },
-          },
-          properties: {
-            accessNodeProcessId: {
-              type: 'string',
-              description: `{{$values.__TAPDATA.shareCdcEnable ? '${this.$t(
-                'packages_business_agent_select_not_found_for_rocksdb',
-              )}' : ''}}`,
-              'x-decorator': 'FormItem',
-              'x-decorator-props': {
-                colon: false,
-                class: 'flex-1',
-              },
-              'x-component': 'Select',
-              'x-component-props': {
-                onChange: `{{ () => $self.setSelfErrors('') }}`,
-              },
-              'x-reactions': [
-                // '{{useAsyncDataSource(loadAccessNode, "dataSource", {value: $self.value})}}',
-                // 根据下拉数据判断是否存在已选的agent
-                {
-                  dependencies: [
-                    '.accessNodeType',
-                    '.accessNodeOption#dataSource',
-                  ],
-                  fulfill: {
-                    state: {
-                      title: `{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0] ? '${i18n.t(
-                        'packages_business_choose_agent_group',
-                      )}': '${i18n.t('packages_business_choose_agent')}'}}`,
-                    },
-                    run: `
-                console.log('$deps[1]', $deps)
-                if (!$deps[1]) return
-                $self.dataSource = $deps[1].filter(item => item.accessNodeType === $deps[0])
-                if ($self.dataSource?.length) {
-                // $self.dataSource = $deps[1].filter(item => item.accessNodeType === $deps[0])
-                if ($self.value) {
-                  const current = $self.dataSource.find(item => item.value === $self.value)
-                  if (!current) {
-                    $self.setSelfErrors('${this.$t('packages_business_agent_select_not_found')}')
-                  }
-                }
-              }`,
-                  },
-                },
-              ],
-              // 校验下拉数据判断是否存在已选的agent
-              'x-validator': `{{(value, rule, ctx)=> {
-            if (!value) {
-              let msg = '${this.$t('packages_business_agent_select_placeholder')}'
-              const {shareCDCExternalStorageId} = $values.__TAPDATA
-              if (shareCDCExternalStorageId) {
-                const dataSource = $form.query('__TAPDATA.shareCDCExternalStorageId').get('dataSource')
-                const type = dataSource.find(item => item.value === shareCDCExternalStorageId)?.type
-                if (type === 'rocksdb') msg = '${this.$t('packages_business_agent_select_not_found_for_rocksdb')}'
-              }
-              return msg
-            } else if (value && ctx.field.dataSource?.length) {
-              const current = ctx.field.dataSource.find(item => item.value === value)
-              if (!current) {
-                $self.setSelfErrors('')
-                return '${this.$t('packages_business_agent_select_not_found')}'
-              }
-            }
-          }}}`,
-            },
-            priorityProcessId: {
-              title: i18n.t('packages_business_priorityProcessId'),
-              type: 'string',
-              default: '',
-              'x-decorator': 'FormItem',
-              'x-decorator-props': {
-                class: 'flex-1',
-              },
-              'x-component': 'Select',
-              'x-reactions': {
-                dependencies: [
-                  '.accessNodeType',
-                  '.accessNodeOption#dataSource',
-                  '.accessNodeProcessId',
-                ],
-                fulfill: {
-                  state: {
-                    visible:
-                      "{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0]}}",
-                  },
-                  run: `
-                    let children = []
-
-                    if ($deps[1] && $deps[2]) {
-                      children = $deps[1].find(item => item.accessNodeType === $deps[0] && item.value === $deps[2]).children || []
-                    }
-
-                    $self.dataSource = [
-                      {
-                        label:'${i18n.t('packages_business_connection_form_automatic')}',
-                        value: ''
-                      }
-                    ].concat(children)
-
-                    if ($self.value && !children.find(item => item.value === $self.value)) {
-                      $self.value = ''
-                    }
-                  `,
-                },
-              },
-            },
-          },
-        },
-
+        ...createAgentSettingsProperties((key) => this.$t(key), this.isDaas),
         schemaUpdateHour: {
           type: 'string',
           title: i18n.t(
@@ -978,10 +774,6 @@ export default {
         endProperties.schemaUpdateHour.enum.unshift({
           label: i18n.t('packages_business_connections_databaseform_system'),
           value: 'default',
-        })
-        endProperties.accessNodeType.enum.push({
-          label: this.$t('packages_business_connection_form_group'),
-          value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP',
         })
       }
 
@@ -1348,48 +1140,7 @@ export default {
             )
           }
         },
-        loadAccessNode: async (fieldName, others = {}) => {
-          const data = await findAccessNodeInfo()
-
-          const mapNode = (item) => ({
-            value: item.processId,
-            label: `${item.agentName || item.hostName}（${
-              item.status === 'running'
-                ? i18n.t('public_status_running')
-                : i18n.t('public_agent_status_offline')
-            }）`,
-            disabled: item.status !== 'running',
-            accessNodeType: item.accessNodeType,
-          })
-
-          return (
-            data
-              ?.filter(
-                (t) =>
-                  t.status === 'running' ||
-                  t.accessNodeType ===
-                    'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' ||
-                  t.processId === others.value,
-              )
-              ?.map((item) => {
-                if (
-                  item.accessNodeType ===
-                  'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
-                ) {
-                  return {
-                    value: item.processId,
-                    label: `${item.accessNodeName}（${i18n.t('public_status_running')}：${
-                      item.accessNodes?.filter((ii) => ii.status === 'running')
-                        .length || 0
-                    }）`,
-                    accessNodeType: item.accessNodeType,
-                    children: item.accessNodes?.map(mapNode) || [],
-                  }
-                }
-                return mapNode(item)
-              }) || []
-          )
-        },
+        loadAccessNode: loadAccessNodeOptions,
         loadCommandList: async (filter, val) => {
           try {
             const { $values, command, where = {}, page, size } = filter

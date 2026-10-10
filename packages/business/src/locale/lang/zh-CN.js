@@ -61,6 +61,10 @@ export default {
   packages_business_priorityProcessId: '标签内调度方式',
   packages_business_connection_form_access_node_tip:
     '自动情况下由平台分配节点进行连接访问，手动情况下由用户手动指定节点进行访问',
+  packages_business_connections_list_batch_agent_settings: '批量设置 Agent',
+  packages_business_agent_settings_dialog_title: '批量设置 Agent',
+  packages_business_agent_settings_dialog_subtitle:
+    '将为选中的 {count} 个连接生成相同的 Agent 设置。',
   packages_business_connection_form_give_up: '放弃',
   packages_business_share_form_setting_table_name: '存储MongoDB表名',
   packages_business_share_form_setting_log_time: '日志保存时长',

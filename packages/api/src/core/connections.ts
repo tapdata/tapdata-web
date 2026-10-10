@@ -28,6 +28,22 @@ export function batchUpdateConnectionTags(params: any) {
   return requestClient.patch(`${BASE_URL}/batchUpdateListtags`, params)
 }
 
+export interface BatchUpdateConnectionAgentSettingsParams {
+  requestId: string
+  connectionIds: string[]
+  settings: {
+    accessNodeType: string
+    accessNodeProcessId: string | null
+    priorityProcessId: string | null
+  }
+}
+
+export function batchUpdateConnectionAgentSettings(
+  params: BatchUpdateConnectionAgentSettingsParams,
+) {
+  return requestClient.patch(`${BASE_URL}/batch-agent-settings`, params)
+}
+
 export function checkConnection(id: string, params: any) {
   return requestClient.patch(`${BASE_URL}/${id}`, params)
 }

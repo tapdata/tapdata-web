@@ -61,6 +61,10 @@ export default {
   packages_business_priorityProcessId: '標籤內調度方式',
   packages_business_connection_form_access_node_tip:
     '自動情況下由平台分配節點進行連接訪問，手動情況下由用戶手動指定節點進行訪問',
+  packages_business_connections_list_batch_agent_settings: '批量設定 Agent',
+  packages_business_agent_settings_dialog_title: '批量設定 Agent',
+  packages_business_agent_settings_dialog_subtitle:
+    '將為選取的 {count} 個連接產生相同的 Agent 設定。',
   packages_business_connection_form_give_up: '放棄',
   packages_business_share_form_setting_table_name: '存儲MongoDB表名',
   packages_business_share_form_setting_log_time: '日誌保存時長',
