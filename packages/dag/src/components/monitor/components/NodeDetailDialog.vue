@@ -318,7 +318,7 @@ const totalDataPercentage = computed(() => {
           text: `${snapshotTableTotal}/${tableTotal}`,
         }
       : { val: 0, text: '' }
-  if (snapshotTableTotal === tableTotal)
+  if (tableTotal > 0 && snapshotTableTotal === tableTotal)
     return {
       val: 100,
       text: '',
