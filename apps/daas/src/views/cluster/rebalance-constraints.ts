@@ -15,13 +15,16 @@ export function visibleAgentIds(
   agents: { agentId: string; online: boolean }[],
   tasks: { sourceAgentId: string; currentAgentId: string }[],
 ): string[] {
-  return [
-    ...new Set(
-      [
-        ...(agentIds ??
-          agents.filter((agent) => agent.online).map((agent) => agent.agentId)),
-        ...tasks.flatMap((task) => [task.sourceAgentId, task.currentAgentId]),
-      ].filter(Boolean),
-    ),
-  ]
+  const visible = new Set(
+    [
+      ...(agentIds ??
+        agents.filter((agent) => agent.online).map((agent) => agent.agentId)),
+      ...tasks.flatMap((task) => [task.sourceAgentId, task.currentAgentId]),
+    ].filter(Boolean),
+  )
+  // Follow the cluster panel order, independent of preview assignment and task counts.
+  const ordered = agents
+    .map((agent) => agent.agentId)
+    .filter((id) => visible.has(id))
+  return [...new Set([...ordered, ...visible])]
 }
