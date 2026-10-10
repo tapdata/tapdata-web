@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { User } from '@element-plus/icons-vue'
 import {
   createForm,
   onFieldInputValueChange,
@@ -22,7 +21,6 @@ import { TextEditable } from '@tap/component/src/base/text-editable'
 import * as components from '@tap/form/src/components'
 import { createSchemaField } from '@tap/form/src/shared/create'
 import { I18nT, useI18n } from '@tap/i18n'
-import { getSettingByKey } from '@tap/shared/src/settings'
 import { debounce } from 'lodash-es'
 import {
   computed,
@@ -34,6 +32,7 @@ import {
   watch,
   type Ref,
 } from 'vue'
+import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { FormTab } from '../../../form'
 import * as _components from '../components/form'
@@ -45,6 +44,11 @@ import {
 import { useDataflowStore } from '../stores/dataflow.store'
 
 const dataflowStore = useDataflowStore()
+const route = useRoute()
+const openAlarmTab = route.query.settingsTab === 'tab3'
+if (openAlarmTab) {
+  dataflowStore.toggleShowSettings(true)
+}
 const scope = inject('formScope')
 const dataflow = inject<Ref<any>>('dataflow')
 const dataflowName = inject('dataflowName')
@@ -479,7 +483,7 @@ const formScope: FormScope = {
   },
   getPickerOptionsBeforeTime,
   $isDaas: isDaas,
-  formTab: FormTab.createFormTab(),
+  formTab: FormTab.createFormTab(openAlarmTab ? 'tab3' : undefined),
   checkName: (value: string) => {
     return new Promise((resolve) => {
       handleCheckName(resolve, value)
@@ -666,35 +670,11 @@ const form = createForm({
 const lazySaveAlarmConfig = debounce(saveAlarmConfig, 100)
 const lazySavePermissionsConfig = debounce(savePermissionsConfig, 300)
 
-function loadEmailReceivers() {
-  const str = getSettingByKey('email.receivers')
-  const receivers = str ? str.split(',').filter(Boolean) : []
-  const taskReceivers = dataflowStore.dataflow.emailReceivers
-  const value =
-    Array.isArray(taskReceivers) && taskReceivers.length
-      ? taskReceivers
-      : receivers
-  const options = [...new Set([...receivers, ...value])]
-
-  form.setFieldState('emailReceivers', {
-    dataSource: options.map((receiver: string) => {
-      return {
-        label: receiver,
-        value: receiver,
-      }
-    }),
-  })
-  form.setValues({ emailReceivers: value })
-}
-
 function useFormEffects() {
-  // 告警和权限的副作用
-  onFieldInputValueChange(
-    '*(alarmSettings.*.*,alarmRules.*.*,emailReceivers)',
-    () => {
-      if (stateIsReadonly.value) lazySaveAlarmConfig()
-    },
-  )
+  // 告警和权限的副作用。接收人由 AlarmReceiverField 单独提交，避免和节点告警写在同一次请求里。
+  onFieldInputValueChange('*(alarmSettings.*.*,alarmRules.*.*)', () => {
+    if (stateIsReadonly.value) lazySaveAlarmConfig()
+  })
   onFieldValueChange('*(permissions.*)', () => {
     lazySavePermissionsConfig()
   })
@@ -711,7 +691,6 @@ function saveAlarmConfig() {
     taskId: values.id,
     alarmSettings: values.alarmSettings,
     alarmRules: values.alarmRules,
-    emailReceivers: values.emailReceivers,
   })
 }
 
@@ -750,6 +729,11 @@ async function getRolePermissions() {
 // Watchers
 watch(stateIsReadonly, (v) => {
   form.setState({ disabled: v })
+  if (isDaas) {
+    form.setFieldState('alarmReceiverField', {
+      pattern: 'editable',
+    })
+  }
   if (v) {
     form.setFieldState('*(accessNodeType,accessNodeProcessId)', {
       disabled: true,
@@ -884,11 +868,10 @@ watch(
 // Lifecycle
 onMounted(() => {
   nextTick(() => {
-    loadEmailReceivers()
-
-    // form.setEffects(useEffects)
-
     if (isDaas) {
+      form.setFieldState('alarmReceiverField', {
+        pattern: 'editable',
+      })
       form.setFieldState('tab4', {
         disabled: !buttonShowMap.Edit,
       })
@@ -1120,7 +1103,9 @@ const schema = {
                                   'x-decorator': 'FormItem',
                                   'x-decorator-props': {
                                     feedbackLayout: 'none',
-                                    addonAfter: `% ${t('packages_dag_migration_settingpanel_shirenwubaocuo')}`,
+                                    addonAfter: `% ${t(
+                                      'packages_dag_migration_settingpanel_shirenwubaocuo',
+                                    )}`,
                                   },
                                   'x-component': 'InputNumber',
                                   default: 1,
@@ -1531,7 +1516,9 @@ const schema = {
                                     state: {
                                       title: `{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0] ? '${t(
                                         'packages_business_choose_agent_group',
-                                      )}': '${t('packages_business_choose_agent')}'}}`,
+                                      )}': '${t(
+                                        'packages_business_choose_agent',
+                                      )}'}}`,
                                     },
                                   },
                                 },
@@ -1567,7 +1554,9 @@ const schema = {
 
                                           $self.dataSource = [
                                             {
-                                              label:'${t('packages_business_connection_form_automatic')}',
+                                              label:'${t(
+                                                'packages_business_connection_form_automatic',
+                                              )}',
                                               value: ''
                                             }
                                           ].concat(children)
@@ -1624,20 +1613,16 @@ const schema = {
             },
             ...getAlarmSettingSchemas(),
 
-            emailReceivers: {
+            alarmReceiverField: {
+              type: 'void',
               'x-index': 1000,
-              title: t('packages_dag_email_receivers'),
-              type: 'array',
-              'x-visible': `{{$isDaas}}`,
+              'x-visible': '{{$isDaas}}',
               'x-editable': true,
               'x-decorator': 'FormItem',
-              'x-component': 'Select',
+              'x-component': 'AlarmReceiverField',
               'x-component-props': {
-                multiple: true,
-                filterable: true,
-              },
-              'x-content': {
-                prefix: () => h(ElIcon, [h(User)]),
+                taskId: '{{$values.id}}',
+                taskName: '{{$values.name}}',
               },
             },
           },
