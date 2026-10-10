@@ -49,5 +49,23 @@ test('指定单节点等不可移动任务拒绝拖放', () => {
   assert.equal(canMoveTask({ ...task, movable: false }, 'b'), false)
 })
 test('源节点已离线时仍显示当前任务所在列', () => {
-  assert.deepEqual(visibleAgentIds(['b', 'c'], agents, [task]), ['b', 'c', 'a'])
+  assert.deepEqual(visibleAgentIds(['b', 'c'], agents, [task]), ['a', 'b', 'c'])
+})
+
+test('预览候选顺序不同仍沿用集群面板顺序', () => {
+  const clusterAgents = ['c', 'a', 'b'].map((agentId) => ({
+    agentId,
+    online: true,
+  }))
+  assert.deepEqual(visibleAgentIds(['a', 'b', 'c'], clusterAgents, [task]), [
+    'c',
+    'a',
+    'b',
+  ])
+  assert.deepEqual(
+    visibleAgentIds(['b', 'c', 'a'], clusterAgents, [
+      { ...task, currentAgentId: 'b' },
+    ]),
+    ['c', 'a', 'b'],
+  )
 })
