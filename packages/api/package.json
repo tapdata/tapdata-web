@@ -19,8 +19,12 @@
     "@tap/request": "workspace:*",
     "@tap/shared": "workspace:*",
     "axios": "catalog:",
+    "json-bigint": "catalog:",
     "qs": "catalog:",
     "vue": "catalog:",
     "vue-request": "catalog:"
+  },
+  "devDependencies": {
+    "@types/json-bigint": "catalog:"
   }
 }
