@@ -144,8 +144,12 @@ export default {
   packages_form_js_processor_mock_log: '日誌',
   packages_form_js_processor_mock_log_clear: '清空',
   packages_form_js_processor_mock_sql_query: 'SQL 查詢',
+  packages_form_js_processor_mock_filter_query: '條件查詢',
   packages_form_js_processor_mock_get_sample: '獲取樣本',
   packages_form_js_processor_mock_sql_dialog_title: 'SQL 查詢獲取數據',
+  packages_form_js_processor_mock_filter_dialog_title: '條件查詢獲取數據',
+  packages_form_js_processor_mock_filter_placeholder:
+    '請輸入 MongoDB 查詢條件，例如 {"status": "PAID"}。如需排序或限制條數，請用 $find 包裝（最多返回 100 條）：\n{\n  "$find": {\n    "filter": {"age": {"$gt": 10}},\n    "sort": {"age": -1},\n    "limit": 10\n  }\n}',
   packages_form_js_processor_mock_sql_preview: '執行預覽',
   packages_form_js_processor_mock_sql_use_data: '使用此數據',
   packages_form_js_processor_mock_json_valid: '格式正確',
@@ -173,7 +177,10 @@ export default {
   packages_form_js_processor_mock_log_no_more: '沒有更多日誌了',
   packages_form_js_processor_mock_log_sql_import:
     '從 SQL 查詢導入 {val1} 條數據',
+  packages_form_js_processor_mock_log_filter_import:
+    '從條件查詢導入 {val1} 條數據',
   packages_form_js_processor_mock_sql_query_fail: 'SQL 查詢失敗',
+  packages_form_js_processor_mock_filter_query_fail: '條件查詢失敗',
   packages_form_js_processor_mock_unknown_error: '未知錯誤',
   packages_form_js_processor_mock_event_insert: '插入',
   packages_form_js_processor_mock_event_update: '更新',

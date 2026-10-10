@@ -1,5 +1,5 @@
 import { isPlainObj } from '@tap/shared'
-import Cookie from '@tap/shared/src/cookie'
+import { downloadAuthenticated } from '../download'
 import { requestClient, type Page } from '../request'
 
 const BASE_URL = '/api/Task'
@@ -131,8 +131,9 @@ export function editTask(params: any) {
 }
 
 export function exportTasks(ids: string[]) {
-  const href = `${BASE_URL}/batch/load?taskId=${ids.join('&taskId=')}&access_token=${Cookie.get('access_token')}`
-  window.open(href)
+  return downloadAuthenticated(
+    `${BASE_URL}/batch/load?taskId=${ids.join('&taskId=')}`,
+  )
 }
 
 export function checkTaskRun(id: string) {

@@ -1,7 +1,5 @@
-import Cookie from '@tap/shared/src/cookie'
 import axios from 'axios'
-
-import qs from 'qs'
+import { reactive } from 'vue'
 
 export const getImgByType = function (type) {
   if (!type || type === 'jira') {
@@ -64,22 +62,42 @@ export const defaultModel = {
   },
 }
 
-// 数据源图标
+// 数据源图标：<img src> 无法带 Authorization，用 Bearer 拉 blob 再转 object URL（TAP-11883）。
+const iconUrlMap = reactive({})
+const iconPending = new Set()
+
 export const getConnectionIcon = (pdkHash) => {
-  if (pdkHash) {
-    const params = {
-      pdkHash,
-    }
-    if (TAP_ACCESS_TOKEN) {
-      params.__token = TAP_ACCESS_TOKEN
-    }
-    const access_token = Cookie.get('access_token')
-    if (access_token) {
-      params.access_token = access_token
-    }
-    const baseUrl = axios.defaults.baseURL.replace(/\/$/, '')
-    return `${baseUrl}/api/pdk/icon?${qs.stringify(params)}`
-  } else {
+  if (!pdkHash) {
     return ''
   }
+  const cached = iconUrlMap[pdkHash]
+  if (cached) {
+    return cached
+  }
+  if (!iconPending.has(pdkHash)) {
+    iconPending.add(pdkHash)
+    const params = { pdkHash }
+    const cloudToken = globalThis.TAP_ACCESS_TOKEN
+    if (cloudToken) {
+      params.__token = cloudToken
+    }
+    const baseUrl = axios.defaults.baseURL.replace(/\/$/, '')
+    axios
+      .get(`${baseUrl}/api/pdk/icon`, {
+        params,
+        responseType: 'blob',
+        skipAuthExpire: true,
+        silenceMessage: true,
+      })
+      .then((res) => {
+        const blob = res.data
+        if (blob && blob.size) {
+          iconUrlMap[pdkHash] = URL.createObjectURL(blob)
+        }
+      })
+      .finally(() => {
+        iconPending.delete(pdkHash)
+      })
+  }
+  return iconUrlMap[pdkHash] || ''
 }
