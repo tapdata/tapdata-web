@@ -12,6 +12,7 @@ import {
 import { showErrorMessage } from '@tap/business/src/components/error-message'
 import UpgradeCharges from '@tap/business/src/components/UpgradeCharges.vue'
 import UpgradeFee from '@tap/business/src/components/UpgradeFee.vue'
+import { useSystemAlarmStatus } from '@tap/business/src/composables/useSystemAlarmStatus'
 import i18n from '@tap/i18n'
 import axios from 'axios'
 import { ElMessageBox, ElMessage as Message } from 'element-plus'
@@ -20,6 +21,33 @@ import { computed, defineComponent, inject, onBeforeUnmount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import SchemaForm from '../SchemaForm.vue'
+
+function getSystemAlarmWarningSchema(index, alarmKey) {
+  return {
+    type: 'void',
+    'x-component': 'SystemAlarmDependencyNotice',
+    'x-component-props': {
+      alarmKey,
+      taskOpen: `{{$values.alarmSettings[${index}].open}}`,
+      taskNotify: `{{$values.alarmSettings[${index}].notify}}`,
+      showRetry: index === 0,
+    },
+    'x-reactions': {
+      dependencies: [
+        `alarmSettings.${index}.open`,
+        `alarmSettings.${index}.notify`,
+      ],
+      fulfill: {
+        state: {
+          componentProps: {
+            taskOpen: '{{$deps[0]}}',
+            taskNotify: '{{$deps[1]}}',
+          },
+        },
+      },
+    },
+  }
+}
 
 // 自定义 Dialog 表单内的 value 变化事件
 const onDialogFormValuesChange = createEffectHook(
@@ -40,6 +68,7 @@ export default defineComponent({
     const pageVersionRef = inject('pageVersion')
     const lockedFeature = inject('lockedFeature')
     const openLocked = inject('openLocked')
+    useSystemAlarmStatus(() => taskRef?.value?.id)
     const scope = {
       lockedFeature,
       $isDaas: isDaas,
@@ -1718,6 +1747,10 @@ export default defineComponent({
               'x-editable': true,
               'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
             },
+            'alarmSettings.0.systemWarning': getSystemAlarmWarningSchema(
+              0,
+              'TASK_STATUS_ERROR',
+            ),
             'alarmSettings.1.open': {
               title: i18n.t(
                 'packages_dag_migration_alarmpanel_renwuquanliangwan',
@@ -1742,6 +1775,10 @@ export default defineComponent({
               'x-editable': true,
               'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
             },
+            'alarmSettings.1.systemWarning': getSystemAlarmWarningSchema(
+              1,
+              'TASK_FULL_COMPLETE',
+            ),
             'alarmSettings.2.open': {
               title: i18n.t(
                 'packages_dag_migration_alarmpanel_renwuzengliangkai',
@@ -1766,6 +1803,10 @@ export default defineComponent({
               'x-editable': true,
               'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
             },
+            'alarmSettings.2.systemWarning': getSystemAlarmWarningSchema(
+              2,
+              'TASK_INCREMENT_START',
+            ),
             'alarmSettings.3.open': {
               title: i18n.t(
                 'packages_dag_migration_alarmpanel_renwuzengliangyan',
@@ -1798,6 +1839,10 @@ export default defineComponent({
               'x-editable': true,
               'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
             },
+            'alarmSettings.3.systemWarning': getSystemAlarmWarningSchema(
+              3,
+              'TASK_INCREMENT_DELAY',
+            ),
             space: {
               type: 'void',
               'x-component': 'Space',

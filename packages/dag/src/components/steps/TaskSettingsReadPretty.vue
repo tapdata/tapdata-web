@@ -2,12 +2,40 @@
 import { createForm } from '@formily/core'
 import { action } from '@formily/reactive'
 import { getAlarmChannels } from '@tap/api/src/core/alarm'
+import { useSystemAlarmStatus } from '@tap/business/src/composables/useSystemAlarmStatus'
 import { checkCloudTaskLimit } from '@tap/api/src/core/task'
 import i18n from '@tap/i18n'
 import { debounce } from 'lodash-es'
 import { defineComponent, ref } from 'vue'
 import { useStore } from 'vuex'
 import SchemaForm from '../SchemaForm.vue'
+
+function getSystemAlarmWarningSchema(index, alarmKey) {
+  return {
+    type: 'void',
+    'x-component': 'SystemAlarmDependencyNotice',
+    'x-component-props': {
+      alarmKey,
+      taskOpen: `{{$values.alarmSettings[${index}].open}}`,
+      taskNotify: `{{$values.alarmSettings[${index}].notify}}`,
+      showRetry: index === 0,
+    },
+    'x-reactions': {
+      dependencies: [
+        `alarmSettings.${index}.open`,
+        `alarmSettings.${index}.notify`,
+      ],
+      fulfill: {
+        state: {
+          componentProps: {
+            taskOpen: '{{$deps[0]}}',
+            taskNotify: '{{$deps[1]}}',
+          },
+        },
+      },
+    },
+  }
+}
 
 export default defineComponent({
   name: 'TaskReadPretty',
@@ -17,6 +45,7 @@ export default defineComponent({
   },
   setup(props) {
     const store = useStore()
+    useSystemAlarmStatus(() => props.task?.id)
     const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
     const nodes = store.getters['dataflow/allNodes']
     const form = ref(null)
@@ -1265,6 +1294,10 @@ export default defineComponent({
               'x-editable': true,
               'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
             },
+            'alarmSettings.0.systemWarning': getSystemAlarmWarningSchema(
+              0,
+              'TASK_STATUS_ERROR',
+            ),
             'alarmSettings.1.open': {
               title: i18n.t(
                 'packages_dag_migration_alarmpanel_renwuquanliangwan',
@@ -1289,6 +1322,10 @@ export default defineComponent({
               'x-editable': true,
               'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
             },
+            'alarmSettings.1.systemWarning': getSystemAlarmWarningSchema(
+              1,
+              'TASK_FULL_COMPLETE',
+            ),
             'alarmSettings.2.open': {
               title: i18n.t(
                 'packages_dag_migration_alarmpanel_renwuzengliangkai',
@@ -1313,6 +1350,10 @@ export default defineComponent({
               'x-editable': true,
               'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
             },
+            'alarmSettings.2.systemWarning': getSystemAlarmWarningSchema(
+              2,
+              'TASK_INCREMENT_START',
+            ),
             'alarmSettings.3.open': {
               title: i18n.t(
                 'packages_dag_migration_alarmpanel_renwuzengliangyan',
@@ -1345,6 +1386,10 @@ export default defineComponent({
               'x-editable': true,
               'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
             },
+            'alarmSettings.3.systemWarning': getSystemAlarmWarningSchema(
+              3,
+              'TASK_INCREMENT_DELAY',
+            ),
             space: {
               type: 'void',
               'x-component': 'Space',

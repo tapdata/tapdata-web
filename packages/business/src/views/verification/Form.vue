@@ -10,6 +10,8 @@ import { getTaskById } from '@tap/api/src/core/task'
 import { useRequest } from '@tap/api/src/request'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
+import SystemAlarmDependencyNotice from '../../components/SystemAlarmDependencyNotice.vue'
+import { useSystemAlarmStatus } from '../../composables/useSystemAlarmStatus'
 import Time from '@tap/shared/src/time.js'
 import { cloneDeep } from 'lodash-es'
 import {
@@ -87,6 +89,10 @@ interface Task {
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+useSystemAlarmStatus(
+  () => (route.params.id ? String(route.params.id) : undefined),
+  'inspect',
+)
 
 const loading = ref(false)
 const timeUnitOptions = ['second', 'minute', 'hour', 'day', 'week', 'month']
@@ -1016,6 +1022,12 @@ provide('ConnectorMap', ConnectorMap)
                   }}
                 </ElCheckbox>
               </ElCheckboxGroup>
+              <SystemAlarmDependencyNotice
+                alarm-key="INSPECT_TASK_ERROR"
+                :task-open="form.alarmSettings?.[0]?.open"
+                :task-notify="form.alarmSettings?.[0]?.notify"
+                show-retry
+              />
               <ElCheckboxGroup
                 v-show="form.inspectMethod === 'row_count'"
                 v-model="form.alarmSettings[1].notify"
@@ -1030,6 +1042,12 @@ provide('ConnectorMap', ConnectorMap)
                   }}
                 </ElCheckbox>
               </ElCheckboxGroup>
+              <SystemAlarmDependencyNotice
+                v-show="form.inspectMethod === 'row_count'"
+                alarm-key="INSPECT_COUNT_ERROR"
+                :task-open="form.alarmSettings?.[1]?.open"
+                :task-notify="form.alarmSettings?.[1]?.notify"
+              />
               <ElCheckboxGroup
                 v-show="['field', 'jointField'].includes(form.inspectMethod)"
                 v-model="form.alarmSettings[2].notify"
@@ -1044,6 +1062,12 @@ provide('ConnectorMap', ConnectorMap)
                   }}
                 </ElCheckbox>
               </ElCheckboxGroup>
+              <SystemAlarmDependencyNotice
+                v-show="['field', 'jointField'].includes(form.inspectMethod)"
+                alarm-key="INSPECT_VALUE_ERROR"
+                :task-open="form.alarmSettings?.[2]?.open"
+                :task-notify="form.alarmSettings?.[2]?.notify"
+              />
             </div>
           </ElFormItem>
 

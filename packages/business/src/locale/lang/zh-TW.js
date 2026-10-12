@@ -809,6 +809,14 @@ export default {
     '任務默認告警規則設置',
   packages_business_setting_alarmnotification_morengaojinggui: '默認告警規則',
   packages_business_setting_alarmnotification_renwugaojingshe: '任務告警設置',
+  packages_business_system_alarm_email_disabled_hint:
+    '任務已開啟郵件告警，但系統全域告警設定未開啟對應郵件渠道，郵件不會發送。',
+  packages_business_system_alarm_open_settings: '前往全域告警設定',
+  packages_business_system_alarm_contact_admin:
+    '請聯絡管理員開啟全域郵件告警。',
+  packages_business_system_alarm_status_load_failed:
+    '無法取得系統全域告警狀態。',
+  packages_business_system_alarm_retry: '重試',
   packages_business_setting_alarmnotification_recipient_setting:
     '任務默認告警接收人設置',
   packages_business_setting_alarmnotification_recipient_desc:

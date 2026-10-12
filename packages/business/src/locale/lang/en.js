@@ -893,6 +893,14 @@ export default {
     'Default Alert Rule',
   packages_business_setting_alarmnotification_renwugaojingshe:
     'Task Alert Setting',
+  packages_business_system_alarm_email_disabled_hint:
+    'Email alerts are enabled for this task, but the corresponding global email alert is disabled. Emails will not be sent.',
+  packages_business_system_alarm_open_settings: 'Open global alert settings',
+  packages_business_system_alarm_contact_admin:
+    'Contact an administrator to enable global email alerts.',
+  packages_business_system_alarm_status_load_failed:
+    'Could not load the global alert status.',
+  packages_business_system_alarm_retry: 'Retry',
   packages_business_setting_alarmnotification_recipient_setting:
     'Task Default Alarm Recipient Setting',
   packages_business_setting_alarmnotification_recipient_desc: `Set here as the system's global alarm recipient configuration. All configured recipients will receive alerts for the currently active system alarms.`,
