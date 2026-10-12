@@ -50,6 +50,17 @@ export interface AlarmSettingVO {
   [property: string]: any
 }
 
+export interface SystemNotificationStatusItem {
+  key: string
+  open: boolean
+  channels: Notify[]
+}
+
+export interface SystemNotificationStatus {
+  supported: boolean
+  items: SystemNotificationStatusItem[]
+}
+
 export enum Notify {
   Email = 'EMAIL',
   SMS = 'SMS',
@@ -95,6 +106,17 @@ export function closeAlarms(ids: string) {
 
 export function getAlarmChannels() {
   return requestClient.get(`${BASE_URL}/channels`)
+}
+
+export function getSystemNotificationStatus(
+  params: {
+    taskId?: string
+    inspectId?: string
+  } = {},
+) {
+  return requestClient.get(`${BASE_URL}/system-notification-status`, {
+    params,
+  })
 }
 
 export function updateTaskAlarm(params: {

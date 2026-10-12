@@ -18,6 +18,8 @@ import {
 } from '@tap/api/src/core/task'
 import { getUserRoles } from '@tap/api/src/core/users'
 import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
+import SystemAlarmDependencyNotice from '@tap/business/src/components/SystemAlarmDependencyNotice.vue'
+import { useSystemAlarmStatus } from '@tap/business/src/composables/useSystemAlarmStatus'
 import { TextEditable } from '@tap/component/src/base/text-editable'
 import * as components from '@tap/form/src/components'
 import { createSchemaField } from '@tap/form/src/shared/create'
@@ -45,6 +47,7 @@ import {
 import { useDataflowStore } from '../stores/dataflow.store'
 
 const dataflowStore = useDataflowStore()
+useSystemAlarmStatus(() => dataflowStore.dataflow?.id)
 const scope = inject('formScope')
 const dataflow = inject<Ref<any>>('dataflow')
 const dataflowName = inject('dataflowName')
@@ -54,6 +57,7 @@ const { SchemaField } = createSchemaField({
   components: {
     ...components,
     ..._components,
+    SystemAlarmDependencyNotice,
   },
 })
 
@@ -261,6 +265,27 @@ function getAlarmSettingSchema(
           fulfill: {
             state: {
               display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
+            },
+          },
+        },
+      },
+      systemWarning: {
+        type: 'void',
+        'x-component': 'SystemAlarmDependencyNotice',
+        'x-component-props': {
+          alarmKey: key,
+          taskOpen: `{{$values.alarmSettings[${index}].open}}`,
+          taskNotify: `{{$values.alarmSettings[${index}].notify}}`,
+          showRetry: index === 0,
+        },
+        'x-reactions': {
+          dependencies: ['.open', '.notify'],
+          fulfill: {
+            state: {
+              componentProps: {
+                taskOpen: '{{$deps[0]}}',
+                taskNotify: '{{$deps[1]}}',
+              },
             },
           },
         },

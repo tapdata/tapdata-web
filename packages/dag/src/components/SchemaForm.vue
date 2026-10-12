@@ -1,17 +1,19 @@
 <script>
-import { components, createSchemaField, Form } from '@tap/form'
+import { components, createSchemaField, Form as FormilyForm } from '@tap/form'
+import SystemAlarmDependencyNotice from '@tap/business/src/components/SystemAlarmDependencyNotice.vue'
 import * as _components from '../components/form'
 
 const { SchemaField } = createSchemaField({
   components: {
     ...components,
     ..._components,
+    SystemAlarmDependencyNotice,
   },
 })
 
 export default {
   name: 'SchemaForm',
-  components: { Form, SchemaField },
+  components: { FormilyForm, SchemaField },
   props: {
     form: Object,
     schema: Object,
@@ -30,9 +32,9 @@ export default {
 </script>
 
 <template>
-  <Form class-name="form-wrap" :form="form" v-bind="formProps">
+  <FormilyForm class-name="form-wrap" :form="form" v-bind="formProps">
     <SchemaField v-if="!!schema" :schema="schema" :scope="scope" />
-  </Form>
+  </FormilyForm>
 </template>
 
 <style scoped lang="scss">
