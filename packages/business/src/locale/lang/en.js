@@ -68,6 +68,11 @@ export default {
   packages_business_priorityProcessId: 'Tag-Based Scheduling',
   packages_business_connection_form_access_node_tip:
     'When using the automatic mode, the platform will assign nodes for connection access, while in manual mode, the user is responsible for manually specifying the nodes for access',
+  packages_business_connections_list_batch_agent_settings:
+    'Batch Agent Settings',
+  packages_business_agent_settings_dialog_title: 'Batch Agent Settings',
+  packages_business_agent_settings_dialog_subtitle:
+    'The same Agent settings will be prepared for {count} selected connections.',
   packages_business_connection_form_give_up: 'Give Up',
   packages_business_share_form_setting_table_name: 'Store MongoDB table name',
   packages_business_share_form_setting_log_time: 'Log save time',
