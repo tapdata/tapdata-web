@@ -1,11 +1,12 @@
 <script>
+import { findAccessNodeInfo } from '@tap/api/src/core/cluster'
 import { getConnectionNoSchema } from '@tap/api/src/core/connections'
 import { fetchDatabaseTypeByPdkHash } from '@tap/api/src/core/database-types'
 import {
   getLogcollectorDetail,
   patchLogcollectorId,
 } from '@tap/api/src/core/logcollector'
-import { getTaskById, patchTask } from '@tap/api/src/core/task'
+import { getTaskById, patchTaskById } from '@tap/api/src/core/task'
 import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 import dayjs from 'dayjs'
 
@@ -23,6 +24,9 @@ export default {
         name: '',
         storageTime: 3,
         syncPoints: [],
+        accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
+        accessNodeProcessId: '',
+        priorityProcessId: '',
       },
       rulesEdit: {
         name: [
@@ -51,7 +55,43 @@ export default {
       },
       schemaData: null,
       schemaScope: null,
+      agentOptions: [],
     }
+  },
+  computed: {
+    accessNodeTypeOptions() {
+      return [
+        {
+          label: this.$t('packages_business_connection_form_automatic'),
+          value: 'AUTOMATIC_PLATFORM_ALLOCATION',
+        },
+        {
+          label: this.$t('packages_business_connection_form_manual'),
+          value: 'MANUALLY_SPECIFIED_BY_THE_USER',
+        },
+        {
+          label: this.$t('packages_business_connection_form_group'),
+          value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP',
+        },
+      ]
+    },
+    selectedAgentOptions() {
+      return this.agentOptions.filter(
+        (item) => item.accessNodeType === this.editForm.accessNodeType,
+      )
+    },
+    priorityOptions() {
+      const group = this.agentOptions.find(
+        (item) => item.value === this.editForm.accessNodeProcessId,
+      )
+      return [
+        {
+          label: this.$t('packages_business_connection_form_automatic'),
+          value: '',
+        },
+        ...(group?.children || []),
+      ]
+    },
   },
   methods: {
     init() {
@@ -60,16 +100,85 @@ export default {
         name: '',
         storageTime: 3,
         syncPoints: [],
+        accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
+        accessNodeProcessId: '',
+        priorityProcessId: '',
       }
       this.schemaData = null
       this.loadDag()
       this.loadData()
     },
 
+    onAccessNodeTypeChange() {
+      this.editForm.accessNodeProcessId = ''
+      this.editForm.priorityProcessId = ''
+    },
+
+    async loadAgentOptions() {
+      try {
+        const data = await findAccessNodeInfo()
+        const mapAgent = (item) => ({
+          value: item.processId,
+          label: `${item.hostName}（${
+            item.status === 'running'
+              ? this.$t('public_status_running')
+              : this.$t('public_agent_status_offline')
+          }）`,
+          disabled: item.status !== 'running',
+        })
+
+        this.agentOptions = (data || [])
+          .filter(
+            (item) =>
+              item.status === 'running' ||
+              item.accessNodeType ===
+                'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' ||
+              item.processId === this.editForm.accessNodeProcessId,
+          )
+          .map((item) => {
+            if (
+              item.accessNodeType ===
+              'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
+            ) {
+              return {
+                value: item.processId,
+                label: `${item.accessNodeName}（${this.$t(
+                  'public_status_running',
+                )}：${
+                  item.accessNodes?.filter((node) => node.status === 'running')
+                    .length || 0
+                }）`,
+                accessNodeType: item.accessNodeType,
+                children: item.accessNodes?.map(mapAgent) || [],
+              }
+            }
+            return {
+              ...mapAgent(item),
+              accessNodeType: item.accessNodeType,
+            }
+          })
+      } catch {
+        this.agentOptions = []
+      }
+    },
+
+    async loadTaskAgentPolicy() {
+      const task = await getTaskById(this.taskId)
+      if (!task) return
+      this.editForm.accessNodeType =
+        task.accessNodeType || 'AUTOMATIC_PLATFORM_ALLOCATION'
+      this.editForm.accessNodeProcessId = task.accessNodeProcessId || ''
+      this.editForm.priorityProcessId = task.priorityProcessId || ''
+      await this.loadAgentOptions()
+    },
+
     loadData() {
       this.loading = true
-      getLogcollectorDetail(this.taskId)
-        .then((task) => {
+      Promise.all([
+        getLogcollectorDetail(this.taskId),
+        this.loadTaskAgentPolicy(),
+      ])
+        .then(([task]) => {
           this.editForm.name = task.name
           this.editForm.storageTime = task.storageTime
           const syncPoints = task.syncPoints
@@ -214,19 +323,19 @@ export default {
     },
 
     handleSave(...args) {
-      this.$refs.form?.validate((valid) => {
+      this.$refs.form?.validate(async (valid) => {
         if (valid) {
-          patchLogcollectorId(this.taskId, this.editForm).then(() => {
-            this.$emit('success', ...args)
-            this.$message.success(
-              this.$t('packages_business_shared_cdc_setting_message_edit_save'),
-            )
-            this.init()
-            this.handleClose()
-          })
-
-          // 保存到目标节点
-          this.saveTaskDag()
+          await patchLogcollectorId(this.taskId, this.editForm)
+          // Save the task-level Agent override after the mining parameters.
+          // Both endpoints update the same Task document; serializing them
+          // prevents the later mining update from restoring the old policy.
+          await this.saveTaskDag()
+          this.$emit('success', ...args)
+          this.$message.success(
+            this.$t('packages_business_shared_cdc_setting_message_edit_save'),
+          )
+          this.init()
+          this.handleClose()
         }
       })
     },
@@ -270,7 +379,7 @@ export default {
         this.dagForm
 
       const getFormValues = this.$refs.schemaToForm?.getFormValues() || {}
-      dag.nodes.forEach((el) => {
+      dag?.nodes?.forEach((el) => {
         if (el.type === 'hazelcastIMDG') {
           Object.assign(el, {
             cdcConcurrent,
@@ -285,9 +394,17 @@ export default {
           })
         }
       })
-      patchTask({
-        id: this.taskId,
-        dag,
+      const accessNodeProcessIdList =
+        this.editForm.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER' &&
+        this.editForm.accessNodeProcessId
+          ? [this.editForm.accessNodeProcessId]
+          : []
+      return patchTaskById(this.taskId, {
+        ...(dag ? { dag } : {}),
+        accessNodeType: this.editForm.accessNodeType,
+        accessNodeProcessId: this.editForm.accessNodeProcessId,
+        accessNodeProcessIdList,
+        priorityProcessId: this.editForm.priorityProcessId,
       })
     },
   },
@@ -372,6 +489,63 @@ export default {
           :min="1"
           controls-position="right"
         />
+      </ElFormItem>
+      <ElFormItem :label="$t('packages_business_connection_form_access_node')">
+        <ElSelect
+          v-model="editForm.accessNodeType"
+          style="width: 240px"
+          @change="onAccessNodeTypeChange"
+        >
+          <ElOption
+            v-for="item in accessNodeTypeOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </ElSelect>
+      </ElFormItem>
+      <ElFormItem
+        v-if="editForm.accessNodeType !== 'AUTOMATIC_PLATFORM_ALLOCATION'"
+        :label="
+          editForm.accessNodeType ===
+          'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
+            ? $t('packages_business_choose_agent_group')
+            : $t('packages_business_choose_agent')
+        "
+      >
+        <ElSelect
+          v-model="editForm.accessNodeProcessId"
+          style="width: 240px"
+          :placeholder="$t('public_select_placeholder')"
+        >
+          <ElOption
+            v-for="item in selectedAgentOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+            :disabled="item.disabled"
+          />
+        </ElSelect>
+      </ElFormItem>
+      <ElFormItem
+        v-if="
+          editForm.accessNodeType ===
+          'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
+        "
+        :label="$t('packages_business_priorityProcessId')"
+      >
+        <ElSelect
+          v-model="editForm.priorityProcessId"
+          style="width: 240px"
+          :placeholder="$t('public_select_placeholder')"
+        >
+          <ElOption
+            v-for="item in priorityOptions"
+            :key="item.value || 'automatic'"
+            :label="item.label"
+            :value="item.value"
+          />
+        </ElSelect>
       </ElFormItem>
       <div
         v-if="schemaData"
