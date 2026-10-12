@@ -10,6 +10,7 @@ import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import { useI18n } from '@tap/i18n'
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { canMoveTask, visibleAgentIds } from './rebalance-constraints'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -39,6 +40,7 @@ const loading = ref(false)
 const submitting = ref(false)
 const reason = ref<string | null>(null)
 const previewTasks = ref<DrawerTask[]>([])
+const previewAgentIds = ref<string[]>()
 const draggingTaskId = ref<string | null>(null)
 const dragOverAgentId = ref<string | null>(null)
 
@@ -48,6 +50,7 @@ const SCHEDULABLE_REASON_MAP: Record<SchedulableStatus, string> = {
   STATUS_ERROR: 'daas_task_rebalance_reason_status_error',
   MANUAL_AGENT: 'daas_task_rebalance_reason_manual_agent',
   INCREMENTAL_NOT_STARTED: 'daas_task_rebalance_reason_incremental',
+  INVALID_AGENT_GROUP: 'daas_task_rebalance_reason_invalid_agent_group',
 }
 
 const TYPE_LABEL_MAP: Record<string, string> = {
@@ -92,28 +95,20 @@ const agentList = computed<AgentInfo[]>(() => {
   for (const agent of props.agents || []) {
     infoMap.set(agent.agentId, agent)
   }
-  const result = new Map<string, AgentInfo>()
-  for (const task of previewTasks.value) {
-    for (const id of [
-      task.sourceAgentId,
-      task.targetAgentId,
-      task.currentAgentId,
-    ]) {
-      if (id && !result.has(id)) {
-        result.set(
-          id,
-          infoMap.get(id) || {
-            agentId: id,
-            name: id,
-            online: true,
-            cpuUsage: 0,
-            memUsage: 0,
-          },
-        )
-      }
-    }
-  }
-  return [...result.values()]
+  return visibleAgentIds(
+    previewAgentIds.value,
+    props.agents || [],
+    previewTasks.value,
+  ).map(
+    (id) =>
+      infoMap.get(id) || {
+        agentId: id,
+        name: id,
+        online: true,
+        cpuUsage: 0,
+        memUsage: 0,
+      },
+  )
 })
 
 const columns = computed(() => {
@@ -143,6 +138,7 @@ async function loadPreview() {
   try {
     const res = await previewTaskRebalance()
     reason.value = res?.reason || null
+    previewAgentIds.value = res?.agentIds
     previewTasks.value = (res?.tasks || []).map((task) => ({
       ...task,
       currentAgentId:
@@ -170,6 +166,8 @@ function getSyncTypeTagType(syncType: string) {
 }
 
 function getLockedReason(task: DrawerTask) {
+  if (task.schedulableStatus === 'INVALID_AGENT_GROUP')
+    return t('daas_task_rebalance_reason_invalid_agent_group')
   if (task.reason) return task.reason
   const key = SCHEDULABLE_REASON_MAP[task.schedulableStatus]
   return key ? t(key) : ''
@@ -195,8 +193,24 @@ function onDragEnd() {
   dragOverAgentId.value = null
 }
 
-function onDragOver(agentId: string) {
-  dragOverAgentId.value = agentId
+function isForbiddenTarget(agentId: string) {
+  const task = previewTasks.value.find(
+    (item) => item.taskId === draggingTaskId.value,
+  )
+  return !!task && !canMoveTask(task, agentId)
+}
+
+function onDragOver(agentId: string, ev: DragEvent) {
+  const task = previewTasks.value.find(
+    (item) => item.taskId === draggingTaskId.value,
+  )
+  if (task && canMoveTask(task, agentId)) {
+    ev.preventDefault()
+    dragOverAgentId.value = agentId
+  } else {
+    dragOverAgentId.value = null
+    if (ev.dataTransfer) ev.dataTransfer.dropEffect = 'none'
+  }
 }
 
 function onDragLeave(agentId: string) {
@@ -209,8 +223,10 @@ function onDrop(agentId: string) {
   const task = previewTasks.value.find(
     (item) => item.taskId === draggingTaskId.value,
   )
-  if (task && task.movable) {
+  if (task && canMoveTask(task, agentId)) {
     task.currentAgentId = agentId
+  } else if (task) {
+    ElMessage.warning(t('daas_task_rebalance_target_not_allowed'))
   }
   draggingTaskId.value = null
   dragOverAgentId.value = null
@@ -232,6 +248,14 @@ function buildPayload(): TaskRebalancePreviewVo {
 }
 
 async function handleConfirm() {
+  if (
+    previewTasks.value.some(
+      (task) => isMoved(task) && !canMoveTask(task, task.currentAgentId),
+    )
+  ) {
+    ElMessage.warning(t('daas_task_rebalance_target_not_allowed'))
+    return
+  }
   submitting.value = true
   try {
     const result = await createTaskRebalance(buildPayload())
@@ -255,6 +279,7 @@ watch(visible, (val) => {
     loadPreview()
   } else {
     previewTasks.value = []
+    previewAgentIds.value = undefined
     reason.value = null
     draggingTaskId.value = null
     dragOverAgentId.value = null
@@ -303,7 +328,12 @@ watch(visible, (val) => {
             :key="col.agentId"
             class="rb-col"
             :class="{ 'rb-col--over': dragOverAgentId === col.agentId }"
-            @dragover.prevent="onDragOver(col.agentId)"
+            :title="
+              isForbiddenTarget(col.agentId)
+                ? t('daas_task_rebalance_target_not_allowed')
+                : undefined
+            "
+            @dragover="onDragOver(col.agentId, $event)"
             @dragleave="onDragLeave(col.agentId)"
             @drop="onDrop(col.agentId)"
           >
