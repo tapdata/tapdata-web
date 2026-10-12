@@ -45,9 +45,9 @@ export function checkToken() {
 }
 
 export function newResetPassword(token: string) {
-  return requestClient.post(
-    `${BASE_URL}/newResetPassword?access_token=${token}`,
-  )
+  return requestClient.post(`${BASE_URL}/newResetPassword`, undefined, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
 }
 
 export function confirmUser(id: string, token: string) {
@@ -71,7 +71,9 @@ export function getUserRoles(params: any) {
 
 export function upsertUserWithWhere(where: any, params: any) {
   return requestClient.post(
-    `${BASE_URL}/upsertWithWhere?where=${encodeURIComponent(JSON.stringify(where))}`,
+    `${BASE_URL}/upsertWithWhere?where=${encodeURIComponent(
+      JSON.stringify(where),
+    )}`,
     params,
   )
 }
@@ -139,4 +141,24 @@ export function batchUpdateUserListtags(params: any) {
 
 export function deleteUser(id: string) {
   return requestClient.delete(`${BASE_URL}/${id}`)
+}
+
+export interface UserAlarmImpactGroup {
+  id?: string
+  name?: string
+}
+
+export interface UserAlarmImpact {
+  username?: string
+  email?: string
+  directTaskCount?: number
+  groups?: UserAlarmImpactGroup[]
+  affectedTasks?: number | unknown[]
+  highRiskTasks?: number | unknown[]
+}
+
+export function fetchUserAlarmImpact(id: string) {
+  return requestClient.get<UserAlarmImpact>(
+    `${BASE_URL}/${encodeURIComponent(id)}/alarmImpact`,
+  )
 }

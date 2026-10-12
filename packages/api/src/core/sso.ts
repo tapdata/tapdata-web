@@ -28,15 +28,22 @@ export function getSamlLoginUrl() {
 }
 
 /**
- * Absolute URL for SP-initiated Single Logout. The browser must navigate to it
- * directly; the backend terminates the local session, then redirects to the IdP
- * SLO endpoint (or straight to the login page when SLO is not configured).
+ * Start SP-initiated Single Logout. The token goes in the Authorization header,
+ * never the URL (TAP-11883); the backend terminates the local session and returns
+ * where the browser should navigate next: the IdP SLO endpoint, or the login page
+ * when SLO is not configured.
  */
-export function getSamlLogoutUrl(accessToken?: string) {
-  const relay = `relayState=${encodeURIComponent(SSO_LOGOUT_RELAY_STATE)}`
-  return accessToken
-    ? `${SSO_BASE_URL}/logout?access_token=${encodeURIComponent(accessToken)}&${relay}`
-    : `${SSO_BASE_URL}/logout?${relay}`
+export function startSamlLogout(accessToken?: string) {
+  return requestClient.post<{ redirectUrl: string }>(
+    `${SSO_BASE_URL}/logout`,
+    { relayState: SSO_LOGOUT_RELAY_STATE },
+    {
+      headers: accessToken
+        ? { Authorization: `Bearer ${accessToken}` }
+        : undefined,
+      skipErrorHandler: true,
+    },
+  )
 }
 
 /** IdP fields extracted from an imported IdP SAML metadata document. */

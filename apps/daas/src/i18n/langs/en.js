@@ -754,7 +754,9 @@ export default {
   setting_License_expiry_email_reminder_:
     'License expiry advance reminder settings (days)',
   setting_flow_engine_version: 'Flow engine version',
-  setting_tapdata_agent_version: `${import.meta.env.VUE_APP_PAGE_TITLE}  agent version`,
+  setting_tapdata_agent_version: `${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  }  agent version`,
   setting_doc_base_url: 'Help document URL',
   setting_help: 'Help document',
   setting_Ip_addresses: 'Ipv4 addresses (separated by multiple commas)',
@@ -970,8 +972,23 @@ export default {
   user_list_bulk_freeze: 'Bulk freeze',
   user_list_bulk_check: 'Bulk check',
   user_list_del_user: 'After deleting user {0}, this user cannot be recovered',
-  user_list_activetion_user: `After activating user {0}, this user will be able to use the ${import.meta.env.VUE_APP_PAGE_TITLE} system`,
-  user_list_freeze_user: `After freezing user {0}, this user will not be able to use the ${import.meta.env.VUE_APP_PAGE_TITLE} system`,
+  user_list_delete_alarm_confirm:
+    'Delete user "{username}" ({email})? This user is a direct alert receiver for {count} tasks and belongs to these user groups: {groups}. After deletion, alerts will no longer be sent to this user directly or through those user groups.',
+  user_list_delete_alarm_title: 'Delete user "{username}" ({email})?',
+  user_list_delete_alarm_body:
+    'This user is a direct alert receiver for {count} tasks. User groups: {groups}.',
+  user_list_delete_alarm_warn:
+    'After deletion, alerts will no longer be sent to this user directly or through those user groups.',
+  user_list_delete_alarm_irreversible: 'This action cannot be undone.',
+  user_list_delete_alarm_no_group: 'None',
+  user_list_alarm_impact_failed:
+    'Unable to load the alert impact. Please try again later.',
+  user_list_activetion_user: `After activating user {0}, this user will be able to use the ${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } system`,
+  user_list_freeze_user: `After freezing user {0}, this user will not be able to use the ${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } system`,
   user_list_check_user:
     'After checking the mailbox of user {0}, this user can be activated',
   user_list_activetion_success: 'Activation successful',
@@ -2145,6 +2162,33 @@ export default {
   notification_modular_user: 'user',
   notification_modular_role: 'role',
   notification_modular_accessCode: 'access code',
+  notification_modular_alarmReceiver: 'alert receivers',
+  notification_modular_userGroup: 'user group',
+  notification_operation_batch_update: ' batch updated ',
+  notification_alarm_receiver_update:
+    'Updated the alert receivers of task [{parameter1}]',
+  notification_alarm_receiver_update_mode:
+    'Updated the alert receivers of task [{parameter1}], operation mode [{parameter2}]',
+  notification_alarm_receiver_update_change:
+    'Updated the alert receivers of task [{parameter1}], {parameter3}',
+  notification_alarm_receiver_update_mode_change:
+    'Updated the alert receivers of task [{parameter1}], operation mode [{parameter2}], {parameter3}',
+  notification_alarm_receiver_batch_update:
+    'Batch updated the alert receivers of task [{parameter1}] in [{parameter2}] mode',
+  notification_alarm_receiver_batch_update_change:
+    'Batch updated the alert receivers of task [{parameter1}] in [{parameter2}] mode, {parameter3}',
+  notification_user_group_delete: 'Deleted user group [{parameter1}]',
+  notification_user_group_delete_mode:
+    'Deleted user group [{parameter1}], operation mode [{parameter2}]',
+  notification_user_group_delete_change:
+    'Deleted user group [{parameter1}], {parameter3}',
+  notification_user_group_delete_mode_change:
+    'Deleted user group [{parameter1}], operation mode [{parameter2}], {parameter3}',
+  notification_alarm_receiver_before_after: 'Before: {before}, After: {after}',
+  notification_alarm_receiver_system_default: 'System Default',
+  notification_alarm_receiver_none: 'None',
+  notification_alarm_receiver_user_group: 'User Group',
+  notification_alarm_receiver_user: 'User',
   notification_operation_readnotification_modular_message: '',
   dialog_placeholderTable:
     'Only supports English, numbers, underscores, minus signs, dots, and starts with English letter',
@@ -2428,9 +2472,15 @@ export default {
   daas_feature_unavailable_upgrade_dec_li4:
     'Permission management (Enterprise edition only)',
   daas_feature_unavailable_upgrade_dec_li5: 'More data sources',
-  daas_feature_unavailable_upgrade_dec_li1_desc: `${import.meta.env.VUE_APP_PAGE_TITLE} ensures data consistency with proprietary technology and supports data table validation to meet production requirements.`,
-  daas_feature_unavailable_upgrade_dec_li2_desc: `${import.meta.env.VUE_APP_PAGE_TITLE} reduces source database load by supporting shared incremental log cache, fetching events directly from the cache without repeated reads.`,
-  daas_feature_unavailable_upgrade_dec_li3_desc: `${import.meta.env.VUE_APP_PAGE_TITLE} sends alert emails via SMTP, allowing users to promptly receive anomaly notifications and ensure task stability.`,
+  daas_feature_unavailable_upgrade_dec_li1_desc: `${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } ensures data consistency with proprietary technology and supports data table validation to meet production requirements.`,
+  daas_feature_unavailable_upgrade_dec_li2_desc: `${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } reduces source database load by supporting shared incremental log cache, fetching events directly from the cache without repeated reads.`,
+  daas_feature_unavailable_upgrade_dec_li3_desc: `${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } sends alert emails via SMTP, allowing users to promptly receive anomaly notifications and ensure task stability.`,
   daas_feature_unavailable_upgrade_dec_li4_desc:
     'Roles are collections of permissions assigned to users. This simplifies management and enhances security by allowing role creation before user assignment.',
   daas_feature_unavailable_upgrade_dec_li5_desc: '',

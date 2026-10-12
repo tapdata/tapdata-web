@@ -1,4 +1,4 @@
-import { getSamlLogoutUrl } from '@tap/api/src/core/sso'
+import { startSamlLogout } from '@tap/api/src/core/sso'
 import { getUserInfoByToken } from '@tap/api/src/core/users'
 import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'
@@ -160,15 +160,53 @@ export function signOut() {
   Cookie.remove('user_id')
   Cookie.remove('auth_method')
   clearPermissions()
+  const loginHref = `${location.href.split('#')[0]}#/login`
   if (isSamlSession) {
-    // The backend terminates the local session, then redirects to the IdP SLO
-    // endpoint (or straight back to the login page when SLO is not configured).
-    window.location.href = getSamlLogoutUrl(accessToken)
+    // The backend terminates the local session, then returns the IdP SLO
+    // endpoint (or the login page when SLO is not configured) to navigate to.
+    startSamlLogout(accessToken)
+      .then(({ redirectUrl }) => {
+        location.href = redirectUrl || loginHref
+      })
+      .catch(() => {
+        location.href = loginHref
+      })
     return null
   }
   sessionStorage.setItem('lastLocationHref', location.href)
-  location.href = `${location.href.split('#')[0]}#/login`
+  location.href = loginHref
   return null
+}
+
+/**
+ * Drop credential params from the address bar without adding a history entry,
+ * so the token is not kept in history or later copied into lastLocationHref
+ * (TAP-11883).
+ */
+export function removeUrlParams(...names: string[]) {
+  const search = new URLSearchParams(location.search)
+  const [hashPath, hashQuery = ''] = location.hash.split('?')
+  const hashParams = new URLSearchParams(hashQuery)
+  if (!names.some((name) => search.has(name) || hashParams.has(name))) {
+    return
+  }
+  for (const name of names) {
+    search.delete(name)
+    hashParams.delete(name)
+  }
+  const nextSearch = search.toString() ? `?${search}` : ''
+  const nextHash = hashParams.toString()
+    ? `${hashPath}?${hashParams}`
+    : hashPath
+  // vue-router keeps the full route in history.state.current; drop it there too.
+  const state = history.state?.current
+    ? { ...history.state, current: nextHash.slice(1) }
+    : history.state
+  history.replaceState(
+    state,
+    '',
+    `${location.pathname}${nextSearch}${nextHash}`,
+  )
 }
 
 export function getUrlSearch(name: string) {

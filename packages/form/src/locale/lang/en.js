@@ -166,8 +166,12 @@ export default {
   packages_form_js_processor_mock_log: 'Log',
   packages_form_js_processor_mock_log_clear: 'Clear',
   packages_form_js_processor_mock_sql_query: 'SQL Query',
+  packages_form_js_processor_mock_filter_query: 'Filter Query',
   packages_form_js_processor_mock_get_sample: 'Get Sample',
   packages_form_js_processor_mock_sql_dialog_title: 'SQL Query Data',
+  packages_form_js_processor_mock_filter_dialog_title: 'Filter Query Data',
+  packages_form_js_processor_mock_filter_placeholder:
+    'Enter a MongoDB filter, for example {"status": "PAID"}. To also sort or limit, wrap it in $find (at most 100 rows):\n{\n  "$find": {\n    "filter": {"age": {"$gt": 10}},\n    "sort": {"age": -1},\n    "limit": 10\n  }\n}',
   packages_form_js_processor_mock_sql_preview: 'Preview',
   packages_form_js_processor_mock_sql_use_data: 'Use This Data',
   packages_form_js_processor_mock_json_valid: 'Valid',
@@ -199,7 +203,10 @@ export default {
   packages_form_js_processor_mock_log_no_more: 'No more logs',
   packages_form_js_processor_mock_log_sql_import:
     'Imported {val1} records from SQL query',
+  packages_form_js_processor_mock_log_filter_import:
+    'Imported {val1} records from filter query',
   packages_form_js_processor_mock_sql_query_fail: 'SQL query failed',
+  packages_form_js_processor_mock_filter_query_fail: 'Filter query failed',
   packages_form_js_processor_mock_unknown_error: 'Unknown error',
   packages_form_js_processor_mock_event_insert: 'Insert',
   packages_form_js_processor_mock_event_update: 'Update',

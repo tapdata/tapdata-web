@@ -155,12 +155,15 @@ const debugData = async () => {
     return
   }
   const hostPath = urlsMap.value[debugMethod.value]?.replace(/\/$/, '') || ''
-  const url = `${hostPath}?access_token=${token.value.access_token}`
+  const url = hostPath
   const queryBody = {
     apiId: form.value.id,
     url: null,
     method,
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token.value.access_token}`,
+    },
     body: null,
     params: null,
   }
@@ -185,7 +188,7 @@ const debugData = async () => {
           }
         })
         //@ts-ignore
-        queryBody.url = `${url}${paramsStr}`
+        queryBody.url = paramsStr ? `${url}?${paramsStr.slice(1)}` : url
         queryBody.params = params
         break
       case 'POST':

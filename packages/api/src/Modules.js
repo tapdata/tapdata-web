@@ -1,4 +1,4 @@
-import Cookie from '@tap/shared/src/cookie'
+import { downloadAuthenticated } from './download'
 import Http from './Http'
 
 export default class Modules extends Http {
@@ -50,17 +50,15 @@ export default class Modules extends Http {
   }
 
   export(ids) {
-    const href = `${
-      this.url
-    }/batch/load?id=${ids.join('&id=')}&access_token=${Cookie.get('access_token')}`
-    window.open(href)
+    return downloadAuthenticated(
+      `${this.url}/batch/load?id=${ids.join('&id=')}`,
+    )
   }
 
   apiExport(ids, ip) {
-    const href = `${
-      this.url
-    }/api/export?id=${ids.join('&id=')}&access_token=${Cookie.get('access_token')}&ip=${ip}`
-    window.open(href)
+    return downloadAuthenticated(
+      `${this.url}/api/export?id=${ids.join('&id=')}&ip=${ip}`,
+    )
   }
 
   updatePermissions(data) {
