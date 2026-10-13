@@ -840,7 +840,10 @@ export default {
                     let children = []
 
                     if ($deps[1] && $deps[2]) {
-                      children = $deps[1].find(item => item.accessNodeType === $deps[0] && item.value === $deps[2]).children || []
+                      const item = $deps[1].find(item => item.accessNodeType === $deps[0] && item.value === $deps[2])
+                      if (item) {
+                        children = item.children || []
+                      }
                     }
 
                     $self.dataSource = [
