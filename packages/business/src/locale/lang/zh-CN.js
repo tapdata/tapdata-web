@@ -63,6 +63,9 @@ export default {
   packages_business_choose_agent: '选择Agent',
   packages_business_choose_agent_group: '选择Agent标签',
   packages_business_priorityProcessId: '标签内调度方式',
+  packages_business_agent_option_running: '{name}（运行中）',
+  packages_business_agent_option_offline: '{name}（离线）',
+  packages_business_agent_group_option_running: '{name}（运行中：{count}）',
   packages_business_connection_form_access_node_tip:
     '自动情况下由平台分配节点进行连接访问，手动情况下由用户手动指定节点进行访问',
   packages_business_connection_form_give_up: '放弃',

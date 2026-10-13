@@ -66,6 +66,9 @@ export default {
   packages_business_choose_agent: 'Select Agent',
   packages_business_choose_agent_group: 'Select Agent Tag',
   packages_business_priorityProcessId: 'Tag-Based Scheduling',
+  packages_business_agent_option_running: '{name} (running)',
+  packages_business_agent_option_offline: '{name} (offline)',
+  packages_business_agent_group_option_running: '{name} ({count} running)',
   packages_business_connection_form_access_node_tip:
     'When using the automatic mode, the platform will assign nodes for connection access, while in manual mode, the user is responsible for manually specifying the nodes for access',
   packages_business_connection_form_give_up: 'Give Up',

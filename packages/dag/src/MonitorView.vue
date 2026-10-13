@@ -581,6 +581,10 @@ function handleOpenDetail(node: any) {
 
 let pollingTimer: ReturnType<typeof setTimeout> | null = null
 
+function handleSharedMiningSaved(settings: Record<string, any>) {
+  Object.assign(dataflowStore.dataflow, settings)
+}
+
 async function pollTaskDetail() {
   const taskId = route.params.id as string
   if (!taskId) return
@@ -797,6 +801,7 @@ provide('isSaving', isSaving)
     <SharedMiningEditor
       v-if="dataflow.syncType === 'logCollector'"
       ref="sharedMiningEditorRef"
+      @success="handleSharedMiningSaved"
     />
     <SharedCacheEditor
       v-if="dataflow.syncType === 'shareCache'"

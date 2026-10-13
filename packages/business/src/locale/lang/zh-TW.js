@@ -63,6 +63,9 @@ export default {
   packages_business_choose_agent: '選擇Agent',
   packages_business_choose_agent_group: '選擇Agent標籤',
   packages_business_priorityProcessId: '標籤內調度方式',
+  packages_business_agent_option_running: '{name}（運行中）',
+  packages_business_agent_option_offline: '{name}（離線）',
+  packages_business_agent_group_option_running: '{name}（運行中：{count}）',
   packages_business_connection_form_access_node_tip:
     '自動情況下由平台分配節點進行連接訪問，手動情況下由用戶手動指定節點進行訪問',
   packages_business_connection_form_give_up: '放棄',

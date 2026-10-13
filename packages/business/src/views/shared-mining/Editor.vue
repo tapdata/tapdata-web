@@ -1,4 +1,5 @@
 <script>
+import { findAccessNodeInfo } from '@tap/api/src/core/cluster'
 import { getConnectionNoSchema } from '@tap/api/src/core/connections'
 import { fetchDatabaseTypeByPdkHash } from '@tap/api/src/core/database-types'
 import {
@@ -23,7 +24,11 @@ export default {
         name: '',
         storageTime: 3,
         syncPoints: [],
+        accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
+        accessNodeProcessId: '',
+        priorityProcessId: '',
       },
+      accessNodes: [],
       rulesEdit: {
         name: [
           {
@@ -53,89 +58,158 @@ export default {
       schemaScope: null,
     }
   },
+  computed: {
+    isDaas() {
+      return import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+    },
+    accessNodeTypeOptions() {
+      const options = [
+        {
+          label: this.$t('packages_dag_connection_form_automatic'),
+          value: 'AUTOMATIC_PLATFORM_ALLOCATION',
+        },
+        {
+          label: this.$t('packages_dag_connection_form_manual'),
+          value: 'MANUALLY_SPECIFIED_BY_THE_USER',
+        },
+      ]
+
+      if (this.isDaas) {
+        options.push({
+          label: this.$t('packages_business_connection_form_group'),
+          value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP',
+        })
+      }
+
+      return options
+    },
+    nodeAccessNodeProcessIds() {
+      return [
+        ...new Set(
+          (this.dag?.nodes || [])
+            .filter((node) => node.type === 'database' || node.type === 'table')
+            .map((node) => node.attrs?.accessNodeProcessId)
+            .filter(Boolean),
+        ),
+      ]
+    },
+    isAccessNodeSelectionLocked() {
+      return this.nodeAccessNodeProcessIds.length === 1
+    },
+    accessNodeOptions() {
+      return this.accessNodes.filter(
+        (item) =>
+          item.accessNodeType === this.editForm.accessNodeType &&
+          (!this.nodeAccessNodeProcessIds.length ||
+            this.nodeAccessNodeProcessIds.includes(item.value)),
+      )
+    },
+    priorityProcessOptions() {
+      const group = this.accessNodeOptions.find(
+        (item) => item.value === this.editForm.accessNodeProcessId,
+      )
+
+      return [
+        {
+          label: this.$t('packages_dag_connection_form_automatic'),
+          value: '',
+        },
+        ...(group?.children || []),
+      ]
+    },
+  },
   methods: {
-    init() {
+    async init() {
       this.editForm = {
         id: '',
         name: '',
         storageTime: 3,
         syncPoints: [],
+        accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
+        accessNodeProcessId: '',
+        priorityProcessId: '',
       }
+      this.accessNodes = []
       this.schemaData = null
-      this.loadDag()
-      this.loadData()
+      this.loading = true
+      try {
+        await Promise.all([
+          this.loadDag(),
+          this.loadData(),
+          this.loadAccessNodes(),
+        ])
+        this.syncAccessNodeSelectionWithDag()
+      } finally {
+        this.loading = false
+      }
     },
 
     loadData() {
-      this.loading = true
-      getLogcollectorDetail(this.taskId)
-        .then((task) => {
-          this.editForm.name = task.name
-          this.editForm.storageTime = task.storageTime
-          const syncPoints = task.syncPoints
-          if (syncPoints) {
-            this.editForm.syncPoints = syncPoints
-          } else {
-            const [connectionId, connectionName] = Object.entries(
-              task.connections[0],
-            )[0]
-            const sourceNodeIds = (task.dag?.edges || []).map((t) => t.source)
-            const sourceNodes = (task.dag?.nodes || [])
-              .filter((node) => sourceNodeIds.includes(node.id))
-              .map((node) => ({
-                nodeId: node.id,
-                nodeName: node.name,
-                connectionId,
-                connectionName,
-              }))
-            const result = sourceNodes.map((item) => {
-              const point = {
-                ...item,
-                timeZone: this.systemTimeZone,
-                pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
-                dateTime: '',
-              }
-              return point
-            })
-            this.editForm.syncPoints = result
-          }
-        })
-        .finally(() => {
-          this.loading = false
-        })
+      return getLogcollectorDetail(this.taskId).then((task) => {
+        this.editForm.name = task.name
+        this.editForm.storageTime = task.storageTime
+        const syncPoints = task.syncPoints
+        if (syncPoints) {
+          this.editForm.syncPoints = syncPoints
+        } else {
+          const [connectionId, connectionName] = Object.entries(
+            task.connections[0],
+          )[0]
+          const sourceNodeIds = (task.dag?.edges || []).map((t) => t.source)
+          const sourceNodes = (task.dag?.nodes || [])
+            .filter((node) => sourceNodeIds.includes(node.id))
+            .map((node) => ({
+              nodeId: node.id,
+              nodeName: node.name,
+              connectionId,
+              connectionName,
+            }))
+          const result = sourceNodes.map((item) => {
+            const point = {
+              ...item,
+              timeZone: this.systemTimeZone,
+              pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
+              dateTime: '',
+            }
+            return point
+          })
+          this.editForm.syncPoints = result
+        }
+      })
     },
 
     // 获取任务的dag
     async loadDag() {
-      let dag = this.$store.getters['dataflow/dag']
+      const task = await getTaskById(this.taskId)
+      const dag = task.dag
+      const outputsMap = {}
+      const inputsMap = {}
 
-      if (!dag?.edges?.length || !dag?.nodes?.length) {
-        const task = await getTaskById(this.taskId)
-        const outputsMap = {}
-        const inputsMap = {}
+      this.editForm.accessNodeType =
+        task.accessNodeType || 'AUTOMATIC_PLATFORM_ALLOCATION'
+      this.editForm.accessNodeProcessId = task.accessNodeProcessId || ''
+      this.editForm.priorityProcessId = task.priorityProcessId || ''
 
-        dag = task.dag
-        dag.edges.forEach(({ source, target }) => {
-          const _source = outputsMap[source]
-          const _target = inputsMap[target]
+      dag.edges.forEach(({ source, target }) => {
+        const _source = outputsMap[source]
+        const _target = inputsMap[target]
 
-          if (!_source) {
-            outputsMap[source] = [target]
-          } else {
-            _source.push(target)
-          }
+        if (!_source) {
+          outputsMap[source] = [target]
+        } else {
+          _source.push(target)
+        }
 
-          if (!_target) {
-            inputsMap[target] = [source]
-          } else {
-            _target.push(source)
-          }
-        })
-        dag.nodes.forEach((node) => {
-          node.$inputs = inputsMap[node.id] || []
-          node.$outputs = outputsMap[node.id] || []
-        })
-      }
+        if (!_target) {
+          inputsMap[target] = [source]
+        } else {
+          _target.push(source)
+        }
+      })
+      dag.nodes.forEach((node) => {
+        node.$inputs = inputsMap[node.id] || []
+        node.$outputs = outputsMap[node.id] || []
+      })
 
       this.dag = dag
 
@@ -203,6 +277,96 @@ export default {
       }
     },
 
+    async loadAccessNodes() {
+      const data = await findAccessNodeInfo({})
+      const mapNode = (item) => ({
+        value: item.processId,
+        label: this.$t(
+          item.status === 'running'
+            ? 'packages_business_agent_option_running'
+            : 'packages_business_agent_option_offline',
+          { name: item.agentName || item.hostName },
+        ),
+        disabled: item.status !== 'running',
+        accessNodeType: item.accessNodeType,
+      })
+
+      this.accessNodes = data.map((item) => {
+        if (
+          item.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
+        ) {
+          return {
+            value: item.processId,
+            label: this.$t('packages_business_agent_group_option_running', {
+              name: item.accessNodeName,
+              count:
+                item.accessNodes?.filter((node) => node.status === 'running')
+                  .length || 0,
+            }),
+            accessNodeType: item.accessNodeType,
+            children: item.accessNodes?.map(mapNode) || [],
+          }
+        }
+
+        return mapNode(item)
+      })
+    },
+
+    syncAccessNodeSelectionWithDag() {
+      const processIds = this.nodeAccessNodeProcessIds
+      if (!processIds.length) return
+
+      const processId = processIds.includes(this.editForm.accessNodeProcessId)
+        ? this.editForm.accessNodeProcessId
+        : processIds[0]
+      const accessNode = this.accessNodes.find(
+        (item) => item.value === processId,
+      )
+      if (!accessNode) return
+
+      this.editForm.accessNodeType =
+        accessNode.accessNodeType || 'MANUALLY_SPECIFIED_BY_THE_USER'
+      this.editForm.accessNodeProcessId = processId
+
+      if (
+        accessNode.accessNodeType ===
+        'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
+      ) {
+        const node = this.dag.nodes.find(
+          (item) =>
+            item.attrs?.accessNodeProcessId === processId &&
+            item.attrs?.priorityProcessId,
+        )
+        this.editForm.priorityProcessId = node?.attrs.priorityProcessId || ''
+      }
+    },
+
+    handleAccessNodeTypeChange() {
+      this.editForm.accessNodeProcessId = ''
+      this.editForm.priorityProcessId = ''
+    },
+
+    handleAccessNodeChange() {
+      this.editForm.priorityProcessId = ''
+    },
+
+    validateAccessNode() {
+      if (
+        this.editForm.accessNodeType !== 'AUTOMATIC_PLATFORM_ALLOCATION' &&
+        (!this.editForm.accessNodeProcessId ||
+          !this.accessNodeOptions.some(
+            (item) => item.value === this.editForm.accessNodeProcessId,
+          ))
+      ) {
+        this.$message.warning(
+          this.$t('packages_business_agent_select_placeholder'),
+        )
+        return false
+      }
+
+      return true
+    },
+
     open(id) {
       this.taskId = id
       this.init()
@@ -214,19 +378,39 @@ export default {
     },
 
     handleSave(...args) {
-      this.$refs.form?.validate((valid) => {
-        if (valid) {
-          patchLogcollectorId(this.taskId, this.editForm).then(() => {
-            this.$emit('success', ...args)
-            this.$message.success(
-              this.$t('packages_business_shared_cdc_setting_message_edit_save'),
-            )
-            this.init()
-            this.handleClose()
-          })
+      if (!this.validateAccessNode()) return
 
-          // 保存到目标节点
-          this.saveTaskDag()
+      this.$refs.form?.validate(async (valid) => {
+        if (!valid) return
+
+        const {
+          accessNodeType,
+          accessNodeProcessId,
+          priorityProcessId,
+          ...logcollectorSettings
+        } = this.editForm
+        const accessNodeSettings = {
+          accessNodeType,
+          accessNodeProcessId,
+          priorityProcessId,
+        }
+
+        this.loading = true
+        try {
+          await patchLogcollectorId(this.taskId, logcollectorSettings)
+          await this.saveTaskDag(accessNodeSettings)
+
+          this.$emit('success', accessNodeSettings, ...args)
+          this.$message.success(
+            this.$t('packages_business_shared_cdc_setting_message_edit_save'),
+          )
+          this.handleClose()
+        } catch (error) {
+          this.$message.error(
+            error?.message || this.$t('public_message_operation_failed'),
+          )
+        } finally {
+          this.loading = false
         }
       })
     },
@@ -264,7 +448,7 @@ export default {
       return op
     },
 
-    saveTaskDag() {
+    saveTaskDag(accessNodeSettings) {
       const { dag } = this
       const { cdcConcurrent, cdcConcurrentWriteNum, increaseReadSize } =
         this.dagForm
@@ -285,9 +469,16 @@ export default {
           })
         }
       })
-      patchTask({
+      return patchTask({
         id: this.taskId,
         dag,
+        ...accessNodeSettings,
+        accessNodeProcessIdList:
+          accessNodeSettings.accessNodeType ===
+            'MANUALLY_SPECIFIED_BY_THE_USER' &&
+          accessNodeSettings.accessNodeProcessId
+            ? [accessNodeSettings.accessNodeProcessId]
+            : [],
       })
     },
   },
@@ -326,6 +517,64 @@ export default {
           :min="1"
         />
         <span class="ml-2">{{ $t('public_time_d') }}</span>
+      </ElFormItem>
+      <ElFormItem :label="$t('packages_dag_connection_form_access_node')">
+        <ElSelect
+          v-model="editForm.accessNodeType"
+          :disabled="isAccessNodeSelectionLocked"
+          style="width: 100%"
+          @change="handleAccessNodeTypeChange"
+        >
+          <ElOption
+            v-for="option in accessNodeTypeOptions"
+            :key="option.value"
+            :label="option.label"
+            :value="option.value"
+          />
+        </ElSelect>
+      </ElFormItem>
+      <ElFormItem
+        v-if="editForm.accessNodeType !== 'AUTOMATIC_PLATFORM_ALLOCATION'"
+        :label="
+          $t(
+            editForm.accessNodeType ===
+              'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
+              ? 'packages_business_choose_agent_group'
+              : 'packages_business_choose_agent',
+          )
+        "
+      >
+        <ElSelect
+          v-model="editForm.accessNodeProcessId"
+          :disabled="isAccessNodeSelectionLocked"
+          :placeholder="$t('packages_business_agent_select_placeholder')"
+          style="width: 100%"
+          @change="handleAccessNodeChange"
+        >
+          <ElOption
+            v-for="option in accessNodeOptions"
+            :key="option.value"
+            :disabled="option.disabled"
+            :label="option.label"
+            :value="option.value"
+          />
+        </ElSelect>
+      </ElFormItem>
+      <ElFormItem
+        v-if="
+          editForm.accessNodeType ===
+          'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
+        "
+        :label="$t('packages_business_priorityProcessId')"
+      >
+        <ElSelect v-model="editForm.priorityProcessId" style="width: 100%">
+          <ElOption
+            v-for="option in priorityProcessOptions"
+            :key="option.value || 'automatic'"
+            :label="option.label"
+            :value="option.value"
+          />
+        </ElSelect>
       </ElFormItem>
       <ElFormItem
         :label="$t('packages_business_shared_list_edit_title_start_time')"
@@ -393,7 +642,7 @@ export default {
         <ElButton @click="handleClose">{{
           $t('public_button_cancel')
         }}</ElButton>
-        <ElButton type="primary" @click="handleSave">{{
+        <ElButton type="primary" :disabled="loading" @click="handleSave">{{
           $t('public_button_save')
         }}</ElButton>
       </span>
