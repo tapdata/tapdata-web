@@ -60,7 +60,8 @@
     border-radius: 4px;
     .task-form-left {
       padding-top: 8px;
-      width: 200px;
+      width: 180px;
+      flex-shrink: 0;
       border-right: 1px solid var(--border-light);
       .table-name {
         font-size: 12px;
@@ -126,12 +127,13 @@
       padding-top: 8px;
     }
     .col-new-field-name {
-      max-width: 90px;
+      max-width: 100%;
     }
 
     .rename-table-item-input {
       position: relative;
       width: 100%;
+      box-sizing: border-box;
       height: 28px;
       line-height: 28px;
       outline: none;
