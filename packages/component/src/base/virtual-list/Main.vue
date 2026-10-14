@@ -1,7 +1,8 @@
 <script>
-import { cloneDeep, debounce } from 'lodash-es'
+import { cloneDeep } from 'lodash-es'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { $emit } from '../../../utils/gogocodeTransfer'
+import { getOverflowTooltipContent } from './tooltip-content.mjs'
 
 export default {
   name: 'Main',
@@ -43,11 +44,11 @@ export default {
       active: '',
       isIndeterminate: false,
       tooltipContent: '',
+      tooltipPosition: { top: '0px', left: '0px' },
       widthMap: {
         index: 50,
         selection: 40,
       },
-      referenceEl: null,
     }
   },
   computed: {
@@ -55,6 +56,7 @@ export default {
       const result = cloneDeep(this.columns)
 
       const usedWidth = result
+        .filter((t) => !['index', 'selection'].includes(t.type))
         .map((t) => t.width || 0)
         .reduce((pre, cur) => {
           return cur + pre
@@ -62,7 +64,7 @@ export default {
 
       const obligateWidth = result
         .filter((t) => ['index', 'selection'].includes(t.type))
-        .map((t) => this.widthMap[t.type])
+        .map((t) => t.width || this.widthMap[t.type])
         .reduce((pre, cur) => {
           return cur + pre
         }, 0)
@@ -84,9 +86,6 @@ export default {
         v && this.fetch()
       },
     },
-  },
-  created() {
-    this.activateTooltip = debounce((tooltip) => tooltip.onOpen(), 50)
   },
   mounted() {
     this.layoutWidth = this.$el.offsetWidth
@@ -162,34 +161,29 @@ export default {
     },
 
     handleCellMouseEnter(event, colItem) {
-      if (!colItem.showOverflowTooltip) return
+      if (!colItem.showOverflowTooltip) {
+        this.tooltipContent = ''
+        return
+      }
 
       const cell = event.target
-      const input = cell.querySelector('input')
-      const text = cell.querySelector('[data-tooltip-content]')
-      const content = input?.value || text?.textContent || cell.textContent
-      const overflowElement = input || text || cell
-
-      if (
-        content &&
-        (colItem.alwaysShowTooltip ||
-          overflowElement.scrollWidth > overflowElement.clientWidth) &&
-        this.$refs.tooltip
-      ) {
-        const tooltip = this.$refs.tooltip
-        this.tooltipContent = content
-        this.referenceEl = cell
-        this.activateTooltip(tooltip)
+      const content = getOverflowTooltipContent(cell)
+      if (!content) {
+        this.tooltipContent = ''
+        return
       }
+
+      const rect = cell.getBoundingClientRect()
+      this.tooltipPosition = {
+        top: `${rect.top < 48 ? rect.bottom + 8 : rect.top - 8}px`,
+        left: `${Math.max(12, Math.min(rect.left, window.innerWidth - 332))}px`,
+        transform: rect.top < 48 ? 'none' : 'translateY(-100%)',
+      }
+      this.tooltipContent = content
     },
 
     handleCellMouseLeave() {
-      this.activateTooltip.cancel()
-      const tooltip = this.$refs.tooltip
-
-      if (tooltip) {
-        tooltip.hide()
-      }
+      this.tooltipContent = ''
     },
 
     getColWidth(item) {
@@ -238,6 +232,9 @@ export default {
               @change="handleCheckAll($event)"
             />
           </div>
+          <div v-else-if="item.headerSlot" class="cell">
+            <slot :name="item.headerSlot" />
+          </div>
           <div v-else class="cell">{{ item.label }}</div>
         </div>
       </div>
@@ -250,6 +247,7 @@ export default {
         :min-item-size="40"
         :item-size="itemSize"
         class="vue-recycle-scroller"
+        @scroll="handleCellMouseLeave"
       >
         <template #default="{ item, index, active }">
           <DynamicScrollerItem
@@ -302,15 +300,16 @@ export default {
           </DynamicScrollerItem>
         </template>
       </DynamicScroller>
-      <el-tooltip
-        ref="tooltip"
-        :virtual-ref="referenceEl"
-        virtual-triggering
-        :reference-el="referenceEl"
-        placement="top"
-        :effect="tooltipEffect"
-        :content="tooltipContent"
-      />
+      <Teleport to="body">
+        <div
+          v-if="tooltipContent"
+          :class="['virtual-list-tooltip', tooltipEffect]"
+          :style="tooltipPosition"
+          role="tooltip"
+        >
+          {{ tooltipContent }}
+        </div>
+      </Teleport>
     </div>
   </div>
 </template>
@@ -378,6 +377,26 @@ export default {
   &.el-tooltip {
     white-space: nowrap;
     min-width: 50px;
+  }
+}
+.virtual-list-tooltip {
+  position: fixed;
+  z-index: 3000;
+  max-width: min(320px, calc(100vw - 24px));
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: #303133;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
+
+  &.light {
+    background: #fff;
+    color: #303133;
+    border: 1px solid #e4e7ed;
   }
 }
 </style>

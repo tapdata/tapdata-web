@@ -151,6 +151,9 @@
           white-space: normal;
           line-height: 16px;
         }
+        .column-operation .cell {
+          padding: 0 4px;
+        }
       }
       .body-wrapper {
         overflow: hidden;
@@ -166,6 +169,10 @@
           padding: 4px 0;
         }
       }
+      .column-index .cell {
+        padding-left: 0;
+        padding-right: 0;
+      }
     }
     .col-new-field-name {
       max-width: 100%;
@@ -179,6 +186,11 @@
     .field-visibility-button {
       width: 28px;
       height: 28px;
+      padding: 0;
+    }
+    .field-bulk-button {
+      width: 24px;
+      height: 24px;
       padding: 0;
     }
 
@@ -235,9 +247,6 @@
     width: 180px;
   }
 
-  .fields-toolbar {
-    border-left: 1px solid var(--el-border-color-lighter);
-  }
   /*.el-table__empty-block {
     height: 100% !important;
   }

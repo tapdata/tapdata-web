@@ -8,7 +8,7 @@
   "author": "",
   "main": "src/index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test src/base/virtual-list/tooltip-content.test.mjs"
   },
   "dependencies": {
     "@element-plus/icons-vue": "catalog:",

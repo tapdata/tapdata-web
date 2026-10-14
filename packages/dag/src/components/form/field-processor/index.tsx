@@ -158,19 +158,18 @@ export const FieldRenameProcessorPreview = defineComponent({
       {
         label: i18n.t('public_serial_number'),
         type: 'index',
+        width: 36,
         align: 'center',
       },
       {
         label: i18n.t('packages_form_dag_dialog_field_mapping_field'),
         showOverflowTooltip: true,
-        alwaysShowTooltip: true,
         prop: 'sourceFieldName',
         slot: 'sourceFieldName',
       },
       {
         label: i18n.t('packages_form_field_processor_index_xinziduanming'),
         showOverflowTooltip: true,
-        alwaysShowTooltip: true,
         prop: 'targetFieldName',
         slot: 'targetFieldName',
         class: 'p-0',
@@ -636,7 +635,7 @@ export const FieldRenameProcessorPreview = defineComponent({
                 </ElPagination>
               </div>
               <div class="main pt-0">
-                <div class="flex p-2 justify-content-between fields-toolbar">
+                <div class="flex p-2 justify-content-between">
                   <div class="flex field-search-input-wrap">
                     <ElInput
                       placeholder={i18n.t(
@@ -687,6 +686,7 @@ export const FieldRenameProcessor = connect(
         const form = formRef.value
         const list = ref([])
         const tableList = ref([])
+        const hideAllSnapshot = ref(null)
         const defaultOperation = {
           prefix: '',
           suffix: '',
@@ -786,19 +786,18 @@ export const FieldRenameProcessor = connect(
           {
             label: i18n.t('public_serial_number'),
             type: 'index',
+            width: 36,
             align: 'center',
           },
           {
             label: i18n.t('packages_form_dag_dialog_field_mapping_field'),
             showOverflowTooltip: true,
-            alwaysShowTooltip: true,
             prop: 'sourceFieldName',
             slot: 'sourceFieldName',
           },
           {
             label: i18n.t('packages_form_field_processor_index_xinziduanming'),
             showOverflowTooltip: true,
-            alwaysShowTooltip: true,
             prop: 'targetFieldName',
             slot: 'targetFieldName',
             class: 'p-0',
@@ -806,7 +805,8 @@ export const FieldRenameProcessor = connect(
           {
             label: i18n.t('public_operation_abb'),
             prop: 'operation',
-            width: 56,
+            width: 76,
+            headerSlot: 'operationHeader',
             slot: 'operation',
           },
         ]
@@ -926,6 +926,7 @@ export const FieldRenameProcessor = connect(
         }
 
         const updateView = (index) => {
+          hideAllSnapshot.value = null
           tableRef.value?.clearSelection()
           config.position = index
           config.selectTableRow = list.value[index]
@@ -945,6 +946,7 @@ export const FieldRenameProcessor = connect(
 
         //重置
         const doOperationRest = () => {
+          hideAllSnapshot.value = null
           fieldsMapping = []
           Object.assign(fieldsOperation, defaultOperation)
           resetTable({
@@ -958,6 +960,7 @@ export const FieldRenameProcessor = connect(
 
         //单个删除字段
         const doShowRow = (row) => {
+          hideAllSnapshot.value = null
           for (let i = 0; i < tableList.value.length; i++) {
             if (tableList.value[i].sourceFieldName === row.sourceFieldName) {
               tableList.value[i].isShow = true
@@ -968,6 +971,7 @@ export const FieldRenameProcessor = connect(
         }
 
         const doDeleteRow = (row) => {
+          hideAllSnapshot.value = null
           for (let i = 0; i < tableList.value.length; i++) {
             if (tableList.value[i].sourceFieldName === row.sourceFieldName) {
               tableList.value[i].isShow = false
@@ -1073,7 +1077,7 @@ export const FieldRenameProcessor = connect(
           return config.checkedFields.some((field) => !!field.isShow)
         })
 
-        const updateFieldsShow = (isShow) => {
+        const updateFieldsShow = (isShow, fields = config.checkedFields) => {
           const qualifiedName = config.selectTableRow?.sourceQualifiedName
           let table = fieldsMapping.find(
             (map) => map.qualifiedName === qualifiedName,
@@ -1097,12 +1101,14 @@ export const FieldRenameProcessor = connect(
           }
 
           const fieldMap = mappingField(table.fields) || {}
-          config.checkedFields.forEach((field) => {
-            field.isShow = isShow
+          fields.forEach((field) => {
+            const visible =
+              typeof isShow === 'function' ? isShow(field) : isShow
+            field.isShow = visible
             fieldMap[field.sourceFieldName] = {
               sourceFieldName: field.sourceFieldName,
               targetFieldName: field.targetFieldName,
-              isShow,
+              isShow: visible,
               migrateType: 'custom',
             }
           })
@@ -1114,12 +1120,83 @@ export const FieldRenameProcessor = connect(
         }
 
         const batchRemove = () => {
+          hideAllSnapshot.value = null
           updateFieldsShow(false)
         }
 
         const batchShow = () => {
+          hideAllSnapshot.value = null
           updateFieldsShow(true)
         }
+
+        const hideAll = () => {
+          hideAllSnapshot.value = {
+            table: config.selectTableRow?.sourceQualifiedName,
+            visibility: new Map(
+              tableList.value.map((field) => [
+                field.sourceFieldName,
+                field.isShow,
+              ]),
+            ),
+          }
+          updateFieldsShow(false, tableList.value)
+        }
+
+        const undoHideAll = () => {
+          const snapshot = hideAllSnapshot.value
+          if (snapshot?.table !== config.selectTableRow?.sourceQualifiedName)
+            return
+          updateFieldsShow(
+            (field) =>
+              snapshot.visibility.get(field.sourceFieldName) ?? field.isShow,
+            tableList.value,
+          )
+          hideAllSnapshot.value = null
+        }
+
+        const renderOperationHeader = () => (
+          <div class="field-bulk-actions flex align-center justify-content-center gap-1">
+            <ElTooltip
+              content={i18n.t('packages_form_field_processor_index_hide_all')}
+              placement="top"
+            >
+              <ElButton
+                class="field-bulk-button"
+                aria-label={i18n.t(
+                  'packages_form_field_processor_index_hide_all',
+                )}
+                disabled={
+                  props.disabled ||
+                  !tableList.value.some((field) => field.isShow)
+                }
+                text
+                type="primary"
+                onClick={hideAll}
+              >
+                <VIcon size="15">EyeOff</VIcon>
+              </ElButton>
+            </ElTooltip>
+            <ElTooltip
+              content={i18n.t(
+                'packages_form_field_processor_index_undo_hide_all',
+              )}
+              placement="top"
+            >
+              <ElButton
+                class="field-bulk-button"
+                aria-label={i18n.t(
+                  'packages_form_field_processor_index_undo_hide_all',
+                )}
+                disabled={props.disabled || !hideAllSnapshot.value}
+                text
+                type="primary"
+                onClick={undoHideAll}
+              >
+                <VIcon size="15">reset</VIcon>
+              </ElButton>
+            </ElTooltip>
+          </div>
+        )
 
         const updateOperation = () => {
           form.setValuesIn('fieldsOperation', {
@@ -1350,7 +1427,7 @@ export const FieldRenameProcessor = connect(
                   </ElPagination>
                 </div>
                 <div class="main pt-0">
-                  <div class="flex p-2 justify-content-between fields-toolbar">
+                  <div class="flex p-2 justify-content-between">
                     <div class="flex field-search-input-wrap">
                       <ElInput
                         placeholder={i18n.t(
@@ -1417,6 +1494,7 @@ export const FieldRenameProcessor = connect(
                       sourceFieldName: renderSourceNode,
                       targetFieldName: renderNode,
                       operation: renderOpNode,
+                      operationHeader: renderOperationHeader,
                     }}
                   </VirtualList>
                 </div>

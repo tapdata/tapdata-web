@@ -134,9 +134,11 @@ export default {
   packages_form_field_processor_index_qianzhui: 'Prefix',
   packages_form_field_processor_index_piliangcaozuo: 'Batch Operation',
   packages_form_field_processor_index_caozuo: 'Operation',
-  packages_form_field_processor_index_xinziduanming: 'New field name',
+  packages_form_field_processor_index_xinziduanming: 'New Name',
   packages_form_field_processor_index_huifu: 'Restore',
   packages_form_field_processor_index_pingbi: 'Mask',
+  packages_form_field_processor_index_hide_all: 'Hide all fields',
+  packages_form_field_processor_index_undo_hide_all: 'Undo hide all',
   packages_form_field_rename_index_mubiaoziduanming: 'Targeted field name',
   packages_form_field_rename_index_yuanziduanming: 'Source field name',
   packages_form_field_value_index_varre:
