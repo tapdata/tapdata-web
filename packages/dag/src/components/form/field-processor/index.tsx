@@ -18,35 +18,8 @@ import { debounce } from 'lodash-es'
 import { computed, defineComponent, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useDataflowStore } from '../../../stores/dataflow.store'
+import { InnerInput } from './inner-input.mjs'
 import './style.scss'
-
-const InnerInput = {
-  name: 'InnerInput',
-  props: ['value', 'readOnly'],
-  data() {
-    return {
-      val: null,
-    }
-  },
-  watch: {
-    value(val) {
-      this.val = val
-    },
-  },
-  created() {
-    this.val = this.value
-  },
-  render() {
-    return (
-      <input
-        class="px-1"
-        readOnly={this.readOnly}
-        value={this.val}
-        onChange={(ev) => this.$emit('change', ev)}
-      />
-    )
-  },
-}
 
 // onChange 懒触发前后缀的变化， 备选方案
 const FormInput = defineComponent({
