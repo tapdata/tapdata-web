@@ -162,11 +162,15 @@ export const FieldRenameProcessorPreview = defineComponent({
       },
       {
         label: i18n.t('packages_form_dag_dialog_field_mapping_field'),
+        showOverflowTooltip: true,
+        alwaysShowTooltip: true,
         prop: 'sourceFieldName',
         slot: 'sourceFieldName',
       },
       {
         label: i18n.t('packages_form_field_processor_index_xinziduanming'),
+        showOverflowTooltip: true,
+        alwaysShowTooltip: true,
         prop: 'targetFieldName',
         slot: 'targetFieldName',
         class: 'p-0',
@@ -341,24 +345,18 @@ export const FieldRenameProcessorPreview = defineComponent({
     //右侧表格slot渲染
     const renderSourceNode = ({ row }) => {
       const show = row?.primary_key_position ? (
-        <span class="field-name-text">
+        <span class="field-name-text" data-tooltip-content>
           {row.sourceFieldName}
           <VIcon size="12" class="color-darkorange">
             key
           </VIcon>
         </span>
       ) : (
-        <span class="field-name-text">{row.sourceFieldName}</span>
+        <span class="field-name-text" data-tooltip-content>
+          {row.sourceFieldName}
+        </span>
       )
-      return (
-        <ElTooltip
-          content={row.sourceFieldName}
-          placement="top"
-          showAfter={200}
-        >
-          {show}
-        </ElTooltip>
-      )
+      return show
     }
     const renderNode = ({ row }) => {
       return row.isShow && !props.disabled ? (
@@ -387,15 +385,12 @@ export const FieldRenameProcessorPreview = defineComponent({
         </div>
       ) : (
         <div class="cursor-pointer pt-1 pl-1">
-          <ElTooltip
-            content={row.targetFieldName}
-            placement="top"
-            showAfter={200}
+          <span
+            class="col-new-field-name inline-block ellipsis align-middle"
+            data-tooltip-content
           >
-            <span class="col-new-field-name inline-block ellipsis align-middle">
-              {row.targetFieldName}
-            </span>
-          </ElTooltip>
+            {row.targetFieldName}
+          </span>
         </div>
       )
     }
@@ -795,11 +790,15 @@ export const FieldRenameProcessor = connect(
           },
           {
             label: i18n.t('packages_form_dag_dialog_field_mapping_field'),
+            showOverflowTooltip: true,
+            alwaysShowTooltip: true,
             prop: 'sourceFieldName',
             slot: 'sourceFieldName',
           },
           {
             label: i18n.t('packages_form_field_processor_index_xinziduanming'),
+            showOverflowTooltip: true,
+            alwaysShowTooltip: true,
             prop: 'targetFieldName',
             slot: 'targetFieldName',
             class: 'p-0',
@@ -807,7 +806,7 @@ export const FieldRenameProcessor = connect(
           {
             label: i18n.t('public_operation_abb'),
             prop: 'operation',
-            width: 88,
+            width: 56,
             slot: 'operation',
           },
         ]
@@ -995,24 +994,18 @@ export const FieldRenameProcessor = connect(
         //右侧表格slot渲染
         const renderSourceNode = ({ row }) => {
           const show = row?.primary_key_position ? (
-            <span class="field-name-text">
+            <span class="field-name-text" data-tooltip-content>
               {row.sourceFieldName}
               <VIcon size="12" class="color-darkorange">
                 key
               </VIcon>
             </span>
           ) : (
-            <span class="field-name-text">{row.sourceFieldName}</span>
+            <span class="field-name-text" data-tooltip-content>
+              {row.sourceFieldName}
+            </span>
           )
-          return (
-            <ElTooltip
-              content={row.sourceFieldName}
-              placement="top"
-              showAfter={200}
-            >
-              {show}
-            </ElTooltip>
-          )
+          return show
         }
         const renderNode = ({ row }) => {
           return row.isShow && !props.disabled ? (
@@ -1041,40 +1034,39 @@ export const FieldRenameProcessor = connect(
             </div>
           ) : (
             <div class="cursor-pointer pt-1 pl-1">
-              <ElTooltip
-                content={row.targetFieldName}
-                placement="top"
-                showAfter={200}
+              <span
+                class="col-new-field-name inline-block ellipsis align-middle"
+                data-tooltip-content
               >
-                <span class="col-new-field-name inline-block ellipsis align-middle">
-                  {row.targetFieldName}
-                </span>
-              </ElTooltip>
+                {row.targetFieldName}
+              </span>
             </div>
           )
         }
         const renderOpNode = ({ row }) => {
-          const show = row.isShow ? (
-            <el-button
-              disabled={props.disabled}
-              text
-              type="primary"
-              onClick={() => doDeleteRow(row)}
-            >
-              {i18n.t('packages_form_field_processor_index_pingbi')}
-            </el-button>
-          ) : (
-            <el-button
-              disabled={props.disabled}
-              text
-              type="primary"
-              onClick={() => doShowRow(row)}
-            >
-              {i18n.t('packages_form_field_processor_index_huifu')}
-            </el-button>
+          const label = i18n.t(
+            row.isShow
+              ? 'packages_form_field_processor_index_pingbi'
+              : 'packages_form_field_processor_index_huifu',
           )
-
-          return show
+          return (
+            <ElTooltip content={label} placement="top">
+              <ElButton
+                class="field-visibility-button"
+                aria-label={label}
+                disabled={props.disabled}
+                text
+                type="primary"
+                onClick={() => (row.isShow ? doDeleteRow(row) : doShowRow(row))}
+              >
+                {row.isShow ? (
+                  <VIcon size="16">EyeOff</VIcon>
+                ) : (
+                  <VIcon size="16">Eye</VIcon>
+                )}
+              </ElButton>
+            </ElTooltip>
+          )
         }
 
         const showBatchRemove = computed(() => {

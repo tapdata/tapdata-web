@@ -165,20 +165,26 @@ export default {
       if (!colItem.showOverflowTooltip) return
 
       const cell = event.target
-      const cellChild = event.target
+      const input = cell.querySelector('input')
+      const text = cell.querySelector('[data-tooltip-content]')
+      const content = input?.value || text?.textContent || cell.textContent
+      const overflowElement = input || text || cell
 
-      if (cellChild.scrollWidth > cellChild.offsetWidth && this.$refs.tooltip) {
+      if (
+        content &&
+        (colItem.alwaysShowTooltip ||
+          overflowElement.scrollWidth > overflowElement.clientWidth) &&
+        this.$refs.tooltip
+      ) {
         const tooltip = this.$refs.tooltip
-        this.tooltipContent =
-          cell.innerText ||
-          cell.textContent ||
-          cell.querySelector('input')?.value
+        this.tooltipContent = content
         this.referenceEl = cell
         this.activateTooltip(tooltip)
       }
     },
 
     handleCellMouseLeave() {
+      this.activateTooltip.cancel()
       const tooltip = this.$refs.tooltip
 
       if (tooltip) {
@@ -298,6 +304,8 @@ export default {
       </DynamicScroller>
       <el-tooltip
         ref="tooltip"
+        :virtual-ref="referenceEl"
+        virtual-triggering
         :reference-el="referenceEl"
         placement="top"
         :effect="tooltipEffect"

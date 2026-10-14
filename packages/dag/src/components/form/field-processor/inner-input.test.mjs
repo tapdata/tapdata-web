@@ -35,7 +35,6 @@ test('an uncommitted field name survives a rerender and commits on change', asyn
   await nextTick()
 
   assert.equal(input.value, 'new_name')
-  assert.equal(component.value.$.subTree.props.content, 'new_name')
   input.dispatchEvent(new window.Event('change', { bubbles: true }))
   assert.deepEqual(changes, ['new_name'])
   app.unmount()
