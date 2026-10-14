@@ -542,7 +542,7 @@ export const FieldRenameProcessorPreview = defineComponent({
             </FormLayout>
 
             <div class="task-form-body rounded-4 mt-4">
-              <div class="task-form-left pt-0 border-0 flex flex-column">
+              <div class="task-form-left pt-0 flex flex-column">
                 <div class="flex p-2">
                   <ElInput
                     placeholder={i18n.t(
@@ -1240,7 +1240,7 @@ export const FieldRenameProcessor = connect(
               </FormItem.BaseItem>
 
               <div class="task-form-body rounded-xl">
-                <div class="task-form-left pt-0 border-0 flex flex-column">
+                <div class="task-form-left pt-0 flex flex-column">
                   <div class="flex p-2">
                     <ElInput
                       placeholder={i18n.t(
