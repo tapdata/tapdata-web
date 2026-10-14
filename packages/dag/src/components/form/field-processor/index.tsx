@@ -162,16 +162,14 @@ export const FieldRenameProcessorPreview = defineComponent({
       },
       {
         label: i18n.t('packages_form_dag_dialog_field_mapping_field'),
-        showOverflowTooltip: true,
         prop: 'sourceFieldName',
         slot: 'sourceFieldName',
       },
       {
         label: i18n.t('packages_form_field_processor_index_xinziduanming'),
-        showOverflowTooltip: true,
         prop: 'targetFieldName',
         slot: 'targetFieldName',
-        class: 'p-0 pt-1',
+        class: 'p-0',
       },
     ]
 
@@ -343,16 +341,24 @@ export const FieldRenameProcessorPreview = defineComponent({
     //右侧表格slot渲染
     const renderSourceNode = ({ row }) => {
       const show = row?.primary_key_position ? (
-        <span title={row.sourceFieldName}>
+        <span class="field-name-text">
           {row.sourceFieldName}
           <VIcon size="12" class="color-darkorange">
             key
           </VIcon>
         </span>
       ) : (
-        <span title={row.sourceFieldName}>{row.sourceFieldName}</span>
+        <span class="field-name-text">{row.sourceFieldName}</span>
       )
-      return show
+      return (
+        <ElTooltip
+          content={row.sourceFieldName}
+          placement="top"
+          showAfter={200}
+        >
+          {show}
+        </ElTooltip>
+      )
     }
     const renderNode = ({ row }) => {
       return row.isShow && !props.disabled ? (
@@ -366,9 +372,8 @@ export const FieldRenameProcessorPreview = defineComponent({
         >
           <InnerInput
             readOnly={props.disabled}
-            class="rename-table-item-input px-1"
+            class="rename-table-item-input"
             value={row.targetFieldName}
-            title={row.targetFieldName}
             onChange={(event) => {
               const val = event.target.value?.trim()
               if (val) {
@@ -382,12 +387,15 @@ export const FieldRenameProcessorPreview = defineComponent({
         </div>
       ) : (
         <div class="cursor-pointer pt-1 pl-1">
-          <span
-            class="col-new-field-name inline-block ellipsis align-middle"
-            title={row.targetFieldName}
+          <ElTooltip
+            content={row.targetFieldName}
+            placement="top"
+            showAfter={200}
           >
-            {row.targetFieldName}
-          </span>
+            <span class="col-new-field-name inline-block ellipsis align-middle">
+              {row.targetFieldName}
+            </span>
+          </ElTooltip>
         </div>
       )
     }
@@ -787,16 +795,14 @@ export const FieldRenameProcessor = connect(
           },
           {
             label: i18n.t('packages_form_dag_dialog_field_mapping_field'),
-            showOverflowTooltip: true,
             prop: 'sourceFieldName',
             slot: 'sourceFieldName',
           },
           {
             label: i18n.t('packages_form_field_processor_index_xinziduanming'),
-            showOverflowTooltip: true,
             prop: 'targetFieldName',
             slot: 'targetFieldName',
-            class: 'p-0 pt-1',
+            class: 'p-0',
           },
           {
             label: i18n.t('public_operation_abb'),
@@ -989,16 +995,24 @@ export const FieldRenameProcessor = connect(
         //右侧表格slot渲染
         const renderSourceNode = ({ row }) => {
           const show = row?.primary_key_position ? (
-            <span title={row.sourceFieldName}>
+            <span class="field-name-text">
               {row.sourceFieldName}
               <VIcon size="12" class="color-darkorange">
                 key
               </VIcon>
             </span>
           ) : (
-            <span title={row.sourceFieldName}>{row.sourceFieldName}</span>
+            <span class="field-name-text">{row.sourceFieldName}</span>
           )
-          return show
+          return (
+            <ElTooltip
+              content={row.sourceFieldName}
+              placement="top"
+              showAfter={200}
+            >
+              {show}
+            </ElTooltip>
+          )
         }
         const renderNode = ({ row }) => {
           return row.isShow && !props.disabled ? (
@@ -1012,9 +1026,8 @@ export const FieldRenameProcessor = connect(
             >
               <InnerInput
                 readOnly={props.disabled}
-                class="rename-table-item-input px-1"
+                class="rename-table-item-input"
                 value={row.targetFieldName}
-                title={row.targetFieldName}
                 onChange={(event) => {
                   const val = event.target.value?.trim()
                   if (val) {
@@ -1028,12 +1041,15 @@ export const FieldRenameProcessor = connect(
             </div>
           ) : (
             <div class="cursor-pointer pt-1 pl-1">
-              <span
-                class="col-new-field-name inline-block ellipsis align-middle"
-                title={row.targetFieldName}
+              <ElTooltip
+                content={row.targetFieldName}
+                placement="top"
+                showAfter={200}
               >
-                {row.targetFieldName}
-              </span>
+                <span class="col-new-field-name inline-block ellipsis align-middle">
+                  {row.targetFieldName}
+                </span>
+              </ElTooltip>
             </div>
           )
         }

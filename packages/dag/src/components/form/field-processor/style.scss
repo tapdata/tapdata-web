@@ -136,7 +136,7 @@
         flex-shrink: 0;
       }
       .header__list {
-        min-height: 32px;
+        min-height: 40px;
         align-items: center;
         background: transparent !important;
         color: var(--text-light);
@@ -146,9 +146,10 @@
           padding: 4px 0;
         }
         .cell {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
+          overflow: visible;
+          text-overflow: clip;
+          white-space: normal;
+          line-height: 16px;
         }
       }
       .body-wrapper {
@@ -169,6 +170,12 @@
     .col-new-field-name {
       max-width: 100%;
     }
+    .field-name-text {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
     .rename-table-item-input {
       position: relative;
@@ -181,7 +188,7 @@
       background: 0 0;
       color: inherit;
       border: 1px solid transparent;
-      border-radius: 4px;
+      border-radius: 8px;
       transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
 
       &:hover,
