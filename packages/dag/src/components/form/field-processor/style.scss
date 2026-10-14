@@ -126,6 +126,45 @@
       flex-direction: column;
       padding-top: 8px;
     }
+    .field-processor-list {
+      min-width: 0;
+      overflow: hidden;
+      padding: 0 4px 4px;
+
+      .header-wrapper {
+        flex-shrink: 0;
+      }
+      .header__list {
+        min-height: 32px;
+        align-items: center;
+        background: transparent !important;
+        color: var(--text-light);
+        font-size: 12px;
+
+        .column-item {
+          padding: 4px 0;
+        }
+        .cell {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+      .body-wrapper {
+        overflow: hidden;
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        background: var(--el-bg-color-overlay);
+      }
+      .body__row {
+        min-height: 36px;
+        align-items: center;
+
+        .column-item {
+          padding: 4px 0;
+        }
+      }
+    }
     .col-new-field-name {
       max-width: 100%;
     }

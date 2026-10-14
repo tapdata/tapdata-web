@@ -661,8 +661,7 @@ export const FieldRenameProcessorPreview = defineComponent({
                   row-class-name={tableRowClassName}
                   on-selection-change={doSelectionField}
                   on-clear-selection={doClearSelection}
-                  border
-                  class="flex-fill h-0"
+                  class="field-processor-list bg-light dark:bg-white/5 rounded-xl flex-fill h-0"
                 ></VirtualList>
               </div>
             </div>
@@ -1404,8 +1403,7 @@ export const FieldRenameProcessor = connect(
                     row-class-name={tableRowClassName}
                     onSelectionChange={doSelectionField}
                     onClearSelection={doClearSelection}
-                    border
-                    class="flex-fill h-0"
+                    class="field-processor-list bg-light dark:bg-white/5 rounded-xl flex-fill h-0"
                   >
                     {{
                       sourceFieldName: renderSourceNode,
