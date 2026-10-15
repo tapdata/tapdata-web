@@ -60,7 +60,8 @@
     border-radius: 4px;
     .task-form-left {
       padding-top: 8px;
-      width: 200px;
+      width: 180px;
+      flex-shrink: 0;
       border-right: 1px solid var(--border-light);
       .table-name {
         font-size: 12px;
@@ -121,17 +122,102 @@
     .main {
       display: flex;
       flex: 1;
+      min-width: 0;
       overflow: hidden;
       flex-direction: column;
-      padding-top: 8px;
+      padding: 12px;
+    }
+    .field-processor-list {
+      min-width: 0;
+      overflow: hidden;
+      padding: 0 4px 4px;
+
+      .header-wrapper {
+        flex-shrink: 0;
+      }
+      .header__list {
+        min-height: 40px;
+        align-items: center;
+        background: transparent !important;
+        color: var(--text-light);
+        font-size: 12px;
+
+        .column-item {
+          padding: 4px 0;
+        }
+        .cell {
+          overflow: visible;
+          text-overflow: clip;
+          white-space: normal;
+          line-height: 16px;
+        }
+        .column-operation .cell {
+          padding: 0 4px;
+        }
+      }
+      .body-wrapper {
+        overflow: hidden;
+        border: 1px solid rgb(242, 244, 247);
+        border-radius: 12px;
+        background: var(--el-bg-color-overlay);
+      }
+      .body__row {
+        min-height: 36px;
+        align-items: center;
+
+        .column-item {
+          padding: 4px 0;
+        }
+      }
+      .column-index .cell {
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      &.is-disabled {
+        .field-name-text,
+        .col-new-field-name {
+          display: block;
+          overflow: visible;
+          text-overflow: clip;
+          white-space: normal;
+          overflow-wrap: anywhere;
+          line-height: 18px;
+        }
+      }
     }
     .col-new-field-name {
-      max-width: 90px;
+      max-width: 100%;
+    }
+    .field-name-text {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .field-visibility-button {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+    }
+    .field-bulk-button {
+      width: 24px;
+      height: 24px;
+      padding: 0;
+    }
+    .field-visibility-icon {
+      width: 16px;
+      height: 16px;
+    }
+    .field-bulk-icon {
+      width: 15px;
+      height: 15px;
     }
 
     .rename-table-item-input {
       position: relative;
       width: 100%;
+      box-sizing: border-box;
       height: 28px;
       line-height: 28px;
       outline: none;
@@ -139,7 +225,7 @@
       background: 0 0;
       color: inherit;
       border: 1px solid transparent;
-      border-radius: 4px;
+      border-radius: 8px;
       transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
 
       &:hover,
@@ -178,12 +264,10 @@
   }
 
   .field-search-input-wrap {
-    width: 180px;
+    width: 100%;
+    min-width: 0;
   }
 
-  .fields-toolbar {
-    border-left: 1px solid var(--el-border-color-lighter);
-  }
   /*.el-table__empty-block {
     height: 100% !important;
   }
