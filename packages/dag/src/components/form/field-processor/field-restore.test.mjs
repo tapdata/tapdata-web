@@ -142,3 +142,27 @@ test('restore removes selected overrides from every entry for the table', () => 
 
   assert.deepEqual(remainingMappings, [])
 })
+
+test('restore sets the default name before making a field visible', () => {
+  const stateAtVisibilityChange = []
+  const row = {
+    sourceFieldName: 'source_a',
+    targetFieldName: 'previous_custom_name',
+  }
+  Object.defineProperty(row, 'isShow', {
+    get: () => false,
+    set: (visible) => {
+      if (visible) stateAtVisibilityChange.push(row.targetFieldName)
+    },
+  })
+
+  restoreSelectedFieldState(
+    [row],
+    [],
+    'table_a',
+    ['source_a'],
+    new Map([['source_a', 'resolved_default_name']]),
+  )
+
+  assert.deepEqual(stateAtVisibilityChange, ['resolved_default_name'])
+})

@@ -10,10 +10,10 @@ export function restoreSelectedFieldState(
   rows.forEach((field) => {
     if (!selectedNames.has(field.sourceFieldName)) return
 
-    field.isShow = true
     field.targetFieldName =
       defaultTargetFieldNames?.get(field.sourceFieldName) ??
       field.sourceFieldName
+    field.isShow = true
   })
 
   const mappings = fieldMappings || []
