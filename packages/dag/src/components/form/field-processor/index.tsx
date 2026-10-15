@@ -18,6 +18,7 @@ import { debounce } from 'lodash-es'
 import { computed, defineComponent, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useDataflowStore } from '../../../stores/dataflow.store'
+import { restoreSelectedFieldState } from './field-restore.mjs'
 import { InnerInput } from './inner-input.mjs'
 import './style.scss'
 
@@ -693,6 +694,7 @@ export const FieldRenameProcessor = connect(
         const form = formRef.value
         const list = ref([])
         const tableList = ref([])
+        const defaultTargetFieldNames = new Map()
         const defaultOperation = {
           prefix: '',
           suffix: '',
@@ -754,6 +756,26 @@ export const FieldRenameProcessor = connect(
           getNodeTableInfo(where)
             .then((res) => {
               const { total, items = [] } = res
+              items.forEach((item) => {
+                let tableDefaults = defaultTargetFieldNames.get(
+                  item.sourceQualifiedName,
+                )
+                if (!tableDefaults) {
+                  tableDefaults = new Map()
+                  defaultTargetFieldNames.set(
+                    item.sourceQualifiedName,
+                    tableDefaults,
+                  )
+                }
+                item.fieldsMapping.forEach((field) => {
+                  if (!tableDefaults.has(field.sourceFieldName)) {
+                    tableDefaults.set(
+                      field.sourceFieldName,
+                      field.targetFieldName,
+                    )
+                  }
+                })
+              })
               list.value = items.map(updateDeletedNum)
               config.page.total = total
               config.page.count =
@@ -964,13 +986,7 @@ export const FieldRenameProcessor = connect(
 
         //单个删除字段
         const doShowRow = (row) => {
-          for (let i = 0; i < tableList.value.length; i++) {
-            if (tableList.value[i].sourceFieldName === row.sourceFieldName) {
-              tableList.value[i].isShow = true
-            }
-          }
-          updateDeletedNum(config.selectTableRow)
-          doUpdateField(row, 'del', true)
+          restoreFields([row])
         }
 
         const doDeleteRow = (row) => {
@@ -1089,6 +1105,26 @@ export const FieldRenameProcessor = connect(
           return config.checkedFields.some((field) => !!field.isShow)
         })
 
+        const restoreFields = (fields) => {
+          const qualifiedName = config.selectTableRow?.sourceQualifiedName
+          const selectedFieldNames = fields.map(
+            (field) => field.sourceFieldName,
+          )
+          if (selectedFieldNames.length === 0) return
+
+          fieldsMapping = restoreSelectedFieldState(
+            tableList.value,
+            form.values.fieldsMapping || fieldsMapping,
+            qualifiedName,
+            selectedFieldNames,
+            defaultTargetFieldNames.get(qualifiedName),
+          )
+
+          form.values.fieldsMapping = fieldsMapping
+          emit('change', fieldsMapping)
+          updateDeletedNum(config.selectTableRow)
+        }
+
         const updateFieldsShow = (isShow) => {
           const qualifiedName = config.selectTableRow?.sourceQualifiedName
           let table = fieldsMapping.find(
@@ -1140,7 +1176,7 @@ export const FieldRenameProcessor = connect(
         }
 
         const batchShow = () => {
-          updateFieldsShow(true)
+          restoreFields(config.checkedFields)
         }
 
         const renderOperationHeader = () => (
