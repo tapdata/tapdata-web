@@ -101,6 +101,10 @@ export default {
       }
     },
 
+    refreshData(data = this.data) {
+      this.list = cloneDeep(data)
+    },
+
     getRowNumber(item, index) {
       if (
         Number.isInteger(index) &&
@@ -115,7 +119,7 @@ export default {
       const itemIndex = this.list.findIndex(
         (row) => row[this.itemKey] === item[this.itemKey],
       )
-      return (Math.max(itemIndex, 0)) + 1
+      return Math.max(itemIndex, 0) + 1
     },
 
     toggleRowSelection(row = {}, selected) {

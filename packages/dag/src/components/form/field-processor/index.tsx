@@ -1120,6 +1120,7 @@ export const FieldRenameProcessor = connect(
             defaultTargetFieldNames.get(qualifiedName),
           )
 
+          tableRef.value?.refreshData(filterFieldList.value)
           form.setValuesIn('fieldsMapping', fieldsMapping)
           emit('change', fieldsMapping)
           updateDeletedNum(config.selectTableRow)
