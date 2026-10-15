@@ -54,11 +54,6 @@ export default {
     }
   },
   computed: {
-    rowNumbers() {
-      return new Map(
-        this.list.map((item, index) => [item[this.itemKey], index + 1]),
-      )
-    },
     cols() {
       const result = cloneDeep(this.columns)
 
@@ -104,6 +99,23 @@ export default {
         this.list = cloneDeep(this.data)
         return
       }
+    },
+
+    getRowNumber(item, index) {
+      if (
+        Number.isInteger(index) &&
+        index >= 0 &&
+        this.list[index]?.[this.itemKey] === item[this.itemKey]
+      ) {
+        return index + 1
+      }
+
+      // DynamicScroller normally provides the row index. Fall back to the
+      // stable item key if a recycled row briefly has an invalid index.
+      const itemIndex = this.list.findIndex(
+        (row) => row[this.itemKey] === item[this.itemKey],
+      )
+      return (Math.max(itemIndex, 0)) + 1
     },
 
     toggleRowSelection(row = {}, selected) {
@@ -269,10 +281,7 @@ export default {
             :data-index="index"
             :size-dependencies="[item[itemKey]]"
           >
-            <div
-              v-if="rowNumbers.has(item[itemKey])"
-              :class="['flex body__row', ...getRowClass(item, index)]"
-            >
+            <div :class="['flex body__row', ...getRowClass(item, index)]">
               <div
                 v-for="(colItem, colIndex) in cols"
                 :key="colIndex"
@@ -300,7 +309,7 @@ export default {
                     />
                   </template>
                   <template v-else-if="colItem.type === 'index'">{{
-                    rowNumbers.get(item[itemKey])
+                    getRowNumber(item, index)
                   }}</template>
 
                   <template v-else-if="colItem.type === 'selection'">
