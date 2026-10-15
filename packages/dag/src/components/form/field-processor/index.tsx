@@ -652,6 +652,7 @@ export const FieldRenameProcessorPreview = defineComponent({
                   </div>
                 </div>
                 <VirtualList
+                  key={config.selectTableRow?.sourceQualifiedName}
                   ref={tableRef}
                   data={filterFieldList.value}
                   columns={columns}
@@ -1419,6 +1420,7 @@ export const FieldRenameProcessor = connect(
                     </div>
                   </div>
                   <VirtualList
+                    key={config.selectTableRow?.sourceQualifiedName}
                     ref={tableRef}
                     data={filterFieldList.value}
                     columns={columns}
