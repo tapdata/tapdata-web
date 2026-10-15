@@ -686,7 +686,6 @@ export const FieldRenameProcessor = connect(
         const form = formRef.value
         const list = ref([])
         const tableList = ref([])
-        const hideAllSnapshot = ref(null)
         const defaultOperation = {
           prefix: '',
           suffix: '',
@@ -926,7 +925,6 @@ export const FieldRenameProcessor = connect(
         }
 
         const updateView = (index) => {
-          hideAllSnapshot.value = null
           tableRef.value?.clearSelection()
           config.position = index
           config.selectTableRow = list.value[index]
@@ -946,7 +944,6 @@ export const FieldRenameProcessor = connect(
 
         //重置
         const doOperationRest = () => {
-          hideAllSnapshot.value = null
           fieldsMapping = []
           Object.assign(fieldsOperation, defaultOperation)
           resetTable({
@@ -960,7 +957,6 @@ export const FieldRenameProcessor = connect(
 
         //单个删除字段
         const doShowRow = (row) => {
-          hideAllSnapshot.value = null
           for (let i = 0; i < tableList.value.length; i++) {
             if (tableList.value[i].sourceFieldName === row.sourceFieldName) {
               tableList.value[i].isShow = true
@@ -971,7 +967,6 @@ export const FieldRenameProcessor = connect(
         }
 
         const doDeleteRow = (row) => {
-          hideAllSnapshot.value = null
           for (let i = 0; i < tableList.value.length; i++) {
             if (tableList.value[i].sourceFieldName === row.sourceFieldName) {
               tableList.value[i].isShow = false
@@ -1077,7 +1072,7 @@ export const FieldRenameProcessor = connect(
           return config.checkedFields.some((field) => !!field.isShow)
         })
 
-        const updateFieldsShow = (isShow, fields = config.checkedFields) => {
+        const updateFieldsShow = (isShow) => {
           const qualifiedName = config.selectTableRow?.sourceQualifiedName
           let table = fieldsMapping.find(
             (map) => map.qualifiedName === qualifiedName,
@@ -1101,14 +1096,12 @@ export const FieldRenameProcessor = connect(
           }
 
           const fieldMap = mappingField(table.fields) || {}
-          fields.forEach((field) => {
-            const visible =
-              typeof isShow === 'function' ? isShow(field) : isShow
-            field.isShow = visible
+          config.checkedFields.forEach((field) => {
+            field.isShow = isShow
             fieldMap[field.sourceFieldName] = {
               sourceFieldName: field.sourceFieldName,
               targetFieldName: field.targetFieldName,
-              isShow: visible,
+              isShow,
               migrateType: 'custom',
             }
           })
@@ -1120,77 +1113,43 @@ export const FieldRenameProcessor = connect(
         }
 
         const batchRemove = () => {
-          hideAllSnapshot.value = null
           updateFieldsShow(false)
         }
 
         const batchShow = () => {
-          hideAllSnapshot.value = null
           updateFieldsShow(true)
-        }
-
-        const hideAll = () => {
-          hideAllSnapshot.value = {
-            table: config.selectTableRow?.sourceQualifiedName,
-            visibility: new Map(
-              tableList.value.map((field) => [
-                field.sourceFieldName,
-                field.isShow,
-              ]),
-            ),
-          }
-          updateFieldsShow(false, tableList.value)
-        }
-
-        const undoHideAll = () => {
-          const snapshot = hideAllSnapshot.value
-          if (snapshot?.table !== config.selectTableRow?.sourceQualifiedName)
-            return
-          updateFieldsShow(
-            (field) =>
-              snapshot.visibility.get(field.sourceFieldName) ?? field.isShow,
-            tableList.value,
-          )
-          hideAllSnapshot.value = null
         }
 
         const renderOperationHeader = () => (
           <div class="field-bulk-actions flex align-center justify-content-center gap-1">
             <ElTooltip
-              content={i18n.t('packages_form_field_processor_index_hide_all')}
+              content={i18n.t('packages_form_field_processor_index_pingbi')}
               placement="top"
             >
               <ElButton
                 class="field-bulk-button"
                 aria-label={i18n.t(
-                  'packages_form_field_processor_index_hide_all',
+                  'packages_form_field_processor_index_pingbi',
                 )}
-                disabled={
-                  props.disabled ||
-                  !tableList.value.some((field) => field.isShow)
-                }
+                disabled={props.disabled || config.checkedFields.length === 0}
                 text
                 type="primary"
-                onClick={hideAll}
+                onClick={batchRemove}
               >
                 <VIcon size="15">EyeOff</VIcon>
               </ElButton>
             </ElTooltip>
             <ElTooltip
-              content={i18n.t(
-                'packages_form_field_processor_index_undo_hide_all',
-              )}
+              content={i18n.t('packages_form_field_processor_index_huifu')}
               placement="top"
             >
               <ElButton
                 class="field-bulk-button"
-                aria-label={i18n.t(
-                  'packages_form_field_processor_index_undo_hide_all',
-                )}
-                disabled={props.disabled || !hideAllSnapshot.value}
+                aria-label={i18n.t('packages_form_field_processor_index_huifu')}
+                disabled={props.disabled || config.checkedFields.length === 0}
                 text
                 type="primary"
-                onClick={undoHideAll}
+                onClick={batchShow}
               >
                 <VIcon size="15">reset</VIcon>
               </ElButton>
@@ -1448,36 +1407,6 @@ export const FieldRenameProcessor = connect(
                           ),
                         }}
                       </ElInput>
-                    </div>
-                    <div class="item px-2">
-                      <ElButton
-                        key="batchRemove"
-                        text
-                        type="primary"
-                        class="btn-operation"
-                        onClick={batchRemove}
-                        disabled={
-                          (config.checkedTables.length === 0 &&
-                            config.checkedFields.length === 0) ||
-                          props.disabled
-                        }
-                      >
-                        {i18n.t('packages_form_field_processor_index_pingbi')}
-                      </ElButton>
-                      <ElButton
-                        key="batchShow"
-                        text
-                        type="primary"
-                        class="btn-operation"
-                        onClick={batchShow}
-                        disabled={
-                          (config.checkedTables.length === 0 &&
-                            config.checkedFields.length === 0) ||
-                          props.disabled
-                        }
-                      >
-                        {i18n.t('packages_form_field_processor_index_huifu')}
-                      </ElButton>
                     </div>
                   </div>
                   <VirtualList

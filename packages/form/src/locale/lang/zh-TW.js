@@ -116,8 +116,6 @@ export default {
   packages_form_field_processor_index_xinziduanming: '新字段名',
   packages_form_field_processor_index_huifu: '恢復',
   packages_form_field_processor_index_pingbi: '屏蔽',
-  packages_form_field_processor_index_hide_all: '隱藏全部字段',
-  packages_form_field_processor_index_undo_hide_all: '撤銷全部隱藏',
   packages_form_field_rename_index_mubiaoziduanming: '目標字段名',
   packages_form_field_rename_index_yuanziduanming: '源字段名',
   packages_form_field_value_index_varre:
