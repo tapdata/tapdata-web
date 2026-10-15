@@ -1049,7 +1049,12 @@ export const FieldRenameProcessor = connect(
               : 'packages_form_field_processor_index_huifu',
           )
           return (
-            <ElTooltip content={label} placement="top">
+            <ElTooltip
+              content={label}
+              placement="top"
+              enterable={false}
+              hideAfter={0}
+            >
               <ElButton
                 class="field-visibility-button"
                 aria-label={label}
@@ -1125,6 +1130,8 @@ export const FieldRenameProcessor = connect(
             <ElTooltip
               content={i18n.t('packages_form_field_processor_index_pingbi')}
               placement="top"
+              enterable={false}
+              hideAfter={0}
             >
               <ElButton
                 class="field-bulk-button"
@@ -1142,6 +1149,8 @@ export const FieldRenameProcessor = connect(
             <ElTooltip
               content={i18n.t('packages_form_field_processor_index_huifu')}
               placement="top"
+              enterable={false}
+              hideAfter={0}
             >
               <ElButton
                 class="field-bulk-button"
