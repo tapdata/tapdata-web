@@ -173,6 +173,18 @@
         padding-left: 0;
         padding-right: 0;
       }
+
+      &.is-disabled {
+        .field-name-text,
+        .col-new-field-name {
+          display: block;
+          overflow: visible;
+          text-overflow: clip;
+          white-space: normal;
+          overflow-wrap: anywhere;
+          line-height: 18px;
+        }
+      }
     }
     .col-new-field-name {
       max-width: 100%;

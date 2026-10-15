@@ -154,7 +154,7 @@ export const FieldRenameProcessorPreview = defineComponent({
       }
     }
 
-    const columns = [
+    const columns = computed(() => [
       {
         label: i18n.t('public_serial_number'),
         type: 'index',
@@ -163,18 +163,18 @@ export const FieldRenameProcessorPreview = defineComponent({
       },
       {
         label: i18n.t('packages_form_dag_dialog_field_mapping_field'),
-        showOverflowTooltip: true,
+        showOverflowTooltip: !props.disabled,
         prop: 'sourceFieldName',
         slot: 'sourceFieldName',
       },
       {
         label: i18n.t('packages_form_field_processor_index_xinziduanming'),
-        showOverflowTooltip: true,
+        showOverflowTooltip: !props.disabled,
         prop: 'targetFieldName',
         slot: 'targetFieldName',
         class: 'p-0',
       },
-    ]
+    ])
 
     const filterFieldList = computed(() => {
       const search = config.searchField.trim().toLowerCase()
@@ -383,9 +383,13 @@ export const FieldRenameProcessorPreview = defineComponent({
           ></InnerInput>
         </div>
       ) : (
-        <div class="cursor-pointer pt-1 pl-1">
+        <div class={props.disabled ? 'pl-1' : 'cursor-pointer pt-1 pl-1'}>
           <span
-            class="col-new-field-name inline-block ellipsis align-middle"
+            class={
+              props.disabled
+                ? 'col-new-field-name'
+                : 'col-new-field-name inline-block ellipsis align-middle'
+            }
             data-tooltip-content
           >
             {row.targetFieldName}
@@ -654,7 +658,7 @@ export const FieldRenameProcessorPreview = defineComponent({
                 <VirtualList
                   ref={tableRef}
                   data={filterFieldList.value}
-                  columns={columns}
+                  columns={columns.value}
                   item-key="sourceFieldName"
                   scopedSlots={{
                     sourceFieldName: renderSourceNode,
@@ -663,7 +667,10 @@ export const FieldRenameProcessorPreview = defineComponent({
                   row-class-name={tableRowClassName}
                   on-selection-change={doSelectionField}
                   on-clear-selection={doClearSelection}
-                  class="field-processor-list bg-light dark:bg-white/5 rounded-xl flex-fill h-0"
+                  class={[
+                    'field-processor-list bg-light dark:bg-white/5 rounded-xl flex-fill h-0',
+                    { 'is-disabled': props.disabled },
+                  ]}
                 ></VirtualList>
               </div>
             </div>
@@ -778,7 +785,7 @@ export const FieldRenameProcessor = connect(
           }
         }
 
-        const columns = [
+        const columns = computed(() => [
           {
             type: 'selection',
           },
@@ -790,13 +797,13 @@ export const FieldRenameProcessor = connect(
           },
           {
             label: i18n.t('packages_form_dag_dialog_field_mapping_field'),
-            showOverflowTooltip: true,
+            showOverflowTooltip: !props.disabled,
             prop: 'sourceFieldName',
             slot: 'sourceFieldName',
           },
           {
             label: i18n.t('packages_form_field_processor_index_xinziduanming'),
-            showOverflowTooltip: true,
+            showOverflowTooltip: !props.disabled,
             prop: 'targetFieldName',
             slot: 'targetFieldName',
             class: 'p-0',
@@ -808,7 +815,7 @@ export const FieldRenameProcessor = connect(
             headerSlot: 'operationHeader',
             slot: 'operation',
           },
-        ]
+        ])
 
         const filterFieldList = computed(() => {
           const search = config.searchField.trim().toLowerCase()
@@ -1032,9 +1039,13 @@ export const FieldRenameProcessor = connect(
               ></InnerInput>
             </div>
           ) : (
-            <div class="cursor-pointer pt-1 pl-1">
+            <div class={props.disabled ? 'pl-1' : 'cursor-pointer pt-1 pl-1'}>
               <span
-                class="col-new-field-name inline-block ellipsis align-middle"
+                class={
+                  props.disabled
+                    ? 'col-new-field-name'
+                    : 'col-new-field-name inline-block ellipsis align-middle'
+                }
                 data-tooltip-content
               >
                 {row.targetFieldName}
@@ -1052,6 +1063,7 @@ export const FieldRenameProcessor = connect(
             <ElTooltip
               content={label}
               placement="top"
+              disabled={props.disabled}
               enterable={false}
               hideAfter={0}
             >
@@ -1130,6 +1142,7 @@ export const FieldRenameProcessor = connect(
             <ElTooltip
               content={i18n.t('packages_form_field_processor_index_pingbi')}
               placement="top"
+              disabled={props.disabled}
               enterable={false}
               hideAfter={0}
             >
@@ -1149,6 +1162,7 @@ export const FieldRenameProcessor = connect(
             <ElTooltip
               content={i18n.t('packages_form_field_processor_index_huifu')}
               placement="top"
+              disabled={props.disabled}
               enterable={false}
               hideAfter={0}
             >
@@ -1421,12 +1435,15 @@ export const FieldRenameProcessor = connect(
                   <VirtualList
                     ref={tableRef}
                     data={filterFieldList.value}
-                    columns={columns}
+                    columns={columns.value}
                     item-key="sourceFieldName"
                     row-class-name={tableRowClassName}
                     onSelectionChange={doSelectionField}
                     onClearSelection={doClearSelection}
-                    class="field-processor-list bg-light dark:bg-white/5 rounded-xl flex-fill h-0"
+                    class={[
+                      'field-processor-list bg-light dark:bg-white/5 rounded-xl flex-fill h-0',
+                      { 'is-disabled': props.disabled },
+                    ]}
                   >
                     {{
                       sourceFieldName: renderSourceNode,
