@@ -4,7 +4,6 @@ import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { $emit } from '../../../utils/gogocodeTransfer'
 import { getOverflowTooltipContent } from './tooltip-content.mjs'
 import { getTooltipPosition } from './tooltip-position.mjs'
-import { getRowNumber } from './row-number.mjs'
 
 export default {
   name: 'Main',
@@ -95,7 +94,9 @@ export default {
     this.fetch()
   },
   methods: {
-    getRowNumber,
+    getRowNumber(index) {
+      return Number.isInteger(index) ? index + 1 : ''
+    },
     fetch() {
       if (!this.remoteMethod) {
         this.list = cloneDeep(this.data)
