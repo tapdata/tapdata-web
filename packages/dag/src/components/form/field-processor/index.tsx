@@ -1112,8 +1112,14 @@ export const FieldRenameProcessor = connect(
             fieldsMapping.push(table)
           }
 
+          const selectedFieldNames = new Set(
+            config.checkedFields.map((field) => field.sourceFieldName),
+          )
+          const selectedFields = tableList.value.filter((field) =>
+            selectedFieldNames.has(field.sourceFieldName),
+          )
           const fieldMap = mappingField(table.fields) || {}
-          config.checkedFields.forEach((field) => {
+          selectedFields.forEach((field) => {
             field.isShow = isShow
             fieldMap[field.sourceFieldName] = {
               sourceFieldName: field.sourceFieldName,
