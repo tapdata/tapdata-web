@@ -635,7 +635,7 @@ export const FieldRenameProcessorPreview = defineComponent({
                 </ElPagination>
               </div>
               <div class="main pt-0">
-                <div class="flex p-2 justify-content-between">
+                <div class="flex p-2 px-0">
                   <div class="flex field-search-input-wrap">
                     <ElInput
                       placeholder={i18n.t(
@@ -1395,7 +1395,7 @@ export const FieldRenameProcessor = connect(
                   </ElPagination>
                 </div>
                 <div class="main pt-0">
-                  <div class="flex p-2 justify-content-between">
+                  <div class="flex p-2 px-0">
                     <div class="flex field-search-input-wrap">
                       <ElInput
                         placeholder={i18n.t(
