@@ -483,6 +483,31 @@ export default {
   packages_business_verification_content_verify: '表全字段值校驗',
   packages_business_verification_joint_verify: '關聯字段值校驗',
   packages_business_verification_hash_verify: '全表 hash 校驗',
+  packages_business_verification_custom_query: '自訂查詢校驗',
+  packages_business_verification_custom_query_tip:
+    '分別在來源端和目標端執行唯讀 SQL，並比較查詢結果。',
+  packages_business_verification_custom_query_required:
+    '請選擇來源端和目標端連線，並分別填寫查詢語句。',
+  packages_business_verification_custom_query_source_sql: '來源端 SQL',
+  packages_business_verification_custom_query_target_sql: '目標端 SQL',
+  packages_business_verification_custom_query_sort_fields: '排序欄位',
+  packages_business_verification_custom_query_sort_fields_placeholder:
+    '填寫逗號分隔的輸出欄位；留空時按全部欄位排序',
+  packages_business_verification_custom_query_field_mapping: '欄位對應',
+  packages_business_verification_custom_query_field_mapping_placeholder:
+    '每行一組對應：來源欄位=目標欄位。留空時按同名欄位匹配。',
+  packages_business_verification_custom_query_field_mapping_invalid:
+    '欄位對應格式應為「來源欄位=目標欄位」。',
+  packages_business_verification_advanced_doc_title: '進階校驗說明',
+  packages_business_verification_advanced_doc_result:
+    '是否通過校驗（passed：校驗通過，failed：校驗失敗）；必填項。',
+  packages_business_verification_advanced_doc_message:
+    '校驗失敗時建議返回的異常資訊；選填項。',
+  packages_business_verification_advanced_doc_data:
+    '校驗失敗時建議返回的目標資料；選填項。',
+  packages_business_verification_advanced_doc_example:
+    '完整範例：MongoDB 查詢範例',
+  packages_business_verification_advanced_doc_mismatch: '記錄不一致',
   packages_business_verification_job_enable: '已啟用',
   packages_business_verification_job_disable: '已禁止',
   packages_business_verification_check_same: '校驗一致',
