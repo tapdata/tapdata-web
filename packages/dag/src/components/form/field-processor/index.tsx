@@ -18,35 +18,9 @@ import { debounce } from 'lodash-es'
 import { computed, defineComponent, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useDataflowStore } from '../../../stores/dataflow.store'
+import { restoreSelectedFieldState } from './field-restore.mjs'
+import { InnerInput } from './inner-input.mjs'
 import './style.scss'
-
-const InnerInput = {
-  name: 'InnerInput',
-  props: ['value', 'readOnly'],
-  data() {
-    return {
-      val: null,
-    }
-  },
-  watch: {
-    value(val) {
-      this.val = val
-    },
-  },
-  created() {
-    this.val = this.value
-  },
-  render() {
-    return (
-      <input
-        class="px-1"
-        readOnly={this.readOnly}
-        value={this.val}
-        onChange={(ev) => this.$emit('change', ev)}
-      />
-    )
-  },
-}
 
 // onChange 懒触发前后缀的变化， 备选方案
 const FormInput = defineComponent({
@@ -181,28 +155,27 @@ export const FieldRenameProcessorPreview = defineComponent({
       }
     }
 
-    const columns = [
+    const columns = computed(() => [
       {
         label: i18n.t('public_serial_number'),
         type: 'index',
+        width: 36,
         align: 'center',
       },
       {
         label: i18n.t('packages_form_dag_dialog_field_mapping_field'),
-        showOverflowTooltip: true,
+        showOverflowTooltip: !props.disabled,
         prop: 'sourceFieldName',
         slot: 'sourceFieldName',
-        width: 140,
       },
       {
         label: i18n.t('packages_form_field_processor_index_xinziduanming'),
-        showOverflowTooltip: true,
+        showOverflowTooltip: !props.disabled,
         prop: 'targetFieldName',
         slot: 'targetFieldName',
-        class: 'p-0 pt-1',
-        width: 140,
+        class: 'p-0',
       },
-    ]
+    ])
 
     const filterFieldList = computed(() => {
       const search = config.searchField.trim().toLowerCase()
@@ -372,14 +345,16 @@ export const FieldRenameProcessorPreview = defineComponent({
     //右侧表格slot渲染
     const renderSourceNode = ({ row }) => {
       const show = row?.primary_key_position ? (
-        <span>
+        <span class="field-name-text" data-tooltip-content>
           {row.sourceFieldName}
           <VIcon size="12" class="color-darkorange">
             key
           </VIcon>
         </span>
       ) : (
-        <span>{row.sourceFieldName}</span>
+        <span class="field-name-text" data-tooltip-content>
+          {row.sourceFieldName}
+        </span>
       )
       return show
     }
@@ -395,7 +370,7 @@ export const FieldRenameProcessorPreview = defineComponent({
         >
           <InnerInput
             readOnly={props.disabled}
-            class="rename-table-item-input px-1"
+            class="rename-table-item-input"
             value={row.targetFieldName}
             onChange={(event) => {
               const val = event.target.value?.trim()
@@ -409,8 +384,15 @@ export const FieldRenameProcessorPreview = defineComponent({
           ></InnerInput>
         </div>
       ) : (
-        <div class="cursor-pointer pt-1 pl-1">
-          <span class="col-new-field-name inline-block ellipsis align-middle">
+        <div class={props.disabled ? 'pl-1' : 'cursor-pointer pt-1 pl-1'}>
+          <span
+            class={
+              props.disabled
+                ? 'col-new-field-name'
+                : 'col-new-field-name inline-block ellipsis align-middle'
+            }
+            data-tooltip-content
+          >
             {row.targetFieldName}
           </span>
         </div>
@@ -567,7 +549,7 @@ export const FieldRenameProcessorPreview = defineComponent({
             </FormLayout>
 
             <div class="task-form-body rounded-4 mt-4">
-              <div class="task-form-left pt-0 border-0 flex flex-column">
+              <div class="task-form-left pt-0 flex flex-column">
                 <div class="flex p-2">
                   <ElInput
                     placeholder={i18n.t(
@@ -658,7 +640,7 @@ export const FieldRenameProcessorPreview = defineComponent({
                 </ElPagination>
               </div>
               <div class="main pt-0">
-                <div class="flex p-2 justify-content-between fields-toolbar">
+                <div class="flex p-2 px-0">
                   <div class="flex field-search-input-wrap">
                     <ElInput
                       placeholder={i18n.t(
@@ -677,7 +659,7 @@ export const FieldRenameProcessorPreview = defineComponent({
                 <VirtualList
                   ref={tableRef}
                   data={filterFieldList.value}
-                  columns={columns}
+                  columns={columns.value}
                   item-key="sourceFieldName"
                   scopedSlots={{
                     sourceFieldName: renderSourceNode,
@@ -686,8 +668,10 @@ export const FieldRenameProcessorPreview = defineComponent({
                   row-class-name={tableRowClassName}
                   on-selection-change={doSelectionField}
                   on-clear-selection={doClearSelection}
-                  border
-                  class="flex-fill h-0"
+                  class={[
+                    'field-processor-list bg-light dark:bg-white/5 rounded-xl flex-fill h-0',
+                    { 'is-disabled': props.disabled },
+                  ]}
                 ></VirtualList>
               </div>
             </div>
@@ -710,6 +694,7 @@ export const FieldRenameProcessor = connect(
         const form = formRef.value
         const list = ref([])
         const tableList = ref([])
+        const defaultTargetFieldNames = new Map()
         const defaultOperation = {
           prefix: '',
           suffix: '',
@@ -771,6 +756,26 @@ export const FieldRenameProcessor = connect(
           getNodeTableInfo(where)
             .then((res) => {
               const { total, items = [] } = res
+              items.forEach((item) => {
+                let tableDefaults = defaultTargetFieldNames.get(
+                  item.sourceQualifiedName,
+                )
+                if (!tableDefaults) {
+                  tableDefaults = new Map()
+                  defaultTargetFieldNames.set(
+                    item.sourceQualifiedName,
+                    tableDefaults,
+                  )
+                }
+                item.fieldsMapping.forEach((field) => {
+                  if (!tableDefaults.has(field.sourceFieldName)) {
+                    tableDefaults.set(
+                      field.sourceFieldName,
+                      field.targetFieldName,
+                    )
+                  }
+                })
+              })
               list.value = items.map(updateDeletedNum)
               config.page.total = total
               config.page.count =
@@ -802,37 +807,37 @@ export const FieldRenameProcessor = connect(
           }
         }
 
-        const columns = [
+        const columns = computed(() => [
           {
             type: 'selection',
           },
           {
             label: i18n.t('public_serial_number'),
             type: 'index',
+            width: 36,
             align: 'center',
           },
           {
             label: i18n.t('packages_form_dag_dialog_field_mapping_field'),
-            showOverflowTooltip: true,
+            showOverflowTooltip: !props.disabled,
             prop: 'sourceFieldName',
             slot: 'sourceFieldName',
-            width: 140,
           },
           {
             label: i18n.t('packages_form_field_processor_index_xinziduanming'),
-            showOverflowTooltip: true,
+            showOverflowTooltip: !props.disabled,
             prop: 'targetFieldName',
             slot: 'targetFieldName',
-            class: 'p-0 pt-1',
-            width: 140,
+            class: 'p-0',
           },
           {
             label: i18n.t('public_operation_abb'),
             prop: 'operation',
-            width: 88,
+            width: 76,
+            headerSlot: 'operationHeader',
             slot: 'operation',
           },
-        ]
+        ])
 
         const filterFieldList = computed(() => {
           const search = config.searchField.trim().toLowerCase()
@@ -981,13 +986,7 @@ export const FieldRenameProcessor = connect(
 
         //单个删除字段
         const doShowRow = (row) => {
-          for (let i = 0; i < tableList.value.length; i++) {
-            if (tableList.value[i].sourceFieldName === row.sourceFieldName) {
-              tableList.value[i].isShow = true
-            }
-          }
-          updateDeletedNum(config.selectTableRow)
-          doUpdateField(row, 'del', true)
+          restoreFields([row])
         }
 
         const doDeleteRow = (row) => {
@@ -1017,14 +1016,16 @@ export const FieldRenameProcessor = connect(
         //右侧表格slot渲染
         const renderSourceNode = ({ row }) => {
           const show = row?.primary_key_position ? (
-            <span>
+            <span class="field-name-text" data-tooltip-content>
               {row.sourceFieldName}
               <VIcon size="12" class="color-darkorange">
                 key
               </VIcon>
             </span>
           ) : (
-            <span>{row.sourceFieldName}</span>
+            <span class="field-name-text" data-tooltip-content>
+              {row.sourceFieldName}
+            </span>
           )
           return show
         }
@@ -1040,7 +1041,7 @@ export const FieldRenameProcessor = connect(
             >
               <InnerInput
                 readOnly={props.disabled}
-                class="rename-table-item-input px-1"
+                class="rename-table-item-input"
                 value={row.targetFieldName}
                 onChange={(event) => {
                   const val = event.target.value?.trim()
@@ -1054,40 +1055,76 @@ export const FieldRenameProcessor = connect(
               ></InnerInput>
             </div>
           ) : (
-            <div class="cursor-pointer pt-1 pl-1">
-              <span class="col-new-field-name inline-block ellipsis align-middle">
+            <div class={props.disabled ? 'pl-1' : 'cursor-pointer pt-1 pl-1'}>
+              <span
+                class={
+                  props.disabled
+                    ? 'col-new-field-name'
+                    : 'col-new-field-name inline-block ellipsis align-middle'
+                }
+                data-tooltip-content
+              >
                 {row.targetFieldName}
               </span>
             </div>
           )
         }
         const renderOpNode = ({ row }) => {
-          const show = row.isShow ? (
-            <el-button
-              disabled={props.disabled}
-              text
-              type="primary"
-              onClick={() => doDeleteRow(row)}
-            >
-              {i18n.t('packages_form_field_processor_index_pingbi')}
-            </el-button>
-          ) : (
-            <el-button
-              disabled={props.disabled}
-              text
-              type="primary"
-              onClick={() => doShowRow(row)}
-            >
-              {i18n.t('packages_form_field_processor_index_huifu')}
-            </el-button>
+          const label = i18n.t(
+            row.isShow
+              ? 'packages_form_field_processor_index_pingbi'
+              : 'packages_form_field_processor_index_huifu',
           )
-
-          return show
+          return (
+            <ElTooltip
+              content={label}
+              placement="top"
+              disabled={props.disabled}
+              enterable={false}
+              hideAfter={0}
+            >
+              <ElButton
+                class="field-visibility-button"
+                aria-label={label}
+                disabled={props.disabled}
+                text
+                type="primary"
+                onClick={() => (row.isShow ? doDeleteRow(row) : doShowRow(row))}
+              >
+                {row.isShow ? (
+                  <i-lucide-eye-off class="field-visibility-icon" />
+                ) : (
+                  <i-lucide-eye class="field-visibility-icon" />
+                )}
+              </ElButton>
+            </ElTooltip>
+          )
         }
 
         const showBatchRemove = computed(() => {
           return config.checkedFields.some((field) => !!field.isShow)
         })
+
+        const restoreFields = (fields) => {
+          const qualifiedName = config.selectTableRow?.sourceQualifiedName
+          const selectedFieldNames = fields.map(
+            (field) => field.sourceFieldName,
+          )
+          if (selectedFieldNames.length === 0) return
+
+          fieldsMapping = restoreSelectedFieldState(
+            tableList.value,
+            form.values.fieldsMapping || fieldsMapping,
+            qualifiedName,
+            selectedFieldNames,
+            defaultTargetFieldNames.get(qualifiedName),
+          )
+
+          tableRef.value?.refreshData(filterFieldList.value)
+          form.setValuesIn('fieldsMapping', fieldsMapping)
+          emit('change', fieldsMapping)
+          updateDeletedNum(config.selectTableRow)
+        }
 
         const updateFieldsShow = (isShow) => {
           const qualifiedName = config.selectTableRow?.sourceQualifiedName
@@ -1112,8 +1149,14 @@ export const FieldRenameProcessor = connect(
             fieldsMapping.push(table)
           }
 
+          const selectedFieldNames = new Set(
+            config.checkedFields.map((field) => field.sourceFieldName),
+          )
+          const selectedFields = tableList.value.filter((field) =>
+            selectedFieldNames.has(field.sourceFieldName),
+          )
           const fieldMap = mappingField(table.fields) || {}
-          config.checkedFields.forEach((field) => {
+          selectedFields.forEach((field) => {
             field.isShow = isShow
             fieldMap[field.sourceFieldName] = {
               sourceFieldName: field.sourceFieldName,
@@ -1134,8 +1177,51 @@ export const FieldRenameProcessor = connect(
         }
 
         const batchShow = () => {
-          updateFieldsShow(true)
+          restoreFields(config.checkedFields)
         }
+
+        const renderOperationHeader = () => (
+          <div class="field-bulk-actions flex align-center justify-content-center gap-1">
+            <ElTooltip
+              content={i18n.t('packages_form_field_processor_index_pingbi')}
+              placement="top"
+              disabled={props.disabled}
+              enterable={false}
+              hideAfter={0}
+            >
+              <ElButton
+                class="field-bulk-button"
+                aria-label={i18n.t(
+                  'packages_form_field_processor_index_pingbi',
+                )}
+                disabled={props.disabled || config.checkedFields.length === 0}
+                text
+                type="primary"
+                onClick={batchRemove}
+              >
+                <i-lucide-eye-off class="field-bulk-icon" />
+              </ElButton>
+            </ElTooltip>
+            <ElTooltip
+              content={i18n.t('packages_form_field_processor_index_huifu')}
+              placement="top"
+              disabled={props.disabled}
+              enterable={false}
+              hideAfter={0}
+            >
+              <ElButton
+                class="field-bulk-button"
+                aria-label={i18n.t('packages_form_field_processor_index_huifu')}
+                disabled={props.disabled || config.checkedFields.length === 0}
+                text
+                type="primary"
+                onClick={batchShow}
+              >
+                <i-lucide-rotate-ccw class="field-bulk-icon" />
+              </ElButton>
+            </ElTooltip>
+          </div>
+        )
 
         const updateOperation = () => {
           form.setValuesIn('fieldsOperation', {
@@ -1264,7 +1350,7 @@ export const FieldRenameProcessor = connect(
               </FormItem.BaseItem>
 
               <div class="task-form-body rounded-xl">
-                <div class="task-form-left pt-0 border-0 flex flex-column">
+                <div class="task-form-left pt-0 flex flex-column">
                   <div class="flex p-2">
                     <ElInput
                       placeholder={i18n.t(
@@ -1366,7 +1452,7 @@ export const FieldRenameProcessor = connect(
                   </ElPagination>
                 </div>
                 <div class="main pt-0">
-                  <div class="flex p-2 justify-content-between fields-toolbar">
+                  <div class="flex p-2 px-0">
                     <div class="flex field-search-input-wrap">
                       <ElInput
                         placeholder={i18n.t(
@@ -1388,52 +1474,25 @@ export const FieldRenameProcessor = connect(
                         }}
                       </ElInput>
                     </div>
-                    <div class="item px-2">
-                      <ElButton
-                        key="batchRemove"
-                        text
-                        type="primary"
-                        class="btn-operation"
-                        onClick={batchRemove}
-                        disabled={
-                          (config.checkedTables.length === 0 &&
-                            config.checkedFields.length === 0) ||
-                          props.disabled
-                        }
-                      >
-                        {i18n.t('packages_form_field_processor_index_pingbi')}
-                      </ElButton>
-                      <ElButton
-                        key="batchShow"
-                        text
-                        type="primary"
-                        class="btn-operation"
-                        onClick={batchShow}
-                        disabled={
-                          (config.checkedTables.length === 0 &&
-                            config.checkedFields.length === 0) ||
-                          props.disabled
-                        }
-                      >
-                        {i18n.t('packages_form_field_processor_index_huifu')}
-                      </ElButton>
-                    </div>
                   </div>
                   <VirtualList
                     ref={tableRef}
                     data={filterFieldList.value}
-                    columns={columns}
+                    columns={columns.value}
                     item-key="sourceFieldName"
                     row-class-name={tableRowClassName}
                     onSelectionChange={doSelectionField}
                     onClearSelection={doClearSelection}
-                    border
-                    class="flex-fill h-0"
+                    class={[
+                      'field-processor-list bg-light dark:bg-white/5 rounded-xl flex-fill h-0',
+                      { 'is-disabled': props.disabled },
+                    ]}
                   >
                     {{
                       sourceFieldName: renderSourceNode,
                       targetFieldName: renderNode,
                       operation: renderOpNode,
+                      operationHeader: renderOperationHeader,
                     }}
                   </VirtualList>
                 </div>
