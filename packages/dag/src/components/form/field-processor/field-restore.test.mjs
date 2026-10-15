@@ -113,3 +113,32 @@ test('restore leaves table overrides untouched when no selected field mapping ex
 
   assert.equal(result, mappings)
 })
+
+test('restore removes selected overrides from every entry for the table', () => {
+  const mappings = [
+    {
+      qualifiedName: 'table_a',
+      fields: [{ sourceFieldName: 'source_a', targetFieldName: 'custom_a' }],
+    },
+    {
+      qualifiedName: 'table_a',
+      fields: [{ sourceFieldName: 'source_a', targetFieldName: 'custom_a' }],
+    },
+  ]
+
+  const remainingMappings = restoreSelectedFieldState(
+    [
+      {
+        sourceFieldName: 'source_a',
+        targetFieldName: 'custom_a',
+        isShow: false,
+      },
+    ],
+    mappings,
+    'table_a',
+    ['source_a'],
+    new Map([['source_a', 'source_a']]),
+  )
+
+  assert.deepEqual(remainingMappings, [])
+})

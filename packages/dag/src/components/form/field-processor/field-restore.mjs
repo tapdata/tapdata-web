@@ -17,26 +17,23 @@ export function restoreSelectedFieldState(
   })
 
   const mappings = fieldMappings || []
-  const tableIndex = mappings.findIndex(
-    (mapping) => mapping.qualifiedName === qualifiedName,
-  )
-  if (tableIndex === -1) return mappings
-
-  const tableMapping = mappings[tableIndex]
-  const tableFields = tableMapping.fields || []
-  const hasSelectedOverrides = tableFields.some((field) =>
-    selectedNames.has(field.sourceFieldName),
+  const hasSelectedOverrides = mappings.some(
+    (mapping) =>
+      mapping.qualifiedName === qualifiedName &&
+      (mapping.fields || []).some((field) =>
+        selectedNames.has(field.sourceFieldName),
+      ),
   )
   if (!hasSelectedOverrides) return mappings
 
-  const remainingFields = tableFields.filter(
-    (field) => !selectedNames.has(field.sourceFieldName),
-  )
-  if (remainingFields.length === 0) {
-    return mappings.filter((_, index) => index !== tableIndex)
-  }
+  return mappings.flatMap((mapping) => {
+    if (mapping.qualifiedName !== qualifiedName) return [mapping]
 
-  return mappings.map((mapping, index) =>
-    index === tableIndex ? { ...mapping, fields: remainingFields } : mapping,
-  )
+    const remainingFields = (mapping.fields || []).filter(
+      (field) => !selectedNames.has(field.sourceFieldName),
+    )
+    return remainingFields.length
+      ? [{ ...mapping, fields: remainingFields }]
+      : []
+  })
 }
