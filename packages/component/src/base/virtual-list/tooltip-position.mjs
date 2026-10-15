@@ -8,7 +8,7 @@ export function getTooltipPosition(cell, tooltip, viewport) {
       viewport.width - tooltip.width - margin,
     ),
   )
-  const above = cell.bottom + gap + tooltip.height > viewport.height - margin
+  const above = cell.top - tooltip.height - gap >= margin
 
   return {
     left: `${left}px`,
