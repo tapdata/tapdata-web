@@ -1059,9 +1059,9 @@ export const FieldRenameProcessor = connect(
                 onClick={() => (row.isShow ? doDeleteRow(row) : doShowRow(row))}
               >
                 {row.isShow ? (
-                  <VIcon size="16">EyeOff</VIcon>
+                  <i-lucide-eye-off class="field-visibility-icon" />
                 ) : (
-                  <VIcon size="16">Eye</VIcon>
+                  <i-lucide-eye class="field-visibility-icon" />
                 )}
               </ElButton>
             </ElTooltip>
@@ -1136,7 +1136,7 @@ export const FieldRenameProcessor = connect(
                 type="primary"
                 onClick={batchRemove}
               >
-                <VIcon size="15">EyeOff</VIcon>
+                <i-lucide-eye-off class="field-bulk-icon" />
               </ElButton>
             </ElTooltip>
             <ElTooltip
@@ -1151,7 +1151,7 @@ export const FieldRenameProcessor = connect(
                 type="primary"
                 onClick={batchShow}
               >
-                <VIcon size="15">reset</VIcon>
+                <i-lucide-rotate-ccw class="field-bulk-icon" />
               </ElButton>
             </ElTooltip>
           </div>

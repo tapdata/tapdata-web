@@ -229,6 +229,7 @@ export default {
             'column-item',
             `column-${item.prop || item.type}`,
             item.headerClass,
+            ...getColClass(item),
           ]"
           :style="{ width: getColWidth(item) }"
         >
