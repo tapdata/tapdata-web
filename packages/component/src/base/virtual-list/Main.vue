@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash-es'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { $emit } from '../../../utils/gogocodeTransfer'
 import { getOverflowTooltipContent } from './tooltip-content.mjs'
+import { getTooltipPosition } from './tooltip-position.mjs'
 
 export default {
   name: 'Main',
@@ -44,7 +45,8 @@ export default {
       active: '',
       isIndeterminate: false,
       tooltipContent: '',
-      tooltipPosition: { top: '0px', left: '0px' },
+      tooltipPosition: { top: '0px', left: '0px', visibility: 'hidden' },
+      tooltipCell: null,
       widthMap: {
         index: 50,
         selection: 40,
@@ -162,27 +164,32 @@ export default {
 
     handleCellMouseEnter(event, colItem) {
       if (!colItem.showOverflowTooltip) {
-        this.tooltipContent = ''
+        this.handleCellMouseLeave()
         return
       }
 
       const cell = event.target
       const content = getOverflowTooltipContent(cell)
       if (!content) {
-        this.tooltipContent = ''
+        this.handleCellMouseLeave()
         return
       }
 
-      const rect = cell.getBoundingClientRect()
-      this.tooltipPosition = {
-        top: `${rect.top < 48 ? rect.bottom + 8 : rect.top - 8}px`,
-        left: `${Math.max(12, Math.min(rect.left, window.innerWidth - 332))}px`,
-        transform: rect.top < 48 ? 'none' : 'translateY(-100%)',
-      }
+      this.tooltipCell = cell
+      this.tooltipPosition = { ...this.tooltipPosition, visibility: 'hidden' }
       this.tooltipContent = content
+      this.$nextTick(() => {
+        if (this.tooltipCell !== cell || !this.$refs.overflowTooltip) return
+        this.tooltipPosition = getTooltipPosition(
+          cell.getBoundingClientRect(),
+          this.$refs.overflowTooltip.getBoundingClientRect(),
+          { width: window.innerWidth, height: window.innerHeight },
+        )
+      })
     },
 
     handleCellMouseLeave() {
+      this.tooltipCell = null
       this.tooltipContent = ''
     },
 
@@ -303,6 +310,7 @@ export default {
       <Teleport to="body">
         <div
           v-if="tooltipContent"
+          ref="overflowTooltip"
           :class="['virtual-list-tooltip', tooltipEffect]"
           :style="tooltipPosition"
           role="tooltip"

@@ -8,7 +8,7 @@
   "author": "",
   "main": "src/index.ts",
   "scripts": {
-    "test": "node --test src/base/virtual-list/tooltip-content.test.mjs"
+    "test": "node --test src/base/virtual-list/*.test.mjs"
   },
   "dependencies": {
     "@element-plus/icons-vue": "catalog:",
