@@ -54,6 +54,9 @@ export default {
     }
   },
   computed: {
+    rowNumbers() {
+      return new Map(this.list.map((item, index) => [item, index + 1]))
+    },
     cols() {
       const result = cloneDeep(this.columns)
 
@@ -94,9 +97,6 @@ export default {
     this.fetch()
   },
   methods: {
-    getRowNumber(index) {
-      return Number.isInteger(index) ? index + 1 : ''
-    },
     fetch() {
       if (!this.remoteMethod) {
         this.list = cloneDeep(this.data)
@@ -267,7 +267,10 @@ export default {
             :data-index="index"
             :size-dependencies="[item[itemKey]]"
           >
-            <div :class="['flex body__row', ...getRowClass(item, index)]">
+            <div
+              v-if="rowNumbers.has(item)"
+              :class="['flex body__row', ...getRowClass(item, index)]"
+            >
               <div
                 v-for="(colItem, colIndex) in cols"
                 :key="colIndex"
@@ -295,7 +298,7 @@ export default {
                     />
                   </template>
                   <template v-else-if="colItem.type === 'index'">{{
-                    getRowNumber(index)
+                    rowNumbers.get(item)
                   }}</template>
 
                   <template v-else-if="colItem.type === 'selection'">
