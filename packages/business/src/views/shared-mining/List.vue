@@ -16,6 +16,7 @@ import {
   taskConsoleRelations,
 } from '@tap/api/src/core/task'
 import { requestClient, withPassive } from '@tap/api/src/request'
+import { showErrorMessage } from '../../components/error-message'
 import { VTable } from '@tap/component/src/base/v-table'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import { useI18n } from '@tap/i18n'
@@ -277,13 +278,34 @@ const start = (ids: string[]) => {
     batchStartTasks(ids)
       .then((data: any) => {
         buried?.(taskBuried.start, '', { result: true })
+        const resultList = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.data)
+            ? data.data
+            : []
+        const failed = resultList.filter(
+          (item) => item?.code && item.code !== 'ok',
+        )
+        if (failed.length) {
+          showErrorMessage({
+            msg: failed
+              .map((item) => item.message)
+              .filter(Boolean)
+              .join('\n'),
+          })
+          return
+        }
         ElMessage.success(
           data?.message || t('public_message_operation_success'),
         )
         table.value?.fetch()
       })
-      .catch(() => {
+      .catch((error) => {
         buried?.(taskBuried.start, '', { result: false })
+        showErrorMessage({
+          msg: error?.message || t('public_message_operation_failed'),
+          stack: error?.stack,
+        })
       })
   })
 }

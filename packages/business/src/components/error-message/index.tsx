@@ -3,6 +3,10 @@ import i18n from '@tap/i18n'
 import { copyToClipboard } from '@tap/shared'
 import './index.scss'
 
+let lastErrorMessage = ''
+let lastErrorAt = 0
+const DUPLICATE_ERROR_WINDOW_MS = 1200
+
 function renderDialog(stack: string) {
   return (
     <div id="error-message-dialog">
@@ -103,10 +107,11 @@ export function ErrorMessage(stack: string, message: string) {
 }
 
 export function showErrorMessage(error: Record<string, any>) {
-  let message =
+  const rawMessage =
     error?.message ||
     error?.msg ||
     i18n.global.t('public_message_request_error')
+  let message = rawMessage
   let duration = 3000
   let showClose = false
 
@@ -122,6 +127,16 @@ export function showErrorMessage(error: Record<string, any>) {
     duration = 4000
     showClose = true
   }
+
+  const now = Date.now()
+  if (
+    rawMessage === lastErrorMessage &&
+    now - lastErrorAt < DUPLICATE_ERROR_WINDOW_MS
+  ) {
+    return
+  }
+  lastErrorMessage = rawMessage
+  lastErrorAt = now
 
   ElMessage.error({
     message,

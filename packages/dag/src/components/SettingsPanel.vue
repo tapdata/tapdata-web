@@ -642,17 +642,9 @@ const accessNodeProcessIdMap = computed(() => {
   }, {})
 })
 
-const accessNodeProcessIdArr = computed(() =>
-  Object.keys(accessNodeProcessIdMap.value),
-)
-
 const accessNodeProcessList = computed(() => {
-  const agents = scope.$agents.filter(
+  return scope.$agents.filter(
     (item: any) => item.accessNodeType === dataflow.value.accessNodeType,
-  )
-  if (!accessNodeProcessIdArr.value.length) return agents
-  return agents.filter(
-    (item: any) => !!accessNodeProcessIdMap.value[item.value],
   )
 })
 
@@ -765,47 +757,6 @@ watch(stateIsReadonly, (v) => {
     })
   }
 })
-
-watch(
-  accessNodeProcessIdArr,
-  (arr) => {
-    const size = arr.length
-    if (size >= 1) {
-      let currentId = form.values.accessNodeProcessId
-      currentId = currentId && arr.includes(currentId) ? currentId : arr[0]
-
-      dataflowStore.dataflow.accessNodeType =
-        scope.$agentMap[currentId]?.accessNodeType ||
-        'MANUALLY_SPECIFIED_BY_THE_USER'
-      dataflowStore.dataflow.accessNodeProcessId = currentId
-
-      if (
-        form.values.accessNodeType ===
-        'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
-      ) {
-        const nodeIds = accessNodeProcessIdMap.value[currentId]
-        let priorityProcessId = null
-
-        nodeIds.some((id) => {
-          const node = scope.findNodeById(id)
-          if (node && node.attrs.priorityProcessId) {
-            priorityProcessId = node.attrs.priorityProcessId
-            return true
-          }
-          return false
-        })
-
-        dataflowStore.dataflow.priorityProcessId = priorityProcessId
-      }
-    }
-    if (!stateIsReadonly.value) {
-      form.setFieldState('*(accessNodeType,accessNodeProcessId)', {
-        disabled: size === 1,
-      })
-    }
-  },
-  { deep: true, immediate: true },
-)
 
 watch(
   accessNodeProcessList,

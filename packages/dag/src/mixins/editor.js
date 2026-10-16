@@ -1496,55 +1496,9 @@ export default {
      * @returns {*}
      */
     validateAgent() {
-      let someErrorMsg
-      const nodes = this.allNodes.filter(
-        (node) => node.type === 'database' || node.type === 'table',
-      )
-      const accessNodeProcessIdArr = [
-        ...nodes.reduce((set, item) => {
-          item.attrs.accessNodeProcessId &&
-            set.add(item.attrs.accessNodeProcessId)
-          return set
-        }, new Set()),
-      ]
-
-      if (accessNodeProcessIdArr.length > 1) {
-        // 所属agent节点冲突
-        const chooseId = this.dataflow.accessNodeProcessId
-
-        if (!chooseId) {
-          // someErrorMsg = `请配置任务运行agent`
-          someErrorMsg = i18n.t('packages_dag_mixins_editor_suoshuage') // 一样提示冲突
-        } else {
-          let isError = false
-          const agent = this.scope.$agentMap[chooseId]
-          nodes.forEach((node) => {
-            if (
-              node.attrs.accessNodeProcessId &&
-              chooseId !== node.attrs.accessNodeProcessId
-            ) {
-              this.setNodeErrorMsg({
-                id: node.id,
-                msg: i18n.t('packages_dag_mixins_editor_gaijiedianbuzhi', {
-                  val1: agent.hostName,
-                  val2: agent.ip,
-                }),
-              })
-              isError = true
-            }
-          })
-          isError &&
-            (someErrorMsg = i18n.t('packages_dag_mixins_editor_suoshuage'))
-        }
-      } else if (accessNodeProcessIdArr.length === 1) {
-        // 如果画布上仅有一个所属agent，自动设置为任务的agent
-        const agentId = accessNodeProcessIdArr[0]
-        this.dataflow.accessNodeType =
-          this.scope.$agentMap[agentId]?.accessNodeType ||
-          'MANUALLY_SPECIFIED_BY_THE_USER'
-        this.dataflow.accessNodeProcessId = agentId
-      }
-      return someErrorMsg
+      // Connection Agent policies are validated by TM on save. Do not infer or
+      // write the task-level Agent from DAG node attributes here.
+      return undefined
     },
 
     async validateSetting() {
@@ -1593,7 +1547,10 @@ export default {
       const arr = []
       if (node.$outputs.length) {
         node.$outputs.forEach((id) => {
-          console.log('this.loadLeafNode(this.nodeById(id))', this.loadLeafNode(this.nodeById(id))) // eslint-disable-line
+          console.log(
+            'this.loadLeafNode(this.nodeById(id))',
+            this.loadLeafNode(this.nodeById(id)),
+          ) // eslint-disable-line
           arr.push(...this.loadLeafNode(this.nodeById(id)))
         })
       } else {
@@ -1674,10 +1631,7 @@ export default {
       let hasEnableDDL
       let hasEnableDDLAndIncreasesql
       let inBlacklist = false
-      const blacklist = [
-        'union_processor',
-        'migrate_union_processor',
-      ]
+      const blacklist = ['union_processor', 'migrate_union_processor']
       this.allNodes.forEach((node) => {
         // 开启了DDL
         if (node.ddlConfiguration === 'SYNCHRONIZATION') {
@@ -2930,7 +2884,18 @@ export default {
       batchStartTasks([this.dataflow.id], {
         silenceMessage: true,
       })
-        .then(() => {
+        .then((response) => {
+          const payload = response?.data ?? response
+          const failure = Array.isArray(payload)
+            ? payload.find((item) => item?.code && item.code !== 'ok')
+            : payload?.code && payload.code !== 'ok'
+              ? payload
+              : null
+          if (failure) {
+            this.buried(buriedCode, { result: false })
+            this.handleError(failure)
+            return
+          }
           this.buried(buriedCode, { result: true })
           this.gotoViewer()
         })

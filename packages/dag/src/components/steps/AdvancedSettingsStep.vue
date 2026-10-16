@@ -249,39 +249,11 @@ export default defineComponent({
     }
 
     const initTaskAgent = () => {
-      const size = accessNodeProcessIdArr.value.length
-      if (size >= 1) {
-        let currentId = taskRef.value.accessNodeProcessId
-        currentId =
-          currentId && accessNodeProcessIdArr.value.includes(currentId)
-            ? currentId
-            : accessNodeProcessIdArr.value[0]
-        taskRef.value.accessNodeType =
-          scope.$agentMap[currentId]?.accessNodeType ||
-          'MANUALLY_SPECIFIED_BY_THE_USER'
-        taskRef.value.accessNodeProcessId = currentId
-
-        if (
-          taskRef.value.accessNodeType ===
-          'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
-        ) {
-          const nodeIds = accessNodeProcessIdMap.value[currentId]
-          let priorityProcessId = null
-
-          nodeIds.some((id) => {
-            const node = taskRef.value.dag.nodes.find((node) => node.id === id)
-            if (node && node.attrs.priorityProcessId) {
-              priorityProcessId = node.attrs.priorityProcessId
-              return true
-            }
-          })
-
-          taskRef.value.priorityProcessId = priorityProcessId
-        }
-      }
-
+      // Keep the task-level Agent policy independent from connection node
+      // attributes. The backend validates the selected Agent against the
+      // connection-policy intersection when saving.
       form.value.setFieldState('*(accessNodeType,accessNodeProcessId)', {
-        disabled: size === 1,
+        disabled: false,
       })
 
       form.value.setFieldState('accessNodeProcessId', {
@@ -320,16 +292,10 @@ export default defineComponent({
       )
     })
 
-    const accessNodeProcessIdArr = computed(() => {
-      return Object.keys(accessNodeProcessIdMap.value)
-    })
-
     const accessNodeProcessList = computed(() => {
-      const agents = scope.$agents.filter(
+      return scope.$agents.filter(
         (item) => item.accessNodeType === taskRef.value.accessNodeType,
       )
-      if (!accessNodeProcessIdArr.value.length) return agents
-      return agents.filter((item) => !!accessNodeProcessIdMap.value[item.value])
     })
 
     const schema = {
@@ -1980,24 +1946,36 @@ export default defineComponent({
     }
 
     const onTaskChange = debounce(async () => {
-      const data = await patchTask(
-        {
-          ...taskRef.value,
-          // id: taskRef.value.id,
-          // editVersion: taskRef.value.editVersion,
-          pageVersion: pageVersionRef.value,
-          // dag: taskRef.value.dag
-        },
-        {
-          silenceMessage: true,
-        },
-      )
+      try {
+        const data = await patchTask(
+          {
+            ...taskRef.value,
+            // Formily may keep the latest settings in form.values without
+            // mutating the injected task object. Include both so the task-level
+            // Agent policy reaches TM's save validator.
+            ...(form.value?.values || {}),
+            // id: taskRef.value.id,
+            // editVersion: taskRef.value.editVersion,
+            pageVersion: pageVersionRef.value,
+            // dag: taskRef.value.dag
+          },
+          {
+            silenceMessage: true,
+          },
+        )
 
-      // 防止触发 FormValuesChange
-      // const rawObj = raw(taskRef.value)
-      taskRef.value.editVersion = data.editVersion
-
-      console.log('onTaskChange')
+        // 防止触发 FormValuesChange
+        // const rawObj = raw(taskRef.value)
+        taskRef.value.editVersion = data.editVersion
+      } catch (error) {
+        // Agent policy conflicts are returned by TM during the debounced task
+        // save. The request intentionally silences the global toast, so surface
+        // the validation error here only when this is not already part of the
+        // explicit start/save flow. The explicit flow will show one message.
+        if (!starting.value) {
+          showErrorMessage(error)
+        }
+      }
     }, 100)
 
     let dispose
@@ -2194,9 +2172,15 @@ export default defineComponent({
       let isOk = false
 
       try {
-        await saveAndStartTask(taskRef.value, {
-          silenceMessage: true,
-        })
+        await saveAndStartTask(
+          {
+            ...taskRef.value,
+            ...(form.value?.values || {}),
+          },
+          {
+            silenceMessage: true,
+          },
+        )
         isOk = true
 
         store.dispatch('setGuideComplete')
