@@ -1,4 +1,9 @@
 .field-processors-tree-warp {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+
   .clickable {
     color: var(--color-primary);
   }
@@ -128,4 +133,193 @@
   .invalid-operations-wrap {
     border-style: dashed !important;
   }
+
+  .field-rename-search-row {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .field-rename-search {
+    width: 100%;
+    min-width: 0;
+    .el-input__wrapper {
+      border-radius: 8px;
+    }
+  }
+
+  .field-rename-table {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+  }
+
+  .field-rename-row {
+    color: var(--text-light);
+  }
+
+  .field-tree-header {
+    flex-shrink: 0;
+  }
+
+  .field-rename-name-column {
+    flex: 1 1 0%;
+    min-width: 0;
+  }
+
+  .field-rename-index-column {
+    flex: 0 0 32px;
+    width: 32px;
+  }
+
+  .field-rename-target-column {
+    flex: 1 1 0%;
+    min-width: 0;
+  }
+
+  .field-rename-action-column {
+    flex: 0 0 44px;
+    width: 44px;
+  }
+
+  .field-rename-tree {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    --el-tree-node-content-height: 36px;
+
+    .el-tree-node:focus > .el-tree-node__content:not(:hover) {
+      background-color: unset;
+    }
+
+    .el-tree-node__content {
+      height: auto;
+      min-height: 36px;
+    }
+
+    .el-tree-node__expand-icon {
+      width: 0;
+      height: 100%;
+      padding: 0;
+    }
+
+    .field-rename-row {
+      flex: 1;
+      min-width: 0;
+      min-height: 34px;
+      line-height: 18px;
+    }
+
+    .field-rename-source,
+    .field-rename-readonly-name {
+      overflow-wrap: anywhere;
+      white-space: normal;
+      line-height: 18px;
+    }
+
+    .field-rename-source {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-light);
+    }
+
+    .field-rename-source .field-rename-tooltip-text {
+      flex: 0 1 auto;
+      min-width: 0;
+    }
+
+    .field-rename-key-icon {
+      flex-shrink: 0;
+    }
+
+    .field-rename-tooltip-text {
+      display: block;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .field-rename-readonly-name {
+      color: inherit;
+    }
+
+    .field-rename-input {
+      width: 100%;
+      min-width: 0;
+
+      .el-input__wrapper {
+        min-height: 32px;
+        padding: 0 10px;
+        border-radius: 8px;
+        box-shadow: none;
+      }
+
+      &.field-rename-input--loading.is-disabled .el-input__wrapper {
+        background-color: var(--el-input-bg-color, var(--el-fill-color-blank));
+        box-shadow: none;
+      }
+
+      &:not(.is-disabled) .el-input__wrapper:hover {
+        box-shadow: 0 0 0 1px var(--el-border-color) inset;
+      }
+
+      &:not(.is-disabled).is-focus .el-input__wrapper {
+        box-shadow: 0 0 0 1px var(--color-primary) inset;
+      }
+
+      &.tree-field-input-primary .el-input__inner {
+        color: var(--color-primary);
+      }
+    }
+
+    .field-rename-reset-button {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+    }
+
+    .field-rename-reset-icon {
+      width: 16px;
+      height: 16px;
+    }
+
+    &.is-disabled {
+      .el-tree-node__content {
+        min-height: 36px;
+      }
+
+      .field-rename-row {
+        box-sizing: border-box;
+        padding-block: 4px;
+      }
+
+      .field-rename-source,
+      .field-rename-readonly-name,
+      .field-rename-tooltip-text {
+        overflow: visible;
+        text-overflow: clip;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        line-height: 18px;
+      }
+    }
+  }
+}
+
+.field-rename-tooltip {
+  position: fixed;
+  z-index: 3000;
+  max-width: min(320px, calc(100vw - 24px));
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: #303133;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
 }
