@@ -245,7 +245,7 @@ export const FieldRename = observer(
       }
 
       const handleTooltipEnter = (event) => {
-        if (props.disabled) {
+        if (props.disabled || transformLoading.value) {
           handleTooltipLeave()
           return
         }
@@ -518,6 +518,8 @@ export const FieldRename = observer(
                                 {
                                   'tree-field-input-primary':
                                     data.field_name !== data.field,
+                                  'field-rename-input--loading':
+                                    transformLoading.value,
                                 },
                               ]}
                               modelValue={

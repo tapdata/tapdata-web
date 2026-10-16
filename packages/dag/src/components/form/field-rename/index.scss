@@ -189,6 +189,10 @@
     overflow: auto;
     --el-tree-node-content-height: 36px;
 
+    .el-tree-node:focus > .el-tree-node__content:not(:hover) {
+      background-color: unset;
+    }
+
     .el-tree-node__content {
       height: auto;
       min-height: 36px;
@@ -250,6 +254,11 @@
         min-height: 32px;
         padding: 0 10px;
         border-radius: 8px;
+        box-shadow: none;
+      }
+
+      &.field-rename-input--loading.is-disabled .el-input__wrapper {
+        background-color: var(--el-input-bg-color, var(--el-fill-color-blank));
         box-shadow: none;
       }
 
