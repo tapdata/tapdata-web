@@ -431,6 +431,7 @@ export const FieldRename = observer(
 
             <div class="field-rename-table bg-light dark:bg-white/5 rounded-xl p-1 pt-0">
               <div class="field-tree-header flex align-center gap-2 pr-2 py-1 fs-7 font-color-light">
+                <span class="field-rename-index-column flex align-center justify-content-center" />
                 <span class="field-rename-name-column text inline-block">
                   {i18n.t('packages_form_dag_dialog_field_mapping_field')}
                 </span>
@@ -474,7 +475,10 @@ export const FieldRename = observer(
               >
                 {{
                   default: ({ node, data }) => (
-                    <span class="field-rename-row flex align-center gap-2 pr-2">
+                    <span class="field-tree-node field-rename-row flex align-center gap-2 pr-2">
+                      <span class="field-rename-index-column font-color-light text-center flex align-center justify-content-center">
+                        {data.fieldIndex}
+                      </span>
                       <span
                         class="field-rename-name-column field-rename-source text__inner inline-block"
                         onMouseenter={handleTooltipEnter}
