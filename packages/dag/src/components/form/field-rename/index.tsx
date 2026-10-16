@@ -283,7 +283,8 @@ export const FieldRename = observer(
         if (!search) return items
         return items.reduce((matches, item) => {
           const children = filterTree(item.children || [], search)
-          const ownText = `${item.field || ''} ${item.field_name || ''} ${item.previousFieldName || ''}`.toLowerCase()
+          const ownText =
+            `${item.field || ''} ${item.field_name || ''} ${item.previousFieldName || ''}`.toLowerCase()
           if (ownText.includes(search) || children.length) {
             matches.push({ ...item, children })
           }
@@ -444,14 +445,22 @@ export const FieldRename = observer(
                     placement="top"
                     enterable={false}
                     hideAfter={0}
-                    disabled={props.disabled || transformLoading.value || (!fieldModel.value.length && !fieldsNameTransforms)}
+                    disabled={
+                      props.disabled ||
+                      transformLoading.value ||
+                      (!fieldModel.value.length && !fieldsNameTransforms)
+                    }
                   >
                     <ElButton
                       text
                       type="primary"
                       class="field-rename-reset-button"
                       aria-label={i18n.t('public_button_reset')}
-                      disabled={props.disabled || transformLoading.value || (!fieldModel.value.length && !fieldsNameTransforms)}
+                      disabled={
+                        props.disabled ||
+                        transformLoading.value ||
+                        (!fieldModel.value.length && !fieldsNameTransforms)
+                      }
                       onClick={() => handleAllReset()}
                     >
                       <i-lucide-rotate-ccw class="field-rename-reset-icon" />
