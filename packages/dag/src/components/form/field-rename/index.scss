@@ -155,20 +155,12 @@
     min-width: 0;
   }
 
-  .field-rename-header,
   .field-rename-row {
-    display: flex;
-    align-items: center;
     color: var(--text-light);
   }
 
-  .field-rename-header {
+  .field-tree-header {
     flex-shrink: 0;
-    height: auto;
-    min-height: 28px;
-    background: transparent;
-    font-size: 12px;
-    line-height: 18px;
   }
 
   .field-rename-name-column {

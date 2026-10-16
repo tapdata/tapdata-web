@@ -430,7 +430,7 @@ export const FieldRename = observer(
             </div>
 
             <div class="field-rename-table bg-light dark:bg-white/5 rounded-xl p-1 pt-0">
-              <div class="field-rename-header flex align-center gap-2 pr-2 py-1 fs-7 font-color-light">
+              <div class="field-tree-header flex align-center gap-2 pr-2 py-1 fs-7 font-color-light">
                 <span class="field-rename-name-column text inline-block">
                   {i18n.t('packages_form_dag_dialog_field_mapping_field')}
                 </span>
