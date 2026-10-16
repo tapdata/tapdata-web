@@ -1,4 +1,5 @@
 import { isPlainObj } from '@tap/shared'
+import { joinListParams, type DeliverySummary } from './alarm'
 import {
   requestClient,
   type CountFetchResult,
@@ -82,5 +83,93 @@ export function updateNotification(where: any, attributes: any) {
   return requestClient.post(
     `${BASE_URL}/execute?where=${encodeURIComponent(queryStr)}`,
     attributes,
+  )
+}
+
+/* ---------- 通知记录（TAP-13052） ---------- */
+
+const RECORD_URL = '/api/notifications'
+
+export interface NotificationRecord {
+  id: string
+  alarmEventId?: string
+  legacy: boolean
+  messageIds: string[]
+  title: string
+  level: string
+  metric?: string
+  alarmStatus?: string
+  objectType?: string
+  taskId?: string
+  taskName?: string
+  firstOccurrenceTime?: string
+  lastOccurrenceTime?: string
+  occurrenceCount?: number
+  notificationCount: number
+  unread: boolean
+  latestNotifyTime?: string
+  deliverySummary?: DeliverySummary
+}
+
+export interface NotificationRecipient {
+  channel: string
+  address?: string
+  status: 'SUCCESS' | 'FAILED' | 'SKIPPED'
+  sentAt?: string
+  failureMessage?: string
+  skipReason?: string
+}
+
+export interface NotificationBatch {
+  batchId: string
+  time?: string
+  occurrenceCountSnapshot?: number
+  recipients: NotificationRecipient[]
+}
+
+export interface NotificationRecordDetail extends NotificationRecord {
+  content: string
+  readAt?: string
+  batches: NotificationBatch[]
+}
+
+export function listNotificationRecords(params: Record<string, any>) {
+  return requestClient.get<{ total: number; items: NotificationRecord[] }>(
+    RECORD_URL,
+    { params: joinListParams(params) },
+  )
+}
+
+export function getNotificationRecord(id: string) {
+  return requestClient.get<NotificationRecordDetail>(
+    `${RECORD_URL}/${encodeURIComponent(id)}`,
+  )
+}
+
+export function getUnreadNotificationCount() {
+  return requestClient.get<number>(`${RECORD_URL}/unread-count`)
+}
+
+export function previewNotificationReadState(
+  params: Record<string, any>,
+  read: boolean,
+) {
+  return requestClient.get<{
+    count: number
+    ids: string[]
+    truncated: boolean
+  }>(`${RECORD_URL}/read-state/preview`, {
+    params: { ...joinListParams(params), read },
+  })
+}
+
+export function updateNotificationReadState(ids: string[], read: boolean) {
+  return requestClient.patch<number>(`${RECORD_URL}/read-state`, { ids, read })
+}
+
+export function updateOneNotificationReadState(id: string, read: boolean) {
+  return requestClient.patch<number>(
+    `${RECORD_URL}/${encodeURIComponent(id)}/read-state`,
+    { read },
   )
 }
