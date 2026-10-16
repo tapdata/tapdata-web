@@ -166,8 +166,6 @@
     flex-shrink: 0;
     height: auto;
     min-height: 28px;
-    gap: 8px;
-    padding: 4px 8px;
     background: transparent;
     font-size: 12px;
     line-height: 18px;
@@ -197,7 +195,6 @@
     .el-tree-node__content {
       height: auto;
       min-height: 36px;
-      padding: 0 8px;
     }
 
     .el-tree-node__expand-icon {
@@ -210,8 +207,6 @@
       flex: 1;
       min-width: 0;
       min-height: 34px;
-      gap: 8px;
-      padding-right: 8px;
       line-height: 18px;
     }
 
@@ -254,10 +249,13 @@
         min-height: 32px;
         padding: 0 10px;
         border-radius: 8px;
+        box-shadow: none;
+      }
+
+      &:not(.is-disabled) .el-input__wrapper:hover {
         box-shadow: 0 0 0 1px var(--el-border-color) inset;
       }
 
-      &:not(.is-disabled) .el-input__wrapper:hover,
       &:not(.is-disabled).is-focus .el-input__wrapper {
         box-shadow: 0 0 0 1px var(--color-primary) inset;
       }
