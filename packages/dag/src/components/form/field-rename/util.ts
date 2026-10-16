@@ -38,6 +38,7 @@ export const convertSchemaToTreeData = function (Schema) {
         }
       }
     }
+    let fieldIndex = 0
     const re = function (field, count) {
       if (field && field.children) {
         count++
@@ -46,6 +47,7 @@ export const convertSchemaToTreeData = function (Schema) {
           return it
         })
         field.children.forEach((it) => {
+          it.fieldIndex = ++fieldIndex
           re(it, count)
         })
       }
