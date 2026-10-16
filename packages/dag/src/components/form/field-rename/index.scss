@@ -283,7 +283,8 @@
       }
 
       .field-rename-row {
-        padding-block: 8px;
+        box-sizing: border-box;
+        padding-block: 4px;
       }
 
       .field-rename-source,
