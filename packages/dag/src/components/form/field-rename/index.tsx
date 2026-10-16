@@ -1,7 +1,16 @@
 import { observer } from '@formily/reactive-vue'
+import { getOverflowTooltipContent } from '@tap/component/src/base/virtual-list/tooltip-content.mjs'
+import { getTooltipPosition } from '@tap/component/src/base/virtual-list/tooltip-position.mjs'
 import { FormItem, useField, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
-import { computed, defineComponent, reactive, ref } from 'vue'
+import {
+  computed,
+  defineComponent,
+  nextTick,
+  reactive,
+  ref,
+  Teleport,
+} from 'vue'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 import { useDataflowStore } from '../../../stores/dataflow.store'
 import { convertSchemaToTreeData } from './util'
@@ -48,6 +57,14 @@ export const FieldRename = observer(
       })
       const searchFiledName = ref('')
       const renameDrafts = reactive(new Map())
+      const overflowTooltip = ref(null)
+      const tooltipCell = ref(null)
+      const tooltipContent = ref('')
+      const tooltipPosition = ref({
+        top: '0px',
+        left: '0px',
+        visibility: 'hidden',
+      })
       const capitalized = ref('') // 字段名处理
       capitalized.value = form.values.fieldsNameTransform || ''
 
@@ -139,7 +156,7 @@ export const FieldRename = observer(
           const index = fieldModel.value.findIndex(
             (v) => v.field === data.previousFieldName && v.op === 'RENAME',
           )
-          if (index >= 0) fieldModel.value.splice(index, 1)
+          if (index !== -1) fieldModel.value.splice(index, 1)
           return
         }
         let op
@@ -225,6 +242,41 @@ export const FieldRename = observer(
         fieldModel.value.splice(0)
         renameDrafts.clear()
         form.setValuesIn('fieldsNameTransform', '')
+      }
+
+      const handleTooltipEnter = (event) => {
+        if (props.disabled) {
+          handleTooltipLeave()
+          return
+        }
+
+        const cell = event.currentTarget
+        const content = getOverflowTooltipContent(cell)
+        if (!content) {
+          handleTooltipLeave()
+          return
+        }
+
+        tooltipCell.value = cell
+        tooltipPosition.value = {
+          ...tooltipPosition.value,
+          visibility: 'hidden',
+        }
+        tooltipContent.value = content
+        nextTick(() => {
+          if (tooltipCell.value !== cell || !overflowTooltip.value) return
+
+          tooltipPosition.value = getTooltipPosition(
+            cell.getBoundingClientRect(),
+            overflowTooltip.value.getBoundingClientRect(),
+            { width: window.innerWidth, height: window.innerHeight },
+          )
+        })
+      }
+
+      const handleTooltipLeave = () => {
+        tooltipCell.value = null
+        tooltipContent.value = ''
       }
 
       const filterTree = (items, search) => {
@@ -354,33 +406,36 @@ export const FieldRename = observer(
               </ElSelect>
             </FormItem.BaseItem>
 
-            <ElInput
-              class="field-rename-search mb-2"
-              placeholder={i18n.t(
-                'packages_form_field_mapping_list_qingshuruziduan',
-              )}
-              modelValue={searchFiledName.value}
-              onInput={(val) => {
-                searchFiledName.value = val
-              }}
-              clearable
-            >
-              {{
-                prefix: () => (
-                  <ElIcon>
-                    <ElIconSearch />
-                  </ElIcon>
-                ),
-              }}
-            </ElInput>
+            <div class="field-rename-search-row flex p-2 px-0">
+              <ElInput
+                class="field-rename-search"
+                placeholder={i18n.t(
+                  'packages_form_field_mapping_list_qingshuruziduan',
+                )}
+                modelValue={searchFiledName.value}
+                onInput={(val) => {
+                  handleTooltipLeave()
+                  searchFiledName.value = val
+                }}
+                clearable
+              >
+                {{
+                  prefix: () => (
+                    <ElIcon>
+                      <ElIconSearch />
+                    </ElIcon>
+                  ),
+                }}
+              </ElInput>
+            </div>
 
-            <div class="field-rename-table border rounded-4 overflow-hidden">
-              <div class="field-processor-operation field-rename-header flex">
+            <div class="field-rename-table bg-light dark:bg-white/5 rounded-xl p-1 pt-0">
+              <div class="field-rename-header flex align-center gap-2 pr-2 py-1 fs-7 font-color-light">
                 <span class="field-rename-name-column text inline-block">
-                  {i18n.t('packages_form_field_rename_index_yuanziduanming')}
+                  {i18n.t('packages_form_dag_dialog_field_mapping_field')}
                 </span>
                 <span class="field-rename-target-column text inline-block">
-                  {i18n.t('packages_form_field_rename_index_mubiaoziduanming')}
+                  {i18n.t('packages_form_field_processor_index_xinziduanming')}
                 </span>
                 <span class="field-rename-action-column flex align-center justify-content-center">
                   <ElTooltip
@@ -403,91 +458,139 @@ export const FieldRename = observer(
                   </ElTooltip>
                 </span>
               </div>
-              <div class={["field-processors-tree-warp field-rename-tree", { 'is-disabled': props.disabled }]}>
-                <ElTree
-                  data={fields}
-                  node-key="id"
-                  default-expand-all={true}
-                  // show-checkbox={true}
-                  expand-on-click-node={false}
-                  class="field-processor-tree"
-                >
-                  {{
-                    default: ({ node, data }) => (
-                      <span class="tree-node field-rename-row flex flex-1 align-items flex-row overflow-hidden">
-                        <span class="field-rename-name-column field-rename-source text__inner inline-block">
-                          {data.field}
-                          {data.primary_key_position > 0 ? (
-                            <VIcon size="12" class="text-warning ml-1">
-                              key
-                            </VIcon>
-                          ) : (
-                            ''
-                          )}
-                        </span>
+              <ElTree
+                data={fields}
+                node-key="id"
+                default-expand-all={true}
+                // show-checkbox={true}
+                expand-on-click-node={false}
+                indent={0}
+                class={[
+                  'field-rename-tree rounded-xl',
+                  { 'is-disabled': props.disabled },
+                ]}
+                style="border: 1px solid #f2f4f7; --btn-space: 0"
+                onScroll={handleTooltipLeave}
+              >
+                {{
+                  default: ({ node, data }) => (
+                    <span class="field-rename-row flex align-center gap-2 pr-2">
+                      <span
+                        class="field-rename-name-column field-rename-source text__inner inline-block"
+                        onMouseenter={handleTooltipEnter}
+                        onMouseleave={handleTooltipLeave}
+                      >
                         <span
-                          class={['field-rename-target-column tree-field-input-wrap inline-block']}
+                          class="field-rename-tooltip-text"
+                          data-tooltip-content
                         >
-                          {data.level === 1 && !data.children?.length ? (
-                            props.disabled ? (
-                              <span class="field-rename-readonly-name">{data.field_name}</span>
-                            ) : (
-                              <ElInput
-                                class={[
-                                  'tree-field-input field-rename-input',
-                                  { 'tree-field-input-primary': data.field_name !== data.field },
-                                ]}
-                                modelValue={renameDrafts.get(data.previousFieldName) ?? data.field_name}
-                                disabled={transformLoading.value}
-                                onInput={(value) => renameDrafts.set(data.previousFieldName, value)}
-                                onChange={(value) => {
-                                  const val = value?.trim()
-                                  if (val) {
-                                    data.field_name = val
-                                    handleRename(node, data)
-                                  }
-                                  renameDrafts.delete(data.previousFieldName)
-                                }}
-                                onKeydown={(event) => {
-                                  if (event.key === 'Enter') event.target.blur()
-                                }}
-                              />
-                            )
-                          ) : (
-                            <span class="field-rename-readonly-name">{data.field_name}</span>
-                          )}
+                          {data.field}
                         </span>
-                        <span class="field-rename-action-column flex align-center justify-content-center">
-                          <ElTooltip
-                            content={i18n.t('public_button_reset')}
-                            placement="top"
-                            enterable={false}
-                            hideAfter={0}
-                            disabled={
-                              (fieldsNameTransforms === '' && !isRename(data.previousFieldName)) ||
-                              isReset(data.previousFieldName) || props.disabled || transformLoading.value
-                            }
-                          >
-                            <ElButton
-                              text
-                              type="primary"
-                              class="field-rename-reset-button"
-                              aria-label={i18n.t('public_button_reset')}
-                              disabled={
-                                (fieldsNameTransforms === '' && !isRename(data.previousFieldName)) ||
-                                isReset(data.previousFieldName) || props.disabled || transformLoading.value
-                              }
-                              onClick={() => handleReset(node, data)}
-                            >
-                              <i-lucide-undo-2 class="field-rename-reset-icon" />
-                            </ElButton>
-                          </ElTooltip>
-                        </span>
+                        {data.primary_key_position > 0 ? (
+                          <VIcon size="12" class="text-warning">
+                            key
+                          </VIcon>
+                        ) : (
+                          ''
+                        )}
                       </span>
-                    ),
-                  }}
-                </ElTree>
-              </div>
+                      <span
+                        class="field-rename-target-column tree-field-input-wrap inline-block"
+                        onMouseenter={handleTooltipEnter}
+                        onMouseleave={handleTooltipLeave}
+                      >
+                        {data.level === 1 && !data.children?.length ? (
+                          props.disabled ? (
+                            <span class="field-rename-readonly-name">
+                              {data.field_name}
+                            </span>
+                          ) : (
+                            <ElInput
+                              class={[
+                                'tree-field-input field-rename-input',
+                                {
+                                  'tree-field-input-primary':
+                                    data.field_name !== data.field,
+                                },
+                              ]}
+                              modelValue={
+                                renameDrafts.get(data.previousFieldName) ??
+                                data.field_name
+                              }
+                              disabled={transformLoading.value}
+                              onInput={(value) =>
+                                renameDrafts.set(data.previousFieldName, value)
+                              }
+                              onChange={(value) => {
+                                const val = value?.trim()
+                                if (val) {
+                                  data.field_name = val
+                                  handleRename(node, data)
+                                }
+                                renameDrafts.delete(data.previousFieldName)
+                              }}
+                              onKeydown={(event) => {
+                                if (event.key === 'Enter') event.target.blur()
+                              }}
+                            />
+                          )
+                        ) : (
+                          <span
+                            class="field-rename-readonly-name field-rename-tooltip-text"
+                            data-tooltip-content
+                          >
+                            {data.field_name}
+                          </span>
+                        )}
+                      </span>
+                      <span class="field-rename-action-column flex align-center justify-content-center">
+                        <ElTooltip
+                          content={i18n.t('public_button_reset')}
+                          placement="top"
+                          enterable={false}
+                          hideAfter={0}
+                          disabled={
+                            (fieldsNameTransforms === '' &&
+                              !isRename(data.previousFieldName)) ||
+                            isReset(data.previousFieldName) ||
+                            props.disabled ||
+                            transformLoading.value
+                          }
+                        >
+                          <ElButton
+                            text
+                            type="primary"
+                            class="field-rename-reset-button"
+                            aria-label={i18n.t('public_button_reset')}
+                            disabled={
+                              (fieldsNameTransforms === '' &&
+                                !isRename(data.previousFieldName)) ||
+                              isReset(data.previousFieldName) ||
+                              props.disabled ||
+                              transformLoading.value
+                            }
+                            onClick={() => handleReset(node, data)}
+                          >
+                            <i-lucide-undo-2 class="field-rename-reset-icon" />
+                          </ElButton>
+                        </ElTooltip>
+                      </span>
+                    </span>
+                  ),
+                }}
+              </ElTree>
+              <Teleport to="body">
+                {!props.disabled && tooltipContent.value && (
+                  <div
+                    ref={overflowTooltip}
+                    class="field-rename-tooltip"
+                    style={tooltipPosition.value}
+                    role="tooltip"
+                  >
+                    {tooltipContent.value}
+                  </div>
+                )}
+              </Teleport>
             </div>
           </div>
         )
