@@ -480,7 +480,7 @@ export const FieldRename = observer(
                         {data.fieldIndex}
                       </span>
                       <span
-                        class="field-rename-name-column field-rename-source text__inner inline-block"
+                        class="field-rename-name-column field-rename-source text__inner"
                         onMouseenter={handleTooltipEnter}
                         onMouseleave={handleTooltipLeave}
                       >
@@ -491,7 +491,10 @@ export const FieldRename = observer(
                           {data.field}
                         </span>
                         {data.primary_key_position > 0 ? (
-                          <VIcon size="12" class="text-warning">
+                          <VIcon
+                            size="12"
+                            class="text-warning field-rename-key-icon"
+                          >
                             key
                           </VIcon>
                         ) : (
