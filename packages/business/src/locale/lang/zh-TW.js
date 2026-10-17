@@ -487,7 +487,7 @@ export default {
   packages_business_verification_custom_query_tip:
     '分別在來源端和目標端執行唯讀 SQL，並比較查詢結果。',
   packages_business_verification_custom_query_required:
-    '請選擇來源端和目標端連線，並分別填寫查詢語句。',
+    '請分別填寫來源端和目標端查詢語句。',
   packages_business_verification_custom_query_source_sql: '來源端 SQL',
   packages_business_verification_custom_query_target_sql: '目標端 SQL',
   packages_business_verification_custom_query_sort_fields: '排序欄位',

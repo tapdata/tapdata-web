@@ -1776,7 +1776,10 @@ watch(conditionList, () => {
                     $t('packages_business_verification_custom_query_source_sql')
                   "
                 >
-                  <SqlEditor v-model:value="item.source.customQuery" />
+                  <SqlEditor
+                    v-model:value="item.source.customQuery"
+                    @update:value="debounceValidate"
+                  />
                 </el-form-item>
                 <el-form-item
                   class="col-start-2"
@@ -1784,7 +1787,10 @@ watch(conditionList, () => {
                     $t('packages_business_verification_custom_query_target_sql')
                   "
                 >
-                  <SqlEditor v-model:value="item.target.customQuery" />
+                  <SqlEditor
+                    v-model:value="item.target.customQuery"
+                    @update:value="debounceValidate"
+                  />
                 </el-form-item>
               </div>
               <div class="grid gap-4 grid-cols-2">

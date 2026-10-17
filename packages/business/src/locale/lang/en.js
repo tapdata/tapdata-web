@@ -527,7 +527,7 @@ export default {
   packages_business_verification_custom_query_tip:
     'Run separate read-only SQL queries on the source and target, then compare their results.',
   packages_business_verification_custom_query_required:
-    'Select both connections and enter a query for each side.',
+    'Enter a query for both the source and target.',
   packages_business_verification_custom_query_source_sql: 'Source SQL',
   packages_business_verification_custom_query_target_sql: 'Target SQL',
   packages_business_verification_custom_query_sort_fields: 'Sort fields',
