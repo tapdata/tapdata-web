@@ -523,6 +523,32 @@ export default {
   packages_business_verification_content_verify: 'All Fields Validation',
   packages_business_verification_joint_verify: 'Related Fields Validation',
   packages_business_verification_hash_verify: 'Hash Validation',
+  packages_business_verification_custom_query: 'Custom Query Validation',
+  packages_business_verification_custom_query_tip:
+    'Run separate read-only SQL queries on the source and target, then compare their results.',
+  packages_business_verification_custom_query_required:
+    'Enter a query for both the source and target.',
+  packages_business_verification_custom_query_source_sql: 'Source SQL',
+  packages_business_verification_custom_query_target_sql: 'Target SQL',
+  packages_business_verification_custom_query_sort_fields: 'Sort fields',
+  packages_business_verification_custom_query_sort_fields_placeholder:
+    'Comma-separated output fields; leave empty to sort by all fields',
+  packages_business_verification_custom_query_field_mapping: 'Field mapping',
+  packages_business_verification_custom_query_field_mapping_placeholder:
+    'One mapping per line: sourceField=targetField. Leave empty for matching names.',
+  packages_business_verification_custom_query_field_mapping_invalid:
+    'Each field mapping must use sourceField=targetField format.',
+  packages_business_verification_advanced_doc_title:
+    'Advanced Verification Instructions',
+  packages_business_verification_advanced_doc_result:
+    'Whether validation passed (passed or failed); required.',
+  packages_business_verification_advanced_doc_message:
+    'Optional error details to return when validation fails.',
+  packages_business_verification_advanced_doc_data:
+    'Optional target data to return when validation fails.',
+  packages_business_verification_advanced_doc_example:
+    'Full example: a MongoDB query',
+  packages_business_verification_advanced_doc_mismatch: 'Records differ',
   packages_business_verification_job_enable: 'Enabled',
   packages_business_verification_job_disable: 'Disabled',
   packages_business_verification_check_same: 'Consistency',

@@ -11,6 +11,7 @@ export const TABLE_PARAMS = {
   isFilter: false,
   conditions: [],
   capabilities: [],
+  customQuery: '',
 }
 
 export const META_INSTANCE_FIELDS = {
