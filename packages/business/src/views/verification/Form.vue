@@ -849,12 +849,11 @@ provide('ConnectorMap', ConnectorMap)
               </div>
             </el-radio-button>
             <el-radio-button
-              v-if="form.taskMode === 'random'"
               value="custom_query"
               style="--el-radio-button-checked-bg-color: transparent"
             >
               <div class="flex align-center gap-2">
-                <VIcon size="16">LucideCodeXml</VIcon>
+                <VIcon size="16">LucideCode</VIcon>
                 {{ inspectMethodMap['custom_query'] }}
               </div>
             </el-radio-button>
