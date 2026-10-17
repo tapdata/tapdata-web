@@ -853,7 +853,7 @@ provide('ConnectorMap', ConnectorMap)
               style="--el-radio-button-checked-bg-color: transparent"
             >
               <div class="flex align-center gap-2">
-                <VIcon size="16">LucideCode</VIcon>
+                <VIcon size="16">code-json</VIcon>
                 {{ inspectMethodMap['custom_query'] }}
               </div>
             </el-radio-button>
