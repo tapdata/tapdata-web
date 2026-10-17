@@ -1059,14 +1059,11 @@ const validate = async () => {
   let message = ''
   const SHOW_COUNT = 20
   if (props.inspectMethod === 'custom_query') {
-    const hasConnectionAndQuery = tasks.every(
+    const hasQuery = tasks.every(
       (task) =>
-        task.source.connectionId &&
-        task.target.connectionId &&
-        task.source.customQuery?.trim() &&
-        task.target.customQuery?.trim(),
+        task.source.customQuery?.trim() && task.target.customQuery?.trim(),
     )
-    if (!hasConnectionAndQuery) {
+    if (!hasQuery) {
       message = i18n.t('packages_business_verification_custom_query_required')
       updateErrorMsg(message, 'error')
       return message
