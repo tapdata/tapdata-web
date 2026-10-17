@@ -1106,8 +1106,6 @@ const validate = async () => {
       updateErrorMsg(message, 'error')
       return message
     }
-    message = validateCustomQueryDatabaseTypes(tasks)
-    if (message) return message
     message = validateCapabilities(tasks, 'execute_command_function')
     if (message) return message
     updateErrorMsg('')
@@ -1280,41 +1278,6 @@ const validateCapabilities = (tasks: any[], capability: string) => {
     ElMessage.error(message)
   }
 
-  return message
-}
-
-// The first release supports SQL Server and IBM DB2 for i. A generic execute
-// command capability is also exposed by non-SQL connectors such as MongoDB.
-const CUSTOM_QUERY_DATABASE_TYPES = new Set([
-  'sqlserver',
-  'mssql',
-  'aliyun_sqlserver',
-  'db2i',
-  'db2fori',
-])
-
-const validateCustomQueryDatabaseTypes = (tasks: any[]) => {
-  const unsupported = new Set<string>()
-  tasks.forEach((task) => {
-    for (const side of ['source', 'target']) {
-      const databaseType = String(task[side]?.databaseType || '').toLowerCase()
-      if (!CUSTOM_QUERY_DATABASE_TYPES.has(databaseType)) {
-        unsupported.add(
-          ConnectorMap.value[task[side]?.databaseType]?.name ||
-            task[side]?.databaseType ||
-            side,
-        )
-      }
-    }
-  })
-  if (!unsupported.size) return ''
-
-  const message = i18n.t('packages_business_not_support_validation', {
-    connection: [...unsupported].join(', '),
-    method: inspectMethodMap[props.inspectMethod],
-  })
-  updateErrorMsg(message, 'error')
-  ElMessage.error(message)
   return message
 }
 
