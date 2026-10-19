@@ -48,6 +48,10 @@ const LINE_SKIP_PATTERNS = [
   /\/\/\s*NOTE/, // NOTE 注释
 ]
 
+// 多行排除标记 —— 仅匹配独立的行注释
+const I18N_IGNORE_START_RE = /^\s*\/\/\s*i18n-ignore-start\s*$/
+const I18N_IGNORE_END_RE = /^\s*\/\/\s*i18n-ignore-end\s*$/
+
 // 已国际化调用模式 —— 行内中文如果全部在这些调用内部则放行
 const I18N_CALL_PATTERNS = [
   /\$t\s*\(/, // $t('key')
@@ -118,10 +122,16 @@ function checkFile(filePath) {
 
   let inBlockComment = false
   let inHtmlComment = false
+  let inI18nIgnoreBlock = false
   let skipBlockDepth = 0 // 块级排除：追踪括号深度
 
   for (const [i, line] of lines.entries()) {
     const lineNum = i + 1
+
+    if (inI18nIgnoreBlock) {
+      if (I18N_IGNORE_END_RE.test(line)) inI18nIgnoreBlock = false
+      continue
+    }
 
     // HTML 块注释追踪 <!-- ... -->
     if (inHtmlComment) {
@@ -164,6 +174,11 @@ function checkFile(filePath) {
     }
     // 单行块注释
     if (/^\s*\/\*.*\*\//.test(line)) continue
+
+    if (I18N_IGNORE_START_RE.test(line)) {
+      inI18nIgnoreBlock = true
+      continue
+    }
 
     // 无中文则跳过
     if (!CHINESE_RE.test(line)) continue
@@ -260,6 +275,9 @@ if (allErrors.length > 0) {
   }
   console.error("\u001B[33m提示: 请使用 $t('key') 或 t('key') 进行国际化处理。")
   console.error('如需忽略某行，请在行尾添加注释: // i18n-ignore\u001B[0m\n')
+  console.error(
+    '如需忽略多行内容，请用独立注释 // i18n-ignore-start 和 // i18n-ignore-end 包围。\n',
+  )
   process.exit(1)
 } else {
   console.log('\u001B[32m✓ 未发现中文硬编码问题\u001B[0m')

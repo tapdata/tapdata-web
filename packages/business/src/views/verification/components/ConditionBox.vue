@@ -427,11 +427,9 @@ const getConnectionsInTask = async (
       const connectionId = t.connectionId
       const connectionName = t.attrs?.connectionName
       const databaseType = t.databaseType
-      const findDynamicSchema = t.attrs?.capabilities.find(
-        (t: any) => t.id === 'dynamic_schema',
-      )
-      if (findDynamicSchema) {
-        dynamicSchemaMap[t.connectionId] = true
+
+      if (hasCapability(databaseType, 'dynamic_schema')) {
+        dynamicSchemaMap[connectionId] = true
       }
       return {
         attrs: {
@@ -1223,6 +1221,7 @@ const validateCapabilities = (tasks: any[], capability: string) => {
   return message
 }
 
+// i18n-ignore-start
 const loadDoc = () => {
   if (i18n.locale === 'en') {
     doc.value = `##### Advanced Verification Instructions
@@ -1302,6 +1301,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
 `
   }
 }
+// i18n-ignore-end
 
 const getModeTypeDisabled = (item: any) => {
   return (
