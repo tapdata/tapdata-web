@@ -60,7 +60,7 @@ function retry() {
         class="system-alarm-dependency-notice__icon"
         aria-hidden="true"
       >
-        <i-lucide-triangle-alert />
+        <i-lucide-circle-alert />
       </el-icon>
       <div class="system-alarm-dependency-notice__content">
         <span>{{
@@ -90,7 +90,7 @@ function retry() {
         class="system-alarm-dependency-notice__icon"
         aria-hidden="true"
       >
-        <i-lucide-circle-alert />
+        <i-lucide-info />
       </el-icon>
       <div class="system-alarm-dependency-notice__content">
         <span>{{
@@ -124,7 +124,7 @@ function retry() {
   gap: 8px;
   padding: 8px 12px;
   border: 1px solid transparent;
-  border-radius: var(--el-border-radius-base);
+  border-radius: var(--el-border-radius-large);
   font-size: 14px;
   font-weight: 400;
   line-height: 20px;
@@ -132,6 +132,10 @@ function retry() {
 
 .system-alarm-dependency-notice__alert
   + .system-alarm-dependency-notice__alert {
+  margin-top: 8px;
+}
+
+.system-alarm-dependency-notice__alert:first-child {
   margin-top: 8px;
 }
 
