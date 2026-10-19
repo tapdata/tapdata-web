@@ -50,6 +50,20 @@ export function findOneUserGroup(params?: any) {
   return requestClient.get(`${BASE_URL}/findOne`, { params })
 }
 
+export interface UserGroupAlarmImpact {
+  name?: string
+  memberCount?: number
+  totalMemberCount?: number
+  affectedTasks?: number | unknown[]
+  highRiskTasks?: number | unknown[]
+}
+
+export function fetchUserGroupAlarmImpact(id: string) {
+  return requestClient.get<UserGroupAlarmImpact>(
+    `${BASE_URL}/${encodeURIComponent(id)}/alarmImpact`,
+  )
+}
+
 /**
  * Update user group
  */

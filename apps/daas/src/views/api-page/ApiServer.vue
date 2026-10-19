@@ -9,8 +9,8 @@ import {
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import { useHas } from '@tap/business/src/composables'
+import { downloadAuthenticated } from '@tap/api/src/download'
 import i18n from '@tap/i18n'
-import Cookie from '@tap/shared/src/cookie'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { escapeRegExp } from 'lodash-es'
 import { h, nextTick, reactive, ref } from 'vue'
@@ -113,11 +113,7 @@ const remove = (item: Record<string, any>) => {
 
 // 下载api配置文件
 const downloadConfig = (item: Record<string, any>) => {
-  const token = Cookie.get('access_token')
-  window.open(
-    `${API_SERVER_BASE_URL}/download/${item.id}?access_token=${token}`,
-    '_blank',
-  )
+  downloadAuthenticated(`${API_SERVER_BASE_URL}/download/${item.id}`)
 }
 
 // 保存

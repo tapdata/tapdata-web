@@ -3,7 +3,7 @@ import { fetchSettings } from '@tap/api/core/settings'
 import { getUserInfoByToken } from '@tap/api/src/core/users'
 import Cookie from '@tap/shared/src/cookie'
 import { setSettings } from '@tap/shared/src/settings'
-import { configUser, getUrlSearch } from '@/utils/util'
+import { configUser, getUrlSearch, removeUrlParams } from '@/utils/util'
 import LoginPage from './LoginPage.vue'
 
 export default {
@@ -25,6 +25,9 @@ export default {
       // to the hash route. Convert that URL token into a cookie and run the same
       // post-login bootstrap as the password path before the router guard runs.
       const accessToken = getUrlSearch('access_token')
+      // Strip the token before any await so it never stays in the address bar
+      // or history, nor ends up in a later location.href (TAP-11883).
+      removeUrlParams('access_token')
       if (!accessToken) {
         this.redirectToLogin()
         return

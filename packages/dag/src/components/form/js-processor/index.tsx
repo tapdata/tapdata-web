@@ -35,6 +35,15 @@ import AiCodeDialog from './AiCodeDialog.vue'
 import { useVirtualLogScroller } from './useVirtualLogScroller'
 import './style.scss'
 
+// Kept out of i18n messages: vue-i18n treats `{}` as interpolation and throws in production
+const MONGO_FILTER_EXAMPLE = `{
+  "$find": {
+    "filter": {"age": {"$gt": 10}},
+    "sort": {"age": -1},
+    "limit": 10
+  }
+}`
+
 export const JsProcessor = observer(
   defineComponent({
     props: ['value', 'disabled', 'isStandard'],
@@ -67,7 +76,7 @@ export const JsProcessor = observer(
       })
       const tableList = ref([])
 
-      const checkSqlCapability = () => {
+      const checkQueryCapability = () => {
         const sourceNode = findParentNode(form.values.id)
         return dataflowStore.hasCapability(
           sourceNode,
@@ -75,7 +84,42 @@ export const JsProcessor = observer(
         )
       }
 
-      const hasSqlCapability = ref(checkSqlCapability())
+      const isMongoSource = () => {
+        const sourceNode = findParentNode(form.values.id)
+        const databaseType = sourceNode?.databaseType || ''
+        return /mongo/i.test(databaseType)
+      }
+
+      const hasSqlCapability = ref(checkQueryCapability())
+      const isMongoQuerySource = ref(isMongoSource())
+
+      const getSourceTableName = () => {
+        if (isMigrate) {
+          return params.tableName || ''
+        }
+        const sourceNode = findParentNode(form.values.id)
+        return sourceNode?.tableName || ''
+      }
+
+      const getDefaultQueryText = () => {
+        if (isMongoQuerySource.value) {
+          return ''
+        }
+        const tableName = getSourceTableName()
+        return tableName ? `SELECT * FROM ${tableName}` : 'SELECT * FROM '
+      }
+
+      const isDefaultQueryText = (text: string) => {
+        const trimmed = text?.trim() || ''
+        return (
+          trimmed === '' ||
+          trimmed === '{}' ||
+          trimmed === 'SELECT * FROM' ||
+          /^SELECT \* FROM\s*\w*$/i.test(trimmed)
+        )
+      }
+
+      const sqlText = ref(getDefaultQueryText())
 
       const loadTable = () => {
         if (!formRef.value.values.$inputs.length) return
@@ -93,7 +137,11 @@ export const JsProcessor = observer(
             }))
             params.tableName = tableList.value[0]?.value
             // Update SQL template with the loaded table name
-            if (params.tableName && sqlText.value === 'SELECT * FROM ') {
+            if (
+              !isMongoQuerySource.value &&
+              params.tableName &&
+              isDefaultQueryText(sqlText.value)
+            ) {
               sqlText.value = `SELECT * FROM ${params.tableName}`
             }
           })
@@ -107,7 +155,16 @@ export const JsProcessor = observer(
           loadTable()
         }
 
-        hasSqlCapability.value = checkSqlCapability()
+        hasSqlCapability.value = checkQueryCapability()
+        const nextIsMongo = isMongoSource()
+        if (nextIsMongo !== isMongoQuerySource.value) {
+          isMongoQuerySource.value = nextIsMongo
+          if (isDefaultQueryText(sqlText.value)) {
+            sqlText.value = getDefaultQueryText()
+          }
+        } else {
+          isMongoQuerySource.value = nextIsMongo
+        }
       })
 
       onBeforeUnmount(() => {
@@ -147,14 +204,6 @@ export const JsProcessor = observer(
       })
       const gettingSample = ref(false)
       const sqlDialogVisible = ref(false)
-      const getSourceTableName = () => {
-        if (isMigrate) {
-          return params.tableName || ''
-        }
-        const sourceNode = findParentNode(form.values.id)
-        return sourceNode?.tableName || ''
-      }
-      const sqlText = ref(`SELECT * FROM ${getSourceTableName()}`)
       const sqlPreviewData = ref<any[]>([])
       const sqlPreviewLoading = ref(false)
 
@@ -424,7 +473,11 @@ export const JsProcessor = observer(
         } catch (error: any) {
           ElMessage.error(
             error?.message ||
-              t('packages_form_js_processor_mock_sql_query_fail'),
+              t(
+                isMongoQuerySource.value
+                  ? 'packages_form_js_processor_mock_filter_query_fail'
+                  : 'packages_form_js_processor_mock_sql_query_fail',
+              ),
           )
           sqlPreviewData.value = []
         } finally {
@@ -437,9 +490,14 @@ export const JsProcessor = observer(
           fillSampleToEditor(sqlPreviewData.value)
           addMockLog(
             'info',
-            t('packages_form_js_processor_mock_log_sql_import', {
-              val1: sqlPreviewData.value.length,
-            }),
+            t(
+              isMongoQuerySource.value
+                ? 'packages_form_js_processor_mock_log_filter_import'
+                : 'packages_form_js_processor_mock_log_sql_import',
+              {
+                val1: sqlPreviewData.value.length,
+              },
+            ),
           )
         }
         sqlDialogVisible.value = false
@@ -758,10 +816,17 @@ export const JsProcessor = observer(
                               text
                               type="primary"
                               onClick={() => {
+                                if (isDefaultQueryText(sqlText.value)) {
+                                  sqlText.value = getDefaultQueryText()
+                                }
                                 sqlDialogVisible.value = true
                               }}
                             >
-                              {t('packages_form_js_processor_mock_sql_query')}
+                              {t(
+                                isMongoQuerySource.value
+                                  ? 'packages_form_js_processor_mock_filter_query'
+                                  : 'packages_form_js_processor_mock_sql_query',
+                              )}
                             </ElButton>
                           )}
                           <ElButton
@@ -1142,15 +1207,48 @@ export const JsProcessor = observer(
                   </div>
                 </div>
 
-                {/* SQL Query Dialog */}
+                {/* SQL / Mongo filter Query Dialog */}
                 <ElDialog
                   v-model={sqlDialogVisible.value}
-                  title={t('packages_form_js_processor_mock_sql_dialog_title')}
                   width="80vw"
                   class="mock-sql-dialog"
                   append-to-body
                 >
                   {{
+                    header: ({ titleId, titleClass }: any) => (
+                      <div class="flex align-center">
+                        <span id={titleId} class={[titleClass, 'mr-1']}>
+                          {t(
+                            isMongoQuerySource.value
+                              ? 'packages_form_js_processor_mock_filter_dialog_title'
+                              : 'packages_form_js_processor_mock_sql_dialog_title',
+                          )}
+                        </span>
+                        {isMongoQuerySource.value && (
+                          <ElTooltip placement="bottom-start">
+                            {{
+                              default: () => (
+                                <VIcon size="14" class="color-primary">
+                                  info
+                                </VIcon>
+                              ),
+                              content: () => (
+                                <div>
+                                  <div>
+                                    {t(
+                                      'packages_form_js_processor_mock_filter_tip',
+                                    )}
+                                  </div>
+                                  <pre class="mt-1 mb-0">
+                                    {MONGO_FILTER_EXAMPLE}
+                                  </pre>
+                                </div>
+                              ),
+                            }}
+                          </ElTooltip>
+                        )}
+                      </div>
+                    ),
                     default: () => (
                       <>
                         <VCodeEditor
@@ -1159,9 +1257,9 @@ export const JsProcessor = observer(
                           onChange={(val) => {
                             sqlText.value = val
                           }}
-                          lang="sql"
+                          lang={isMongoQuerySource.value ? 'json' : 'sql'}
                           theme="chrome"
-                          height={120}
+                          height={isMongoQuerySource.value ? 180 : 120}
                           options={{ highlightActiveLine: true }}
                         />
                         {sqlPreviewData.value.length > 0 && (

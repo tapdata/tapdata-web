@@ -134,7 +134,7 @@ export default {
   packages_form_field_processor_index_qianzhui: 'Prefix',
   packages_form_field_processor_index_piliangcaozuo: 'Batch Operation',
   packages_form_field_processor_index_caozuo: 'Operation',
-  packages_form_field_processor_index_xinziduanming: 'New field name',
+  packages_form_field_processor_index_xinziduanming: 'New Name',
   packages_form_field_processor_index_huifu: 'Restore',
   packages_form_field_processor_index_pingbi: 'Mask',
   packages_form_field_rename_index_mubiaoziduanming: 'Targeted field name',
@@ -166,8 +166,12 @@ export default {
   packages_form_js_processor_mock_log: 'Log',
   packages_form_js_processor_mock_log_clear: 'Clear',
   packages_form_js_processor_mock_sql_query: 'SQL Query',
+  packages_form_js_processor_mock_filter_query: 'Filter Query',
   packages_form_js_processor_mock_get_sample: 'Get Sample',
   packages_form_js_processor_mock_sql_dialog_title: 'SQL Query Data',
+  packages_form_js_processor_mock_filter_dialog_title: 'Filter Query Data',
+  packages_form_js_processor_mock_filter_tip:
+    'Enter a MongoDB filter object. To also sort or limit, wrap it in $find (at most 100 rows), for example:',
   packages_form_js_processor_mock_sql_preview: 'Preview',
   packages_form_js_processor_mock_sql_use_data: 'Use This Data',
   packages_form_js_processor_mock_json_valid: 'Valid',
@@ -179,8 +183,6 @@ export default {
     'Click "Test Run" to see log output',
   packages_form_js_processor_mock_items: '{val1} items',
   packages_form_js_processor_mock_run_time: '{val1}ms',
-  packages_form_js_processor_mock_json_placeholder:
-    'Enter test data in JSON array format, e.g.:\n[\n  {\n    "id": 1,\n    "name": "John"\n  }\n]',
   packages_form_js_processor_mock_js_editor: 'JS Node Editor',
   packages_form_js_processor_mock_js_code: 'JS Code',
   packages_form_js_processor_mock_log_start: 'Start executing JS code...',
@@ -199,7 +201,10 @@ export default {
   packages_form_js_processor_mock_log_no_more: 'No more logs',
   packages_form_js_processor_mock_log_sql_import:
     'Imported {val1} records from SQL query',
+  packages_form_js_processor_mock_log_filter_import:
+    'Imported {val1} records from filter query',
   packages_form_js_processor_mock_sql_query_fail: 'SQL query failed',
+  packages_form_js_processor_mock_filter_query_fail: 'Filter query failed',
   packages_form_js_processor_mock_unknown_error: 'Unknown error',
   packages_form_js_processor_mock_event_insert: 'Insert',
   packages_form_js_processor_mock_event_update: 'Update',

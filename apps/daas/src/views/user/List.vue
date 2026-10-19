@@ -7,6 +7,7 @@ import {
   countUsers,
   createUser,
   deleteUser,
+  fetchUserAlarmImpact,
   fetchUsers,
   updateUser,
   updateUserInfo,
@@ -413,7 +414,9 @@ export default {
       this.table.fetch(1)
     },
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+      this.order = `${order ? prop : 'last_updated'} ${
+        order === 'ascending' ? 'ASC' : 'DESC'
+      }`
       this.table.fetch(1)
     },
     // 选中数据
@@ -566,6 +569,7 @@ export default {
             .map((item) => ({
               id: item.id,
               value: item.value,
+              gid: item.gid,
             }))
           params.listtags = listtags
 
@@ -588,9 +592,52 @@ export default {
         }
       })
     },
+    countOf(value) {
+      if (Array.isArray(value)) return value.length
+      const numberValue = Number(value)
+      return Number.isFinite(numberValue) ? numberValue : 0
+    },
     // 删除用户
-    remove(item) {
-      this.$confirm(this.$t('user_list_del_user', [item.username]), {
+    async remove(item) {
+      let impact
+      try {
+        impact = await fetchUserAlarmImpact(item.id)
+      } catch (error) {
+        console.error(error)
+        this.$message.error(this.$t('user_list_alarm_impact_failed'))
+        return
+      }
+      const escapeHtml = (value) =>
+        String(value ?? '')
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+      const groups = (impact?.groups || [])
+        .map((group) => escapeHtml(group?.name))
+        .filter(Boolean)
+        .join('、')
+      const username = impact?.username || item.username || ''
+      const email = impact?.email || item.email || '-'
+      const title = this.$t('user_list_delete_alarm_title', {
+        username,
+        email,
+      })
+      const warnStyle =
+        'margin-top:8px;padding:10px 12px;border-radius:8px;background:#fdf6ec;color:#b88230;line-height:1.6;'
+      const dangerStyle =
+        'margin-top:8px;padding:10px 12px;border-radius:8px;background:#fef0f0;color:#c45656;line-height:1.6;'
+      const message = [
+        this.$t('user_list_delete_alarm_body', {
+          count: this.countOf(impact?.directTaskCount),
+          groups: groups || this.$t('user_list_delete_alarm_no_group'),
+        }),
+        `<div style="${warnStyle}">${this.$t('user_list_delete_alarm_warn')}</div>`,
+        `<div style="${dangerStyle}">${this.$t('user_list_delete_alarm_irreversible')}</div>`,
+      ].join('')
+      this.$confirm(title, message, {
+        dangerouslyUseHTMLString: true,
+        confirmButtonText: this.$t('public_button_delete'),
+        type: 'warning',
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
@@ -1120,12 +1167,18 @@ export default {
                 v-for="i in 3"
                 :key="i"
                 class="password-strength__bar"
-                :class="`password-strength__bar--${passwordStrength >= i ? ['weak', 'medium', 'strong'][passwordStrength - 1] : 'empty'}`"
+                :class="`password-strength__bar--${
+                  passwordStrength >= i
+                    ? ['weak', 'medium', 'strong'][passwordStrength - 1]
+                    : 'empty'
+                }`"
               />
             </div>
             <span
               class="password-strength__label"
-              :class="`password-strength__label--${['weak', 'medium', 'strong'][passwordStrength - 1]}`"
+              :class="`password-strength__label--${
+                ['weak', 'medium', 'strong'][passwordStrength - 1]
+              }`"
             >
               {{
                 [
@@ -1226,10 +1279,7 @@ export default {
       </template>
     </el-dialog>
 
-    <SsoUserImportDialog
-      v-model="ssoImportVisible"
-      @success="table.fetch()"
-    />
+    <SsoUserImportDialog v-model="ssoImportVisible" @success="table.fetch()" />
   </PageContainer>
 </template>
 

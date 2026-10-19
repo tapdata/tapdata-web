@@ -1,4 +1,4 @@
-import Cookie from '@tap/shared/src/cookie'
+import { downloadAuthenticated } from './download'
 import Http from './Http'
 
 export default class PythonFunctions extends Http {
@@ -6,10 +6,9 @@ export default class PythonFunctions extends Http {
     super('/api/python-functions')
   }
   export(ids) {
-    const href = `${
-      this.url
-    }/batch/load?id=${ids.join('&id=')}&access_token=${Cookie.get('access_token')}`
-    window.open(href)
+    return downloadAuthenticated(
+      `${this.url}/batch/load?id=${ids.join('&id=')}`,
+    )
   }
 }
 export { PythonFunctions }

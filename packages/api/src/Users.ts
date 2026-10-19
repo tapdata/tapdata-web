@@ -44,7 +44,9 @@ export default class Users extends Http {
   }
 
   newResetPassword(token) {
-    return this.axios.post(`${this.url}/newResetPassword?access_token=${token}`)
+    return this.axios.post(`${this.url}/newResetPassword`, undefined, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
   }
 
   confirm(id, token) {

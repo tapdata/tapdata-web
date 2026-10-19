@@ -1,7 +1,9 @@
 <script>
-import { cloneDeep, debounce } from 'lodash-es'
+import { cloneDeep } from 'lodash-es'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { $emit } from '../../../utils/gogocodeTransfer'
+import { getOverflowTooltipContent } from './tooltip-content.mjs'
+import { getTooltipPosition } from './tooltip-position.mjs'
 
 export default {
   name: 'Main',
@@ -43,11 +45,12 @@ export default {
       active: '',
       isIndeterminate: false,
       tooltipContent: '',
+      tooltipPosition: { top: '0px', left: '0px', visibility: 'hidden' },
+      tooltipCell: null,
       widthMap: {
         index: 50,
         selection: 40,
       },
-      referenceEl: null,
     }
   },
   computed: {
@@ -55,6 +58,7 @@ export default {
       const result = cloneDeep(this.columns)
 
       const usedWidth = result
+        .filter((t) => !['index', 'selection'].includes(t.type))
         .map((t) => t.width || 0)
         .reduce((pre, cur) => {
           return cur + pre
@@ -62,7 +66,7 @@ export default {
 
       const obligateWidth = result
         .filter((t) => ['index', 'selection'].includes(t.type))
-        .map((t) => this.widthMap[t.type])
+        .map((t) => t.width || this.widthMap[t.type])
         .reduce((pre, cur) => {
           return cur + pre
         }, 0)
@@ -85,9 +89,6 @@ export default {
       },
     },
   },
-  created() {
-    this.activateTooltip = debounce((tooltip) => tooltip.onOpen(), 50)
-  },
   mounted() {
     this.layoutWidth = this.$el.offsetWidth
     this.fetch()
@@ -98,6 +99,27 @@ export default {
         this.list = cloneDeep(this.data)
         return
       }
+    },
+
+    refreshData(data = this.data) {
+      this.list = cloneDeep(data)
+    },
+
+    getRowNumber(item, index) {
+      if (
+        Number.isInteger(index) &&
+        index >= 0 &&
+        this.list[index]?.[this.itemKey] === item[this.itemKey]
+      ) {
+        return index + 1
+      }
+
+      // DynamicScroller normally provides the row index. Fall back to the
+      // stable item key if a recycled row briefly has an invalid index.
+      const itemIndex = this.list.findIndex(
+        (row) => row[this.itemKey] === item[this.itemKey],
+      )
+      return Math.max(itemIndex, 0) + 1
     },
 
     toggleRowSelection(row = {}, selected) {
@@ -162,28 +184,34 @@ export default {
     },
 
     handleCellMouseEnter(event, colItem) {
-      if (!colItem.showOverflowTooltip) return
+      if (!colItem.showOverflowTooltip) {
+        this.handleCellMouseLeave()
+        return
+      }
 
       const cell = event.target
-      const cellChild = event.target
-
-      if (cellChild.scrollWidth > cellChild.offsetWidth && this.$refs.tooltip) {
-        const tooltip = this.$refs.tooltip
-        this.tooltipContent =
-          cell.innerText ||
-          cell.textContent ||
-          cell.querySelector('input')?.value
-        this.referenceEl = cell
-        this.activateTooltip(tooltip)
+      const content = getOverflowTooltipContent(cell)
+      if (!content) {
+        this.handleCellMouseLeave()
+        return
       }
+
+      this.tooltipCell = cell
+      this.tooltipPosition = { ...this.tooltipPosition, visibility: 'hidden' }
+      this.tooltipContent = content
+      this.$nextTick(() => {
+        if (this.tooltipCell !== cell || !this.$refs.overflowTooltip) return
+        this.tooltipPosition = getTooltipPosition(
+          cell.getBoundingClientRect(),
+          this.$refs.overflowTooltip.getBoundingClientRect(),
+          { width: window.innerWidth, height: window.innerHeight },
+        )
+      })
     },
 
     handleCellMouseLeave() {
-      const tooltip = this.$refs.tooltip
-
-      if (tooltip) {
-        tooltip.hide()
-      }
+      this.tooltipCell = null
+      this.tooltipContent = ''
     },
 
     getColWidth(item) {
@@ -222,6 +250,7 @@ export default {
             'column-item',
             `column-${item.prop || item.type}`,
             item.headerClass,
+            ...getColClass(item),
           ]"
           :style="{ width: getColWidth(item) }"
         >
@@ -231,6 +260,9 @@ export default {
               :indeterminate="isIndeterminate"
               @change="handleCheckAll($event)"
             />
+          </div>
+          <div v-else-if="item.headerSlot" class="cell">
+            <slot :name="item.headerSlot" />
           </div>
           <div v-else class="cell">{{ item.label }}</div>
         </div>
@@ -244,6 +276,7 @@ export default {
         :min-item-size="40"
         :item-size="itemSize"
         class="vue-recycle-scroller"
+        @scroll="handleCellMouseLeave"
       >
         <template #default="{ item, index, active }">
           <DynamicScrollerItem
@@ -280,7 +313,7 @@ export default {
                     />
                   </template>
                   <template v-else-if="colItem.type === 'index'">{{
-                    index + 1
+                    getRowNumber(item, index)
                   }}</template>
 
                   <template v-else-if="colItem.type === 'selection'">
@@ -296,13 +329,17 @@ export default {
           </DynamicScrollerItem>
         </template>
       </DynamicScroller>
-      <el-tooltip
-        ref="tooltip"
-        :reference-el="referenceEl"
-        placement="top"
-        :effect="tooltipEffect"
-        :content="tooltipContent"
-      />
+      <Teleport to="body">
+        <div
+          v-if="tooltipContent"
+          ref="overflowTooltip"
+          :class="['virtual-list-tooltip', tooltipEffect]"
+          :style="tooltipPosition"
+          role="tooltip"
+        >
+          {{ tooltipContent }}
+        </div>
+      </Teleport>
     </div>
   </div>
 </template>
@@ -370,6 +407,26 @@ export default {
   &.el-tooltip {
     white-space: nowrap;
     min-width: 50px;
+  }
+}
+.virtual-list-tooltip {
+  position: fixed;
+  z-index: 3000;
+  max-width: min(320px, calc(100vw - 24px));
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: #303133;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
+
+  &.light {
+    background: #fff;
+    color: #303133;
+    border: 1px solid #e4e7ed;
   }
 }
 </style>
