@@ -170,8 +170,8 @@ export default {
   packages_form_js_processor_mock_get_sample: 'Get Sample',
   packages_form_js_processor_mock_sql_dialog_title: 'SQL Query Data',
   packages_form_js_processor_mock_filter_dialog_title: 'Filter Query Data',
-  packages_form_js_processor_mock_filter_placeholder:
-    'Enter a MongoDB filter, for example {"status": "PAID"}. To also sort or limit, wrap it in $find (at most 100 rows):\n{\n  "$find": {\n    "filter": {"age": {"$gt": 10}},\n    "sort": {"age": -1},\n    "limit": 10\n  }\n}',
+  packages_form_js_processor_mock_filter_tip:
+    'Enter a MongoDB filter object. To also sort or limit, wrap it in $find (at most 100 rows), for example:',
   packages_form_js_processor_mock_sql_preview: 'Preview',
   packages_form_js_processor_mock_sql_use_data: 'Use This Data',
   packages_form_js_processor_mock_json_valid: 'Valid',
@@ -183,8 +183,6 @@ export default {
     'Click "Test Run" to see log output',
   packages_form_js_processor_mock_items: '{val1} items',
   packages_form_js_processor_mock_run_time: '{val1}ms',
-  packages_form_js_processor_mock_json_placeholder:
-    'Enter test data in JSON array format, e.g.:\n[\n  {\n    "id": 1,\n    "name": "John"\n  }\n]',
   packages_form_js_processor_mock_js_editor: 'JS Node Editor',
   packages_form_js_processor_mock_js_code: 'JS Code',
   packages_form_js_processor_mock_log_start: 'Start executing JS code...',
