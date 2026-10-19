@@ -35,6 +35,15 @@ import AiCodeDialog from './AiCodeDialog.vue'
 import { useVirtualLogScroller } from './useVirtualLogScroller'
 import './style.scss'
 
+// Kept out of i18n messages: vue-i18n treats `{}` as interpolation and throws in production
+const MONGO_FILTER_EXAMPLE = `{
+  "$find": {
+    "filter": {"age": {"$gt": 10}},
+    "sort": {"age": -1},
+    "limit": 10
+  }
+}`
+
 export const JsProcessor = observer(
   defineComponent({
     props: ['value', 'disabled', 'isStandard'],
@@ -1201,25 +1210,47 @@ export const JsProcessor = observer(
                 {/* SQL / Mongo filter Query Dialog */}
                 <ElDialog
                   v-model={sqlDialogVisible.value}
-                  title={t(
-                    isMongoQuerySource.value
-                      ? 'packages_form_js_processor_mock_filter_dialog_title'
-                      : 'packages_form_js_processor_mock_sql_dialog_title',
-                  )}
                   width="80vw"
                   class="mock-sql-dialog"
                   append-to-body
                 >
                   {{
+                    header: ({ titleId, titleClass }: any) => (
+                      <div class="flex align-center">
+                        <span id={titleId} class={[titleClass, 'mr-1']}>
+                          {t(
+                            isMongoQuerySource.value
+                              ? 'packages_form_js_processor_mock_filter_dialog_title'
+                              : 'packages_form_js_processor_mock_sql_dialog_title',
+                          )}
+                        </span>
+                        {isMongoQuerySource.value && (
+                          <ElTooltip placement="bottom-start">
+                            {{
+                              default: () => (
+                                <VIcon size="14" class="color-primary">
+                                  info
+                                </VIcon>
+                              ),
+                              content: () => (
+                                <div>
+                                  <div>
+                                    {t(
+                                      'packages_form_js_processor_mock_filter_tip',
+                                    )}
+                                  </div>
+                                  <pre class="mt-1 mb-0">
+                                    {MONGO_FILTER_EXAMPLE}
+                                  </pre>
+                                </div>
+                              ),
+                            }}
+                          </ElTooltip>
+                        )}
+                      </div>
+                    ),
                     default: () => (
                       <>
-                        {isMongoQuerySource.value && (
-                          <pre class="mb-2 font-color-light text-sm whitespace-pre-wrap">
-                            {t(
-                              'packages_form_js_processor_mock_filter_placeholder',
-                            )}
-                          </pre>
-                        )}
                         <VCodeEditor
                           class="border rounded-lg py-0"
                           value={sqlText.value}

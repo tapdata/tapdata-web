@@ -148,8 +148,8 @@ export default {
   packages_form_js_processor_mock_get_sample: '获取样本',
   packages_form_js_processor_mock_sql_dialog_title: 'SQL 查询获取数据',
   packages_form_js_processor_mock_filter_dialog_title: '条件查询获取数据',
-  packages_form_js_processor_mock_filter_placeholder:
-    '请输入 MongoDB 查询条件，例如 {"status": "PAID"}。如需排序或限制条数，请用 $find 包装（最多返回 100 条）：\n{\n  "$find": {\n    "filter": {"age": {"$gt": 10}},\n    "sort": {"age": -1},\n    "limit": 10\n  }\n}',
+  packages_form_js_processor_mock_filter_tip:
+    '请输入 MongoDB 查询条件（filter 对象）。如需排序或限制条数，请用 $find 包装（最多返回 100 条），示例：',
   packages_form_js_processor_mock_sql_preview: '执行预览',
   packages_form_js_processor_mock_sql_use_data: '使用此数据',
   packages_form_js_processor_mock_json_valid: '格式正确',
@@ -161,8 +161,6 @@ export default {
     '点击「试运行」执行代码后查看日志输出',
   packages_form_js_processor_mock_items: '{val1} 条',
   packages_form_js_processor_mock_run_time: '{val1}ms',
-  packages_form_js_processor_mock_json_placeholder:
-    '请输入 JSON 数组格式的测试数据，例如：\n[\n  {\n    "id": 1,\n    "name": "张三"\n  }\n]',
   packages_form_js_processor_mock_js_editor: 'JS 节点编辑器',
   packages_form_js_processor_mock_js_code: 'JS 代码',
   packages_form_js_processor_mock_log_start: '开始执行 JS 代码...',
