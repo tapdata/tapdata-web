@@ -427,11 +427,9 @@ const getConnectionsInTask = async (
       const connectionId = t.connectionId
       const connectionName = t.attrs?.connectionName
       const databaseType = t.databaseType
-      const findDynamicSchema = t.attrs?.capabilities.find(
-        (t: any) => t.id === 'dynamic_schema',
-      )
-      if (findDynamicSchema) {
-        dynamicSchemaMap[t.connectionId] = true
+
+      if (hasCapability(databaseType, 'dynamic_schema')) {
+        dynamicSchemaMap[connectionId] = true
       }
       return {
         attrs: {
