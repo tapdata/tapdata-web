@@ -1221,6 +1221,7 @@ const validateCapabilities = (tasks: any[], capability: string) => {
   return message
 }
 
+// i18n-ignore-start
 const loadDoc = () => {
   if (i18n.locale === 'en') {
     doc.value = `##### Advanced Verification Instructions
@@ -1300,6 +1301,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
 `
   }
 }
+// i18n-ignore-end
 
 const getModeTypeDisabled = (item: any) => {
   return (
