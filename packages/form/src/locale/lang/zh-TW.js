@@ -148,8 +148,8 @@ export default {
   packages_form_js_processor_mock_get_sample: '獲取樣本',
   packages_form_js_processor_mock_sql_dialog_title: 'SQL 查詢獲取數據',
   packages_form_js_processor_mock_filter_dialog_title: '條件查詢獲取數據',
-  packages_form_js_processor_mock_filter_placeholder:
-    '請輸入 MongoDB 查詢條件，例如 {"status": "PAID"}。如需排序或限制條數，請用 $find 包裝（最多返回 100 條）：\n{\n  "$find": {\n    "filter": {"age": {"$gt": 10}},\n    "sort": {"age": -1},\n    "limit": 10\n  }\n}',
+  packages_form_js_processor_mock_filter_tip:
+    '請輸入 MongoDB 查詢條件（filter 物件）。如需排序或限制條數，請用 $find 包裝（最多返回 100 條），範例：',
   packages_form_js_processor_mock_sql_preview: '執行預覽',
   packages_form_js_processor_mock_sql_use_data: '使用此數據',
   packages_form_js_processor_mock_json_valid: '格式正確',
@@ -161,8 +161,6 @@ export default {
     '點擊「試運行」執行代碼後查看日誌輸出',
   packages_form_js_processor_mock_items: '{val1} 條',
   packages_form_js_processor_mock_run_time: '{val1}ms',
-  packages_form_js_processor_mock_json_placeholder:
-    '請輸入 JSON 陣列格式的測試數據，例如：\n[\n  {\n    "id": 1,\n    "name": "張三"\n  }\n]',
   packages_form_js_processor_mock_js_editor: 'JS 節點編輯器',
   packages_form_js_processor_mock_js_code: 'JS 代碼',
   packages_form_js_processor_mock_log_start: '開始執行 JS 代碼...',
