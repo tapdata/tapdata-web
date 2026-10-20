@@ -70,6 +70,7 @@ export default {
     'When using the automatic mode, the platform will assign nodes for connection access, while in manual mode, the user is responsible for manually specifying the nodes for access',
   packages_business_connections_list_batch_agent_settings:
     'Batch Agent Settings',
+  packages_business_connections_list_batch_operation: 'Batch operations',
   packages_business_agent_settings_dialog_title: 'Batch Agent Settings',
   packages_business_agent_settings_dialog_subtitle:
     'The same Agent settings will be prepared for {count} selected connections.',
