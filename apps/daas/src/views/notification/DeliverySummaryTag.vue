@@ -24,7 +24,7 @@ const STATUS_TYPES: Record<string, string> = {
 
 const status = computed(() => props.summary?.status || 'NONE')
 
-// 例如“站内 1/1 · 邮件 2/3”，成功数/总数
+// 例如“站内消息 1/1 · 邮件 2/3”，成功数/收件人数
 const text = computed(() => {
   const byChannel = props.summary?.byChannel || {}
   return (props.summary?.channels || [])
@@ -41,7 +41,7 @@ const text = computed(() => {
 <template>
   <el-tooltip
     v-if="status !== 'NONE'"
-    :content="t(`delivery_status_${status.toLowerCase()}`)"
+    :content="`${t(`delivery_status_${status.toLowerCase()}`)}（${t('delivery_summary_hint')}）`"
     placement="top"
   >
     <el-tag :type="STATUS_TYPES[status]" size="small" disable-transitions>
