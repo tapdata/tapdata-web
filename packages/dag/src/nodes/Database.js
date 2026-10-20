@@ -129,14 +129,16 @@ export class Database extends NodeType {
                 'x-decorator-props': {
                   feedbackLayout: 'none',
                 },
-                'x-component': 'PreviewText.Input',
-                'x-component-props': {
-                  content: `{{$agentMap[$self.value] ? $values.attrs.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' ? \`\${$agentMap[$self.value].accessNodeName} (\${$agentMap[$self.value].processId})\` : \`\${$agentMap[$self.value].hostName}（\${$agentMap[$self.value].ip}）\` : "-"}}`,
-                },
+                'x-component': 'AgentAssignmentDisplay',
                 'x-reactions': {
+                  dependencies: [
+                    'attrs.accessNodeType',
+                    'attrs.accessNodeProcessIdList',
+                  ],
                   fulfill: {
                     state: {
-                      display: '{{!$self.value ? "hidden":"visible"}}',
+                      display:
+                        '{{($values.attrs.accessNodeType !== "AUTOMATIC_PLATFORM_ALLOCATION" && ($self.value || $deps[1]?.length)) ? "visible" : "hidden"}}',
                     },
                   },
                 },

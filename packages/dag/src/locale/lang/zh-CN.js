@@ -59,6 +59,23 @@ export default {
   packages_dag_agent_setting_from: 'agent设置来源于以下连接',
   packages_dag_connection_form_automatic: '平台自动分配',
   packages_dag_connection_form_manual: '用户手动指定',
+  packages_dag_agent_display_unavailable: '暂无法获取 Agent 信息',
+  packages_dag_agent_display_priority: '优先',
+  packages_dag_task_agent_custom: '自定义 Agent 调度',
+  packages_dag_task_agent_auto_desc:
+    '平台将根据任务涉及的连接自动选择可用 Agent',
+  packages_dag_task_agent_customize: '自定义',
+  packages_dag_task_agent_use_automatic: '恢复自动分配',
+  packages_dag_task_agent_compatible_summary:
+    '已根据 {connections} 个连接筛选，可选择 {agents} 项',
+  packages_dag_task_agent_options_summary: '可选择 {agents} 项',
+  packages_dag_task_agent_no_compatible: '没有兼容的 Agent',
+  packages_dag_task_agent_no_compatible_desc:
+    '当前连接配置存在冲突，请调整连接设置或恢复平台自动分配。',
+  packages_dag_task_agent_no_available_desc:
+    '当前没有可选择的 Agent，请检查 Agent 列表或恢复平台自动分配。',
+  packages_dag_task_agent_selection_invalid:
+    '当前选择已不符合连接配置，请重新选择或恢复平台自动分配。',
   packages_dag_task_setting_automatic_ddl: '自动DDL',
   packages_dag_task_setting_distinct_write_type: '去重写入机制',
   packages_dag_task_setting_transformer_concurrency: '目标写入线程数',

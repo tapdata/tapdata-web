@@ -556,7 +556,12 @@ export default {
     },
 
     responseHandler(data, msg, canNotList = []) {
-      let failList = data?.filter((t) => t.code !== 'ok') || []
+      const resultList = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.data)
+          ? data.data
+          : []
+      let failList = resultList.filter((t) => t.code !== 'ok')
       failList = [...failList, ...canNotList]
       if (failList.length) {
         const findErr = failList.find((t) =>
@@ -698,8 +703,12 @@ export default {
             canNotList,
           )
         })
-        .catch(() => {
+        .catch((error) => {
           this.buried(this.taskBuried.start, '', { result: false })
+          showErrorMessage({
+            msg: error?.message || this.$t('public_message_operation_failed'),
+            stack: error?.stack,
+          })
         })
     },
 

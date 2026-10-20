@@ -25,6 +25,10 @@ import { isPlainObj } from '@tap/shared'
 import axios from 'axios'
 import { isEmpty, isEqual, merge } from 'lodash-es'
 import { mapGetters, mapState } from 'vuex'
+import {
+  createAccessNodeInfoMap,
+  getAccessNodeDisplayName,
+} from '../utils/accessNodePolicy'
 
 const editorKeyboard = {
   handleKeyboard({ editor }, hash, keyString, keyCode, event) {
@@ -353,6 +357,7 @@ export default {
                 databaseType: item.database_type,
                 connectionType: item.connection_type,
                 accessNodeProcessId: item.accessNodeProcessId,
+                accessNodeProcessIdList: item.accessNodeProcessIdList || [],
               }
             })
 
@@ -466,6 +471,9 @@ export default {
           const accessNodeProcessId = form.getValuesIn(
             'attrs.accessNodeProcessId',
           )
+          const accessNodeProcessIdList = form.getValuesIn(
+            'attrs.accessNodeProcessIdList',
+          )
           const connectionName = form.getValuesIn('attrs.connectionName')
 
           connectionType !== item.connectionType &&
@@ -474,6 +482,11 @@ export default {
             form.setValuesIn(
               'attrs.accessNodeProcessId',
               item.accessNodeProcessId,
+            )
+          !isEqual(accessNodeProcessIdList, item.accessNodeProcessIdList) &&
+            form.setValuesIn(
+              'attrs.accessNodeProcessIdList',
+              item.accessNodeProcessIdList || [],
             )
           connectionName !== item.name &&
             form.setValuesIn('attrs.connectionName', item.name)
@@ -882,6 +895,8 @@ export default {
           const connectionType = form.getValuesIn('attrs.connectionType') || ''
           const accessNodeProcessId =
             form.getValuesIn('attrs.accessNodeProcessId') || ''
+          const accessNodeProcessIdList =
+            form.getValuesIn('attrs.accessNodeProcessIdList') || []
           const accessNodeType = form.getValuesIn('attrs.accessNodeType') || ''
           const priorityProcessId =
             form.getValuesIn('attrs.priorityProcessId') || ''
@@ -902,6 +917,14 @@ export default {
             form.setValuesIn(
               'attrs.accessNodeProcessId',
               connection.accessNodeProcessId,
+            )
+          !isEqual(
+            accessNodeProcessIdList,
+            connection.accessNodeProcessIdList,
+          ) &&
+            form.setValuesIn(
+              'attrs.accessNodeProcessIdList',
+              connection.accessNodeProcessIdList || [],
             )
           accessNodeType !== connection.accessNodeType &&
             form.setValuesIn('attrs.accessNodeType', connection.accessNodeType)
@@ -1309,7 +1332,7 @@ export default {
       const data = await findAccessNodeInfo()
       const mapNode = (item) => ({
         value: item.processId,
-        label: `${item.agentName || item.hostName}（${
+        label: `${getAccessNodeDisplayName(item) || '-'}（${
           item.status === 'running'
             ? i18n.t('public_status_running')
             : i18n.t('public_agent_status_offline')
@@ -1323,7 +1346,7 @@ export default {
         ) {
           return {
             value: item.processId,
-            label: `${item.accessNodeName}（${i18n.t('public_status_running')}：${
+            label: `${getAccessNodeDisplayName(item) || '-'}（${i18n.t('public_status_running')}：${
               item.accessNodes?.filter((ii) => ii.status === 'running')
                 .length || 0
             }）`,
@@ -1333,10 +1356,7 @@ export default {
         }
         return mapNode(item)
       })
-      this.scope.$agentMap = data.reduce(
-        (obj, item) => ((obj[item.processId] = item), obj),
-        {},
-      )
+      this.scope.$agentMap = createAccessNodeInfoMap(data)
     },
 
     /**

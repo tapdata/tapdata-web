@@ -10,6 +10,7 @@ import {
 } from '@tap/api/src/core/task'
 import { requestClient } from '@tap/api/src/request'
 import { FilterBar } from '@tap/component/src/filter-bar'
+import { showErrorMessage } from '../../components/error-message'
 import { useI18n } from '@tap/i18n'
 import dayjs from 'dayjs'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -178,14 +179,37 @@ const start = (ids: string[]) => {
   fetchTasks({ where: { id: ids[0] } }).then(() => {
     batchStartTasks(ids)
       .then((data: any) => {
+        const resultList = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.data)
+            ? data.data
+            : []
+        const failed = resultList.filter(
+          (item) => item?.code && item.code !== 'ok',
+        )
+        if (failed.length) {
+          showErrorMessage({
+            msg: failed
+              .map((item) => item.message)
+              .filter(Boolean)
+              .join('\n'),
+          })
+          table.value?.fetch()
+          buried?.(taskBuried.start, '', { result: false })
+          return
+        }
         buried?.(taskBuried.start, '', { result: true })
         ElMessage.success(
           data?.message || t('public_message_operation_success'),
         )
         table.value?.fetch()
       })
-      .catch(() => {
+      .catch((error) => {
         buried?.(taskBuried.start, '', { result: false })
+        showErrorMessage({
+          msg: error?.message || t('public_message_operation_failed'),
+          stack: error?.stack,
+        })
       })
   })
 }

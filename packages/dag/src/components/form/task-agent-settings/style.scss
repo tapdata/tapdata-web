@@ -1,0 +1,135 @@
+.task-agent-settings {
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--bg-light);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    min-height: 66px;
+    gap: 10px;
+    padding: 12px 14px;
+  }
+
+  &__icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    color: var(--el-color-primary);
+    background: var(--el-color-primary-light-9);
+  }
+
+  &__summary {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    color: var(--el-text-color-primary);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 20px;
+  }
+
+  &__description {
+    margin-top: 2px;
+    color: var(--el-text-color-secondary);
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  &__body {
+    padding: 0 14px 14px;
+  }
+
+  &__mode {
+    width: 100%;
+    margin-bottom: 14px;
+
+    .el-segmented__item {
+      flex: 1;
+    }
+  }
+
+  &__fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  &__field {
+    display: block;
+    min-width: 0;
+  }
+
+  &__label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--el-text-color-regular);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+  }
+
+  &__empty {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: var(--el-color-warning-dark-2);
+    background: var(--el-color-warning-light-9);
+  }
+
+  &__empty-title {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 18px;
+  }
+
+  &__empty-description {
+    margin-top: 2px;
+    color: var(--el-text-color-secondary);
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  &__error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    color: var(--el-color-danger);
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .el-button {
+    flex: none;
+  }
+
+  .el-select.is-error .el-select__wrapper {
+    box-shadow: 0 0 0 1px var(--el-color-danger) inset;
+  }
+}
+
+@media (max-width: 640px) {
+  .task-agent-settings {
+    &__header {
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    &__header > .el-button {
+      margin-left: 44px;
+    }
+
+    &__fields {
+      grid-template-columns: 1fr;
+    }
+  }
+}

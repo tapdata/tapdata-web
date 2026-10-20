@@ -269,6 +269,7 @@ export default defineComponent({
         connectionName: data.name,
         connectionType: data.connection_type,
         accessNodeProcessId: data.accessNodeProcessId,
+        accessNodeProcessIdList: data.accessNodeProcessIdList || [],
         priorityProcessId: data.priorityProcessId,
         pdkType: data.pdkType,
         pdkHash: data.pdkHash,
