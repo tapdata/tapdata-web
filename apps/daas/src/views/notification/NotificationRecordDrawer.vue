@@ -4,6 +4,7 @@ import {
   updateOneNotificationReadState,
   type NotificationRecordDetail,
 } from '@tap/api/src/core/notification'
+import { getAlarmKeyMap } from '@tap/business/src/shared/alarm'
 import { ALARM_LEVEL_MAP } from '@tap/business/src/shared/const'
 import dayjs from 'dayjs'
 import { computed, ref, watch } from 'vue'
@@ -23,6 +24,7 @@ const emit = defineEmits<{
 }>()
 const { t } = useI18n()
 const router = useRouter()
+const alarmKeyMap: Record<string, string> = getAlarmKeyMap()
 
 const loading = ref(false)
 const detail = ref<NotificationRecordDetail | null>(null)
@@ -127,7 +129,11 @@ function goAlarm() {
             {{ detail.taskName || '-' }}
           </el-descriptions-item>
           <el-descriptions-item :label="t('alarm_event_type')">
-            {{ detail.metric || '-' }}
+            {{
+              (detail.metric && alarmKeyMap[detail.metric]) ||
+              detail.metric ||
+              '-'
+            }}
           </el-descriptions-item>
           <el-descriptions-item
             :label="t('packages_dag_components_alert_gaojingshoucifa')"
@@ -161,11 +167,14 @@ function goAlarm() {
           <el-button
             text
             type="primary"
-            :disabled="detail.legacy"
+            :disabled="detail.legacy || detail.alarmEventMissing"
             @click="goAlarm"
           >
             {{ t('notification_record_view_alarm') }}
           </el-button>
+          <span v-if="detail.alarmEventMissing" class="color-info fs-8">{{
+            t('notification_record_alarm_missing')
+          }}</span>
         </div>
 
         <div class="flex align-center gap-3 mt-4 mb-2">

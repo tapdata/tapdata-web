@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getAlarmEvent, type AlarmEvent } from '@tap/api/src/core/alarm'
+import { getAlarmKeyMap } from '@tap/business/src/shared/alarm'
 import {
   ALARM_LEVEL_MAP,
   ALARM_STATUS_MAP,
@@ -14,6 +15,7 @@ const props = defineProps<{ id?: string; visible: boolean }>()
 const emit = defineEmits<{ (e: 'update:visible', value: boolean): void }>()
 const { t } = useI18n()
 const router = useRouter()
+const alarmKeyMap: Record<string, string> = getAlarmKeyMap()
 
 const loading = ref(false)
 const detail = ref<AlarmEvent | null>(null)
@@ -101,7 +103,7 @@ function openNotifications() {
             {{ detail.id }}
           </el-descriptions-item>
           <el-descriptions-item :label="t('alarm_event_type')">
-            {{ detail.metric }}
+            {{ alarmKeyMap[detail.metric] || detail.metric }}
           </el-descriptions-item>
           <el-descriptions-item
             :label="t('packages_dag_components_alert_gaojingshoucifa')"
@@ -124,7 +126,10 @@ function openNotifications() {
           </el-descriptions-item>
           <el-descriptions-item :label="t('alarm_event_close_time')">
             {{ fmt(detail.closeTime) }}
-            <span v-if="detail.closeBy">（{{ detail.closeBy }}）</span>
+            <span v-if="detail.archived"
+              >（{{ t('alarm_event_archived') }}）</span
+            >
+            <span v-else-if="detail.closeBy">（{{ detail.closeBy }}）</span>
           </el-descriptions-item>
           <el-descriptions-item :label="t('alarm_event_current_value')">
             {{ detail.currentValue ?? '-' }}

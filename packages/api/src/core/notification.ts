@@ -94,6 +94,8 @@ export interface NotificationRecord {
   id: string
   alarmEventId?: string
   legacy: boolean
+  /** 关联告警事件已被清除（历史版本任务重新运行时删除） */
+  alarmEventMissing?: boolean
   messageIds: string[]
   title: string
   level: string

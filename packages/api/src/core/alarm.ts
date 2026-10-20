@@ -286,6 +286,8 @@ export interface AlarmEvent {
   recoveryTime?: string
   closeTime?: string
   closeBy?: string
+  /** 任务重新运行时由系统归档 */
+  archived?: boolean
   lastNotifyTime?: string
   deliverySummary?: DeliverySummary
 }

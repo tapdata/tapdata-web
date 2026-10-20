@@ -2660,6 +2660,8 @@ export default {
   notification_record_keyword_placeholder: '任務/對象名稱或 ID',
   notification_record_content: '通知內容',
   notification_record_legacy: '歷史記錄，無投遞明細',
+  notification_record_alarm_missing: '告警事件已在任務重新運行時清除',
+  alarm_event_archived: '任務重新運行時歸檔',
   notification_record_delivery: '投遞結果',
   notification_record_latest_notify: '最近通知時間',
   notification_record_mark_read: '標為已讀',

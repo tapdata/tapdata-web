@@ -275,6 +275,9 @@ export default {
             <div v-if="row.legacy" class="color-info fs-8">
               {{ $t('notification_record_legacy') }}
             </div>
+            <div v-else-if="row.alarmEventMissing" class="color-info fs-8">
+              {{ $t('notification_record_alarm_missing') }}
+            </div>
           </template>
         </el-table-column>
         <el-table-column

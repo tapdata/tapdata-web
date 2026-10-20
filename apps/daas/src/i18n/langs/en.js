@@ -2821,6 +2821,9 @@ export default {
   notification_record_keyword_placeholder: 'Task/object name or ID',
   notification_record_content: 'Content',
   notification_record_legacy: 'Historical record without delivery details',
+  notification_record_alarm_missing:
+    'Alarm event was cleared when the task was rerun',
+  alarm_event_archived: 'Archived when the task was rerun',
   notification_record_delivery: 'Delivery',
   notification_record_latest_notify: 'Last Notified',
   notification_record_mark_read: 'Mark as read',

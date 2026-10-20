@@ -2676,6 +2676,8 @@ export default {
   notification_record_keyword_placeholder: '任务/对象名称或 ID',
   notification_record_content: '通知内容',
   notification_record_legacy: '历史记录，无投递明细',
+  notification_record_alarm_missing: '告警事件已在任务重新运行时清除',
+  alarm_event_archived: '任务重新运行时归档',
   notification_record_delivery: '投递结果',
   notification_record_latest_notify: '最近通知时间',
   notification_record_mark_read: '标为已读',
