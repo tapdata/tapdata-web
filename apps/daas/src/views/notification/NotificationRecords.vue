@@ -112,9 +112,8 @@ export default {
           label: i18n.t('notification_record_channel'),
           key: 'channel',
           type: 'select-inner',
-          items: ['SYSTEM', 'EMAIL', 'SMS', 'WECHAT'].map(
-            option('delivery_channel_'),
-          ),
+          // 企业版告警通知渠道为站内消息与邮件
+          items: ['SYSTEM', 'EMAIL'].map(option('delivery_channel_')),
         },
         {
           label: i18n.t('notification_record_delivery_status'),

@@ -9,8 +9,6 @@ const { t } = useI18n()
 const CHANNEL_KEYS: Record<string, string> = {
   SYSTEM: 'delivery_channel_system',
   EMAIL: 'delivery_channel_email',
-  SMS: 'delivery_channel_sms',
-  WECHAT: 'delivery_channel_wechat',
   WEBHOOK: 'delivery_channel_webhook',
 }
 

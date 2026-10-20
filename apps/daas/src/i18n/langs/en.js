@@ -2796,8 +2796,6 @@ export default {
   alarm_event_view_notifications: 'View notification records',
   delivery_channel_system: 'In-app message',
   delivery_channel_email: 'Email',
-  delivery_channel_sms: 'SMS',
-  delivery_channel_wechat: 'WeChat',
   delivery_channel_webhook: 'Webhook',
   delivery_status_success: 'All succeeded',
   delivery_status_partial_failed: 'Partially failed',

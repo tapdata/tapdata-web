@@ -2634,8 +2634,6 @@ export default {
   alarm_event_view_notifications: '查看全部通知記錄',
   delivery_channel_system: '站內訊息',
   delivery_channel_email: '郵件',
-  delivery_channel_sms: '簡訊',
-  delivery_channel_wechat: '微信',
   delivery_channel_webhook: 'Webhook',
   delivery_status_success: '全部成功',
   delivery_status_partial_failed: '部分失敗',
