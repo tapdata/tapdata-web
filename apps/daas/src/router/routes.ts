@@ -873,7 +873,7 @@ export const routes = [
         meta: {
           title: 'page_title_operation_audit',
           hideTitle: true,
-          code: 'v2_audit_log_list',
+          code: 'v2_audit_log',
         },
       },
       /* ---------- 用户管理  ----------*/

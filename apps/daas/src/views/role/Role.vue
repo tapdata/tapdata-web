@@ -24,6 +24,8 @@ const MODULE_ICONS: Record<string, string> = {
   v2_data_pipeline: 'migrate',
   v2_advanced_features: 'vip-one',
   'v2_data-server': 'apiServer_navbar',
+  'v2_ops-center': 'warning',
+  'v2_message-center': 'notice-system-notice',
   'v2_system-management': 'setting',
 }
 
@@ -429,6 +431,25 @@ const pageSort = [
     ],
   },
   {
+    name: 'v2_ops-center',
+    children: [
+      {
+        name: 'v2_alarm_event',
+        buttons: [
+          {
+            label: t('public_button_close'),
+            name: 'v2_alarm_event_ack_close',
+            checked: false,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'v2_message-center',
+    children: [{ name: 'v2_notification_record' }],
+  },
+  {
     name: 'v2_system-management',
     children: [
       { name: 'v2_cluster-management_menu' },
@@ -458,6 +479,7 @@ const pageSort = [
         ],
       },
       { name: 'v2_role_management' },
+      { name: 'v2_audit_log' },
     ],
   },
 ]
