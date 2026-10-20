@@ -17,9 +17,22 @@ import i18n from '@tap/i18n'
 import axios from 'axios'
 import { ElMessageBox, ElMessage as Message } from 'element-plus'
 import { debounce } from 'lodash-es'
-import { computed, defineComponent, inject, onBeforeUnmount, ref } from 'vue'
+import {
+  computed,
+  defineComponent,
+  inject,
+  onBeforeUnmount,
+  ref,
+  watch,
+} from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { useConnectionAgentConfigs } from '../../composables/useConnectionAgentConfigs'
+import {
+  createAccessNodeInfoMap,
+  getAccessNodeDisplayName,
+  getCompatibleAccessNodeOptions,
+} from '../../utils/accessNodePolicy'
 import SchemaForm from '../SchemaForm.vue'
 
 function getSystemAlarmWarningSchema(index, alarmKey) {
@@ -176,12 +189,15 @@ export default defineComponent({
           return
         }
 
-        const map = {
-          [taskRef.value.dag.nodes[0].connectionId]:
-            taskRef.value.dag.nodes[0].attrs.connectionName,
-          [taskRef.value.dag.nodes[3].connectionId]:
-            taskRef.value.dag.nodes[3].attrs.connectionName,
-        }
+        const connectionNodeIds = new Set(
+          accessNodeProcessIdMap.value[field.value],
+        )
+        const map = taskConnectionNodes.value
+          .filter((node) => connectionNodeIds.has(node.id))
+          .reduce((result, node) => {
+            result[node.connectionId] = node.attrs.connectionName
+            return result
+          }, {})
 
         const values = Object.values(map)
 
@@ -206,6 +222,7 @@ export default defineComponent({
     }, 500)
 
     const form = ref(null)
+    const selectedTaskAccessNodeType = ref(taskRef.value.accessNodeType)
     const starting = ref(false)
     const upgradeFeeVisible = ref(false)
     const upgradeFeeVisibleTips = ref(false)
@@ -218,7 +235,7 @@ export default defineComponent({
       const data = await findAccessNodeInfo()
       const mapNode = (item) => ({
         value: item.processId,
-        label: `${item.agentName || item.hostName}（${
+        label: `${getAccessNodeDisplayName(item) || '-'}（${
           item.status === 'running'
             ? i18n.t('public_status_running')
             : i18n.t('public_agent_status_offline')
@@ -232,7 +249,7 @@ export default defineComponent({
         ) {
           return {
             value: item.processId,
-            label: `${item.accessNodeName}（${i18n.t('public_status_running')}：${
+            label: `${getAccessNodeDisplayName(item) || '-'}（${i18n.t('public_status_running')}：${
               item.accessNodes?.filter((ii) => ii.status === 'running')
                 .length || 0
             }）`,
@@ -242,10 +259,7 @@ export default defineComponent({
         }
         return mapNode(item)
       })
-      scope.$agentMap = data.reduce(
-        (obj, item) => ((obj[item.processId] = item), obj),
-        {},
-      )
+      scope.$agentMap = createAccessNodeInfoMap(data)
     }
 
     const initTaskAgent = () => {
@@ -256,7 +270,7 @@ export default defineComponent({
         disabled: false,
       })
 
-      form.value.setFieldState('accessNodeProcessId', {
+      form.value.setFieldState('*(accessNodeProcessId)', {
         dataSource: accessNodeProcessList.value,
       })
     }
@@ -273,30 +287,83 @@ export default defineComponent({
       })
     }, 500)
 
+    const taskConnectionNodes = computed(() =>
+      (taskRef.value.dag?.nodes || []).filter((node) =>
+        ['database', 'table'].includes(node.type),
+      ),
+    )
+
+    const connectionIds = computed(() =>
+      [
+        ...new Set(taskConnectionNodes.value.map((node) => node.connectionId)),
+      ].filter(Boolean),
+    )
+    const { connectionAgentConfigs } = useConnectionAgentConfigs(connectionIds)
+
+    const connectionAgentConfigList = computed(() =>
+      taskConnectionNodes.value.map((node) => ({
+        ...(node.attrs || {}),
+        ...(connectionAgentConfigs.value[node.connectionId] || {}),
+      })),
+    )
+
     const accessNodeProcessIdMap = computed(() => {
-      return [taskRef.value.dag.nodes[0], taskRef.value.dag.nodes[3]].reduce(
-        (map, node) => {
-          const { accessNodeProcessId } = node.attrs
-          if (accessNodeProcessId) {
-            let nodeIdArr = map[accessNodeProcessId]
+      return taskConnectionNodes.value.reduce((map, node, index) => {
+        const config = connectionAgentConfigList.value[index]
+        const processIds = config.accessNodeProcessId
+          ? [config.accessNodeProcessId]
+          : config.accessNodeProcessIdList || []
 
-            if (!nodeIdArr) {
-              nodeIdArr = map[accessNodeProcessId] = []
-            }
+        processIds.forEach((processId) => {
+          const nodeIds = (map[processId] ||= [])
+          nodeIds.push(node.id)
+        })
 
-            nodeIdArr.push(node.id)
-          }
-          return map
-        },
-        {},
-      )
+        return map
+      }, {})
     })
 
-    const accessNodeProcessList = computed(() => {
-      return scope.$agents.filter(
-        (item) => item.accessNodeType === taskRef.value.accessNodeType,
+    const accessNodeProcessList = computed(() =>
+      getCompatibleAccessNodeOptions(
+        scope.$agents || [],
+        connectionAgentConfigList.value,
+        selectedTaskAccessNodeType.value,
+      ),
+    )
+
+    watch(
+      accessNodeProcessList,
+      (dataSource = []) => {
+        form.value?.setFieldState('*(accessNodeProcessId)', { dataSource })
+      },
+      { deep: true, immediate: true },
+    )
+
+    const getTaskSaveErrorMessage = (error) => {
+      const responseData = error?.response?.data ?? error
+      if (typeof responseData === 'string') return responseData
+      const validationData =
+        responseData?.code === 'Task.ListWarnMessage'
+          ? responseData.data
+          : (responseData?.data ?? responseData)
+      const validationItems = Array.isArray(validationData)
+        ? validationData
+        : Object.values(validationData || {}).flatMap((value) =>
+            Array.isArray(value) ? value : [value],
+          )
+      const validationMessage = validationItems.find(
+        (item) => item?.msg || item?.message,
       )
-    })
+
+      return (
+        validationMessage?.msg ||
+        validationMessage?.message ||
+        responseData?.message ||
+        responseData?.msg ||
+        error?.message ||
+        error?.msg
+      )
+    }
 
     const schema = {
       type: 'object',
@@ -1973,7 +2040,10 @@ export default defineComponent({
         // the validation error here only when this is not already part of the
         // explicit start/save flow. The explicit flow will show one message.
         if (!starting.value) {
-          showErrorMessage(error)
+          showErrorMessage({
+            msg: getTaskSaveErrorMessage(error),
+            stack: error?.stack,
+          })
         }
       }
     }, 100)
@@ -2045,6 +2115,9 @@ export default defineComponent({
         // })
 
         form.value.addEffects('watchForm', () => {
+          onFieldValueChange('accessNodeType', (field) => {
+            selectedTaskAccessNodeType.value = field.value
+          })
           // onFormValuesChange(form => {
           //   // onTaskChange()
           //   console.log('onFormValuesChange', form.values)
@@ -2102,7 +2175,7 @@ export default defineComponent({
               }),
             )}`,
           )
-          .then(async (data) => {
+          .then((data) => {
             const { items = [] } = data
 
             if (items.some((t) => t.status === 'Stopped')) {
@@ -2125,26 +2198,10 @@ export default defineComponent({
       error,
       msg = i18n.t('packages_dag_src_editor_chucuole'),
     ) => {
-      const code = error?.code
+      const code = error?.response?.data?.code ?? error?.code
       if (code === 'Task.ListWarnMessage') {
-        const names = []
-        if (error.data) {
-          const keys = Object.keys(error.data)
-          keys.forEach((key) => {
-            const node = taskRef.value.dag.nodes.find(({ id }) => id === key)
-            if (node) {
-              names.push(node.name)
-            }
-          })
-          if (!names.length && keys.length && msg) {
-            // 兼容错误信息id不是节点id的情况
-            const msg = error.data[keys[0]][0]?.msg
-            if (msg) {
-              Message.error(msg)
-              return
-            }
-          }
-        }
+        Message.error(getTaskSaveErrorMessage(error) || msg)
+        return
       } else if (code === 'Task.OldVersion') {
         ElMessageBox.confirm(
           '',
@@ -2163,7 +2220,10 @@ export default defineComponent({
       ) {
         handleShowUpgradeDialog(error)
       } else {
-        showErrorMessage(error)
+        showErrorMessage({
+          msg: getTaskSaveErrorMessage(error),
+          stack: error?.stack,
+        })
       }
     }
 

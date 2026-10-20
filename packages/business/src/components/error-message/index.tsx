@@ -107,9 +107,18 @@ export function ErrorMessage(stack: string, message: string) {
 }
 
 export function showErrorMessage(error: Record<string, any>) {
+  const response = error?.response?.data ?? error
+  const detail =
+    response?.code === 'Task.ListWarnMessage' && response.data
+      ? Object.values(response.data)
+          .flatMap((items) => (Array.isArray(items) ? items : [items]))
+          .find((item: any) => item?.msg || item?.message)
+      : undefined
   const rawMessage =
-    error?.message ||
-    error?.msg ||
+    detail?.msg ||
+    detail?.message ||
+    response?.message ||
+    response?.msg ||
     i18n.global.t('public_message_request_error')
   let message = rawMessage
   let duration = 3000

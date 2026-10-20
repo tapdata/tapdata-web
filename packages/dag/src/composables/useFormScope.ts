@@ -28,6 +28,10 @@ import { computed, reactive, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { useDataflowStore } from '../stores/dataflow.store'
+import {
+  createAccessNodeInfoMap,
+  getAccessNodeDisplayName,
+} from '../utils/accessNodePolicy'
 import type { Field } from '@formily/core'
 
 function addDeclaredCompleter(editor, tools, params1) {
@@ -140,7 +144,7 @@ export function useFormScope({ canvasRef }) {
     const data = await findAccessNodeInfo()
     const mapNode = (item) => ({
       value: item.processId,
-      label: `${item.agentName || item.hostName}（${
+      label: `${getAccessNodeDisplayName(item) || '-'}（${
         item.status === 'running'
           ? t('public_status_running')
           : t('public_agent_status_offline')
@@ -154,7 +158,7 @@ export function useFormScope({ canvasRef }) {
       ) {
         return {
           value: item.processId,
-          label: `${item.accessNodeName}（${t('public_status_running')}：${
+          label: `${getAccessNodeDisplayName(item) || '-'}（${t('public_status_running')}：${
             item.accessNodes?.filter((ii) => ii.status === 'running').length ||
             0
           }）`,
@@ -164,10 +168,7 @@ export function useFormScope({ canvasRef }) {
       }
       return mapNode(item)
     })
-    scope.$agentMap = data.reduce(
-      (obj, item) => ((obj[item.processId] = item), obj),
-      {},
-    )
+    scope.$agentMap = createAccessNodeInfoMap(data)
   }
 
   const findNodeById = dataflowStore.findNodeById
@@ -467,6 +468,7 @@ export function useFormScope({ canvasRef }) {
             databaseType: item.database_type,
             connectionType: item.connection_type,
             accessNodeProcessId: item.accessNodeProcessId,
+            accessNodeProcessIdList: item.accessNodeProcessIdList || [],
           }
         })
 
@@ -579,12 +581,20 @@ export function useFormScope({ canvasRef }) {
       })
       const connectionType = form.getValuesIn('attrs.connectionType')
       const accessNodeProcessId = form.getValuesIn('attrs.accessNodeProcessId')
+      const accessNodeProcessIdList = form.getValuesIn(
+        'attrs.accessNodeProcessIdList',
+      )
       const connectionName = form.getValuesIn('attrs.connectionName')
 
       connectionType !== item.connectionType &&
         form.setValuesIn('attrs.connectionType', item.connectionType)
       accessNodeProcessId !== item.accessNodeProcessId &&
         form.setValuesIn('attrs.accessNodeProcessId', item.accessNodeProcessId)
+      !isEqual(accessNodeProcessIdList, item.accessNodeProcessIdList) &&
+        form.setValuesIn(
+          'attrs.accessNodeProcessIdList',
+          item.accessNodeProcessIdList || [],
+        )
       connectionName !== item.name &&
         form.setValuesIn('attrs.connectionName', item.name)
     },
@@ -885,6 +895,10 @@ export function useFormScope({ canvasRef }) {
       form.setValuesIn(
         'attrs.accessNodeProcessId',
         connection.accessNodeProcessId,
+      )
+      form.setValuesIn(
+        'attrs.accessNodeProcessIdList',
+        connection.accessNodeProcessIdList || [],
       )
       form.setValuesIn('attrs.accessNodeType', connection.accessNodeType)
       form.setValuesIn('attrs.priorityProcessId', connection.priorityProcessId)
