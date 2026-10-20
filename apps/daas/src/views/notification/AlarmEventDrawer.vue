@@ -6,7 +6,7 @@ import {
   ALARM_STATUS_MAP,
 } from '@tap/business/src/shared/const'
 import dayjs from 'dayjs'
-import { computed, ref, watch } from 'vue'
+import { computed, inject, ref, watch } from 'vue'
 import { useI18n } from '@tap/i18n'
 import { useRouter } from 'vue-router'
 import DeliverySummaryTag from './DeliverySummaryTag.vue'
@@ -16,6 +16,11 @@ const emit = defineEmits<{ (e: 'update:visible', value: boolean): void }>()
 const { t } = useI18n()
 const router = useRouter()
 const alarmKeyMap: Record<string, string> = getAlarmKeyMap()
+const hasPermissionByCode = inject<(code: string) => boolean>(
+  'hasPermissionByCode',
+)
+const canViewNotifications =
+  hasPermissionByCode?.('v2_notification_record') ?? false
 
 const loading = ref(false)
 const detail = ref<AlarmEvent | null>(null)
@@ -208,9 +213,13 @@ function openNotifications() {
               fmt(detail.deliverySummary.latestDeliveryTime)
             }}
           </span>
-          <el-button text type="primary" @click="openNotifications">{{
-            t('alarm_event_view_notifications')
-          }}</el-button>
+          <el-button
+            v-if="canViewNotifications"
+            text
+            type="primary"
+            @click="openNotifications"
+            >{{ t('alarm_event_view_notifications') }}</el-button
+          >
         </div>
       </template>
     </div>

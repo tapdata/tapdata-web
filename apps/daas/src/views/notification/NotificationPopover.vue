@@ -14,7 +14,7 @@ import { $on } from '@tap/shared/src/event'
 import dayjs from 'dayjs'
 import { ElMessageBox } from 'element-plus'
 import { debounce } from 'lodash-es'
-import { computed, getCurrentInstance, onMounted, ref } from 'vue'
+import { computed, getCurrentInstance, inject, onMounted, ref } from 'vue'
 import { useI18n } from '@tap/i18n'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -36,6 +36,11 @@ const drawerId = ref('')
 
 const unRead = computed(() => store.state.notification?.unRead || 0)
 const isAdmin = Number.parseInt(Cookie.get('isAdmin') || '0') === 1
+const hasPermissionByCode = inject<(code: string) => boolean>(
+  'hasPermissionByCode',
+)
+// 铃铛只展示发给自己的通知；查看全部通知记录需要通知记录权限
+const canViewAll = hasPermissionByCode?.('v2_notification_record') ?? false
 
 const fmt = (time?: string) =>
   time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : ''
@@ -91,6 +96,7 @@ async function markAllRead() {
 }
 
 function viewAll() {
+  if (!canViewAll) return
   router.push({ name: 'notificationRecords' })
 }
 
@@ -177,7 +183,7 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <div class="text-center pt-2 border-top">
+    <div v-if="canViewAll" class="text-center pt-2 border-top">
       <el-button text type="primary" @click="viewAll">{{
         t('notification_view_all_records')
       }}</el-button>

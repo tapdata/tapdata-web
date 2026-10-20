@@ -96,6 +96,8 @@ export interface NotificationRecord {
   legacy: boolean
   /** 关联告警事件已被清除（历史版本任务重新运行时删除） */
   alarmEventMissing?: boolean
+  /** 记录中有发给当前用户的消息，才可标记已读/未读 */
+  readable: boolean
   messageIds: string[]
   title: string
   level: string

@@ -1,6 +1,6 @@
 <script>
 import {
-  closeAlarms,
+  closeAlarmEvents,
   getAlarmEventStats,
   listAlarmEvents,
 } from '@tap/api/src/core/alarm'
@@ -26,6 +26,7 @@ const OBJECT_TYPES = [
 ]
 
 export default {
+  inject: ['hasPermissionByCode'],
   components: {
     TablePage,
     FilterBar,
@@ -44,6 +45,9 @@ export default {
     }
   },
   computed: {
+    canClose() {
+      return this.hasPermissionByCode('v2_alarm_event_ack_close')
+    },
     table() {
       return this.$refs.table
     },
@@ -198,7 +202,7 @@ export default {
           type: 'warning',
         },
       ).then(() =>
-        closeAlarms(ids.join(',')).then(() => {
+        closeAlarmEvents(ids).then(() => {
           this.$message.success(
             i18n.t('daas_notification_systemalarm_guanbichenggong'),
           )
@@ -225,6 +229,7 @@ export default {
   <PageContainer>
     <template #actions>
       <el-button
+        v-if="canClose"
         :disabled="!multipleSelection.length"
         type="primary"
         @click="handleClose"
@@ -339,16 +344,21 @@ export default {
               @click.stop="goTask(row)"
               >{{ $t('alarm_event_go_task') }}</el-button
             >
-            <el-divider direction="vertical" />
-            <el-tooltip :content="$t('alarm_event_close_hint')" placement="top">
-              <el-button
-                text
-                type="primary"
-                :disabled="row.status === 'CLOESE'"
-                @click.stop="handleClose(row.id)"
-                >{{ $t('public_button_close') }}</el-button
+            <template v-if="canClose">
+              <el-divider direction="vertical" />
+              <el-tooltip
+                :content="$t('alarm_event_close_hint')"
+                placement="top"
               >
-            </el-tooltip>
+                <el-button
+                  text
+                  type="primary"
+                  :disabled="row.status === 'CLOESE'"
+                  @click.stop="handleClose(row.id)"
+                  >{{ $t('public_button_close') }}</el-button
+                >
+              </el-tooltip>
+            </template>
           </template>
         </el-table-column>
       </TablePage>

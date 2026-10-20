@@ -2663,6 +2663,9 @@ export default {
   notification_record_content: '通知內容',
   notification_record_legacy: '歷史記錄，無發送明細',
   notification_record_alarm_missing: '告警事件已在任務重新運行時清除',
+  notification_record_others: '其他使用者的通知',
+  notification_record_others_hint:
+    '其他使用者的通知，查看不會改變對方的閱讀狀態',
   alarm_event_archived: '任務重新運行時歸檔',
   notification_record_delivery: '發送結果',
   notification_record_latest_notify: '最近通知時間',

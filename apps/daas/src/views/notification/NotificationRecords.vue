@@ -248,7 +248,12 @@ export default {
             @fetch="table.fetch(1)"
           />
         </template>
-        <el-table-column type="selection" width="32" align="center" />
+        <el-table-column
+          type="selection"
+          width="32"
+          align="center"
+          :selectable="(row) => row.readable"
+        />
         <el-table-column width="28">
           <template #default="{ row }">
             <span v-if="row.unread" class="notification-unread-dot" />
@@ -323,14 +328,16 @@ export default {
             <el-button text type="primary" @click.stop="openDetail(row)">{{
               $t('public_button_details')
             }}</el-button>
-            <el-divider direction="vertical" />
-            <el-button text type="primary" @click.stop="toggleRow(row)">
-              {{
-                row.unread
-                  ? $t('notification_record_mark_read')
-                  : $t('notification_record_mark_unread')
-              }}
-            </el-button>
+            <template v-if="row.readable">
+              <el-divider direction="vertical" />
+              <el-button text type="primary" @click.stop="toggleRow(row)">
+                {{
+                  row.unread
+                    ? $t('notification_record_mark_read')
+                    : $t('notification_record_mark_unread')
+                }}
+              </el-button>
+            </template>
           </template>
         </el-table-column>
       </TablePage>

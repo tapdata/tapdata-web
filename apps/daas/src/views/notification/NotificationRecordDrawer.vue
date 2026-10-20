@@ -7,7 +7,7 @@ import {
 import { getAlarmKeyMap } from '@tap/business/src/shared/alarm'
 import { ALARM_LEVEL_MAP } from '@tap/business/src/shared/const'
 import dayjs from 'dayjs'
-import { computed, ref, watch } from 'vue'
+import { computed, inject, ref, watch } from 'vue'
 import { useI18n } from '@tap/i18n'
 import { useRouter } from 'vue-router'
 import DeliverySummaryTag from './DeliverySummaryTag.vue'
@@ -25,6 +25,10 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const router = useRouter()
 const alarmKeyMap: Record<string, string> = getAlarmKeyMap()
+const hasPermissionByCode = inject<(code: string) => boolean>(
+  'hasPermissionByCode',
+)
+const canViewAlarm = hasPermissionByCode?.('v2_alarm_event') ?? false
 
 const loading = ref(false)
 const detail = ref<NotificationRecordDetail | null>(null)
@@ -46,7 +50,11 @@ async function load(id: string) {
   loading.value = true
   try {
     detail.value = await getNotificationRecord(id)
-    if (props.markReadOnOpen !== false && detail.value?.unread) {
+    if (
+      props.markReadOnOpen !== false &&
+      detail.value?.readable &&
+      detail.value.unread
+    ) {
       await updateOneNotificationReadState(id, true)
       detail.value.unread = false
       emit('changed')
@@ -99,7 +107,14 @@ function goAlarm() {
           <el-tag size="small">{{
             ALARM_LEVEL_MAP[detail.level]?.text || detail.level
           }}</el-tag>
-          <el-tag size="small" :type="detail.unread ? 'warning' : 'info'">
+          <el-tag v-if="!detail.readable" size="small" type="info">
+            {{ t('notification_record_others') }}
+          </el-tag>
+          <el-tag
+            v-else
+            size="small"
+            :type="detail.unread ? 'warning' : 'info'"
+          >
             {{
               detail.unread
                 ? t('notification_record_unread')
@@ -111,7 +126,16 @@ function goAlarm() {
               fmt(detail.readAt)
             }}</span
           >
-          <el-button text type="primary" class="ml-auto" @click="toggleRead">
+          <span v-if="!detail.readable" class="color-info fs-8 ml-auto">{{
+            t('notification_record_others_hint')
+          }}</span>
+          <el-button
+            v-else
+            text
+            type="primary"
+            class="ml-auto"
+            @click="toggleRead"
+          >
             {{
               detail.unread
                 ? t('notification_record_mark_read')
@@ -165,6 +189,7 @@ function goAlarm() {
             {{ t('alarm_event_go_task') }}
           </el-button>
           <el-button
+            v-if="canViewAlarm"
             text
             type="primary"
             :disabled="detail.legacy || detail.alarmEventMissing"

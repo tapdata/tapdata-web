@@ -850,19 +850,31 @@ export const routes = [
         path: '/alarm-events',
         name: 'alarmEvents',
         component: () => import('@/views/notification/AlarmEvents.vue'),
-        meta: { title: 'page_title_alarm_events', hideTitle: true },
+        meta: {
+          title: 'page_title_alarm_events',
+          hideTitle: true,
+          code: 'v2_alarm_event',
+        },
       },
       {
         path: '/notification-records',
         name: 'notificationRecords',
         component: () => import('@/views/notification/NotificationRecords.vue'),
-        meta: { title: 'page_title_notification_records', hideTitle: true },
+        meta: {
+          title: 'page_title_notification_records',
+          hideTitle: true,
+          code: 'v2_notification_record',
+        },
       },
       {
         path: '/operation-audit',
         name: 'operationAudit',
         component: () => import('@/views/notification/UserNotification.vue'),
-        meta: { title: 'page_title_operation_audit', hideTitle: true },
+        meta: {
+          title: 'page_title_operation_audit',
+          hideTitle: true,
+          code: 'v2_audit_log_list',
+        },
       },
       /* ---------- 用户管理  ----------*/
       {

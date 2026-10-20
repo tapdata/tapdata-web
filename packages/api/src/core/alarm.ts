@@ -327,3 +327,8 @@ export function getAlarmEvent(id: string) {
 export function getAlarmEventStats() {
   return requestClient.get<AlarmEventStats>('/api/alarms/stats')
 }
+
+/** 关闭告警事件，需要告警关闭权限并写入操作审计 */
+export function closeAlarmEvents(ids: string[]) {
+  return requestClient.post('/api/alarms/close', ids)
+}

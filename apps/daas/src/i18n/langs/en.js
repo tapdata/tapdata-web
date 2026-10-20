@@ -2826,6 +2826,9 @@ export default {
   notification_record_legacy: 'Historical record without delivery details',
   notification_record_alarm_missing:
     'Alarm event was cleared when the task was rerun',
+  notification_record_others: "Another user's notification",
+  notification_record_others_hint:
+    "Another user's notification; viewing it does not change their read state",
   alarm_event_archived: 'Archived when the task was rerun',
   notification_record_delivery: 'Delivery',
   notification_record_latest_notify: 'Last Notified',
