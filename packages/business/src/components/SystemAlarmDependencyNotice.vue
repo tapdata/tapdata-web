@@ -50,44 +50,157 @@ function retry() {
 
 <template>
   <div class="system-alarm-dependency-notice" aria-live="polite">
-    <ElAlert
+    <div
       v-if="isBlocked"
-      type="warning"
-      :closable="false"
-      show-icon
-      class="mb-2"
+      class="system-alarm-dependency-notice__alert is-warning"
+      role="alert"
     >
-      <span>{{ t('packages_business_system_alarm_email_disabled_hint') }}</span>
-      <RouterLink
-        v-if="hasPermission('v2_alarm_settings_menu')"
-        :to="{ name: 'alarmSetting' }"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="ml-2"
+      <el-icon
+        :size="16"
+        class="system-alarm-dependency-notice__icon"
+        aria-hidden="true"
       >
-        {{ t('packages_business_system_alarm_open_settings') }}
-      </RouterLink>
-      <span v-else class="ml-2">
-        {{ t('packages_business_system_alarm_contact_admin') }}
-      </span>
-    </ElAlert>
-    <ElAlert
+        <i-lucide-circle-alert />
+      </el-icon>
+      <div class="system-alarm-dependency-notice__content">
+        <span>{{
+          t('packages_business_system_alarm_email_disabled_hint')
+        }}</span>
+        <RouterLink
+          v-if="hasPermission('v2_alarm_settings_menu')"
+          :to="{ name: 'alarmSetting' }"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="system-alarm-dependency-notice__link"
+        >
+          {{ t('packages_business_system_alarm_open_settings') }}
+        </RouterLink>
+        <span v-else class="system-alarm-dependency-notice__detail">
+          {{ t('packages_business_system_alarm_contact_admin') }}
+        </span>
+      </div>
+    </div>
+    <div
       v-if="showRetry"
-      type="info"
-      :closable="false"
-      show-icon
-      class="mb-2"
+      class="system-alarm-dependency-notice__alert is-info"
+      role="status"
     >
-      <span>{{ t('packages_business_system_alarm_status_load_failed') }}</span>
-      <ElButton link type="primary" :disabled="retryDisabled" @click="retry">
-        {{ t('packages_business_system_alarm_retry') }}
-      </ElButton>
-    </ElAlert>
+      <el-icon
+        :size="16"
+        class="system-alarm-dependency-notice__icon"
+        aria-hidden="true"
+      >
+        <i-lucide-info />
+      </el-icon>
+      <div class="system-alarm-dependency-notice__content">
+        <span>{{
+          t('packages_business_system_alarm_status_load_failed')
+        }}</span>
+        <button
+          type="button"
+          class="system-alarm-dependency-notice__link"
+          :disabled="retryDisabled"
+          @click="retry"
+        >
+          {{ t('packages_business_system_alarm_retry') }}
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .system-alarm-dependency-notice {
   width: 100%;
+  color: var(--el-text-color-primary);
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.system-alarm-dependency-notice__alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: var(--el-border-radius-large);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.system-alarm-dependency-notice__alert
+  + .system-alarm-dependency-notice__alert {
+  margin-top: 8px;
+}
+
+.system-alarm-dependency-notice__alert:first-child {
+  margin-top: 8px;
+}
+
+.system-alarm-dependency-notice__alert.is-warning {
+  background-color: var(--el-color-warning-light-9);
+  border-color: var(--el-color-warning-light-8);
+}
+
+.system-alarm-dependency-notice__alert.is-info {
+  background-color: var(--el-color-info-light-9);
+  border-color: var(--el-color-info-light-8);
+}
+
+.system-alarm-dependency-notice__icon {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: var(--el-color-warning);
+}
+
+.is-info .system-alarm-dependency-notice__icon {
+  color: var(--el-color-info);
+}
+
+.system-alarm-dependency-notice__content {
+  min-width: 0;
+  flex: 1;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.system-alarm-dependency-notice__link {
+  display: inline;
+  margin-left: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--el-color-primary);
+  font: inherit;
+  font-weight: 500;
+  line-height: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.system-alarm-dependency-notice__link:hover {
+  text-decoration: underline;
+}
+
+.system-alarm-dependency-notice__link:visited {
+  color: var(--el-color-primary);
+}
+
+.system-alarm-dependency-notice__link:focus-visible {
+  border-radius: 2px;
+  outline: 2px solid var(--el-color-primary);
+  outline-offset: 2px;
+}
+
+.system-alarm-dependency-notice__link:disabled {
+  color: var(--el-text-color-disabled);
+  cursor: not-allowed;
+}
+
+.system-alarm-dependency-notice__detail {
+  margin-left: 6px;
+  font-weight: 500;
 }
 </style>

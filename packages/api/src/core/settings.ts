@@ -11,6 +11,8 @@ export interface Setting {
   hot_reloading: boolean
   id: string
   key: string
+  parent_key?: string
+  parent_value?: string | number | boolean
   key_label: string
   last_update: string
   scope: string

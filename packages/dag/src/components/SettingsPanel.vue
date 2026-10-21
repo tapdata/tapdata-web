@@ -236,6 +236,9 @@ function getAlarmSettingSchema(
     'x-component': 'div',
     'x-component-props': {
       class: 'flex align-center',
+      style: {
+        flexWrap: 'wrap',
+      },
     },
     properties: {
       open: openSchema,
@@ -281,6 +284,9 @@ function getAlarmSettingSchema(
           taskOpen: `{{$values.alarmSettings[${index}].open}}`,
           taskNotify: `{{$values.alarmSettings[${index}].notify}}`,
           showRetry: index === 0,
+          style: {
+            flex: '0 0 100%',
+          },
         },
         'x-reactions': {
           dependencies: ['.open', '.notify'],
