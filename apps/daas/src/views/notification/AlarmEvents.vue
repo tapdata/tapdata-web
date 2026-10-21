@@ -237,132 +237,128 @@ export default {
         {{ $t('public_button_close') }}
       </el-button>
     </template>
-    <div class="alarm-events flex flex-column h-100 overflow-hidden">
-      <div class="alarm-events-cards flex gap-3 mb-3">
-        <div
-          v-for="card in cards"
-          :key="card.key"
-          class="alarm-events-card flex-1 rounded-lg p-3 cursor-pointer"
-          @click="applyCard(card)"
-        >
-          <div class="color-info fs-7">{{ $t(card.label) }}</div>
-          <div class="fs-3 fw-sub mt-1">{{ stats[card.key] }}</div>
+    <TablePage
+      ref="table"
+      row-key="id"
+      :remote-method="getData"
+      @selection-change="(val) => (multipleSelection = val)"
+      @row-click="openDetail"
+    >
+      <template #nav>
+        <div class="alarm-events-cards flex gap-3">
+          <div
+            v-for="card in cards"
+            :key="card.key"
+            class="alarm-events-card flex-1 rounded-lg p-3 cursor-pointer"
+            @click="applyCard(card)"
+          >
+            <div class="color-info fs-7">{{ $t(card.label) }}</div>
+            <div class="fs-3 fw-sub mt-1">{{ stats[card.key] }}</div>
+          </div>
         </div>
-      </div>
-      <TablePage
-        ref="table"
-        row-key="id"
-        class="flex-1"
-        :remote-method="getData"
-        @selection-change="(val) => (multipleSelection = val)"
-        @row-click="openDetail"
+      </template>
+      <template #search>
+        <FilterBar
+          v-model:value="searchParams"
+          :items="filterItems"
+          @fetch="table.fetch(1)"
+        />
+      </template>
+      <el-table-column type="selection" width="32" align="center" />
+      <el-table-column
+        :label="$t('packages_dag_components_alert_gaojingjibie')"
+        prop="level"
+        width="100"
       >
-        <template #search>
-          <FilterBar
-            v-model:value="searchParams"
-            :items="filterItems"
-            @fetch="table.fetch(1)"
-          />
+        <template #default="{ row }">
+          <span :class="[`status-${row.levelType}`, 'status-block']">{{
+            row.levelLabel
+          }}</span>
         </template>
-        <el-table-column type="selection" width="32" align="center" />
-        <el-table-column
-          :label="$t('packages_dag_components_alert_gaojingjibie')"
-          prop="level"
-          width="100"
-        >
-          <template #default="{ row }">
-            <span :class="[`status-${row.levelType}`, 'status-block']">{{
-              row.levelLabel
-            }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          :label="$t('packages_dag_components_alert_gaojingzhuangtai')"
-          prop="statusLabel"
-          width="90"
-        />
-        <el-table-column
-          :label="$t('daas_notification_systemalarm_gaojingduixiang')"
-          min-width="160"
-        >
-          <template #default="{ row }">
-            <div class="ellipsis">{{ row.objectName || '-' }}</div>
-            <div class="color-info fs-8">
-              {{ $t(`alarm_object_type_${row.objectType}`) }}
-              <span v-if="row.objectDeleted"
-                >· {{ $t('alarm_event_object_deleted') }}</span
-              >
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column
-          :label="$t('packages_dag_components_alert_gaojingmiaoshu')"
-          min-width="200"
-        >
-          <template #default="{ row }">
-            <div class="alarm-events-summary">{{ row.summary }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column
-          :label="$t('packages_dag_components_alert_gaojingshoucifa')"
-          prop="firstOccurrenceText"
-          width="160"
-        />
-        <el-table-column
-          :label="$t('packages_dag_components_alert_gaojingzuijinfa')"
-          prop="lastOccurrenceText"
-          width="160"
-        />
-        <el-table-column
-          :label="$t('alarm_event_occurrence_count')"
-          prop="occurrenceCount"
-          width="90"
-          align="right"
-        />
-        <el-table-column
-          :label="$t('alarm_event_notification_result')"
-          min-width="150"
-        >
-          <template #default="{ row }">
-            <DeliverySummaryTag :summary="row.deliverySummary" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          fixed="right"
-          :label="$t('public_operation')"
-          width="200"
-        >
-          <template #default="{ row }">
-            <el-button text type="primary" @click.stop="openDetail(row)">{{
-              $t('public_button_details')
-            }}</el-button>
-            <el-divider direction="vertical" />
-            <el-button
-              text
-              type="primary"
-              :disabled="!row.taskId || row.objectDeleted"
-              @click.stop="goTask(row)"
-              >{{ $t('alarm_event_go_task') }}</el-button
+      </el-table-column>
+      <el-table-column
+        :label="$t('packages_dag_components_alert_gaojingzhuangtai')"
+        prop="statusLabel"
+        width="90"
+      />
+      <el-table-column
+        :label="$t('daas_notification_systemalarm_gaojingduixiang')"
+        min-width="160"
+      >
+        <template #default="{ row }">
+          <div class="ellipsis">{{ row.objectName || '-' }}</div>
+          <div class="color-info fs-8">
+            {{ $t(`alarm_object_type_${row.objectType}`) }}
+            <span v-if="row.objectDeleted"
+              >· {{ $t('alarm_event_object_deleted') }}</span
             >
-            <template v-if="canClose">
-              <el-divider direction="vertical" />
-              <el-tooltip
-                :content="$t('alarm_event_close_hint')"
-                placement="top"
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('packages_dag_components_alert_gaojingmiaoshu')"
+        min-width="200"
+      >
+        <template #default="{ row }">
+          <div class="alarm-events-summary">{{ row.summary }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('packages_dag_components_alert_gaojingshoucifa')"
+        prop="firstOccurrenceText"
+        width="160"
+      />
+      <el-table-column
+        :label="$t('packages_dag_components_alert_gaojingzuijinfa')"
+        prop="lastOccurrenceText"
+        width="160"
+      />
+      <el-table-column
+        :label="$t('alarm_event_occurrence_count')"
+        prop="occurrenceCount"
+        width="90"
+        align="right"
+      />
+      <el-table-column
+        :label="$t('alarm_event_notification_result')"
+        min-width="150"
+      >
+        <template #default="{ row }">
+          <DeliverySummaryTag :summary="row.deliverySummary" />
+        </template>
+      </el-table-column>
+      <el-table-column
+        fixed="right"
+        :label="$t('public_operation')"
+        width="200"
+      >
+        <template #default="{ row }">
+          <el-button text type="primary" @click.stop="openDetail(row)">{{
+            $t('public_button_details')
+          }}</el-button>
+          <el-divider direction="vertical" />
+          <el-button
+            text
+            type="primary"
+            :disabled="!row.taskId || row.objectDeleted"
+            @click.stop="goTask(row)"
+            >{{ $t('alarm_event_go_task') }}</el-button
+          >
+          <template v-if="canClose">
+            <el-divider direction="vertical" />
+            <el-tooltip :content="$t('alarm_event_close_hint')" placement="top">
+              <el-button
+                text
+                type="primary"
+                :disabled="row.status === 'CLOESE'"
+                @click.stop="handleClose(row.id)"
+                >{{ $t('public_button_close') }}</el-button
               >
-                <el-button
-                  text
-                  type="primary"
-                  :disabled="row.status === 'CLOESE'"
-                  @click.stop="handleClose(row.id)"
-                  >{{ $t('public_button_close') }}</el-button
-                >
-              </el-tooltip>
-            </template>
+            </el-tooltip>
           </template>
-        </el-table-column>
-      </TablePage>
-    </div>
+        </template>
+      </el-table-column>
+    </TablePage>
     <AlarmEventDrawer v-model:visible="drawerVisible" :id="drawerId" />
   </PageContainer>
 </template>

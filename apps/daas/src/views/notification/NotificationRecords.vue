@@ -223,124 +223,123 @@ export default {
         {{ $t('notify_setting') }}
       </el-button>
     </template>
-    <div class="flex flex-column h-100 overflow-hidden">
-      <el-tabs :model-value="tab" @tab-change="switchTab">
-        <el-tab-pane
-          v-for="item in tabs"
-          :key="item"
-          :name="item"
-          :label="$t(`notification_record_tab_${item.toLowerCase()}`)"
-        />
-      </el-tabs>
-      <TablePage
-        ref="table"
-        row-key="id"
-        class="flex-1"
-        :remote-method="getData"
-        @selection-change="(val) => (multipleSelection = val)"
-        @row-click="openDetail"
-      >
-        <template #search>
-          <FilterBar
-            v-model:value="searchParams"
-            :items="filterItems"
-            @fetch="table.fetch(1)"
+    <TablePage
+      ref="table"
+      row-key="id"
+      :remote-method="getData"
+      @selection-change="(val) => (multipleSelection = val)"
+      @row-click="openDetail"
+    >
+      <template #nav>
+        <el-tabs :model-value="tab" @tab-change="switchTab">
+          <el-tab-pane
+            v-for="item in tabs"
+            :key="item"
+            :name="item"
+            :label="$t(`notification_record_tab_${item.toLowerCase()}`)"
           />
+        </el-tabs>
+      </template>
+      <template #search>
+        <FilterBar
+          v-model:value="searchParams"
+          :items="filterItems"
+          @fetch="table.fetch(1)"
+        />
+      </template>
+      <el-table-column
+        type="selection"
+        width="32"
+        align="center"
+        :selectable="(row) => row.readable"
+      />
+      <el-table-column width="28">
+        <template #default="{ row }">
+          <span v-if="row.unread" class="notification-unread-dot" />
         </template>
-        <el-table-column
-          type="selection"
-          width="32"
-          align="center"
-          :selectable="(row) => row.readable"
-        />
-        <el-table-column width="28">
-          <template #default="{ row }">
-            <span v-if="row.unread" class="notification-unread-dot" />
+      </el-table-column>
+      <el-table-column
+        :label="$t('packages_dag_components_alert_gaojingjibie')"
+        width="100"
+      >
+        <template #default="{ row }">
+          <span :class="[`status-${row.levelType}`, 'status-block']">{{
+            row.levelLabel
+          }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('notification_record_content')"
+        min-width="220"
+      >
+        <template #default="{ row }">
+          <div class="ellipsis" :class="{ 'fw-sub': row.unread }">
+            {{ row.title }}
+          </div>
+          <div v-if="row.legacy" class="color-info fs-8">
+            {{ $t('notification_record_legacy') }}
+          </div>
+          <div v-else-if="row.alarmEventMissing" class="color-info fs-8">
+            {{ $t('notification_record_alarm_missing') }}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('alarm_event_task')"
+        prop="taskName"
+        min-width="140"
+      />
+      <el-table-column
+        :label="$t('packages_dag_components_alert_gaojingshoucifa')"
+        prop="firstOccurrenceText"
+        width="160"
+      />
+      <el-table-column
+        :label="$t('packages_dag_components_alert_gaojingzuijinfa')"
+        prop="lastOccurrenceText"
+        width="160"
+      />
+      <el-table-column
+        :label="$t('alarm_event_occurrence_count')"
+        prop="occurrenceCount"
+        width="90"
+        align="right"
+      />
+      <el-table-column
+        :label="$t('notification_record_delivery')"
+        min-width="160"
+      >
+        <template #default="{ row }">
+          <DeliverySummaryTag :summary="row.deliverySummary" />
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('notification_record_latest_notify')"
+        prop="latestNotifyText"
+        width="160"
+      />
+      <el-table-column
+        fixed="right"
+        :label="$t('public_operation')"
+        width="170"
+      >
+        <template #default="{ row }">
+          <el-button text type="primary" @click.stop="openDetail(row)">{{
+            $t('public_button_details')
+          }}</el-button>
+          <template v-if="row.readable">
+            <el-divider direction="vertical" />
+            <el-button text type="primary" @click.stop="toggleRow(row)">
+              {{
+                row.unread
+                  ? $t('notification_record_mark_read')
+                  : $t('notification_record_mark_unread')
+              }}
+            </el-button>
           </template>
-        </el-table-column>
-        <el-table-column
-          :label="$t('packages_dag_components_alert_gaojingjibie')"
-          width="100"
-        >
-          <template #default="{ row }">
-            <span :class="[`status-${row.levelType}`, 'status-block']">{{
-              row.levelLabel
-            }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          :label="$t('notification_record_content')"
-          min-width="220"
-        >
-          <template #default="{ row }">
-            <div class="ellipsis" :class="{ 'fw-sub': row.unread }">
-              {{ row.title }}
-            </div>
-            <div v-if="row.legacy" class="color-info fs-8">
-              {{ $t('notification_record_legacy') }}
-            </div>
-            <div v-else-if="row.alarmEventMissing" class="color-info fs-8">
-              {{ $t('notification_record_alarm_missing') }}
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column
-          :label="$t('alarm_event_task')"
-          prop="taskName"
-          min-width="140"
-        />
-        <el-table-column
-          :label="$t('packages_dag_components_alert_gaojingshoucifa')"
-          prop="firstOccurrenceText"
-          width="160"
-        />
-        <el-table-column
-          :label="$t('packages_dag_components_alert_gaojingzuijinfa')"
-          prop="lastOccurrenceText"
-          width="160"
-        />
-        <el-table-column
-          :label="$t('alarm_event_occurrence_count')"
-          prop="occurrenceCount"
-          width="90"
-          align="right"
-        />
-        <el-table-column
-          :label="$t('notification_record_delivery')"
-          min-width="160"
-        >
-          <template #default="{ row }">
-            <DeliverySummaryTag :summary="row.deliverySummary" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          :label="$t('notification_record_latest_notify')"
-          prop="latestNotifyText"
-          width="160"
-        />
-        <el-table-column
-          fixed="right"
-          :label="$t('public_operation')"
-          width="170"
-        >
-          <template #default="{ row }">
-            <el-button text type="primary" @click.stop="openDetail(row)">{{
-              $t('public_button_details')
-            }}</el-button>
-            <template v-if="row.readable">
-              <el-divider direction="vertical" />
-              <el-button text type="primary" @click.stop="toggleRow(row)">
-                {{
-                  row.unread
-                    ? $t('notification_record_mark_read')
-                    : $t('notification_record_mark_unread')
-                }}
-              </el-button>
-            </template>
-          </template>
-        </el-table-column>
-      </TablePage>
-    </div>
+        </template>
+      </el-table-column>
+    </TablePage>
     <NotificationRecordDrawer
       v-model:visible="drawerVisible"
       :id="drawerId"
