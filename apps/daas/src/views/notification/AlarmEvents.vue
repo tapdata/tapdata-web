@@ -191,25 +191,18 @@ export default {
         },
       ]
     },
-    handleClose(id) {
+    async handleClose(id) {
       const ids = this.multipleSelection?.length
         ? this.multipleSelection.map((item) => item.id)
         : [id]
-      this.$confirm(
-        i18n.t('alarm_event_close_confirm'),
-        i18n.t('public_button_close'),
-        {
-          type: 'warning',
-        },
-      ).then(() =>
-        closeAlarmEvents(ids).then(() => {
-          this.$message.success(
-            i18n.t('daas_notification_systemalarm_guanbichenggong'),
-          )
-          this.table.fetch(1)
-          this.loadStats()
-        }),
+      const confirmed = await this.$confirm(i18n.t('alarm_event_close_confirm'))
+      if (!confirmed) return
+      await closeAlarmEvents(ids)
+      this.$message.success(
+        i18n.t('daas_notification_systemalarm_guanbichenggong'),
       )
+      this.table.fetch(1)
+      this.loadStats()
     },
     openDetail(row) {
       this.drawerId = row.id

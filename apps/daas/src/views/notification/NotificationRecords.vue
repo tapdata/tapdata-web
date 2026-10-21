@@ -168,7 +168,8 @@ export default {
     async markSelected(read) {
       const ids = this.multipleSelection.map((item) => item.id)
       if (!ids.length) return
-      await this.confirmScope(ids.length, read)
+      const confirmed = await this.confirmScope(ids.length, read)
+      if (!confirmed) return
       await updateNotificationReadState(ids, read)
       this.refresh()
     },
@@ -182,7 +183,12 @@ export default {
         this.$message.info(i18n.t('notification_record_nothing_to_mark'))
         return
       }
-      await this.confirmScope(preview.count, read, preview.truncated)
+      const confirmed = await this.confirmScope(
+        preview.count,
+        read,
+        preview.truncated,
+      )
+      if (!confirmed) return
       await updateNotificationReadState(preview.ids, read)
       this.refresh()
     },
@@ -197,8 +203,6 @@ export default {
         truncated
           ? `${message} ${i18n.t('notification_record_truncated')}`
           : message,
-        i18n.t('public_message_title_prompt'),
-        { type: 'warning' },
       )
     },
     async toggleRow(row) {

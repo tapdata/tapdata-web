@@ -12,7 +12,7 @@ import Cookie from '@tap/shared/src/cookie'
 import { getSettingByKey } from '@tap/shared/src/settings'
 import { $on } from '@tap/shared/src/event'
 import dayjs from 'dayjs'
-import { ElMessageBox } from 'element-plus'
+import { Modal } from '@tap/component/src/modal'
 import { debounce } from 'lodash-es'
 import { computed, getCurrentInstance, inject, onMounted, ref } from 'vue'
 import { useI18n } from '@tap/i18n'
@@ -86,11 +86,10 @@ function open(record: NotificationRecord) {
 async function markAllRead() {
   const preview = await previewNotificationReadState({ tab: 'UNREAD' }, true)
   if (!preview?.count) return
-  await ElMessageBox.confirm(
+  const confirmed = await Modal.confirm(
     t('notification_record_confirm_read', [preview.count]),
-    t('public_message_title_prompt'),
-    { type: 'warning' },
   )
+  if (!confirmed) return
   await updateNotificationReadState(preview.ids, true)
   refresh()
 }
