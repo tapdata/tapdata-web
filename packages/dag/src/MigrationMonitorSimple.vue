@@ -968,7 +968,8 @@ export default {
               isError = true
             }
           })
-          isError && (someErrorMsg = this.$t('packages_dag_mixins_editor_suoshuage'))
+          isError &&
+            (someErrorMsg = this.$t('packages_dag_mixins_editor_suoshuage'))
         }
       } else if (accessNodeProcessIdArr.length === 1) {
         // 如果画布上仅有一个所属agent，自动设置为任务的agent
@@ -1049,7 +1050,18 @@ export default {
       this.isSaving = true
       try {
         this.wsAgentLive()
-        await startTask(this.dataflow.id)
+        const response = await startTask(this.dataflow.id)
+        const payload = response?.data ?? response
+        const businessError = Array.isArray(payload)
+          ? payload.find((item) => item?.code && item.code !== 'ok')
+          : payload?.code && payload.code !== 'ok'
+            ? payload
+            : null
+        if (businessError) {
+          this.handleError(businessError)
+          this.isSaving = false
+          return
+        }
         this.$message.success(this.$t('public_message_operation_success'))
         this.isSaving = false
         this.isReset = false

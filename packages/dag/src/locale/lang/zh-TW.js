@@ -59,6 +59,23 @@ export default {
   packages_dag_agent_setting_from: '代理设置來自以下連結',
   packages_dag_connection_form_automatic: '平台自動分配',
   packages_dag_connection_form_manual: '用戶手動指定',
+  packages_dag_agent_display_unavailable: '暫無法取得 Agent 資訊',
+  packages_dag_agent_display_priority: '優先',
+  packages_dag_task_agent_custom: '自訂 Agent 調度',
+  packages_dag_task_agent_auto_desc:
+    '平台將根據任務涉及的連線自動選擇可用 Agent',
+  packages_dag_task_agent_customize: '自訂',
+  packages_dag_task_agent_use_automatic: '恢復自動分配',
+  packages_dag_task_agent_compatible_summary:
+    '已根據 {connections} 個連線篩選，可選擇 {agents} 項',
+  packages_dag_task_agent_options_summary: '可選擇 {agents} 項',
+  packages_dag_task_agent_no_compatible: '沒有相容的 Agent',
+  packages_dag_task_agent_no_compatible_desc:
+    '目前連線設定存在衝突，請調整連線設定或恢復平台自動分配。',
+  packages_dag_task_agent_no_available_desc:
+    '目前沒有可選擇的 Agent，請檢查 Agent 清單或恢復平台自動分配。',
+  packages_dag_task_agent_selection_invalid:
+    '目前選擇已不符合連線設定，請重新選擇或恢復平台自動分配。',
   packages_dag_task_setting_automatic_ddl: '自動DDL',
   packages_dag_task_setting_distinct_write_type: '去重寫入機制',
   packages_dag_task_setting_transformer_concurrency: '目標寫入線程數',

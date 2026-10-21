@@ -466,6 +466,23 @@ const openBatchAgentSettingsDialog = () => {
   batchAgentSettingsDialog.value?.open(multipleSelection.value as any)
 }
 
+const handleBatchOperation = (command: string) => {
+  switch (command) {
+    case 'permissions':
+      handlePermissionsSettings()
+      break
+    case 'agent-settings':
+      openBatchAgentSettingsDialog()
+      break
+    case 'tags':
+      openBatchTagDialog()
+      break
+    case 'export':
+      handleExport()
+      break
+  }
+}
+
 const handleBatchAgentSettingsSubmit = async (
   payload: BatchAgentSettingsPayload,
 ) => {
@@ -813,26 +830,50 @@ onUnmounted(() => {
         </FilterBar>
       </template>
       <template #multipleSelectionActions>
-        <ElButton v-if="isDaas" @click="handlePermissionsSettings"
-          >{{
-            $t('packages_business_permissionse_settings_create_quanxianshezhi')
-          }}
-        </ElButton>
-        <ElButton @click="openBatchAgentSettingsDialog">
-          {{ $t('packages_business_connections_list_batch_agent_settings') }}
-        </ElButton>
-        <ElButton
-          v-if="isDaas"
-          v-readonlybtn="'datasource_category_application'"
-          class="btn"
-          @click="openBatchTagDialog"
-        >
-          <span> {{ $t('public_button_bulk_tag') }}</span>
-        </ElButton>
-        <ElButton v-if="isDaas" @click="handleExport">
-          <el-icon><i-lucide-download /></el-icon>
-          <span> {{ $t('public_button_export') }}</span>
-        </ElButton>
+        <ElDropdown @command="handleBatchOperation">
+          <ElButton>
+            {{ $t('packages_business_connections_list_batch_operation') }}
+            <el-icon class="ml-1"><i-lucide-chevron-down /></el-icon>
+          </ElButton>
+          <template #dropdown>
+            <ElDropdownMenu>
+              <ElDropdownItem v-if="isDaas" command="permissions">
+                <el-icon :size="14" class="mr-2">
+                  <i-lucide-shield-check />
+                </el-icon>
+                {{
+                  $t(
+                    'packages_business_permissionse_settings_create_quanxianshezhi',
+                  )
+                }}
+              </ElDropdownItem>
+              <ElDropdownItem command="agent-settings">
+                <el-icon :size="14" class="mr-2">
+                  <i-lucide-settings-2 />
+                </el-icon>
+                {{
+                  $t('packages_business_connections_list_batch_agent_settings')
+                }}
+              </ElDropdownItem>
+              <ElDropdownItem
+                v-if="isDaas"
+                v-readonlybtn="'datasource_category_application'"
+                command="tags"
+              >
+                <el-icon :size="14" class="mr-2">
+                  <i-lucide-tag />
+                </el-icon>
+                {{ $t('public_button_bulk_tag') }}
+              </ElDropdownItem>
+              <ElDropdownItem v-if="isDaas" command="export">
+                <el-icon :size="14" class="mr-2">
+                  <i-lucide-download />
+                </el-icon>
+                {{ $t('public_button_export') }}
+              </ElDropdownItem>
+            </ElDropdownMenu>
+          </template>
+        </ElDropdown>
       </template>
       <ElTableColumn
         type="selection"

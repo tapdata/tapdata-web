@@ -999,50 +999,9 @@ export function useCanvasOperation() {
 
   // --- Agent 校验 ---
   const validateAgent = () => {
-    let someErrorMsg: string | undefined
-    const nodes = allNodes.value.filter(
-      (node: any) => node.type === 'database' || node.type === 'table',
-    )
-    const accessNodeProcessIdArr = [
-      ...nodes.reduce((set: Set<string>, item: any) => {
-        item.attrs.accessNodeProcessId &&
-          set.add(item.attrs.accessNodeProcessId)
-        return set
-      }, new Set<string>()),
-    ]
-
-    if (accessNodeProcessIdArr.length > 1) {
-      const chooseId = dataflowStore.dataflow.accessNodeProcessId
-      if (!chooseId) {
-        someErrorMsg = t('packages_dag_mixins_editor_suoshuage')
-      } else {
-        let isError = false
-        const agent = (formScope as any)?.$agentMap?.[chooseId]
-        nodes.forEach((node: any) => {
-          if (
-            node.attrs.accessNodeProcessId &&
-            chooseId !== node.attrs.accessNodeProcessId
-          ) {
-            setNodeErrorMsg({
-              id: node.id,
-              msg: t('packages_dag_mixins_editor_gaijiedianbuzhi', {
-                val1: agent?.hostName,
-                val2: agent?.ip,
-              }),
-            })
-            isError = true
-          }
-        })
-        if (isError) someErrorMsg = t('packages_dag_mixins_editor_suoshuage')
-      }
-    } else if (accessNodeProcessIdArr.length === 1) {
-      const agentId = accessNodeProcessIdArr[0] as string
-      dataflowStore.dataflow.accessNodeType =
-        (formScope as any)?.$agentMap?.[agentId]?.accessNodeType ||
-        'MANUALLY_SPECIFIED_BY_THE_USER'
-      dataflowStore.dataflow.accessNodeProcessId = agentId
-    }
-    return someErrorMsg
+    // Connection Agent policies are validated by TM on save. Do not infer or
+    // write the task-level Agent from DAG node attributes here.
+    return undefined
   }
 
   // --- validateSetting (需要外部传入 configPanel ref) ---
@@ -1672,7 +1631,18 @@ export function useCanvasOperation() {
     batchStartTasks([dataflowStore.dataflow.id], {
       silenceMessage: true,
     })
-      .then(() => {
+      .then((response) => {
+        const payload = response?.data ?? response
+        const failure = Array.isArray(payload)
+          ? payload.find((item) => item?.code && item.code !== 'ok')
+          : payload?.code && payload.code !== 'ok'
+            ? payload
+            : null
+        if (failure) {
+          buried(buriedCode, { result: false })
+          handleError(failure)
+          return
+        }
         buried(buriedCode, { result: true })
         router.push({
           name: monitorRoute.value,

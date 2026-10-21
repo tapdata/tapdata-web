@@ -66,6 +66,7 @@ export default {
   packages_business_connection_form_access_node_tip:
     '自动情况下由平台分配节点进行连接访问，手动情况下由用户手动指定节点进行访问',
   packages_business_connections_list_batch_agent_settings: '批量设置 Agent',
+  packages_business_connections_list_batch_operation: '批量操作',
   packages_business_agent_settings_dialog_title: '批量设置 Agent',
   packages_business_agent_settings_dialog_subtitle:
     '将为选中的 {count} 个连接生成相同的 Agent 设置。',

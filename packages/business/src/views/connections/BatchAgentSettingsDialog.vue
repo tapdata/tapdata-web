@@ -3,7 +3,7 @@ import { action } from '@formily/reactive'
 import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 import { useI18n } from '@tap/i18n'
 import { uuid } from '@tap/shared'
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import {
   AGENT_GROUP_ALLOCATION,
   AUTOMATIC_AGENT_ALLOCATION,
@@ -31,6 +31,21 @@ const selectedConnections = ref<ConnectionRow[]>([])
 const schemaForm = ref<InstanceType<typeof SchemaToForm> | null>(null)
 const formValues = ref<Record<string, any>>({})
 const formKey = ref(0)
+
+watch(
+  visible,
+  (isVisible) => {
+    document.body.classList.toggle(
+      'batch-agent-settings-dialog-open',
+      isVisible,
+    )
+  },
+  { flush: 'sync' },
+)
+
+onBeforeUnmount(() => {
+  document.body.classList.remove('batch-agent-settings-dialog-open')
+})
 
 const schema = computed(() => ({
   type: 'object',
@@ -157,16 +172,19 @@ defineExpose({ open, close: handleClose })
         })
       }}
     </div>
-    <SchemaToForm
-      :key="formKey"
-      ref="schemaForm"
-      :schema="schema"
-      :scope="formScope"
-      :value="formValues"
-      layout="vertical"
-      label-width="100%"
-      class="w-100"
-    />
+    <ElConfigProvider :z-index="3000">
+      <SchemaToForm
+        :key="formKey"
+        ref="schemaForm"
+        :schema="schema"
+        :scope="formScope"
+        :value="formValues"
+        layout="vertical"
+        label-width="100%"
+        feedback-layout="terse"
+        class="w-100"
+      />
+    </ElConfigProvider>
     <template #footer>
       <ElButton @click="handleClose">{{ t('public_button_cancel') }}</ElButton>
       <ElButton
@@ -179,3 +197,9 @@ defineExpose({ open, close: handleClose })
     </template>
   </ElDialog>
 </template>
+
+<style lang="scss" scoped>
+:global(body.batch-agent-settings-dialog-open .el-popper[role='tooltip']) {
+  z-index: 3001 !important;
+}
+</style>
