@@ -72,7 +72,8 @@ interface ConditionItem {
   jsEngineName: string
   modeType: 'all' | 'custom'
   fieldMappingText?: string
-  sortFields?: string[]
+  // Raw comma-separated text while editing; Form.vue parses it into an array on save.
+  sortFields?: string[] | string
 }
 
 interface Props {
@@ -1776,12 +1777,7 @@ watch(conditionList, () => {
                         'packages_business_verification_custom_query_sort_fields_placeholder',
                       )
                     "
-                    @update:model-value="
-                      item.sortFields = $event
-                        .split(',')
-                        .map((field) => field.trim())
-                        .filter(Boolean)
-                    "
+                    @update:model-value="item.sortFields = $event"
                   />
                 </el-form-item>
                 <el-form-item
