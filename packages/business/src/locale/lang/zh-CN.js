@@ -488,6 +488,31 @@ export default {
   packages_business_verification_content_verify: '表全字段值校验',
   packages_business_verification_joint_verify: '关联字段值校验',
   packages_business_verification_hash_verify: '全表 hash 校验',
+  packages_business_verification_custom_query: '自定义查询校验',
+  packages_business_verification_custom_query_tip:
+    '分别在源端和目标端执行只读 SQL，并比较查询结果。',
+  packages_business_verification_custom_query_required:
+    '请分别填写源端和目标端查询语句。',
+  packages_business_verification_custom_query_source_sql: '源端 SQL',
+  packages_business_verification_custom_query_target_sql: '目标端 SQL',
+  packages_business_verification_custom_query_sort_fields: '排序字段',
+  packages_business_verification_custom_query_sort_fields_placeholder:
+    '填写逗号分隔的输出字段；留空时按全部字段排序',
+  packages_business_verification_custom_query_field_mapping: '字段映射',
+  packages_business_verification_custom_query_field_mapping_placeholder:
+    '每行一组映射：源字段=目标字段。留空时按同名字段匹配。',
+  packages_business_verification_custom_query_field_mapping_invalid:
+    '字段映射格式应为“源字段=目标字段”。',
+  packages_business_verification_advanced_doc_title: '高级校验说明',
+  packages_business_verification_advanced_doc_result:
+    '是否通过校验（passed：校验通过，failed：校验失败）；必填项。',
+  packages_business_verification_advanced_doc_message:
+    '校验失败时建议返回的异常信息；选填项。',
+  packages_business_verification_advanced_doc_data:
+    '校验失败时建议返回的目标数据；选填项。',
+  packages_business_verification_advanced_doc_example:
+    '完整示例：MongoDB 查询示例',
+  packages_business_verification_advanced_doc_mismatch: '记录不一致',
   packages_business_verification_job_enable: '已启用',
   packages_business_verification_job_disable: '已禁止',
   packages_business_verification_check_same: '校验一致',
