@@ -29,6 +29,7 @@ export default {
     if (!query.start && !query.end) {
       // 默认最近 7 天
       query.start = dayjs().subtract(7, 'day').startOf('day').valueOf()
+      query.end = dayjs().endOf('day').valueOf()
     }
     return {
       tabs: TABS,
@@ -49,11 +50,22 @@ export default {
     '$route.query': function (query) {
       this.searchParams = { ...query }
       this.tab = TABS.includes(query.tab) ? query.tab : 'ALL'
-      this.table.fetch(1)
+      this.table?.fetch?.(1)
     },
   },
   created() {
     this.getFilterItems()
+    if (!this.$route.query.start && !this.$route.query.end) {
+      this.$router.replace({
+        name: this.$route.name,
+        query: {
+          ...this.$route.query,
+          tab: this.tab,
+          start: this.searchParams.start,
+          end: this.searchParams.end,
+        },
+      })
+    }
   },
   methods: {
     currentParams() {
@@ -62,7 +74,7 @@ export default {
     switchTab(tab) {
       this.$router.replace({
         name: this.$route.name,
-        query: { ...this.$route.query, tab },
+        query: { ...this.$route.query, ...this.searchParams, tab },
       })
     },
     getData({ page }) {
