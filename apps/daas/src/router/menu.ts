@@ -57,6 +57,23 @@ export const MENU = [
   },
 
   {
+    name: 'opsCenter',
+    label: 'page_title_ops_center',
+    icon: 'warning',
+    group: 'bottom',
+    children: [{ name: 'alarmEvents' }],
+  },
+  {
+    name: 'messageCenter',
+    label: 'page_title_message_center',
+    icon: 'notice-system-notice',
+    group: 'bottom',
+    children: [
+      { name: 'notificationRecords' },
+      { name: 'notificationSetting' },
+    ],
+  },
+  {
     name: 'advancedFeatures',
     label: 'page_title_advanced_features',
     icon: 'vip-one',
@@ -125,6 +142,7 @@ export const MENU = [
         hidden: isCommunity,
       },
       { name: 'externalStorage', code: 'v2_external-storage_menu' },
+      { name: 'operationAudit' },
     ],
   },
 ]

@@ -85,6 +85,8 @@ const IS_IFRAME = ref(Boolean(sessionStorage.getItem('IS_IFRAME') === 'true'))
 
   :deep(.layout-side-scrollbar) {
     flex-shrink: 0;
+    will-change: transform;
+    transform: translateZ(0);
     .el-scrollbar__view {
       min-height: 100%;
       display: flex;
@@ -110,6 +112,10 @@ const IS_IFRAME = ref(Boolean(sessionStorage.getItem('IS_IFRAME') === 'true'))
       gap: 8px;
     }
 
+    .el-menu--inline {
+      overflow: hidden;
+    }
+
     .el-menu-item.is-active {
       background-color: var(--primary-hover-light);
     }
@@ -120,8 +126,22 @@ const IS_IFRAME = ref(Boolean(sessionStorage.getItem('IS_IFRAME') === 'true'))
     }
 
     .el-sub-menu__title + .el-menu {
-      margin-top: 8px;
+      padding-top: 8px;
       padding-inline-start: 10px;
+    }
+
+    .el-sub-menu__icon-arrow {
+      transition:
+        transform var(--el-transition-duration) ease-in-out,
+        opacity var(--el-transition-duration) ease-in-out;
+
+      &::before,
+      &::after {
+        transition:
+          transform var(--el-transition-duration) ease-in-out,
+          background-color var(--el-transition-duration) ease-in-out,
+          color var(--el-transition-duration) ease-in-out;
+      }
     }
 
     .el-menu-item.is-active,
