@@ -12,12 +12,16 @@ import { useI18n } from '@tap/i18n'
 import { useRouter } from 'vue-router'
 import DeliverySummaryTag from './DeliverySummaryTag.vue'
 
-const props = defineProps<{
-  id?: string
-  visible: boolean
-  /** 打开即标为已读；管理员查看他人记录时服务端不会改变他人状态 */
-  markReadOnOpen?: boolean
-}>()
+const props = withDefaults(
+  defineProps<{
+    id?: string
+    visible: boolean
+    /** 打开即标为已读；管理员查看他人记录时服务端不会改变他人状态 */
+    markReadOnOpen?: boolean
+  }>(),
+  // 布尔 prop 未传时会被转换为 false，需显式默认为 true
+  { markReadOnOpen: true },
+)
 const emit = defineEmits<{
   (e: 'update:visible', value: boolean): void
   (e: 'changed'): void
@@ -50,11 +54,7 @@ async function load(id: string) {
   loading.value = true
   try {
     detail.value = await getNotificationRecord(id)
-    if (
-      props.markReadOnOpen !== false &&
-      detail.value?.readable &&
-      detail.value.unread
-    ) {
+    if (props.markReadOnOpen && detail.value?.readable && detail.value.unread) {
       await updateOneNotificationReadState(id, true)
       detail.value.unread = false
       emit('changed')

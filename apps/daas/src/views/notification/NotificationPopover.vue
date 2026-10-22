@@ -104,6 +104,10 @@ onMounted(() => {
   loadLicense()
   const ws = instance?.proxy?.$ws
   ws?.on('notification', refresh)
+  // TM 只向已登记订阅的会话推送通知；断线重连是新会话，需重新订阅
+  const subscribe = () => ws?.send({ type: 'notification' })
+  ws?.on('open', subscribe)
+  subscribe()
   $on(instance?.proxy?.$root, 'notificationUpdate', refresh)
 })
 </script>
@@ -117,12 +121,7 @@ onMounted(() => {
     @show="loadRecords"
   >
     <template #reference>
-      <el-badge
-        class="item-badge"
-        :model-value="unRead"
-        :max="99"
-        :hidden="!unRead"
-      >
+      <el-badge class="item-badge" :value="unRead" :max="99" :hidden="!unRead">
         <el-button text size="large" @click="viewAll">
           <template #icon>
             <VIcon :size="20">xiaoxi-2</VIcon>
