@@ -20,6 +20,8 @@ interface ConnectionRow {
   shareCdcEnable?: boolean
 }
 
+defineProps<{ loading?: boolean }>()
+
 const emit = defineEmits<{
   submit: [payload: BatchAgentSettingsPayload]
 }>()
@@ -161,6 +163,8 @@ defineExpose({ open, close: handleClose })
     :title="t('packages_business_agent_settings_dialog_title')"
     width="560px"
     :close-on-click-modal="false"
+    :close-on-press-escape="!loading"
+    :show-close="!loading"
     append-to-body
     destroy-on-close
     @closed="handleClose"
@@ -186,9 +190,12 @@ defineExpose({ open, close: handleClose })
       />
     </ElConfigProvider>
     <template #footer>
-      <ElButton @click="handleClose">{{ t('public_button_cancel') }}</ElButton>
+      <ElButton :disabled="loading" @click="handleClose">{{
+        t('public_button_cancel')
+      }}</ElButton>
       <ElButton
         type="primary"
+        :loading="loading"
         :disabled="!selectedConnections.length"
         @click="handleSubmit"
       >
