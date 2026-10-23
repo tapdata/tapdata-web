@@ -1685,4 +1685,22 @@ export default {
     '当任一API Server 连接池资源紧张触发告警阈值时',
   packages_business_api_server_connection_pool_idle_warn:
     '当任一API Server 连接池连接数低于告警阈值时',
+  packages_business_agent_conflict_title: '切换 Agent 存在任务冲突',
+  packages_business_agent_conflict_summary:
+    '本次修改会与 {count} 个任务产生 Agent 冲突。请先调整任务或连接配置，再重新保存。',
+  packages_business_agent_conflict_hidden:
+    '其中有 {count} 个任务无权查看，请联系管理员处理。',
+  packages_business_agent_conflict_type: '任务类型',
+  packages_business_agent_conflict_status: '任务状态',
+  packages_business_agent_conflict_connections: '修改的连接',
+  packages_business_agent_conflict_reason: '冲突原因',
+  packages_business_agent_conflict_reason_connections:
+    '任务关联连接没有共同允许的 Agent。',
+  packages_business_agent_conflict_reason_task:
+    '任务指定的 Agent 不在连接允许的范围内。',
+  packages_business_agent_conflict_type_sync: '数据开发',
+  packages_business_agent_conflict_type_migrate: '数据复制',
+  packages_business_agent_conflict_type_logCollector: '共享挖掘',
+  packages_business_agent_conflict_type_connHeartbeat: '心跳任务',
+  packages_business_agent_conflict_type_inspect: '数据校验',
 }

@@ -1,0 +1,68 @@
+import type {
+  BatchUpdateConnectionAgentSettingsParams,
+  ConnectionAgentConflictReport,
+} from '@tap/api/src/core/connections'
+
+export function agentCheckPayload(
+  connectionIds: string[],
+  settings: Record<string, unknown>,
+  requestId = '',
+): BatchUpdateConnectionAgentSettingsParams {
+  const type = String(
+    settings.accessNodeType || 'AUTOMATIC_PLATFORM_ALLOCATION',
+  )
+  const clean = (value: unknown) =>
+    typeof value === 'string' && value.trim() ? value.trim() : null
+  return {
+    requestId,
+    connectionIds: [...connectionIds],
+    settings: {
+      accessNodeType: type,
+      accessNodeProcessId:
+        type === 'AUTOMATIC_PLATFORM_ALLOCATION'
+          ? null
+          : clean(settings.accessNodeProcessId),
+      priorityProcessId:
+        type === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
+          ? clean(settings.priorityProcessId)
+          : null,
+    },
+  }
+}
+
+export function agentConflictReport(
+  value: any,
+): ConnectionAgentConflictReport | null {
+  const candidates = [
+    value,
+    value?.data,
+    value?.response?.data,
+    value?.response?.data?.data,
+  ]
+  const report = candidates.find(
+    (candidate) =>
+      candidate &&
+      typeof candidate.hasConflicts === 'boolean' &&
+      Array.isArray(candidate.items) &&
+      Number.isFinite(candidate.total) &&
+      candidate.total >= 0,
+  )
+  if (!report) return null
+  const hiddenCount =
+    Number.isFinite(report.hiddenCount) && report.hiddenCount > 0
+      ? report.hiddenCount
+      : 0
+  return {
+    ...report,
+    hiddenCount,
+    hasConflicts: report.hasConflicts || report.total > 0 || hiddenCount > 0,
+  }
+}
+
+export const conflictTaskRoutes: Record<string, string> = {
+  sync: 'dataflowList',
+  migrate: 'migrateList',
+  logCollector: 'sharedMiningList',
+  connHeartbeat: 'HeartbeatTableList',
+  inspect: 'dataVerificationList',
+}

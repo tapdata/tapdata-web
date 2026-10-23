@@ -1674,4 +1674,22 @@ export default {
     '當任一API Server 連接池資源緊張触发告警閾值時',
   packages_business_api_server_connection_pool_idle_warn:
     '當任一API Server 連接池連接數低於告警閾值時',
+  packages_business_agent_conflict_title: '切換 Agent 存在任務衝突',
+  packages_business_agent_conflict_summary:
+    '本次修改會與 {count} 個任務產生 Agent 衝突。請先調整任務或連線設定，再重新儲存。',
+  packages_business_agent_conflict_hidden:
+    '其中有 {count} 個任務無權檢視，請聯絡管理員處理。',
+  packages_business_agent_conflict_type: '任務類型',
+  packages_business_agent_conflict_status: '任務狀態',
+  packages_business_agent_conflict_connections: '修改的連線',
+  packages_business_agent_conflict_reason: '衝突原因',
+  packages_business_agent_conflict_reason_connections:
+    '任務關聯的連線沒有共同允許的 Agent。',
+  packages_business_agent_conflict_reason_task:
+    '任務指定的 Agent 不在連線允許的範圍內。',
+  packages_business_agent_conflict_type_sync: '資料開發',
+  packages_business_agent_conflict_type_migrate: '資料複製',
+  packages_business_agent_conflict_type_logCollector: '共享挖掘',
+  packages_business_agent_conflict_type_connHeartbeat: '心跳任務',
+  packages_business_agent_conflict_type_inspect: '資料校驗',
 }

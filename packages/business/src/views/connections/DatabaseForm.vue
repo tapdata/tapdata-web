@@ -2,6 +2,7 @@
 import { action } from '@formily/reactive'
 import {
   createConnection,
+  checkConnectionAgentSettings,
   getUsingDigginTaskByConnectionId,
   patchConnectionById,
   updateConnectionById,
@@ -39,6 +40,11 @@ import {
   loadAccessNodeOptions,
 } from './agentSettingsSchema'
 import UsedTaskDialog from './UsedTaskDialog.vue'
+import AgentTaskConflictDialog from './AgentTaskConflictDialog.vue'
+import {
+  agentCheckPayload,
+  agentConflictReport,
+} from './connectionAgentConflicts'
 import { getConnectionIcon } from './util'
 
 export default {
@@ -51,6 +57,7 @@ export default {
     SchemaToForm,
     ConnectionDebug,
     UsedTaskDialog,
+    AgentTaskConflictDialog,
     JsDebug,
     PageContainer,
   },
@@ -210,15 +217,15 @@ export default {
       this.buried('connectionSubmit')
       this.pdkFormModel = this.$refs.schemaToForm?.getForm?.()
       this.schemaFormInstance?.validate().then(
-        () => {
+        async () => {
+          if (this.submitBtnLoading) return
           this.submitBtnLoading = true
           // 保存数据源
           const id = this.$route.params?.id
           const { pdkOptions } = this
-          const formValues = this.$refs.schemaToForm?.getFormValues?.()
-          const { __TAPDATA } = formValues
+          const { __TAPDATA, ...formValues } =
+            this.$refs.schemaToForm?.getFormValues?.() || {}
           formValues.__connectionType = __TAPDATA.connection_type
-          delete formValues.__TAPDATA
           const params = Object.assign(
             {
               ...__TAPDATA,
@@ -239,6 +246,24 @@ export default {
               config: formValues,
             },
           )
+          const agentPayload =
+            id && __TAPDATA.accessNodeType
+              ? agentCheckPayload([id], __TAPDATA, uuid())
+              : null
+          if (agentPayload) {
+            Object.assign(params, agentPayload.settings)
+            try {
+              const report = await checkConnectionAgentSettings(agentPayload)
+              if (report.hasConflicts) {
+                this.$refs.agentTaskConflictDialog.open(agentPayload, report)
+                this.submitBtnLoading = false
+                return
+              }
+            } catch {
+              this.submitBtnLoading = false
+              return
+            }
+          }
           let promise = null
           if (id) {
             params.id = id
@@ -258,7 +283,10 @@ export default {
               this.$message.success(this.$t('public_message_save_ok'))
               this.gotoBackPath()
             })
-            .catch(() => {
+            .catch((error) => {
+              const report = agentConflictReport(error)
+              if (agentPayload && report?.hasConflicts)
+                this.$refs.agentTaskConflictDialog.open(agentPayload, report)
               this.buried('connectionSubmit', '', {
                 result: false,
               })
@@ -1640,6 +1668,7 @@ export default {
         :data="connectionLogCollectorTaskData"
       />
     </div>
+    <AgentTaskConflictDialog ref="agentTaskConflictDialog" />
   </PageContainer>
 </template>
 

@@ -1881,4 +1881,22 @@ export default {
     'When any API Server connection pool resource is tight and triggers the alarm threshold',
   packages_business_api_server_connection_pool_idle_warn:
     'When the number of connections in the connection pool of any API Server falls below the alarm threshold',
+  packages_business_agent_conflict_title: 'Agent changes conflict with tasks',
+  packages_business_agent_conflict_summary:
+    'These changes conflict with {count} tasks. Adjust the task or connection settings before saving again.',
+  packages_business_agent_conflict_hidden:
+    'You do not have permission to view {count} of these tasks. Contact an administrator to resolve them.',
+  packages_business_agent_conflict_type: 'Task type',
+  packages_business_agent_conflict_status: 'Task status',
+  packages_business_agent_conflict_connections: 'Changed connections',
+  packages_business_agent_conflict_reason: 'Conflict reason',
+  packages_business_agent_conflict_reason_connections:
+    'The task connections have no mutually allowed Agent.',
+  packages_business_agent_conflict_reason_task:
+    'The Agent specified by the task is not allowed by its connections.',
+  packages_business_agent_conflict_type_sync: 'Data development',
+  packages_business_agent_conflict_type_migrate: 'Data replication',
+  packages_business_agent_conflict_type_logCollector: 'Shared mining',
+  packages_business_agent_conflict_type_connHeartbeat: 'Heartbeat',
+  packages_business_agent_conflict_type_inspect: 'Data verification',
 }
