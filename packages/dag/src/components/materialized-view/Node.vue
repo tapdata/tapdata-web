@@ -585,6 +585,7 @@ function onConnectionSelect(connection) {
     connectionName: connection.name,
     connectionType: connection.connection_type,
     accessNodeProcessId: connection.accessNodeProcessId,
+    accessNodeProcessIdList: connection.accessNodeProcessIdList || [],
     pdkType: connection.pdkType,
     pdkHash: connection.pdkHash,
     capabilities: connection.capabilities || [],

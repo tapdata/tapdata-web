@@ -524,6 +524,7 @@ export default {
         connectionName: connection.name,
         connectionType: connection.connection_type,
         accessNodeProcessId: connection.accessNodeProcessId,
+        accessNodeProcessIdList: connection.accessNodeProcessIdList || [],
         priorityProcessId: connection.priorityProcessId,
         pdkType: connection.pdkType,
         pdkHash: connection.pdkHash,

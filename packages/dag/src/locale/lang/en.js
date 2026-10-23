@@ -67,6 +67,23 @@ export default {
   packages_dag_agent_setting_from: 'Agent settings derive from the following',
   packages_dag_connection_form_automatic: 'Platform automatic allocation',
   packages_dag_connection_form_manual: 'User specified manually',
+  packages_dag_agent_display_unavailable: 'Agent information unavailable',
+  packages_dag_agent_display_priority: 'Preferred',
+  packages_dag_task_agent_custom: 'Custom Agent scheduling',
+  packages_dag_task_agent_auto_desc:
+    'The platform selects an available Agent based on the task connections',
+  packages_dag_task_agent_customize: 'Customize',
+  packages_dag_task_agent_use_automatic: 'Use automatic allocation',
+  packages_dag_task_agent_compatible_summary:
+    'Filtered by {connections} connections, {agents} options available',
+  packages_dag_task_agent_options_summary: '{agents} options available',
+  packages_dag_task_agent_no_compatible: 'No compatible Agent',
+  packages_dag_task_agent_no_compatible_desc:
+    'The connection settings conflict. Update them or use automatic allocation.',
+  packages_dag_task_agent_no_available_desc:
+    'No Agent is available for this selection. Check the Agent list or use automatic allocation.',
+  packages_dag_task_agent_selection_invalid:
+    'The current selection no longer matches the connection settings. Select another option or use automatic allocation.',
   packages_dag_task_setting_automatic_ddl: 'Automatic DDL',
   packages_dag_task_setting_distinct_write_type: 're-rewriting mechanism',
   packages_dag_task_setting_transformer_concurrency:

@@ -179,7 +179,6 @@ const start = (ids: string[]) => {
   fetchTasks({ where: { id: ids[0] } }).then(() => {
     batchStartTasks(ids)
       .then((data: any) => {
-        buried?.(taskBuried.start, '', { result: true })
         const resultList = Array.isArray(data)
           ? data
           : Array.isArray(data?.data)
@@ -195,8 +194,11 @@ const start = (ids: string[]) => {
               .filter(Boolean)
               .join('\n'),
           })
+          table.value?.fetch()
+          buried?.(taskBuried.start, '', { result: false })
           return
         }
+        buried?.(taskBuried.start, '', { result: true })
         ElMessage.success(
           data?.message || t('public_message_operation_success'),
         )

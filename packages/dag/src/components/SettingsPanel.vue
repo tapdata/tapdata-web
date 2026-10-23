@@ -43,6 +43,8 @@ import {
   getDefaultAlarmSettings,
   type AlarmSettingKey,
 } from '../constants'
+import { useConnectionAgentConfigs } from '../composables/useConnectionAgentConfigs'
+import { getCompatibleAccessNodeOptions } from '../utils/accessNodePolicy'
 import { useDataflowStore } from '../stores/dataflow.store'
 
 const dataflowStore = useDataflowStore()
@@ -129,8 +131,10 @@ interface FormScope {
   ) => (field: any) => void
   loadRoleList: (field: any, val: any[]) => Promise<any[]>
   handleRemovePermissionsItem: () => void
-  getConnectionNameByAgent: (field: any) => void
   handleQuicklySyncPoints: () => void
+  $getTaskAgentOptions: (accessNodeType: string) => any[]
+  $getTaskAgentConnectionCount: () => number
+  $refreshTaskAgentConfigs: () => Promise<void>
 }
 
 // Store
@@ -514,6 +518,14 @@ const formScope: FormScope = {
   },
   getPickerOptionsBeforeTime,
   $isDaas: isDaas,
+  $getTaskAgentOptions: (accessNodeType: string) =>
+    getCompatibleAccessNodeOptions(
+      scope.$agents || [],
+      connectionAgentConfigList.value,
+      accessNodeType,
+    ),
+  $getTaskAgentConnectionCount: () => connectionIds.value.length,
+  $refreshTaskAgentConfigs: () => refreshConnectionAgentConfigs(),
   formTab: FormTab.createFormTab(openAlarmTab ? 'tab3' : undefined),
   checkName: (value: string) => {
     return new Promise((resolve) => {
@@ -579,31 +591,6 @@ const formScope: FormScope = {
   handleRemovePermissionsItem: () => {
     savePermissionsConfig()
   },
-  getConnectionNameByAgent: (field: any) => {
-    if (
-      !field.value ||
-      !field.dataSource?.length ||
-      !accessNodeProcessIdMap.value[field.value]
-    ) {
-      field.setDescription('')
-      return
-    }
-
-    const map: Record<string, string> = {}
-
-    for (const id of accessNodeProcessIdMap.value[field.value]) {
-      const node = dataflowStore.findNodeById(id)
-      map[node.connectionId] = node.attrs.connectionName
-    }
-
-    const values = Object.values(map)
-
-    field.setDescription(
-      values.length
-        ? `${t('packages_dag_agent_setting_from')}: ${values.join(', ')}`
-        : '',
-    )
-  },
   handleQuicklySyncPoints: () => {
     const currentEventTimestamp = form.values.currentEventTimestamp
     const syncPoints = form.values.syncPoints
@@ -632,27 +619,27 @@ const showDoubleActive = computed(() => {
     : false
 })
 
-const accessNodeProcessIdMap = computed(() => {
-  return dataNodes.value.reduce((map: Record<string, string[]>, node: any) => {
-    const { accessNodeProcessId } = node.attrs
-    if (accessNodeProcessId) {
-      let nodeIdArr = map[accessNodeProcessId]
+const connectionIds = computed(() => [
+  ...new Set(
+    dataNodes.value.map((node: any) => node.connectionId).filter(Boolean),
+  ),
+])
+const { connectionAgentConfigs, refreshConnectionAgentConfigs } =
+  useConnectionAgentConfigs(connectionIds)
 
-      if (!nodeIdArr) {
-        nodeIdArr = map[accessNodeProcessId] = []
-      }
+watch(
+  () => dataflowStore.showSettings,
+  async (visible) => {
+    if (visible) await refreshConnectionAgentConfigs()
+  },
+)
 
-      nodeIdArr.push(node.id)
-    }
-    return map
-  }, {})
-})
-
-const accessNodeProcessList = computed(() => {
-  return scope.$agents.filter(
-    (item: any) => item.accessNodeType === dataflow.value.accessNodeType,
-  )
-})
+const connectionAgentConfigList = computed(() =>
+  dataNodes.value.map((node: any) => ({
+    ...(node.attrs || {}),
+    ...(connectionAgentConfigs.value[node.connectionId] || {}),
+  })),
+)
 
 const sourceNodes = computed(() => {
   return allNodes.value
@@ -763,16 +750,6 @@ watch(stateIsReadonly, (v) => {
     })
   }
 })
-
-watch(
-  accessNodeProcessList,
-  (dataSource = []) => {
-    form.setFieldState('accessNodeProcessId', {
-      dataSource,
-    })
-  },
-  { deep: true, immediate: true },
-)
 
 const syncPointsCache: Record<string, any> = {}
 
@@ -1417,140 +1394,35 @@ const schema = {
                           },
                           'x-component': 'Switch',
                         },
+                        taskAgentSettings: {
+                          type: 'void',
+                          title: t('packages_dag_connection_form_access_node'),
+                          'x-decorator': 'FormItem',
+                          'x-decorator-props': {
+                            feedbackLayout: 'none',
+                          },
+                          'x-component': 'TaskAgentSettings',
+                          'x-component-props': {
+                            getOptions: formScope.$getTaskAgentOptions,
+                            getConnectionCount:
+                              formScope.$getTaskAgentConnectionCount,
+                            refreshConnectionConfigs:
+                              formScope.$refreshTaskAgentConfigs,
+                          },
+                        },
                         accessNodeType: {
                           type: 'string',
-                          title: t('packages_dag_connection_form_access_node'),
                           default: 'AUTOMATIC_PLATFORM_ALLOCATION',
-                          'x-decorator': 'FormItem',
-                          'x-component': 'Select',
-                          enum: [
-                            {
-                              label: t(
-                                'packages_dag_connection_form_automatic',
-                              ),
-                              value: 'AUTOMATIC_PLATFORM_ALLOCATION',
-                            },
-                            {
-                              label: t('packages_dag_connection_form_manual'),
-                              value: 'MANUALLY_SPECIFIED_BY_THE_USER',
-                            },
-                            {
-                              label: t(
-                                'packages_business_connection_form_group',
-                              ),
-                              value:
-                                'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP',
-                            },
-                          ],
-                          'x-reactions': [
-                            {
-                              fulfill: {
-                                state: {
-                                  dataSource: `{{$isDaas ? $self.dataSource : $self.dataSource.slice(0,2)}}`,
-                                },
-                              },
-                            },
-                            {
-                              target: 'accessNodeProcessId',
-                              effects: ['onFieldInputValueChange'],
-                              fulfill: {
-                                state: {
-                                  value: '',
-                                  // '{{$target.value || (item = $target.dataSource.find(item => !item.disabled), item ? item.value:undefined)}}'
-                                },
-                              },
-                            },
-                          ],
+                          'x-display': 'hidden',
                         },
-
-                        agentWrap: {
-                          type: 'void',
-                          'x-component': 'Space',
-                          'x-component-props': {
-                            class: 'w-100 align-items-start',
-                          },
-                          'x-reactions': {
-                            dependencies: ['.accessNodeType'],
-                            fulfill: {
-                              state: {
-                                visible:
-                                  "{{['MANUALLY_SPECIFIED_BY_THE_USER', 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'].includes($deps[0])}}",
-                              },
-                            },
-                          },
-                          properties: {
-                            accessNodeProcessId: {
-                              type: 'string',
-                              'x-decorator': 'FormItem',
-                              'x-decorator-props': {
-                                class: 'flex-1',
-                              },
-                              'x-component': 'Select',
-                              'x-reactions': [
-                                '{{getConnectionNameByAgent}}',
-                                // 根据下拉数据判断是否存在已选的agent
-                                {
-                                  dependencies: [
-                                    '.accessNodeType',
-                                    '.accessNodeOption#dataSource',
-                                  ],
-                                  fulfill: {
-                                    state: {
-                                      title: `{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0] ? '${t(
-                                        'packages_business_choose_agent_group',
-                                      )}': '${t(
-                                        'packages_business_choose_agent',
-                                      )}'}}`,
-                                    },
-                                  },
-                                },
-                              ],
-                            },
-                            priorityProcessId: {
-                              title: t('packages_business_priorityProcessId'),
-                              type: 'string',
-                              default: '',
-                              'x-decorator': 'FormItem',
-                              'x-decorator-props': {
-                                class: 'flex-1',
-                              },
-                              'x-component': 'Select',
-                              'x-reactions': {
-                                dependencies: [
-                                  '.accessNodeType',
-                                  '.accessNodeProcessId#dataSource',
-                                  '.accessNodeProcessId',
-                                ],
-                                fulfill: {
-                                  state: {
-                                    visible:
-                                      "{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0]}}",
-                                  },
-                                  run: `
-                                          let children = []
-
-                                          if ($deps[1] && $deps[2]) {
-                                            const item = $deps[1].find(item => item.accessNodeType === $deps[0] && item.value === $deps[2])
-                                            children = (item && item.children) || []
-                                          }
-
-                                          $self.dataSource = [
-                                            {
-                                              label:'${t(
-                                                'packages_business_connection_form_automatic',
-                                              )}',
-                                              value: ''
-                                            }
-                                          ].concat(children)
-
-                                          if ($self.value && !children.find(item => item.value === $self.value)) {
-                                            $self.value = null
-                                          }
-                                        `,
-                                },
-                              },
-                            },
-                          },
+                        accessNodeProcessId: {
+                          type: 'string',
+                          'x-display': 'hidden',
+                        },
+                        priorityProcessId: {
+                          type: 'string',
+                          default: '',
+                          'x-display': 'hidden',
                         },
                       },
                     },
@@ -1901,7 +1773,7 @@ defineExpose({
 
       > .el-tabs__content {
         height: calc(100% - $tabHeight);
-        padding: 0 16px;
+        padding: 0 16px 24px;
         overflow: auto;
         .el-tab-pane {
           // height: 100%;

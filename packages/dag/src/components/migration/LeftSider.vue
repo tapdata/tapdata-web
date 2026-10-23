@@ -305,6 +305,7 @@ export default {
         connectionName: item.name,
         connectionType: item.connection_type,
         accessNodeProcessId: item.accessNodeProcessId,
+        accessNodeProcessIdList: item.accessNodeProcessIdList || [],
         priorityProcessId: item.priorityProcessId,
         pdkType: item.pdkType,
         pdkHash: item.pdkHash,
