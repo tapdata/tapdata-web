@@ -285,6 +285,7 @@ const typTipMap = ref({
   field: t('packages_business_verification_contentVerifyTip'),
   jointField: t('packages_business_verification_jointFieldTip'),
   hash: t('packages_business_verification_hashVerifyTip'),
+  custom_query: t('packages_business_verification_custom_query_tip'),
 })
 const jointErrorMessage = ref('')
 const errorMessageLevel = ref('')
@@ -359,6 +360,9 @@ const getData = async (id: string) => {
         }
         t.id = t.taskId
         t.modeType = t.source.columns ? 'custom' : 'all'
+        t.fieldMappingText = Object.entries(t.fieldMapping || {})
+          .map(([source, target]) => `${source}=${target}`)
+          .join('\n')
 
         return t
       })
@@ -471,6 +475,14 @@ const save = async (saveOnly = false) => {
       let tasks = conditionList.value
       // 自动过滤出完整数据，以及索引字段数量不相等的情况
       tasks = tasks.filter((t) => {
+        if (form.inspectMethod === 'custom_query') {
+          return (
+            t.source.connectionId &&
+            t.target.connectionId &&
+            t.source.customQuery?.trim() &&
+            t.target.customQuery?.trim()
+          )
+        }
         if (
           form.inspectMethod === 'row_count' ||
           form.inspectMethod === 'hash'
@@ -532,6 +544,8 @@ const save = async (saveOnly = false) => {
               webScript,
               jsEngineName,
               modeType,
+              sortFields,
+              fieldMappingText,
             }) => {
               if (modeType === 'all') {
                 source.columns = null
@@ -578,6 +592,28 @@ const save = async (saveOnly = false) => {
                 script,
                 webScript,
                 jsEngineName,
+                sortFields:
+                  typeof sortFields === 'string'
+                    ? sortFields
+                        .split(',')
+                        .map((field) => field.trim())
+                        .filter(Boolean)
+                    : sortFields,
+                fieldMapping: Object.fromEntries(
+                  (fieldMappingText || '')
+                    .split('\n')
+                    .map((line) => line.trim())
+                    .filter(Boolean)
+                    .map((line) => {
+                      const separator = line.indexOf('=')
+                      return separator === -1
+                        ? [line, line]
+                        : [
+                            line.slice(0, separator).trim(),
+                            line.slice(separator + 1).trim(),
+                          ]
+                    }),
+                ),
               }
             },
           ),
@@ -812,6 +848,15 @@ provide('ConnectorMap', ConnectorMap)
                 {{ inspectMethodMap['hash'] }}
               </div>
             </el-radio-button>
+            <el-radio-button
+              value="custom_query"
+              style="--el-radio-button-checked-bg-color: transparent"
+            >
+              <div class="flex align-center gap-2">
+                <VIcon size="16">code-json</VIcon>
+                {{ inspectMethodMap['custom_query'] }}
+              </div>
+            </el-radio-button>
           </el-radio-group>
           <div v-if="typTipMap[form.inspectMethod]" class="font-color-light">
             <VIcon class="align-middle mr-1">info</VIcon>
@@ -836,7 +881,7 @@ provide('ConnectorMap', ConnectorMap)
             }}</span>
           </template>
           <ElFormItem
-            v-if="form.inspectMethod !== 'hash'"
+            v-if="!['hash', 'custom_query'].includes(form.inspectMethod)"
             class="form-item"
             prop="inspectDifferenceMode"
             :label="`${$t('packages_business_verification_form_jieguoshuchu')}`"
@@ -963,7 +1008,7 @@ provide('ConnectorMap', ConnectorMap)
                     controls-position="right"
                     :min="0"
                     style="width: 100px"
-                    @click.native.prevent.stop
+                    @click.prevent.stop
                     @blur="
                       () => {
                         form.alarmSettings[1].params.maxDifferentialRows =
@@ -991,7 +1036,7 @@ provide('ConnectorMap', ConnectorMap)
                     controls-position="right"
                     :min="0"
                     style="width: 100px"
-                    @click.native.prevent.stop
+                    @click.prevent.stop
                     @blur="
                       () => {
                         form.alarmSettings[2].params.maxDifferentialValues =

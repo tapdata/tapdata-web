@@ -6,6 +6,7 @@ export const inspectMethod = {
   jointField: i18n.t('packages_business_verification_joint_verify'),
   cdcCount: i18n.t('packages_business_verification_details_dongtaijiaoyan'),
   hash: i18n.t('packages_business_verification_hash_verify'),
+  custom_query: i18n.t('packages_business_verification_custom_query'),
 }
 
 export const typeList = [
@@ -25,6 +26,10 @@ export const typeList = [
   {
     label: i18n.t('packages_business_verification_hash_verify'),
     value: 'hash',
+  },
+  {
+    label: i18n.t('packages_business_verification_custom_query'),
+    value: 'custom_query',
   },
 ]
 
