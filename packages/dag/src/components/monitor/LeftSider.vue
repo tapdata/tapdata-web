@@ -540,7 +540,18 @@ function formatTime(date: any, f = 'YYYY-MM-DD HH:mm:ss') {
 
 function getCollectorData() {
   getLogcollectorDetail(dataflow.value?.id).then((data: any) => {
-    const { externalStorage = {} as any, logTime } = data
+    const { externalStorage = {} as any, logTime, storageTime } = data
+    const collectorInfo = [
+      {
+        label: t('packages_business_relation_details_rizhiwajueshi'),
+        value: formatTime(logTime),
+      },
+      {
+        label: t('packages_business_shared_detail_log_time'),
+        value:
+          storageTime == null ? '-' : `${storageTime}${t('public_time_d')}`,
+      },
+    ]
     let uriInfo = externalStorage.uri
     if (externalStorage.type === 'mongodb') {
       const regResult =
@@ -551,19 +562,11 @@ function getCollectorData() {
       uriInfo = `mongodb://${username}:***@${host}/${database}${query ? `/${query}` : ''}`
     }
     if (!externalStorage.name) {
-      infoList.value = [
-        {
-          label: t('packages_business_relation_details_rizhiwajueshi'),
-          value: formatTime(logTime),
-        },
-      ]
+      infoList.value = collectorInfo
       return
     }
     infoList.value = [
-      {
-        label: t('packages_business_relation_details_rizhiwajueshi'),
-        value: formatTime(logTime),
-      },
+      ...collectorInfo,
       {
         label: t('public_external_memory_name'),
         value: externalStorage.name,
@@ -613,6 +616,8 @@ async function getBasicInformation() {
   }
   map[route.name as string]?.(dataflow.value?.id)
 }
+
+defineExpose({ refreshBasicInformation: getBasicInformation })
 
 function changeTimeSelect(val: any, isTime: any, source: any) {
   emit('changeTimeSelect', val, isTime, source)

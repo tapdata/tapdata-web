@@ -44,6 +44,7 @@ const taskRecord = ref({ total: 0, items: [] as any[] })
 const timeFormat = ref('HH:mm:ss')
 const nodeDetailDialog = ref(false)
 const nodeDetailDialogId = ref('')
+const leftSiderRef = ref<InstanceType<typeof LeftSider> | null>(null)
 const { t } = useI18n()
 
 const {
@@ -740,6 +741,7 @@ provide('isSaving', isSaving)
       </template>
       <template #left>
         <LeftSider
+          ref="leftSiderRef"
           :quota="quota"
           :verify-totals="verifyTotals"
           :time-format="timeFormat"
@@ -795,6 +797,7 @@ provide('isSaving', isSaving)
     <SharedMiningEditor
       v-if="dataflow.syncType === 'logCollector'"
       ref="sharedMiningEditorRef"
+      @success="leftSiderRef?.refreshBasicInformation()"
     />
     <SharedCacheEditor
       v-if="dataflow.syncType === 'shareCache'"
