@@ -106,6 +106,7 @@ export interface NotificationRecord {
   objectType?: string
   taskId?: string
   taskName?: string
+  syncType?: string
   firstOccurrenceTime?: string
   lastOccurrenceTime?: string
   occurrenceCount?: number

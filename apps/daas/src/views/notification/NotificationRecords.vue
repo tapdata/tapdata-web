@@ -1,4 +1,5 @@
 <script>
+import { joinListParams } from '@tap/api/src/core/alarm'
 import {
   listNotificationRecords,
   previewNotificationReadState,
@@ -16,6 +17,23 @@ import NotificationRecordDrawer from './NotificationRecordDrawer.vue'
 
 const TABS = ['ALL', 'UNREAD', 'FAILED']
 
+const FILTER_KEYS = [
+  'start',
+  'end',
+  'level',
+  'channel',
+  'deliveryStatus',
+  'read',
+  'recipient',
+  'keyword',
+  'alarmEventId',
+]
+
+function buildSearchParams(query = {}) {
+  const base = Object.fromEntries(FILTER_KEYS.map((key) => [key, '']))
+  return { ...base, ...query }
+}
+
 export default {
   components: {
     TablePage,
@@ -26,8 +44,8 @@ export default {
   },
   data() {
     const query = { ...this.$route.query }
-    if (!query.start && !query.end) {
-      // 默认最近 7 天
+    if (!query.start && !query.end && !query.alarmEventId) {
+      // 默认最近 7 天；携带 alarmEventId 深链接时不自动加时间范围，避免漏掉早于 7 天的历史通知
       query.start = dayjs().subtract(7, 'day').startOf('day').valueOf()
       query.end = dayjs().endOf('day').valueOf()
     }
@@ -35,7 +53,7 @@ export default {
       tabs: TABS,
       tab: TABS.includes(query.tab) ? query.tab : 'ALL',
       filterItems: [],
-      searchParams: query,
+      searchParams: buildSearchParams(query),
       multipleSelection: [],
       drawerVisible: false,
       drawerId: '',
@@ -48,34 +66,41 @@ export default {
   },
   watch: {
     '$route.query': function (query) {
-      this.searchParams = { ...query }
+      this.searchParams = buildSearchParams(query)
       this.tab = TABS.includes(query.tab) ? query.tab : 'ALL'
       this.table?.fetch?.(1)
     },
   },
   created() {
     this.getFilterItems()
-    if (!this.$route.query.start && !this.$route.query.end) {
-      this.$router.replace({
-        name: this.$route.name,
-        query: {
-          ...this.$route.query,
-          tab: this.tab,
-          start: this.searchParams.start,
-          end: this.searchParams.end,
-        },
-      })
+    if (
+      !this.$route.query.start &&
+      !this.$route.query.end &&
+      !this.$route.query.alarmEventId
+    ) {
+      this.syncQuery()
     }
   },
   methods: {
     currentParams() {
-      return { ...this.searchParams, tab: this.tab }
+      return {
+        ...this.searchParams,
+        alarmEventId: this.$route.query.alarmEventId,
+        tab: this.tab,
+      }
+    },
+    syncQuery() {
+      const query = joinListParams(this.currentParams())
+      const current = joinListParams(this.$route.query)
+      if (JSON.stringify(query) === JSON.stringify(current)) {
+        this.table?.fetch?.(1)
+        return
+      }
+      this.$router.replace({ name: this.$route.name, query })
     },
     switchTab(tab) {
-      this.$router.replace({
-        name: this.$route.name,
-        query: { ...this.$route.query, ...this.searchParams, tab },
-      })
+      this.tab = tab
+      this.syncQuery()
     },
     getData({ page }) {
       const { current, size } = page
@@ -260,7 +285,9 @@ export default {
         <FilterBar
           v-model:value="searchParams"
           :items="filterItems"
-          @fetch="table.fetch(1)"
+          :change-route="false"
+          @search="syncQuery"
+          @fetch="syncQuery"
         />
       </template>
       <el-table-column

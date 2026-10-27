@@ -2,6 +2,7 @@
 import {
   closeAlarmEvents,
   getAlarmEventStats,
+  joinListParams,
   listAlarmEvents,
 } from '@tap/api/src/core/alarm'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
@@ -25,6 +26,22 @@ const OBJECT_TYPES = [
   'API_SERVER',
 ]
 
+const FILTER_KEYS = [
+  'status',
+  'level',
+  'objectType',
+  'notified',
+  'agentId',
+  'start',
+  'end',
+  'keyword',
+]
+
+function buildSearchParams(query = {}) {
+  const base = Object.fromEntries(FILTER_KEYS.map((key) => [key, '']))
+  return { ...base, ...query }
+}
+
 export default {
   inject: ['hasPermissionByCode'],
   components: {
@@ -38,7 +55,7 @@ export default {
     return {
       filterItems: [],
       multipleSelection: [],
-      searchParams: { ...this.$route.query },
+      searchParams: buildSearchParams(this.$route.query),
       stats: { alarming: 0, severe: 0, todayNew: 0, todayRecovered: 0 },
       drawerVisible: false,
       drawerId: '',
@@ -79,7 +96,11 @@ export default {
   },
   watch: {
     '$route.query': function (query) {
-      this.searchParams = { ...query }
+      this.searchParams = buildSearchParams(query)
+      if (query.alarmId) {
+        this.drawerId = query.alarmId
+        this.drawerVisible = true
+      }
       this.table.fetch(1)
     },
   },
@@ -101,6 +122,15 @@ export default {
     applyCard(card) {
       // 统计卡等同于应用筛选条件，写入 URL 便于刷新和分享
       this.$router.replace({ name: this.$route.name, query: card.query })
+    },
+    syncQuery() {
+      const query = joinListParams(this.searchParams)
+      const current = joinListParams(this.$route.query)
+      if (JSON.stringify(query) === JSON.stringify(current)) {
+        this.table.fetch(1)
+        return
+      }
+      this.$router.replace({ name: this.$route.name, query })
     },
     getData({ page }) {
       const { current, size } = page
@@ -192,9 +222,11 @@ export default {
       ]
     },
     async handleClose(id) {
-      const ids = this.multipleSelection?.length
-        ? this.multipleSelection.map((item) => item.id)
-        : [id]
+      const ids =
+        typeof id === 'string' && id
+          ? [id]
+          : this.multipleSelection.map((item) => item.id)
+      if (!ids.length) return
       const confirmed = await this.$confirm(i18n.t('alarm_event_close_confirm'))
       if (!confirmed) return
       await closeAlarmEvents(ids)
@@ -225,7 +257,7 @@ export default {
         v-if="canClose"
         :disabled="!multipleSelection.length"
         type="primary"
-        @click="handleClose"
+        @click="handleClose()"
       >
         {{ $t('public_button_close') }}
       </el-button>
@@ -254,7 +286,9 @@ export default {
         <FilterBar
           v-model:value="searchParams"
           :items="filterItems"
-          @fetch="table.fetch(1)"
+          :change-route="false"
+          @search="syncQuery"
+          @fetch="syncQuery"
         />
       </template>
       <el-table-column type="selection" width="32" align="center" />

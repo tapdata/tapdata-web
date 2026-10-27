@@ -4,6 +4,7 @@ import {
   updateOneNotificationReadState,
   type NotificationRecordDetail,
 } from '@tap/api/src/core/notification'
+import { getTaskById } from '@tap/api/src/core/task'
 import { getAlarmKeyMap } from '@tap/business/src/shared/alarm'
 import { ALARM_LEVEL_MAP } from '@tap/business/src/shared/const'
 import dayjs from 'dayjs'
@@ -80,9 +81,18 @@ async function toggleRead() {
   emit('changed')
 }
 
-function goTask() {
-  if (!detail.value?.taskId) return
-  router.push({ name: 'TaskMonitor', params: { id: detail.value.taskId } })
+async function goTask() {
+  const d = detail.value
+  if (!d?.taskId) return
+  let syncType = d.syncType
+  if (!syncType) {
+    const task = await getTaskById(d.taskId).catch(() => null)
+    syncType = task?.syncType
+  }
+  router.push({
+    name: syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor',
+    params: { id: d.taskId },
+  })
 }
 
 function goAlarm() {
