@@ -1,5 +1,4 @@
 import Layout from '@/layouts/Layout.vue'
-import NotifyLayout from '@/layouts/NotifyLayout.vue'
 import SettingLayout from '@/layouts/SettingLayout.vue'
 
 const FunctionForm = () => import('@/views/function/Form.vue')
@@ -60,8 +59,6 @@ const ExternalStorageList = () =>
   import('@tap/business/src/views/external-storage/List.vue')
 
 // 告警通知
-const AlarmNotification = () =>
-  import('@tap/business/src/views/setting/AlarmNotification.vue')
 
 // 数据加密
 const DataEncryptionList = () =>
@@ -848,6 +845,37 @@ export const routes = [
           hideTitle: true,
         },
       },
+      /* ---------- 告警事件 / 通知记录 / 操作审计（TAP-13052 §4.1） ----------*/
+      {
+        path: '/alarm-events',
+        name: 'alarmEvents',
+        component: () => import('@/views/notification/AlarmEvents.vue'),
+        meta: {
+          title: 'page_title_alarm_events',
+          hideTitle: true,
+          code: 'v2_alarm_event',
+        },
+      },
+      {
+        path: '/notification-records',
+        name: 'notificationRecords',
+        component: () => import('@/views/notification/NotificationRecords.vue'),
+        meta: {
+          title: 'page_title_notification_records',
+          hideTitle: true,
+          code: 'v2_notification_record',
+        },
+      },
+      {
+        path: '/operation-audit',
+        name: 'operationAudit',
+        component: () => import('@/views/notification/UserNotification.vue'),
+        meta: {
+          title: 'page_title_operation_audit',
+          hideTitle: true,
+          code: 'v2_audit_log',
+        },
+      },
       /* ---------- 用户管理  ----------*/
       {
         path: '/user',
@@ -969,39 +997,31 @@ export const routes = [
       },
     ],
   },
-  /* ---------- 通知模块  ----------*/
+  /* ---------- 通知模块（旧入口，重定向至 §4.1 新入口）  ----------*/
   {
     path: '/notification',
     name: 'notification',
-    redirect: '/notification/systemNotification',
-    component: NotifyLayout,
-    meta: {
-      title: 'page_title_back_menu',
-    },
+    redirect: { name: 'notificationRecords' },
     children: [
       {
         path: 'systemNotification',
         name: 'systemNotification',
-        component: () => import('@/views/notification/SystemNotification.vue'),
-        meta: { title: 'notify_system_notice' },
+        redirect: { name: 'notificationRecords' },
       },
       {
         path: 'userNotification',
         name: 'userNotification',
-        component: () => import('@/views/notification/UserNotification.vue'),
-        meta: { title: 'daas_notification_center_yonghucaozuo' },
+        redirect: { name: 'operationAudit' },
       },
       {
         path: 'alarmNotification',
         name: 'alarmNotification',
-        component: AlarmNotification,
-        meta: { title: 'daas_notification_alarmnotification_gaojingtongzhi' },
+        redirect: { name: 'notificationRecords' },
       },
       {
         path: 'systemAlarm',
         name: 'systemAlarm',
-        component: () => import('@/views/notification/SystemAlarm.vue'),
-        meta: { title: 'daas_notification_center_xitonggaojing' },
+        redirect: { name: 'alarmEvents' },
       },
     ],
   },

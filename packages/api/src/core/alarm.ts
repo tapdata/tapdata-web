@@ -229,3 +229,106 @@ export function fetchAlarmReceiverPreview(taskId: string) {
     { params: { taskId } },
   )
 }
+
+/* ---------- 告警事件（TAP-13052） ---------- */
+
+export type AlarmObjectType =
+  | 'TASK'
+  | 'NODE'
+  | 'CONNECTION'
+  | 'AGENT'
+  | 'INSPECT'
+  | 'API_SERVER'
+
+export interface DeliveryChannelSummary {
+  total: number
+  success: number
+  failed: number
+  skipped: number
+}
+
+export interface DeliverySummary {
+  status: 'NONE' | 'SUCCESS' | 'PARTIAL_FAILED' | 'FAILED' | 'SKIPPED'
+  total: number
+  success: number
+  failed: number
+  skipped: number
+  channels: Notify[]
+  byChannel: Partial<Record<Notify | 'WEBHOOK', DeliveryChannelSummary>>
+  latestDeliveryTime?: string
+}
+
+export interface AlarmEvent {
+  id: string
+  level: string
+  status: 'ING' | 'RECOVER' | 'CLOESE'
+  metric: string
+  summary: string
+  objectType: AlarmObjectType
+  objectId?: string
+  objectName?: string
+  objectDeleted: boolean
+  taskId?: string
+  taskName?: string
+  syncType?: string
+  nodeId?: string
+  nodeName?: string
+  agentId?: string
+  connectionId?: string
+  inspectId?: string
+  serverId?: string
+  apiId?: string
+  currentValue?: number
+  threshold?: number
+  firstOccurrenceTime?: string
+  lastOccurrenceTime?: string
+  occurrenceCount?: number
+  recoveryTime?: string
+  closeTime?: string
+  closeBy?: string
+  /** 任务重新运行时由系统归档 */
+  archived?: boolean
+  lastNotifyTime?: string
+  deliverySummary?: DeliverySummary
+}
+
+export interface AlarmEventStats {
+  alarming: number
+  severe: number
+  todayNew: number
+  todayRecovered: number
+}
+
+/** 数组参数以逗号拼接，服务端按列表绑定 */
+export function joinListParams(params: Record<string, any> = {}) {
+  const result: Record<string, any> = {}
+  Object.entries(params).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === '') return
+    if (Array.isArray(value)) {
+      if (value.length) result[key] = value.join(',')
+      return
+    }
+    result[key] = value
+  })
+  return result
+}
+
+export function listAlarmEvents(params: Record<string, any>) {
+  return requestClient.get<{ total: number; items: AlarmEvent[] }>(
+    '/api/alarms',
+    { params: joinListParams(params) },
+  )
+}
+
+export function getAlarmEvent(id: string) {
+  return requestClient.get<AlarmEvent>(`/api/alarms/${id}`)
+}
+
+export function getAlarmEventStats() {
+  return requestClient.get<AlarmEventStats>('/api/alarms/stats')
+}
+
+/** 关闭告警事件，需要告警关闭权限并写入操作审计 */
+export function closeAlarmEvents(ids: string[]) {
+  return requestClient.post('/api/alarms/close', ids)
+}

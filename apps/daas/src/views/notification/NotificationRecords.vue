@@ -1,0 +1,410 @@
+<script>
+import { joinListParams } from '@tap/api/src/core/alarm'
+import {
+  listNotificationRecords,
+  previewNotificationReadState,
+  updateNotificationReadState,
+} from '@tap/api/src/core/notification'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import TablePage from '@tap/business/src/components/TablePage.vue'
+import { ALARM_LEVEL_MAP } from '@tap/business/src/shared/const'
+import { FilterBar } from '@tap/component/src/filter-bar'
+import { $emit } from '@tap/shared/src/event'
+import dayjs from 'dayjs'
+import i18n from '@/i18n'
+import DeliverySummaryTag from './DeliverySummaryTag.vue'
+import NotificationRecordDrawer from './NotificationRecordDrawer.vue'
+
+const TABS = ['ALL', 'UNREAD', 'FAILED']
+
+const FILTER_KEYS = [
+  'start',
+  'end',
+  'level',
+  'channel',
+  'deliveryStatus',
+  'read',
+  'recipient',
+  'keyword',
+  'alarmEventId',
+]
+
+function buildSearchParams(query = {}) {
+  const base = Object.fromEntries(FILTER_KEYS.map((key) => [key, '']))
+  return { ...base, ...query }
+}
+
+export default {
+  components: {
+    TablePage,
+    FilterBar,
+    PageContainer,
+    DeliverySummaryTag,
+    NotificationRecordDrawer,
+  },
+  data() {
+    const query = { ...this.$route.query }
+    if (!query.start && !query.end && !query.alarmEventId) {
+      // 默认最近 7 天；携带 alarmEventId 深链接时不自动加时间范围，避免漏掉早于 7 天的历史通知
+      query.start = dayjs().subtract(7, 'day').startOf('day').valueOf()
+      query.end = dayjs().endOf('day').valueOf()
+    }
+    return {
+      tabs: TABS,
+      tab: TABS.includes(query.tab) ? query.tab : 'ALL',
+      filterItems: [],
+      searchParams: buildSearchParams(query),
+      multipleSelection: [],
+      drawerVisible: false,
+      drawerId: '',
+    }
+  },
+  computed: {
+    table() {
+      return this.$refs.table
+    },
+  },
+  watch: {
+    '$route.query': function (query) {
+      this.searchParams = buildSearchParams(query)
+      this.tab = TABS.includes(query.tab) ? query.tab : 'ALL'
+      this.table?.fetch?.(1)
+    },
+  },
+  created() {
+    this.getFilterItems()
+    if (
+      !this.$route.query.start &&
+      !this.$route.query.end &&
+      !this.$route.query.alarmEventId
+    ) {
+      this.syncQuery()
+    }
+  },
+  methods: {
+    currentParams() {
+      return {
+        ...this.searchParams,
+        alarmEventId: this.$route.query.alarmEventId,
+        tab: this.tab,
+      }
+    },
+    syncQuery() {
+      const query = joinListParams(this.currentParams())
+      const current = joinListParams(this.$route.query)
+      if (JSON.stringify(query) === JSON.stringify(current)) {
+        this.table?.fetch?.(1)
+        return
+      }
+      this.$router.replace({ name: this.$route.name, query })
+    },
+    switchTab(tab) {
+      this.tab = tab
+      this.syncQuery()
+    },
+    getData({ page }) {
+      const { current, size } = page
+      return listNotificationRecords({
+        ...this.currentParams(),
+        page: current,
+        size,
+      }).then((data) => ({
+        total: data?.total || 0,
+        data: (data?.items || []).map((item) => ({
+          ...item,
+          levelLabel: ALARM_LEVEL_MAP[item.level]?.text || item.level,
+          levelType: ALARM_LEVEL_MAP[item.level]?.type,
+          firstOccurrenceText: this.fmt(item.firstOccurrenceTime),
+          lastOccurrenceText: this.fmt(item.lastOccurrenceTime),
+          latestNotifyText: this.fmt(item.latestNotifyTime),
+        })),
+      }))
+    },
+    fmt(time) {
+      return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : ''
+    },
+    getFilterItems() {
+      const option = (prefix) => (value) => ({
+        label: i18n.t(`${prefix}${value.toLowerCase()}`),
+        value,
+      })
+      this.filterItems = [
+        {
+          title: i18n.t('notification_record_notify_time'),
+          type: 'datetimerange',
+          key: 'start,end',
+        },
+        {
+          label: i18n.t('packages_dag_components_alert_gaojingjibie'),
+          key: 'level',
+          type: 'select-inner',
+          items: ['NORMAL', 'WARNING', 'CRITICAL', 'EMERGENCY', 'RECOVERY'].map(
+            (value) => ({
+              label: ALARM_LEVEL_MAP[value].text,
+              value,
+            }),
+          ),
+        },
+        {
+          label: i18n.t('notification_record_channel'),
+          key: 'channel',
+          type: 'select-inner',
+          // 企业版告警通知渠道为站内消息与邮件
+          items: ['SYSTEM', 'EMAIL'].map(option('delivery_channel_')),
+        },
+        {
+          label: i18n.t('notification_record_delivery_status'),
+          key: 'deliveryStatus',
+          type: 'select-inner',
+          items: ['SUCCESS', 'PARTIAL_FAILED', 'FAILED', 'SKIPPED', 'NONE'].map(
+            option('delivery_status_'),
+          ),
+        },
+        {
+          label: i18n.t('notification_record_read_state'),
+          key: 'read',
+          type: 'select-inner',
+          items: [
+            { label: i18n.t('notification_record_read'), value: 'true' },
+            { label: i18n.t('notification_record_unread'), value: 'false' },
+          ],
+        },
+        {
+          placeholder: i18n.t('notification_record_recipient_placeholder'),
+          key: 'recipient',
+          type: 'input',
+          width: '180px',
+        },
+        {
+          placeholder: i18n.t('notification_record_keyword_placeholder'),
+          key: 'keyword',
+          type: 'input',
+        },
+      ]
+    },
+    openDetail(row) {
+      this.drawerId = row.id
+      this.drawerVisible = true
+    },
+    refresh() {
+      this.table.fetch()
+      $emit(this.$root, 'notificationUpdate')
+    },
+    async markSelected(read) {
+      const ids = this.multipleSelection.map((item) => item.id)
+      if (!ids.length) return
+      const confirmed = await this.confirmScope(ids.length, read)
+      if (!confirmed) return
+      await updateNotificationReadState(ids, read)
+      this.refresh()
+    },
+    async markAll(read) {
+      // “全部”先由服务端按当前筛选计算影响范围，确认后再按明确 ID 执行
+      const preview = await previewNotificationReadState(
+        this.currentParams(),
+        read,
+      )
+      if (!preview?.count) {
+        this.$message.info(i18n.t('notification_record_nothing_to_mark'))
+        return
+      }
+      const confirmed = await this.confirmScope(
+        preview.count,
+        read,
+        preview.truncated,
+      )
+      if (!confirmed) return
+      await updateNotificationReadState(preview.ids, read)
+      this.refresh()
+    },
+    confirmScope(count, read, truncated) {
+      const message = i18n.t(
+        read
+          ? 'notification_record_confirm_read'
+          : 'notification_record_confirm_unread',
+        [count],
+      )
+      return this.$confirm(
+        truncated
+          ? `${message} ${i18n.t('notification_record_truncated')}`
+          : message,
+      )
+    },
+    async toggleRow(row) {
+      await updateNotificationReadState([row.id], row.unread)
+      this.refresh()
+    },
+  },
+}
+</script>
+
+<template>
+  <PageContainer>
+    <template #actions>
+      <el-button
+        :disabled="!multipleSelection.length"
+        @click="markSelected(true)"
+      >
+        {{ $t('notification_record_mark_read') }}
+      </el-button>
+      <el-button
+        :disabled="!multipleSelection.length"
+        @click="markSelected(false)"
+      >
+        {{ $t('notification_record_mark_unread') }}
+      </el-button>
+      <el-button type="primary" @click="markAll(true)">
+        {{ $t('notification_record_mark_all_read') }}
+      </el-button>
+      <el-button
+        text
+        type="primary"
+        @click="$router.push({ name: 'notificationSetting' })"
+      >
+        {{ $t('notify_setting') }}
+      </el-button>
+    </template>
+    <TablePage
+      ref="table"
+      row-key="id"
+      :remote-method="getData"
+      @selection-change="(val) => (multipleSelection = val)"
+      @row-click="openDetail"
+    >
+      <template #nav>
+        <el-tabs :model-value="tab" @tab-change="switchTab">
+          <el-tab-pane
+            v-for="item in tabs"
+            :key="item"
+            :name="item"
+            :label="$t(`notification_record_tab_${item.toLowerCase()}`)"
+          />
+        </el-tabs>
+      </template>
+      <template #search>
+        <FilterBar
+          v-model:value="searchParams"
+          :items="filterItems"
+          :change-route="false"
+          @search="syncQuery"
+          @fetch="syncQuery"
+        />
+      </template>
+      <el-table-column
+        type="selection"
+        width="32"
+        align="center"
+        :selectable="(row) => row.readable"
+      />
+      <el-table-column width="28">
+        <template #default="{ row }">
+          <span v-if="row.unread" class="notification-unread-dot" />
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('packages_dag_components_alert_gaojingjibie')"
+        width="100"
+      >
+        <template #default="{ row }">
+          <span :class="[`status-${row.levelType}`, 'status-block']">{{
+            row.levelLabel
+          }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('notification_record_content')"
+        min-width="220"
+      >
+        <template #default="{ row }">
+          <div class="ellipsis" :class="{ 'fw-sub': row.unread }">
+            {{ row.title }}
+          </div>
+          <div v-if="row.legacy" class="color-info fs-8">
+            {{ $t('notification_record_legacy') }}
+          </div>
+          <div v-else-if="row.alarmEventMissing" class="color-info fs-8">
+            {{ $t('notification_record_alarm_missing') }}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('alarm_event_task')"
+        prop="taskName"
+        min-width="140"
+      />
+      <el-table-column
+        :label="$t('packages_dag_components_alert_gaojingshoucifa')"
+        prop="firstOccurrenceText"
+        width="160"
+      />
+      <el-table-column
+        :label="$t('packages_dag_components_alert_gaojingzuijinfa')"
+        prop="lastOccurrenceText"
+        width="160"
+      />
+      <el-table-column
+        :label="$t('alarm_event_occurrence_count')"
+        prop="occurrenceCount"
+        width="90"
+        align="right"
+      />
+      <el-table-column
+        :label="$t('notification_record_delivery')"
+        min-width="160"
+      >
+        <template #default="{ row }">
+          <DeliverySummaryTag :summary="row.deliverySummary" />
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('notification_record_latest_notify')"
+        prop="latestNotifyText"
+        width="160"
+      />
+      <el-table-column
+        fixed="right"
+        :label="$t('public_operation')"
+        width="170"
+      >
+        <template #default="{ row }">
+          <el-button text type="primary" @click.stop="openDetail(row)">{{
+            $t('public_button_details')
+          }}</el-button>
+          <template v-if="row.readable">
+            <el-divider direction="vertical" />
+            <el-button text type="primary" @click.stop="toggleRow(row)">
+              {{
+                row.unread
+                  ? $t('notification_record_mark_read')
+                  : $t('notification_record_mark_unread')
+              }}
+            </el-button>
+          </template>
+        </template>
+      </el-table-column>
+    </TablePage>
+    <NotificationRecordDrawer
+      v-model:visible="drawerVisible"
+      :id="drawerId"
+      @changed="refresh"
+    />
+  </PageContainer>
+</template>
+
+<style lang="scss" scoped>
+.notification-unread-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--el-color-danger);
+}
+.status-block {
+  display: inline-block;
+  min-width: 60px;
+  padding: 3px 10px;
+  text-align: center;
+  font-weight: 500;
+  border-radius: 4px;
+}
+</style>
