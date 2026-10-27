@@ -1,230 +1,115 @@
-<script>
+<script setup lang="ts">
+import { getLicenseExpires } from '@tap/api/src/core/licenses'
 import {
-  countNotifications,
-  fetchNotifications,
-  listNotifications,
-  patchNotification,
+  getUnreadNotificationCount,
+  listNotificationRecords,
+  previewNotificationReadState,
+  updateNotificationReadState,
+  type NotificationRecord,
 } from '@tap/api/src/core/notification'
-import { fetchUserLogs } from '@tap/api/src/core/userlogs'
 import { ALARM_LEVEL_MAP } from '@tap/business/src/shared/const'
 import Cookie from '@tap/shared/src/cookie'
-
-import { $emit, $on } from '@tap/shared/src/event'
+import { getSettingByKey } from '@tap/shared/src/settings'
+import { $on } from '@tap/shared/src/event'
 import dayjs from 'dayjs'
+import { Modal } from '@tap/component/src/modal'
 import { debounce } from 'lodash-es'
-import { mapState } from 'vuex'
+import { computed, getCurrentInstance, inject, onMounted, ref } from 'vue'
+import { useI18n } from '@tap/i18n'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import NotificationRecordDrawer from './NotificationRecordDrawer.vue'
 
-import { TYPEMAP } from './tyepMap'
-import UserOperation from './UserOperation'
+/**
+ * 铃铛：只承担个人待处理消息入口——未读的站内告警通知，以及管理员的许可证平台提醒。
+ */
+const { t } = useI18n()
+const router = useRouter()
+const store = useStore()
+const instance = getCurrentInstance()
 
-export default {
-  components: {
-    UserOperation,
-  },
-  data() {
-    return {
-      // unRead: 0,
-      loading: false,
-      loadingAlarm: false,
-      activeTab: 'system',
-      listData: [],
-      colorMap: {
-        ERROR: '#D44D4D',
-        WARN: '#FF7D00',
-        INFO: '#2c65ff',
-      },
-      typeMap: TYPEMAP,
-      systemMap: {
-        sync: this.$t('notify_sync'),
-        migration: this.$t('notify_migration'),
-        dataFlow: this.$t('notify_data_flow'),
-        agent: this.$t('notify_manage_sever'),
-        inspect: this.$t('notify_inspect'),
-        JobDDL: this.$t('notify_ddl_deal'),
-        system: this.$t('notify_system'),
-        Agent: 'Agent',
-      },
-      userOperations: [],
-      alarmData: [],
-      isHide: true,
-    }
-  },
-  computed: mapState({
-    unRead: (state) => state.notification.unRead,
-  }),
-  created() {
-    this.init()
-  },
-  methods: {
-    handleViewMore() {
-      const routeMap = {
-        system: { name: 'systemNotification' },
-        alarm: { name: 'systemAlarm' },
-        user: { name: 'userNotification' },
-      }
-      this.$router.push(routeMap[this.activeTab])
-    },
-    init() {
-      const msg = {
-        type: 'notification',
-      }
-      if (!Number.parseInt(Cookie.get('isAdmin'))) {
-        msg.userId = Cookie.get('user_id')
-      }
-      this.getUnreadData()
-      this.$ws.on(
-        'notification',
-        debounce((res) => {
-          const data = res?.data
-          if (data?.msg !== 'alarm') {
-            if (this.isHide) {
-              this.getUnReadNum()
-              return
-            }
-            this.getUnreadData()
-          }
-        }, 800),
-      )
-      this.$ws.ready(() => {
-        this.$ws.send(msg)
-      }, true)
-      $on(this.$root, 'notificationUpdate', () => {
-        this.$ws.send(msg)
-      })
-    },
-    getUnReadNum() {
-      const where = {
-        read: false,
-      }
-      countNotifications({ where: JSON.stringify(where) }).then((data) => {
-        this.$store.commit('notification', {
-          unRead: data?.count || 0,
-        })
-      })
-    },
-    getUnreadData() {
-      const filter = {
-        where: {
-          read: false,
-        },
-        order: ['createTime DESC'],
-        limit: 20,
-        skip: 0,
-      }
-      fetchNotifications(filter).then((data) => {
-        const { items, total } = data || {}
-        this.$store.commit('notification', {
-          unRead: total,
-        })
-        this.listData = items.map((t) => {
-          t.createTime = dayjs(t.createTime).format('YYYY-MM-DD HH:mm:ss')
-          return t
-        })
-      })
-    },
-    handleRead(id, type) {
-      patchNotification({ read: true, id }).then(() => {
-        if (type === 'alarm') {
-          this.getAlarmData()
-          return
-        }
-        this.getUnreadData()
-        $emit(this.$root, 'notificationUpdate')
-      })
-    },
-    handleGo(item) {
-      switch (item.system) {
-        case 'migration':
-          this.$router.push({
-            name: 'MigrateEditor',
-            params: {
-              id: item.sourceId,
-            },
-          })
-          break
-        case 'dataFlow':
-          this.$router.push({
-            name: 'DataflowEditor',
-            params: {
-              id: item.sourceId,
-            },
-          })
-          break
-        case 'agent':
-          this.$router.push({
-            name: 'clusterManagement',
-          })
-          break
-      }
-    },
-    tabHandler(tab) {
-      if (tab === 'user') {
-        this.getUserOperations()
-      }
-      if (tab === 'alarm') {
-        this.getAlarmData()
-      }
-    },
-    getUserOperations() {
-      this.loading = true
-      const filter = {
-        order: 'createTime DESC',
-        limit: 50,
-        skip: 0,
-        where: {
-          type: 'userOperation',
-        },
-      }
-      fetchUserLogs(filter)
-        .then((data) => {
-          this.userOperations =
-            data?.items?.map((item) => {
-              item.createTimeFmt = dayjs(item.createTime).format(
-                'YYYY-MM-DD HH:mm:ss',
-              )
-              return item
-            }) || []
-        })
-        .finally(() => {
-          this.loading = false
-        })
-    },
-    getAlarmData() {
-      const where = {
-        msgType: 'ALARM',
-        page: 1,
-        size: 20,
-        read: false,
-      }
-      this.loadingAlarm = true
-      listNotifications(where).then((data) => {
-        const list = data?.items || []
-        this.alarmData = list.map((item) => {
-          item.levelLabel = ALARM_LEVEL_MAP[item.level].text
-          item.levelType = ALARM_LEVEL_MAP[item.level].type
-          return item
-        })
+const loading = ref(false)
+const records = ref<NotificationRecord[]>([])
+const licenseDays = ref<number | null>(null)
+const drawerVisible = ref(false)
+const drawerId = ref('')
 
-        this.loadingAlarm = false
-      })
-    },
-    toCenter() {
-      if (this.$route.name === 'notification') {
-        return
-      }
-      this.$router.push({ name: 'notification' })
-    },
-    handleShow() {
-      this.activeTab = 'system'
-      this.isHide = false
-      this.getUnreadData()
-    },
-    handleHide() {
-      this.isHide = true
-    },
-  },
-  emits: ['notificationUpdate'],
+const unRead = computed(() => store.state.notification?.unRead || 0)
+const isAdmin = Number.parseInt(Cookie.get('isAdmin') || '0') === 1
+const hasPermissionByCode = inject<(code: string) => boolean>(
+  'hasPermissionByCode',
+)
+// 铃铛只展示发给自己的通知；查看全部通知记录需要通知记录权限
+const canViewAll = hasPermissionByCode?.('v2_notification_record') ?? false
+
+const fmt = (time?: string) =>
+  time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : ''
+
+async function loadCount() {
+  const count = await getUnreadNotificationCount()
+  store.commit('notification', { unRead: count || 0 })
 }
+
+async function loadRecords() {
+  loading.value = true
+  try {
+    const data = await listNotificationRecords({
+      tab: 'UNREAD',
+      page: 1,
+      size: 10,
+    })
+    records.value = data?.items || []
+  } finally {
+    loading.value = false
+  }
+}
+
+async function loadLicense() {
+  if (!isAdmin) return
+  const data: any = await getLicenseExpires()
+  const showDay = Number(getSettingByKey('licenseNoticeDays') || 0)
+  if (!data?.expires_on) return
+  const days = Math.floor((Number(data.expires_on) - Date.now()) / 86400000)
+  licenseDays.value = showDay > days ? days : null
+}
+
+const refresh = debounce(() => {
+  loadCount()
+  loadRecords()
+}, 800)
+
+function open(record: NotificationRecord) {
+  drawerId.value = record.id
+  drawerVisible.value = true
+}
+
+async function markAllRead() {
+  const preview = await previewNotificationReadState({ tab: 'UNREAD' }, true)
+  if (!preview?.count) return
+  const confirmed = await Modal.confirm(
+    t('notification_record_confirm_read', [preview.count]),
+  )
+  if (!confirmed) return
+  await updateNotificationReadState(preview.ids, true)
+  refresh()
+}
+
+function viewAll() {
+  if (!canViewAll) return
+  router.push({ name: 'notificationRecords' })
+}
+
+onMounted(() => {
+  loadCount()
+  loadLicense()
+  const ws = instance?.proxy?.$ws
+  ws?.on('notification', refresh)
+  // TM 只向已登记订阅的会话推送通知；断线重连是新会话，需重新订阅
+  const subscribe = () => ws?.send({ type: 'notification' })
+  ws?.on('open', subscribe)
+  subscribe()
+  $on(instance?.proxy?.$root, 'notificationUpdate', refresh)
+})
 </script>
 
 <template>
@@ -232,271 +117,96 @@ export default {
     popper-class="notification-popover pt-1"
     placement="bottom"
     trigger="hover"
-    width="450"
-    @show="handleShow"
-    @hide="handleHide"
+    width="420"
+    @show="loadRecords"
   >
     <template #reference>
-      <el-badge
-        class="item-badge"
-        :model-value="unRead"
-        :max="99"
-        :hidden="!unRead"
-      >
-        <el-button text size="large" @click="toCenter()">
+      <el-badge class="item-badge" :value="unRead" :max="99" :hidden="!unRead">
+        <el-button text size="large" @click="viewAll">
           <template #icon>
             <VIcon :size="20">xiaoxi-2</VIcon>
           </template>
         </el-button>
       </el-badge>
     </template>
-    <el-tabs
-      v-model="activeTab"
-      stretch
-      class="notification-popover-wrap"
-      @tab-change="tabHandler"
-    >
-      <ElButton text type="primary" @click="handleViewMore">{{
-        $t('notify_view_more')
-      }}</ElButton>
-      <el-tab-pane class="tab-item" name="system">
-        <template #label>
-          <span>{{ $t('notify_system_notice') }}</span>
-        </template>
-        <div class="tab-item-container">
-          <ul v-if="listData.length" class="tab-list notification-list">
-            <li
-              v-for="(item, index) in listData"
-              :key="index"
-              class="notification-item"
-              @click="handleRead(item.id)"
-            >
-              <div class="flex flex-row">
-                <div class="mr-1">
-                  <span class="unread-1zPaAXtSu inline-block" />
-                </div>
-                <div>
-                  <span :style="`color: ${colorMap[item.level]};`"
-                    >【{{ item.level }}】</span
-                  >
-                  <span>{{ systemMap[item.system] }} </span>
-                  <span v-if="item.msg === 'deleted'">
-                    {{ `${item.serverName} ` }}
-                  </span>
-                  <span
-                    v-else
-                    class="cursor-pointer px-1 primary"
-                    @click.stop="handleGo(item)"
-                  >
-                    {{ item.serverName }}
-                  </span>
-                  <template v-if="item.msg === 'JobDDL'">
-                    <span class="list-item-platform">
-                      {{
-                        `${$t('notify_source_name')} : ${item.sourceName} , ${$t('notify_database_name')} : ${
-                          item.databaseName
-                        } , ${$t('notify_schema_name')} : ${item.schemaName} ,`
-                      }}
-                    </span>
-                    <el-tooltip :content="item.sql" placement="top">
-                      <span>
-                        {{ `DDL SQL : ${item.sql}` }}
-                      </span>
-                    </el-tooltip>
-                  </template>
-                  <template v-else>
-                    <span>{{ typeMap[item.msg] }}</span>
-                  </template>
-                  <div class="item-time">
-                    <span>{{ item.createTime }}</span>
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ul>
-          <div
-            v-else
-            class="notification-no-data flex h-100 justify-content-center align-items-center"
-          >
-            <div>
-              <VIcon size="76">no-notice</VIcon>
-              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">
-                {{ $t('notify_no_notice') }}
-              </div>
-            </div>
+    <div class="flex align-center justify-content-between px-1 pb-2">
+      <span class="fw-sub">{{
+        t('notification_bell_title', [unRead > 99 ? '99+' : unRead])
+      }}</span>
+      <el-button
+        text
+        type="primary"
+        size="small"
+        :disabled="!unRead"
+        @click="markAllRead"
+      >
+        {{ t('notification_record_mark_all_read') }}
+      </el-button>
+    </div>
+    <el-alert
+      v-if="licenseDays !== null"
+      type="warning"
+      :closable="false"
+      show-icon
+      class="mb-2 cursor-pointer"
+      :title="t('notification_platform_license', [licenseDays])"
+      @click="router.push({ name: 'License' })"
+    />
+    <div v-loading="loading" class="notification-bell-list">
+      <ul v-if="records.length">
+        <li
+          v-for="record in records"
+          :key="record.id"
+          class="notification-bell-item px-1 py-2 cursor-pointer"
+          @click="open(record)"
+        >
+          <div class="flex align-center gap-1">
+            <span class="notification-bell-dot" />
+            <span class="fs-8 color-warning">
+              [{{ ALARM_LEVEL_MAP[record.level]?.text || record.level }}]
+            </span>
+            <span class="ellipsis flex-1">{{ record.title }}</span>
+          </div>
+          <div class="color-info fs-8 mt-1 pl-3">
+            {{ record.taskName }} · {{ fmt(record.latestNotifyTime) }}
+          </div>
+        </li>
+      </ul>
+      <div v-else class="flex justify-content-center align-items-center py-6">
+        <div class="text-center">
+          <VIcon size="64">no-notice</VIcon>
+          <div class="pt-2 fs-8 font-color-slight">
+            {{ t('notify_no_notice') }}
           </div>
         </div>
-      </el-tab-pane>
-      <el-tab-pane v-loading="loading" class="tab-item" name="user">
-        <template #label>
-          <span>{{ $t('daas_notification_center_yonghucaozuo') }}</span>
-        </template>
-        <div class="tab-item-container">
-          <ul v-if="userOperations.length" class="tab-list notification-list">
-            <li
-              v-for="record in userOperations"
-              :key="record.id"
-              class="notification-item"
-            >
-              <UserOperation :record="record" />
-              <div class="item-time">
-                {{ record.createTimeFmt }}
-              </div>
-            </li>
-          </ul>
-          <div
-            v-else
-            class="notification-no-data flex h-100 justify-content-center align-items-center"
-          >
-            <div>
-              <VIcon size="76">no-notice</VIcon>
-              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">
-                {{ $t('notify_view_more') }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </el-tab-pane>
-      <el-tab-pane v-loading="loadingAlarm" class="tab-item" name="alarm">
-        <template #label>
-          <span>{{
-            $t('daas_notification_alarmnotification_gaojingtongzhi')
-          }}</span>
-        </template>
-        <div class="tab-item-container">
-          <ul v-if="alarmData.length" class="tab-list notification-list">
-            <li
-              v-for="(item, index) in alarmData"
-              :key="index"
-              class="notification-item"
-              @click="handleRead(item.id, 'alarm')"
-            >
-              <div class="flex flex-row">
-                <div class="mr-1">
-                  <span class="unread-1zPaAXtSu inline-block" />
-                </div>
-                <div>
-                  <span :class="[`level-${item.levelType}`]"
-                    >【{{ item.title }}】</span
-                  >
-                  <template>
-                    <span>{{ item.title }}</span>
-                  </template>
-                </div>
-              </div>
-            </li>
-          </ul>
-          <div
-            v-else
-            class="notification-no-data flex h-100 justify-content-center align-items-center"
-          >
-            <div>
-              <VIcon size="76">no-notice</VIcon>
-              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">
-                {{ $t('notify_no_notice') }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </el-tab-pane>
-    </el-tabs>
+      </div>
+    </div>
+    <div v-if="canViewAll" class="text-center pt-2 border-top">
+      <el-button text type="primary" @click="viewAll">{{
+        t('notification_view_all_records')
+      }}</el-button>
+    </div>
+    <NotificationRecordDrawer
+      v-model:visible="drawerVisible"
+      :id="drawerId"
+      @changed="refresh"
+    />
   </el-popover>
 </template>
 
-<style lang="scss">
-.notification-popover {
-  overflow: hidden;
-  .notification-popover-wrap {
-    overflow: hidden;
-    .el-tabs__header {
-      .el-tabs__nav-wrap {
-        .el-tabs__nav-scroll {
-          width: 280px;
-        }
-      }
-    }
-    > .el-tabs__content {
-      margin-right: -13px;
-      padding: 0 !important;
-      overflow: initial;
-      & > .el-button {
-        position: absolute;
-        right: 16px;
-        top: -53px;
-        z-index: 10;
-      }
-    }
-    .tab-item {
-      margin-bottom: 1px;
-    }
-  }
-}
-</style>
-
 <style lang="scss" scoped>
-.notification-popover-wrap {
-  overflow: hidden;
-  position: relative;
-
-  .notice-footer {
-    display: flex;
-    justify-content: space-between;
-    font-size: var(--font-base-title);
-    height: 40px;
-    line-height: 40px;
-    padding: 0 25px;
-    background: rgba(241, 241, 241, 1);
-    border-top: 1px solid rgba(222, 222, 228, 1);
-    .notice-footer-text,
-    .more-text {
-      display: inline-block;
-      cursor: pointer;
-      color: var(--text-light);
-    }
-  }
-  .tab-item {
-    .tab-item-container {
-      display: flex;
-      flex-direction: column;
-      height: 362px;
-      overflow: hidden;
-      margin-bottom: -1px;
-      .tab-list {
-        flex: 1;
-        overflow-y: auto;
-      }
-    }
-    .notification-list {
-      box-sizing: border-box;
-      .notification-item {
-        padding: 5px 20px 4px 20px;
-        border-bottom: 1px solid var(--border-light);
-        font-size: var(--font-base-title);
-        color: var(--text-light);
-        .primary {
-          color: var(--color-primary);
-        }
-        .unread-1zPaAXtSu {
-          top: 22px;
-          left: 8px;
-          width: 6px;
-          height: 6px;
-          background: #ee5353;
-          border-radius: 50%;
-        }
-        &:hover {
-          background-color: var(--el-fill-color-light);
-        }
-        &:last-child {
-          border: none;
-        }
-        .item-time {
-          margin-top: 5px;
-          color: var(--text-light);
-          font-size: var(--font-base-title);
-        }
-      }
-    }
-  }
+.notification-bell-list {
+  max-height: 420px;
+  overflow-y: auto;
+}
+.notification-bell-item:hover {
+  background: var(--el-fill-color-light);
+}
+.notification-bell-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--el-color-danger);
 }
 </style>

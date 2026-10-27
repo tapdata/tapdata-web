@@ -173,7 +173,7 @@ onMounted(() => {
             </template>
           </ElMenuItem>
         </template>
-        <div class="flex-grow-1 border-bottom" />
+        <div class="border-bottom my-1" />
         <template v-for="menu in menusGroup.bottom" :key="menu.name">
           <ElSubMenu
             v-if="menu.children && !menu.hidden"
@@ -216,8 +216,12 @@ onMounted(() => {
 <style lang="scss" scoped>
 .layout-side-scrollbar {
   position: fixed;
-  margin-top: 64px;
+  top: 64px;
+  bottom: 0;
+  height: calc(100vh - 64px);
   flex-shrink: 0;
+  will-change: transform;
+  transform: translateZ(0);
   :deep(.el-scrollbar__view) {
     min-height: 100%;
     display: flex;
@@ -242,6 +246,10 @@ onMounted(() => {
     gap: 8px;
   }
 
+  :deep(.el-menu--inline) {
+    overflow: hidden;
+  }
+
   :deep(.el-menu-item.is-active) {
     background-color: var(--primary-hover-light);
   }
@@ -252,8 +260,22 @@ onMounted(() => {
   }
 
   :deep(.el-sub-menu__title + .el-menu) {
-    margin-top: 8px;
+    padding-top: 8px;
     padding-inline-start: 10px;
+  }
+
+  :deep(.el-sub-menu__icon-arrow) {
+    transition:
+      transform var(--el-transition-duration) ease-in-out,
+      opacity var(--el-transition-duration) ease-in-out;
+
+    &::before,
+    &::after {
+      transition:
+        transform var(--el-transition-duration) ease-in-out,
+        background-color var(--el-transition-duration) ease-in-out,
+        color var(--el-transition-duration) ease-in-out;
+    }
   }
 }
 </style>

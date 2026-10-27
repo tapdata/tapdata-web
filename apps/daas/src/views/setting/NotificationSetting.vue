@@ -70,6 +70,20 @@ export default {
         type="info"
         show-icon
       />
+      <ElAlert
+        class="mb-4"
+        :closable="false"
+        type="warning"
+        show-icon
+        :title="$t('notification_setting_retired_tip')"
+      >
+        <ElButton
+          text
+          type="primary"
+          @click="$router.push({ name: 'alarmSetting' })"
+          >{{ $t('alarm_event_open_setting') }}</ElButton
+        >
+      </ElAlert>
       <div class="notification-main">
         <section
           v-show="runNotification && runNotification.length > 0"
@@ -79,9 +93,7 @@ export default {
           <ul>
             <li v-for="(item, index) in runNotification" :key="index">
               <span class="label">{{ notificationMAP[item.label] }}</span>
-              <el-checkbox v-model="item.notice" class="notice">{{
-                $t('notify_system_notice')
-              }}</el-checkbox>
+              <!-- 站内系统通知已下线（TAP-13052），不再提供站内开关 -->
               <!--<el-checkbox class="email" v-model="item.email">{{ $t('notify_email_notice') }}</el-checkbox>-->
               <div v-if="item.lagTime" class="mt-4">
                 <span v-if="item.lagTime" class="label">{{
@@ -162,9 +174,7 @@ export default {
           <ul>
             <li v-for="(item, index) in systemNotification" :key="index">
               <span class="label">{{ notificationMAP[item.label] }}</span>
-              <el-checkbox v-model="item.notice" class="notice">{{
-                $t('notify_system_notice')
-              }}</el-checkbox>
+              <!-- 站内系统通知已下线（TAP-13052），不再提供站内开关 -->
               <!--<el-checkbox class="email" v-model="item.email">{{ $t('notify_email_notice') }}</el-checkbox>-->
             </li>
           </ul>
@@ -177,9 +187,7 @@ export default {
           <ul>
             <li v-for="(item, index) in agentNotification" :key="index">
               <span class="label">{{ notificationMAP[item.label] }}</span>
-              <el-checkbox v-model="item.notice" class="notice">{{
-                $t('notify_system_notice')
-              }}</el-checkbox>
+              <!-- 站内系统通知已下线（TAP-13052），不再提供站内开关 -->
               <!--<el-checkbox class="email" v-model="item.email">{{ $t('notify_email_notice') }}</el-checkbox>-->
             </li>
           </ul>
