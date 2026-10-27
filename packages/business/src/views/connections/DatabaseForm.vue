@@ -255,9 +255,14 @@ export default {
             try {
               const report = await checkConnectionAgentSettings(agentPayload)
               if (report.hasConflicts) {
-                this.$refs.agentTaskConflictDialog.open(agentPayload, report)
-                this.submitBtnLoading = false
-                return
+                const proceed = await this.$refs.agentTaskConflictDialog.open(
+                  agentPayload,
+                  report,
+                )
+                if (!proceed) {
+                  this.submitBtnLoading = false
+                  return
+                }
               }
             } catch {
               this.submitBtnLoading = false

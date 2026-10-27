@@ -53,10 +53,24 @@ export interface ConnectionAgentConflictReport {
     name: string
     syncType: string
     status: string
+    editable: boolean
+    revision: number | null
     code: string
     reason: string
     connections: Array<{ id: string; name: string }>
   }>
+}
+
+export function updateConflictTaskAgents(
+  params: BatchUpdateConnectionAgentSettingsParams & {
+    taskEdits: Array<{ id: string; revision: number | null }>
+    taskSettings: BatchUpdateConnectionAgentSettingsParams['settings']
+  },
+) {
+  return requestClient.post<{
+    updatedTaskIds: string[]
+    failures: Array<{ id: string; code: string }>
+  }>(`${BASE_URL}/agent-settings-conflicts/tasks`, params)
 }
 
 export function checkConnectionAgentSettings(

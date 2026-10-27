@@ -4,6 +4,7 @@ import {
   agentCheckPayload,
   agentConflictReport,
   conflictTaskRoutes,
+  taskAgentEdits,
 } from '../src/views/connections/connectionAgentConflicts.ts'
 
 test('automatic allocation clears stale manual and priority values without mutating the form', () => {
@@ -78,4 +79,18 @@ test('supports navigation for all five related task types', () => {
   assert.equal(Object.keys(conflictTaskRoutes).length, 5)
   assert.equal(conflictTaskRoutes.inspect, 'dataVerificationList')
   assert.equal(conflictTaskRoutes.connHeartbeat, 'HeartbeatTableList')
+})
+
+test('task edits carry the selected revision and exclude noneditable rows', () => {
+  const rows = [
+    { id: 'stopped', editable: true, revision: 123 },
+    { id: 'running', editable: false, revision: 456 },
+    { id: 'legacy', editable: true, revision: null },
+  ]
+  assert.deepEqual(taskAgentEdits(rows), [
+    { id: 'stopped', revision: 123 },
+    { id: 'legacy', revision: null },
+  ])
+  assert.equal(rows.length, 3)
+  assert.deepEqual(taskAgentEdits([]), [])
 })

@@ -1,4 +1,17 @@
 export default {
+  packages_business_agent_tasks_selected: 'Selected {count} tasks',
+
+  packages_business_agent_tasks_retry:
+    'The task changed, is not editable, or its save result is unknown. Refresh and retry.',
+
+  packages_business_agent_tasks_hint:
+    'Only editable inactive tasks can be selected. Task changes are saved first and remain saved if connection saving is canceled or fails.',
+
+  packages_business_agent_tasks_edit: 'Batch edit task Agents',
+  packages_business_agent_tasks_saved:
+    '{count} tasks updated. These changes remain saved even if you cancel or connection saving fails.',
+  packages_business_agent_tasks_continue: 'Continue saving connection',
+
   packages_business_status_wait_start: 'Ready To Start',
   packages_business_status_starting: 'Starting',
   packages_business_status_renewing: 'Resetting',

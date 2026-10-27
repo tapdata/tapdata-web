@@ -20,7 +20,7 @@ interface ConnectionRow {
   shareCdcEnable?: boolean
 }
 
-defineProps<{ loading?: boolean }>()
+defineProps<{ loading?: boolean; title?: string; subtitleKey?: string }>()
 
 const emit = defineEmits<{
   submit: [payload: BatchAgentSettingsPayload]
@@ -160,7 +160,7 @@ defineExpose({ open, close: handleClose })
 <template>
   <ElDialog
     v-model="visible"
-    :title="t('packages_business_agent_settings_dialog_title')"
+    :title="title || t('packages_business_agent_settings_dialog_title')"
     width="560px"
     :close-on-click-modal="false"
     :close-on-press-escape="!loading"
@@ -171,7 +171,7 @@ defineExpose({ open, close: handleClose })
   >
     <div class="mb-4 text-muted">
       {{
-        t('packages_business_agent_settings_dialog_subtitle', {
+        t(subtitleKey || 'packages_business_agent_settings_dialog_subtitle', {
           count: selectedConnections.length,
         })
       }}

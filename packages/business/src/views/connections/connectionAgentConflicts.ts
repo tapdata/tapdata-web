@@ -66,3 +66,11 @@ export const conflictTaskRoutes: Record<string, string> = {
   connHeartbeat: 'HeartbeatTableList',
   inspect: 'dataVerificationList',
 }
+
+export function taskAgentEdits(
+  items: Array<{ id: string; editable: boolean; revision: number | null }>,
+) {
+  return items
+    .filter((item) => item.editable)
+    .map(({ id, revision }) => ({ id, revision }))
+}

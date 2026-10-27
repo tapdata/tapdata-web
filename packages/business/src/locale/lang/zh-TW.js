@@ -1,4 +1,17 @@
 export default {
+  packages_business_agent_tasks_selected: '已選擇 {count} 個任務',
+
+  packages_business_agent_tasks_retry:
+    '任務已變更、不可編輯或儲存結果不確定，請重新整理確認後重試。',
+
+  packages_business_agent_tasks_hint:
+    '僅可選擇有編輯權限的非執行任務。任務設定先儲存；取消或連線儲存失敗不會撤銷任務修改。',
+
+  packages_business_agent_tasks_edit: '批次修改任務 Agent',
+  packages_business_agent_tasks_saved:
+    '已修改 {count} 個任務。取消或連線儲存失敗不會撤銷已儲存的任務設定。',
+  packages_business_agent_tasks_continue: '繼續儲存連線',
+
   packages_business_status_wait_start: '待啟動',
   packages_business_status_starting: '啟動中',
   packages_business_status_renewing: '重置中',

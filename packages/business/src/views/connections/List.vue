@@ -498,10 +498,11 @@ const handleBatchAgentSettingsSubmit = async (
   batchAgentSubmitting.value = true
   try {
     const report = await checkConnectionAgentSettings(payload)
-    if (report.hasConflicts) {
-      agentConflictDialog.value?.open(payload, report)
+    if (
+      report.hasConflicts &&
+      !(await agentConflictDialog.value?.open(payload, report))
+    )
       return
-    }
     await batchUpdateConnectionAgentSettings(payload)
     batchAgentSettingsDialog.value?.close()
     table.value?.clearSelection?.()

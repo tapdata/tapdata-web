@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import {
   checkConnectionAgentSettings,
+  updateConflictTaskAgents,
   type BatchUpdateConnectionAgentSettingsParams,
   type ConnectionAgentConflictReport,
 } from '@tap/api/src/core/connections'
 import { useI18n } from '@tap/i18n'
 import { ref } from 'vue'
+import BatchAgentSettingsDialog from './BatchAgentSettingsDialog.vue'
 import { useRouter } from 'vue-router'
-import { conflictTaskRoutes } from './connectionAgentConflicts'
+import { conflictTaskRoutes, taskAgentEdits } from './connectionAgentConflicts'
 import { STATUS_MAP } from '../../shared'
 
 const { t } = useI18n()
@@ -24,17 +26,88 @@ const report = ref<ConnectionAgentConflictReport>({
 })
 let payload: BatchUpdateConnectionAgentSettingsParams | null = null
 let generation = 0
+const selectedTasks = ref<ConnectionAgentConflictReport['items']>([])
+const taskSettingsDialog = ref<InstanceType<
+  typeof BatchAgentSettingsDialog
+> | null>(null)
+const taskSaving = ref(false)
+const savedCount = ref(0)
+const taskNames = new Map<string, string>()
+const failures = ref<Array<{ id: string; code: string }>>([])
+let finish: ((value: boolean) => void) | null = null
+
+function settle(value: boolean) {
+  finish?.(value)
+  finish = null
+}
+
+function editTasks() {
+  taskSettingsDialog.value?.open(selectedTasks.value)
+}
+
+async function saveTasks(settings: BatchUpdateConnectionAgentSettingsParams) {
+  if (!payload || taskSaving.value) return
+  taskSaving.value = true
+  selectedTasks.value.forEach(({ id, name }) => taskNames.set(id, name))
+  try {
+    const result = await updateConflictTaskAgents({
+      ...payload,
+      taskEdits: taskAgentEdits(selectedTasks.value),
+      taskSettings: settings.settings,
+    })
+    savedCount.value += result.updatedTaskIds.length
+    failures.value = result.failures
+    taskSettingsDialog.value?.close()
+    selectedTasks.value = []
+    await changePage(1)
+  } catch {
+    failures.value = selectedTasks.value.map(({ id }) => ({
+      id,
+      code: 'Task.AgentUpdateResultUnknown',
+    }))
+    await changePage(1)
+  } finally {
+    taskSaving.value = false
+  }
+}
+
+function failureLabel(failure: { id: string; code: string }) {
+  const reason =
+    failure.code === 'Task.AgentConflict'
+      ? t('packages_business_agent_conflict_reason_task')
+      : failure.code === 'Task.SourceAgentConflict'
+        ? t('packages_business_agent_conflict_reason_connections')
+        : t('packages_business_agent_tasks_retry')
+  return `${taskNames.get(failure.id) || failure.id}: ${reason}`
+}
+
+function onClosed() {
+  generation += 1
+  settle(false)
+}
+
+function continueSave() {
+  settle(true)
+  visible.value = false
+}
 
 function open(
   settings: BatchUpdateConnectionAgentSettingsParams,
   data: ConnectionAgentConflictReport,
 ) {
+  settle(false)
   generation += 1
   payload = settings
   report.value = data
   page.value = 1
   loading.value = false
+  savedCount.value = 0
+  failures.value = []
+  selectedTasks.value = []
   visible.value = true
+  return new Promise<boolean>((resolve) => {
+    finish = resolve
+  })
 }
 
 async function changePage(nextPage: number) {
@@ -81,7 +154,10 @@ defineExpose({ open })
     :title="t('packages_business_agent_conflict_title')"
     width="900px"
     append-to-body
-    @closed="generation += 1"
+    :close-on-click-modal="!taskSaving"
+    :close-on-press-escape="!taskSaving"
+    :show-close="!taskSaving"
+    @closed="onClosed"
   >
     <ElAlert
       type="warning"
@@ -103,12 +179,47 @@ defineExpose({ open })
         })
       "
     />
+    <ElAlert
+      v-if="savedCount"
+      class="mt-3"
+      type="warning"
+      :closable="false"
+      :title="t('packages_business_agent_tasks_saved', { count: savedCount })"
+    />
+    <ElAlert
+      v-for="failure in failures"
+      :key="failure.id"
+      class="mt-2"
+      type="error"
+      :closable="false"
+      :title="failureLabel(failure)"
+    />
+    <ElAlert
+      class="mt-3"
+      type="info"
+      :closable="false"
+      :title="t('packages_business_agent_tasks_hint')"
+    />
+    <ElButton
+      class="mt-3"
+      :disabled="!selectedTasks.length || taskSaving || loading"
+      @click="editTasks"
+    >
+      {{ t('packages_business_agent_tasks_edit') }}
+    </ElButton>
     <ElTable
       v-loading="loading"
       class="mt-4"
       :data="report.items"
       max-height="420"
+      row-key="id"
+      @selection-change="selectedTasks = $event"
     >
+      <ElTableColumn
+        type="selection"
+        width="48"
+        :selectable="(row) => row.editable && !taskSaving"
+      />
       <ElTableColumn
         :label="t('public_task_name')"
         min-width="160"
@@ -173,9 +284,23 @@ defineExpose({ open })
       @current-change="changePage"
     />
     <template #footer>
-      <ElButton @click="visible = false">{{
+      <ElButton
+        type="primary"
+        :disabled="report.hasConflicts || loading || taskSaving"
+        @click="continueSave"
+      >
+        {{ t('packages_business_agent_tasks_continue') }}
+      </ElButton>
+      <ElButton :disabled="taskSaving" @click="visible = false">{{
         t('public_button_cancel')
       }}</ElButton>
     </template>
+    <BatchAgentSettingsDialog
+      ref="taskSettingsDialog"
+      :title="t('packages_business_agent_tasks_edit')"
+      subtitle-key="packages_business_agent_tasks_selected"
+      :loading="taskSaving"
+      @submit="saveTasks"
+    />
   </ElDialog>
 </template>
