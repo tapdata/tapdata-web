@@ -1,4 +1,30 @@
 export default {
+  packages_business_agent_edit_one: 'Edit task Agent',
+
+  packages_business_agent_recheck: 'Check again',
+  packages_business_agent_recheck_clear:
+    'No conflicts detected. You can continue saving the connection.',
+  packages_business_agent_auto_title: 'Confirm automatic allocation',
+  packages_business_agent_auto_confirm:
+    'Save platform automatic allocation for these {count} tasks: {names}. Task changes are saved first and remain if you cancel or connection saving fails.',
+  packages_business_agent_auto_save:
+    'Set automatic allocation and save ({count})',
+  packages_business_agent_actions_hint:
+    'Automatic action includes only eligible tasks on this page or in your selection. Resolve the other items as indicated, then check again.',
+  packages_business_agent_action: 'How to resolve',
+  packages_business_agent_action_auto:
+    'Can resolve automatically: use platform allocation',
+  packages_business_agent_action_no_edit_permission:
+    'View only; task edit permission required',
+  packages_business_agent_action_task_active:
+    'Task is active; stop it and check again',
+  packages_business_agent_action_connection_conflict:
+    'Change the related connection Agent settings; task changes cannot resolve this',
+  packages_business_agent_action_unsupported_policy:
+    'This task type has no editable task Agent policy',
+  packages_business_agent_action_policy_conflict:
+    'Edit task Agent settings and check again',
+
   packages_business_agent_tasks_selected: 'Selected {count} tasks',
 
   packages_business_agent_tasks_retry:

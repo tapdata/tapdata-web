@@ -6,10 +6,15 @@ import {
   type ConnectionAgentConflictReport,
 } from '@tap/api/src/core/connections'
 import { useI18n } from '@tap/i18n'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { ElMessageBox } from 'element-plus'
 import BatchAgentSettingsDialog from './BatchAgentSettingsDialog.vue'
 import { useRouter } from 'vue-router'
-import { conflictTaskRoutes, taskAgentEdits } from './connectionAgentConflicts'
+import {
+  taskAgentEdits,
+  conflictTaskDestination,
+  automaticConflictTasks,
+} from './connectionAgentConflicts'
 import { STATUS_MAP } from '../../shared'
 
 const { t } = useI18n()
@@ -45,14 +50,60 @@ function editTasks() {
   taskSettingsDialog.value?.open(selectedTasks.value)
 }
 
-async function saveTasks(settings: BatchUpdateConnectionAgentSettingsParams) {
+const automaticRows = computed(() =>
+  automaticConflictTasks(
+    selectedTasks.value.length ? selectedTasks.value : report.value.items,
+  ),
+)
+
+async function saveAutomatically() {
+  if (
+    !payload ||
+    !automaticRows.value.length ||
+    taskSaving.value ||
+    loading.value
+  )
+    return
+  const rows = report.value.items.filter((row) =>
+    automaticRows.value.some((item) => item.id === row.id),
+  )
+  try {
+    await ElMessageBox.confirm(
+      t('packages_business_agent_auto_confirm', {
+        count: rows.length,
+        names: rows.map((row) => row.name).join(', '),
+      }),
+      t('packages_business_agent_auto_title'),
+      { type: 'warning' },
+    )
+  } catch {
+    return
+  }
+  await saveTasks(
+    {
+      ...payload,
+      settings: {
+        accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
+        accessNodeProcessId: null,
+        priorityProcessId: null,
+      },
+    },
+    rows,
+  )
+}
+
+async function saveTasks(
+  settings: BatchUpdateConnectionAgentSettingsParams,
+  rows = selectedTasks.value,
+) {
   if (!payload || taskSaving.value) return
+  const tasks = [...rows]
   taskSaving.value = true
-  selectedTasks.value.forEach(({ id, name }) => taskNames.set(id, name))
+  tasks.forEach(({ id, name }) => taskNames.set(id, name))
   try {
     const result = await updateConflictTaskAgents({
       ...payload,
-      taskEdits: taskAgentEdits(selectedTasks.value),
+      taskEdits: taskAgentEdits(tasks),
       taskSettings: settings.settings,
     })
     savedCount.value += result.updatedTaskIds.length
@@ -61,7 +112,7 @@ async function saveTasks(settings: BatchUpdateConnectionAgentSettingsParams) {
     selectedTasks.value = []
     await changePage(1)
   } catch {
-    failures.value = selectedTasks.value.map(({ id }) => ({
+    failures.value = tasks.map(({ id }) => ({
       id,
       code: 'Task.AgentUpdateResultUnknown',
     }))
@@ -135,14 +186,31 @@ function statusLabel(status: string) {
   return entry ? t(entry.i18n) : status
 }
 
+function category(item: ConnectionAgentConflictReport['items'][number]) {
+  if (item.blockedReason === 'no_edit_permission') return 'no_edit_permission'
+  if (item.code === 'Task.SourceAgentConflict') return 'connection_conflict'
+  if (item.blockedReason) return item.blockedReason
+  return item.autoResolvable ? 'auto' : 'policy_conflict'
+}
+
+function editOneTask(item: ConnectionAgentConflictReport['items'][number]) {
+  selectedTasks.value = [item]
+  editTasks()
+}
+
 function openTask(item: ConnectionAgentConflictReport['items'][number]) {
-  const name = conflictTaskRoutes[item.syncType]
-  if (!name || !router.hasRoute(name)) return
-  window.open(
-    router.resolve({ name, query: { keyword: item.name } }).href,
-    '_blank',
-    'noopener',
-  )
+  const destination = conflictTaskDestination(item)
+  if (!destination && item.editable) {
+    editOneTask(item)
+    return
+  }
+  if (!destination || !router.hasRoute(destination.name)) return
+  window.open(router.resolve(destination).href, '_blank', 'noopener')
+}
+
+function hasTaskEntry(item: ConnectionAgentConflictReport['items'][number]) {
+  const destination = conflictTaskDestination(item)
+  return destination ? router.hasRoute(destination.name) : item.editable
 }
 
 defineExpose({ open })
@@ -160,12 +228,14 @@ defineExpose({ open })
     @closed="onClosed"
   >
     <ElAlert
-      type="warning"
+      :type="report.hasConflicts ? 'warning' : 'success'"
       :closable="false"
       :title="
-        t('packages_business_agent_conflict_summary', {
-          count: report.total + report.hiddenCount,
-        })
+        report.hasConflicts
+          ? t('packages_business_agent_conflict_summary', {
+              count: report.total + report.hiddenCount,
+            })
+          : t('packages_business_agent_recheck_clear')
       "
     />
     <ElAlert
@@ -202,6 +272,24 @@ defineExpose({ open })
     />
     <ElButton
       class="mt-3"
+      :disabled="loading || taskSaving"
+      @click="changePage(1)"
+      >{{ t('packages_business_agent_recheck') }}</ElButton
+    >
+    <ElButton
+      class="mt-3"
+      type="primary"
+      :disabled="!automaticRows.length || loading || taskSaving"
+      @click="saveAutomatically"
+      >{{
+        t('packages_business_agent_auto_save', { count: automaticRows.length })
+      }}</ElButton
+    >
+    <div class="mt-3 text-muted">
+      {{ t('packages_business_agent_actions_hint') }}
+    </div>
+    <ElButton
+      class="mt-3"
       :disabled="!selectedTasks.length || taskSaving || loading"
       @click="editTasks"
     >
@@ -218,7 +306,12 @@ defineExpose({ open })
       <ElTableColumn
         type="selection"
         width="48"
-        :selectable="(row) => row.editable && !taskSaving"
+        :selectable="
+          (row) =>
+            row.editable &&
+            row.code !== 'Task.SourceAgentConflict' &&
+            !taskSaving
+        "
       />
       <ElTableColumn
         :label="t('public_task_name')"
@@ -227,13 +320,29 @@ defineExpose({ open })
       >
         <template #default="{ row }">
           <ElLink
-            v-if="router.hasRoute(conflictTaskRoutes[row.syncType] || '')"
+            v-if="hasTaskEntry(row)"
             type="primary"
             @click="openTask(row)"
             >{{ row.name }}</ElLink
           >
           <span v-else>{{ row.name }}</span>
         </template>
+      </ElTableColumn>
+      <ElTableColumn
+        :label="t('packages_business_agent_action')"
+        min-width="210"
+      >
+        <template #default="{ row }"
+          >{{ t(`packages_business_agent_action_${category(row)}`)
+          }}<ElLink
+            v-if="row.editable && row.code !== 'Task.SourceAgentConflict'"
+            class="ml-2"
+            type="primary"
+            :disabled="taskSaving || loading"
+            @click="editOneTask(row)"
+            >{{ t('packages_business_agent_edit_one') }}</ElLink
+          ></template
+        >
       </ElTableColumn>
       <ElTableColumn
         :label="t('packages_business_agent_conflict_type')"

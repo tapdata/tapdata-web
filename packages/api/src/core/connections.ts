@@ -54,6 +54,9 @@ export interface ConnectionAgentConflictReport {
     syncType: string
     status: string
     editable: boolean
+    canEdit: boolean
+    autoResolvable: boolean
+    blockedReason: string | null
     revision: number | null
     code: string
     reason: string

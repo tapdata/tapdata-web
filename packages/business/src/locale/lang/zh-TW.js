@@ -1,4 +1,26 @@
 export default {
+  packages_business_agent_edit_one: '修改任務 Agent',
+
+  packages_business_agent_recheck: '重新檢查',
+  packages_business_agent_recheck_clear: '目前未偵測到衝突，可以繼續儲存連線。',
+  packages_business_agent_auto_title: '確認批次改為自動分配',
+  packages_business_agent_auto_confirm:
+    '將以下 {count} 個任務改為平台自動分配並立即儲存：{names}。任務先儲存，取消或連線儲存失敗不會撤銷這些修改。',
+  packages_business_agent_auto_save: '改為自動分配並儲存（{count} 項）',
+  packages_business_agent_actions_hint:
+    '自動操作僅處理本頁或已勾選任務中預檢可解決的項目。其他項目請依處理方式調整後重新檢查。',
+  packages_business_agent_action: '處理方式',
+  packages_business_agent_action_auto: '可自動解決：改為平台自動分配',
+  packages_business_agent_action_no_edit_permission:
+    '僅可檢視，需要任務編輯權限',
+  packages_business_agent_action_task_active: '任務執行中，請先停止後重新檢查',
+  packages_business_agent_action_connection_conflict:
+    '需調整相關連線的 Agent 設定，修改任務無法解決',
+  packages_business_agent_action_unsupported_policy:
+    '此類型沒有可修改的任務級 Agent 設定',
+  packages_business_agent_action_policy_conflict:
+    '請手動調整任務 Agent 後重新檢查',
+
   packages_business_agent_tasks_selected: '已選擇 {count} 個任務',
 
   packages_business_agent_tasks_retry:

@@ -5,6 +5,8 @@ import {
   agentConflictReport,
   conflictTaskRoutes,
   taskAgentEdits,
+  conflictTaskDestination,
+  automaticConflictTasks,
 } from '../src/views/connections/connectionAgentConflicts.ts'
 
 test('automatic allocation clears stale manual and priority values without mutating the form', () => {
@@ -93,4 +95,64 @@ test('task edits carry the selected revision and exclude noneditable rows', () =
   ])
   assert.equal(rows.length, 3)
   assert.deepEqual(taskAgentEdits([]), [])
+})
+
+test('direct task links use IDs, editors for editable tasks and viewers otherwise', () => {
+  const item = {
+    id: 'task-id',
+    syncType: 'sync',
+    status: 'stop',
+    canEdit: true,
+    editable: true,
+  }
+  assert.deepEqual(conflictTaskDestination(item), {
+    name: 'DataflowEditor',
+    params: { id: 'task-id' },
+    query: { settingsTab: 'agent' },
+  })
+  assert.equal(
+    conflictTaskDestination({ ...item, canEdit: false })?.name,
+    'TaskMonitor',
+  )
+  assert.equal(
+    conflictTaskDestination({ ...item, status: 'running' })?.name,
+    'TaskMonitor',
+  )
+  assert.equal(
+    conflictTaskDestination({ ...item, syncType: 'migrate' })?.name,
+    'MigrateEditor',
+  )
+  assert.deepEqual(
+    conflictTaskDestination({ ...item, syncType: 'logCollector' }),
+    { name: 'sharedMiningList', query: { editTaskId: 'task-id' } },
+  )
+  assert.equal(
+    conflictTaskDestination({ ...item, syncType: 'connHeartbeat' }),
+    null,
+  )
+  assert.equal(
+    conflictTaskDestination({
+      ...item,
+      syncType: 'connHeartbeat',
+      canEdit: false,
+    })?.name,
+    'HeartbeatMonitor',
+  )
+  assert.equal(
+    conflictTaskDestination({ ...item, syncType: 'inspect' })?.name,
+    'dataVerificationEdit',
+  )
+})
+
+test('automatic action requires a positive server prediction and editability', () => {
+  const rows = [
+    { id: 'eligible', editable: true, autoResolvable: true },
+    { id: 'connections-conflict', editable: true, autoResolvable: false },
+    { id: 'no-permission', editable: false, autoResolvable: true },
+    { id: 'old-server', editable: true },
+  ]
+  assert.deepEqual(
+    automaticConflictTasks(rows).map((row) => row.id),
+    ['eligible'],
+  )
 })

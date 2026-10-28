@@ -1,4 +1,26 @@
 export default {
+  packages_business_agent_edit_one: '修改任务 Agent',
+
+  packages_business_agent_recheck: '重新检查',
+  packages_business_agent_recheck_clear: '当前未检测到冲突，可以继续保存连接。',
+  packages_business_agent_auto_title: '确认批量改为自动分配',
+  packages_business_agent_auto_confirm:
+    '将以下 {count} 个任务改为平台自动分配并立即保存：{names}。任务先保存，取消或连接保存失败不会撤销这些修改。',
+  packages_business_agent_auto_save: '改为自动分配并保存（{count} 项）',
+  packages_business_agent_actions_hint:
+    '自动操作仅处理本页或已勾选任务中预检可解决的项目。其他项目请按处理方式调整后重新检查。',
+  packages_business_agent_action: '处理方式',
+  packages_business_agent_action_auto: '可自动解决：改为平台自动分配',
+  packages_business_agent_action_no_edit_permission:
+    '仅可查看，需要任务编辑权限',
+  packages_business_agent_action_task_active: '任务活动中，请先停止后重新检查',
+  packages_business_agent_action_connection_conflict:
+    '需调整相关连接的 Agent 配置，改任务无法解决',
+  packages_business_agent_action_unsupported_policy:
+    '此类型没有可修改的任务级 Agent 设置',
+  packages_business_agent_action_policy_conflict:
+    '请手动调整任务 Agent 后重新检查',
+
   packages_business_agent_tasks_selected: '已选择 {count} 个任务',
 
   packages_business_agent_tasks_retry:

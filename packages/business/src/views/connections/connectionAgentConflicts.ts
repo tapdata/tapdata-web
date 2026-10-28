@@ -74,3 +74,44 @@ export function taskAgentEdits(
     .filter((item) => item.editable)
     .map(({ id, revision }) => ({ id, revision }))
 }
+
+export function conflictTaskDestination(item: {
+  id: string
+  syncType: string
+  editable: boolean
+  canEdit?: boolean
+  status: string
+}) {
+  const editable =
+    item.canEdit &&
+    ['edit', 'ready', 'stop', 'wait_start', 'stopped'].includes(item.status)
+  if (editable) {
+    if (item.syncType === 'sync' || item.syncType === 'migrate')
+      return {
+        name: item.syncType === 'sync' ? 'DataflowEditor' : 'MigrateEditor',
+        params: { id: item.id },
+        query: { settingsTab: 'agent' },
+      }
+    if (item.syncType === 'logCollector')
+      return { name: 'sharedMiningList', query: { editTaskId: item.id } }
+    if (item.syncType === 'inspect')
+      return { name: 'dataVerificationEdit', params: { id: item.id } }
+    // Heartbeat has no dedicated editor; use the inline Agent editor.
+    if (item.syncType === 'connHeartbeat') return null
+  }
+  const viewers: Record<string, string> = {
+    sync: 'TaskMonitor',
+    migrate: 'MigrationMonitor',
+    logCollector: 'SharedMiningMonitor',
+    connHeartbeat: 'HeartbeatMonitor',
+    inspect: 'dataVerifyDetails',
+  }
+  const name = viewers[item.syncType]
+  return name ? { name, params: { id: item.id } } : null
+}
+
+export function automaticConflictTasks(
+  items: Array<{ id: string; editable: boolean; autoResolvable?: boolean }>,
+) {
+  return items.filter((item) => item.editable && item.autoResolvable === true)
+}
