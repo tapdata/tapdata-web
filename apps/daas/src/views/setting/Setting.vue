@@ -28,6 +28,11 @@ import {
   isSettingDependencyVisible,
   orderSettingsByDependency,
 } from '@/utils/setting-dependency'
+import {
+  isRetentionShortened,
+  isValidRetention,
+  RETENTION_KEY,
+} from '@/views/audit/audit-log'
 
 export default {
   name: 'Setting',
@@ -42,6 +47,7 @@ export default {
       title: import.meta.env.VUE_APP_PAGE_TITLE,
       liceseItems: [],
       emailTemplateDialog: false,
+      originalRetention: undefined,
       formData: {
         items: [],
       },
@@ -327,12 +333,41 @@ export default {
         }
 
         this.formData.items = vals
+        this.originalRetention = this.findRetention()?.value
 
         this.changeName(this.formData.items[0])
       })
     },
     // 保存
-    save() {
+    findRetention() {
+      for (const item of this.formData.items || []) {
+        const found = (item.items || []).find(
+          (child) => child.key === RETENTION_KEY,
+        )
+        if (found) return found
+      }
+      return null
+    },
+    // 审计日志保留时间：范围校验；缩短时提示早于新期限的记录将被清理且不可恢复
+    confirmRetention() {
+      const retention = this.findRetention()
+      if (!retention) return true
+      if (!isValidRetention(retention.value)) {
+        this.$message.error(this.$t('audit_retention_invalid'))
+        return false
+      }
+      if (!isRetentionShortened(this.originalRetention, retention.value))
+        return true
+      return this.$confirm(
+        this.$t('audit_retention_shorten_confirm', [
+          this.originalRetention,
+          retention.value,
+        ]),
+        { type: 'warning' },
+      ).catch(() => false)
+    },
+    async save() {
+      if (!(await this.confirmRetention())) return
       const settingData = []
       this.formData.items.forEach((item) => {
         item.items.forEach((childItem) => {
@@ -340,6 +375,7 @@ export default {
         })
       })
       saveSettings(settingData).then(async () => {
+        this.originalRetention = this.findRetention()?.value
         const settings = await fetchSettings()
         setSettings(settings)
         localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(settings))

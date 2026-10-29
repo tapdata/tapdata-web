@@ -479,7 +479,16 @@ const pageSort = [
         ],
       },
       { name: 'v2_role_management' },
-      { name: 'v2_audit_log' },
+      {
+        name: 'v2_audit_log',
+        buttons: [
+          {
+            label: t('role_audit_log_export'),
+            name: 'v2_audit_log_export',
+            checked: false,
+          },
+        ],
+      },
     ],
   },
 ]

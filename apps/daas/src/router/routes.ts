@@ -869,7 +869,7 @@ export const routes = [
       {
         path: '/operation-audit',
         name: 'operationAudit',
-        component: () => import('@/views/notification/UserNotification.vue'),
+        component: () => import('@/views/audit/AuditLog.vue'),
         meta: {
           title: 'page_title_operation_audit',
           hideTitle: true,

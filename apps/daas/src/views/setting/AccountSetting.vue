@@ -9,6 +9,7 @@ import {
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { IconButton } from '@tap/component/src/icon-button'
 import Cookie from '@tap/shared/src/cookie'
+import { revealAccessCode } from '@tap/api/src/core/audit-events'
 import { copyToClipboard } from '@tap/shared/src/util'
 export default {
   name: 'List',
@@ -147,9 +148,15 @@ export default {
     this.handleGetData()
   },
   methods: {
-    handleCopy(value) {
+    // 访问码经服务端接口取得后复制，以便记录敏感读取审计；页面只显示掩码
+    async handleCopy() {
+      const value = await revealAccessCode()
       copyToClipboard(value)
       this.$message.success(this.$t('public_message_copy_success'))
+    },
+    displayValue(item) {
+      if (item.key !== 'accessCode' || !item.value) return item.value
+      return `${'*'.repeat(8)}${String(item.value).slice(-4)}`
     },
     // 获取当前信息
     async handleGetData() {
@@ -290,13 +297,13 @@ export default {
           >
             <span class="label">{{ item.label }}</span>
             <span class="text">
-              <span class="align-middle">{{ item.value }}</span>
+              <span class="align-middle">{{ displayValue(item) }}</span>
               <IconButton
                 v-if="item.key === 'accessCode'"
                 primary
                 class="align-middle ml-2"
                 sm
-                @click="handleCopy(item.value)"
+                @click="handleCopy"
                 >copy</IconButton
               >
             </span>
