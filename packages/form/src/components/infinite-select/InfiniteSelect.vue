@@ -117,12 +117,19 @@ const getParams = (pageNum = page.value) => {
 }
 
 const labelContent = ref('')
+const currentOptionData = ref<any>()
 
 // 回显数据
 const setCurrentLabel = async () => {
   const [current] = selectRef.value?.states.selected || []
+  currentOptionData.value = undefined
 
   if (!current) return
+
+  const selectedOption = (selectRef.value as any)?.states?.options?.get(
+    current.value,
+  )
+  currentOptionData.value = selectedOption?.$attrs?.['origin-data']
 
   if (current.currentLabel === current.value && props.itemType === 'object') {
     if (props.currentLabel) {
@@ -132,6 +139,7 @@ const setCurrentLabel = async () => {
     if (props.lazy) return
 
     const optionData = await getOption(current.value)
+    currentOptionData.value = optionData
     labelContent.value = optionData?.[props.itemLabel]
   }
 }
@@ -142,6 +150,11 @@ const getLabel = (value, label) => {
   }
 
   return label
+}
+
+const getSelectedItem = (value: any) => {
+  const selectedOption = (selectRef.value as any)?.states?.options?.get(value)
+  return selectedOption?.$attrs?.['origin-data'] || currentOptionData.value
 }
 
 const getOption = async (value) => {
@@ -248,6 +261,10 @@ const onChange = (value: any) => {
   })
 }
 
+const onClear = () => {
+  emit('select', undefined, undefined, false)
+}
+
 const onUpdateModelValue = (val) => {
   emit('update:modelValue', val)
 }
@@ -297,6 +314,7 @@ onMounted(() => {
     @update:model-value="onUpdateModelValue"
     @visible-change="onVisibleChange"
     @change="onChange"
+    @clear="onClear"
   >
     <template v-if="showLoading || $slots.prefix" #prefix>
       <slot name="prefix" />
@@ -308,7 +326,14 @@ onMounted(() => {
     </template>
 
     <template #label="{ label, value }">
-      <span>{{ getLabel(value, label) }}</span>
+      <slot
+        name="label"
+        :label="getLabel(value, label)"
+        :value="value"
+        :item="getSelectedItem(value)"
+      >
+        <span>{{ getLabel(value, label) }}</span>
+      </slot>
     </template>
 
     <slot v-if="showNewOption" name="created-option" :value="query" />
@@ -316,7 +341,7 @@ onMounted(() => {
     <el-option v-if="showLoading" class="el-select-loading">
       <el-icon class="el-select-loading__icon"><ElIconLoading /></el-icon>
       <span class="el-select-loading__tips">{{
-        loadingText || '正在加载'
+        loadingText || '正在加载' /* i18n-ignore */
       }}</span>
     </el-option>
 
