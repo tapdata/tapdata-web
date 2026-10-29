@@ -369,9 +369,30 @@ export default {
       testEmail(params)
         .then((data) => {
           if (data?.result) {
+            // 群发时可能仅部分地址送达：正常收件人已收到，但需提示哪些地址被拒绝
+            const failedAddresses = Array.isArray(data?.failedAddresses)
+              ? data.failedAddresses.filter(Boolean)
+              : []
+            const validSentAddresses = Array.isArray(data?.validSentAddresses)
+              ? data.validSentAddresses.filter(Boolean)
+              : []
+            if (failedAddresses.length) {
+              ElMessage.warning({
+                message: this.$t('setting_test_email_partial_error', [
+                  validSentAddresses.join(', '),
+                  failedAddresses.join(', '),
+                ]),
+                duration: 6000,
+                showClose: true,
+              })
+              return
+            }
             this.$message.success(this.$t('setting_test_email_success'))
           } else {
-            showErrorMessage(data)
+            showErrorMessage({
+              ...data,
+              msg: data?.msg || this.$t('setting_test_email_error'),
+            })
           }
         })
         .finally(() => {
