@@ -124,6 +124,7 @@ export function batchSummary(
 export function changeText(
   change: {
     field: string
+    label?: string | null
     before?: string | null
     after?: string | null
     secretState?: string | null
@@ -131,7 +132,16 @@ export function changeText(
   t: Translate,
   label?: string,
 ) {
-  const field = label || change.field
+  // 设置项优先显示译文（setting_<key_label 空格转下划线>，保留大小写），缺译文时回退 key_label，再回退内部键
+  const labelKey =
+    label || change.label || ''
+      ? `setting_${(label || change.label || '').split(' ').join('_')}`
+      : ''
+  const translated = labelKey ? t(labelKey) : ''
+  const field =
+    translated && translated !== labelKey
+      ? translated
+      : label || change.label || change.field
   if (change.secretState) {
     return `${field}: ${t(`audit_value_${change.secretState.toLowerCase()}`)}`
   }

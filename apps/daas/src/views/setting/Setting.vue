@@ -340,7 +340,7 @@ export default {
     },
     // 保存
     // Options API 模板访问不到模块作用域的 import 常量，这里通过 methods 判断（F-05）
-    isRetentionSetting(item: any) {
+    isRetentionSetting(item) {
       return item?.key === RETENTION_KEY
     },
     findRetention() {

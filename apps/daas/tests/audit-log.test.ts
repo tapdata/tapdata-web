@@ -122,3 +122,27 @@ test('prefers the readable field label provided by the backend', () => {
     'objectName: a → b',
   )
 })
+
+test('translates the setting label and falls back when translations are missing', () => {
+  const dict: Record<string, string> = {
+    setting_SMTP_Server_Host: 'SMTP 服务Host',
+  }
+  const t = (key: string) => dict[key] ?? key
+  const change = {
+    field: 'SMTP.smtp.server.host',
+    before: 'a',
+    after: 'b',
+    label: 'SMTP Server Host',
+  }
+  assert.equal(changeText(change, t), 'SMTP 服务Host: a → b')
+  // 缺译文时回退 key_label
+  assert.equal(
+    changeText({ ...change, label: 'Unknown Label' }, t),
+    'Unknown Label: a → b',
+  )
+  // 没有 label 时回退到内部键
+  assert.equal(
+    changeText({ field: 'SMTP.smtp.server.host', before: 'a', after: 'b' }, t),
+    'SMTP.smtp.server.host: a → b',
+  )
+})
