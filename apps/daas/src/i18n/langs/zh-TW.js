@@ -742,6 +742,9 @@ export default {
   setting_job_cdc_share_only_doc:
     '當增量同步任務共享模式開啟，並且無法找到一個可共享的日誌，將會停止任務',
   setting_test_email_success: '測試郵件已發送，請登錄接收郵箱查收',
+  setting_test_email_partial_error:
+    '部分收件地址不可用：郵件已發送給 {0}；以下地址被郵件伺服器拒絕，請檢查並移除：{1}',
+  setting_test_email_error: '測試郵件發送失敗，請檢查郵件設定',
   setting_test_ldap_success: '成功連接Ldap服務',
   setting_email_template_from: '發件人',
   setting_email_template_to: '收件人',

@@ -12,7 +12,10 @@ import {
   testSamlConfig,
 } from '@tap/api/src/core/sso'
 import { testLdapLogin } from '@tap/api/src/core/users'
-import { showErrorMessage } from '@tap/business/src/components/error-message'
+import {
+  ErrorMessage,
+  showErrorMessage,
+} from '@tap/business/src/components/error-message'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
 import EmailTemplateDialog from '@tap/business/src/views/setting/EmailTemplateDialog.vue'
@@ -23,6 +26,7 @@ import Cookie from '@tap/shared/src/cookie'
 import { setSettings } from '@tap/shared/src/settings'
 import { downloadJson } from '@tap/shared/src/util'
 import { find, uniq } from 'lodash-es'
+import { h } from 'vue'
 import i18n from '@/i18n'
 import {
   isSettingDependencyVisible,
@@ -369,9 +373,58 @@ export default {
       testEmail(params)
         .then((data) => {
           if (data?.result) {
+            // 群发时可能仅部分地址送达：正常收件人已收到，但需提示哪些地址被拒绝
+            const failedAddresses = Array.isArray(data?.failedAddresses)
+              ? data.failedAddresses.filter(Boolean)
+              : []
+            const validSentAddresses = Array.isArray(data?.validSentAddresses)
+              ? data.validSentAddresses.filter(Boolean)
+              : []
+            if (failedAddresses.length) {
+              const partialMessage = this.$t(
+                'setting_test_email_partial_error',
+                [validSentAddresses.join(', '), failedAddresses.join(', ')],
+              )
+              // 被拒绝的具体原因在接口 stack 中，收起为可查看的详情，避免主提示被堆栈淹没
+              const stack = data?.stack
+              if (!stack) {
+                ElMessage.warning({
+                  message: partialMessage,
+                  duration: 6000,
+                  showClose: true,
+                })
+                return
+              }
+              const notify = ElMessage({
+                type: 'warning',
+                duration: 6000,
+                showClose: true,
+                grouping: true,
+                message: h('span', { class: 'align-middle' }, [
+                  h('span', partialMessage),
+                  h(
+                    ElButton,
+                    {
+                      text: true,
+                      type: 'primary',
+                      class: 'ml-1 align-middle',
+                      onClick: () => {
+                        ErrorMessage(stack, partialMessage)
+                        notify.close()
+                      },
+                    },
+                    () => this.$t('public_view_details'),
+                  ),
+                ]),
+              })
+              return
+            }
             this.$message.success(this.$t('setting_test_email_success'))
           } else {
-            showErrorMessage(data)
+            showErrorMessage({
+              ...data,
+              msg: data?.msg || this.$t('setting_test_email_error'),
+            })
           }
         })
         .finally(() => {
