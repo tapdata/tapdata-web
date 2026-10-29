@@ -2947,4 +2947,6 @@ export default {
     '审计日志保留时间将从 {0} 天缩短为 {1} 天，早于新期限的记录将被系统自动清理且无法恢复。是否继续？',
   audit_retention_invalid: '审计日志保留时间必须是 30–3650 之间的整数天',
   role_audit_log_export: '导出审计日志',
+  audit_legacy_description: '历史记录原始描述',
+  audit_retention_range: '范围 {0}–{1} 天',
 }

@@ -10,6 +10,7 @@ import { FilterBar } from '@tap/component/src/filter-bar'
 import dayjs from 'dayjs'
 import i18n from '@/i18n'
 import AuditEventDrawer from './AuditEventDrawer.vue'
+import UserOperation from '@/views/notification/UserOperation.vue'
 import {
   AUDIT_EVENT_TYPES,
   AUDIT_FILTER_KEYS,
@@ -30,7 +31,13 @@ function buildSearchParams(query = {}) {
 }
 
 export default {
-  components: { TablePage, FilterBar, PageContainer, AuditEventDrawer },
+  components: {
+    TablePage,
+    FilterBar,
+    PageContainer,
+    AuditEventDrawer,
+    UserOperation,
+  },
   inject: ['hasPermissionByCode'],
   data() {
     const query = { ...this.$route.query }
@@ -114,6 +121,14 @@ export default {
         actionText: legacy
           ? e.legacyMessage || displayValue(null, true, tr)
           : e.actionName || e.action,
+        legacyRecord: legacy
+          ? {
+              ...(e.legacyFields || {}),
+              username: e.username,
+              userId: e.userId,
+              i18nMessage: e.legacyMessage,
+            }
+          : undefined,
         objectText: displayValue(e.objectName || e.objectId, legacy, tr),
         batchText: batchSummary(e.batch, tr),
         outcomeText: op.pending
@@ -294,10 +309,13 @@ export default {
         show-overflow-tooltip
       >
         <template #default="{ row }">
-          {{ row.actionText }}
-          <span v-if="row.batchText" class="color-info"
-            >（{{ row.batchText }}）</span
-          >
+          <UserOperation v-if="row.legacy" :record="row.legacyRecord" />
+          <template v-else>
+            {{ row.actionText }}
+            <span v-if="row.batchText" class="color-info"
+              >（{{ row.batchText }}）</span
+            >
+          </template>
         </template>
       </el-table-column>
       <el-table-column

@@ -3,6 +3,7 @@ import test from 'node:test'
 import {
   batchSummary,
   buildAuditQuery,
+  changeFieldLabel,
   changeText,
   displayValue,
   hasUnresolvedPlaceholder,
@@ -95,4 +96,22 @@ test('validates retention range and detects shortening', () => {
 test('detects unresolved placeholders', () => {
   assert.equal(hasUnresolvedPlaceholder('created {sourceName}'), true)
   assert.equal(hasUnresolvedPlaceholder('created orders'), false)
+})
+
+test('uses readable setting labels for change fields', () => {
+  const labels: Record<string, string> = {
+    setting_smtp_server_host: 'SMTP 服务器',
+  }
+  const tt = (key: string) => labels[key] ?? key
+  const change = {
+    field: 'SMTP.smtp.server.host',
+    before: '192.168.1.46',
+    after: '192.168.1.47',
+  }
+  assert.equal(
+    changeText(change, tt, changeFieldLabel(change.field, tt)),
+    'SMTP 服务器: 192.168.1.46 → 192.168.1.47',
+  )
+  assert.equal(changeFieldLabel('audit.log.retention.days', tt), undefined)
+  assert.equal(changeFieldLabel('objectName', tt), undefined)
 })

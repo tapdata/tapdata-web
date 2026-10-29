@@ -67,6 +67,7 @@ export interface AuditEvent {
   node?: AuditNode
   context?: Record<string, string>
   legacyMessage?: string
+  legacyFields?: Record<string, string | null>
 }
 
 export interface AuditOperation {

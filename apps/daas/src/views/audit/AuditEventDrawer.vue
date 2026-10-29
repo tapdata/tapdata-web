@@ -7,8 +7,10 @@ import {
 import dayjs from 'dayjs'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from '@tap/i18n'
+import UserOperation from '@/views/notification/UserOperation.vue'
 import {
   batchSummary,
+  changeFieldLabel,
   changeText,
   displayValue,
   operatorText,
@@ -51,6 +53,16 @@ watch(
 )
 
 const initiator = computed(() => operation.value?.initiator)
+
+/** 历史记录交给原操作日志渲染组件，占位符与对象链接按原逻辑替换。 */
+function legacyRecord(e: AuditEvent) {
+  return {
+    ...(e.legacyFields || {}),
+    username: e.username,
+    userId: e.userId,
+    i18nMessage: e.legacyMessage,
+  }
+}
 
 function message(key?: string) {
   if (!key) return ''
@@ -146,12 +158,16 @@ function requiredRows(e: AuditEvent): [string, string][] {
             }}</span>
           </el-descriptions-item>
         </el-descriptions>
+        <div v-if="initiator.legacy" class="mt-3">
+          <div class="fw-sub mb-1">{{ t('audit_legacy_description') }}</div>
+          <UserOperation :record="legacyRecord(initiator)" />
+        </div>
 
         <template v-if="!initiator.legacy && initiator.detailLevel">
           <div class="fw-sub mt-4 mb-2">{{ t('audit_section_changes') }}</div>
           <ul v-if="initiator.changes?.length" class="audit-list">
             <li v-for="change in initiator.changes" :key="change.field">
-              {{ changeText(change, tr) }}
+              {{ changeText(change, tr, changeFieldLabel(change.field, tr)) }}
             </li>
           </ul>
           <div v-else class="color-info">{{ t('audit_value_no_diff') }}</div>

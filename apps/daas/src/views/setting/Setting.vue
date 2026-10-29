@@ -855,6 +855,22 @@ export default {
                       />
                     </template>
 
+                    <ElInput
+                      v-else-if="childItem.key === RETENTION_KEY"
+                      v-model="childItem.value"
+                      type="number"
+                      style="width: 220px"
+                      :placeholder="$t('audit_retention_invalid')"
+                    >
+                      <template #suffix>
+                        <span class="color-info fs-8">{{
+                          $t('audit_retention_range', [
+                            childItem.min,
+                            childItem.max,
+                          ])
+                        }}</span>
+                      </template>
+                    </ElInput>
                     <ElInputNumber
                       v-else-if="'min' in childItem || 'max' in childItem"
                       v-model="childItem.value"

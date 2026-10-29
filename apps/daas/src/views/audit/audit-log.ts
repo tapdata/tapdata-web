@@ -129,12 +129,25 @@ export function changeText(
     secretState?: string | null
   },
   t: Translate,
+  label?: string,
 ) {
+  const field = label || change.field
   if (change.secretState) {
-    return `${change.field}: ${t(`audit_value_${change.secretState.toLowerCase()}`)}`
+    return `${field}: ${t(`audit_value_${change.secretState.toLowerCase()}`)}`
   }
   const empty = t('audit_value_empty')
-  return `${change.field}: ${change.before ?? empty} → ${change.after ?? empty}`
+  return `${field}: ${change.before ?? empty} → ${change.after ?? empty}`
+}
+
+/** 设置项变更字段名（SMTP.smtp.server.host）读取为可读标签；非设置字段返回 undefined。 */
+export function changeFieldLabel(field: string, t: Translate) {
+  const idx = field.indexOf('.')
+  if (idx <= 0) return undefined
+  const key = field.slice(idx + 1)
+  // 与设置页一致：setting_<key_label，空格与点替换为下划线>
+  const messageKey = `setting_${key.replaceAll(/[ .]/g, '_')}`
+  const text = t(messageKey)
+  return text === messageKey ? undefined : text
 }
 
 /** 保留期输入校验：30–3650 的整数。 */

@@ -2932,4 +2932,6 @@ export default {
     '稽核日誌保留時間將從 {0} 天縮短為 {1} 天，早於新期限的記錄將被系統自動清理且無法恢復。是否繼續？',
   audit_retention_invalid: '稽核日誌保留時間必須是 30–3650 之間的整數天',
   role_audit_log_export: '匯出稽核日誌',
+  audit_legacy_description: '歷史記錄原始描述',
+  audit_retention_range: '範圍 {0}–{1} 天',
 }

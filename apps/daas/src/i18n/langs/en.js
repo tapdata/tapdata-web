@@ -3104,4 +3104,6 @@ export default {
   audit_retention_invalid:
     'Audit log retention must be an integer between 30 and 3650 days',
   role_audit_log_export: 'Export audit logs',
+  audit_legacy_description: 'Original description of the legacy record',
+  audit_retention_range: '{0}–{1} days',
 }
