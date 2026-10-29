@@ -3,7 +3,6 @@ import test from 'node:test'
 import {
   batchSummary,
   buildAuditQuery,
-  changeFieldLabel,
   changeText,
   displayValue,
   hasUnresolvedPlaceholder,
@@ -98,20 +97,28 @@ test('detects unresolved placeholders', () => {
   assert.equal(hasUnresolvedPlaceholder('created orders'), false)
 })
 
-test('uses readable setting labels for change fields', () => {
-  const labels: Record<string, string> = {
-    setting_smtp_server_host: 'SMTP 服务器',
-  }
-  const tt = (key: string) => labels[key] ?? key
+test('prefers the readable field label provided by the backend', () => {
+  const t = (key: string) => key
   const change = {
     field: 'SMTP.smtp.server.host',
     before: '192.168.1.46',
-    after: '192.168.1.47',
+    after: '192.168.1.48',
+    label: 'SMTP 服务Host',
   }
   assert.equal(
-    changeText(change, tt, changeFieldLabel(change.field, tt)),
-    'SMTP 服务器: 192.168.1.46 → 192.168.1.47',
+    changeText(change, t, change.label),
+    'SMTP 服务Host: 192.168.1.46 → 192.168.1.48',
   )
-  assert.equal(changeFieldLabel('audit.log.retention.days', tt), undefined)
-  assert.equal(changeFieldLabel('objectName', tt), undefined)
+  assert.equal(
+    changeText(
+      { field: 'x', secretState: 'REPLACED', label: '密码' },
+      t,
+      '密码',
+    ),
+    '密码: audit_value_replaced',
+  )
+  assert.equal(
+    changeText({ field: 'objectName', before: 'a', after: 'b' }, t),
+    'objectName: a → b',
+  )
 })

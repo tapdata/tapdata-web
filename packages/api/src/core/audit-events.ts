@@ -13,6 +13,7 @@ export interface AuditChange {
   before?: string | null
   after?: string | null
   secretState?: 'SET' | 'REPLACED' | 'CLEARED' | 'UNCHANGED' | null
+  label?: string | null
 }
 
 export interface AuditBatchItem {

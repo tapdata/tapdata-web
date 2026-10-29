@@ -339,6 +339,10 @@ export default {
       })
     },
     // 保存
+    // Options API 模板访问不到模块作用域的 import 常量，这里通过 methods 判断（F-05）
+    isRetentionSetting(item: any) {
+      return item?.key === RETENTION_KEY
+    },
     findRetention() {
       for (const item of this.formData.items || []) {
         const found = (item.items || []).find(
@@ -856,7 +860,7 @@ export default {
                     </template>
 
                     <ElInput
-                      v-else-if="childItem.key === RETENTION_KEY"
+                      v-else-if="isRetentionSetting(childItem)"
                       v-model="childItem.value"
                       type="number"
                       style="width: 220px"

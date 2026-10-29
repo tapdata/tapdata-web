@@ -10,7 +10,6 @@ import { useI18n } from '@tap/i18n'
 import UserOperation from '@/views/notification/UserOperation.vue'
 import {
   batchSummary,
-  changeFieldLabel,
   changeText,
   displayValue,
   operatorText,
@@ -167,7 +166,7 @@ function requiredRows(e: AuditEvent): [string, string][] {
           <div class="fw-sub mt-4 mb-2">{{ t('audit_section_changes') }}</div>
           <ul v-if="initiator.changes?.length" class="audit-list">
             <li v-for="change in initiator.changes" :key="change.field">
-              {{ changeText(change, tr, changeFieldLabel(change.field, tr)) }}
+              {{ changeText(change, tr, change.label) }}
             </li>
           </ul>
           <div v-else class="color-info">{{ t('audit_value_no_diff') }}</div>
