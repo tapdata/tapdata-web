@@ -111,6 +111,18 @@ export function operatorText(
   return displayValue(event.username || event.userId, !!event.legacy, t)
 }
 
+/** 服务节点展示：服务 / 实例 / 主机 / IP，便于同主机多实例定位；缺失项不显示占位。 */
+export function nodeText(
+  node:
+    | { service?: string; instance?: string; host?: string; ip?: string }
+    | undefined,
+) {
+  if (!node) return ''
+  return [node.service, node.instance, node.host, node.ip]
+    .filter(Boolean)
+    .join(' / ')
+}
+
 /** 批量结果摘要，如「2 成功、1 失败」。 */
 export function batchSummary(
   batch: { total: number; success: number; failed: number } | undefined,

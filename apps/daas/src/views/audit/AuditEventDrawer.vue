@@ -12,6 +12,7 @@ import {
   batchSummary,
   changeText,
   displayValue,
+  nodeText,
   operatorText,
   outcomeView,
 } from './audit-log'
@@ -69,7 +70,10 @@ function message(key?: string) {
   return text === key ? key : text
 }
 
-function requiredRows(e: AuditEvent): [string, string][] {
+function requiredRows(
+  e: AuditEvent,
+  operationOutcome?: string,
+): [string, string][] {
   const legacy = !!e.legacy
   return [
     ['audit_field_event_id', e.eventId || displayValue(null, legacy, tr)],
@@ -103,7 +107,11 @@ function requiredRows(e: AuditEvent): [string, string][] {
       'audit_field_object',
       displayValue(e.objectName || e.objectId, legacy, tr),
     ],
-    ['audit_field_outcome', outcomeView(e.outcome, tr).text],
+    [
+      'audit_field_outcome',
+      // 详情「结果」与列表一致，取操作聚合结果；异步操作完成后不再停留在请求阶段的「已受理」（TAP-13018 F-11）
+      outcomeView(operationOutcome || e.outcome, tr).text,
+    ],
   ]
 }
 </script>
@@ -119,7 +127,7 @@ function requiredRows(e: AuditEvent): [string, string][] {
       <template v-if="operation && initiator">
         <el-descriptions :column="1" border size="small">
           <el-descriptions-item
-            v-for="[label, value] in requiredRows(initiator)"
+            v-for="[label, value] in requiredRows(initiator, operation.outcome)"
             :key="label"
             :label="t(label)"
           >
@@ -141,11 +149,7 @@ function requiredRows(e: AuditEvent): [string, string][] {
             v-if="initiator.node"
             :label="t('audit_field_node')"
           >
-            {{
-              [initiator.node.service, initiator.node.host, initiator.node.ip]
-                .filter(Boolean)
-                .join(' / ')
-            }}
+            {{ nodeText(initiator.node) }}
           </el-descriptions-item>
           <el-descriptions-item
             v-if="initiator.forwardedFor"

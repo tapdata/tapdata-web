@@ -8,6 +8,7 @@ import {
   hasUnresolvedPlaceholder,
   isRetentionShortened,
   isValidRetention,
+  nodeText,
   operatorText,
   outcomeView,
 } from '../src/views/audit/audit-log.ts'
@@ -145,4 +146,22 @@ test('translates the setting label and falls back when translations are missing'
     changeText({ field: 'SMTP.smtp.server.host', before: 'a', after: 'b' }, t),
     'SMTP.smtp.server.host: a → b',
   )
+})
+
+test('renders service node with instance and ip so same-host instances differ', () => {
+  // TAP-13018 F-10：只显示 service/host 时同主机多实例无法区分
+  assert.equal(
+    nodeText({
+      service: 'Engine',
+      instance: 'ffbb68d1',
+      host: 'node-1',
+      ip: '172.17.0.2',
+    }),
+    'Engine / ffbb68d1 / node-1 / 172.17.0.2',
+  )
+  assert.equal(
+    nodeText({ service: 'Engine', host: 'node-1' }),
+    'Engine / node-1',
+  )
+  assert.equal(nodeText(undefined), '')
 })
