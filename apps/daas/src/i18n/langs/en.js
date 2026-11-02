@@ -784,6 +784,10 @@ export default {
     'When the incremental synchronization task sharing mode is turned on and a sharable log cannot be found, the task will be stopped',
   setting_test_email_success:
     'The test email has been sent, please log in to the receiving mailbox to check it',
+  setting_test_email_partial_error:
+    'Some recipients are unavailable: the email was delivered to {0}; these addresses were rejected by the mail server, please check and remove them: {1}',
+  setting_test_email_error:
+    'The test email could not be delivered, please check the mail settings',
   setting_test_ldap_success: 'Connected to Ldap service successfully',
   setting_email_template_from: 'From',
   setting_email_template_to: 'Recipient',

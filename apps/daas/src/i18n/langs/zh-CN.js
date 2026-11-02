@@ -745,6 +745,9 @@ export default {
   setting_job_cdc_share_only_doc:
     '当增量同步任务共享模式开启，并且无法找到一个可共享的日志，将会停止任务',
   setting_test_email_success: '测试邮件已发送，请登录接收邮箱查收',
+  setting_test_email_partial_error:
+    '部分收件地址不可用：邮件已发送给 {0}；以下地址被邮件服务器拒绝，请检查并移除：{1}',
+  setting_test_email_error: '测试邮件发送失败，请检查邮件设置',
   setting_test_ldap_success: '成功连接Ldap服务',
   setting_email_template_from: '发件人',
   setting_email_template_to: '收件人',
