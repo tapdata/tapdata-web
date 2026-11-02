@@ -6,11 +6,13 @@ import {
   patchInspect,
   postInspect,
 } from '@tap/api/src/core/inspects'
+import type { AlarmReceiver } from '@tap/api/src/core/alarm'
 import { getTaskById } from '@tap/api/src/core/task'
 import { useRequest } from '@tap/api/src/request'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import SystemAlarmDependencyNotice from '../../components/SystemAlarmDependencyNotice.vue'
+import AlarmReceiverSelector from '../../components/AlarmReceiverSelector.vue'
 import { useSystemAlarmStatus } from '../../composables/useSystemAlarmStatus'
 import Time from '@tap/shared/src/time.js'
 import { cloneDeep } from 'lodash-es'
@@ -28,6 +30,7 @@ import PageContainer from '../../components/PageContainer.vue'
 import ConditionBox from './components/ConditionBox.vue'
 import { TABLE_PARAMS } from './components/const.js'
 import { inspectMethod as inspectMethodMap } from './const.js'
+import { initialInspectAlarm } from './alarm-receivers'
 
 import type { SelectV2Instance } from 'element-plus'
 
@@ -71,6 +74,8 @@ interface FormData {
   inconsistentNotifys: string[]
   checkTableThreadNum: number
   alarmSettings: AlarmSetting[]
+  alarmReceivers: AlarmReceiver[] | null
+  emailReceivers?: string[] | null
   ignoreTimePrecision?: boolean
   treatEmptyStringAsNull?: boolean
 }
@@ -218,6 +223,29 @@ const form = reactive({
       },
     },
   ],
+  // null means system default; [] is an explicit custom selection with no receivers.
+  alarmReceivers: null as AlarmReceiver[] | null,
+  emailReceivers: null as string[] | null,
+})
+
+const alarmReceiverMode = computed({
+  get: () => (form.alarmReceivers === null ? 'SYSTEM_DEFAULT' : 'CUSTOM'),
+  set: (mode: 'SYSTEM_DEFAULT' | 'CUSTOM') => {
+    if (mode === 'SYSTEM_DEFAULT') {
+      form.alarmReceivers = null
+      form.emailReceivers = null
+    } else if (form.alarmReceivers === null) {
+      form.alarmReceivers = []
+      form.emailReceivers = []
+    }
+  },
+})
+const customAlarmReceivers = computed({
+  get: () => form.alarmReceivers || [],
+  set: (receivers: AlarmReceiver[]) => {
+    form.alarmReceivers = receivers
+    form.emailReceivers = null
+  },
 })
 
 const requiredValidator = (msg: string, check?: () => boolean) => {
@@ -294,10 +322,12 @@ const taskOptionCache = ref(null)
 const baseForm = ref(null)
 const conditionBox = ref(null)
 const activePanel = ref('condition')
+const alarmReceiverInvalid = ref(false)
 
 const saveDisabled = computed(() => {
   return (
     errorMessageLevel.value === 'error' ||
+    alarmReceiverInvalid.value ||
     autoAddTableLoading.value ||
     loading.value
   )
@@ -347,7 +377,7 @@ const getData = async (id: string) => {
     if (data) {
       if (form.taskMode === 'pipeline' && data.flowId) {
         taskName.value = data.taskDto.name
-        applyTask(data.taskDto)
+        applyTask(data.taskDto, undefined, false)
       }
 
       data.tasks = data.tasks.map((t) => {
@@ -406,8 +436,13 @@ const getFlowStages = async (id: string, cb?: () => void) => {
   }
 }
 
-const applyTask = (task: any, cb?: () => void) => {
+const applyTask = (task: any, cb?: () => void, inheritReceivers = true) => {
   isDbClone.value = task.syncType === 'migrate'
+  if (inheritReceivers && !form.id && form.taskMode === 'pipeline') {
+    const alarm = initialInspectAlarm(task)
+    form.alarmReceivers = cloneDeep(alarm.alarmReceivers)
+    form.emailReceivers = alarm.emailReceivers
+  }
   const dagEdges = task.dag?.edges || []
   const nodes = task.dag?.nodes || []
 
@@ -623,6 +658,7 @@ const save = async (saveOnly = false) => {
           byFirstCheckId: '',
           browserTimezoneOffset: new Date().getTimezoneOffset(),
           alarmSettings,
+          alarmReceivers: form.alarmReceivers,
         }),
       )
       ElMessage.success(t('public_message_save_ok'))
@@ -1112,6 +1148,30 @@ provide('ConnectorMap', ConnectorMap)
                 alarm-key="INSPECT_VALUE_ERROR"
                 :task-open="form.alarmSettings?.[2]?.open"
                 :task-notify="form.alarmSettings?.[2]?.notify"
+              />
+            </div>
+          </ElFormItem>
+
+          <ElFormItem
+            class="form-item"
+            :label="`${$t('packages_business_verification_form_alarm_receivers')}`"
+          >
+            <div class="flex flex-column gap-3">
+              <ElRadioGroup v-model="alarmReceiverMode">
+                <ElRadio value="SYSTEM_DEFAULT">
+                  {{ $t('packages_business_verification_form_alarm_receivers_system') }}
+                </ElRadio>
+                <ElRadio value="CUSTOM">
+                  {{ $t('packages_business_verification_form_alarm_receivers_custom') }}
+                </ElRadio>
+              </ElRadioGroup>
+              <AlarmReceiverSelector
+                v-if="alarmReceiverMode === 'CUSTOM'"
+                v-model="customAlarmReceivers"
+                :task-id="form.flowId || undefined"
+                :task-name="taskName"
+                inspect-scope
+                @invalid-change="alarmReceiverInvalid = $event"
               />
             </div>
           </ElFormItem>

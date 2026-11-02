@@ -209,9 +209,11 @@ export function batchUpdateTaskAlarm(params: {
 export function fetchAlarmReceiverCandidates(params?: {
   taskId?: string
   taskIds?: string[] | string
+  inspectScope?: boolean
 }) {
   const query: Record<string, string> = {}
   if (params?.taskId) query.taskId = params.taskId
+  if (params?.inspectScope) query.inspectScope = 'true'
   if (params?.taskIds) {
     query.taskIds = Array.isArray(params.taskIds)
       ? params.taskIds.filter(Boolean).join(',')
