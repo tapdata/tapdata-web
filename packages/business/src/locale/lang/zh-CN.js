@@ -1,4 +1,39 @@
 export default {
+  packages_business_agent_edit_one: '修改任务 Agent',
+
+  packages_business_agent_recheck: '重新检查',
+  packages_business_agent_recheck_clear: '当前未检测到冲突，可以继续保存连接。',
+  packages_business_agent_auto_title: '确认批量改为自动分配',
+  packages_business_agent_auto_confirm:
+    '将以下 {count} 个任务改为平台自动分配并立即保存：{names}。任务先保存，取消或连接保存失败不会撤销这些修改。',
+  packages_business_agent_auto_save: '改为自动分配并保存（{count} 项）',
+  packages_business_agent_actions_hint:
+    '自动操作仅处理本页或已勾选任务中预检可解决的项目。其他项目请按处理方式调整后重新检查。',
+  packages_business_agent_action: '处理方式',
+  packages_business_agent_action_auto: '可自动解决：改为平台自动分配',
+  packages_business_agent_action_no_edit_permission:
+    '仅可查看，需要任务编辑权限',
+  packages_business_agent_action_task_active: '任务活动中，请先停止后重新检查',
+  packages_business_agent_action_connection_conflict:
+    '需调整相关连接的 Agent 配置，改任务无法解决',
+  packages_business_agent_action_unsupported_policy:
+    '此类型没有可修改的任务级 Agent 设置',
+  packages_business_agent_action_policy_conflict:
+    '请手动调整任务 Agent 后重新检查',
+
+  packages_business_agent_tasks_selected: '已选择 {count} 个任务',
+
+  packages_business_agent_tasks_retry:
+    '任务已变化、不可编辑或保存结果不确定，请刷新确认后重试。',
+
+  packages_business_agent_tasks_hint:
+    '仅可选择有编辑权限的非运行任务。任务设置先保存；取消或连接保存失败不会撤销任务修改。',
+
+  packages_business_agent_tasks_edit: '批量修改任务 Agent',
+  packages_business_agent_tasks_saved:
+    '已修改 {count} 个任务。取消或连接保存失败不会撤销已保存的任务设置。',
+  packages_business_agent_tasks_continue: '继续保存连接',
+
   packages_business_status_wait_start: '待启动',
   packages_business_status_starting: '启动中',
   packages_business_status_renewing: '重置中',
@@ -1710,4 +1745,22 @@ export default {
     '当任一API Server 连接池资源紧张触发告警阈值时',
   packages_business_api_server_connection_pool_idle_warn:
     '当任一API Server 连接池连接数低于告警阈值时',
+  packages_business_agent_conflict_title: '切换 Agent 存在任务冲突',
+  packages_business_agent_conflict_summary:
+    '本次修改会与 {count} 个任务产生 Agent 冲突。请先调整任务或连接配置，再重新保存。',
+  packages_business_agent_conflict_hidden:
+    '其中有 {count} 个任务无权查看，请联系管理员处理。',
+  packages_business_agent_conflict_type: '任务类型',
+  packages_business_agent_conflict_status: '任务状态',
+  packages_business_agent_conflict_connections: '修改的连接',
+  packages_business_agent_conflict_reason: '冲突原因',
+  packages_business_agent_conflict_reason_connections:
+    '任务关联连接没有共同允许的 Agent。',
+  packages_business_agent_conflict_reason_task:
+    '任务指定的 Agent 不在连接允许的范围内。',
+  packages_business_agent_conflict_type_sync: '数据开发',
+  packages_business_agent_conflict_type_migrate: '数据复制',
+  packages_business_agent_conflict_type_logCollector: '共享挖掘',
+  packages_business_agent_conflict_type_connHeartbeat: '心跳任务',
+  packages_business_agent_conflict_type_inspect: '数据校验',
 }
