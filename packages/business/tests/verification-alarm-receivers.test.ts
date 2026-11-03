@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { initialInspectAlarm } from '../src/views/verification/alarm-receivers.ts'
+import {
+  initialInspectAlarm,
+  inspectReceiverPreviewEmailCount,
+  inspectReceiverPreviewRequest,
+} from '../src/views/verification/alarm-receivers.ts'
 
 test('copies pipeline user and group recipients as an independent initial selection', () => {
   const source = [
@@ -30,4 +34,39 @@ test('converts legacy email snapshots and defaults when the linked task has no c
     alarmReceivers: null,
     emailReceivers: null,
   })
+})
+
+test('builds an Inspect preview request without losing system-default or custom-empty modes', () => {
+  assert.deepEqual(
+    inspectReceiverPreviewRequest({
+      id: 'inspect-1',
+      flowId: 'flow-1',
+      alarmReceivers: [],
+      emailReceivers: [],
+    }),
+    {
+      inspectId: 'inspect-1',
+      flowId: 'flow-1',
+      alarmReceivers: [],
+      emailReceivers: [],
+    },
+  )
+  assert.deepEqual(
+    inspectReceiverPreviewRequest({ alarmReceivers: null, emailReceivers: null }),
+    { inspectId: undefined, flowId: undefined, alarmReceivers: null, emailReceivers: null },
+  )
+})
+
+test('uses the resolved unique email list length for the preview count', () => {
+  assert.equal(
+    inspectReceiverPreviewEmailCount({
+      emails: [
+        { email: 'one@example.com' },
+        { email: 'two@example.com' },
+      ],
+    }),
+    2,
+  )
+  assert.equal(inspectReceiverPreviewEmailCount({ emails: [] }), 0)
+  assert.equal(inspectReceiverPreviewEmailCount(null), 0)
 })

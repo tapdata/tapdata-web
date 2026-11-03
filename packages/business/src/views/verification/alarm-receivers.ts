@@ -1,4 +1,8 @@
-import type { AlarmReceiver } from '@tap/api/src/core/alarm'
+import type {
+  AlarmReceiver,
+  AlarmReceiverPreview,
+  InspectReceiverPreviewRequest,
+} from '@tap/api/src/core/alarm'
 
 type SyncTaskAlarm = {
   alarmReceivers?: unknown
@@ -32,4 +36,24 @@ export function initialInspectAlarm(task?: SyncTaskAlarm | null): {
   }
 
   return { alarmReceivers: null, emailReceivers: null }
+}
+
+export function inspectReceiverPreviewRequest(form: {
+  id?: string
+  flowId?: string
+  alarmReceivers?: AlarmReceiver[] | null
+  emailReceivers?: string[] | null
+}): InspectReceiverPreviewRequest {
+  return {
+    inspectId: form.id ? String(form.id) : undefined,
+    flowId: form.flowId || undefined,
+    alarmReceivers: form.alarmReceivers ?? null,
+    emailReceivers: form.emailReceivers ?? null,
+  }
+}
+
+export function inspectReceiverPreviewEmailCount(
+  preview?: AlarmReceiverPreview | null,
+) {
+  return Array.isArray(preview?.emails) ? preview.emails.length : 0
 }

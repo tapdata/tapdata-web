@@ -232,6 +232,20 @@ export function fetchAlarmReceiverPreview(taskId: string) {
   )
 }
 
+export interface InspectReceiverPreviewRequest {
+  inspectId?: string
+  flowId?: string
+  alarmReceivers?: AlarmReceiver[] | null
+  emailReceivers?: string[] | null
+}
+
+export function fetchInspectReceiverPreview(params: InspectReceiverPreviewRequest) {
+  return requestClient.post<AlarmReceiverPreview>(
+    `${BASE_URL}/receiverPreview/inspect`,
+    params,
+  )
+}
+
 /* ---------- 告警事件（TAP-13052） ---------- */
 
 export type AlarmObjectType =

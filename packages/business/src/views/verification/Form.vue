@@ -6,7 +6,10 @@ import {
   patchInspect,
   postInspect,
 } from '@tap/api/src/core/inspects'
-import type { AlarmReceiver } from '@tap/api/src/core/alarm'
+import {
+  fetchInspectReceiverPreview,
+  type AlarmReceiver,
+} from '@tap/api/src/core/alarm'
 import { getTaskById } from '@tap/api/src/core/task'
 import { useRequest } from '@tap/api/src/request'
 import { Modal } from '@tap/component/src/modal'
@@ -18,11 +21,13 @@ import Time from '@tap/shared/src/time.js'
 import { cloneDeep } from 'lodash-es'
 import {
   computed,
+  onBeforeUnmount,
   onMounted,
   provide,
   reactive,
   ref,
   useTemplateRef,
+  watch,
 } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -30,7 +35,11 @@ import PageContainer from '../../components/PageContainer.vue'
 import ConditionBox from './components/ConditionBox.vue'
 import { TABLE_PARAMS } from './components/const.js'
 import { inspectMethod as inspectMethodMap } from './const.js'
-import { initialInspectAlarm } from './alarm-receivers'
+import {
+  initialInspectAlarm,
+  inspectReceiverPreviewEmailCount,
+  inspectReceiverPreviewRequest,
+} from './alarm-receivers'
 
 import type { SelectV2Instance } from 'element-plus'
 
@@ -323,6 +332,50 @@ const baseForm = ref(null)
 const conditionBox = ref(null)
 const activePanel = ref('condition')
 const alarmReceiverInvalid = ref(false)
+const receiverPreviewCount = ref<number | null>(null)
+const receiverPreviewFailed = ref(false)
+const receiverPreviewStale = ref(false)
+const receiverPreviewReady = ref(false)
+let receiverPreviewTimer: ReturnType<typeof setTimeout> | undefined
+let receiverPreviewVersion = 0
+
+const loadReceiverPreview = async () => {
+  const version = ++receiverPreviewVersion
+  receiverPreviewFailed.value = false
+  try {
+    const preview = await fetchInspectReceiverPreview(
+      inspectReceiverPreviewRequest(form),
+    )
+    if (version !== receiverPreviewVersion) return
+    receiverPreviewCount.value = inspectReceiverPreviewEmailCount(preview)
+    receiverPreviewFailed.value = false
+    receiverPreviewStale.value = false
+  } catch (error) {
+    console.error(error)
+    if (version !== receiverPreviewVersion) return
+    receiverPreviewCount.value = null
+    receiverPreviewFailed.value = true
+    receiverPreviewStale.value = false
+  }
+}
+
+watch(
+  () => [form.id, form.flowId, form.alarmReceivers, form.emailReceivers],
+  () => {
+    if (!receiverPreviewReady.value) return
+    receiverPreviewStale.value = true
+    if (receiverPreviewTimer) clearTimeout(receiverPreviewTimer)
+    receiverPreviewTimer = setTimeout(() => {
+      void loadReceiverPreview()
+    }, 300)
+  },
+  { deep: true, immediate: true },
+)
+
+onBeforeUnmount(() => {
+  if (receiverPreviewTimer) clearTimeout(receiverPreviewTimer)
+  receiverPreviewVersion += 1
+})
 
 const saveDisabled = computed(() => {
   return (
@@ -346,7 +399,13 @@ onMounted(() => {
 
   const id = route.params.id
   if (id) {
-    getData(id)
+    void getData(id).finally(() => {
+      receiverPreviewReady.value = true
+      void loadReceiverPreview()
+    })
+  } else {
+    receiverPreviewReady.value = true
+    void loadReceiverPreview()
   }
 })
 
@@ -1173,6 +1232,22 @@ provide('ConnectorMap', ConnectorMap)
                 inspect-scope
                 @invalid-change="alarmReceiverInvalid = $event"
               />
+              <div
+                v-if="receiverPreviewCount !== null && !receiverPreviewStale"
+                class="flex align-center gap-2 fs-7"
+              >
+                {{
+                  $t('packages_dag_alarm_receiver_preview', {
+                    count: receiverPreviewCount,
+                  })
+                }}
+              </div>
+              <div v-if="receiverPreviewFailed" class="flex align-center gap-2 fs-7">
+                <span>{{ $t('packages_dag_alarm_receiver_preview_failed') }}</span>
+                <ElButton text type="primary" @click="loadReceiverPreview">
+                  {{ $t('public_button_retry') }}
+                </ElButton>
+              </div>
             </div>
           </ElFormItem>
 
