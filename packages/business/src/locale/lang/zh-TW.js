@@ -731,7 +731,8 @@ export default {
   packages_business_verification_form_zanbuzhichi_doris: '暫不支持Doris。 ',
   packages_business_verification_form_task_alarm: '校驗任務告警',
   packages_business_verification_form_alarm_receivers: '校驗告警接收人',
-  packages_business_verification_form_alarm_receivers_system: '使用系統預設接收人',
+  packages_business_verification_form_alarm_receivers_system:
+    '使用系統預設接收人',
   packages_business_verification_form_alarm_receivers_custom: '自訂接收人',
   packages_business_verification_form_task_alarm_when_error:
     '當校驗任務出錯時進行告警',

@@ -239,7 +239,9 @@ export interface InspectReceiverPreviewRequest {
   emailReceivers?: string[] | null
 }
 
-export function fetchInspectReceiverPreview(params: InspectReceiverPreviewRequest) {
+export function fetchInspectReceiverPreview(
+  params: InspectReceiverPreviewRequest,
+) {
   return requestClient.post<AlarmReceiverPreview>(
     `${BASE_URL}/receiverPreview/inspect`,
     params,

@@ -16,11 +16,15 @@ export function initialInspectAlarm(task?: SyncTaskAlarm | null): {
   if (Array.isArray(task?.alarmReceivers)) {
     return {
       // An empty array is a deliberate custom selection; do not turn it into default.
-      alarmReceivers: (task.alarmReceivers as AlarmReceiver[]).map((receiver) => ({
-        ...receiver,
-      })),
+      alarmReceivers: (task.alarmReceivers as AlarmReceiver[]).map(
+        (receiver) => ({
+          ...receiver,
+        }),
+      ),
       emailReceivers: Array.isArray(task.emailReceivers)
-        ? task.emailReceivers.filter((email): email is string => typeof email === 'string')
+        ? task.emailReceivers.filter(
+            (email): email is string => typeof email === 'string',
+          )
         : [],
     }
   }

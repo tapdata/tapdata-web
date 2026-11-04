@@ -1218,10 +1218,18 @@ provide('ConnectorMap', ConnectorMap)
             <div class="flex flex-column gap-3">
               <ElRadioGroup v-model="alarmReceiverMode">
                 <ElRadio value="SYSTEM_DEFAULT">
-                  {{ $t('packages_business_verification_form_alarm_receivers_system') }}
+                  {{
+                    $t(
+                      'packages_business_verification_form_alarm_receivers_system',
+                    )
+                  }}
                 </ElRadio>
                 <ElRadio value="CUSTOM">
-                  {{ $t('packages_business_verification_form_alarm_receivers_custom') }}
+                  {{
+                    $t(
+                      'packages_business_verification_form_alarm_receivers_custom',
+                    )
+                  }}
                 </ElRadio>
               </ElRadioGroup>
               <AlarmReceiverSelector
@@ -1242,8 +1250,13 @@ provide('ConnectorMap', ConnectorMap)
                   })
                 }}
               </div>
-              <div v-if="receiverPreviewFailed" class="flex align-center gap-2 fs-7">
-                <span>{{ $t('packages_dag_alarm_receiver_preview_failed') }}</span>
+              <div
+                v-if="receiverPreviewFailed"
+                class="flex align-center gap-2 fs-7"
+              >
+                <span>{{
+                  $t('packages_dag_alarm_receiver_preview_failed')
+                }}</span>
                 <ElButton text type="primary" @click="loadReceiverPreview">
                   {{ $t('public_button_retry') }}
                 </ElButton>

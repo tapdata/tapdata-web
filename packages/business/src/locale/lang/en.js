@@ -803,9 +803,12 @@ export default {
   packages_business_verification_form_zanbuzhichi_doris:
     'Doris is not supported yet.',
   packages_business_verification_form_task_alarm: 'Validation task alert',
-  packages_business_verification_form_alarm_receivers: 'Validation alert recipients',
-  packages_business_verification_form_alarm_receivers_system: 'Use system default recipients',
-  packages_business_verification_form_alarm_receivers_custom: 'Custom recipients',
+  packages_business_verification_form_alarm_receivers:
+    'Validation alert recipients',
+  packages_business_verification_form_alarm_receivers_system:
+    'Use system default recipients',
+  packages_business_verification_form_alarm_receivers_custom:
+    'Custom recipients',
   packages_business_verification_form_task_alarm_when_error:
     'Alert when the validation task encounters an error',
   packages_business_verification_form_task_alarm_when_diff_result_over_count1:
