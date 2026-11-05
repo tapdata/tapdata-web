@@ -1,0 +1,828 @@
+[
+  {
+    "pdkId": "activemq",
+    "name": "ActiveMQ",
+    "realName": "Apache ActiveMQ",
+    "icon": "activemq.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "activemq-connector",
+    "type": "ActiveMQ"
+  },
+  {
+    "pdkId": "aliyun-adb-mysql",
+    "name": "Aliyun ADB MySQL",
+    "realName": "ApsaraDB AnalyticDB (MySQL Edition)",
+    "icon": "aliyun_adb_mysql.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "aliyun-adb-mysql-connector",
+    "type": "Aliyun ADB MySQL"
+  },
+  {
+    "pdkId": "aliyun-adb-postgres",
+    "name": "Aliyun ADB PostgreSQL",
+    "realName": "ApsaraDB AnalyticDB for PostgreSQL",
+    "icon": "aliyun_adb_postgres.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "aliyun-adb-postgres-connector",
+    "type": "Aliyun ADB PostgreSQL"
+  },
+  {
+    "pdkId": "aliyun-db-mongodb",
+    "name": "Aliyun MongoDB",
+    "realName": "ApsaraDB for MongoDB",
+    "icon": "aliyun-mongodb.png",
+    "tags": ["schema-free", "Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "aliyun-mongodb-connector",
+    "type": "Aliyun MongoDB"
+  },
+  {
+    "pdkId": "aliyun-rds-mariadb",
+    "name": "Aliyun RDS Mariadb",
+    "realName": "ApsaraDB RDS for MariaDB",
+    "icon": "aliyun_rds_mariadb.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "aliyun-rds-mariadb-connector",
+    "type": "Aliyun RDS Mariadb"
+  },
+  {
+    "pdkId": "aliyun-rds-mysql",
+    "name": "Aliyun RDS MySQL",
+    "realName": "ApsaraDB RDS for MySQL",
+    "icon": "aliyun_rds_mysql.png",
+    "tags": ["Database", "ssl"],
+    "connectionType": "source_and_target",
+    "artifactId": "aliyun-rds-mysql-connector",
+    "type": "Aliyun RDS MySQL"
+  },
+  {
+    "pdkId": "aliyun-rds-postgres",
+    "name": "Aliyun RDS PostgreSQL",
+    "realName": "ApsaraDB RDS for PostgreSQL",
+    "icon": "aliyun_rds_postgres.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "aliyun-rds-postgres-connector",
+    "type": "Aliyun RDS PostgreSQL"
+  },
+  {
+    "pdkId": "aliyun-rds-sqlserver",
+    "name": "Aliyun RDS SQL Server",
+    "realName": "ApsaraDB RDS(SQL Server Edition)",
+    "icon": "aliyun_rds_mssql.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "aliyun-rds-sqlserver-connector",
+    "type": "Aliyun RDS SQL Server"
+  },
+  {
+    "pdkId": "aws-rds-mysql",
+    "name": "AWS RDS MySQL",
+    "realName": "Amazon RDS for MySQL",
+    "icon": "aws_rds_mysql.png",
+    "tags": ["Database", "ssl"],
+    "connectionType": "source_and_target",
+    "artifactId": "aws-rds-mysql-connector",
+    "type": "AWS RDS MySQL"
+  },
+  {
+    "pdkId": "azure-cosmosdb",
+    "name": "Azure CosmosDB",
+    "realName": "Azure Cosmos DB",
+    "icon": "azure-cosmosdb.png",
+    "tags": ["schema-free", "Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "azure-cosmosdb-connector",
+    "type": "Azure CosmosDB"
+  },
+  {
+    "pdkId": "bigquery",
+    "name": "BigQuery",
+    "realName": "BigQuery",
+    "icon": "bigquery.png",
+    "tags": [""],
+    "connectionType": "source_and_target",
+    "artifactId": "bigquery-connector",
+    "type": "BigQuery"
+  },
+  {
+    "pdkId": "clickhouse",
+    "name": "Clickhouse",
+    "realName": "ClickHouse",
+    "icon": "clickhouse.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "clickhouse-connector",
+    "type": "Clickhouse"
+  },
+  {
+    "pdkId": "coding",
+    "name": "Coding",
+    "realName": "Coding",
+    "icon": "coding.png",
+    "tags": ["SaaS"],
+    "connectionType": "source_and_target",
+    "artifactId": "coding-connector",
+    "type": "Coding"
+  },
+  {
+    "pdkId": "csv",
+    "name": "CSV",
+    "realName": "CSV",
+    "icon": "csv.png",
+    "tags": ["File", "schema-free"],
+    "connectionType": "source_and_target",
+    "artifactId": "csv-connector",
+    "type": "CSV"
+  },
+  {
+    "pdkId": "custom",
+    "name": "Custom Connection",
+    "realName": "Custom Connection",
+    "icon": "custom.png",
+    "tags": ["schema-free", "Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "custom-connector",
+    "type": "Custom Connection"
+  },
+  {
+    "pdkId": "dameng",
+    "name": "Dameng",
+    "realName": "Dameng",
+    "icon": "dameng.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "dameng-connector",
+    "type": "Dameng"
+  },
+  {
+    "pdkId": "databend",
+    "name": "Databend",
+    "realName": "Databend",
+    "icon": "databend.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "databend-connector",
+    "type": "Databend"
+  },
+  {
+    "pdkId": "db2",
+    "name": "DB2",
+    "realName": "Db2",
+    "icon": "db2.png",
+    "tags": ["Database", "ssl"],
+    "connectionType": "source_and_target",
+    "artifactId": "db2-connector",
+    "type": "DB2"
+  },
+  {
+    "pdkId": "db2i",
+    "name": "DB2 For i",
+    "realName": "Db2 for i",
+    "icon": "db2.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "db2i-connector",
+    "type": "DB2 For i"
+  },
+  {
+    "pdkId": "doris",
+    "name": "Doris",
+    "realName": "Apache Doris",
+    "icon": "doris.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "doris-connector",
+    "type": "Doris"
+  },
+  {
+    "pdkId": "dummy",
+    "name": "Dummy",
+    "realName": "Dummy",
+    "icon": "dummy.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "dummy-connector",
+    "type": "Dummy"
+  },
+  {
+    "pdkId": "elasticsearch",
+    "name": "Elasticsearch",
+    "realName": "Elasticsearch",
+    "icon": "elasticsearch.png",
+    "tags": ["Database", "schema-free"],
+    "connectionType": "source_and_target",
+    "artifactId": "elasticsearch-connector",
+    "type": "Elasticsearch"
+  },
+  {
+    "pdkId": "excel",
+    "name": "EXCEL",
+    "realName": "Excel",
+    "icon": "excel.png",
+    "tags": ["File"],
+    "connectionType": "source_and_target",
+    "artifactId": "excel-connector",
+    "type": "EXCEL"
+  },
+  {
+    "pdkId": "file-stream",
+    "name": "File Stream",
+    "realName": "File Stream",
+    "icon": "filestream.png",
+    "tags": ["File"],
+    "connectionType": "source_and_target",
+    "artifactId": "file-stream-connector",
+    "type": "File Stream"
+  },
+  {
+    "pdkId": "dws",
+    "name": "GaussDB(DWS)",
+    "realName": "GaussDB(DWS)",
+    "icon": "dws.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "dws-connector",
+    "type": "GaussDB(DWS)"
+  },
+  {
+    "pdkId": "gbase8a",
+    "name": "GBase-8a",
+    "realName": "GBase 8a",
+    "icon": "gbase8a.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "gbase8a-connector",
+    "type": "GBase-8a"
+  },
+  {
+    "pdkId": "gbase8s",
+    "name": "GBase-8s",
+    "realName": "GBase 8s",
+    "icon": "gbase8s.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "gbase8s-connector",
+    "type": "GBase-8s"
+  },
+  {
+    "pdkId": "greenplum",
+    "name": "GreenPlum",
+    "realName": "Greenplum",
+    "icon": "greenplum.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "greenplum-connector",
+    "type": "GreenPlum"
+  },
+  {
+    "pdkId": "hazelcast",
+    "name": "Hazelcast",
+    "realName": "Hazelcast",
+    "icon": "hazelcast.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "hazelcast-connector",
+    "type": "Hazelcast"
+  },
+  {
+    "pdkId": "hbase",
+    "name": "HBase",
+    "realName": "HBase",
+    "icon": "hbase.png",
+    "tags": ["Database", "NoSQL", "BigData"],
+    "connectionType": "source_and_target",
+    "artifactId": "hbase-connector",
+    "type": "HBase"
+  },
+  {
+    "pdkId": "highgo",
+    "name": "Highgo",
+    "realName": "HighGo",
+    "icon": "highgo.svg",
+    "tags": ["Database", "ssl", "doubleActive"],
+    "connectionType": "source_and_target",
+    "artifactId": "highgo-connector",
+    "type": "Highgo"
+  },
+  {
+    "pdkId": "http-receiver",
+    "name": "Http Receiver",
+    "realName": "HTTP Receiver",
+    "icon": "http.png",
+    "tags": ["SaaS"],
+    "connectionType": "source_and_target",
+    "artifactId": "http-receiver-connector",
+    "type": "Http Receiver"
+  },
+  {
+    "pdkId": "huawei-gauss-db",
+    "name": "HuaWei'Cloud GaussDB",
+    "realName": "Huawei Cloud GaussDB",
+    "icon": "gauss.png",
+    "tags": ["Database", "ssl"],
+    "connectionType": "source_and_target",
+    "artifactId": "huawei-cloud-gaussdb-connector",
+    "type": "HuaWei'Cloud GaussDB"
+  },
+  {
+    "pdkId": "informix",
+    "name": "Informix",
+    "realName": "IBM Informix",
+    "icon": "informix.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "informix-connector",
+    "type": "Informix"
+  },
+  {
+    "pdkId": "iris",
+    "name": "Iris",
+    "realName": "IRIS",
+    "icon": "iris.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "iris-connector",
+    "type": "Iris"
+  },
+  {
+    "pdkId": "json",
+    "name": "JSON",
+    "realName": "JSON",
+    "icon": "json.png",
+    "tags": ["File"],
+    "connectionType": "source_and_target",
+    "artifactId": "json-connector",
+    "type": "JSON"
+  },
+  {
+    "pdkId": "kafka",
+    "name": "Kafka",
+    "realName": "Apache Kafka(Deprecated)",
+    "icon": "kafka.png",
+    "tags": ["Database", "schema-free"],
+    "connectionType": "source_and_target",
+    "artifactId": "kafka-connector",
+    "type": "Kafka"
+  },
+  {
+    "pdkId": "kafka_avro",
+    "name": "Kafka-Avro",
+    "realName": "Confluent Avro",
+    "icon": "kafka_avro.png",
+    "tags": ["schema-free", "NoHeartbeat", "MessageQueue"],
+    "connectionType": "source_and_target",
+    "artifactId": "kafka-avro-connector",
+    "type": "Kafka-Avro"
+  },
+  {
+    "pdkId": "kafka_enhanced",
+    "name": "Kafka-Enhanced",
+    "realName": "Apache Kafka(Confluent Compatible)",
+    "icon": "kafka_enhanced.png",
+    "tags": ["schema-free", "NoHeartbeat", "MessageQueue"],
+    "connectionType": "source_and_target",
+    "artifactId": "kafka-enhanced-connector",
+    "type": "Kafka-Enhanced"
+  },
+  {
+    "pdkId": "kingbaser3",
+    "name": "KingBaseES-R3",
+    "realName": "KingbaseES V8R3",
+    "icon": "kingbaser3.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "kingbaser3-connector",
+    "type": "KingBaseES-R3"
+  },
+  {
+    "pdkId": "kingbaser6",
+    "name": "KingBaseES-R6",
+    "realName": "KingbaseES V8R6",
+    "icon": "kingbaser6.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "kingbaser6-connector",
+    "type": "KingBaseES-R6"
+  },
+  {
+    "pdkId": "mariadb",
+    "name": "Mariadb",
+    "realName": "MariaDB",
+    "icon": "mariadb.png",
+    "tags": ["Database", "ssl"],
+    "connectionType": "source_and_target",
+    "artifactId": "mariadb-connector",
+    "type": "Mariadb"
+  },
+  {
+    "pdkId": "mock-source",
+    "name": "Mock Source",
+    "realName": "Mock Source",
+    "icon": "mock-source.png",
+    "tags": ["schema-free", "Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "mock-source-connector",
+    "type": "Mock Source"
+  },
+  {
+    "pdkId": "mock-target",
+    "name": "Mock Target",
+    "realName": "Mock Target",
+    "icon": "mock-target.png",
+    "tags": ["schema-free", "Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "mock-target-connector",
+    "type": "Mock Target"
+  },
+  {
+    "pdkId": "mongodb",
+    "name": "MongoDB",
+    "realName": "MongoDB",
+    "icon": "mongodb.png",
+    "tags": ["schema-free", "Database", "doubleActive"],
+    "connectionType": "source_and_target",
+    "artifactId": "mongodb-connector",
+    "type": "MongoDB"
+  },
+  {
+    "pdkId": "mongodb-atlas",
+    "name": "MongoDB Atlas",
+    "realName": "MongoDB Atlas",
+    "icon": "atlas.png",
+    "tags": ["schema-free", "Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "mongodb-atlas-connector",
+    "type": "MongoDB Atlas"
+  },
+  {
+    "pdkId": "mongodb3",
+    "name": "MongoDB Below 3.4",
+    "realName": "MongoDB Below 3.4",
+    "icon": "mongodb3.png",
+    "tags": ["schema-free", "Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "mongodb-lower-connector",
+    "type": "MongoDB Below 3.4"
+  },
+  {
+    "pdkId": "mysql",
+    "name": "Mysql",
+    "realName": "MySQL",
+    "icon": "mysql.png",
+    "tags": ["Database", "ssl", "doubleActive", "disableForeignKey"],
+    "connectionType": "source_and_target",
+    "artifactId": "mysql-connector",
+    "type": "Mysql"
+  },
+  {
+    "pdkId": "mysql-pxc",
+    "name": "MySQL PXC",
+    "realName": "MySQL Percona XtraDB Cluster",
+    "icon": "mysql_pxc.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "mysql-pxc-connector",
+    "type": "MySQL PXC"
+  },
+  {
+    "pdkId": "oceanbase",
+    "name": "Oceanbase",
+    "realName": "OceanBase",
+    "icon": "oceanbase.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "oceanbase-mysql-connector",
+    "type": "Oceanbase"
+  },
+  {
+    "pdkId": "oceanbase_oracle",
+    "name": "Oceanbase(Oracle)",
+    "realName": "OceanBase (Oracle Edition)",
+    "icon": "oceanbase.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "oceanbase_oracle-connector",
+    "type": "Oceanbase(Oracle)"
+  },
+  {
+    "pdkId": "open-gauss",
+    "name": "OpenGauss",
+    "realName": "openGauss",
+    "icon": "open-gauss.png",
+    "tags": ["Database", "ssl"],
+    "connectionType": "source_and_target",
+    "artifactId": "opengauss-connector",
+    "type": "OpenGauss"
+  },
+  {
+    "pdkId": "oracle",
+    "name": "Oracle",
+    "realName": "Oracle",
+    "icon": "oracle.png",
+    "tags": ["Database", "doubleActive"],
+    "connectionType": "source_and_target",
+    "artifactId": "oracle-connector",
+    "type": "Oracle"
+  },
+  {
+    "pdkId": "paimon-plus",
+    "name": "Paimon Plus",
+    "realName": "Apache Paimon Plus",
+    "icon": "paimon.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "paimon-plus-connector",
+    "type": "Paimon Plus"
+  },
+  {
+    "pdkId": "polar-db-mysql",
+    "name": "PolarDB MySQL",
+    "realName": "ApsaraDB PolarDB for MySQL",
+    "icon": "polar-db-mysql.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "polar-db-mysql-connector",
+    "type": "PolarDB MySQL"
+  },
+  {
+    "pdkId": "polar-db-postgres",
+    "name": "PolarDB PostgreSQL",
+    "realName": "ApsaraDB PolarDB for PostgreSQL",
+    "icon": "polar_db_postgres.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "polar-db-postgres-connector",
+    "type": "PolarDB PostgreSQL"
+  },
+  {
+    "pdkId": "postgres",
+    "name": "PostgreSQL",
+    "realName": "PostgreSQL",
+    "icon": "postgres.png",
+    "tags": [
+      "Database",
+      "ssl",
+      "doubleActive",
+      "disableForeignKey",
+      "NullsLast"
+    ],
+    "connectionType": "source_and_target",
+    "artifactId": "postgres-connector",
+    "type": "PostgreSQL"
+  },
+  {
+    "pdkId": "quickapi",
+    "name": "QuickAPI",
+    "realName": "QuickAPI",
+    "icon": "quickapi.png",
+    "tags": ["SaaS"],
+    "connectionType": "source_and_target",
+    "artifactId": "quickapi-connector",
+    "type": "QuickAPI"
+  },
+  {
+    "pdkId": "rabbitmq",
+    "name": "RabbitMQ",
+    "realName": "RabbitMQ",
+    "icon": "rabbitmq.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "rabbitmq-connector",
+    "type": "RabbitMQ"
+  },
+  {
+    "pdkId": "redis",
+    "name": "Redis",
+    "realName": "Redis",
+    "icon": "redis.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "redis-connector",
+    "type": "Redis"
+  },
+  {
+    "pdkId": "risingwave",
+    "name": "RisingWave",
+    "realName": "RisingWave",
+    "icon": "risingwave.png",
+    "tags": ["Database", "Streaming"],
+    "connectionType": "source_and_target",
+    "artifactId": "risingwave-connector",
+    "type": "RisingWave"
+  },
+  {
+    "pdkId": "rocketmq",
+    "name": "RocketMQ",
+    "realName": "Apache RocketMQ",
+    "icon": "rocketmq.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "rocketmq-connector",
+    "type": "RocketMQ"
+  },
+  {
+    "pdkId": "hana",
+    "name": "SAP Hana",
+    "realName": "SAP Hana",
+    "icon": "hana.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "hana-connector",
+    "type": "SAP Hana"
+  },
+  {
+    "pdkId": "selectdb",
+    "name": "SelectDB",
+    "realName": "SelectDB",
+    "icon": "selectdb.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "selectdb-connector",
+    "type": "SelectDB"
+  },
+  {
+    "pdkId": "snowflake",
+    "name": "Snowflake",
+    "realName": "Snowflake",
+    "icon": "snowflake.png",
+    "tags": ["Database", "Cloud", "DataWarehouse"],
+    "connectionType": "source_and_target",
+    "artifactId": "snowflake-connector",
+    "type": "Snowflake"
+  },
+  {
+    "pdkId": "sqlserver",
+    "name": "SQL Server",
+    "realName": "SQL Server",
+    "icon": "mssql.png",
+    "tags": ["Database", "doubleActive", "disableForeignKey"],
+    "connectionType": "source_and_target",
+    "artifactId": "sqlserver-connector",
+    "type": "SQL Server"
+  },
+  {
+    "pdkId": "starrocks",
+    "name": "Starrocks",
+    "realName": "StarRocks",
+    "icon": "starrocks.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "starrocks-connector",
+    "type": "Starrocks"
+  },
+  {
+    "pdkId": "sybase",
+    "name": "Sybase",
+    "realName": "Sybase",
+    "icon": "sybase.png",
+    "tags": ["Database", "disableForeignKey"],
+    "connectionType": "source_and_target",
+    "artifactId": "sybase-connector",
+    "type": "Sybase"
+  },
+  {
+    "pdkId": "tablestore",
+    "name": "Tablestore",
+    "realName": "Tablestore",
+    "icon": "tablestore.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "tablestore-connector",
+    "type": "Tablestore"
+  },
+  {
+    "pdkId": "tdengine",
+    "name": "TDengine",
+    "realName": "TDengine",
+    "icon": "tdengine.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "tdengine-connector",
+    "type": "TDengine"
+  },
+  {
+    "pdkId": "tencent-db-postgres",
+    "name": "Tencent DB PostgreSQL",
+    "realName": "TencentDB for PostgreSQL",
+    "icon": "tencent_db_postgres.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "tencent-db-postgres-connector",
+    "type": "Tencent DB PostgreSQL"
+  },
+  {
+    "pdkId": "tencent-db-mariadb",
+    "name": "TencentDB MariaDB",
+    "realName": "TencentDB for MariaDB",
+    "icon": "tencent_db_mariadb.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "tencent-db-mariadb-connector",
+    "type": "TencentDB MariaDB"
+  },
+  {
+    "pdkId": "tencent-db-mongodb",
+    "name": "TencentDB MongoDB",
+    "realName": "TencentDB for MongoDB",
+    "icon": "tencent-db-mongodb.png",
+    "tags": ["Database", "schema-free"],
+    "connectionType": "source_and_target",
+    "artifactId": "tencent-db-mongodb-connector",
+    "type": "TencentDB MongoDB"
+  },
+  {
+    "pdkId": "tencent-db-sqlserver",
+    "name": "TencentDB SQL Server",
+    "realName": "TencentDB for SQL Server",
+    "icon": "tencent_db_mssql.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "tencent-db-sqlserver-connector",
+    "type": "TencentDB SQL Server"
+  },
+  {
+    "pdkId": "tencent-db-mysql",
+    "name": "TencentDB TD-SQL",
+    "realName": "TDSQL(MySQL Edition)",
+    "icon": "tencent_db_mysql.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "tencent-db-mysql-connector",
+    "type": "TencentDB TD-SQL"
+  },
+  {
+    "pdkId": "tidb",
+    "name": "Tidb",
+    "realName": "TiDB",
+    "icon": "tidb.svg",
+    "tags": ["Database", "ssl"],
+    "connectionType": "source_and_target",
+    "artifactId": "tidb-connector",
+    "type": "Tidb"
+  },
+  {
+    "pdkId": "vastbase",
+    "name": "Vastbase",
+    "realName": "Vastbase G100",
+    "icon": "vastbase.png",
+    "tags": ["Database", "ssl", "doubleActive"],
+    "connectionType": "source_and_target",
+    "artifactId": "vastbase-connector",
+    "type": "Vastbase"
+  },
+  {
+    "pdkId": "vika",
+    "name": "vika",
+    "realName": "vika",
+    "icon": "vika.png",
+    "tags": ["SaaS"],
+    "connectionType": "source_and_target",
+    "artifactId": "vika-connector",
+    "type": "vika"
+  },
+  {
+    "pdkId": "xml",
+    "name": "XML",
+    "realName": "XML",
+    "icon": "xml.png",
+    "tags": ["File"],
+    "connectionType": "source_and_target",
+    "artifactId": "xml-connector",
+    "type": "XML"
+  },
+  {
+    "pdkId": "yashandb",
+    "name": "YashanDB",
+    "realName": "YashanDB",
+    "icon": "yashandb.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "yashandb-connector",
+    "type": "YashanDB"
+  },
+  {
+    "pdkId": "zoho-desk",
+    "name": "Zoho-Desk",
+    "realName": "Zoho Desk",
+    "icon": "zoho.png",
+    "tags": ["SaaS"],
+    "connectionType": "source_and_target",
+    "artifactId": "zoho-desk-connector",
+    "type": "Zoho-Desk"
+  },
+  {
+    "pdkId": "aws-clickhouse",
+    "name": "AWS ClickHouse",
+    "realName": "AWS ClickHouse",
+    "icon": "clickhouse.png",
+    "tags": ["Database"],
+    "connectionType": "source_and_target",
+    "artifactId": "aws-clickhouse-connector",
+    "type": "AWS ClickHouse"
+  }
+]

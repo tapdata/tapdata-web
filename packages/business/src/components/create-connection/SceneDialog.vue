@@ -3,6 +3,11 @@ import {
   fetchDatabases,
   fetchDatabaseTypes,
 } from '@tap/api/src/core/database-types'
+import {
+  getConnectorRegistrationImpact,
+  getConnectorReleases,
+  registerConnectorRelease,
+} from '@tap/api/src/core/pdk'
 import { getConnectorImage, getIcon } from '@tap/assets'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import { IconButton } from '@tap/component/src/icon-button'
@@ -13,6 +18,30 @@ import { DatabaseIcon } from '../DatabaseIcon'
 import RequestDialog from './RequestDialog.vue'
 import ConnectionForm from './SceneForm'
 import ServeForm from './ServeForm'
+import connectorCatalog from './connectorCatalog.json'
+
+function compareConnectorVersions(left, right) {
+  if (!left || !right) return 0
+  const normalize = (version) =>
+    String(version)
+      .replace(/-SNAPSHOT.*$/i, '')
+      .split('.')
+      .map(Number)
+  const leftParts = normalize(left)
+  const rightParts = normalize(right)
+  if ([...leftParts, ...rightParts].some((part) => !Number.isFinite(part))) {
+    return 0
+  }
+  for (
+    let index = 0;
+    index < Math.max(leftParts.length, rightParts.length);
+    index++
+  ) {
+    const difference = (leftParts[index] || 0) - (rightParts[index] || 0)
+    if (difference) return difference > 0 ? 1 : -1
+  }
+  return /-SNAPSHOT/i.test(right) && !/-SNAPSHOT/i.test(left) ? 1 : 0
+}
 
 export default {
   name: 'SceneDialog',
@@ -62,6 +91,11 @@ export default {
       demoDatabase: [],
       databaseTypeMap: {},
       loading: false,
+      releaseDialogVisible: false,
+      releaseLoading: false,
+      releaseImpactLoading: false,
+      releaseItem: null,
+      releaseImpact: { tasks: [], inspects: [] },
       showDialog: this.visible,
       sceneList: [
         {
@@ -608,6 +642,11 @@ export default {
     },
 
     async handleSelect(item, isDemo = false) {
+      if (item.requiresDownload) {
+        this.handleReleaseAction(item)
+        return
+      }
+
       if (item.locked) {
         this.openLocked()
         return
@@ -696,6 +735,58 @@ export default {
       this.resetScroll()
     },
 
+    async handleReleaseAction(item) {
+      if (this.releaseLoading) return
+      this.releaseItem = item
+      this.releaseImpact = { tasks: [], inspects: [] }
+      this.releaseDialogVisible = true
+      this.releaseImpactLoading = true
+      try {
+        this.releaseImpact =
+          (await getConnectorRegistrationImpact(item.pdkId, item.artifactId)) ||
+          this.releaseImpact
+      } catch (error) {
+        this.releaseDialogVisible = false
+        this.$message.error(error.message || String(error))
+      } finally {
+        this.releaseImpactLoading = false
+      }
+    },
+
+    async registerRelease(stopTasks) {
+      if (!this.releaseItem || this.releaseLoading) return
+      this.releaseLoading = true
+      try {
+        await registerConnectorRelease({
+          pdkId: this.releaseItem.pdkId,
+          artifactId: this.releaseItem.artifactId,
+          stopTasks,
+          ignoreInFlightResources:
+            !stopTasks &&
+            (this.releaseImpact.tasks.length > 0 ||
+              this.releaseImpact.inspects.length > 0),
+        })
+        this.releaseDialogVisible = false
+        this.$message.success(
+          this.$t('packages_business_connector_release_success'),
+        )
+        await this.getData(true)
+      } catch (error) {
+        this.$message.error(error.message || String(error))
+        try {
+          this.releaseImpact =
+            (await getConnectorRegistrationImpact(
+              this.releaseItem.pdkId,
+              this.releaseItem.artifactId,
+            )) || this.releaseImpact
+        } catch {
+          // Keep the last impact details visible if the refresh also fails.
+        }
+      } finally {
+        this.releaseLoading = false
+      }
+    },
+
     resetScroll() {
       this.$refs.connectorContainer.scrollTop = 0
     },
@@ -710,13 +801,60 @@ export default {
       }
       if (!noLoading) this.loading = true
       const res = await fetchDatabases(params)
-      const data =
+      let data =
         this.selectorType !== 'source_and_target'
           ? res?.filter(
               (t) =>
                 t.connectionType.includes(this.selectorType) && !!t.pdkHash,
             ) || []
           : res
+
+      if (this.isDaas && !this.isCommunity) {
+        let releases = []
+        try {
+          releases = await getConnectorReleases()
+        } catch (error) {
+          console.warn(
+            'Unable to load the Nexus connector release catalog',
+            error,
+          )
+        }
+        const releaseByArtifact = new Map(
+          (releases || []).map((release) => [release.artifactId, release]),
+        )
+        const installedById = new Map(data.map((item) => [item.pdkId, item]))
+        const catalogByArtifact = new Map(
+          connectorCatalog.map((item) => [item.artifactId, item]),
+        )
+        const publishedConnectors = []
+
+        for (const [artifactId, release] of releaseByArtifact) {
+          const metadata = catalogByArtifact.get(artifactId)
+          if (!metadata) continue
+
+          const pdkId = metadata.pdkId
+          const installed = installedById.get(pdkId)
+          const item = {
+            ...metadata,
+            ...installed,
+            pdkId,
+            releaseVersion: release.version,
+            requiresDownload: !installed,
+            locked: !installed,
+            updateAvailable:
+              !!installed &&
+              compareConnectorVersions(release.version, installed.version) > 0,
+          }
+          if (
+            this.selectorType === 'source_and_target' ||
+            item.connectionType?.includes(this.selectorType)
+          ) {
+            publishedConnectors.push(item)
+          }
+        }
+        data = publishedConnectors
+      }
+
       this.databaseTypeMap = data.reduce(
         (map, db) => ((map[db.type] = db), map),
         {},
@@ -738,7 +876,9 @@ export default {
         return o1Level - o2Level
       }
 
-      if (this.isControlEnabled) {
+      if (this.isDaas && !this.isCommunity) {
+        this.lockedTypes = data.filter((item) => item.requiresDownload)
+      } else if (this.isControlEnabled) {
         this.lockedTypes = data.filter((item) => {
           const enabled = this.connectors.includes(item.type)
 
@@ -1018,17 +1158,31 @@ export default {
                 v-if="!item.locked || !item.icon.includes('.')"
                 :size="38"
                 :item="item"
+                :class="{
+                  'connector-icon--unregistered': item.requiresDownload,
+                }"
               />
               <ElImage
                 v-else
                 style="width: 38px; height: 38px"
                 :src="getConnectorImage(item.icon)"
+                :class="{
+                  'connector-icon--unregistered': item.requiresDownload,
+                }"
               />
               <div class="connector-item-content flex-1 overflow-hidden">
                 <div
                   class="connector-item-title font-color-dark flex align-center"
                 >
                   <span class="ellipsis mr-1">{{ item.name }}</span>
+                  <ElTag
+                    v-if="item.updateAvailable"
+                    type="warning"
+                    class="text-uppercase ml-auto px-1 connector-item-tag"
+                    @click.stop="handleReleaseAction(item)"
+                  >
+                    {{ $t('packages_business_connector_update_available') }}
+                  </ElTag>
                   <VIcon v-if="item.locked" size="24">lock-circle</VIcon>
                   <VIcon
                     v-if="item.qcType === 'GA'"
@@ -1106,6 +1260,79 @@ export default {
       :meta="requestMeta"
       @update:visible="(val) => (requestVisible = val)"
     />
+  </ElDialog>
+  <ElDialog
+    v-model="releaseDialogVisible"
+    append-to-body
+    :title="
+      $t(
+        releaseItem?.updateAvailable
+          ? 'packages_business_connector_update_title'
+          : 'packages_business_connector_download_title',
+      )
+    "
+    width="480px"
+    :close-on-click-modal="false"
+  >
+    <p v-if="releaseItem" class="mb-4">
+      <span v-if="releaseItem.requiresDownload" class="block mb-2">
+        {{ $t('packages_business_connector_requires_download') }}
+      </span>
+      {{
+        $t('packages_business_connector_download_confirm', {
+          version: releaseItem.releaseVersion,
+        })
+      }}
+    </p>
+    <p
+      v-if="releaseImpact.tasks.length || releaseImpact.inspects.length"
+      class="mb-0"
+    >
+      {{
+        $t('packages_business_connector_registration_impact', {
+          taskCount: releaseImpact.tasks.length,
+          inspectCount: releaseImpact.inspects.length,
+        })
+      }}
+    </p>
+    <template #footer>
+      <div class="flex justify-end gap-2">
+        <ElButton
+          :disabled="releaseImpactLoading || releaseLoading"
+          @click="releaseDialogVisible = false"
+        >
+          {{ $t('public_button_cancel') }}
+        </ElButton>
+        <template
+          v-if="releaseImpact.tasks.length || releaseImpact.inspects.length"
+        >
+          <ElButton
+            :disabled="releaseImpactLoading"
+            :loading="releaseLoading"
+            @click="registerRelease(false)"
+          >
+            {{ $t('packages_business_connector_register_while_running') }}
+          </ElButton>
+          <ElButton
+            type="primary"
+            :disabled="releaseImpactLoading"
+            :loading="releaseLoading"
+            @click="registerRelease(true)"
+          >
+            {{ $t('packages_business_connector_stop_and_register') }}
+          </ElButton>
+        </template>
+        <ElButton
+          v-else
+          type="primary"
+          :disabled="releaseImpactLoading"
+          :loading="releaseLoading"
+          @click="registerRelease(false)"
+        >
+          {{ $t('packages_business_connector_download_title') }}
+        </ElButton>
+      </div>
+    </template>
   </ElDialog>
 </template>
 
@@ -1217,5 +1444,10 @@ export default {
 
 .form__content {
   height: 640px;
+}
+
+.connector-icon--unregistered {
+  filter: grayscale(1);
+  opacity: 0.45;
 }
 </style>

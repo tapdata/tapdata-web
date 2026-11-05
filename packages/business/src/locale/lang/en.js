@@ -1907,4 +1907,19 @@ export default {
     'When any API Server connection pool resource is tight and triggers the alarm threshold',
   packages_business_api_server_connection_pool_idle_warn:
     'When the number of connections in the connection pool of any API Server falls below the alarm threshold',
+  packages_business_connector_requires_download:
+    'This data source is not registered. Download and register it before creating a connection.',
+  packages_business_connector_update_available: '↑ Update',
+  packages_business_connector_download_title:
+    'Download and Register Data Source',
+  packages_business_connector_update_title: 'Update Data Source',
+  packages_business_connector_download_confirm:
+    'The formal release {version} will be downloaded from Nexus and registered automatically.',
+  packages_business_connector_registration_impact:
+    'This data source has {taskCount} in-flight tasks and {inspectCount} in-flight verification tasks. Choose how to register it.',
+  packages_business_connector_stop_and_register: 'Stop tasks and register',
+  packages_business_connector_register_while_running:
+    'Register without stopping tasks',
+  packages_business_connector_release_success:
+    'Data source registered successfully',
 }

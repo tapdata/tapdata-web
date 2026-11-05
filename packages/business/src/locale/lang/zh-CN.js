@@ -1710,4 +1710,16 @@ export default {
     '当任一API Server 连接池资源紧张触发告警阈值时',
   packages_business_api_server_connection_pool_idle_warn:
     '当任一API Server 连接池连接数低于告警阈值时',
+  packages_business_connector_requires_download:
+    '此数据源尚未注册，请先下载并注册后再创建连接。',
+  packages_business_connector_update_available: '↑ 更新',
+  packages_business_connector_download_title: '下载并注册数据源',
+  packages_business_connector_update_title: '更新数据源',
+  packages_business_connector_download_confirm:
+    '将从 Nexus 下载正式版 {version}，并自动注册该数据源。',
+  packages_business_connector_registration_impact:
+    '该数据源有 {taskCount} 个在途任务和 {inspectCount} 个在途校验任务。请选择注册方式。',
+  packages_business_connector_stop_and_register: '停止任务后注册',
+  packages_business_connector_register_while_running: '无感知注册',
+  packages_business_connector_release_success: '数据源注册成功',
 }
