@@ -167,10 +167,14 @@ curl "http://localhost:5173/api/task/dashboard?access_token=<ACCESS_TOKEN>"
 | 参数名 | 类型 | 是否必填 | 允许值 | 默认值 | 描述 |
 | --- | --- | --- | --- | --- | --- |
 | `access_token` | `string` | 在 token-query 模式下必填 | 任意有效的用户访问令牌 | 无 | 通过查询字符串传递的认证令牌。 |
-| `type` | `string` | 否 | `minute`、`hours`、`days` | `minute` | 时间窗口类型。 |
-| `step` | `number` | 否 | `minute` 对应 `5`，`hours` 对应 `1`，`days` 对应 `1` | `5` | 时间窗口步长。无效组合将回退到默认窗口。 |
+| `type` | `string` | 否 | `minute`、`hours`、`days`、`range` | `minute` | 时间窗口类型；`range` 仅用于趋势 v2。 |
+| `step` | `number` | 否 | `minute` 对应 `5`，`hours` 对应 `1`，`days` 对应 `1` | `5` | 旧时间窗口步长；`range` 不使用此参数。 |
 | `dashboardType` | `string` | 否 | `all`、`summary`、`activeTasks`、`totalThroughput`、`connectedDbs`、`apiRequests`、`trends`、`tops` | `all` | 控制填充哪个仪表盘板块。 |
 | `top` | `number` | 否 | `5`、`10`、`20` | `5` | `tops` 排行榜大小。无效值将回退为 `5`。 |
+| `physicalNodeId` | `string` | 否 | 当前用户有权访问的安装 UUID | 无 | 只用于趋势 v2；省略时查询全部节点。 |
+| `startAt` | `number` | 否 | 正整数 Unix 秒时间戳 | 无 | 趋势 v2 起始时间，须与 `endAt` 同时提供。 |
+| `endAt` | `number` | 否 | 正整数 Unix 秒时间戳 | 无 | 趋势 v2 结束时间，不能晚于当前时间。 |
+| `trendSchemaVersion` | `number` | 否 | `2` | 无 | 仅用于 `dashboardType=trends`，启用 nullable 趋势序列与状态字段。 |
 
 ### 有效时间窗口
 
@@ -179,7 +183,10 @@ curl "http://localhost:5173/api/task/dashboard?access_token=<ACCESS_TOKEN>"
 | `type=minute&step=5` | 最近 5 分钟 |
 | `type=hours&step=1` | 最近 1 小时 |
 | `type=days&step=1` | 最近 24 小时 |
-| 任何无效组合 | 最近 5 分钟 |
+| `type=range&startAt=...&endAt=...&trendSchemaVersion=2` | 指定的半开区间 `[startAt,endAt)`，最长 604800 秒 |
+| 旧参数的任何无效组合 | 最近 5 分钟 |
+
+趋势 v2 的新参数仅用于 `dashboardType=trends`，不改变 `summary`、`tops` 或 API KPI 的请求合同。`startAt` 和 `endAt` 必须同时提供，起点早于终点，终点不晚于当前时间，范围不能超过 7 天。允许查询早于最近 7 天的历史窗口；若数据已超过实际保存期，则返回无数据状态。
 
 ### 请求示例
 
@@ -198,6 +205,37 @@ curl "http://localhost:5173/api/task/dashboard?access_token=<ACCESS_TOKEN>&dashb
 ```bash
 curl "http://localhost:5173/api/task/dashboard?access_token=<ACCESS_TOKEN>&dashboardType=tops&top=10&type=days&step=1"
 ```
+
+趋势 v2 自定义范围示例：
+
+```bash
+curl "http://localhost:5173/api/Task/dashboard?access_token=<ACCESS_TOKEN>&dashboardType=trends&type=range&physicalNodeId=<INSTALL_UUID>&startAt=1775644614&endAt=1775731014&trendSchemaVersion=2"
+```
+
+`GET /api/Task/dashboard/nodes` 使用标准 `ResponseMessage` 包装器，`data` 为当前用户可访问的已登记安装节点列表，包含离线节点：
+
+```json
+{
+  "reqId": "request-id",
+  "ts": 0,
+  "code": "ok",
+  "data": [
+    {
+      "physicalNodeId": "installation-uuid",
+      "label": "agent-name (short-uuid)",
+      "status": "running",
+      "engineDeployed": true,
+      "apiServerDeployed": false
+    }
+  ]
+}
+```
+
+前端提供“全部节点”选项，请求全部节点时省略 `physicalNodeId`。节点 ID 是安装 UUID；同一台机器上的不同安装保持独立。
+
+趋势 v2 序列包含 `status`（`ok`、`no_data`、`component_not_deployed`）、`traceability`（`complete`、`partial`、`untraceable`）、`coverage`（`complete`、`partial`、`unknown`）和 `hasUnattributedData`。`ts` 与 `values` 等长且按 Unix 秒升序；缺失采样为 `null`，真实零值保留为 `0`。部分或不可追溯状态应明确标示；全部节点查询可保留旧数据，单节点查询不将无节点标签的旧记录分配给节点。组件未部署且无历史数据时返回 `component_not_deployed`；已有历史数据仍可展示。
+
+7 天及自定义趋势的采样粒度至少为小时，跨日坐标轴包含日期，tooltip 显示完整本地日期时间和浏览器时区。
 
 Apifox 风格请求：
 
@@ -312,6 +350,9 @@ curl --location --request GET 'http://localhost:5173/api/task/dashboard?access_t
 | `top` | `number` | 标准化的排行榜大小。 |
 | `startAt` | `number` | 窗口起始时间，Unix 秒级时间戳。 |
 | `endAt` | `number` | 窗口结束时间，Unix 秒级时间戳。 |
+| `physicalNodeId` | `string` | 趋势 v2 查询的安装 UUID；全部节点查询时为空。 |
+| `intervalSeconds` | `number` | 趋势采样间隔，单位为秒。 |
+| `trendSchemaVersion` | `number` | 趋势响应版本；`2` 表示可空序列并返回数据状态。 |
 
 ### summary.activeTasks
 
@@ -353,9 +394,9 @@ curl --location --request GET 'http://localhost:5173/api/task/dashboard?access_t
 | 字段 | 类型 | 描述 |
 | --- | --- | --- |
 | `throughput.ts` | `array<number>` | Unix 秒级时间戳数组。 |
-| `throughput.values` | `array<number>` | 与 `ts` 对齐的吞吐量值。 |
+| `throughput.values` | `array` | 与 `ts` 对齐的吞吐量值；趋势 v2 缺失采样为 `null`。 |
 | `apiRequests.ts` | `array<number>` | Unix 秒级时间戳数组。 |
-| `apiRequests.values` | `array<number>` | 与 `ts` 对齐的请求速率值。 |
+| `apiRequests.values` | `array` | 与 `ts` 对齐的请求速率值；趋势 v2 缺失采样为 `null`。 |
 
 ### tops
 

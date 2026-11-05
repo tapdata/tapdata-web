@@ -252,7 +252,43 @@ export default {
   dashboard_odh_system_trends: 'System Trends',
   dashboard_odh_throughput_chart: 'Throughput (events/sec)',
   dashboard_odh_api_chart: 'API Requests (req/sec)',
+  dashboard_odh_all_nodes: 'All nodes',
+  dashboard_odh_range_5min: '5 minutes',
+  dashboard_odh_range_1h: '1 hour',
+  dashboard_odh_range_24h: '24 hours',
+  dashboard_odh_range_7d: '7 days',
+  dashboard_odh_range_custom: 'Custom',
+  dashboard_odh_start_time: 'Start time',
+  dashboard_odh_end_time: 'End time',
+  dashboard_odh_time_range_to: 'to',
+  dashboard_odh_timezone: 'Time zone: {timezone}',
+  dashboard_odh_node_online: 'Online',
+  dashboard_odh_node_offline: 'Offline',
+  dashboard_odh_node_list_refresh_failed:
+    'The node list could not be refreshed. The current selection was kept.',
+  dashboard_odh_requests_sec: 'requests/sec',
   dashboard_odh_no_data_in_range: 'No data in this time range',
+  dashboard_odh_trend_loading: 'Loading trend data…',
+  dashboard_odh_trend_request_failed:
+    'Trend data could not be loaded. Try again.',
+  dashboard_odh_trend_component_not_deployed:
+    'The component for {component} is not deployed and no historical data is available in the selected range.',
+  dashboard_odh_trend_partial:
+    'Some historical data has no node attribution. The chart shows only confirmed data.',
+  dashboard_odh_trend_untraceable:
+    'Data in this time range cannot be traced to a physical node.',
+  dashboard_odh_trend_coverage_unknown:
+    'Data collection coverage cannot be confirmed for this time range.',
+  dashboard_odh_trend_select_custom_range:
+    'Select both a start time and an end time.',
+  dashboard_odh_trend_invalid_custom_range:
+    'The start time must be earlier than the end time.',
+  dashboard_odh_trend_future_range: 'The end time cannot be in the future.',
+  dashboard_odh_trend_range_over_7_days:
+    'A custom time range cannot exceed 7 days.',
+  dashboard_odh_trend_no_sample: 'No sample',
+  dashboard_odh_trend_tooltip_value: '{series}: {value} {unit}',
+  dashboard_odh_trend_tooltip_missing: '{series}: {state}',
   dashboard_odh_top_tasks: 'Top Tasks',
   dashboard_odh_most_lagging: 'Most Lagging',
   dashboard_odh_highest_throughput: 'Highest Throughput',
