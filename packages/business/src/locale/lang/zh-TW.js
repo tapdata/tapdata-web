@@ -1701,7 +1701,7 @@ export default {
     '當任一API Server 連接池連接數低於告警閾值時',
   packages_business_connector_requires_download:
     '此資料來源尚未註冊，請先下載並註冊後再建立連線。',
-  packages_business_connector_update_available: '↑ 更新',
+  packages_business_connector_update_available: '更新',
   packages_business_connector_download_title: '下載並註冊資料來源',
   packages_business_connector_update_title: '更新資料來源',
   packages_business_connector_download_confirm:

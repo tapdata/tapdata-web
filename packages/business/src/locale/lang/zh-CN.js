@@ -1712,7 +1712,7 @@ export default {
     '当任一API Server 连接池连接数低于告警阈值时',
   packages_business_connector_requires_download:
     '此数据源尚未注册，请先下载并注册后再创建连接。',
-  packages_business_connector_update_available: '↑ 更新',
+  packages_business_connector_update_available: '更新',
   packages_business_connector_download_title: '下载并注册数据源',
   packages_business_connector_update_title: '更新数据源',
   packages_business_connector_download_confirm:

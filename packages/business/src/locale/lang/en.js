@@ -1909,7 +1909,7 @@ export default {
     'When the number of connections in the connection pool of any API Server falls below the alarm threshold',
   packages_business_connector_requires_download:
     'This data source is not registered. Download and register it before creating a connection.',
-  packages_business_connector_update_available: '↑ Update',
+  packages_business_connector_update_available: 'Update',
   packages_business_connector_download_title:
     'Download and Register Data Source',
   packages_business_connector_update_title: 'Update Data Source',

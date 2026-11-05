@@ -877,7 +877,7 @@ export default {
       }
 
       if (this.isDaas && !this.isCommunity) {
-        this.lockedTypes = data.filter((item) => item.requiresDownload)
+        this.lockedTypes = []
       } else if (this.isControlEnabled) {
         this.lockedTypes = data.filter((item) => {
           const enabled = this.connectors.includes(item.type)
@@ -1173,17 +1173,11 @@ export default {
               <div class="connector-item-content flex-1 overflow-hidden">
                 <div
                   class="connector-item-title font-color-dark flex align-center"
+                  :class="{
+                    'connector-item-title--updatable': item.updateAvailable,
+                  }"
                 >
                   <span class="ellipsis mr-1">{{ item.name }}</span>
-                  <ElTag
-                    v-if="item.updateAvailable"
-                    type="warning"
-                    class="text-uppercase ml-auto px-1 connector-item-tag"
-                    @click.stop="handleReleaseAction(item)"
-                  >
-                    {{ $t('packages_business_connector_update_available') }}
-                  </ElTag>
-                  <VIcon v-if="item.locked" size="24">lock-circle</VIcon>
                   <VIcon
                     v-if="item.qcType === 'GA'"
                     size="24"
@@ -1215,6 +1209,17 @@ export default {
                 </div>
               </div>
             </div>
+            <ElTag
+              v-if="item.updateAvailable"
+              type="warning"
+              class="connector-item-update px-1 connector-item-tag"
+              @click.stop="handleReleaseAction(item)"
+            >
+              <span class="flex align-center gap-1">
+                {{ $t('packages_business_connector_update_available') }}
+                <el-icon><i-lucide-arrow-up /></el-icon>
+              </span>
+            </ElTag>
             <div
               v-if="currentScene === 'recommend' && !search"
               class="font-color-light fs-8 mt-2"
@@ -1417,6 +1422,7 @@ export default {
   }
 
   .connector-item {
+    position: relative;
     box-shadow:
       0 1px 2px 0 rgba(0, 0, 0, 0.03),
       0 1px 6px -1px rgba(0, 0, 0, 0.02),
@@ -1426,11 +1432,22 @@ export default {
     &-title {
       font-size: 15px;
       line-height: 38px;
+
+      &--updatable {
+        padding-right: 88px;
+      }
     }
 
     &-tag {
       height: 18px;
       line-height: 16px;
+    }
+
+    &-update {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      cursor: pointer;
     }
 
     &:hover {
