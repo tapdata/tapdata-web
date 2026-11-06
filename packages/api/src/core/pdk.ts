@@ -24,6 +24,10 @@ export function registerConnectorRelease(data: {
   return requestClient.post(`${BASE_URL}/register-release`, data)
 }
 
+export function getConnectorRegistrationJob(jobId: string) {
+  return requestClient.get(`${BASE_URL}/registration-jobs/${jobId}`)
+}
+
 export function getPdkDoc(pdkHash: string) {
   const url = `${BASE_URL}/doc?pdkHash=${pdkHash}`
   return requestClient.get(url, {

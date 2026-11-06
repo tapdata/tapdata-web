@@ -1922,4 +1922,7 @@ export default {
     'Register without stopping tasks',
   packages_business_connector_release_success:
     'Data source registered successfully',
+  packages_business_connector_release_started:
+    'Registration started in the background. You can continue choosing other data sources.',
+  packages_business_connector_release_failed: 'Data source registration failed',
 }

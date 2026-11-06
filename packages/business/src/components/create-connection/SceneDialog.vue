@@ -5,6 +5,7 @@ import {
 } from '@tap/api/src/core/database-types'
 import {
   getConnectorRegistrationImpact,
+  getConnectorRegistrationJob,
   getConnectorReleases,
   registerConnectorRelease,
 } from '@tap/api/src/core/pdk'
@@ -96,6 +97,9 @@ export default {
       releaseImpactLoading: false,
       releaseItem: null,
       releaseImpact: { tasks: [], inspects: [] },
+      connectorJobs: {},
+      connectorJobTimers: {},
+      connectorJobsStorageKey: 'tapdata.connectorRegistrationJobs',
       showDialog: this.visible,
       sceneList: [
         {
@@ -593,6 +597,7 @@ export default {
     },
   },
   mounted() {
+    this.restoreConnectorJobs()
     const { type, pdkHash, pdkId } = this.$route.query
 
     // add-source/add-target
@@ -605,6 +610,9 @@ export default {
         this.showForm = true
       })
     }
+  },
+  beforeUnmount() {
+    Object.values(this.connectorJobTimers).forEach(clearTimeout)
   },
   methods: {
     getConnectorImage,
@@ -637,11 +645,54 @@ export default {
       this.$emit('update:visible', false)
     },
 
+    restoreConnectorJobs() {
+      try {
+        const jobs = JSON.parse(
+          window.localStorage.getItem(this.connectorJobsStorageKey) || '{}',
+        )
+        if (!jobs || typeof jobs !== 'object' || Array.isArray(jobs)) return
+        this.connectorJobs = Object.fromEntries(
+          Object.entries(jobs).filter(
+            ([, job]) => job && typeof job.jobId === 'string',
+          ),
+        )
+        Object.entries(this.connectorJobs).forEach(([pdkId, job]) => {
+          this.pollConnectorRegistration(job.jobId, pdkId)
+        })
+      } catch (error) {
+        console.warn('Unable to restore connector registration progress', error)
+        this.connectorJobs = {}
+      }
+    },
+
+    persistConnectorJobs(jobs = this.connectorJobs) {
+      try {
+        if (Object.keys(jobs).length) {
+          window.localStorage.setItem(
+            this.connectorJobsStorageKey,
+            JSON.stringify(jobs),
+          )
+        } else {
+          window.localStorage.removeItem(this.connectorJobsStorageKey)
+        }
+      } catch (error) {
+        console.warn('Unable to persist connector registration progress', error)
+      }
+    },
+
+    removeConnectorJob(pdkId) {
+      const remainingJobs = { ...this.connectorJobs }
+      delete remainingJobs[pdkId]
+      this.connectorJobs = remainingJobs
+      this.persistConnectorJobs(remainingJobs)
+    },
+
     onClosed() {
       this.showForm = false
     },
 
     async handleSelect(item, isDemo = false) {
+      if (this.connectorJobs[item.pdkId]) return
       if (item.requiresDownload) {
         this.handleReleaseAction(item)
         return
@@ -736,7 +787,7 @@ export default {
     },
 
     async handleReleaseAction(item) {
-      if (this.releaseLoading) return
+      if (this.releaseLoading || this.connectorJobs[item.pdkId]) return
       this.releaseItem = item
       this.releaseImpact = { tasks: [], inspects: [] }
       this.releaseDialogVisible = true
@@ -757,9 +808,10 @@ export default {
       if (!this.releaseItem || this.releaseLoading) return
       this.releaseLoading = true
       try {
-        await registerConnectorRelease({
-          pdkId: this.releaseItem.pdkId,
-          artifactId: this.releaseItem.artifactId,
+        const releaseItem = this.releaseItem
+        const job = await registerConnectorRelease({
+          pdkId: releaseItem.pdkId,
+          artifactId: releaseItem.artifactId,
           stopTasks,
           ignoreInFlightResources:
             !stopTasks &&
@@ -767,10 +819,20 @@ export default {
               this.releaseImpact.inspects.length > 0),
         })
         this.releaseDialogVisible = false
-        this.$message.success(
-          this.$t('packages_business_connector_release_success'),
+        this.connectorJobs = {
+          ...this.connectorJobs,
+          [releaseItem.pdkId]: {
+            jobId: job.jobId,
+            status: job.status,
+            progress: job.progress,
+            artifactId: releaseItem.artifactId,
+          },
+        }
+        this.persistConnectorJobs()
+        this.$message.info(
+          this.$t('packages_business_connector_release_started'),
         )
-        await this.getData(true)
+        this.pollConnectorRegistration(job.jobId, releaseItem.pdkId)
       } catch (error) {
         this.$message.error(error.message || String(error))
         try {
@@ -785,6 +847,90 @@ export default {
       } finally {
         this.releaseLoading = false
       }
+    },
+
+    async pollConnectorRegistration(jobId, pdkId, retryCount = 0) {
+      delete this.connectorJobTimers[pdkId]
+      try {
+        const job = await getConnectorRegistrationJob(jobId)
+        if (
+          !this.connectorJobs[pdkId] ||
+          this.connectorJobs[pdkId].jobId !== jobId
+        )
+          return
+        if (job.status === 'completed') {
+          this.removeConnectorJob(pdkId)
+          this.$message.success(
+            this.$t('packages_business_connector_release_success'),
+          )
+          await this.getData(true)
+          return
+        }
+        if (job.status === 'failed') {
+          const activeJob = this.connectorJobs[pdkId]
+          this.removeConnectorJob(pdkId)
+          if (job.errorCode === 'RESOURCE_IMPACT_CHANGED') {
+            const release = this.releaseItem || {
+              pdkId,
+              artifactId: activeJob?.artifactId,
+            }
+            if (!release.artifactId) {
+              this.$message.error(
+                job.error ||
+                  this.$t('packages_business_connector_release_failed'),
+              )
+              return
+            }
+            this.releaseItem = release
+            this.releaseDialogVisible = true
+            this.releaseImpactLoading = true
+            try {
+              this.releaseImpact = (await getConnectorRegistrationImpact(
+                release.pdkId,
+                release.artifactId,
+              )) || { tasks: [], inspects: [] }
+            } catch (error) {
+              this.$message.error(error.message || String(error))
+            } finally {
+              this.releaseImpactLoading = false
+            }
+            return
+          }
+          this.$message.error(
+            job.error || this.$t('packages_business_connector_release_failed'),
+          )
+          return
+        }
+        this.connectorJobs = {
+          ...this.connectorJobs,
+          [pdkId]: {
+            ...this.connectorJobs[pdkId],
+            jobId,
+            status: job.status,
+            progress: job.progress,
+          },
+        }
+        this.persistConnectorJobs()
+      } catch (error) {
+        const status = error?.response?.status || error?.status || error?.code
+        if (status === 404 || status === '404' || retryCount >= 10) {
+          this.removeConnectorJob(pdkId)
+          this.$message.error(
+            this.$t('packages_business_connector_release_failed'),
+          )
+          return
+        }
+        console.warn('Unable to read connector registration progress', error)
+        this.connectorJobTimers[pdkId] = setTimeout(
+          () => this.pollConnectorRegistration(jobId, pdkId, retryCount + 1),
+          1200,
+        )
+        return
+      }
+      this.connectorJobTimers[pdkId] = setTimeout(
+        () => this.pollConnectorRegistration(jobId, pdkId, 0),
+        1200,
+      )
     },
 
     resetScroll() {
@@ -1170,6 +1316,15 @@ export default {
                   'connector-icon--unregistered': item.requiresDownload,
                 }"
               />
+              <ElProgress
+                v-if="connectorJobs[item.pdkId]"
+                class="connector-icon-progress"
+                type="circle"
+                :percentage="connectorJobs[item.pdkId].progress"
+                :width="38"
+                :stroke-width="3"
+                :show-text="false"
+              />
               <div class="connector-item-content flex-1 overflow-hidden">
                 <div
                   class="connector-item-title font-color-dark flex align-center"
@@ -1466,5 +1621,11 @@ export default {
 .connector-icon--unregistered {
   filter: grayscale(1);
   opacity: 0.45;
+}
+
+.connector-icon-progress {
+  position: absolute;
+  left: 12px;
+  top: 12px;
 }
 </style>

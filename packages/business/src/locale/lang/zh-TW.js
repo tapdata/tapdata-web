@@ -1711,4 +1711,7 @@ export default {
   packages_business_connector_stop_and_register: '停止任務後註冊',
   packages_business_connector_register_while_running: '無感知註冊',
   packages_business_connector_release_success: '資料來源註冊成功',
+  packages_business_connector_release_started:
+    '已開始背景註冊，您可以繼續選擇其他資料來源。',
+  packages_business_connector_release_failed: '資料來源註冊失敗',
 }

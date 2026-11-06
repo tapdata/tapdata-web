@@ -1722,4 +1722,7 @@ export default {
   packages_business_connector_stop_and_register: '停止任务后注册',
   packages_business_connector_register_while_running: '无感知注册',
   packages_business_connector_release_success: '数据源注册成功',
+  packages_business_connector_release_started:
+    '已开始后台注册，您可以继续选择其他数据源。',
+  packages_business_connector_release_failed: '数据源注册失败',
 }
