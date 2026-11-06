@@ -1,4 +1,6 @@
 #!/bin/bash
+set -eo pipefail
+
 base=$(cd `dirname $0`/.. && pwd)
 app='daas'
 mode='production'
@@ -32,10 +34,16 @@ corepack enable
 
 pnpm i
 
-echo "node version: $(node --version)
-corepack version: $(corepack --version)
-pnpm version: $(pnpm --version)
+# Assign separately so a failed diagnostic command cannot be hidden by echo.
+node_version=$(node --version)
+corepack_version=$(corepack --version)
+pnpm_version=$(pnpm --version)
+heap_statistics=$(node -e 'console.log(v8.getHeapStatistics())')
+
+echo "node version: $node_version
+corepack version: $corepack_version
+pnpm version: $pnpm_version
 NODE_OPTIONS: $NODE_OPTIONS
-Heap Statistics: $(node -e 'console.log(v8.getHeapStatistics())')"
+Heap Statistics: $heap_statistics"
 
 pnpm build:$app --mode $mode -- --env $env
