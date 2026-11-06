@@ -957,11 +957,17 @@ export const routes = [
         meta: { title: 'page_title_account' },
       },
       {
+        // 通知设置已下线；旧地址保留并转向现有告警设置，由目标页展示一次性说明
         path: 'notificationSetting',
         name: 'notificationSetting',
-        code: 'v2_notification-setting',
-        component: () => import('@/views/setting/NotificationSetting.vue'),
-        meta: { title: 'notify_setting', isNotAside: true },
+        redirect: {
+          name: 'alarmSetting',
+          query: { from: 'notificationSetting' },
+        },
+        meta: {
+          title: 'daas_setting_settingcenter_gaojingshezhi',
+          isNotAside: true,
+        },
       },
       /* ---------- 系统设置  ----------*/
       {

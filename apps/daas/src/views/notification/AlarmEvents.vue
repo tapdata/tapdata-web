@@ -254,6 +254,14 @@ export default {
   <PageContainer>
     <template #actions>
       <el-button
+        v-if="hasPermissionByCode('v2_alarm_settings_menu')"
+        text
+        type="primary"
+        @click="$router.push({ name: 'alarmSetting' })"
+      >
+        {{ $t('daas_setting_settingcenter_gaojingshezhi') }}
+      </el-button>
+      <el-button
         v-if="canClose"
         :disabled="!multipleSelection.length"
         type="primary"
