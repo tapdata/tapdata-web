@@ -729,6 +729,10 @@ export default {
   packages_business_verification_form_jiaoyangaojing: '校验告警',
   packages_business_verification_form_zanbuzhichi_doris: '暂不支持Doris。',
   packages_business_verification_form_task_alarm: '校验任务告警',
+  packages_business_verification_form_alarm_receivers: '校验告警接收人',
+  packages_business_verification_form_alarm_receivers_system:
+    '使用系统默认接收人',
+  packages_business_verification_form_alarm_receivers_custom: '自定义接收人',
   packages_business_verification_form_task_alarm_when_error:
     '当校验任务出错时进行告警',
   packages_business_verification_form_task_alarm_when_diff_result_over_count1:
