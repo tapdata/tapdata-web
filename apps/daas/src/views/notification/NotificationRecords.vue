@@ -35,6 +35,7 @@ function buildSearchParams(query = {}) {
 }
 
 export default {
+  inject: ['hasPermissionByCode'],
   components: {
     TablePage,
     FilterBar,
@@ -257,11 +258,12 @@ export default {
         {{ $t('notification_record_mark_all_read') }}
       </el-button>
       <el-button
+        v-if="hasPermissionByCode?.('v2_alarm_settings_menu')"
         text
         type="primary"
-        @click="$router.push({ name: 'notificationSetting' })"
+        @click="$router.push({ name: 'alarmSetting' })"
       >
-        {{ $t('notify_setting') }}
+        {{ $t('daas_setting_settingcenter_gaojingshezhi') }}
       </el-button>
     </template>
     <TablePage
