@@ -264,6 +264,8 @@ export default {
   dashboard_odh_trend_request_failed: '趋势数据加载失败，请重试。',
   dashboard_odh_trend_component_not_deployed:
     '{component} 所需组件未部署，当前所选时间段无历史数据。',
+  dashboard_odh_trend_coverage_partial:
+    '该时间段内部分时段没有数据（任务未运行）。',
   dashboard_odh_trend_partial:
     '部分历史数据缺少节点归属，图表仅显示可确认的数据。',
   dashboard_odh_trend_untraceable: '该时间段的数据无法追溯到节点归属。',

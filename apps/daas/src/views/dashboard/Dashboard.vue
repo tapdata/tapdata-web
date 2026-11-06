@@ -240,12 +240,11 @@ function getTrendSeriesMessage(
   if (series.traceability === 'untraceable') {
     return t('dashboard_odh_trend_untraceable')
   }
-  if (
-    series.traceability === 'partial' ||
-    series.coverage === 'partial' ||
-    series.hasUnattributedData
-  ) {
+  if (series.traceability === 'partial' || series.hasUnattributedData) {
     return t('dashboard_odh_trend_partial')
+  }
+  if (series.coverage === 'partial') {
+    return t('dashboard_odh_trend_coverage_partial')
   }
   if (series.coverage === 'unknown') {
     return t('dashboard_odh_trend_coverage_unknown')
@@ -667,9 +666,7 @@ function onTrendNodeChange() {
 
 function onCustomTrendTimeChange() {
   if (customTrendTimeIssue.value) {
-    if (customTrendTime.value) {
-      ElMessage.warning(customTrendTimeMessage.value)
-    }
+    ElMessage.warning(customTrendTimeMessage.value)
     invalidateTrendRequest()
     return
   }
@@ -1084,6 +1081,9 @@ onBeforeUnmount(() => {
               @change="onCustomTrendTimeChange"
             />
           </div>
+          <p v-if="customTrendTimeIssue" class="dashboard__trend-notice mb-4">
+            {{ customTrendTimeMessage }}
+          </p>
           <p v-if="trendNodeListError" class="dashboard__trend-notice mb-4">
             {{ t('dashboard_odh_node_list_refresh_failed') }}
           </p>
