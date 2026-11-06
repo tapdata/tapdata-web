@@ -18,6 +18,7 @@ import Chart from '@tap/component/src/chart/Chart.vue'
 import CountUp from '@tap/component/src/CountUp.vue'
 import { useI18n } from '@tap/i18n'
 import { calcTimeUnit, calcUnit } from '@tap/shared/src/number'
+import dayjs from 'dayjs'
 import { ElMessage } from 'element-plus'
 import { isNumber } from 'lodash-es'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
@@ -46,6 +47,7 @@ type CustomTrendTimeIssue =
   | 'range_over_7_days'
 const trendsTimeRange = ref<TrendsTimeRange>('24h')
 const customTrendTime = ref<[number, number] | null>(null)
+const manualTrendTimeIssue = ref<CustomTrendTimeIssue | null>(null)
 const selectedPhysicalNodeId = ref('')
 const trendNodes = ref<TaskDashboardNodeOption[]>([])
 const trendNodeListError = ref(false)
@@ -182,7 +184,9 @@ const apiTrendMessage = computed(() =>
   ),
 )
 const customTrendTimeIssue = computed(() =>
-  trendsTimeRange.value === 'custom' ? getCustomTrendTimeIssue() : null,
+  trendsTimeRange.value === 'custom'
+    ? manualTrendTimeIssue.value || getCustomTrendTimeIssue()
+    : null,
 )
 const customTrendTimeMessage = computed(() => {
   switch (customTrendTimeIssue.value) {
@@ -664,7 +668,49 @@ function onTrendNodeChange() {
   return fetchTrends()
 }
 
+function onManualTrendInput() {
+  manualTrendTimeIssue.value = null
+}
+
+function onManualTrendKeydown(event: KeyboardEvent) {
+  if (event.key !== 'Enter') return
+  const inputs = (event.currentTarget as HTMLElement).querySelectorAll('input')
+  if (inputs.length !== 2) return
+  const [startText, endText] = Array.from(inputs, (input) => input.value.trim())
+  let issue: CustomTrendTimeIssue | null = null
+  if (!startText || !endText) {
+    issue = 'select_custom_range'
+  } else {
+    const format = 'YYYY-MM-DD HH:mm:ss'
+    const start = dayjs(startText)
+    const end = dayjs(endText)
+    if (
+      !start.isValid() ||
+      !end.isValid() ||
+      start.format(format) !== startText ||
+      end.format(format) !== endText ||
+      !start.isBefore(end)
+    ) {
+      issue = 'invalid_custom_range'
+    } else if (end.valueOf() > Date.now()) {
+      issue = 'future_range'
+    } else if (end.valueOf() - start.valueOf() > 604800000) {
+      issue = 'range_over_7_days'
+    }
+  }
+  if (issue) {
+    event.preventDefault()
+    event.stopPropagation()
+    manualTrendTimeIssue.value = issue
+    invalidateTrendRequest()
+    ElMessage.warning(customTrendTimeMessage.value)
+  } else {
+    manualTrendTimeIssue.value = null
+  }
+}
+
 function onCustomTrendTimeChange() {
+  manualTrendTimeIssue.value = null
   if (customTrendTimeIssue.value) {
     ElMessage.warning(customTrendTimeMessage.value)
     invalidateTrendRequest()
@@ -1066,20 +1112,25 @@ onBeforeUnmount(() => {
             <span class="fs-7 text-secondary">
               {{ t('dashboard_odh_timezone', { timezone: browserTimezone }) }}
             </span>
-            <el-date-picker
+            <div
               v-if="trendsTimeRange === 'custom'"
-              v-model="customTrendTime"
-              type="datetimerange"
-              :range-separator="t('dashboard_odh_time_range_to')"
-              :start-placeholder="t('dashboard_odh_start_time')"
-              :end-placeholder="t('dashboard_odh_end_time')"
-              :disabled-date="disableFutureTrendDate"
-              format="YYYY-MM-DD HH:mm:ss"
-              value-format="x"
-              size="small"
-              style="width: 380px"
-              @change="onCustomTrendTimeChange"
-            />
+              @keydown.capture="onManualTrendKeydown"
+              @input.capture="onManualTrendInput"
+            >
+              <el-date-picker
+                v-model="customTrendTime"
+                type="datetimerange"
+                :range-separator="t('dashboard_odh_time_range_to')"
+                :start-placeholder="t('dashboard_odh_start_time')"
+                :end-placeholder="t('dashboard_odh_end_time')"
+                :disabled-date="disableFutureTrendDate"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-format="x"
+                size="small"
+                style="width: 380px"
+                @change="onCustomTrendTimeChange"
+              />
+            </div>
           </div>
           <p v-if="customTrendTimeIssue" class="dashboard__trend-notice mb-4">
             {{ customTrendTimeMessage }}
