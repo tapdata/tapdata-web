@@ -354,9 +354,7 @@ defineExpose({
             <ElDropdownItem
               v-if="hasPermissionByCode?.('v2_alarm_settings_menu')"
               command="alarmSetting"
-              >{{
-                $t('daas_setting_settingcenter_gaojingshezhi')
-              }}
+              >{{ $t('daas_setting_settingcenter_gaojingshezhi') }}
             </ElDropdownItem>
           </ElDropdownMenu>
         </template>

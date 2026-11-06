@@ -210,7 +210,9 @@ function goAlarm() {
             v-if="canViewAlarm"
             text
             type="primary"
-            :disabled="detail.legacy || detail.alarmEventMissing || noRelatedAlarm"
+            :disabled="
+              detail.legacy || detail.alarmEventMissing || noRelatedAlarm
+            "
             @click="goAlarm"
           >
             {{ t('notification_record_view_alarm') }}
@@ -218,11 +220,9 @@ function goAlarm() {
           <span v-if="noRelatedAlarm" class="color-info fs-8">{{
             t('notification_record_no_related_alarm')
           }}</span>
-          <span
-            v-else-if="detail.alarmEventMissing"
-            class="color-info fs-8"
-            >{{ t('notification_record_alarm_missing') }}</span
-          >
+          <span v-else-if="detail.alarmEventMissing" class="color-info fs-8">{{
+            t('notification_record_alarm_missing')
+          }}</span>
         </div>
 
         <div class="flex align-center gap-3 mt-4 mb-2">

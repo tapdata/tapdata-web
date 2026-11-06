@@ -12,12 +12,18 @@ const store = useStore()
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
-const hasPermissionByCode = inject<(code: string) => boolean>('hasPermissionByCode')
+const hasPermissionByCode = inject<(code: string) => boolean>(
+  'hasPermissionByCode',
+)
 
 watch(
   () => [route.name, route.query.from],
   () => {
-    if (route.name !== 'alarmSetting' || route.query.from !== 'notificationSetting') return
+    if (
+      route.name !== 'alarmSetting' ||
+      route.query.from !== 'notificationSetting'
+    )
+      return
     ElMessage.info(t('notification_setting_offline_notice'))
     const query = { ...route.query }
     delete query.from
@@ -45,7 +51,8 @@ const settingList = computed(() => {
       (item) =>
         !item.hidden &&
         isMenuEnabled.value(item.key) &&
-        (item.key !== 'alarmSetting' || hasPermissionByCode?.('v2_alarm_settings_menu')),
+        (item.key !== 'alarmSetting' ||
+          hasPermissionByCode?.('v2_alarm_settings_menu')),
     ),
   )
 })
