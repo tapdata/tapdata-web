@@ -5,6 +5,7 @@ import {
   type NotificationRecordDetail,
 } from '@tap/api/src/core/notification'
 import { getTaskById } from '@tap/api/src/core/task'
+import { ErrorMessage } from '@tap/business/src/components/error-message'
 import { getAlarmKeyMap } from '@tap/business/src/shared/alarm'
 import { ALARM_LEVEL_MAP } from '@tap/business/src/shared/const'
 import dayjs from 'dayjs'
@@ -44,6 +45,22 @@ const open = computed({
 
 const fmt = (time?: string) =>
   time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+
+const summaryMessage = (message?: string) => {
+  if (!message) return ''
+  const lines = message.split(/\r?\n/)
+  const firstFrameIdx = lines.findIndex((line) => /^\s*at\s+\S/.test(line))
+  const headerLines = (
+    firstFrameIdx > 0 ? lines.slice(0, firstFrameIdx) : [lines[0]]
+  )
+    .map((line) => line.trim())
+    .filter(Boolean)
+  return headerLines.join(' ').replaceAll(/\s*;\s*/g, '; ')
+}
+
+function showFailureDetail(message: string) {
+  ErrorMessage(message, summaryMessage(message))
+}
 
 const STATUS_TYPES: Record<string, string> = {
   SUCCESS: 'success',
@@ -270,12 +287,29 @@ function goAlarm() {
               min-width="160"
             >
               <template #default="{ row }">
-                {{
-                  row.failureMessage ||
-                  (row.skipReason
-                    ? t(`delivery_skip_${row.skipReason.toLowerCase()}`)
-                    : '-')
-                }}
+                <div v-if="row.failureMessage" class="flex align-center gap-1">
+                  <span
+                    class="flex-1 text-truncate"
+                    :title="summaryMessage(row.failureMessage)"
+                  >
+                    {{ summaryMessage(row.failureMessage) }}
+                  </span>
+                  <el-button
+                    text
+                    type="primary"
+                    size="small"
+                    @click="showFailureDetail(row.failureMessage)"
+                  >
+                    {{ t('public_view_details') }}
+                  </el-button>
+                </div>
+                <template v-else>
+                  {{
+                    row.skipReason
+                      ? t(`delivery_skip_${row.skipReason.toLowerCase()}`)
+                      : '-'
+                  }}
+                </template>
               </template>
             </el-table-column>
           </el-table>
