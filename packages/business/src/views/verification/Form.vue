@@ -718,6 +718,7 @@ const save = async (saveOnly = false) => {
           browserTimezoneOffset: new Date().getTimezoneOffset(),
           alarmSettings,
           alarmReceivers: form.alarmReceivers,
+          useSystemDefaultReceivers: form.alarmReceivers === null,
         }),
       )
       ElMessage.success(t('public_message_save_ok'))
