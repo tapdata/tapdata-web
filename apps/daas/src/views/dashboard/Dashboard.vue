@@ -4,7 +4,10 @@ import {
   type ClusterState,
 } from '@tap/api/src/core/cluster'
 import {
+  fetchTaskDashboardNodes,
   fetchTaskDashboard,
+  type TaskDashboardNodeOption,
+  type TaskDashboardParams,
   type TaskDashboardTopTask,
   type TaskDashboardVo,
 } from '@tap/api/src/core/task'
@@ -15,6 +18,8 @@ import Chart from '@tap/component/src/chart/Chart.vue'
 import CountUp from '@tap/component/src/CountUp.vue'
 import { useI18n } from '@tap/i18n'
 import { calcTimeUnit, calcUnit } from '@tap/shared/src/number'
+import dayjs from 'dayjs'
+import { ElMessage } from 'element-plus'
 import { isNumber } from 'lodash-es'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -34,7 +39,54 @@ let isRefreshing = false
 const apiTimeRange = ref<'5m' | '1h' | '24h'>('1h')
 
 // System Trends time range
-const trendsTimeRange = ref<'5min' | '1h' | '24h'>('24h')
+type TrendsTimeRange = '5min' | '1h' | '24h' | '7d' | 'custom'
+type CustomTrendTimeIssue =
+  | 'select_custom_range'
+  | 'invalid_custom_range'
+  | 'future_range'
+  | 'range_over_7_days'
+const trendsTimeRange = ref<TrendsTimeRange>('24h')
+const customTrendTime = ref<[number, number] | null>(null)
+const manualTrendTimeIssue = ref<CustomTrendTimeIssue | null>(null)
+const selectedPhysicalNodeId = ref('')
+const trendNodes = ref<TaskDashboardNodeOption[]>([])
+const trendNodeListError = ref(false)
+const trendLoading = ref(false)
+const trendRequestErrorKey = ref<string | null>(null)
+const trendsResult = ref<{
+  data: TaskDashboardVo['trends']
+  query: TaskDashboardVo['query']
+  selectionKey: string
+} | null>(null)
+let trendRequestId = 0
+const browserTimezone =
+  Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+const trendsTimeRangeOptions = computed(() => [
+  { label: t('dashboard_odh_range_5min'), value: '5min' },
+  { label: t('dashboard_odh_range_1h'), value: '1h' },
+  { label: t('dashboard_odh_range_24h'), value: '24h' },
+  { label: t('dashboard_odh_range_7d'), value: '7d' },
+  { label: t('dashboard_odh_range_custom'), value: 'custom' },
+])
+const trendSelectionKey = computed(() => {
+  const customRange =
+    customTrendTime.value?.map((value) => Math.floor(Number(value) / 1000)) ??
+    []
+  return JSON.stringify([
+    trendsTimeRange.value,
+    selectedPhysicalNodeId.value,
+    customRange,
+  ])
+})
+const visibleTrendsResult = computed(() => {
+  if (
+    trendsResult.value?.selectionKey !== trendSelectionKey.value ||
+    trendRequestErrorKey.value === trendSelectionKey.value
+  ) {
+    return null
+  }
+  return trendsResult.value
+})
 
 // Top Tasks state
 const topTaskTab = ref<'lagging' | 'throughput'>('lagging')
@@ -77,47 +129,230 @@ const connectedDbs = computed(() => dashboardData.value?.summary?.connectedDbs)
 
 // ── KPI: API Requests ──────────────────────────────────
 const apiRequests = computed(() => dashboardData.value?.summary?.apiRequests)
-const hasApiTrendsData = computed(() => {
-  const trends = dashboardData.value?.trends?.apiRequests
-  return (trends?.ts?.length ?? 0) > 0
-})
 
 // ── System Trends: ECharts options ─────────────────────
 const throughputChartOption = computed(() => {
-  const trends = dashboardData.value?.trends?.throughput
-  if (!trends?.ts?.length) return buildAreaChartOption([], [], '#6366f1')
-  // const showSeconds = trendsTimeRange.value === '5min'
-  const xData = trends.ts.map((t) => formatTimeLabel(t, true))
-  const yData = trends.values.map((v: number) => Number(v.toFixed(2)))
-  return buildAreaChartOption(xData, yData, '#6366f1')
+  const result = visibleTrendsResult.value
+  const series = result?.data.throughput
+  if (!result || !series) {
+    return buildAreaChartOption([], [], [], '#6366f1', '', '')
+  }
+  const xData = series.ts.map((ts) => formatTrendAxisLabel(ts, result.query))
+  return buildAreaChartOption(
+    xData,
+    series.ts,
+    normalizeTrendValues(series.values),
+    '#6366f1',
+    t('dashboard_odh_throughput_chart'),
+    t('dashboard_odh_events_sec'),
+  )
 })
 
 const apiChartOption = computed(() => {
-  const trends = dashboardData.value?.trends?.apiRequests
-  if (!trends?.ts?.length) return buildLineChartOption([], [], '#a855f7')
-  // const showSeconds = apiTimeRange.value === '5m'
-  const xData = trends.ts.map((t) => formatTimeLabel(t, true))
-  const yData = trends.values.map((v: number) => Number(v.toFixed(2)))
-  return buildLineChartOption(xData, yData, '#a855f7')
+  const result = visibleTrendsResult.value
+  const series = result?.data.apiRequests
+  if (!result || !series) {
+    return buildLineChartOption([], [], [], '#a855f7', '', '')
+  }
+  const xData = series.ts.map((ts) => formatTrendAxisLabel(ts, result.query))
+  return buildLineChartOption(
+    xData,
+    series.ts,
+    normalizeTrendValues(series.values),
+    '#a855f7',
+    t('dashboard_odh_api_chart'),
+    t('dashboard_odh_requests_sec'),
+  )
 })
 
-function formatTimeLabel(ts: number, showSeconds = false): string {
-  const d = new Date(Number(`${ts}000`))
-  const hh = String(d.getHours()).padStart(2, '0')
-  const mm = String(d.getMinutes()).padStart(2, '0')
-  if (showSeconds) {
-    const ss = String(d.getSeconds()).padStart(2, '0')
-    return `${hh}:${mm}:${ss}`
+const throughputTrendHasData = computed(() =>
+  hasTrendValues(visibleTrendsResult.value?.data.throughput),
+)
+const apiTrendHasData = computed(() =>
+  hasTrendValues(visibleTrendsResult.value?.data.apiRequests),
+)
+const throughputTrendMessage = computed(() =>
+  getTrendSeriesMessage(
+    visibleTrendsResult.value?.data.throughput,
+    t('dashboard_odh_throughput_chart'),
+  ),
+)
+const apiTrendMessage = computed(() =>
+  getTrendSeriesMessage(
+    visibleTrendsResult.value?.data.apiRequests,
+    t('dashboard_odh_api_chart'),
+  ),
+)
+const customTrendTimeIssue = computed(() =>
+  trendsTimeRange.value === 'custom'
+    ? manualTrendTimeIssue.value || getCustomTrendTimeIssue()
+    : null,
+)
+const customTrendTimeMessage = computed(() => {
+  switch (customTrendTimeIssue.value) {
+    case 'select_custom_range':
+      return t('dashboard_odh_trend_select_custom_range')
+    case 'invalid_custom_range':
+      return t('dashboard_odh_trend_invalid_custom_range')
+    case 'future_range':
+      return t('dashboard_odh_trend_future_range')
+    case 'range_over_7_days':
+      return t('dashboard_odh_trend_range_over_7_days')
+    default:
+      return ''
   }
-  return `${hh}:${mm}`
+})
+
+function normalizeTrendValues(
+  values: Array<number | null>,
+): Array<number | null> {
+  return values.map((value) =>
+    typeof value === 'number' && Number.isFinite(value)
+      ? Number(value.toFixed(2))
+      : null,
+  )
 }
 
-function buildAreaChartOption(x: string[], y: number[], color: string) {
+function hasTrendValues(series?: TaskDashboardVo['trends']['throughput']) {
+  return Boolean(
+    series?.values.some(
+      (value) => typeof value === 'number' && Number.isFinite(value),
+    ),
+  )
+}
+
+function getTrendSeriesMessage(
+  series: TaskDashboardVo['trends']['throughput'] | undefined,
+  seriesName: string,
+) {
+  if (trendRequestErrorKey.value === trendSelectionKey.value) {
+    return t('dashboard_odh_trend_request_failed')
+  }
+  if (customTrendTimeIssue.value) {
+    return customTrendTimeMessage.value
+  }
+  if (!series) {
+    return trendLoading.value
+      ? t('dashboard_odh_trend_loading')
+      : t('dashboard_odh_no_data_in_range')
+  }
+  if (series.status === 'component_not_deployed') {
+    return t('dashboard_odh_trend_component_not_deployed', {
+      component: seriesName,
+    })
+  }
+  if (series.traceability === 'untraceable') {
+    return t('dashboard_odh_trend_untraceable')
+  }
+  if (series.traceability === 'partial' || series.hasUnattributedData) {
+    return t('dashboard_odh_trend_partial')
+  }
+  if (series.coverage === 'partial') {
+    return t('dashboard_odh_trend_coverage_partial')
+  }
+  if (series.coverage === 'unknown') {
+    return t('dashboard_odh_trend_coverage_unknown')
+  }
+  if (series.status === 'no_data' || !hasTrendValues(series)) {
+    return t('dashboard_odh_no_data_in_range')
+  }
+  return ''
+}
+
+function getCustomTrendTimeIssue(): CustomTrendTimeIssue | null {
+  if (!customTrendTime.value) return 'select_custom_range'
+  const [startValue, endValue] = customTrendTime.value
+  const startAt = Math.floor(Number(startValue) / 1000)
+  const endAt = Math.floor(Number(endValue) / 1000)
+  if (!Number.isFinite(startAt) || !Number.isFinite(endAt) || startAt <= 0) {
+    return 'invalid_custom_range'
+  }
+  if (startAt >= endAt) return 'invalid_custom_range'
+  if (endAt > Math.floor(Date.now() / 1000)) return 'future_range'
+  if (endAt - startAt > 604800) return 'range_over_7_days'
+  return null
+}
+
+function formatTrendAxisLabel(
+  ts: number,
+  query?: TaskDashboardVo['query'],
+): string {
+  const d = new Date(ts * 1000)
+  const hh = String(d.getHours()).padStart(2, '0')
+  const mm = String(d.getMinutes()).padStart(2, '0')
+  const showDate = Boolean(
+    query?.startAt &&
+      query.endAt &&
+      new Date(query.startAt * 1000).toDateString() !==
+        new Date((query.endAt - 1) * 1000).toDateString(),
+  )
+  const intervalSeconds = query?.intervalSeconds ?? 60
+  let time = `${hh}:${mm}`
+  if (intervalSeconds < 60) {
+    const ss = String(d.getSeconds()).padStart(2, '0')
+    time = `${time}:${ss}`
+  }
+  if (!showDate) return time
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${month}-${day} ${time}`
+}
+
+function formatTrendTooltipTime(ts: number): string {
+  const dateTime = new Intl.DateTimeFormat(undefined, {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+    timeZone: browserTimezone,
+  }).format(new Date(ts * 1000))
+  return `${dateTime} (${browserTimezone})`
+}
+
+function buildTrendTooltipFormatter(
+  timestamps: number[],
+  seriesName: string,
+  unit: string,
+) {
+  return (params: any) => {
+    const items = Array.isArray(params) ? params : [params]
+    const index = Number(items[0]?.dataIndex ?? 0)
+    const ts = timestamps[index]
+    if (typeof ts !== 'number' || !Number.isFinite(ts)) return ''
+    const rows = items.map((item) => {
+      const value = item.value ?? item.data
+      return typeof value === 'number' && Number.isFinite(value)
+        ? t('dashboard_odh_trend_tooltip_value', {
+            series: seriesName,
+            value: value.toFixed(2),
+            unit,
+          })
+        : t('dashboard_odh_trend_tooltip_missing', {
+            series: seriesName,
+            state: t('dashboard_odh_trend_no_sample'),
+          })
+    })
+    return `${formatTrendTooltipTime(ts)}<br/>${rows.join('<br/>')}`
+  }
+}
+
+function buildAreaChartOption(
+  x: string[],
+  timestamps: number[],
+  y: Array<number | null>,
+  color: string,
+  seriesName: string,
+  unit: string,
+) {
   return {
     backgroundColor: 'transparent',
     grid: { top: 20, right: 16, bottom: 28, left: 50 },
     tooltip: {
       trigger: 'axis',
+      formatter: buildTrendTooltipFormatter(timestamps, seriesName, unit),
       backgroundColor: '#fff',
       borderColor: '#e2e8f0',
       borderRadius: 8,
@@ -140,9 +375,12 @@ function buildAreaChartOption(x: string[], y: number[], color: string) {
     series: [
       {
         type: 'line',
+        name: seriesName,
         data: y,
-        smooth: true,
-        symbol: 'none',
+        smooth: false,
+        connectNulls: false,
+        symbol: 'circle',
+        symbolSize: 3,
         lineStyle: { width: 2, color },
         areaStyle: {
           color: {
@@ -162,12 +400,20 @@ function buildAreaChartOption(x: string[], y: number[], color: string) {
   }
 }
 
-function buildLineChartOption(x: string[], y: number[], color: string) {
+function buildLineChartOption(
+  x: string[],
+  timestamps: number[],
+  y: Array<number | null>,
+  color: string,
+  seriesName: string,
+  unit: string,
+) {
   return {
     backgroundColor: 'transparent',
     grid: { top: 20, right: 16, bottom: 28, left: 50 },
     tooltip: {
       trigger: 'axis',
+      formatter: buildTrendTooltipFormatter(timestamps, seriesName, unit),
       backgroundColor: '#fff',
       borderColor: '#e2e8f0',
       borderRadius: 8,
@@ -189,9 +435,12 @@ function buildLineChartOption(x: string[], y: number[], color: string) {
     series: [
       {
         type: 'line',
+        name: seriesName,
         data: y,
         smooth: false,
-        symbol: 'none',
+        connectNulls: false,
+        symbol: 'circle',
+        symbolSize: 3,
         lineStyle: { width: 2, color },
       },
     ],
@@ -284,6 +533,194 @@ function rangeToTimeParams(range: string): {
   if (range === '5m' || range === '5min') return { type: 'minute' }
   if (range === '1h') return { type: 'hours' }
   return { type: 'days' }
+}
+
+function getTrendRequestParams(): TaskDashboardParams | null {
+  const params: TaskDashboardParams = {
+    dashboardType: 'trends',
+    trendSchemaVersion: 2,
+  }
+  if (selectedPhysicalNodeId.value) {
+    params.physicalNodeId = selectedPhysicalNodeId.value
+  }
+
+  if (trendsTimeRange.value === '5min') {
+    params.type = 'minute'
+    return params
+  }
+  if (trendsTimeRange.value === '1h') {
+    params.type = 'hours'
+    return params
+  }
+  if (trendsTimeRange.value === '24h') {
+    params.type = 'days'
+    return params
+  }
+
+  if (trendsTimeRange.value === '7d') {
+    params.type = 'range'
+    params.endAt = Math.floor(Date.now() / 1000)
+    params.startAt = params.endAt - 604800
+    return params
+  }
+
+  if (!customTrendTime.value || customTrendTimeIssue.value) return null
+  params.type = 'range'
+  params.startAt = Math.floor(Number(customTrendTime.value[0]) / 1000)
+  params.endAt = Math.floor(Number(customTrendTime.value[1]) / 1000)
+  return params
+}
+
+function invalidateTrendRequest() {
+  trendRequestId += 1
+  trendLoading.value = false
+  trendRequestErrorKey.value = null
+}
+
+async function fetchTrends() {
+  const selectionKey = trendSelectionKey.value
+  const params = getTrendRequestParams()
+  if (!params) {
+    invalidateTrendRequest()
+    return
+  }
+
+  const requestId = ++trendRequestId
+  trendLoading.value = true
+  trendRequestErrorKey.value = null
+  try {
+    const result = await fetchTaskDashboard(params)
+    if (
+      requestId !== trendRequestId ||
+      selectionKey !== trendSelectionKey.value
+    ) {
+      return
+    }
+    if (!result?.trends || !result.query) {
+      trendRequestErrorKey.value = selectionKey
+      return
+    }
+    trendsResult.value = {
+      data: result.trends,
+      query: result.query,
+      selectionKey,
+    }
+  } catch {
+    if (
+      requestId === trendRequestId &&
+      selectionKey === trendSelectionKey.value
+    ) {
+      trendRequestErrorKey.value = selectionKey
+    }
+  } finally {
+    if (requestId === trendRequestId) trendLoading.value = false
+  }
+}
+
+function getTrendNodeLabel(node: TaskDashboardNodeOption) {
+  const statusKey =
+    node.status === 'running'
+      ? 'dashboard_odh_node_online'
+      : 'dashboard_odh_node_offline'
+  return `${node.label} (${t(statusKey)})`
+}
+
+async function fetchTrendNodes() {
+  try {
+    const response = await fetchTaskDashboardNodes()
+    if (!Array.isArray(response)) throw new Error('Invalid trend node response')
+    const nodes = [...response]
+    if (
+      selectedPhysicalNodeId.value &&
+      !nodes.some(
+        (node) => node.physicalNodeId === selectedPhysicalNodeId.value,
+      )
+    ) {
+      const previousNode = trendNodes.value.find(
+        (node) => node.physicalNodeId === selectedPhysicalNodeId.value,
+      )
+      nodes.push(
+        previousNode ?? {
+          physicalNodeId: selectedPhysicalNodeId.value,
+          label: selectedPhysicalNodeId.value,
+          status: 'offline',
+          engineDeployed: false,
+          apiServerDeployed: false,
+        },
+      )
+    }
+    trendNodes.value = nodes
+    trendNodeListError.value = false
+  } catch {
+    trendNodeListError.value = true
+  }
+}
+
+function onTrendsTimeChange() {
+  if (trendsTimeRange.value === 'custom' && customTrendTimeIssue.value) {
+    invalidateTrendRequest()
+    return
+  }
+  return fetchTrends()
+}
+
+function onTrendNodeChange() {
+  return fetchTrends()
+}
+
+function onManualTrendInput() {
+  manualTrendTimeIssue.value = null
+}
+
+function onManualTrendKeydown(event: KeyboardEvent) {
+  if (event.key !== 'Enter') return
+  const inputs = (event.currentTarget as HTMLElement).querySelectorAll('input')
+  if (inputs.length !== 2) return
+  const [startText, endText] = Array.from(inputs, (input) => input.value.trim())
+  let issue: CustomTrendTimeIssue | null = null
+  if (!startText || !endText) {
+    issue = 'select_custom_range'
+  } else {
+    const format = 'YYYY-MM-DD HH:mm:ss'
+    const start = dayjs(startText)
+    const end = dayjs(endText)
+    if (
+      !start.isValid() ||
+      !end.isValid() ||
+      start.format(format) !== startText ||
+      end.format(format) !== endText ||
+      !start.isBefore(end)
+    ) {
+      issue = 'invalid_custom_range'
+    } else if (end.valueOf() > Date.now()) {
+      issue = 'future_range'
+    } else if (end.valueOf() - start.valueOf() > 604800000) {
+      issue = 'range_over_7_days'
+    }
+  }
+  if (issue) {
+    event.preventDefault()
+    event.stopPropagation()
+    manualTrendTimeIssue.value = issue
+    invalidateTrendRequest()
+    ElMessage.warning(customTrendTimeMessage.value)
+  } else {
+    manualTrendTimeIssue.value = null
+  }
+}
+
+function onCustomTrendTimeChange() {
+  manualTrendTimeIssue.value = null
+  if (customTrendTimeIssue.value) {
+    ElMessage.warning(customTrendTimeMessage.value)
+    invalidateTrendRequest()
+    return
+  }
+  return fetchTrends()
+}
+
+function disableFutureTrendDate(time: Date) {
+  return time.getTime() > Date.now()
 }
 
 // ── Data fetching ──────────────────────────────────────
@@ -405,15 +842,6 @@ async function fetchPartial(
           prev.summary.apiRequests = result.summary.apiRequests
         }
         break
-      case 'trends':
-        if (result.trends) {
-          prev.trends = {
-            ...prev.trends,
-            throughput: result.trends.throughput,
-            apiRequests: result.trends.apiRequests,
-          }
-        }
-        break
       case 'tops':
         if (result.tops) {
           prev.tops = result.tops
@@ -427,10 +855,6 @@ async function fetchPartial(
 
 function onApiTimeRangeChange() {
   fetchPartial('apiRequests', apiTimeRange.value)
-}
-
-function onTrendsTimeChange() {
-  fetchPartial('trends', trendsTimeRange.value)
 }
 
 function onTopTaskLimitChange() {
@@ -457,7 +881,8 @@ async function refreshAll() {
       fetchPartial('totalThroughput', trendsTimeRange.value),
       fetchPartial('connectedDbs', trendsTimeRange.value),
       fetchPartial('apiRequests', apiTimeRange.value),
-      fetchPartial('trends', trendsTimeRange.value),
+      fetchTrends(),
+      fetchTrendNodes(),
       fetchPartial('tops', trendsTimeRange.value, topTaskLimit.value),
       fetchClusterData(),
     ])
@@ -473,6 +898,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  trendRequestId += 1
   if (refreshTimer) clearInterval(refreshTimer)
 })
 </script>
@@ -651,41 +1077,113 @@ onBeforeUnmount(() => {
 
         <!-- ═══ System Trends ═══ -->
         <div class="dashboard__card bg-card p-5 mb-6">
-          <div class="flex justify-content-between align-items-center mb-5">
+          <div
+            class="flex justify-content-between align-items-center gap-3 flex-wrap mb-4"
+          >
             <h2 class="fs-5 lh-6 font-semibold m-0">
               {{ t('dashboard_odh_system_trends') }}
             </h2>
-            <el-segmented
-              v-model="trendsTimeRange"
-              :options="['5min', '1h', '24h']"
-              size="small"
-              @change="onTrendsTimeChange"
-            />
+            <div class="flex align-items-center gap-3 flex-wrap">
+              <el-select
+                v-model="selectedPhysicalNodeId"
+                size="small"
+                style="width: 220px"
+                @change="onTrendNodeChange"
+              >
+                <el-option :label="t('dashboard_odh_all_nodes')" value="" />
+                <el-option
+                  v-for="node in trendNodes"
+                  :key="node.physicalNodeId"
+                  :label="getTrendNodeLabel(node)"
+                  :value="node.physicalNodeId"
+                />
+              </el-select>
+              <el-segmented
+                v-model="trendsTimeRange"
+                :options="trendsTimeRangeOptions"
+                size="small"
+                @change="onTrendsTimeChange"
+              />
+            </div>
           </div>
+          <div
+            class="flex align-items-center justify-content-between gap-3 flex-wrap mb-5"
+          >
+            <span class="fs-7 text-secondary">
+              {{ t('dashboard_odh_timezone', { timezone: browserTimezone }) }}
+            </span>
+            <div
+              v-if="trendsTimeRange === 'custom'"
+              @keydown.capture="onManualTrendKeydown"
+              @input.capture="onManualTrendInput"
+            >
+              <el-date-picker
+                v-model="customTrendTime"
+                type="datetimerange"
+                :range-separator="t('dashboard_odh_time_range_to')"
+                :start-placeholder="t('dashboard_odh_start_time')"
+                :end-placeholder="t('dashboard_odh_end_time')"
+                :disabled-date="disableFutureTrendDate"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-format="x"
+                size="small"
+                style="width: 380px"
+                @change="onCustomTrendTimeChange"
+              />
+            </div>
+          </div>
+          <p v-if="customTrendTimeIssue" class="dashboard__trend-notice mb-4">
+            {{ customTrendTimeMessage }}
+          </p>
+          <p v-if="trendNodeListError" class="dashboard__trend-notice mb-4">
+            {{ t('dashboard_odh_node_list_refresh_failed') }}
+          </p>
           <div class="grid grid-cols-2 gap-6">
             <div>
               <p class="fs-7 text-secondary mb-3 mt-0">
                 {{ t('dashboard_odh_throughput_chart') }}
               </p>
+              <p
+                v-if="throughputTrendHasData && throughputTrendMessage"
+                class="dashboard__trend-notice mb-2"
+              >
+                {{ throughputTrendMessage }}
+              </p>
               <div class="dashboard__trend-chart">
-                <Chart type="line" :extend="throughputChartOption" />
+                <Chart
+                  v-if="throughputTrendHasData"
+                  type="line"
+                  :extend="throughputChartOption"
+                />
+                <div
+                  v-else
+                  class="flex align-items-center justify-content-center h-100 text-secondary fs-7"
+                >
+                  {{ throughputTrendMessage }}
+                </div>
               </div>
             </div>
             <div>
               <p class="fs-7 text-secondary mb-3 mt-0">
                 {{ t('dashboard_odh_api_chart') }}
               </p>
+              <p
+                v-if="apiTrendHasData && apiTrendMessage"
+                class="dashboard__trend-notice mb-2"
+              >
+                {{ apiTrendMessage }}
+              </p>
               <div class="dashboard__trend-chart">
-                <template v-if="hasApiTrendsData">
-                  <Chart type="line" :extend="apiChartOption" />
-                </template>
+                <Chart
+                  v-if="apiTrendHasData"
+                  type="line"
+                  :extend="apiChartOption"
+                />
                 <div
                   v-else
-                  class="flex align-items-center justify-content-center h-100"
+                  class="flex align-items-center justify-content-center h-100 text-secondary fs-7"
                 >
-                  <span class="fs-7 text-secondary">{{
-                    t('dashboard_odh_no_data_in_range')
-                  }}</span>
+                  {{ apiTrendMessage }}
                 </div>
               </div>
             </div>
@@ -999,6 +1497,12 @@ onBeforeUnmount(() => {
   // ── Trend charts ───────────────────────────────────────
   &__trend-chart {
     height: 220px;
+  }
+
+  &__trend-notice {
+    margin-top: 0;
+    font-size: 0.75rem;
+    color: var(--el-color-warning);
   }
 
   // ── Tables ─────────────────────────────────────────────
