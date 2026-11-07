@@ -3,7 +3,7 @@ import { requestClient } from '../request'
 const BASE_URL = '/api/pdk'
 
 export function getConnectorReleases() {
-  return requestClient.get(`${BASE_URL}/releases`)
+  return requestClient.get(`${BASE_URL}/releases`, { skipErrorHandler: true })
 }
 
 export function getConnectorRegistrationImpact(
@@ -12,6 +12,7 @@ export function getConnectorRegistrationImpact(
 ) {
   return requestClient.get(`${BASE_URL}/registration-impact`, {
     params: { pdkId, artifactId },
+    skipErrorHandler: true,
   })
 }
 
@@ -21,11 +22,15 @@ export function registerConnectorRelease(data: {
   stopTasks: boolean
   ignoreInFlightResources: boolean
 }) {
-  return requestClient.post(`${BASE_URL}/register-release`, data)
+  return requestClient.post(`${BASE_URL}/register-release`, data, {
+    skipErrorHandler: true,
+  })
 }
 
 export function getConnectorRegistrationJob(jobId: string) {
-  return requestClient.get(`${BASE_URL}/registration-jobs/${jobId}`)
+  return requestClient.get(`${BASE_URL}/registration-jobs/${jobId}`, {
+    skipErrorHandler: true,
+  })
 }
 
 export function getPdkDoc(pdkHash: string) {

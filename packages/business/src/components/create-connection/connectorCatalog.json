@@ -76,7 +76,7 @@
     "icon": "aliyun_rds_mssql.png",
     "tags": ["Database"],
     "connectionType": "source_and_target",
-    "artifactId": "aliyun-rds-sqlserver-connector",
+    "artifactId": "aliyun-rds-mssql-connector",
     "type": "Aliyun RDS SQL Server"
   },
   {
@@ -506,7 +506,7 @@
     "icon": "oceanbase.png",
     "tags": ["Database"],
     "connectionType": "source_and_target",
-    "artifactId": "oceanbase_oracle-connector",
+    "artifactId": "oceanbase-oracle-connector",
     "type": "Oceanbase(Oracle)"
   },
   {
@@ -662,7 +662,7 @@
     "icon": "mssql.png",
     "tags": ["Database", "doubleActive", "disableForeignKey"],
     "connectionType": "source_and_target",
-    "artifactId": "sqlserver-connector",
+    "artifactId": "mssql-connector",
     "type": "SQL Server"
   },
   {
@@ -742,7 +742,7 @@
     "icon": "tencent_db_mssql.png",
     "tags": ["Database"],
     "connectionType": "source_and_target",
-    "artifactId": "tencent-db-sqlserver-connector",
+    "artifactId": "tencent-db-mssql-connector",
     "type": "TencentDB SQL Server"
   },
   {

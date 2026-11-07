@@ -16,10 +16,10 @@ import { IconButton } from '@tap/component/src/icon-button'
 import i18n from '@tap/i18n'
 import { mapGetters } from 'vuex'
 import { DatabaseIcon } from '../DatabaseIcon'
+import connectorCatalog from './connectorCatalog.json'
 import RequestDialog from './RequestDialog.vue'
 import ConnectionForm from './SceneForm'
 import ServeForm from './ServeForm'
-import connectorCatalog from './connectorCatalog.json'
 
 function compareConnectorVersions(left, right) {
   if (!left || !right) return 0
@@ -69,6 +69,14 @@ export default {
     dialogMode: Boolean,
     width: { type: String, default: '80%' },
   },
+  emits: [
+    'update:visible',
+    'update:selectorType',
+    'visible',
+    'selected',
+    'success',
+    'saveAndMore',
+  ],
   data() {
     const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
     const isCommunity = import.meta.env.VUE_APP_MODE === 'community'
@@ -91,6 +99,7 @@ export default {
       database: [],
       demoDatabase: [],
       databaseTypeMap: {},
+      connectorReleaseRequestId: 0,
       loading: false,
       releaseDialogVisible: false,
       releaseLoading: false,
@@ -615,6 +624,15 @@ export default {
     Object.values(this.connectorJobTimers).forEach(clearTimeout)
   },
   methods: {
+    getReleaseErrorMessage(error) {
+      return (
+        error?.response?.data?.message ||
+        error?.response?.data?.msg ||
+        error?.message ||
+        this.$t('packages_business_connector_release_failed')
+      )
+    },
+
     getConnectorImage,
     getIcon,
     init() {
@@ -788,6 +806,7 @@ export default {
 
     async handleReleaseAction(item) {
       if (this.releaseLoading || this.connectorJobs[item.pdkId]) return
+      if (!item.releaseAvailable) return
       this.releaseItem = item
       this.releaseImpact = { tasks: [], inspects: [] }
       this.releaseDialogVisible = true
@@ -798,7 +817,7 @@ export default {
           this.releaseImpact
       } catch (error) {
         this.releaseDialogVisible = false
-        this.$message.error(error.message || String(error))
+        this.$message.error(this.getReleaseErrorMessage(error))
       } finally {
         this.releaseImpactLoading = false
       }
@@ -834,7 +853,7 @@ export default {
         )
         this.pollConnectorRegistration(job.jobId, releaseItem.pdkId)
       } catch (error) {
-        this.$message.error(error.message || String(error))
+        this.$message.error(this.getReleaseErrorMessage(error))
         try {
           this.releaseImpact =
             (await getConnectorRegistrationImpact(
@@ -890,7 +909,7 @@ export default {
                 release.artifactId,
               )) || { tasks: [], inspects: [] }
             } catch (error) {
-              this.$message.error(error.message || String(error))
+              this.$message.error(this.getReleaseErrorMessage(error))
             } finally {
               this.releaseImpactLoading = false
             }
@@ -947,7 +966,7 @@ export default {
       }
       if (!noLoading) this.loading = true
       const res = await fetchDatabases(params)
-      let data =
+      const registeredData =
         this.selectorType !== 'source_and_target'
           ? res?.filter(
               (t) =>
@@ -955,50 +974,13 @@ export default {
             ) || []
           : res
 
-      if (this.isDaas && !this.isCommunity) {
-        let releases = []
-        try {
-          releases = await getConnectorReleases()
-        } catch (error) {
-          console.warn(
-            'Unable to load the Nexus connector release catalog',
-            error,
-          )
-        }
-        const releaseByArtifact = new Map(
-          (releases || []).map((release) => [release.artifactId, release]),
-        )
-        const installedById = new Map(data.map((item) => [item.pdkId, item]))
-        const catalogByArtifact = new Map(
-          connectorCatalog.map((item) => [item.artifactId, item]),
-        )
-        const publishedConnectors = []
-
-        for (const [artifactId, release] of releaseByArtifact) {
-          const metadata = catalogByArtifact.get(artifactId)
-          if (!metadata) continue
-
-          const pdkId = metadata.pdkId
-          const installed = installedById.get(pdkId)
-          const item = {
-            ...metadata,
-            ...installed,
-            pdkId,
-            releaseVersion: release.version,
-            requiresDownload: !installed,
-            locked: !installed,
-            updateAvailable:
-              !!installed &&
-              compareConnectorVersions(release.version, installed.version) > 0,
-          }
-          if (
-            this.selectorType === 'source_and_target' ||
-            item.connectionType?.includes(this.selectorType)
-          ) {
-            publishedConnectors.push(item)
-          }
-        }
-        data = publishedConnectors
+      let data = registeredData
+      const enterpriseCatalog = this.isDaas && !this.isCommunity
+      const releaseRequestId = enterpriseCatalog
+        ? ++this.connectorReleaseRequestId
+        : 0
+      if (enterpriseCatalog) {
+        data = this.buildEnterpriseConnectorList(registeredData)
       }
 
       this.databaseTypeMap = data.reduce(
@@ -1012,8 +994,8 @@ export default {
           Beta: 2,
           Alpha: 3,
         }
-        const o1Level = qcTypeLevel[o1.qcType]
-        const o2Level = qcTypeLevel[o2.qcType]
+        const o1Level = qcTypeLevel[o1.qcType] || 4
+        const o2Level = qcTypeLevel[o2.qcType] || 4
 
         if (o1Level === o2Level) {
           return o1.name.localeCompare(o2.name)
@@ -1052,8 +1034,6 @@ export default {
         data.push(...this.lockedTypes)
       }
 
-      console.log('this.lockedTypes', this.lockedTypes)
-
       this.database = data.sort(sortFn)
 
       if (this.selectorType === 'source') {
@@ -1063,6 +1043,70 @@ export default {
       }
 
       this.loading = false
+
+      // Nexus is optional for rendering the connection list. Fetch its release
+      // metadata after the locally available connectors are already usable.
+      if (enterpriseCatalog) {
+        getConnectorReleases()
+          .then((releases) => {
+            if (releaseRequestId !== this.connectorReleaseRequestId) return
+            this.database = this.buildEnterpriseConnectorList(
+              registeredData,
+              releases,
+            ).sort(sortFn)
+            this.databaseTypeMap = this.database.reduce(
+              (map, db) => ((map[db.type] = db), map),
+              {},
+            )
+          })
+          .catch((error) => {
+            console.warn(
+              'Unable to load the Nexus connector release catalog',
+              error,
+            )
+          })
+      }
+    },
+
+    buildEnterpriseConnectorList(registeredData, releases = []) {
+      const installedById = new Map(
+        registeredData.map((item) => [item.pdkId, item]),
+      )
+      const releaseByArtifact = new Map(
+        (releases || []).map((release) => [release.artifactId, release]),
+      )
+      const knownPdkIds = new Set()
+      const catalogItems = connectorCatalog
+        .map((metadata) => {
+          const installed = installedById.get(metadata.pdkId)
+          knownPdkIds.add(metadata.pdkId)
+          const release = releaseByArtifact.get(metadata.artifactId)
+          return {
+            ...metadata,
+            ...installed,
+            pdkId: metadata.pdkId,
+            releaseVersion: release?.version,
+            releaseAvailable: !!release,
+            requiresDownload: !installed,
+            locked: !installed,
+            updateAvailable:
+              !!installed &&
+              !!release &&
+              compareConnectorVersions(release.version, installed.version) > 0,
+          }
+        })
+        .filter(
+          (item) =>
+            this.selectorType === 'source_and_target' ||
+            item.connectionType?.includes(this.selectorType),
+        )
+
+      // Keep manually registered or custom connectors even when the catalog
+      // does not know their artifact id, or Nexus is unavailable.
+      const unlistedInstalled = registeredData.filter(
+        (item) => !knownPdkIds.has(item.pdkId),
+      )
+      return [...catalogItems, ...unlistedInstalled]
     },
 
     handleSearchInput() {
@@ -1119,14 +1163,6 @@ export default {
       window.open('https://github.com/tapdata/tapdata-connectors', '_blank')
     },
   },
-  emits: [
-    'update:visible',
-    'update:selectorType',
-    'visible',
-    'selected',
-    'success',
-    'saveAndMore',
-  ],
 }
 </script>
 
