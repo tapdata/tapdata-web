@@ -1699,4 +1699,19 @@ export default {
     '當任一API Server 連接池資源緊張触发告警閾值時',
   packages_business_api_server_connection_pool_idle_warn:
     '當任一API Server 連接池連接數低於告警閾值時',
+  packages_business_connector_requires_download:
+    '此資料來源尚未註冊，請先下載並註冊後再建立連線。',
+  packages_business_connector_update_available: '更新',
+  packages_business_connector_download_title: '下載並註冊資料來源',
+  packages_business_connector_update_title: '更新資料來源',
+  packages_business_connector_download_confirm:
+    '將從 Nexus 下載正式版 {version}，並自動註冊此資料來源。',
+  packages_business_connector_registration_impact:
+    '此資料來源有 {taskCount} 個進行中的任務和 {inspectCount} 個進行中的校驗任務。請選擇註冊方式。',
+  packages_business_connector_stop_and_register: '停止任務後註冊',
+  packages_business_connector_register_while_running: '無感知註冊',
+  packages_business_connector_release_success: '資料來源註冊成功',
+  packages_business_connector_release_started:
+    '已開始背景註冊，您可以繼續選擇其他資料來源。',
+  packages_business_connector_release_failed: '資料來源註冊失敗',
 }
