@@ -4,13 +4,14 @@ import {
   type AuditEvent,
   type AuditOperation,
 } from '@tap/api/src/core/audit-events'
+import { useI18n } from '@tap/i18n'
 import dayjs from 'dayjs'
 import { computed, ref, watch } from 'vue'
-import { useI18n } from '@tap/i18n'
 import UserOperation from '@/views/notification/UserOperation.vue'
 import {
   batchSummary,
   changeText,
+  createAuditDetailLoader,
   displayValue,
   nodeText,
   operatorText,
@@ -34,20 +35,20 @@ const fmt = (time?: string) =>
     : t('audit_value_unavailable')
 const tr = (key: string, args?: any) => t(key, args)
 
-async function load(id: string) {
-  loading.value = true
-  try {
-    const list = await fetchAuditOperation(id)
-    operation.value = list?.[0] || null
-  } finally {
-    loading.value = false
-  }
-}
+const loader = createAuditDetailLoader<AuditOperation>(
+  async (id) => (await fetchAuditOperation(id))?.[0] || null,
+  (value) => (operation.value = value),
+  (value) => (loading.value = value),
+)
 
 watch(
   () => [props.visible, props.id],
   ([visible, id]) => {
-    if (visible && id) load(id as string)
+    if (visible && id) {
+      loader.load(id as string).catch((error) => console.error(error))
+    } else {
+      loader.clear()
+    }
   },
   { immediate: true },
 )

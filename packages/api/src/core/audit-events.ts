@@ -1,7 +1,7 @@
 import { downloadBlob } from '@tap/shared'
-import axios from 'axios'
-import { joinListParams } from './alarm'
 import { requestClient } from '../request'
+import { joinListParams } from './alarm'
+import type { AxiosResponse } from 'axios'
 
 const BASE_URL = '/api/audit-events'
 
@@ -116,9 +116,26 @@ export async function exportAuditEvents(params: Record<string, any>) {
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     }),
   )
-  const res = await axios.get(`${BASE_URL}/export?${query.toString()}`, {
-    responseType: 'blob',
-  })
+  let res: AxiosResponse<Blob>
+  try {
+    res = await requestClient.get<AxiosResponse<Blob>>(
+      `${BASE_URL}/export?${query.toString()}`,
+      {
+        responseType: 'blob',
+        responseReturn: 'raw',
+        skipErrorHandler: true,
+      },
+    )
+  } catch (error: any) {
+    let body = error?.response?.data
+    if (body instanceof Blob && body.type.includes('application/json')) {
+      body = JSON.parse(await body.text())
+    }
+    if (body?.message || body?.code) {
+      throw new Error(body.message || body.code)
+    }
+    throw error
+  }
   const type = String(res.headers?.['content-type'] || '')
   if (type.includes('application/json')) {
     const body = JSON.parse(await (res.data as Blob).text())

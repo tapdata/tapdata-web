@@ -108,7 +108,37 @@ export function operatorText(
     return event.attemptedAccount ? `${base} (${event.attemptedAccount})` : base
   }
   if (event.userId === 'SYSTEM') return 'SYSTEM'
-  return displayValue(event.username || event.userId, !!event.legacy, t)
+  if (event.username && event.userId && event.username !== event.userId) {
+    return `${event.username} (${event.userId})`
+  }
+  return displayValue(event.userId || event.username, !!event.legacy, t)
+}
+
+/** Only the latest open detail request may change the displayed operation. */
+export function createAuditDetailLoader<T>(
+  fetchDetail: (id: string) => Promise<T | null>,
+  setDetail: (value: T | null) => void,
+  setLoading: (value: boolean) => void,
+) {
+  let version = 0
+  return {
+    clear() {
+      version++
+      setDetail(null)
+      setLoading(false)
+    },
+    async load(id: string) {
+      const requestVersion = ++version
+      setDetail(null)
+      setLoading(true)
+      try {
+        const detail = await fetchDetail(id)
+        if (version === requestVersion) setDetail(detail)
+      } finally {
+        if (version === requestVersion) setLoading(false)
+      }
+    },
+  }
 }
 
 /** 服务节点展示：服务 / 实例 / 主机 / IP，便于同主机多实例定位；缺失项不显示占位。 */

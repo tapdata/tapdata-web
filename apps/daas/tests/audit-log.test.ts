@@ -4,6 +4,7 @@ import {
   batchSummary,
   buildAuditQuery,
   changeText,
+  createAuditDetailLoader,
   displayValue,
   hasUnresolvedPlaceholder,
   isRetentionShortened,
@@ -62,8 +63,44 @@ test('shows unauthenticated operator with masked account and SYSTEM', () => {
     'audit_value_unauthenticated (a***e@x.com)',
   )
   assert.equal(operatorText({ userId: 'SYSTEM' }, t), 'SYSTEM')
-  assert.equal(operatorText({ userId: 'u1', username: 'ops' }, t), 'ops')
+  assert.equal(operatorText({ userId: 'u1', username: 'ops' }, t), 'ops (u1)')
+  assert.equal(operatorText({ userId: 'u1' }, t), 'u1')
+  assert.equal(operatorText({ username: 'ops' }, t), 'ops')
   assert.equal(operatorText({ legacy: true }, t), 'audit_value_legacy')
+})
+
+test('detail loader ignores stale results and clears stale content on failure', async () => {
+  const pending = new Map<string, (value: string) => void>()
+  let detail: string | null = 'previous'
+  let loading = false
+  const loader = createAuditDetailLoader<string>(
+    (id) => new Promise((resolve) => pending.set(id, resolve)),
+    (value) => (detail = value),
+    (value) => (loading = value),
+  )
+  const first = loader.load('A')
+  const second = loader.load('B')
+  pending.get('B')!('B')
+  await second
+  pending.get('A')!('A')
+  await first
+  assert.equal(detail, 'B')
+  assert.equal(loading, false)
+  const third = loader.load('C')
+  loader.clear()
+  pending.get('C')!('C')
+  await third
+  assert.equal(detail, null)
+  assert.equal(loading, false)
+  const failing = createAuditDetailLoader<string>(
+    () => Promise.reject(new Error('request failed')),
+    (value) => (detail = value),
+    (value) => (loading = value),
+  )
+  detail = 'previous'
+  await assert.rejects(failing.load('D'), /request failed/)
+  assert.equal(detail, null)
+  assert.equal(loading, false)
 })
 
 test('summarizes batch results and secret changes', () => {
