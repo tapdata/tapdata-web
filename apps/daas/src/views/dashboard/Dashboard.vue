@@ -46,9 +46,11 @@ type CustomTrendTimeIssue =
   | 'future_range'
   | 'range_over_7_days'
 const trendsTimeRange = ref<TrendsTimeRange>('24h')
+// Element Plus 把空字符串视为未选择，用非空哨兵值让“全部节点”正常显示为已选项
+const ALL_NODES_VALUE = '__all_nodes__'
 const customTrendTime = ref<[number, number] | null>(null)
 const manualTrendTimeIssue = ref<CustomTrendTimeIssue | null>(null)
-const selectedPhysicalNodeId = ref('')
+const selectedPhysicalNodeId = ref(ALL_NODES_VALUE)
 const trendNodes = ref<TaskDashboardNodeOption[]>([])
 const trendNodeListError = ref(false)
 const trendLoading = ref(false)
@@ -540,7 +542,7 @@ function getTrendRequestParams(): TaskDashboardParams | null {
     dashboardType: 'trends',
     trendSchemaVersion: 2,
   }
-  if (selectedPhysicalNodeId.value) {
+  if (selectedPhysicalNodeId.value !== ALL_NODES_VALUE) {
     params.physicalNodeId = selectedPhysicalNodeId.value
   }
 
@@ -631,7 +633,7 @@ async function fetchTrendNodes() {
     if (!Array.isArray(response)) throw new Error('Invalid trend node response')
     const nodes = [...response]
     if (
-      selectedPhysicalNodeId.value &&
+      selectedPhysicalNodeId.value !== ALL_NODES_VALUE &&
       !nodes.some(
         (node) => node.physicalNodeId === selectedPhysicalNodeId.value,
       )
@@ -1090,7 +1092,10 @@ onBeforeUnmount(() => {
                 style="width: 220px"
                 @change="onTrendNodeChange"
               >
-                <el-option :label="t('dashboard_odh_all_nodes')" value="" />
+                <el-option
+                  :label="t('dashboard_odh_all_nodes')"
+                  :value="ALL_NODES_VALUE"
+                />
                 <el-option
                   v-for="node in trendNodes"
                   :key="node.physicalNodeId"
