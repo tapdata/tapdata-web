@@ -1,5 +1,6 @@
 <script>
 import { EditPen, Refresh } from '@element-plus/icons-vue'
+import { revealAccessCode } from '@tap/api/src/core/audit-events'
 import {
   changeUserPassword,
   getUserById,
@@ -9,7 +10,6 @@ import {
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { IconButton } from '@tap/component/src/icon-button'
 import Cookie from '@tap/shared/src/cookie'
-import { revealAccessCode } from '@tap/api/src/core/audit-events'
 import { copyToClipboard } from '@tap/shared/src/util'
 export default {
   name: 'List',
@@ -77,7 +77,7 @@ export default {
         },
         {
           label: this.$t('account_accessCode'),
-          value: '',
+          value: '********',
           key: 'accessCode',
           icon: Refresh,
         },
@@ -155,8 +155,7 @@ export default {
       this.$message.success(this.$t('public_message_copy_success'))
     },
     displayValue(item) {
-      if (item.key !== 'accessCode' || !item.value) return item.value
-      return `${'*'.repeat(8)}${String(item.value).slice(-4)}`
+      return item.key === 'accessCode' ? '********' : item.value
     },
     // 获取当前信息
     async handleGetData() {
@@ -165,7 +164,7 @@ export default {
       if (data) {
         this.infoList.forEach((item) => {
           Object.keys(data).forEach((key) => {
-            if (item.key === key) {
+            if (item.key === key && key !== 'accessCode') {
               item.value = data[key]
             }
           })
@@ -195,9 +194,7 @@ export default {
             },
           ).then((res) => {
             if (res) {
-              refreshAccessCode().then((data) => {
-                this.infoList.find((item) => item.key === 'accessCode').value =
-                  data
+              refreshAccessCode().then(() => {
                 this.$message({
                   type: 'success',
                   message: this.$t('account_accessCode_success'),

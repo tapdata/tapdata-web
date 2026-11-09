@@ -64,10 +64,6 @@ const createForm = reactive<CreateForm>({
 const $has = useHas()
 
 // 客户端密钥列表只显示掩码；复制时经服务端接口取得，以便记录敏感读取审计
-function maskSecret(secret?: string) {
-  return secret ? `${'*'.repeat(8)}${secret.slice(-4)}` : ''
-}
-
 async function copySecret(row: { id: string }) {
   const secret = await revealClientSecret(row.id)
   copyToClipboard(secret)
@@ -115,6 +111,7 @@ const edit = (item: Record<string, any>) => {
     formRef.value?.clearValidate()
   })
   Object.assign(createForm, item)
+  createForm.clientSecret = ''
 }
 
 // 移除
@@ -138,6 +135,7 @@ const createApplication = () => {
   params.responseTypes = ['token']
   params.redirectUris = params.redirectUrisStr?.split(',') || []
   delete params.redirectUrisStr
+  if (params.id && !params.clientSecret) delete params.clientSecret
 
   // 如果clientId为空，则不传递该字段
   if (!params.clientId || params.clientId.trim() === '') {
@@ -285,9 +283,11 @@ watch(
         max-width="300"
       >
         <template #default="{ row }">
-          <span class="align-middle">{{ maskSecret(row.clientSecret) }}</span>
+          <span class="align-middle">{{
+            row.clientSecretConfigured ? '********' : ''
+          }}</span>
           <el-button
-            v-if="row.clientSecret"
+            v-if="row.clientSecretConfigured"
             text
             type="primary"
             size="small"
@@ -395,7 +395,7 @@ watch(
         </ElFormItem>
         <ElFormItem
           :label="$t('application_header_client_secret')"
-          required
+          :required="!createForm.id"
           prop="clientSecret"
         >
           <template #label>

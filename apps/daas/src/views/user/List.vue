@@ -1,4 +1,5 @@
 <script>
+import { revealUserAccessCode } from '@tap/api/src/core/audit-events'
 import { fetchRoleMappings } from '@tap/api/src/core/role-mappings'
 import { fetchRoles } from '@tap/api/src/core/roles'
 import { checkSamlLoginEnable } from '@tap/api/src/core/sso'
@@ -17,6 +18,7 @@ import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
 import { FilterBar } from '@tap/component/src/filter-bar'
+import { copyToClipboard } from '@tap/shared/src/util'
 import dayjs from 'dayjs'
 import { ElDivider } from 'element-plus'
 import { escapeRegExp } from 'lodash-es'
@@ -519,7 +521,7 @@ export default {
         password: '',
         roleusers: item.roleusers,
         status: item.status ? item.status : '',
-        accesscode: item.accessCode,
+        accesscode: '',
         emailVerified: item.emailVerified,
         account_status: item.account_status,
         groups: item.listtags?.map((item) => item.id),
@@ -536,7 +538,8 @@ export default {
           this.$refs.form.clearValidate('password')
         }
         if (valid) {
-          const params = this.createForm
+          const params = { ...this.createForm }
+          if (params.id && !params.accesscode) delete params.accesscode
 
           if (!params.id) {
             params.source = 'create'
@@ -790,6 +793,14 @@ export default {
     // 复制激活码
     onCopy() {
       this.showTooltip = true
+    },
+    async copyAccessCode() {
+      const value =
+        this.createForm.accesscode ||
+        (this.createForm.id && (await revealUserAccessCode(this.createForm.id)))
+      if (!value) return
+      copyToClipboard(value)
+      this.onCopy()
     },
     getFilterItems() {
       this.filterItems = [
@@ -1243,22 +1254,20 @@ export default {
             <span
               class="border rounded-lg w-100 px-2 bg-light"
               style="line-height: 30px"
-              >{{ createForm.accesscode || '-' }}</span
+              >{{
+                createForm.accesscode || createForm.id ? '********' : '-'
+              }}</span
             >
             <el-button text type="primary" @click="resetAccesCode">{{
               $t('public_button_reset')
             }}</el-button>
             <el-tooltip
-              v-if="createForm.accesscode"
+              v-if="createForm.accesscode || createForm.id"
               :visible="showTooltip"
               placement="top"
               :content="$t('public_message_copied')"
             >
-              <span
-                v-clipboard:copy="createForm.accesscode"
-                v-clipboard:success="onCopy"
-                @mouseleave="showTooltip = false"
-              >
+              <span @click="copyAccessCode" @mouseleave="showTooltip = false">
                 <el-button text type="primary">{{
                   $t('public_button_copy')
                 }}</el-button>

@@ -149,6 +149,12 @@ export function revealAccessCode() {
   return requestClient.post<string>('/api/users/access-code/reveal')
 }
 
+export function revealUserAccessCode(id: string) {
+  return requestClient.post<string>(
+    `/api/users/${encodeURIComponent(id)}/access-code/reveal`,
+  )
+}
+
 /** 显示或复制 API 客户端密钥：经服务端接口读取以便记录敏感读取审计。 */
 export function revealClientSecret(id: string) {
   return requestClient.post<string>(
