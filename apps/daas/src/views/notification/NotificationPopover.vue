@@ -29,6 +29,7 @@ const store = useStore()
 const instance = getCurrentInstance()
 
 const loading = ref(false)
+const popoverVisible = ref(false)
 const records = ref<NotificationRecord[]>([])
 const licenseDays = ref<number | null>(null)
 const drawerVisible = ref(false)
@@ -41,6 +42,8 @@ const hasPermissionByCode = inject<(code: string) => boolean>(
 )
 // 铃铛只展示发给自己的通知；查看全部通知记录需要通知记录权限
 const canViewAll = hasPermissionByCode?.('v2_notification_record') ?? false
+// 操作审计是铃铛内的快捷入口，仅对拥有审计权限的用户展示
+const canViewAudit = hasPermissionByCode?.('v2_audit_log') ?? false
 
 const fmt = (time?: string) =>
   time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : ''
@@ -79,6 +82,7 @@ const refresh = debounce(() => {
 }, 800)
 
 function open(record: NotificationRecord) {
+  popoverVisible.value = false
   drawerId.value = record.id
   drawerVisible.value = true
 }
@@ -96,7 +100,14 @@ async function markAllRead() {
 
 function viewAll() {
   if (!canViewAll) return
+  popoverVisible.value = false
   router.push({ name: 'notificationRecords' })
+}
+
+function viewAudit() {
+  if (!canViewAudit) return
+  popoverVisible.value = false
+  router.push({ name: 'operationAudit' })
 }
 
 onMounted(() => {
@@ -114,15 +125,16 @@ onMounted(() => {
 
 <template>
   <el-popover
+    v-model:visible="popoverVisible"
     popper-class="notification-popover pt-1"
     placement="bottom"
-    trigger="hover"
+    trigger="click"
     width="420"
     @show="loadRecords"
   >
     <template #reference>
       <el-badge class="item-badge" :value="unRead" :max="99" :hidden="!unRead">
-        <el-button text size="large" @click="viewAll">
+        <el-button text size="large">
           <template #icon>
             <VIcon :size="20">xiaoxi-2</VIcon>
           </template>
@@ -181,9 +193,15 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <div v-if="canViewAll" class="text-center pt-2 border-top">
-      <el-button text type="primary" @click="viewAll">{{
+    <div
+      v-if="canViewAll || canViewAudit"
+      class="flex align-center justify-content-between pt-2 border-top"
+    >
+      <el-button v-if="canViewAll" text type="primary" @click="viewAll">{{
         t('notification_view_all_records')
+      }}</el-button>
+      <el-button v-if="canViewAudit" text type="primary" @click="viewAudit">{{
+        t('page_title_operation_audit')
       }}</el-button>
     </div>
     <NotificationRecordDrawer

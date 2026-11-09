@@ -38,6 +38,7 @@ const canViewAlarm = hasPermissionByCode?.('v2_alarm_event') ?? false
 
 const loading = ref(false)
 const detail = ref<NotificationRecordDetail | null>(null)
+const noRelatedAlarm = computed(() => !detail.value?.alarmEventId)
 const open = computed({
   get: () => props.visible,
   set: (value) => emit('update:visible', value),
@@ -113,6 +114,13 @@ async function goTask() {
 }
 
 function goAlarm() {
+  if (
+    !canViewAlarm ||
+    !detail.value?.alarmEventId ||
+    detail.value.alarmEventMissing ||
+    detail.value.legacy
+  )
+    return
   router.push({
     name: 'alarmEvents',
     query: { alarmId: detail.value?.alarmEventId },
@@ -219,12 +227,17 @@ function goAlarm() {
             v-if="canViewAlarm"
             text
             type="primary"
-            :disabled="detail.legacy || detail.alarmEventMissing"
+            :disabled="
+              detail.legacy || detail.alarmEventMissing || noRelatedAlarm
+            "
             @click="goAlarm"
           >
             {{ t('notification_record_view_alarm') }}
           </el-button>
-          <span v-if="detail.alarmEventMissing" class="color-info fs-8">{{
+          <span v-if="noRelatedAlarm" class="color-info fs-8">{{
+            t('notification_record_no_related_alarm')
+          }}</span>
+          <span v-else-if="detail.alarmEventMissing" class="color-info fs-8">{{
             t('notification_record_alarm_missing')
           }}</span>
         </div>
