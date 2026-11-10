@@ -55,8 +55,11 @@ import { useRoute, useRouter } from 'vue-router'
 import SetTag from '@/views/cluster/SetTag.vue'
 import AddServe from './AddServe.vue'
 import { STATUS_MAP } from './const'
+import Db2LogReaderCard from './log-mining/Db2LogReaderCard.vue'
+import OracleLogParserCard from './log-mining/OracleLogParserCard.vue'
 import TaskRebalanceDrawer from './TaskRebalanceDrawer.vue'
 import UpdateLicense from './UpdateLicense.vue'
+import type { LogMiningMonitor } from './log-mining/types'
 
 const { t } = useI18n()
 const $has = useHas()
@@ -126,36 +129,6 @@ interface ClusterData {
   metricValues?: {
     CpuUsage: string
     HeapMemoryUsage: string
-  }
-}
-
-interface LogMiningMonitor {
-  timestamp: string
-  pid?: number
-  cpuPercent?: number
-  memoryPercent?: number
-  state: string
-  dataSource: string
-  serviceId: string
-  isAlive: boolean
-  id: number | string
-  name: string
-  ip: string
-  startTime: string
-  status: 'running' | 'stopped'
-  cpuUsage: string
-  memoryUsage: string
-  agentType?: string
-  proxyProcessId?: string
-  sourceServiceId?: string
-  address?: string
-  processStatus?: string
-  errorReason?: string
-  reportedData?: {
-    state: string
-    cpuPercent: number
-    memoryPercent: number
-    createTime?: string | number | Date
   }
 }
 
@@ -1214,6 +1187,9 @@ const handleTabChange = (tab: any) => {
 }
 
 const handleLogMiningAgentTypeChange = (agentType: string) => {
+  cancelFetchLogMiningData()
+  latestLogMiningData.value = []
+  logMiningData.value = []
   selectedLogMiningAgentType.value = agentType
   licenseExpireDays.value = {}
   licenseExpireDate.value = {}
@@ -2257,385 +2233,32 @@ const onUpdateLicenseSuccess = () => {
             :gutter="24"
             style="row-gap: 24px"
           >
-            <div
-              v-for="item in logMiningData"
-              :key="item.id"
-              class="grid-content list-box border rounded-xl mb-6 logMining-card"
-              :class="{
-                'reader-process-card':
-                  selectedLogMiningAgentType !== 'OracleLogParser',
-              }"
-            >
-              <div
+            <template v-for="item in logMiningData" :key="item.id">
+              <OracleLogParserCard
                 v-if="selectedLogMiningAgentType === 'OracleLogParser'"
-                class="list-box-header justify-content-start gap-3"
-              >
-                <div class="list-box-header-left">
-                  <img
-                    class="mr-4 rounded-xl"
-                    src="../../assets/static/serve.svg"
-                  />
-                  <div class="list-box-header-main">
-                    <h2 class="name fs-6 mb-1 flex align-center gap-2">
-                      <i
-                        class="circular"
-                        :class="!item.isAlive ? 'bgred' : 'bggreen'"
-                      />
-                      {{ item.serviceId }}
-                    </h2>
-                    <span class="ip">{{ item.dataSource }}</span>
-                  </div>
-                </div>
-                <div
-                  class="flex flex-column align-items-end justify-content-between flex-1"
-                  style="--btn-space: 0"
-                >
-                  <div class="flex align-center gap-2 mb-1">
-                    <el-tag
-                      v-if="item.reportedData.state === 'sleep'"
-                      type="success"
-                    >
-                      <el-tooltip
-                        v-if="!item.isAlive"
-                        :content="$t('cluster_launcher_offline')"
-                        :enterable="false"
-                        placement="top"
-                      >
-                        <el-icon class="color-warning"
-                          ><i-lucide-triangle-alert
-                        /></el-icon>
-                      </el-tooltip>
-                      {{ $t('public_status_running') }}</el-tag
-                    >
-                    <el-tag
-                      v-else-if="item.reportedData.state === 'notExists'"
-                      type="info"
-                      >{{ $t('public_agent_status_offline') }}</el-tag
-                    >
-                    <el-tag v-else type="danger">{{
-                      $t('public_status_stop')
-                    }}</el-tag>
-                    <ElButton
-                      v-if="item.reportedData.state === 'sleep'"
-                      text
-                      type="danger"
-                      :loading="
-                        logMiningCommandLoading[item.serviceId] ||
-                        !!logMiningOperationState[item.serviceId]
-                      "
-                      :disabled="
-                        !item.isAlive ||
-                        !!logMiningOperationState[item.serviceId]
-                      "
-                      @click="stopLogMining(item)"
-                    >
-                      <template #icon>
-                        <i-lucide-square />
-                      </template>
-                      <span>{{ $t('public_button_stop') }}</span>
-                    </ElButton>
-                    <ElButton
-                      v-else
-                      text
-                      type="primary"
-                      :loading="
-                        logMiningCommandLoading[item.serviceId] ||
-                        !!logMiningOperationState[item.serviceId]
-                      "
-                      :disabled="
-                        !item.isAlive ||
-                        !!logMiningOperationState[item.serviceId]
-                      "
-                      @click="startLogMining(item)"
-                    >
-                      <template #icon>
-                        <i-lucide-play />
-                      </template>
-                      <span>{{ $t('public_button_start') }}</span>
-                    </ElButton>
-                    <el-dropdown
-                      @command="handleLogMiningCommand($event, item)"
-                    >
-                      <el-button text>
-                        <template #icon>
-                          <i-lucide-ellipsis />
-                        </template>
-                      </el-button>
-
-                      <template #dropdown>
-                        <el-dropdown-menu>
-                          <el-dropdown-item
-                            :disabled="
-                              !item.isAlive ||
-                              logMiningCommandLoading[item.serviceId]
-                            "
-                            command="restart"
-                          >
-                            <el-icon class="mr-2" size="16">
-                              <i-lucide-rotate-cw />
-                            </el-icon>
-                            {{ $t('public_button_restart') }}</el-dropdown-item
-                          >
-                          <el-dropdown-item
-                            :disabled="!item.isAlive"
-                            command="updateLicense"
-                          >
-                            <el-icon class="mr-2" size="16">
-                              <i-lucide-file-key />
-                            </el-icon>
-                            {{ $t('license_renew_dialog') }}</el-dropdown-item
-                          >
-                          <el-dropdown-item
-                            :disabled="item.reportedData.state === 'sleep'"
-                            divided
-                            class="is-danger"
-                            command="delete"
-                          >
-                            <el-icon class="mr-2" size="16">
-                              <i-lucide-trash-2 />
-                            </el-icon>
-                            {{ $t('public_button_delete') }}</el-dropdown-item
-                          >
-                        </el-dropdown-menu>
-                      </template>
-                    </el-dropdown>
-                  </div>
-
-                  <div class="text-xs flex align-center">
-                    <span class="font-color-sslight inline-flex flex-wrap gap-1"
-                      ><span
-                        >{{ $t('packages_business_task_preview_startTime') }}:
-                      </span>
-                      {{ item.startTime }}</span
-                    ><template v-if="licenseExpireDate[item.serviceId]"
-                      ><el-divider direction="vertical" />
-                      <span
-                        class="font-color-sslight inline-flex flex-wrap gap-1"
-                        ><span>{{ $t('license_expire_date') }}: </span>
-                        {{ licenseExpireDate[item.serviceId] }}</span
-                      ></template
-                    >
-                  </div>
-                </div>
-              </div>
-              <div
-                v-if="
-                  selectedLogMiningAgentType === 'OracleLogParser' &&
-                  licenseExpireDays[item.serviceId] < 8
+                :key="`oracle-${item.id}`"
+                :item="item"
+                :license-expire-days="licenseExpireDays[item.serviceId]"
+                :license-expire-date="licenseExpireDate[item.serviceId]"
+                :command-loading="!!logMiningCommandLoading[item.serviceId]"
+                :operation-state="logMiningOperationState[item.serviceId]"
+                @start="startLogMining(item)"
+                @stop="stopLogMining(item)"
+                @command="handleLogMiningCommand($event, item)"
+                @update-license="updateLogMiningLicense(item)"
+              />
+              <Db2LogReaderCard
+                v-else
+                :key="`reader-${item.id}`"
+                :item="item"
+                :type-label="
+                  getLogMiningAgentTypeCardLabel(
+                    item.agentType || selectedLogMiningAgentType,
+                  )
                 "
-                class="px-4 pb-4"
-              >
-                <el-alert
-                  v-if="licenseExpireDays[item.serviceId] < 1"
-                  :closable="false"
-                  type="error"
-                  show-icon
-                  class="fit-content"
-                >
-                  <template #title>
-                    <div class="flex align-center justify-content-between">
-                      <span>
-                        {{
-                          licenseExpireDays[item.serviceId] === 0
-                            ? $t('license_expired_today')
-                            : $t('license_expired_days', {
-                                val: Math.abs(
-                                  licenseExpireDays[item.serviceId],
-                                ),
-                              })
-                        }}
-                      </span>
-                      <el-button
-                        type="primary"
-                        text
-                        @click="updateLogMiningLicense(item)"
-                      >
-                        <el-icon>
-                          <i-lucide-upload />
-                        </el-icon>
-                        <span>
-                          {{ $t('license_renew_dialog') }}
-                        </span>
-                      </el-button>
-                    </div>
-                  </template>
-                </el-alert>
-                <el-alert
-                  v-else
-                  :closable="false"
-                  type="warning"
-                  show-icon
-                  class="fit-content"
-                >
-                  <template #title>
-                    <div class="flex align-center justify-content-between">
-                      <span>
-                        {{
-                          $t('license_expire_days', {
-                            val: licenseExpireDays[item.serviceId],
-                          })
-                        }}
-                      </span>
-                      <el-button text @click="updateLogMiningLicense(item)">
-                        {{ $t('license_renew_dialog') }}
-                      </el-button>
-                    </div>
-                  </template>
-                </el-alert>
-              </div>
-              <div
-                v-if="selectedLogMiningAgentType === 'OracleLogParser'"
-                class="list-box-main"
-              >
-                <div class="usageRate">
-                  <div class="fs-5 pb-1 fw-bolder">{{ item.cpuUsage }}%</div>
-                  {{ $t('cluster_cpu_usage') }}
-                </div>
-                <div class="line" />
-                <div class="usageRate">
-                  <div class="fs-5 pb-1 fw-bolder">{{ item.memoryUsage }}%</div>
-                  {{ $t('cluster_heap_memory_usage') }}
-                </div>
-              </div>
-              <div
-                v-if="selectedLogMiningAgentType !== 'OracleLogParser'"
-                class="reader-process-card__content"
-              >
-                <div class="list-box-header reader-process-card__header">
-                  <div class="list-box-header-left">
-                    <img
-                      class="mr-4 rounded-xl"
-                      src="../../assets/static/serve.svg"
-                    />
-                    <div class="list-box-header-main">
-                      <h2 class="name fs-6 mb-1 flex align-center gap-2">
-                        <i
-                          class="circular"
-                          :class="
-                            item.processStatus === 'RUNNING'
-                              ? 'bggreen'
-                              : item.processStatus === 'FAILED'
-                                ? 'bgred'
-                                : 'reader-process-card__status-dot--offline'
-                          "
-                        />
-                        {{ item.name }}
-                      </h2>
-                      <span class="ip">{{
-                        getLogMiningAgentTypeCardLabel(
-                          item.agentType || selectedLogMiningAgentType,
-                        )
-                      }}</span>
-                    </div>
-                  </div>
-                  <div class="reader-process-card__header-actions">
-                    <div class="reader-process-card__header-controls">
-                      <el-tag
-                        size="small"
-                        :type="
-                          item.processStatus === 'RUNNING'
-                            ? 'success'
-                            : item.processStatus === 'FAILED'
-                              ? 'danger'
-                              : 'info'
-                        "
-                      >
-                        <i
-                          class="circular mr-1"
-                          :class="
-                            item.processStatus === 'RUNNING'
-                              ? 'bggreen'
-                              : item.processStatus === 'FAILED'
-                                ? 'bgred'
-                                : 'reader-process-card__status-dot--offline'
-                          "
-                        />
-                        {{
-                          item.processStatus === 'RUNNING'
-                            ? $t('public_status_running')
-                            : item.processStatus === 'FAILED'
-                              ? $t('public_status_stop')
-                              : $t('public_agent_status_offline')
-                        }}
-                      </el-tag>
-                      <el-button
-                        text
-                        type="danger"
-                        :disabled="!item.proxyProcessId"
-                        @click="deleteReaderProcess(item)"
-                      >
-                        <el-icon><i-lucide-trash-2 /></el-icon>
-                        {{ $t('public_button_delete') }}
-                      </el-button>
-                    </div>
-                    <span class="reader-process-card__start-time">
-                      <span
-                        >{{ $t('cluster_log_mining_reader_start_time') }}:</span
-                      >
-                      <span>{{ item.startTime }}</span>
-                    </span>
-                  </div>
-                </div>
-
-                <div class="list-box-main reader-process-card__main">
-                  <div class="reader-process-card__metrics">
-                    <div class="reader-process-card__metric">
-                      <div
-                        class="reader-process-card__value reader-process-card__value--address"
-                      >
-                        {{ item.address || '--' }}
-                      </div>
-                      <div class="reader-process-card__label">
-                        {{ $t('cluster_log_mining_reader_ip_address') }}
-                      </div>
-                    </div>
-                    <div class="reader-process-card__metric">
-                      <div class="reader-process-card__value">
-                        {{ item.pid ?? '--' }}
-                      </div>
-                      <div class="reader-process-card__label">
-                        {{ $t('cluster_log_mining_reader_process_id') }}
-                      </div>
-                    </div>
-                    <div class="reader-process-card__metric">
-                      <div class="reader-process-card__value">
-                        {{ item.cpuUsage }}%
-                      </div>
-                      <div class="reader-process-card__label">
-                        {{ $t('cluster_log_mining_reader_cpu_usage') }}
-                      </div>
-                    </div>
-                    <div class="reader-process-card__metric">
-                      <div class="reader-process-card__value">
-                        {{ item.memoryUsage }}%
-                      </div>
-                      <div class="reader-process-card__label">
-                        {{ $t('cluster_log_mining_reader_heap_memory_usage') }}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="reader-process-card__error">
-                    <span class="reader-process-card__label">
-                      {{ $t('daas_cluster_agent_error_reason') }}
-                    </span>
-                    <span
-                      class="reader-process-card__error-value"
-                      :class="{
-                        'reader-process-card__error-value--visible':
-                          item.processStatus !== 'RUNNING',
-                      }"
-                    >
-                      {{
-                        item.processStatus === 'RUNNING'
-                          ? '-'
-                          : item.errorReason || '--'
-                      }}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+                @delete="deleteReaderProcess(item)"
+              />
+            </template>
           </div>
 
           <el-empty v-else />
@@ -3230,211 +2853,9 @@ const onUpdateLicenseSuccess = () => {
   break-inside: avoid; /* 防止卡片被分割到两列 */
 }
 
-.reader-process-card {
-  overflow: hidden;
-  border-color: var(--el-border-color-lighter) !important;
-  background: var(--el-bg-color);
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-
-  &:hover {
-    border-color: var(--el-color-primary-light-5) !important;
-    box-shadow: 0 4px 16px rgb(31 45 61 / 6%);
-  }
-}
-
-.reader-process-card__header {
-  display: flex;
-  width: 100%;
-  min-width: 0;
-  align-items: center;
-  justify-content: space-between !important;
-  min-height: 67px;
-  box-sizing: border-box;
-}
-
-.reader-process-card__header .list-box-header-left {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-.reader-process-card__header .list-box-header-main {
-  min-width: 0;
-}
-
-.reader-process-card__header .list-box-header-main .name {
-  max-width: 100%;
-}
-
-.reader-process-card__header-actions {
-  display: flex;
-  flex: 0 0 auto;
-  flex-direction: column;
-  align-items: flex-end;
-  margin-left: auto;
-  gap: 4px;
-}
-
-.reader-process-card__header-controls {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
-.reader-process-card__start-time {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 4px;
-  max-width: 100%;
-  color: var(--text-dark, var(--el-text-color-primary));
-  font-size: 12px;
-  line-height: 18px;
-  text-align: right;
-  white-space: nowrap;
-}
-
-.reader-process-card__status-dot--offline {
-  background-color: var(--el-color-info) !important;
-}
-
-.reader-process-card__main {
-  display: block !important;
-  padding: 0 !important;
-  text-align: left !important;
-}
-
-.reader-process-card__metrics {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  padding: 16px 8px;
-}
-
-.reader-process-card__metric {
-  position: relative;
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  padding: 4px 12px;
-  text-align: center;
-
-  &:not(:first-child)::before {
-    position: absolute;
-    top: 5px;
-    bottom: 5px;
-    left: 0;
-    width: 1px;
-    background: var(--el-border-color-lighter);
-    content: '';
-  }
-}
-
-.reader-process-card__value {
-  width: 100%;
-  overflow: hidden;
-  color: var(--text-dark, var(--el-text-color-primary));
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 22px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.reader-process-card__value--address {
-  overflow: visible;
-  overflow-wrap: anywhere;
-  text-overflow: clip;
-  white-space: normal;
-}
-
-.reader-process-card__label {
-  color: var(--text-slight, var(--el-text-color-secondary));
-  font-size: 12px;
-  line-height: 18px;
-}
-
-.reader-process-card__error {
-  display: grid;
-  grid-template-columns: 92px minmax(0, 1fr);
-  align-items: baseline;
-  gap: 12px;
-  min-width: 0;
-  padding: 11px 16px 13px;
-  border-top: 1px solid var(--el-border-color-lighter);
-  background: var(--el-fill-color-lighter);
-}
-
-.reader-process-card__error-value {
-  overflow-wrap: anywhere;
-  color: var(--text-dark, var(--el-text-color-primary));
-  font-size: 13px;
-  line-height: 18px;
-}
-
-.reader-process-card__error-value--visible {
-  color: var(--el-color-danger);
-  font-weight: 500;
-}
-
-@media (max-width: 1100px) {
-  .reader-process-card__metrics {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .reader-process-card__metric:nth-child(3)::before {
-    display: none;
-  }
-
-  .reader-process-card__metric:nth-child(n + 3) {
-    border-top: 1px solid var(--el-border-color-lighter);
-    padding-top: 12px;
-  }
-}
-
 @media (max-width: 600px) {
   .logMining-container {
     column-count: 1;
-  }
-
-  .reader-process-card__metrics {
-    grid-template-columns: minmax(0, 1fr);
-    padding: 8px 12px;
-  }
-
-  .reader-process-card__metric:not(:first-child) {
-    border-top: 1px solid var(--el-border-color-lighter);
-  }
-
-  .reader-process-card__metric:not(:first-child)::before {
-    display: none;
-  }
-
-  .reader-process-card__error {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 4px;
-  }
-
-  .reader-process-card__header {
-    flex-wrap: wrap;
-    align-items: flex-start;
-  }
-
-  .reader-process-card__header .list-box-header-left,
-  .reader-process-card__header-actions {
-    flex: 1 0 100%;
-  }
-
-  .reader-process-card__header-actions {
-    margin-left: 0;
-  }
-
-  .reader-process-card__start-time {
-    font-size: 11px;
   }
 }
 </style>
