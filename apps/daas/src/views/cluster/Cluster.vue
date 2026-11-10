@@ -1,5 +1,11 @@
 <script setup lang="ts">
 import {
+  deleteAgentProcess,
+  fetchAgentProcesses,
+  fetchAgentProcessTypes,
+  type AgentProcessItem,
+} from '@tap/api/src/core/agent-process'
+import {
   addAgent,
   deleteAgentGroup,
   fetchAgentGroups,
@@ -125,26 +131,37 @@ interface ClusterData {
 
 interface LogMiningMonitor {
   timestamp: string
-  pid: number
-  cpuPercent: number
-  memoryPercent: number
+  pid?: number
+  cpuPercent?: number
+  memoryPercent?: number
   state: string
   dataSource: string
   serviceId: string
   isAlive: boolean
-  id: number
+  id: number | string
   name: string
   ip: string
   startTime: string
   status: 'running' | 'stopped'
   cpuUsage: string
   memoryUsage: string
+  agentType?: string
+  proxyProcessId?: string
+  sourceServiceId?: string
+  address?: string
+  processStatus?: string
+  errorReason?: string
   reportedData?: {
     state: string
     cpuPercent: number
     memoryPercent: number
-    createTime?: string
+    createTime?: string | number | Date
   }
+}
+
+type OracleLogMiningRawItem = Omit<LogMiningMonitor, 'reportedData'> & {
+  dataSource: string
+  reportedData: NonNullable<LogMiningMonitor['reportedData']>
 }
 
 // Router
@@ -233,6 +250,9 @@ const updateLicenseDialog = reactive({
   serviceId: '',
 })
 const logMiningFirstLoading = ref(false)
+const logMiningAgentTypes = ref<string[]>([])
+const selectedLogMiningAgentType = ref('')
+const latestLogMiningData = ref<LogMiningMonitor[]>([])
 const logMiningCommandLoading = ref<{ [key: string]: boolean }>({})
 // 记录正在操作的服务状态：'starting' | 'stopping'
 const logMiningOperationState = ref<{ [key: string]: 'starting' | 'stopping' }>(
@@ -246,6 +266,26 @@ const DataSourceMap = {
   nineBridge: t('public_oracle_raw_log'),
   OracleLogParser: t('public_oracle_raw_log'),
 } as const
+const LogMiningAgentTypeLabelKeyMap: Record<string, string> = {
+  oraclelogparser: 'cluster_log_mining_type_oracle_log_parser',
+  'db2 for z cdc reader': 'cluster_log_mining_type_db2_z_log_reader',
+}
+const supportedLogMiningAgentTypes = new Set([
+  'oraclelogparser',
+  'db2 for z cdc reader',
+])
+const getLogMiningAgentTypeLabel = (agentType: string) => {
+  const labelKey = LogMiningAgentTypeLabelKeyMap[agentType.trim().toLowerCase()]
+  return labelKey ? t(labelKey) : agentType
+}
+const getLogMiningAgentTypeCardLabel = (agentType: string) => {
+  if (agentType.trim().toLowerCase() === 'db2 for z cdc reader') {
+    return t('cluster_log_mining_card_type_db2_z_log')
+  }
+  return getLogMiningAgentTypeLabel(agentType)
+}
+const isSupportedLogMiningAgentType = (agentType: string) =>
+  supportedLogMiningAgentTypes.has(agentType.trim().toLowerCase())
 
 // Watchers
 watch(
@@ -1005,19 +1045,128 @@ const {
   loading: logMiningLoading,
 } = usePollingRequest<LogMiningMonitor[]>(
   async () => {
-    const data = await findRawServerInfo()
-    const result = data.items
-      .map((item) => {
-        item.timestamp = dayjs(item.timestamp).format('YYYY-MM-DD HH:mm:ss')
-        item.dataSource = DataSourceMap[item.dataSource]
-        item.cpuUsage = (item.reportedData.cpuPercent * 100).toFixed(2)
-        item.memoryUsage = (item.reportedData.memoryPercent * 100).toFixed(2)
-        item.startTime = item.reportedData.createTime
-          ? dayjs(item.reportedData.createTime).format('YYYY-MM-DD HH:mm:ss')
-          : '--'
-        return item
+    if (!selectedLogMiningAgentType.value) return []
+    const requestedAgentType = selectedLogMiningAgentType.value
+
+    if (requestedAgentType === 'OracleLogParser') {
+      const data = await findRawServerInfo()
+      if (requestedAgentType !== selectedLogMiningAgentType.value) {
+        return latestLogMiningData.value
+      }
+
+      const result: LogMiningMonitor[] = (
+        data.items as OracleLogMiningRawItem[]
+      )
+        .map((item) => {
+          item.timestamp = dayjs(item.timestamp).format('YYYY-MM-DD HH:mm:ss')
+          item.dataSource =
+            DataSourceMap[item.dataSource as keyof typeof DataSourceMap]
+          item.cpuUsage = (item.reportedData.cpuPercent * 100).toFixed(2)
+          item.memoryUsage = (item.reportedData.memoryPercent * 100).toFixed(2)
+          item.startTime = item.reportedData.createTime
+            ? dayjs(item.reportedData.createTime).format('YYYY-MM-DD HH:mm:ss')
+            : '--'
+          return item
+        })
+        .sort((a, b) => {
+          const aRunning = a.reportedData?.state === 'sleep'
+          const bRunning = b.reportedData?.state === 'sleep'
+
+          if (aRunning && !bRunning) return -1
+          if (!aRunning && bRunning) return 1
+
+          return a.serviceId.localeCompare(b.serviceId)
+        })
+
+      latestLogMiningData.value = result
+      updateOracleLogParserOperationState(result)
+      return result
+    }
+
+    const pageSize = 100
+    const firstPage = await fetchAgentProcesses({
+      agentType: requestedAgentType,
+      page: 1,
+      pageSize,
+      sortBy: 'lastRegisterTime',
+      sortOrder: 'DESC',
+    })
+    if (requestedAgentType !== selectedLogMiningAgentType.value) {
+      return latestLogMiningData.value
+    }
+    const pageCount = Math.ceil(firstPage.total / pageSize)
+    const otherPages = await Promise.all(
+      Array.from({ length: Math.max(0, pageCount - 1) }, (_, index) =>
+        fetchAgentProcesses({
+          agentType: requestedAgentType,
+          page: index + 2,
+          pageSize,
+          sortBy: 'lastRegisterTime',
+          sortOrder: 'DESC',
+        }),
+      ),
+    )
+    if (requestedAgentType !== selectedLogMiningAgentType.value) {
+      return latestLogMiningData.value
+    }
+    const agentProcessItems = [
+      ...firstPage.items,
+      ...otherPages.flatMap((page) => page.items),
+    ]
+    const result: LogMiningMonitor[] = agentProcessItems
+      .map((item: AgentProcessItem, index) => {
+        const processStatus = item.status || ''
+        const timestamp = item.statusReportTime || item.lastRegisterTime
+        const startTime = item.startTime
+        const isAlive = item.statusReportTime
+          ? dayjs().diff(dayjs(item.statusReportTime)) <= 3 * 60 * 1000
+          : false
+        return {
+          id: item.proxyProcessId || index,
+          proxyProcessId: item.proxyProcessId,
+          serviceId: item.agentName || item.agentId,
+          agentType: item.agentType,
+          dataSource: item.agentType,
+          timestamp: timestamp
+            ? dayjs(timestamp).format('YYYY-MM-DD HH:mm:ss')
+            : '--',
+          pid: item.pid,
+          cpuPercent: item.cpuUsage,
+          memoryPercent: item.memoryUsage,
+          state: processStatus,
+          isAlive,
+          name: item.agentName || item.agentId,
+          ip: item.advertiseIp || '',
+          address: [item.advertiseIp, item.advertisePort]
+            .filter(
+              (part) => part !== undefined && part !== null && part !== '',
+            )
+            .join(':'),
+          startTime: startTime
+            ? dayjs(startTime).format('YYYY-MM-DD HH:mm:ss')
+            : '--',
+          status: (item.status === 'RUNNING' ? 'running' : 'stopped') as
+            | 'running'
+            | 'stopped',
+          processStatus,
+          errorReason: item.errorReason,
+          cpuUsage: item.cpuUsage == null ? '--' : item.cpuUsage.toFixed(2),
+          memoryUsage:
+            item.memoryUsage == null ? '--' : item.memoryUsage.toFixed(2),
+          reportedData: {
+            state:
+              item.status === 'RUNNING'
+                ? 'sleep'
+                : item.status === 'OFFLINE'
+                  ? 'notExists'
+                  : 'failed',
+            cpuPercent: item.cpuUsage || 0,
+            memoryPercent: item.memoryUsage || 0,
+            createTime: startTime,
+          },
+        }
       })
-      .sort((a: any, b: any) => {
+      .sort((a, b) => {
         const aRunning = a.reportedData?.state === 'sleep'
         const bRunning = b.reportedData?.state === 'sleep'
 
@@ -1027,27 +1176,7 @@ const {
         return a.serviceId.localeCompare(b.serviceId)
       })
 
-    // 检查操作状态是否已完成
-    if (result && result.length) {
-      Object.keys(logMiningOperationState.value).forEach((serviceId) => {
-        const operationState = logMiningOperationState.value[serviceId]
-        const item = result.find((d: any) => d.serviceId === serviceId)
-
-        if (item) {
-          const isRunning = item.reportedData?.state === 'sleep'
-
-          // 如果正在启动，且状态已变为运行中，清除操作状态
-          if (operationState === 'starting' && isRunning) {
-            delete logMiningOperationState.value[serviceId]
-          }
-          // 如果正在停止，且状态已变为停止，清除操作状态
-          else if (operationState === 'stopping' && !isRunning) {
-            delete logMiningOperationState.value[serviceId]
-          }
-        }
-      })
-    }
-
+    latestLogMiningData.value = result
     return result
   },
   {
@@ -1061,13 +1190,68 @@ const {
 const handleTabChange = (tab: any) => {
   if (tab === 'logMining') {
     logMiningFirstLoading.value = true
-    fetchLogMiningData().finally(() => {
-      logMiningFirstLoading.value = false
-      fetchLogMiningLicense()
-    })
+    fetchAgentProcessTypes()
+      .then((types) => {
+        logMiningAgentTypes.value = (types || []).filter(
+          isSupportedLogMiningAgentType,
+        )
+        if (
+          !logMiningAgentTypes.value.includes(selectedLogMiningAgentType.value)
+        ) {
+          selectedLogMiningAgentType.value = logMiningAgentTypes.value[0] || ''
+        }
+        return fetchLogMiningData()
+      })
+      .finally(() => {
+        logMiningFirstLoading.value = false
+        if (selectedLogMiningAgentType.value === 'OracleLogParser') {
+          fetchLogMiningLicense()
+        }
+      })
   } else {
     cancelFetchLogMiningData()
   }
+}
+
+const handleLogMiningAgentTypeChange = (agentType: string) => {
+  selectedLogMiningAgentType.value = agentType
+  licenseExpireDays.value = {}
+  licenseExpireDate.value = {}
+  logMiningFirstLoading.value = true
+  fetchLogMiningData().finally(() => {
+    logMiningFirstLoading.value = false
+    if (agentType === 'OracleLogParser') fetchLogMiningLicense()
+  })
+}
+
+const updateOracleLogParserOperationState = (result: LogMiningMonitor[]) => {
+  if (!result.length) return
+
+  Object.keys(logMiningOperationState.value).forEach((serviceId) => {
+    const operationState = logMiningOperationState.value[serviceId]
+    const item = result.find((row) => row.serviceId === serviceId)
+
+    if (!item) return
+
+    const isRunning = item.reportedData?.state === 'sleep'
+    if (
+      (operationState === 'starting' && isRunning) ||
+      (operationState === 'stopping' && !isRunning)
+    ) {
+      delete logMiningOperationState.value[serviceId]
+    }
+  })
+}
+
+const deleteReaderProcess = async (row: LogMiningMonitor) => {
+  if (!row.proxyProcessId) return
+
+  const confirmed = await Modal.confirm(t('cluster_delete_confirm'))
+  if (!confirmed) return
+
+  await deleteAgentProcess(row.proxyProcessId)
+  await fetchLogMiningData()
+  ElMessage.success(t('public_message_operation_success'))
 }
 
 const updateLicenseExpireDays = (serverId: string, item: any) => {
@@ -1079,7 +1263,7 @@ const updateLicenseExpireDays = (serverId: string, item: any) => {
 }
 
 const fetchLogMiningLicense = () => {
-  const serviceIds = logMiningData.value.map((item) => item.serviceId)
+  const serviceIds = (logMiningData.value || []).map((item) => item.serviceId)
   const fetchIds = serviceIds.filter((id) => !(id in licenseExpireDays.value))
 
   Object.keys(licenseExpireDays.value).forEach((id) => {
@@ -1222,6 +1406,29 @@ const onUpdateLicenseSuccess = () => {
         </template>
       </el-tab-pane>
     </el-tabs>
+
+    <div v-if="viewType === 'logMining'" class="flex align-center gap-2 mb-4">
+      <el-tag
+        v-for="agentType in logMiningAgentTypes"
+        :key="agentType"
+        :type="selectedLogMiningAgentType === agentType ? 'primary' : 'info'"
+        effect="plain"
+        class="log-mining-agent-type-tag"
+        :class="{
+          'log-mining-agent-type-tag--active':
+            selectedLogMiningAgentType === agentType,
+        }"
+        @click="handleLogMiningAgentTypeChange(agentType)"
+      >
+        {{ getLogMiningAgentTypeLabel(agentType) }}
+        <el-icon
+          v-if="selectedLogMiningAgentType === agentType"
+          class="log-mining-agent-type-tag__check"
+        >
+          <i-lucide-check />
+        </el-icon>
+      </el-tag>
+    </div>
 
     <section class="clusterManagement-container">
       <div class="section-wrap-box">
@@ -2054,8 +2261,15 @@ const onUpdateLicenseSuccess = () => {
               v-for="item in logMiningData"
               :key="item.id"
               class="grid-content list-box border rounded-xl mb-6 logMining-card"
+              :class="{
+                'reader-process-card':
+                  selectedLogMiningAgentType !== 'OracleLogParser',
+              }"
             >
-              <div class="list-box-header justify-content-start gap-3">
+              <div
+                v-if="selectedLogMiningAgentType === 'OracleLogParser'"
+                class="list-box-header justify-content-start gap-3"
+              >
                 <div class="list-box-header-left">
                   <img
                     class="mr-4 rounded-xl"
@@ -2205,7 +2419,10 @@ const onUpdateLicenseSuccess = () => {
                 </div>
               </div>
               <div
-                v-if="licenseExpireDays[item.serviceId] < 8"
+                v-if="
+                  selectedLogMiningAgentType === 'OracleLogParser' &&
+                  licenseExpireDays[item.serviceId] < 8
+                "
                 class="px-4 pb-4"
               >
                 <el-alert
@@ -2266,7 +2483,10 @@ const onUpdateLicenseSuccess = () => {
                   </template>
                 </el-alert>
               </div>
-              <div class="list-box-main">
+              <div
+                v-if="selectedLogMiningAgentType === 'OracleLogParser'"
+                class="list-box-main"
+              >
                 <div class="usageRate">
                   <div class="fs-5 pb-1 fw-bolder">{{ item.cpuUsage }}%</div>
                   {{ $t('cluster_cpu_usage') }}
@@ -2275,6 +2495,144 @@ const onUpdateLicenseSuccess = () => {
                 <div class="usageRate">
                   <div class="fs-5 pb-1 fw-bolder">{{ item.memoryUsage }}%</div>
                   {{ $t('cluster_heap_memory_usage') }}
+                </div>
+              </div>
+              <div
+                v-if="selectedLogMiningAgentType !== 'OracleLogParser'"
+                class="reader-process-card__content"
+              >
+                <div class="list-box-header reader-process-card__header">
+                  <div class="list-box-header-left">
+                    <img
+                      class="mr-4 rounded-xl"
+                      src="../../assets/static/serve.svg"
+                    />
+                    <div class="list-box-header-main">
+                      <h2 class="name fs-6 mb-1 flex align-center gap-2">
+                        <i
+                          class="circular"
+                          :class="
+                            item.processStatus === 'RUNNING'
+                              ? 'bggreen'
+                              : item.processStatus === 'FAILED'
+                                ? 'bgred'
+                                : 'reader-process-card__status-dot--offline'
+                          "
+                        />
+                        {{ item.name }}
+                      </h2>
+                      <span class="ip">{{
+                        getLogMiningAgentTypeCardLabel(
+                          item.agentType || selectedLogMiningAgentType,
+                        )
+                      }}</span>
+                    </div>
+                  </div>
+                  <div class="reader-process-card__header-actions">
+                    <div class="reader-process-card__header-controls">
+                      <el-tag
+                        size="small"
+                        :type="
+                          item.processStatus === 'RUNNING'
+                            ? 'success'
+                            : item.processStatus === 'FAILED'
+                              ? 'danger'
+                              : 'info'
+                        "
+                      >
+                        <i
+                          class="circular mr-1"
+                          :class="
+                            item.processStatus === 'RUNNING'
+                              ? 'bggreen'
+                              : item.processStatus === 'FAILED'
+                                ? 'bgred'
+                                : 'reader-process-card__status-dot--offline'
+                          "
+                        />
+                        {{
+                          item.processStatus === 'RUNNING'
+                            ? $t('public_status_running')
+                            : item.processStatus === 'FAILED'
+                              ? $t('public_status_stop')
+                              : $t('public_agent_status_offline')
+                        }}
+                      </el-tag>
+                      <el-button
+                        text
+                        type="danger"
+                        :disabled="!item.proxyProcessId"
+                        @click="deleteReaderProcess(item)"
+                      >
+                        <el-icon><i-lucide-trash-2 /></el-icon>
+                        {{ $t('public_button_delete') }}
+                      </el-button>
+                    </div>
+                    <span class="reader-process-card__start-time">
+                      <span
+                        >{{ $t('cluster_log_mining_reader_start_time') }}:</span
+                      >
+                      <span>{{ item.startTime }}</span>
+                    </span>
+                  </div>
+                </div>
+
+                <div class="list-box-main reader-process-card__main">
+                  <div class="reader-process-card__metrics">
+                    <div class="reader-process-card__metric">
+                      <div
+                        class="reader-process-card__value reader-process-card__value--address"
+                      >
+                        {{ item.address || '--' }}
+                      </div>
+                      <div class="reader-process-card__label">
+                        {{ $t('cluster_log_mining_reader_ip_address') }}
+                      </div>
+                    </div>
+                    <div class="reader-process-card__metric">
+                      <div class="reader-process-card__value">
+                        {{ item.pid ?? '--' }}
+                      </div>
+                      <div class="reader-process-card__label">
+                        {{ $t('cluster_log_mining_reader_process_id') }}
+                      </div>
+                    </div>
+                    <div class="reader-process-card__metric">
+                      <div class="reader-process-card__value">
+                        {{ item.cpuUsage }}%
+                      </div>
+                      <div class="reader-process-card__label">
+                        {{ $t('cluster_log_mining_reader_cpu_usage') }}
+                      </div>
+                    </div>
+                    <div class="reader-process-card__metric">
+                      <div class="reader-process-card__value">
+                        {{ item.memoryUsage }}%
+                      </div>
+                      <div class="reader-process-card__label">
+                        {{ $t('cluster_log_mining_reader_heap_memory_usage') }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="reader-process-card__error">
+                    <span class="reader-process-card__label">
+                      {{ $t('daas_cluster_agent_error_reason') }}
+                    </span>
+                    <span
+                      class="reader-process-card__error-value"
+                      :class="{
+                        'reader-process-card__error-value--visible':
+                          item.processStatus !== 'RUNNING',
+                      }"
+                    >
+                      {{
+                        item.processStatus === 'RUNNING'
+                          ? '-'
+                          : item.errorReason || '--'
+                      }}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2831,7 +3189,252 @@ const onUpdateLicenseSuccess = () => {
   column-count: 2; /* 两列 */
   column-gap: 24px;
 }
+.log-mining-agent-type-tag {
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease;
+
+  &:not(.log-mining-agent-type-tag--active) {
+    background: var(--el-fill-color-light);
+    border-color: var(--el-border-color-lighter);
+    color: var(--el-text-color-regular);
+
+    &:hover {
+      border-color: var(--el-color-primary-light-5);
+      color: var(--el-color-primary);
+    }
+  }
+
+  &--active {
+    background: var(--el-color-primary) !important;
+    border-color: var(--el-color-primary) !important;
+    color: var(--el-color-white) !important;
+    box-shadow: 0 2px 7px rgb(64 118 255 / 24%);
+    font-weight: 600;
+  }
+
+  &__check {
+    margin-left: 5px;
+    color: inherit;
+  }
+}
 .logMining-card {
   break-inside: avoid; /* 防止卡片被分割到两列 */
+}
+
+.reader-process-card {
+  overflow: hidden;
+  border-color: var(--el-border-color-lighter) !important;
+  background: var(--el-bg-color);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: var(--el-color-primary-light-5) !important;
+    box-shadow: 0 4px 16px rgb(31 45 61 / 6%);
+  }
+}
+
+.reader-process-card__header {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between !important;
+  min-height: 67px;
+  box-sizing: border-box;
+}
+
+.reader-process-card__header .list-box-header-left {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.reader-process-card__header .list-box-header-main {
+  min-width: 0;
+}
+
+.reader-process-card__header .list-box-header-main .name {
+  max-width: 100%;
+}
+
+.reader-process-card__header-actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-left: auto;
+  gap: 4px;
+}
+
+.reader-process-card__header-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.reader-process-card__start-time {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  max-width: 100%;
+  color: var(--text-dark, var(--el-text-color-primary));
+  font-size: 12px;
+  line-height: 18px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.reader-process-card__status-dot--offline {
+  background-color: var(--el-color-info) !important;
+}
+
+.reader-process-card__main {
+  display: block !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+.reader-process-card__metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 16px 8px;
+}
+
+.reader-process-card__metric {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 4px 12px;
+  text-align: center;
+
+  &:not(:first-child)::before {
+    position: absolute;
+    top: 5px;
+    bottom: 5px;
+    left: 0;
+    width: 1px;
+    background: var(--el-border-color-lighter);
+    content: '';
+  }
+}
+
+.reader-process-card__value {
+  width: 100%;
+  overflow: hidden;
+  color: var(--text-dark, var(--el-text-color-primary));
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 22px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reader-process-card__value--address {
+  overflow: visible;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.reader-process-card__label {
+  color: var(--text-slight, var(--el-text-color-secondary));
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.reader-process-card__error {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 12px;
+  min-width: 0;
+  padding: 11px 16px 13px;
+  border-top: 1px solid var(--el-border-color-lighter);
+  background: var(--el-fill-color-lighter);
+}
+
+.reader-process-card__error-value {
+  overflow-wrap: anywhere;
+  color: var(--text-dark, var(--el-text-color-primary));
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.reader-process-card__error-value--visible {
+  color: var(--el-color-danger);
+  font-weight: 500;
+}
+
+@media (max-width: 1100px) {
+  .reader-process-card__metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .reader-process-card__metric:nth-child(3)::before {
+    display: none;
+  }
+
+  .reader-process-card__metric:nth-child(n + 3) {
+    border-top: 1px solid var(--el-border-color-lighter);
+    padding-top: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .logMining-container {
+    column-count: 1;
+  }
+
+  .reader-process-card__metrics {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 8px 12px;
+  }
+
+  .reader-process-card__metric:not(:first-child) {
+    border-top: 1px solid var(--el-border-color-lighter);
+  }
+
+  .reader-process-card__metric:not(:first-child)::before {
+    display: none;
+  }
+
+  .reader-process-card__error {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+
+  .reader-process-card__header {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .reader-process-card__header .list-box-header-left,
+  .reader-process-card__header-actions {
+    flex: 1 0 100%;
+  }
+
+  .reader-process-card__header-actions {
+    margin-left: 0;
+  }
+
+  .reader-process-card__start-time {
+    font-size: 11px;
+  }
 }
 </style>
