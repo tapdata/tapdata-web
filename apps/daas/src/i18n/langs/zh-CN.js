@@ -1458,6 +1458,7 @@ export default {
   cluster_log_mining_reader_cpu_usage: 'CPU使用率',
   cluster_log_mining_reader_heap_memory_usage: '堆内存使用率',
   cluster_log_mining_reader_start_time: '启动时间',
+  cluster_log_mining_error_detail: '详情',
   cluster_uniqueEncode: '唯一编码',
   cluster_logs: '日志信息',
   cluster_serviceType: '服务类型',

@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue'
+
 import type { LogMiningMonitor } from './types'
 
-defineProps<{
+const props = defineProps<{
   item: LogMiningMonitor
   typeLabel: string
 }>()
@@ -9,6 +11,18 @@ defineProps<{
 const emit = defineEmits<{
   delete: []
 }>()
+
+const errorDetailVisible = ref(false)
+const errorText = computed(() =>
+  props.item.processStatus === 'RUNNING' ? '-' : props.item.errorReason || '--',
+)
+const errorPreviewLimit = 120
+const isErrorLong = computed(() => errorText.value.length > 80)
+const errorPreview = computed(() =>
+  isErrorLong.value
+    ? `${errorText.value.slice(0, errorPreviewLimit).trimEnd()}…`
+    : errorText.value,
+)
 </script>
 
 <template>
@@ -118,20 +132,39 @@ const emit = defineEmits<{
         <span class="reader-process-card__label">
           {{ $t('daas_cluster_agent_error_reason') }}
         </span>
-        <span
-          class="reader-process-card__error-value"
-          :class="{
-            'reader-process-card__error-value--visible':
-              item.processStatus !== 'RUNNING',
-          }"
-        >
-          {{
-            item.processStatus === 'RUNNING' ? '-' : item.errorReason || '--'
-          }}
-        </span>
+        <div class="reader-process-card__error-content">
+          <span
+            class="reader-process-card__error-value"
+            :class="{
+              'reader-process-card__error-value--visible':
+                item.processStatus !== 'RUNNING',
+            }"
+          >
+            {{ errorPreview }}
+          </span>
+          <el-button
+            v-if="isErrorLong"
+            class="reader-process-card__error-detail"
+            link
+            type="danger"
+            @click="errorDetailVisible = true"
+          >
+            {{ $t('cluster_log_mining_error_detail') }}
+          </el-button>
+        </div>
       </div>
     </div>
   </div>
+
+  <el-dialog
+    v-model="errorDetailVisible"
+    :title="$t('daas_cluster_agent_error_reason')"
+    width="min(900px, calc(100vw - 32px))"
+    align-center
+    append-to-body
+  >
+    <pre class="reader-process-card__error-stack">{{ errorText }}</pre>
+  </el-dialog>
 </template>
 
 <style lang="scss" scoped>
@@ -306,7 +339,7 @@ const emit = defineEmits<{
 .reader-process-card__error {
   display: grid;
   grid-template-columns: 92px minmax(0, 1fr);
-  align-items: baseline;
+  align-items: center;
   gap: 12px;
   min-width: 0;
   padding: 11px 16px 13px;
@@ -314,16 +347,54 @@ const emit = defineEmits<{
   background: var(--el-fill-color-lighter);
 }
 
+.reader-process-card__error-content {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+}
+
 .reader-process-card__error-value {
-  overflow-wrap: anywhere;
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
   color: var(--text-dark, var(--el-text-color-primary));
   font-size: 13px;
   line-height: 18px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .reader-process-card__error-value--visible {
   color: var(--el-color-danger);
   font-weight: 500;
+}
+
+.reader-process-card__error-detail {
+  flex: 0 0 auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  color: var(--text-slight, var(--el-text-color-secondary)) !important;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+}
+
+.reader-process-card__error-stack {
+  max-height: 65vh;
+  overflow: auto;
+  margin: 0;
+  padding: 16px;
+  border-radius: 6px;
+  background: var(--el-fill-color-light);
+  color: var(--el-color-danger);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 1100px) {

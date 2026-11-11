@@ -1544,6 +1544,7 @@ export default {
   cluster_log_mining_reader_cpu_usage: 'CPU usage',
   cluster_log_mining_reader_heap_memory_usage: 'Heap memory usage',
   cluster_log_mining_reader_start_time: 'Start time',
+  cluster_log_mining_error_detail: 'Details',
   cluster_uniqueEncode: 'Unique encoding',
   cluster_logs: 'Log',
   cluster_serviceType: 'Service type',

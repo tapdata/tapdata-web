@@ -1196,7 +1196,12 @@ const handleLogMiningAgentTypeChange = (agentType: string) => {
   logMiningFirstLoading.value = true
   fetchLogMiningData().finally(() => {
     logMiningFirstLoading.value = false
-    if (agentType === 'OracleLogParser') fetchLogMiningLicense()
+    if (
+      agentType === 'OracleLogParser' &&
+      selectedLogMiningAgentType.value === 'OracleLogParser'
+    ) {
+      fetchLogMiningLicense()
+    }
   })
 }
 
@@ -1239,6 +1244,8 @@ const updateLicenseExpireDays = (serverId: string, item: any) => {
 }
 
 const fetchLogMiningLicense = () => {
+  if (selectedLogMiningAgentType.value !== 'OracleLogParser') return
+
   const serviceIds = (logMiningData.value || []).map((item) => item.serviceId)
   const fetchIds = serviceIds.filter((id) => !(id in licenseExpireDays.value))
 
@@ -1250,7 +1257,10 @@ const fetchLogMiningLicense = () => {
   })
 
   if (fetchIds.length) {
+    const requestedAgentType = selectedLogMiningAgentType.value
     Promise.all(fetchIds.map((id) => getNieBridgeLicense(id))).then((res) => {
+      if (selectedLogMiningAgentType.value !== requestedAgentType) return
+
       res.forEach((item, i) => updateLicenseExpireDays(fetchIds[i]!, item))
     })
   }
@@ -1339,6 +1349,8 @@ const updateLogMiningLicense = (row: any) => {
 }
 
 const onUpdateLicenseSuccess = () => {
+  if (selectedLogMiningAgentType.value !== 'OracleLogParser') return
+
   fetchLogMiningData()
   getNieBridgeLicense(updateLicenseDialog.serviceId).then((res) =>
     updateLicenseExpireDays(updateLicenseDialog.serviceId, res),
