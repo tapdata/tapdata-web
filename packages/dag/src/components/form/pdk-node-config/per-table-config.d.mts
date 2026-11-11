@@ -1,4 +1,7 @@
-export function pickPerTableConfig(schema: any, values: any): Record<string, any>
+export function pickPerTableConfig(
+  schema: any,
+  values: any,
+): Record<string, any>
 export function syncInheritedPerTableValues(
   schema: any,
   tableValues: any,

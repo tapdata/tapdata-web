@@ -49,7 +49,10 @@ export const TableLevelConfigDialog = defineComponent({
             nextNodeConfig,
           )
           if (!perTableValuesEqual(tableConfig, nextTableConfig)) {
-            props.form.setValuesIn(`tableNodeConfig.${tableName}`, nextTableConfig)
+            props.form.setValuesIn(
+              `tableNodeConfig.${tableName}`,
+              nextTableConfig,
+            )
           }
         }
       },
@@ -93,7 +96,10 @@ export const TableLevelConfigDialog = defineComponent({
       if (!tableName) return
       props.form.setValuesIn(
         `tableNodeConfig.${tableName}`,
-        pickPerTableConfig(props.nodeSchema, props.form.values.nodeConfig || {}),
+        pickPerTableConfig(
+          props.nodeSchema,
+          props.form.values.nodeConfig || {},
+        ),
       )
       selectedTable.value = tableName
       addTableValue.value = ''

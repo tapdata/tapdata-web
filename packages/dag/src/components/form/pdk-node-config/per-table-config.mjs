@@ -20,7 +20,12 @@ function cloneValue(value) {
 
 function equalValue(left, right) {
   if (Object.is(left, right)) return true
-  if (!left || !right || typeof left !== 'object' || typeof right !== 'object') {
+  if (
+    !left ||
+    !right ||
+    typeof left !== 'object' ||
+    typeof right !== 'object'
+  ) {
     return false
   }
   if (Array.isArray(left) !== Array.isArray(right)) return false
@@ -61,8 +66,12 @@ export function syncInheritedPerTableValues(
   for (const [key, fieldSchema] of Object.entries(propertiesOf(schema))) {
     if (fieldSchema?.['x-perTable'] === true) {
       const current = synced[key]
-      const inherited = current === undefined || equalValue(current, previousNodeValues?.[key])
-      if (inherited && !equalValue(previousNodeValues?.[key], nextNodeValues?.[key])) {
+      const inherited =
+        current === undefined || equalValue(current, previousNodeValues?.[key])
+      if (
+        inherited &&
+        !equalValue(previousNodeValues?.[key], nextNodeValues?.[key])
+      ) {
         if (nextNodeValues?.[key] === undefined) delete synced[key]
         else synced[key] = cloneValue(nextNodeValues[key])
       }
