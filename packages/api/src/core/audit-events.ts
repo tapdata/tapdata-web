@@ -1,6 +1,7 @@
 import { downloadBlob } from '@tap/shared'
 import { requestClient } from '../request'
 import { joinListParams } from './alarm'
+import { auditExportError } from './audit-export-error'
 import type { AxiosResponse } from 'axios'
 
 const BASE_URL = '/api/audit-events'
@@ -126,15 +127,8 @@ export async function exportAuditEvents(params: Record<string, any>) {
         skipErrorHandler: true,
       },
     )
-  } catch (error: any) {
-    let body = error?.response?.data
-    if (body instanceof Blob && body.type.includes('application/json')) {
-      body = JSON.parse(await body.text())
-    }
-    if (body?.message || body?.code) {
-      throw new Error(body.message || body.code)
-    }
-    throw error
+  } catch (error: unknown) {
+    throw await auditExportError(error)
   }
   const type = String(res.headers?.['content-type'] || '')
   if (type.includes('application/json')) {
