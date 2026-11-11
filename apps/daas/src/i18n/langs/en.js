@@ -784,6 +784,10 @@ export default {
     'When the incremental synchronization task sharing mode is turned on and a sharable log cannot be found, the task will be stopped',
   setting_test_email_success:
     'The test email has been sent, please log in to the receiving mailbox to check it',
+  setting_test_email_partial_error:
+    'Some recipients are unavailable: the email was delivered to {0}; these addresses were rejected by the mail server, please check and remove them: {1}',
+  setting_test_email_error:
+    'The test email could not be delivered, please check the mail settings',
   setting_test_ldap_success: 'Connected to Ldap service successfully',
   setting_email_template_from: 'From',
   setting_email_template_to: 'Recipient',
@@ -2754,6 +2758,7 @@ export default {
   // TAP-13052 告警事件 / 通知记录 / 操作审计
   page_title_ops_center: 'Operations',
   page_title_message_center: 'Messages & Notifications',
+  page_title_alarm_notification: 'Alarms & Notifications',
   page_title_alarm_events: 'Alarm Events',
   page_title_notification_records: 'Notification Records',
   page_title_operation_audit: 'Operation Audit',
@@ -2833,6 +2838,9 @@ export default {
   notification_record_keyword_placeholder: 'Task/object name or ID',
   notification_record_content: 'Content',
   notification_record_legacy: 'Historical record without delivery details',
+  notification_record_no_related_alarm: 'No related alarm event',
+  notification_setting_offline_notice:
+    'Notification settings have been retired. In-app notifications and email alerts are now configured in Alert Settings.',
   notification_record_alarm_missing:
     'Alarm event was cleared when the task was rerun',
   notification_record_others: "Another user's notification",

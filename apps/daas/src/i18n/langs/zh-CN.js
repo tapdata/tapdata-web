@@ -745,6 +745,9 @@ export default {
   setting_job_cdc_share_only_doc:
     '当增量同步任务共享模式开启，并且无法找到一个可共享的日志，将会停止任务',
   setting_test_email_success: '测试邮件已发送，请登录接收邮箱查收',
+  setting_test_email_partial_error:
+    '部分收件地址不可用：邮件已发送给 {0}；以下地址被邮件服务器拒绝，请检查并移除：{1}',
+  setting_test_email_error: '测试邮件发送失败，请检查邮件设置',
   setting_test_ldap_success: '成功连接Ldap服务',
   setting_email_template_from: '发件人',
   setting_email_template_to: '收件人',
@@ -2609,6 +2612,7 @@ export default {
   // TAP-13052 告警事件 / 通知记录 / 操作审计
   page_title_ops_center: '运维中心',
   page_title_message_center: '消息与通知',
+  page_title_alarm_notification: '告警与通知',
   page_title_alarm_events: '告警事件',
   page_title_notification_records: '通知记录',
   page_title_operation_audit: '操作审计',
@@ -2688,6 +2692,9 @@ export default {
   notification_record_content: '通知内容',
   notification_record_legacy: '历史记录，无发送明细',
   notification_record_alarm_missing: '告警事件已在任务重新运行时清除',
+  notification_record_no_related_alarm: '无关联告警',
+  notification_setting_offline_notice:
+    '通知设置已下线，原站内通知与邮件提醒统一在告警设置中配置。',
   notification_record_others: '其他用户的通知',
   notification_record_others_hint: '其他用户的通知，查看不会改变对方的阅读状态',
   alarm_event_archived: '任务重新运行时归档',
