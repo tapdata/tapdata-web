@@ -1,10 +1,17 @@
 import { getNodeSchemaPage } from '@tap/api/src/core/metadata-instances'
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { computed as reactiveComputed } from '@tap/form'
+import { watch as reactiveWatch } from '@tap/form/src/shared/reactive'
 import { useI18n } from '@tap/i18n'
 import { cloneDeep } from 'lodash-es'
 import { computed, defineComponent, ref, type PropType } from 'vue'
 import type { Form } from '@formily/core'
+import type { Schema } from '@tap/form'
+import {
+  perTableValuesEqual,
+  pickPerTableConfig,
+  syncInheritedPerTableValues,
+} from './per-table-config.mjs'
 import './style.scss'
 
 export const TableLevelConfigDialog = defineComponent({
@@ -16,6 +23,10 @@ export const TableLevelConfigDialog = defineComponent({
     nodeId: {
       type: String,
     },
+    nodeSchema: {
+      type: Object as PropType<Schema>,
+      required: true,
+    },
   },
   setup(props, { slots }) {
     const { t } = useI18n()
@@ -24,6 +35,25 @@ export const TableLevelConfigDialog = defineComponent({
     const addTableValue = ref('')
     const tableNames = ref<{ name: string }[]>([])
     const loading = ref(false)
+
+    reactiveWatch(
+      () => cloneDeep(props.form.values.nodeConfig || {}),
+      (nodeConfig, previousNodeConfig) => {
+        const nextNodeConfig = cloneDeep(nodeConfig || {})
+        const tableConfigs = props.form.values.tableNodeConfig || {}
+        for (const [tableName, tableConfig] of Object.entries(tableConfigs)) {
+          const nextTableConfig = syncInheritedPerTableValues(
+            props.nodeSchema,
+            tableConfig,
+            previousNodeConfig,
+            nextNodeConfig,
+          )
+          if (!perTableValuesEqual(tableConfig, nextTableConfig)) {
+            props.form.setValuesIn(`tableNodeConfig.${tableName}`, nextTableConfig)
+          }
+        }
+      },
+    )
 
     const configuredTables = reactiveComputed(() => {
       const tableConfig = props.form.values.tableNodeConfig || {}
@@ -63,7 +93,7 @@ export const TableLevelConfigDialog = defineComponent({
       if (!tableName) return
       props.form.setValuesIn(
         `tableNodeConfig.${tableName}`,
-        cloneDeep(props.form.values.nodeConfig),
+        pickPerTableConfig(props.nodeSchema, props.form.values.nodeConfig || {}),
       )
       selectedTable.value = tableName
       addTableValue.value = ''
@@ -81,6 +111,20 @@ export const TableLevelConfigDialog = defineComponent({
     }
 
     const handleOpen = () => {
+      const nodeConfig = cloneDeep(props.form.values.nodeConfig || {})
+      const tableConfigs = props.form.values.tableNodeConfig || {}
+      // Drop service-only values copied by older table-level dialogs.
+      for (const [tableName, tableConfig] of Object.entries(tableConfigs)) {
+        const normalized = syncInheritedPerTableValues(
+          props.nodeSchema,
+          tableConfig,
+          nodeConfig,
+          nodeConfig,
+        )
+        if (!perTableValuesEqual(tableConfig, normalized)) {
+          props.form.setValuesIn(`tableNodeConfig.${tableName}`, normalized)
+        }
+      }
       fetchTables()
     }
 
