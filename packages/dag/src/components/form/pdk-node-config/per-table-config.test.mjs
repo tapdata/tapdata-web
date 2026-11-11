@@ -41,7 +41,10 @@ test('node changes update inherited values and preserve explicit per-table overr
       schema,
       tableValues,
       { diskTmpDir: '/tmp', options: { inherited: 'old-node-value' } },
-      { diskTmpDir: '/tapdata_cache', options: { inherited: 'new-node-value' } },
+      {
+        diskTmpDir: '/tapdata_cache',
+        options: { inherited: 'new-node-value' },
+      },
     ),
     {
       diskTmpDir: '/tapdata_cache',
