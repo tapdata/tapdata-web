@@ -2747,6 +2747,7 @@ export default {
   // TAP-13052 告警事件 / 通知记录 / 操作审计
   page_title_ops_center: 'Operations',
   page_title_message_center: 'Messages & Notifications',
+  page_title_alarm_notification: 'Alarms & Notifications',
   page_title_alarm_events: 'Alarm Events',
   page_title_notification_records: 'Notification Records',
   page_title_operation_audit: 'Audit Logs',
@@ -2826,6 +2827,9 @@ export default {
   notification_record_keyword_placeholder: 'Task/object name or ID',
   notification_record_content: 'Content',
   notification_record_legacy: 'Historical record without delivery details',
+  notification_record_no_related_alarm: 'No related alarm event',
+  notification_setting_offline_notice:
+    'Notification settings have been retired. In-app notifications and email alerts are now configured in Alert Settings.',
   notification_record_alarm_missing:
     'Alarm event was cleared when the task was rerun',
   notification_record_others: "Another user's notification",

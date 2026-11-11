@@ -2585,6 +2585,7 @@ export default {
   // TAP-13052 告警事件 / 通知记录 / 操作审计
   page_title_ops_center: '運維中心',
   page_title_message_center: '訊息與通知',
+  page_title_alarm_notification: '告警與通知',
   page_title_alarm_events: '告警事件',
   page_title_notification_records: '通知記錄',
   page_title_operation_audit: '稽核日誌',
@@ -2664,6 +2665,9 @@ export default {
   notification_record_content: '通知內容',
   notification_record_legacy: '歷史記錄，無發送明細',
   notification_record_alarm_missing: '告警事件已在任務重新運行時清除',
+  notification_record_no_related_alarm: '無關聯告警',
+  notification_setting_offline_notice:
+    '通知設置已下線，原站內通知與郵件提醒統一在告警設置中配置。',
   notification_record_others: '其他使用者的通知',
   notification_record_others_hint:
     '其他使用者的通知，查看不會改變對方的閱讀狀態',
