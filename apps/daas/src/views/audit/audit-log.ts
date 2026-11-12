@@ -58,16 +58,21 @@ export function buildAuditQuery(params: Record<string, any> = {}) {
   return query
 }
 
+type OutcomeType = 'success' | 'danger' | 'primary' | 'warning' | 'info'
+
 /** 结果文字与状态色：结果同时用文字和颜色表达，不只依赖颜色。 */
-export function outcomeView(outcome: string | undefined, t: Translate) {
+export function outcomeView(
+  outcome: string | undefined,
+  t: Translate,
+): { text: string; type: OutcomeType } {
   if (!outcome) return { text: t('audit_value_legacy'), type: 'info' }
-  const type =
-    {
-      SUCCESS: 'success',
-      FAILED: 'danger',
-      ACCEPTED: 'primary',
-      PARTIAL: 'warning',
-    }[outcome] || 'info'
+  const types: Record<string, OutcomeType> = {
+    SUCCESS: 'success',
+    FAILED: 'danger',
+    ACCEPTED: 'primary',
+    PARTIAL: 'warning',
+  }
+  const type = types[outcome] || 'info'
   return { text: t(`audit_outcome_${outcome.toLowerCase()}`), type }
 }
 
@@ -172,7 +177,7 @@ export function changeText(
     secretState?: string | null
   },
   t: Translate,
-  label?: string,
+  label?: string | null,
 ) {
   // 设置项优先显示译文（setting_<key_label 空格转下划线>，保留大小写），缺译文时回退 key_label，再回退内部键
   const labelKey =
