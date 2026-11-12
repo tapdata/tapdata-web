@@ -82,7 +82,7 @@ const errorPreview = computed(() =>
           <el-button
             text
             type="danger"
-            :disabled="!item.proxyProcessId"
+            :disabled="!item.proxyProcessId || item.processStatus === 'RUNNING'"
             @click="emit('delete')"
           >
             <el-icon><i-lucide-trash-2 /></el-icon>
