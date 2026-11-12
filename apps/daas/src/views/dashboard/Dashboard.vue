@@ -50,6 +50,7 @@ const trendsTimeRange = ref<TrendsTimeRange>('24h')
 const ALL_NODES_VALUE = '__all_nodes__'
 const customTrendTime = ref<[number, number] | null>(null)
 const manualTrendTimeIssue = ref<CustomTrendTimeIssue | null>(null)
+const manualTrendTimePending = ref(false)
 const selectedPhysicalNodeId = ref(ALL_NODES_VALUE)
 const trendNodes = ref<TaskDashboardNodeOption[]>([])
 const trendNodeListError = ref(false)
@@ -82,6 +83,7 @@ const trendSelectionKey = computed(() => {
 })
 const visibleTrendsResult = computed(() => {
   if (
+    customTrendTimeIssue.value ||
     trendsResult.value?.selectionKey !== trendSelectionKey.value ||
     trendRequestErrorKey.value === trendSelectionKey.value
   ) {
@@ -187,7 +189,10 @@ const apiTrendMessage = computed(() =>
 )
 const customTrendTimeIssue = computed(() =>
   trendsTimeRange.value === 'custom'
-    ? manualTrendTimeIssue.value || getCustomTrendTimeIssue()
+    ? manualTrendTimeIssue.value ||
+      (manualTrendTimePending.value
+        ? 'select_custom_range'
+        : getCustomTrendTimeIssue())
     : null,
 )
 const customTrendTimeMessage = computed(() => {
@@ -577,6 +582,7 @@ function invalidateTrendRequest() {
   trendRequestId += 1
   trendLoading.value = false
   trendRequestErrorKey.value = null
+  trendsResult.value = null
 }
 
 async function fetchTrends() {
@@ -672,6 +678,8 @@ function onTrendNodeChange() {
 
 function onManualTrendInput() {
   manualTrendTimeIssue.value = null
+  manualTrendTimePending.value = true
+  invalidateTrendRequest()
 }
 
 function onManualTrendKeydown(event: KeyboardEvent) {
@@ -708,11 +716,22 @@ function onManualTrendKeydown(event: KeyboardEvent) {
     ElMessage.warning(customTrendTimeMessage.value)
   } else {
     manualTrendTimeIssue.value = null
+    // The picker does not emit change when the user restores the committed range.
+    if (
+      customTrendTime.value?.every(
+        (value, index) =>
+          dayjs(Number(value)).format('YYYY-MM-DD HH:mm:ss') ===
+          [startText, endText][index],
+      )
+    ) {
+      return onCustomTrendTimeChange()
+    }
   }
 }
 
 function onCustomTrendTimeChange() {
   manualTrendTimeIssue.value = null
+  manualTrendTimePending.value = false
   if (customTrendTimeIssue.value) {
     ElMessage.warning(customTrendTimeMessage.value)
     invalidateTrendRequest()

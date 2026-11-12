@@ -265,8 +265,7 @@ export default {
   dashboard_odh_trend_request_failed: '趨勢資料載入失敗，請重試。',
   dashboard_odh_trend_component_not_deployed:
     '{component} 所需元件未部署，目前所選時間範圍內沒有歷史資料。',
-  dashboard_odh_trend_coverage_partial:
-    '該時間範圍內部分時段沒有資料（任務未執行）。',
+  dashboard_odh_trend_coverage_partial: '該時間範圍內部分時段缺少採樣資料。',
   dashboard_odh_trend_partial:
     '部分歷史資料缺少節點歸屬，圖表僅顯示可確認的資料。',
   dashboard_odh_trend_untraceable: '該時間範圍的資料無法追溯至節點歸屬。',

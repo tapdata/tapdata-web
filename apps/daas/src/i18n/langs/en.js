@@ -274,7 +274,7 @@ export default {
   dashboard_odh_trend_component_not_deployed:
     'The component for {component} is not deployed and no historical data is available in the selected range.',
   dashboard_odh_trend_coverage_partial:
-    'Some periods in this time range have no data because no task was running.',
+    'Some periods in this time range have no sample data.',
   dashboard_odh_trend_partial:
     'Some historical data has no node attribution. The chart shows only confirmed data.',
   dashboard_odh_trend_untraceable:
