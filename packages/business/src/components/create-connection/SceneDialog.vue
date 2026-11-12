@@ -710,6 +710,10 @@ export default {
     },
 
     async handleSelect(item, isDemo = false) {
+      if (item.licenseLocked) {
+        this.openLocked()
+        return
+      }
       if (this.connectorJobs[item.pdkId]) return
       if (item.requiresDownload) {
         this.handleReleaseAction(item)
@@ -805,6 +809,10 @@ export default {
     },
 
     async handleReleaseAction(item) {
+      if (item.licenseLocked) {
+        this.openLocked()
+        return
+      }
       if (this.releaseLoading || this.connectorJobs[item.pdkId]) return
       if (!item.releaseAvailable) return
       this.releaseItem = item
@@ -889,7 +897,8 @@ export default {
           const activeJob = this.connectorJobs[pdkId]
           this.removeConnectorJob(pdkId)
           if (job.errorCode === 'RESOURCE_IMPACT_CHANGED') {
-            const release = this.releaseItem || {
+            const release = {
+              ...this.database?.find((item) => item.pdkId === pdkId),
               pdkId,
               artifactId: activeJob?.artifactId,
             }
@@ -980,7 +989,7 @@ export default {
         ? ++this.connectorReleaseRequestId
         : 0
       if (enterpriseCatalog) {
-        data = this.buildEnterpriseConnectorList(registeredData)
+        data = this.buildEnterpriseConnectorList(res || [])
       }
 
       this.databaseTypeMap = data.reduce(
@@ -1005,7 +1014,7 @@ export default {
       }
 
       if (this.isDaas && !this.isCommunity) {
-        this.lockedTypes = []
+        this.lockedTypes = data.filter((item) => item.licenseLocked)
       } else if (this.isControlEnabled) {
         this.lockedTypes = data.filter((item) => {
           const enabled = this.connectors.includes(item.type)
@@ -1051,9 +1060,12 @@ export default {
           .then((releases) => {
             if (releaseRequestId !== this.connectorReleaseRequestId) return
             this.database = this.buildEnterpriseConnectorList(
-              registeredData,
+              res || [],
               releases,
             ).sort(sortFn)
+            this.lockedTypes = this.database.filter(
+              (item) => item.licenseLocked,
+            )
             this.databaseTypeMap = this.database.reduce(
               (map, db) => ((map[db.type] = db), map),
               {},
@@ -1076,30 +1088,24 @@ export default {
         (releases || []).map((release) => [release.artifactId, release]),
       )
       const knownPdkIds = new Set()
-      const catalogItems = connectorCatalog
-        .map((metadata) => {
-          const installed = installedById.get(metadata.pdkId)
-          knownPdkIds.add(metadata.pdkId)
-          const release = releaseByArtifact.get(metadata.artifactId)
-          return {
-            ...metadata,
-            ...installed,
-            pdkId: metadata.pdkId,
-            releaseVersion: release?.version,
-            releaseAvailable: !!release,
-            requiresDownload: !installed,
-            locked: !installed,
-            updateAvailable:
-              !!installed &&
-              !!release &&
-              compareConnectorVersions(release.version, installed.version) > 0,
-          }
-        })
-        .filter(
-          (item) =>
-            this.selectorType === 'source_and_target' ||
-            item.connectionType?.includes(this.selectorType),
-        )
+      const catalogItems = connectorCatalog.map((metadata) => {
+        const installed = installedById.get(metadata.pdkId)
+        knownPdkIds.add(metadata.pdkId)
+        const release = releaseByArtifact.get(metadata.artifactId)
+        return {
+          ...metadata,
+          ...installed,
+          pdkId: metadata.pdkId,
+          releaseVersion: release?.version,
+          releaseAvailable: !!release,
+          requiresDownload: !installed,
+          locked: !installed,
+          updateAvailable:
+            !!installed &&
+            !!release &&
+            compareConnectorVersions(release.version, installed.version) > 0,
+        }
+      })
 
       // Keep manually registered or custom connectors even when the catalog
       // does not know their artifact id, or Nexus is unavailable.
@@ -1107,6 +1113,22 @@ export default {
         (item) => !knownPdkIds.has(item.pdkId),
       )
       return [...catalogItems, ...unlistedInstalled]
+        .filter(
+          (item) =>
+            this.selectorType === 'source_and_target' ||
+            (item.connectionType?.includes(this.selectorType) &&
+              (item.requiresDownload || !!item.pdkHash)),
+        )
+        .map((item) => {
+          const licenseLocked =
+            this.isControlEnabled && !this.connectors.includes(item.type)
+          return {
+            ...item,
+            licenseLocked,
+            locked: licenseLocked || item.locked,
+            updateAvailable: !licenseLocked && item.updateAvailable,
+          }
+        })
     },
 
     handleSearchInput() {

@@ -15,7 +15,7 @@
     "realName": "ApsaraDB AnalyticDB (MySQL Edition)",
     "icon": "aliyun_adb_mysql.png",
     "tags": ["Database"],
-    "connectionType": "source_and_target",
+    "connectionType": "source",
     "artifactId": "aliyun-adb-mysql-connector",
     "type": "Aliyun ADB MySQL"
   },
@@ -125,7 +125,7 @@
     "realName": "Coding",
     "icon": "coding.png",
     "tags": ["SaaS"],
-    "connectionType": "source_and_target",
+    "connectionType": "source",
     "artifactId": "coding-connector",
     "type": "Coding"
   },
@@ -255,7 +255,7 @@
     "realName": "GBase 8a",
     "icon": "gbase8a.png",
     "tags": ["Database"],
-    "connectionType": "source_and_target",
+    "connectionType": "target",
     "artifactId": "gbase8a-connector",
     "type": "GBase-8a"
   },
@@ -265,7 +265,7 @@
     "realName": "GBase 8s",
     "icon": "gbase8s.png",
     "tags": ["Database"],
-    "connectionType": "source_and_target",
+    "connectionType": "target",
     "artifactId": "gbase8s-connector",
     "type": "GBase-8s"
   },
@@ -811,7 +811,7 @@
     "realName": "Zoho Desk",
     "icon": "zoho.png",
     "tags": ["SaaS"],
-    "connectionType": "source_and_target",
+    "connectionType": "source",
     "artifactId": "zoho-desk-connector",
     "type": "Zoho-Desk"
   },
