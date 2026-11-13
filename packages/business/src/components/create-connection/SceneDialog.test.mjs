@@ -55,6 +55,12 @@ function createDialog(overrides = {}, api = {}) {
     connectorJobs: {},
     connectorJobTimers: {},
     connectorReleaseRequestId: 0,
+    connectorCatalogLoading: false,
+    currentScene: 'installed',
+    sceneList: [],
+    tagList: [],
+    startingTour: false,
+    pausedGuide: false,
     lockedTypes: [],
     $t: (key) => key,
     $message: { error() {}, success() {}, info() {} },
@@ -69,8 +75,247 @@ function createDialog(overrides = {}, api = {}) {
   for (const [key, method] of Object.entries(component.methods)) {
     if (!(key in dialog)) dialog[key] = method.bind(dialog)
   }
+  for (const [key, getter] of Object.entries(component.computed)) {
+    if (!(key in dialog) && typeof getter === 'function') {
+      Object.defineProperty(dialog, key, { get: getter.bind(dialog) })
+    }
+  }
   return dialog
 }
+
+test('enterprise browsing defaults to installed while other sidebar categories and search include the full catalog', () => {
+  const dialog = createDialog({
+    selectorType: 'source_and_target',
+    tagList: [
+      { key: 'all' },
+      { key: 'recommend' },
+      { key: 'Database' },
+      { key: 'File' },
+      { key: 'Custom' },
+    ],
+    database: [
+      {
+        pdkId: 'mysql',
+        name: 'MySQL',
+        pdkHash: 'mysql-hash',
+        tags: ['Database'],
+      },
+      { pdkId: 'json', name: 'JSON', pdkHash: 'json-hash', tags: ['File'] },
+      {
+        pdkId: 'custom',
+        name: 'Private',
+        pdkHash: 'private-hash',
+        tags: ['Custom'],
+      },
+      { pdkId: 'legacy', name: 'Legacy API', tags: ['Database'] },
+      { pdkId: 'xml', name: 'XML', requiresDownload: true, tags: ['File'] },
+      {
+        pdkId: 'aws',
+        name: 'Amazon MySQL',
+        requiresDownload: true,
+        tags: ['Database'],
+      },
+    ],
+  })
+  dialog.resetConnectorBrowser()
+  assert.equal(dialog.currentScene, 'installed')
+  assert.deepEqual(
+    dialog.sceneDatabases.map((item) => item.pdkId),
+    ['mysql', 'json', 'custom', 'legacy'],
+  )
+  assert.equal(dialog.installedConnectorCount, 4)
+  assert.equal(
+    dialog.options.some((item) => item.key === 'recommend'),
+    true,
+  )
+
+  dialog.handleSelectScene({ key: 'all' })
+  assert.deepEqual(
+    dialog.sceneDatabases.map((item) => item.pdkId),
+    ['mysql', 'json', 'custom', 'legacy', 'xml', 'aws'],
+  )
+  assert.equal(
+    dialog.options.some((item) => item.key === 'Custom'),
+    true,
+  )
+  dialog.currentScene = 'File'
+  assert.deepEqual(
+    dialog.sceneDatabases.map((item) => item.pdkId),
+    ['json', 'xml'],
+  )
+  dialog.handleSelectScene({ key: 'installed' })
+  assert.deepEqual(
+    dialog.sceneDatabases.map((item) => item.pdkId),
+    ['mysql', 'json', 'custom', 'legacy'],
+  )
+  dialog.search = 'mysql'
+  assert.deepEqual(
+    dialog.connectorSections.map((section) => [
+      section.key,
+      section.items.map((item) => item.pdkId),
+    ]),
+    [
+      ['installed', ['mysql']],
+      ['available', ['aws']],
+    ],
+  )
+})
+
+test('enterprise target filters use connector types and keep the API creation entry', () => {
+  const dialog = createDialog({
+    tagList: [{ key: 'all' }, { key: 'SaaS' }],
+    sceneList: [{ key: 'api', hidden: false }],
+    currentScene: 'SaaS',
+    database: [
+      { pdkId: 'saas', name: 'SaaS', pdkHash: 'hash', tags: ['SaaS'] },
+    ],
+  })
+  assert.deepEqual(
+    dialog.sceneDatabases.map((item) => item.pdkId),
+    ['saas'],
+  )
+  assert.ok(dialog.options.some((item) => item.key === 'api'))
+})
+
+test('API category global search waits for the pending connector catalog without blocking the API entry itself', () => {
+  const dialog = createDialog({
+    currentScene: 'api',
+    specialScene: { api: [{ key: 'apiApp' }] },
+    connectorCatalogLoading: true,
+  })
+  assert.equal(dialog.showSpecialScene, true)
+  assert.equal(dialog.connectorListLoading, false)
+  dialog.search = 'mysql'
+  assert.equal(dialog.showSpecialScene, false)
+  assert.deepEqual(dialog.connectorSections, [])
+  assert.equal(dialog.connectorListLoading, true)
+  dialog.database = [{ pdkId: 'mysql', name: 'MySQL', requiresDownload: true }]
+  assert.equal(dialog.connectorListLoading, false)
+  assert.equal(dialog.connectorSections[0].items[0].pdkId, 'mysql')
+})
+
+test('installed, type and search empty states share recovery to the full catalog without hiding pending results', () => {
+  const dialog = createDialog()
+  dialog.resetConnectorBrowser()
+  assert.equal(dialog.showInstalledEmptyState, true)
+  assert.equal(
+    dialog.connectorEmptyMessage,
+    'packages_business_connector_none_installed',
+  )
+  assert.equal(dialog.canResetConnectorFilters, true)
+  for (const category of ['Database', 'SaaS', 'File', 'Custom', 'recommend']) {
+    dialog.handleSelectScene({ key: category })
+    assert.equal(dialog.connectorSections.length, 0)
+    assert.equal(
+      dialog.connectorEmptyMessage,
+      'packages_business_connector_no_matches',
+    )
+    assert.equal(dialog.canResetConnectorFilters, true)
+  }
+  dialog.handleSelectScene({ key: 'all' })
+  assert.equal(dialog.canResetConnectorFilters, false)
+  dialog.search = 'not-found'
+  assert.equal(dialog.canResetConnectorFilters, true)
+  dialog.connectorCatalogLoading = true
+  assert.equal(dialog.connectorListLoading, true)
+  dialog.handleSelectScene({ key: 'all' })
+  assert.equal(dialog.search, '')
+  assert.equal(dialog.currentScene, 'all')
+})
+
+test('Cloud and community keep their existing recommendation and target-scenario browsing', () => {
+  for (const platform of [
+    { isDaas: false, isCommunity: false },
+    { isDaas: true, isCommunity: true },
+  ]) {
+    const mysql = {
+      pdkId: 'mysql',
+      name: 'MySQL',
+      type: 'Mysql',
+      pdkHash: 'hash',
+    }
+    const dialog = createDialog({
+      ...platform,
+      sceneList: [{ key: 'recommend', types: ['Mysql'] }, { key: 'api' }],
+      database: [mysql],
+      databaseTypeMap: { Mysql: mysql },
+    })
+    dialog.resetConnectorBrowser()
+    assert.equal(dialog.usesConnectorCatalog, false)
+    assert.equal(dialog.currentScene, 'recommend')
+    assert.deepEqual(dialog.sceneDatabases, [mysql])
+    assert.equal(dialog.connectorSections.length, 1)
+    assert.ok(dialog.options.some((item) => item.key === 'api'))
+  }
+})
+
+test('a pending release catalog keeps local entries usable and waits before showing empty category or search results', async () => {
+  let resolveReleases
+  const releases = new Promise((resolve) => (resolveReleases = resolve))
+  const dialog = createDialog(
+    { selectorType: 'source_and_target' },
+    {
+      fetchDatabases: () =>
+        Promise.resolve([
+          {
+            pdkId: 'mysql',
+            name: 'MySQL',
+            type: 'Mysql',
+            pdkHash: 'hash',
+            connectionType: 'source_and_target',
+          },
+        ]),
+      getConnectorReleases: () => releases,
+    },
+  )
+  await dialog.getData()
+  assert.equal(dialog.connectorListLoading, false)
+  assert.deepEqual(
+    dialog.sceneDatabases.map((item) => item.pdkId),
+    ['mysql'],
+  )
+  dialog.handleSelectScene({ key: 'all' })
+  assert.equal(dialog.connectorListLoading, false)
+  assert.deepEqual(
+    dialog.sceneDatabases.map((item) => item.pdkId),
+    ['mysql'],
+  )
+  dialog.search = 'mongo'
+  assert.equal(dialog.connectorListLoading, true)
+  assert.deepEqual(dialog.sceneDatabases, [])
+  resolveReleases([{ artifactId: 'mongodb-connector', version: '2.11.0' }])
+  await new Promise((resolve) => setImmediate(resolve))
+  assert.equal(dialog.connectorListLoading, false)
+  assert.equal(dialog.currentScene, 'all')
+  assert.deepEqual(
+    dialog.sceneDatabases.map((item) => item.pdkId),
+    ['mongodb'],
+  )
+})
+
+test('installation completion returns its open dialog to installed connectors without interrupting other browsing', async () => {
+  for (const context of [
+    { visible: true, selected: 'mysql', expected: 'installed' },
+    { visible: true, selected: 'postgres', expected: 'File' },
+    { visible: false, selected: 'mysql', expected: 'File' },
+  ]) {
+    const dialog = createDialog(
+      {
+        currentScene: 'File',
+        releaseDialogVisible: context.visible,
+        releaseItem: { pdkId: context.selected },
+        connectorJobs: { mysql: { jobId: 'install', operation: 'install' } },
+        getData: () => Promise.resolve(),
+      },
+      {
+        getConnectorRegistrationJob: () =>
+          Promise.resolve({ status: 'completed', progress: 100 }),
+      },
+    )
+    await dialog.pollConnectorRegistration('install', 'mysql')
+    assert.equal(dialog.currentScene, context.expected)
+  }
+})
 
 test('recovers the failed job instead of the most recently selected connector', async () => {
   const impacts = []

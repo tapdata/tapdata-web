@@ -1768,6 +1768,12 @@ export default {
   packages_business_connector_no_release: '当前无可用安装版本',
   packages_business_connector_license_required: '当前许可不支持此连接器',
   packages_business_connector_installed: '已安装',
+  packages_business_connector_add_data_source: '添加数据源',
+  packages_business_connector_available: '可安装',
+  packages_business_connector_all_types: '全部类型',
+  packages_business_connector_none_installed: '尚未安装数据源',
+  packages_business_connector_no_matches: '暂无匹配的数据源',
+  packages_business_connector_view_all: '查看全部数据源',
   packages_business_connector_updated: '已更新',
   packages_business_connector_job_unavailable:
     '无法找到注册任务，请检查连接器及关联任务的实际状态。',

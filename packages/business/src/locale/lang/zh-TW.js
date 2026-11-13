@@ -1757,6 +1757,12 @@ export default {
   packages_business_connector_no_release: '目前沒有可用的安裝版本',
   packages_business_connector_license_required: '目前授權不支援此連接器',
   packages_business_connector_installed: '已安裝',
+  packages_business_connector_add_data_source: '新增資料來源',
+  packages_business_connector_available: '可安裝',
+  packages_business_connector_all_types: '所有類型',
+  packages_business_connector_none_installed: '尚未安裝資料來源',
+  packages_business_connector_no_matches: '沒有符合條件的資料來源',
+  packages_business_connector_view_all: '查看所有資料來源',
   packages_business_connector_updated: '已更新',
   packages_business_connector_job_unavailable:
     '找不到註冊任務，請檢查連接器及關聯任務的實際狀態。',

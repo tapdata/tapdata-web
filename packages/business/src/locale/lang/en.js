@@ -1971,6 +1971,12 @@ export default {
   packages_business_connector_license_required:
     'Your license does not include this connector',
   packages_business_connector_installed: 'Installed',
+  packages_business_connector_add_data_source: 'Add data source',
+  packages_business_connector_available: 'Available to install',
+  packages_business_connector_all_types: 'All types',
+  packages_business_connector_none_installed: 'No data sources installed yet',
+  packages_business_connector_no_matches: 'No matching data sources',
+  packages_business_connector_view_all: 'View all data sources',
   packages_business_connector_updated: 'Updated',
   packages_business_connector_job_unavailable:
     'Registration job not found. Check the connector and related tasks.',

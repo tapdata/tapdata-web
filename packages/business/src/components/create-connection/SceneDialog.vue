@@ -104,6 +104,7 @@ export default {
       demoDatabase: [],
       databaseTypeMap: {},
       connectorReleaseRequestId: 0,
+      connectorCatalogLoading: false,
       loading: false,
       releaseDialogVisible: false,
       releaseLoading: false,
@@ -241,7 +242,7 @@ export default {
           'packages_business_create_connection_mongodbatlas_desc',
         ),
       },
-      currentScene: 'recommend',
+      currentScene: isDaas && !isCommunity ? 'installed' : 'recommend',
       lockedTypes:
         import.meta.env.VUE_APP_MODE === 'community'
           ? [
@@ -505,6 +506,12 @@ export default {
   },
   computed: {
     ...mapGetters('feature', ['isControlEnabled', 'connectors']),
+    usesConnectorCatalog() {
+      return this.isDaas && !this.isCommunity
+    },
+    installedConnectorCount() {
+      return this.database.filter((item) => !item.requiresDownload).length
+    },
     startingTour() {
       return this.$store.getters.startingTour
     },
@@ -527,6 +534,10 @@ export default {
 
       const { currentScene } = this
 
+      if (this.usesConnectorCatalog && currentScene === 'installed') {
+        return this.database.filter((item) => !item.requiresDownload)
+      }
+
       if (currentScene === 'all') {
         return this.database
       }
@@ -537,9 +548,11 @@ export default {
 
       if (
         currentScene === 'recommend' ||
-        (this.selectorType === 'target' && currentScene !== 'Database')
+        (!this.usesConnectorCatalog &&
+          this.selectorType === 'target' &&
+          currentScene !== 'Database')
       ) {
-        const types = this.sceneMap[this.currentScene]
+        const types = this.sceneMap[this.currentScene] || []
         const arr = []
 
         if (!types.length) return arr
@@ -554,10 +567,83 @@ export default {
 
       return this.database.filter((db) => db.tags?.includes(currentScene))
     },
+    connectorSections() {
+      if (!this.sceneDatabases.length) return []
+      if (!this.usesConnectorCatalog || !this.search) {
+        return [{ key: 'current', items: this.sceneDatabases }]
+      }
+      return [
+        {
+          key: 'installed',
+          title: 'packages_business_connector_installed',
+          items: this.sceneDatabases.filter((item) => !item.requiresDownload),
+        },
+        {
+          key: 'available',
+          title: 'packages_business_connector_available',
+          items: this.sceneDatabases.filter((item) => item.requiresDownload),
+        },
+      ].filter((section) => section.items.length)
+    },
+    showSpecialScene() {
+      return (
+        !!this.specialScene?.[this.currentScene] &&
+        (!this.usesConnectorCatalog || !this.search)
+      )
+    },
+    connectorListLoading() {
+      return (
+        this.loading ||
+        (this.usesConnectorCatalog &&
+          this.connectorCatalogLoading &&
+          (this.currentScene !== 'installed' || !!this.search) &&
+          !this.showSpecialScene &&
+          this.sceneDatabases.length === 0)
+      )
+    },
+    showInstalledEmptyState() {
+      return (
+        this.usesConnectorCatalog &&
+        this.currentScene === 'installed' &&
+        !this.search &&
+        !this.loading &&
+        this.installedConnectorCount === 0
+      )
+    },
+    connectorEmptyMessage() {
+      return this.$t(
+        this.showInstalledEmptyState
+          ? 'packages_business_connector_none_installed'
+          : 'packages_business_connector_no_matches',
+      )
+    },
+    canResetConnectorFilters() {
+      return this.currentScene !== 'all' || !!this.search
+    },
     options() {
       const list =
-        this.selectorType === 'target' ? this.sceneList : this.tagList
-      return list.filter((item) => !item.hidden)
+        !this.usesConnectorCatalog && this.selectorType === 'target'
+          ? this.sceneList
+          : this.tagList
+      const options = list.filter((item) => !item.hidden)
+      if (this.usesConnectorCatalog) {
+        if (this.selectorType === 'target') {
+          options.push(
+            ...this.sceneList.filter(
+              (item) => item.key === 'api' && !item.hidden,
+            ),
+          )
+        }
+        return options.map((item) =>
+          item.key === 'all'
+            ? {
+                ...item,
+                name: this.$t('packages_business_connector_all_types'),
+              }
+            : item,
+        )
+      }
+      return options
     },
     title() {
       if (this.selectorType === 'target') {
@@ -570,6 +656,7 @@ export default {
 
     showDemoConnection() {
       return (
+        !this.usesConnectorCatalog &&
         this.startingTour &&
         !this.pausedGuide &&
         this.currentScene === 'recommend' &&
@@ -590,8 +677,7 @@ export default {
       })
       if (v) {
         this.modalClass = ''
-        this.search = ''
-        this.currentScene = 'recommend'
+        this.resetConnectorBrowser()
 
         if (this.fixedPdkId) {
           this.onlyForm = true
@@ -829,6 +915,11 @@ export default {
       this.resetScroll()
     },
 
+    resetConnectorBrowser() {
+      this.search = ''
+      this.currentScene = this.usesConnectorCatalog ? 'installed' : 'recommend'
+    },
+
     getConnectorJob(item) {
       const job = this.connectorJobs[item.pdkId]
       return job?.status === 'completed' &&
@@ -1037,6 +1128,14 @@ export default {
           await this.getData(true).catch((error) =>
             console.warn('Unable to refresh installed connectors', error),
           )
+          if (
+            this.usesConnectorCatalog &&
+            activeJob.operation === 'install' &&
+            this.releaseDialogVisible &&
+            this.releaseItem?.pdkId === pdkId
+          ) {
+            this.handleSelectScene({ key: 'installed' })
+          }
           return
         }
         if (job.status === 'failed') {
@@ -1122,7 +1221,8 @@ export default {
     },
 
     resetScroll() {
-      this.$refs.connectorContainer.scrollTop = 0
+      if (this.$refs?.connectorContainer)
+        this.$refs.connectorContainer.scrollTop = 0
     },
 
     async getData(noLoading = false) {
@@ -1216,6 +1316,7 @@ export default {
       // Nexus is optional for rendering the connection list. Fetch its release
       // metadata after the locally available connectors are already usable.
       if (enterpriseCatalog) {
+        this.connectorCatalogLoading = true
         getConnectorReleases()
           .then((releases) => {
             if (releaseRequestId !== this.connectorReleaseRequestId) return
@@ -1237,6 +1338,10 @@ export default {
               'Unable to load the Nexus connector release catalog',
               error,
             )
+          })
+          .finally(() => {
+            if (releaseRequestId === this.connectorReleaseRequestId)
+              this.connectorCatalogLoading = false
           })
       }
     },
@@ -1403,7 +1508,7 @@ export default {
         </template>
       </div>
     </template>
-    <div v-if="!showForm" class="flex border-top flex-1 min-h-0">
+    <div v-if="!showForm" class="flex flex-1 min-h-0 border-top">
       <div
         class="flex flex-column border-end scene-name-list-wrap overflow-x-hidden pt-4 pb-2"
         :class="{
@@ -1411,6 +1516,16 @@ export default {
         }"
       >
         <div class="scene-name-list overflow-y-auto">
+          <button
+            v-if="usesConnectorCatalog"
+            type="button"
+            class="scene-name-item connector-installed-option px-4 rounded-lg user-select-none cursor-pointer flex align-center"
+            :class="{ active: currentScene === 'installed' && !search }"
+            :aria-pressed="currentScene === 'installed' && !search"
+            @click="handleSelectScene({ key: 'installed' })"
+          >
+            <span>{{ $t('packages_business_connector_installed') }}</span>
+          </button>
           <div
             v-if="lockedTypes.length"
             class="scene-name-item px-4 rounded-lg user-select-none ellipsis cursor-pointer flex align-center"
@@ -1457,12 +1572,13 @@ export default {
       </div>
       <div
         ref="connectorContainer"
-        v-loading="loading"
+        v-loading="connectorListLoading"
         class="flex-1 bg-light dark:bg-card p-4 overflow-y-auto"
       >
         <div
-          v-if="specialScene[currentScene]"
+          v-if="showSpecialScene"
           class="connector-list grid gap-4"
+          :class="{ 'connector-list--catalog': usesConnectorCatalog }"
         >
           <div
             v-for="item in specialScene[currentScene]"
@@ -1482,165 +1598,206 @@ export default {
             </div>
           </div>
         </div>
-        <div
-          v-else-if="sceneDatabases.length"
-          class="connector-list grid gap-4"
-        >
-          <template v-if="showDemoConnection">
+        <div v-else-if="connectorSections.length" class="connector-sections">
+          <section
+            v-for="section in connectorSections"
+            :key="section.key"
+            class="connector-section"
+          >
             <div
-              v-for="item in demoDatabase"
-              :key="`demo-${item.pdkId}`"
-              class="connector-item rounded-xl p-3 overflow-hidden bg-white clickable"
-              :class="{ active: item.pdkId === selected.pdkId }"
-              :data-qc="
-                ['GA', 'Beta', 'Alpha'].includes(item.qcType)
-                  ? item.qcType
-                  : undefined
-              "
-              @click="handleSelect(item, true)"
+              v-if="usesConnectorCatalog && search"
+              class="connector-section-heading"
             >
-              <div class="flex gap-3">
-                <DatabaseIcon :size="38" :item="item" />
-                <div class="connector-item-content flex-1 overflow-hidden">
-                  <div
-                    class="connector-item-title font-color-dark flex align-center"
-                  >
-                    <span class="ellipsis mr-1"
-                      >{{ item.name }}
-                      <span class="color-warning">Demo</span></span
-                    >
-                    <ElTag
-                      type="warning"
-                      class="text-uppercase ml-auto px-1 connector-item-tag"
-                      >DEMO</ElTag
-                    >
+              <h3>{{ $t(section.title) }}</h3>
+              <span>{{ section.items.length }}</span>
+            </div>
+            <div
+              class="connector-list grid gap-4"
+              :class="{ 'connector-list--catalog': usesConnectorCatalog }"
+            >
+              <template v-if="showDemoConnection">
+                <div
+                  v-for="item in demoDatabase"
+                  :key="`demo-${item.pdkId}`"
+                  class="connector-item rounded-xl p-3 overflow-hidden bg-white clickable"
+                  :class="{ active: item.pdkId === selected.pdkId }"
+                  :data-qc="
+                    ['GA', 'Beta', 'Alpha'].includes(item.qcType)
+                      ? item.qcType
+                      : undefined
+                  "
+                  @click="handleSelect(item, true)"
+                >
+                  <div class="flex gap-3">
+                    <DatabaseIcon :size="38" :item="item" />
+                    <div class="connector-item-content flex-1 overflow-hidden">
+                      <div
+                        class="connector-item-title font-color-dark flex align-center"
+                      >
+                        <span class="ellipsis mr-1"
+                          >{{ item.name }}
+                          <span class="color-warning">Demo</span></span
+                        >
+                        <ElTag
+                          type="warning"
+                          class="text-uppercase ml-auto px-1 connector-item-tag"
+                          >DEMO</ElTag
+                        >
+                      </div>
+                    </div>
+                  </div>
+                  <div class="font-color-light fs-8 mt-2">
+                    {{ item.name }}
+                    {{ $t('packages_business_demo_database_desc') }}
                   </div>
                 </div>
-              </div>
-              <div class="font-color-light fs-8 mt-2">
-                {{ item.name }} {{ $t('packages_business_demo_database_desc') }}
-              </div>
-            </div>
-          </template>
-          <div
-            v-for="item in sceneDatabases"
-            :key="item.type"
-            class="connector-item rounded-xl p-3 overflow-hidden bg-card dark:bg-white/10 clickable"
-            :class="{ active: item.pdkId === selected.pdkId }"
-            :data-qc="
-              ['GA', 'Beta', 'Alpha'].includes(item.qcType)
-                ? item.qcType
-                : undefined
-            "
-            @click="handleSelect(item)"
-          >
-            <ConnectorQualityBadge :quality="item.qcType" />
-            <div class="flex gap-3">
-              <DatabaseIcon
-                v-if="!item.locked || !item.icon.includes('.')"
-                :size="38"
-                :item="item"
-                :class="{
-                  'connector-icon--unregistered': item.requiresDownload,
-                }"
-              />
-              <ElImage
-                v-else
-                style="width: 38px; height: 38px"
-                :src="getConnectorImage(item.icon)"
-                :class="{
-                  'connector-icon--unregistered': item.requiresDownload,
-                }"
-              />
-              <div class="connector-item-content flex-1 overflow-hidden">
-                <div
-                  class="connector-item-title font-color-dark flex align-center"
-                  :class="{
-                    'connector-item-title--updatable':
-                      showConnectorAction(item),
-                    'connector-item-title--versioned':
-                      item.pdkHash && !item.requiresDownload && item.version,
-                  }"
+              </template>
+              <div
+                v-for="item in section.items"
+                :key="item.type"
+                class="connector-item rounded-xl p-3 overflow-hidden bg-card dark:bg-white/10 clickable"
+                :class="{ active: item.pdkId === selected.pdkId }"
+                :data-qc="
+                  ['GA', 'Beta', 'Alpha'].includes(item.qcType)
+                    ? item.qcType
+                    : undefined
+                "
+                @click="handleSelect(item)"
+              >
+                <ConnectorQualityBadge :quality="item.qcType" />
+                <div class="flex gap-3">
+                  <DatabaseIcon
+                    v-if="!item.locked || !item.icon.includes('.')"
+                    :size="38"
+                    :item="item"
+                    :class="{
+                      'connector-icon--unregistered':
+                        item.requiresDownload && !usesConnectorCatalog,
+                    }"
+                  />
+                  <ElImage
+                    v-else
+                    style="width: 38px; height: 38px"
+                    :src="getConnectorImage(item.icon)"
+                    :class="{
+                      'connector-icon--unregistered':
+                        item.requiresDownload && !usesConnectorCatalog,
+                    }"
+                  />
+                  <div class="connector-item-content flex-1 overflow-hidden">
+                    <div
+                      class="connector-item-title font-color-dark flex align-center"
+                      :class="{
+                        'connector-item-title--updatable':
+                          showConnectorAction(item),
+                        'connector-item-title--versioned':
+                          item.pdkHash &&
+                          !item.requiresDownload &&
+                          item.version,
+                      }"
+                    >
+                      <span class="connector-item-name ellipsis">{{
+                        item.name
+                      }}</span>
+                      <span
+                        v-if="
+                          item.pdkHash && !item.requiresDownload && item.version
+                        "
+                        class="connector-item-version"
+                        >{{ item.version }}</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <ElButton
+                  v-if="showConnectorAction(item)"
+                  size="small"
+                  class="connector-release-action"
+                  :type="
+                    getConnectorJob(item)?.status === 'failed'
+                      ? 'danger'
+                      : item.requiresDownload
+                        ? 'primary'
+                        : undefined
+                  "
+                  :plain="
+                    item.requiresDownload ||
+                    getConnectorJob(item)?.status === 'failed'
+                  "
+                  :disabled="!!connectorActionDisabledReason(item)"
+                  :title="
+                    connectorActionDisabledReason(item) || item.releaseVersion
+                  "
+                  @click.stop="handleReleaseAction(item)"
                 >
-                  <span class="connector-item-name ellipsis">{{
-                    item.name
-                  }}</span>
+                  <ElIcon v-if="getConnectorJob(item)?.status === 'failed'"
+                    ><i-lucide-circle-alert
+                  /></ElIcon>
+                  <ElIcon
+                    v-else-if="getConnectorJob(item)"
+                    class="connector-release-loader"
+                    ><i-lucide-loader-circle
+                  /></ElIcon>
+                  <ElIcon v-else-if="item.requiresDownload"
+                    ><i-lucide-download
+                  /></ElIcon>
+                  <ElIcon v-else><i-lucide-arrow-up /></ElIcon>
+                  {{ connectorActionLabel(item) }}
                   <span
                     v-if="
-                      item.pdkHash && !item.requiresDownload && item.version
+                      item.updateAvailable &&
+                      !item.requiresDownload &&
+                      !getConnectorJob(item)
                     "
-                    class="connector-item-version"
-                    >{{ item.version }}</span
-                  >
+                    class="connector-release-dot"
+                    aria-hidden="true"
+                  />
+                </ElButton>
+                <div
+                  v-if="
+                    getConnectorJob(item) &&
+                    !['completed', 'failed'].includes(
+                      getConnectorJob(item).status,
+                    )
+                  "
+                  class="connector-release-track"
+                >
+                  <span
+                    :style="{
+                      transform: `scaleX(${connectorJobProgress(item) / 100})`,
+                    }"
+                  />
+                </div>
+                <div
+                  v-if="currentScene === 'recommend' && !search"
+                  class="font-color-light fs-8 mt-2"
+                >
+                  {{ connectorDescMap[item.type] }}
                 </div>
               </div>
             </div>
-            <ElButton
-              v-if="showConnectorAction(item)"
-              size="small"
-              class="connector-release-action"
-              :type="
-                getConnectorJob(item)?.status === 'failed'
-                  ? 'danger'
-                  : item.requiresDownload
-                    ? 'primary'
-                    : undefined
-              "
-              :plain="
-                item.requiresDownload ||
-                getConnectorJob(item)?.status === 'failed'
-              "
-              :disabled="!!connectorActionDisabledReason(item)"
-              :title="
-                connectorActionDisabledReason(item) || item.releaseVersion
-              "
-              @click.stop="handleReleaseAction(item)"
-            >
-              <ElIcon v-if="getConnectorJob(item)?.status === 'failed'"
-                ><i-lucide-circle-alert
-              /></ElIcon>
-              <ElIcon
-                v-else-if="getConnectorJob(item)"
-                class="connector-release-loader"
-                ><i-lucide-loader-circle
-              /></ElIcon>
-              <ElIcon v-else-if="item.requiresDownload"
-                ><i-lucide-download
-              /></ElIcon>
-              <ElIcon v-else><i-lucide-arrow-up /></ElIcon>
-              {{ connectorActionLabel(item) }}
-              <span
-                v-if="
-                  item.updateAvailable &&
-                  !item.requiresDownload &&
-                  !getConnectorJob(item)
-                "
-                class="connector-release-dot"
-                aria-hidden="true"
-              />
-            </ElButton>
-            <div
-              v-if="
-                getConnectorJob(item) &&
-                !['completed', 'failed'].includes(getConnectorJob(item).status)
-              "
-              class="connector-release-track"
-            >
-              <span
-                :style="{
-                  transform: `scaleX(${connectorJobProgress(item) / 100})`,
-                }"
-              />
-            </div>
-            <div
-              v-if="currentScene === 'recommend' && !search"
-              class="font-color-light fs-8 mt-2"
-            >
-              {{ connectorDescMap[item.type] }}
-            </div>
-          </div>
+          </section>
         </div>
-        <VEmpty v-else />
+        <ElEmpty
+          v-else-if="usesConnectorCatalog && !connectorListLoading"
+          :description="connectorEmptyMessage"
+        >
+          <template v-if="canResetConnectorFilters" #default>
+            <ElButton
+              type="primary"
+              plain
+              @click="handleSelectScene({ key: 'all' })"
+              >{{
+                $t(
+                  showInstalledEmptyState
+                    ? 'packages_business_connector_add_data_source'
+                    : 'packages_business_connector_view_all',
+                )
+              }}</ElButton
+            >
+          </template>
+        </ElEmpty>
+        <VEmpty v-else-if="!connectorListLoading" />
       </div>
     </div>
     <div
@@ -1773,6 +1930,39 @@ export default {
 
   .connector-list {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .connector-list--catalog {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  }
+
+  .connector-installed-option {
+    width: calc(100% - 16px);
+    border: 0;
+    background: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    text-align: left;
+  }
+
+  .connector-section + .connector-section {
+    margin-top: 24px;
+  }
+
+  .connector-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    color: var(--el-text-color-secondary);
+    font-size: 12px;
+
+    h3 {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--el-text-color-primary);
+    }
   }
 
   .connector-item {
