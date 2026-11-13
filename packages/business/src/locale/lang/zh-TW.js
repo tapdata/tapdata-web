@@ -1,4 +1,39 @@
 export default {
+  packages_business_agent_edit_one: '修改任務 Agent',
+
+  packages_business_agent_recheck: '重新檢查',
+  packages_business_agent_recheck_clear: '目前未偵測到衝突，可以繼續儲存連線。',
+  packages_business_agent_auto_title: '確認批次改為自動分配',
+  packages_business_agent_auto_confirm:
+    '將以下 {count} 個任務改為平台自動分配並立即儲存：{names}。任務先儲存，取消或連線儲存失敗不會撤銷這些修改。',
+  packages_business_agent_auto_save: '改為自動分配並儲存（{count} 項）',
+  packages_business_agent_actions_hint:
+    '自動操作僅處理本頁或已勾選任務中預檢可解決的項目。其他項目請依處理方式調整後重新檢查。',
+  packages_business_agent_action: '處理方式',
+  packages_business_agent_action_auto: '可自動解決：改為平台自動分配',
+  packages_business_agent_action_no_edit_permission:
+    '僅可檢視，需要任務編輯權限',
+  packages_business_agent_action_task_active: '任務執行中，請先停止後重新檢查',
+  packages_business_agent_action_connection_conflict:
+    '需調整相關連線的 Agent 設定，修改任務無法解決',
+  packages_business_agent_action_unsupported_policy:
+    '此類型沒有可修改的任務級 Agent 設定',
+  packages_business_agent_action_policy_conflict:
+    '請手動調整任務 Agent 後重新檢查',
+
+  packages_business_agent_tasks_selected: '已選擇 {count} 個任務',
+
+  packages_business_agent_tasks_retry:
+    '任務已變更、不可編輯或儲存結果不確定，請重新整理確認後重試。',
+
+  packages_business_agent_tasks_hint:
+    '僅可選擇有編輯權限的非執行任務。任務設定先儲存；取消或連線儲存失敗不會撤銷任務修改。',
+
+  packages_business_agent_tasks_edit: '批次修改任務 Agent',
+  packages_business_agent_tasks_saved:
+    '已修改 {count} 個任務。取消或連線儲存失敗不會撤銷已儲存的任務設定。',
+  packages_business_agent_tasks_continue: '繼續儲存連線',
+
   packages_business_status_wait_start: '待啟動',
   packages_business_status_starting: '啟動中',
   packages_business_status_renewing: '重置中',
@@ -1699,4 +1734,22 @@ export default {
     '當任一API Server 連接池資源緊張触发告警閾值時',
   packages_business_api_server_connection_pool_idle_warn:
     '當任一API Server 連接池連接數低於告警閾值時',
+  packages_business_agent_conflict_title: '切換 Agent 存在任務衝突',
+  packages_business_agent_conflict_summary:
+    '本次修改會與 {count} 個任務產生 Agent 衝突。請先調整任務或連線設定，再重新儲存。',
+  packages_business_agent_conflict_hidden:
+    '其中有 {count} 個任務無權檢視，請聯絡管理員處理。',
+  packages_business_agent_conflict_type: '任務類型',
+  packages_business_agent_conflict_status: '任務狀態',
+  packages_business_agent_conflict_connections: '修改的連線',
+  packages_business_agent_conflict_reason: '衝突原因',
+  packages_business_agent_conflict_reason_connections:
+    '任務關聯的連線沒有共同允許的 Agent。',
+  packages_business_agent_conflict_reason_task:
+    '任務指定的 Agent 不在連線允許的範圍內。',
+  packages_business_agent_conflict_type_sync: '資料開發',
+  packages_business_agent_conflict_type_migrate: '資料複製',
+  packages_business_agent_conflict_type_logCollector: '共享挖掘',
+  packages_business_agent_conflict_type_connHeartbeat: '心跳任務',
+  packages_business_agent_conflict_type_inspect: '資料校驗',
 }

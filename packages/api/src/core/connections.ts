@@ -44,6 +44,50 @@ export function batchUpdateConnectionAgentSettings(
   return requestClient.patch(`${BASE_URL}/batch-agent-settings`, params)
 }
 
+export interface ConnectionAgentConflictReport {
+  total: number
+  hiddenCount: number
+  hasConflicts: boolean
+  items: Array<{
+    id: string
+    name: string
+    syncType: string
+    status: string
+    editable: boolean
+    canEdit: boolean
+    autoResolvable: boolean
+    blockedReason: string | null
+    revision: number | null
+    code: string
+    reason: string
+    connections: Array<{ id: string; name: string }>
+  }>
+}
+
+export function updateConflictTaskAgents(
+  params: BatchUpdateConnectionAgentSettingsParams & {
+    taskEdits: Array<{ id: string; revision: number | null }>
+    taskSettings: BatchUpdateConnectionAgentSettingsParams['settings']
+  },
+) {
+  return requestClient.post<{
+    updatedTaskIds: string[]
+    failures: Array<{ id: string; code: string }>
+  }>(`${BASE_URL}/agent-settings-conflicts/tasks`, params)
+}
+
+export function checkConnectionAgentSettings(
+  params: BatchUpdateConnectionAgentSettingsParams & {
+    skip?: number
+    limit?: number
+  },
+) {
+  return requestClient.post<ConnectionAgentConflictReport>(
+    `${BASE_URL}/agent-settings-conflicts`,
+    params,
+  )
+}
+
 export function checkConnection(id: string, params: any) {
   return requestClient.patch(`${BASE_URL}/${id}`, params)
 }

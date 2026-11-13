@@ -118,6 +118,8 @@ const init = async () => {
 
   initWS()
   isInitialized.value = true
+  if (route.query.settingsTab === 'agent')
+    dataflowStore.toggleShowSettings(true)
   dataflowStore.taskLoading = false
   // Check route query for auto-opening materialized view
   checkMaterializedView()

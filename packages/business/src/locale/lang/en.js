@@ -1,4 +1,43 @@
 export default {
+  packages_business_agent_edit_one: 'Edit task Agent',
+
+  packages_business_agent_recheck: 'Check again',
+  packages_business_agent_recheck_clear:
+    'No conflicts detected. You can continue saving the connection.',
+  packages_business_agent_auto_title: 'Confirm automatic allocation',
+  packages_business_agent_auto_confirm:
+    'Save platform automatic allocation for these {count} tasks: {names}. Task changes are saved first and remain if you cancel or connection saving fails.',
+  packages_business_agent_auto_save:
+    'Set automatic allocation and save ({count})',
+  packages_business_agent_actions_hint:
+    'Automatic action includes only eligible tasks on this page or in your selection. Resolve the other items as indicated, then check again.',
+  packages_business_agent_action: 'How to resolve',
+  packages_business_agent_action_auto:
+    'Can resolve automatically: use platform allocation',
+  packages_business_agent_action_no_edit_permission:
+    'View only; task edit permission required',
+  packages_business_agent_action_task_active:
+    'Task is active; stop it and check again',
+  packages_business_agent_action_connection_conflict:
+    'Change the related connection Agent settings; task changes cannot resolve this',
+  packages_business_agent_action_unsupported_policy:
+    'This task type has no editable task Agent policy',
+  packages_business_agent_action_policy_conflict:
+    'Edit task Agent settings and check again',
+
+  packages_business_agent_tasks_selected: 'Selected {count} tasks',
+
+  packages_business_agent_tasks_retry:
+    'The task changed, is not editable, or its save result is unknown. Refresh and retry.',
+
+  packages_business_agent_tasks_hint:
+    'Only editable inactive tasks can be selected. Task changes are saved first and remain saved if connection saving is canceled or fails.',
+
+  packages_business_agent_tasks_edit: 'Batch edit task Agents',
+  packages_business_agent_tasks_saved:
+    '{count} tasks updated. These changes remain saved even if you cancel or connection saving fails.',
+  packages_business_agent_tasks_continue: 'Continue saving connection',
+
   packages_business_status_wait_start: 'Ready To Start',
   packages_business_status_starting: 'Starting',
   packages_business_status_renewing: 'Resetting',
@@ -1907,4 +1946,22 @@ export default {
     'When any API Server connection pool resource is tight and triggers the alarm threshold',
   packages_business_api_server_connection_pool_idle_warn:
     'When the number of connections in the connection pool of any API Server falls below the alarm threshold',
+  packages_business_agent_conflict_title: 'Agent changes conflict with tasks',
+  packages_business_agent_conflict_summary:
+    'These changes conflict with {count} tasks. Adjust the task or connection settings before saving again.',
+  packages_business_agent_conflict_hidden:
+    'You do not have permission to view {count} of these tasks. Contact an administrator to resolve them.',
+  packages_business_agent_conflict_type: 'Task type',
+  packages_business_agent_conflict_status: 'Task status',
+  packages_business_agent_conflict_connections: 'Changed connections',
+  packages_business_agent_conflict_reason: 'Conflict reason',
+  packages_business_agent_conflict_reason_connections:
+    'The task connections have no mutually allowed Agent.',
+  packages_business_agent_conflict_reason_task:
+    'The Agent specified by the task is not allowed by its connections.',
+  packages_business_agent_conflict_type_sync: 'Data development',
+  packages_business_agent_conflict_type_migrate: 'Data replication',
+  packages_business_agent_conflict_type_logCollector: 'Shared mining',
+  packages_business_agent_conflict_type_connHeartbeat: 'Heartbeat',
+  packages_business_agent_conflict_type_inspect: 'Data verification',
 }
