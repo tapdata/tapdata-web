@@ -5,6 +5,7 @@ import {
   type PageFetchResult,
 } from '../request'
 
+import { revealClientSecret } from './audit-events'
 import type { ApiModule } from './modules'
 
 const BASE_URL = '/api/Applications'
@@ -19,7 +20,7 @@ export interface ApiClientVo {
   clientType: string
   grantTypes: string[]
   tokenType: string
-  clientSecret: string
+  clientSecretConfigured: boolean
   scopes: string[]
   scopeNames: string[]
   redirectUris: string[]
@@ -58,9 +59,15 @@ export async function fetchApiServerToken() {
     },
   })
   const clientInfoItem = clientInfo?.items[0] || {}
-  const data = `grant_type=client_credentials&client_id=${clientInfoItem.id}&client_secret=${clientInfoItem.clientSecret}`
+  if (!clientInfoItem.id) throw new Error('API client not found')
+  const secret = await revealClientSecret(clientInfoItem.id)
+  const data = new URLSearchParams({
+    grant_type: 'client_credentials',
+    client_id: clientInfoItem.id,
+    client_secret: secret,
+  }).toString()
   try {
-   const result = await baseRequestClient.post('/oauth/token', data, {
+    const result = await baseRequestClient.post('/oauth/token', data, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         debug: 'true',
