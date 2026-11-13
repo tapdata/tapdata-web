@@ -17,6 +17,8 @@ import i18n from '@tap/i18n'
 import { mapGetters } from 'vuex'
 import { DatabaseIcon } from '../DatabaseIcon'
 import connectorCatalog from './connectorCatalog.json'
+import ConnectorQualityBadge from './ConnectorQualityBadge.vue'
+import ConnectorReleaseDialog from './ConnectorReleaseDialog.vue'
 import RequestDialog from './RequestDialog.vue'
 import ConnectionForm from './SceneForm'
 import ServeForm from './ServeForm'
@@ -47,6 +49,8 @@ function compareConnectorVersions(left, right) {
 export default {
   name: 'SceneDialog',
   components: {
+    ConnectorQualityBadge,
+    ConnectorReleaseDialog,
     RequestDialog,
     ConnectionForm,
     ServeForm,
@@ -105,6 +109,10 @@ export default {
       releaseLoading: false,
       releaseImpactLoading: false,
       releaseItem: null,
+      releaseImpactRequestId: 0,
+      releaseImpactError: '',
+      releaseRequestError: '',
+      connectorPollingDisposed: false,
       releaseImpact: { tasks: [], inspects: [] },
       connectorJobs: {},
       connectorJobTimers: {},
@@ -606,7 +614,7 @@ export default {
     },
   },
   mounted() {
-    this.restoreConnectorJobs()
+    if (this.isDaas && !this.isCommunity) this.restoreConnectorJobs()
     const { type, pdkHash, pdkId } = this.$route.query
 
     // add-source/add-target
@@ -621,6 +629,7 @@ export default {
     }
   },
   beforeUnmount() {
+    this.connectorPollingDisposed = true
     Object.values(this.connectorJobTimers).forEach(clearTimeout)
   },
   methods: {
@@ -671,7 +680,10 @@ export default {
         if (!jobs || typeof jobs !== 'object' || Array.isArray(jobs)) return
         this.connectorJobs = Object.fromEntries(
           Object.entries(jobs).filter(
-            ([, job]) => job && typeof job.jobId === 'string',
+            ([, job]) =>
+              job &&
+              typeof job.jobId === 'string' &&
+              !['completed', 'failed'].includes(job.status),
           ),
         )
         Object.entries(this.connectorJobs).forEach(([pdkId, job]) => {
@@ -684,11 +696,16 @@ export default {
     },
 
     persistConnectorJobs(jobs = this.connectorJobs) {
+      const activeJobs = Object.fromEntries(
+        Object.entries(jobs).filter(
+          ([, job]) => !['completed', 'failed'].includes(job.status),
+        ),
+      )
       try {
-        if (Object.keys(jobs).length) {
+        if (Object.keys(activeJobs).length) {
           window.localStorage.setItem(
             this.connectorJobsStorageKey,
-            JSON.stringify(jobs),
+            JSON.stringify(activeJobs),
           )
         } else {
           window.localStorage.removeItem(this.connectorJobsStorageKey)
@@ -714,7 +731,11 @@ export default {
         this.openLocked()
         return
       }
-      if (this.connectorJobs[item.pdkId]) return
+      const job = this.getConnectorJob(item)
+      if (job && !['completed', 'failed'].includes(job.status)) {
+        this.handleReleaseAction(item)
+        return
+      }
       if (item.requiresDownload) {
         this.handleReleaseAction(item)
         return
@@ -808,34 +829,152 @@ export default {
       this.resetScroll()
     },
 
+    getConnectorJob(item) {
+      const job = this.connectorJobs[item.pdkId]
+      return job?.status === 'completed' &&
+        item.updateAvailable &&
+        job.releaseVersion !== item.releaseVersion
+        ? undefined
+        : job
+    },
+
+    showConnectorAction(item) {
+      const job = this.getConnectorJob(item)
+      return (
+        job?.status !== 'completed' &&
+        Boolean(job || item.requiresDownload || item.updateAvailable)
+      )
+    },
+
+    connectorJobProgress(item) {
+      return Math.max(
+        0,
+        Math.min(100, Number(this.getConnectorJob(item)?.progress) || 0),
+      )
+    },
+
+    connectorActionLabel(item) {
+      const job = this.getConnectorJob(item)
+      if (job?.status === 'failed') return this.$t('public_button_retry')
+      if (job)
+        return new Intl.NumberFormat(this.$i18n.locale, {
+          style: 'percent',
+          maximumFractionDigits: 0,
+        }).format((Number(job.progress) || 0) / 100)
+      return this.$t(
+        item.requiresDownload
+          ? 'packages_business_connector_install'
+          : 'packages_business_connector_update_available',
+      )
+    },
+
+    connectorActionDisabledReason(item) {
+      if (item.licenseLocked)
+        return this.$t('packages_business_connector_license_required')
+      if (!item.releaseAvailable && !this.getConnectorJob(item))
+        return this.$t('packages_business_connector_no_release')
+      return ''
+    },
+
     async handleReleaseAction(item) {
       if (item.licenseLocked) {
         this.openLocked()
         return
       }
-      if (this.releaseLoading || this.connectorJobs[item.pdkId]) return
-      if (!item.releaseAvailable) return
-      this.releaseItem = item
-      this.releaseImpact = { tasks: [], inspects: [] }
+      if (this.releaseLoading) return
+      const job = this.getConnectorJob(item)
+      if (!job && !item.releaseAvailable) return
+      this.releaseItem = {
+        ...item,
+        requiresDownload: job?.operation
+          ? job.operation === 'install'
+          : item.requiresDownload,
+      }
       this.releaseDialogVisible = true
+      this.releaseRequestError = ''
+      this.releaseImpactError = ''
+      if (job) {
+        this.releaseImpactLoading = false
+        return
+      }
+      // A new formal release can supersede a result retained in this session.
+      if (this.connectorJobs[item.pdkId]) this.removeConnectorJob(item.pdkId)
+      const requestId = ++this.releaseImpactRequestId
+      this.releaseImpact = { tasks: [], inspects: [] }
       this.releaseImpactLoading = true
       try {
-        this.releaseImpact =
-          (await getConnectorRegistrationImpact(item.pdkId, item.artifactId)) ||
-          this.releaseImpact
+        const impact = await getConnectorRegistrationImpact(
+          item.pdkId,
+          item.artifactId,
+        )
+        if (
+          requestId !== this.releaseImpactRequestId ||
+          this.releaseItem?.pdkId !== item.pdkId
+        )
+          return
+        this.releaseImpact = {
+          tasks: impact?.tasks || [],
+          inspects: impact?.inspects || [],
+        }
       } catch (error) {
-        this.releaseDialogVisible = false
-        this.$message.error(this.getReleaseErrorMessage(error))
+        if (
+          requestId === this.releaseImpactRequestId &&
+          this.releaseItem?.pdkId === item.pdkId
+        )
+          this.releaseImpactError = this.getReleaseErrorMessage(error)
       } finally {
-        this.releaseImpactLoading = false
+        if (
+          requestId === this.releaseImpactRequestId &&
+          this.releaseItem?.pdkId === item.pdkId
+        )
+          this.releaseImpactLoading = false
+      }
+    },
+
+    async retryConnectorRelease() {
+      if (!this.releaseItem) return
+      const pdkId = this.releaseItem.pdkId
+      const job = this.connectorJobs[pdkId]
+      const item = {
+        ...this.releaseItem,
+        ...this.database?.find((db) => db.pdkId === pdkId),
+      }
+      if (!item.releaseAvailable && job?.releaseVersion) {
+        item.releaseAvailable = true
+        item.releaseVersion = job.releaseVersion
+        item.artifactId = job.artifactId
+      }
+      this.removeConnectorJob(pdkId)
+      await this.handleReleaseAction(item)
+    },
+
+    async resumeConnectorPolling() {
+      const pdkId = this.releaseItem?.pdkId
+      const job = this.connectorJobs[pdkId]
+      if (job) {
+        this.connectorJobs = {
+          ...this.connectorJobs,
+          [pdkId]: { ...job, pollError: '' },
+        }
+        await this.pollConnectorRegistration(job.jobId, pdkId)
       }
     },
 
     async registerRelease(stopTasks) {
-      if (!this.releaseItem || this.releaseLoading) return
+      if (
+        !this.releaseItem ||
+        this.releaseLoading ||
+        this.releaseImpactLoading ||
+        this.releaseImpactError
+      )
+        return
+      const releaseItem = this.releaseItem
+      const activeJob = this.connectorJobs[releaseItem.pdkId]
+      if (activeJob && !['completed', 'failed'].includes(activeJob.status))
+        return
       this.releaseLoading = true
+      this.releaseRequestError = ''
       try {
-        const releaseItem = this.releaseItem
         const job = await registerConnectorRelease({
           pdkId: releaseItem.pdkId,
           artifactId: releaseItem.artifactId,
@@ -845,107 +984,127 @@ export default {
             (this.releaseImpact.tasks.length > 0 ||
               this.releaseImpact.inspects.length > 0),
         })
-        this.releaseDialogVisible = false
         this.connectorJobs = {
           ...this.connectorJobs,
           [releaseItem.pdkId]: {
-            jobId: job.jobId,
-            status: job.status,
-            progress: job.progress,
+            ...job,
             artifactId: releaseItem.artifactId,
+            operation: releaseItem.requiresDownload ? 'install' : 'update',
+            version: releaseItem.version,
+            releaseVersion: releaseItem.releaseVersion,
+            name: releaseItem.name,
+            icon: releaseItem.icon,
+            stopTasks,
           },
         }
         this.persistConnectorJobs()
-        this.$message.info(
-          this.$t('packages_business_connector_release_started'),
-        )
+        if (!this.releaseDialogVisible)
+          this.$message.info(
+            this.$t('packages_business_connector_release_started'),
+          )
         this.pollConnectorRegistration(job.jobId, releaseItem.pdkId)
       } catch (error) {
-        this.$message.error(this.getReleaseErrorMessage(error))
-        try {
-          this.releaseImpact =
-            (await getConnectorRegistrationImpact(
-              this.releaseItem.pdkId,
-              this.releaseItem.artifactId,
-            )) || this.releaseImpact
-        } catch {
-          // Keep the last impact details visible if the refresh also fails.
-        }
+        this.releaseRequestError = this.getReleaseErrorMessage(error)
+        if (!this.releaseDialogVisible)
+          this.$message.error(this.releaseRequestError)
       } finally {
         this.releaseLoading = false
       }
     },
 
     async pollConnectorRegistration(jobId, pdkId, retryCount = 0) {
+      clearTimeout(this.connectorJobTimers[pdkId])
       delete this.connectorJobTimers[pdkId]
+      if (this.connectorPollingDisposed) return
       try {
         const job = await getConnectorRegistrationJob(jobId)
         if (
-          !this.connectorJobs[pdkId] ||
-          this.connectorJobs[pdkId].jobId !== jobId
+          this.connectorPollingDisposed ||
+          this.connectorJobs[pdkId]?.jobId !== jobId
         )
           return
+        const activeJob = this.connectorJobs[pdkId]
+        this.connectorJobs = {
+          ...this.connectorJobs,
+          [pdkId]: { ...activeJob, ...job, pollError: '' },
+        }
+        this.persistConnectorJobs()
         if (job.status === 'completed') {
-          this.removeConnectorJob(pdkId)
-          this.$message.success(
-            this.$t('packages_business_connector_release_success'),
+          if (!this.releaseDialogVisible || this.releaseItem?.pdkId !== pdkId)
+            this.$message.success(
+              this.$t('packages_business_connector_release_success'),
+            )
+          await this.getData(true).catch((error) =>
+            console.warn('Unable to refresh installed connectors', error),
           )
-          await this.getData(true)
           return
         }
         if (job.status === 'failed') {
-          const activeJob = this.connectorJobs[pdkId]
-          this.removeConnectorJob(pdkId)
           if (job.errorCode === 'RESOURCE_IMPACT_CHANGED') {
-            const release = {
-              ...this.database?.find((item) => item.pdkId === pdkId),
-              pdkId,
-              artifactId: activeJob?.artifactId,
-            }
-            if (!release.artifactId) {
+            if (
+              this.releaseLoading ||
+              (this.releaseDialogVisible && this.releaseItem?.pdkId !== pdkId)
+            ) {
               this.$message.error(
                 job.error ||
-                  this.$t('packages_business_connector_release_failed'),
+                  this.$t('packages_business_connector_impact_changed'),
               )
               return
             }
-            this.releaseItem = release
-            this.releaseDialogVisible = true
-            this.releaseImpactLoading = true
-            try {
-              this.releaseImpact = (await getConnectorRegistrationImpact(
-                release.pdkId,
-                release.artifactId,
-              )) || { tasks: [], inspects: [] }
-            } catch (error) {
-              this.$message.error(this.getReleaseErrorMessage(error))
-            } finally {
-              this.releaseImpactLoading = false
+            // Recovery belongs to this job, even if another connector was selected meanwhile.
+            const item = {
+              ...connectorCatalog.find((db) => db.pdkId === pdkId),
+              ...this.database?.find((db) => db.pdkId === pdkId),
+              pdkId,
+              releaseAvailable: true,
+              artifactId: activeJob.artifactId,
+              releaseVersion: activeJob.releaseVersion,
+              requiresDownload: activeJob.operation === 'install',
             }
+            this.removeConnectorJob(pdkId)
+            await this.handleReleaseAction(item)
+            this.releaseRequestError = this.$t(
+              'packages_business_connector_impact_changed',
+            )
             return
           }
-          this.$message.error(
-            job.error || this.$t('packages_business_connector_release_failed'),
-          )
+          if (!this.releaseDialogVisible || this.releaseItem?.pdkId !== pdkId)
+            this.$message.error(
+              job.error ||
+                this.$t('packages_business_connector_release_failed'),
+            )
           return
         }
-        this.connectorJobs = {
-          ...this.connectorJobs,
-          [pdkId]: {
-            ...this.connectorJobs[pdkId],
-            jobId,
-            status: job.status,
-            progress: job.progress,
-          },
-        }
-        this.persistConnectorJobs()
       } catch (error) {
+        if (
+          this.connectorPollingDisposed ||
+          this.connectorJobs[pdkId]?.jobId !== jobId
+        )
+          return
         const status = error?.response?.status || error?.status || error?.code
-        if (status === 404 || status === '404' || retryCount >= 10) {
-          this.removeConnectorJob(pdkId)
-          this.$message.error(
-            this.$t('packages_business_connector_release_failed'),
-          )
+        if (status === 404 || status === '404') {
+          this.connectorJobs = {
+            ...this.connectorJobs,
+            [pdkId]: {
+              ...this.connectorJobs[pdkId],
+              status: 'failed',
+              error: this.$t('packages_business_connector_job_unavailable'),
+            },
+          }
+          this.persistConnectorJobs()
+          return
+        }
+        if (retryCount >= 10) {
+          this.connectorJobs = {
+            ...this.connectorJobs,
+            [pdkId]: {
+              ...this.connectorJobs[pdkId],
+              pollError: this.$t(
+                'packages_business_connector_poll_unavailable',
+              ),
+            },
+          }
+          this.persistConnectorJobs()
           return
         }
         console.warn('Unable to read connector registration progress', error)
@@ -955,10 +1114,11 @@ export default {
         )
         return
       }
-      this.connectorJobTimers[pdkId] = setTimeout(
-        () => this.pollConnectorRegistration(jobId, pdkId, 0),
-        1200,
-      )
+      if (!this.connectorPollingDisposed)
+        this.connectorJobTimers[pdkId] = setTimeout(
+          () => this.pollConnectorRegistration(jobId, pdkId, 0),
+          1200,
+        )
     },
 
     resetScroll() {
@@ -1072,6 +1232,7 @@ export default {
             )
           })
           .catch((error) => {
+            if (releaseRequestId !== this.connectorReleaseRequestId) return
             console.warn(
               'Unable to load the Nexus connector release catalog',
               error,
@@ -1113,6 +1274,12 @@ export default {
         (item) => !knownPdkIds.has(item.pdkId),
       )
       return [...catalogItems, ...unlistedInstalled]
+        .filter(
+          (item) =>
+            !item.requiresDownload ||
+            item.releaseAvailable ||
+            !!this.connectorJobs[item.pdkId],
+        )
         .filter(
           (item) =>
             this.selectorType === 'source_and_target' ||
@@ -1325,6 +1492,11 @@ export default {
               :key="`demo-${item.pdkId}`"
               class="connector-item rounded-xl p-3 overflow-hidden bg-white clickable"
               :class="{ active: item.pdkId === selected.pdkId }"
+              :data-qc="
+                ['GA', 'Beta', 'Alpha'].includes(item.qcType)
+                  ? item.qcType
+                  : undefined
+              "
               @click="handleSelect(item, true)"
             >
               <div class="flex gap-3">
@@ -1355,8 +1527,14 @@ export default {
             :key="item.type"
             class="connector-item rounded-xl p-3 overflow-hidden bg-card dark:bg-white/10 clickable"
             :class="{ active: item.pdkId === selected.pdkId }"
+            :data-qc="
+              ['GA', 'Beta', 'Alpha'].includes(item.qcType)
+                ? item.qcType
+                : undefined
+            "
             @click="handleSelect(item)"
           >
+            <ConnectorQualityBadge :quality="item.qcType" />
             <div class="flex gap-3">
               <DatabaseIcon
                 v-if="!item.locked || !item.icon.includes('.')"
@@ -1374,65 +1552,86 @@ export default {
                   'connector-icon--unregistered': item.requiresDownload,
                 }"
               />
-              <ElProgress
-                v-if="connectorJobs[item.pdkId]"
-                class="connector-icon-progress"
-                type="circle"
-                :percentage="connectorJobs[item.pdkId].progress"
-                :width="38"
-                :stroke-width="3"
-                :show-text="false"
-              />
               <div class="connector-item-content flex-1 overflow-hidden">
                 <div
                   class="connector-item-title font-color-dark flex align-center"
                   :class="{
-                    'connector-item-title--updatable': item.updateAvailable,
+                    'connector-item-title--updatable':
+                      showConnectorAction(item),
+                    'connector-item-title--versioned':
+                      item.pdkHash && !item.requiresDownload && item.version,
                   }"
                 >
-                  <span class="ellipsis mr-1">{{ item.name }}</span>
-                  <VIcon
-                    v-if="item.qcType === 'GA'"
-                    size="24"
-                    class="ml-auto color-success"
-                    >verified</VIcon
-                  >
-                  <el-tooltip
-                    v-else-if="item.qcType"
-                    :hide-after="0"
-                    :enterable="false"
-                    :content="
-                      $t(
-                        item.qcType === 'Beta'
-                          ? 'public_connector_beta_tip'
-                          : 'public_connector_alpha_tip',
-                      )
+                  <span class="connector-item-name ellipsis">{{
+                    item.name
+                  }}</span>
+                  <span
+                    v-if="
+                      item.pdkHash && !item.requiresDownload && item.version
                     "
+                    class="connector-item-version"
+                    >{{ item.version }}</span
                   >
-                    <ElTag
-                      :type="item.qcType === 'Beta' ? 'primary' : 'warning'"
-                      class="text-uppercase ml-auto px-1 connector-item-tag tag-amber"
-                    >
-                      <span class="flex align-center gap-0.5">
-                        <el-icon><i-lucide-badge-alert /></el-icon>
-                        {{ item.qcType }}
-                      </span>
-                    </ElTag>
-                  </el-tooltip>
                 </div>
               </div>
             </div>
-            <ElTag
-              v-if="item.updateAvailable"
-              type="warning"
-              class="connector-item-update px-1 connector-item-tag"
+            <ElButton
+              v-if="showConnectorAction(item)"
+              size="small"
+              class="connector-release-action"
+              :type="
+                getConnectorJob(item)?.status === 'failed'
+                  ? 'danger'
+                  : item.requiresDownload
+                    ? 'primary'
+                    : undefined
+              "
+              :plain="
+                item.requiresDownload ||
+                getConnectorJob(item)?.status === 'failed'
+              "
+              :disabled="!!connectorActionDisabledReason(item)"
+              :title="
+                connectorActionDisabledReason(item) || item.releaseVersion
+              "
               @click.stop="handleReleaseAction(item)"
             >
-              <span class="flex align-center gap-1">
-                {{ $t('packages_business_connector_update_available') }}
-                <el-icon><i-lucide-arrow-up /></el-icon>
-              </span>
-            </ElTag>
+              <ElIcon v-if="getConnectorJob(item)?.status === 'failed'"
+                ><i-lucide-circle-alert
+              /></ElIcon>
+              <ElIcon
+                v-else-if="getConnectorJob(item)"
+                class="connector-release-loader"
+                ><i-lucide-loader-circle
+              /></ElIcon>
+              <ElIcon v-else-if="item.requiresDownload"
+                ><i-lucide-download
+              /></ElIcon>
+              <ElIcon v-else><i-lucide-arrow-up /></ElIcon>
+              {{ connectorActionLabel(item) }}
+              <span
+                v-if="
+                  item.updateAvailable &&
+                  !item.requiresDownload &&
+                  !getConnectorJob(item)
+                "
+                class="connector-release-dot"
+                aria-hidden="true"
+              />
+            </ElButton>
+            <div
+              v-if="
+                getConnectorJob(item) &&
+                !['completed', 'failed'].includes(getConnectorJob(item).status)
+              "
+              class="connector-release-track"
+            >
+              <span
+                :style="{
+                  transform: `scaleX(${connectorJobProgress(item) / 100})`,
+                }"
+              />
+            </div>
             <div
               v-if="currentScene === 'recommend' && !search"
               class="font-color-light fs-8 mt-2"
@@ -1479,79 +1678,21 @@ export default {
       @update:visible="(val) => (requestVisible = val)"
     />
   </ElDialog>
-  <ElDialog
-    v-model="releaseDialogVisible"
-    append-to-body
-    :title="
-      $t(
-        releaseItem?.updateAvailable
-          ? 'packages_business_connector_update_title'
-          : 'packages_business_connector_download_title',
-      )
-    "
-    width="480px"
-    :close-on-click-modal="false"
-  >
-    <p v-if="releaseItem" class="mb-4">
-      <span v-if="releaseItem.requiresDownload" class="block mb-2">
-        {{ $t('packages_business_connector_requires_download') }}
-      </span>
-      {{
-        $t('packages_business_connector_download_confirm', {
-          version: releaseItem.releaseVersion,
-        })
-      }}
-    </p>
-    <p
-      v-if="releaseImpact.tasks.length || releaseImpact.inspects.length"
-      class="mb-0"
-    >
-      {{
-        $t('packages_business_connector_registration_impact', {
-          taskCount: releaseImpact.tasks.length,
-          inspectCount: releaseImpact.inspects.length,
-        })
-      }}
-    </p>
-    <template #footer>
-      <div class="flex justify-end gap-2">
-        <ElButton
-          :disabled="releaseImpactLoading || releaseLoading"
-          @click="releaseDialogVisible = false"
-        >
-          {{ $t('public_button_cancel') }}
-        </ElButton>
-        <template
-          v-if="releaseImpact.tasks.length || releaseImpact.inspects.length"
-        >
-          <ElButton
-            :disabled="releaseImpactLoading"
-            :loading="releaseLoading"
-            @click="registerRelease(false)"
-          >
-            {{ $t('packages_business_connector_register_while_running') }}
-          </ElButton>
-          <ElButton
-            type="primary"
-            :disabled="releaseImpactLoading"
-            :loading="releaseLoading"
-            @click="registerRelease(true)"
-          >
-            {{ $t('packages_business_connector_stop_and_register') }}
-          </ElButton>
-        </template>
-        <ElButton
-          v-else
-          type="primary"
-          :disabled="releaseImpactLoading"
-          :loading="releaseLoading"
-          @click="registerRelease(false)"
-        >
-          {{ $t('packages_business_connector_download_title') }}
-        </ElButton>
-      </div>
-    </template>
-  </ElDialog>
+  <ConnectorReleaseDialog
+    v-if="releaseItem"
+    v-model:visible="releaseDialogVisible"
+    :item="releaseItem"
+    :impact="releaseImpact"
+    :job="connectorJobs[releaseItem.pdkId]"
+    :pending="releaseLoading"
+    :impact-loading="releaseImpactLoading"
+    :impact-error="releaseImpactError"
+    :request-error="releaseRequestError"
+    @start="registerRelease"
+    @retry="retryConnectorRelease"
+    @retry-impact="handleReleaseAction(releaseItem)"
+    @retry-poll="resumeConnectorPolling"
+  />
 </template>
 
 <style lang="scss">
@@ -1646,21 +1787,50 @@ export default {
       font-size: 15px;
       line-height: 38px;
 
-      &--updatable {
-        padding-right: 88px;
+      &--versioned {
+        gap: 12px;
       }
+
+      &--updatable {
+        > .connector-item-name {
+          padding-right: 88px;
+        }
+
+        &.connector-item-title--versioned {
+          flex-wrap: wrap;
+          gap: 0;
+          line-height: 20px;
+
+          > .connector-item-name {
+            flex-basis: 100%;
+          }
+
+          > .connector-item-version {
+            line-height: 18px;
+          }
+        }
+      }
+    }
+
+    &-name {
+      flex: 1;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    &-version {
+      flex: none;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 20px;
+      font-variant-numeric: tabular-nums;
+      color: var(--el-text-color-secondary);
+      white-space: nowrap;
     }
 
     &-tag {
       height: 18px;
       line-height: 16px;
-    }
-
-    &-update {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      cursor: pointer;
     }
 
     &:hover {
@@ -1681,9 +1851,71 @@ export default {
   opacity: 0.45;
 }
 
-.connector-icon-progress {
+.connector-release-action.el-button {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  margin: 0;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: 8px;
+  font-size: 12px;
+  overflow: visible;
+}
+.connector-release-action.el-button > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.connector-release-action .el-icon {
+  font-size: 12px;
+}
+.connector-item[data-qc] .connector-release-action.el-button {
+  top: 28px;
+}
+.connector-release-dot {
+  position: absolute !important;
+  right: -2px;
+  top: -2px;
+  width: 7px;
+  height: 7px;
+  box-sizing: border-box;
+  border: 1.5px solid var(--el-bg-color);
+  border-radius: 50%;
+  background: var(--el-color-danger);
+  pointer-events: none;
+}
+.connector-release-track {
   position: absolute;
   left: 12px;
-  top: 12px;
+  right: 12px;
+  bottom: 0;
+  height: 2px;
+  background: var(--el-border-color-lighter);
+  overflow: hidden;
+}
+.connector-release-track > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--el-color-primary);
+  transform-origin: left;
+  transition: transform 0.6s ease;
+}
+.connector-release-loader {
+  animation: connector-release-rotate 1.3s linear infinite;
+}
+@keyframes connector-release-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .connector-release-loader {
+    animation: none;
+  }
+  .connector-release-track > span {
+    transition: none;
+  }
 }
 </style>
