@@ -1907,4 +1907,81 @@ export default {
     'When any API Server connection pool resource is tight and triggers the alarm threshold',
   packages_business_api_server_connection_pool_idle_warn:
     'When the number of connections in the connection pool of any API Server falls below the alarm threshold',
+  packages_business_connector_requires_download:
+    'This data source is not registered. Download and register it before creating a connection.',
+  packages_business_connector_update_available: 'Update',
+  packages_business_connector_download_title:
+    'Download and Register Data Source',
+  packages_business_connector_update_title: 'Update Data Source',
+  packages_business_connector_download_confirm:
+    'The formal release {version} will be downloaded from Nexus and registered automatically.',
+  packages_business_connector_registration_impact:
+    'This data source has {taskCount} in-flight tasks and {inspectCount} in-flight verification tasks. Choose how to register it.',
+  packages_business_connector_stop_and_register: 'Stop tasks and register',
+  packages_business_connector_register_while_running:
+    'Register without stopping tasks',
+  packages_business_connector_release_success:
+    'Data source registered successfully',
+  packages_business_connector_release_started:
+    'Registration started in the background. You can continue choosing other data sources.',
+  packages_business_connector_release_failed: 'Data source registration failed',
+  packages_business_connector_install: 'Install',
+  packages_business_connector_install_connector: 'Install {name}',
+  packages_business_connector_update_connector: 'Update {name}',
+  packages_business_connector_install_complete: 'Installation complete',
+  packages_business_connector_update_complete: 'Update complete',
+  packages_business_connector_install_failed: 'Installation incomplete',
+  packages_business_connector_update_failed: 'Update incomplete',
+  packages_business_connector_install_running: 'Installing',
+  packages_business_connector_update_running: 'Updating',
+  packages_business_connector_update_method: 'Update method',
+  packages_business_connector_impact_count: 'Affects {count} tasks',
+  packages_business_connector_open_task:
+    'Open {name} task details in a new tab',
+  packages_business_connector_inspect_task: 'Verification task',
+  packages_business_connector_sync_task: 'Related task',
+  packages_business_connector_keep_tasks: 'Keep tasks running',
+  packages_business_connector_keep_tasks_description: 'No automatic stop',
+  packages_business_connector_stop_tasks: 'Stop tasks',
+  packages_business_connector_stop_tasks_description: 'Auto-stop, then restart',
+  packages_business_connector_stop_tasks_notice:
+    'Related tasks and verifications will stop during the update. The system will attempt to restart them afterward.',
+  packages_business_connector_stop_and_update: 'Stop and update',
+  packages_business_connector_update_to: 'Update to {version}',
+  packages_business_connector_download_check: 'Download & verify',
+  packages_business_connector_prepare: 'Prepare',
+  packages_business_connector_register: 'Register',
+  packages_business_connector_preparing_install: 'Preparing installation',
+  packages_business_connector_preparing_update: 'Preparing update',
+  packages_business_connector_progress: 'Connector operation progress',
+  packages_business_connector_operation_failed: 'Operation incomplete',
+  packages_business_connector_failure_hint:
+    'Review the error details and check related tasks.',
+  packages_business_connector_error_details: 'Error details',
+  packages_business_connector_restart_complete:
+    'Update complete. Check task monitoring for automatic restart status.',
+  packages_business_connector_connector_ready: 'The connector is ready.',
+  packages_business_connector_background_notice:
+    'Closing will not interrupt the operation',
+  packages_business_connector_background_continue: 'Continue in background',
+  packages_business_connector_check_status: 'Check status again',
+  packages_business_connector_done: 'Done',
+  packages_business_connector_later: 'Later',
+  packages_business_connector_no_release: 'No installable release is available',
+  packages_business_connector_license_required:
+    'Your license does not include this connector',
+  packages_business_connector_installed: 'Installed',
+  packages_business_connector_add_data_source: 'Add data source',
+  packages_business_connector_available: 'Available to install',
+  packages_business_connector_all_types: 'All types',
+  packages_business_connector_none_installed: 'No data sources installed yet',
+  packages_business_connector_no_matches: 'No matching data sources',
+  packages_business_connector_view_all: 'View all data sources',
+  packages_business_connector_updated: 'Updated',
+  packages_business_connector_job_unavailable:
+    'Registration job not found. Check the connector and related tasks.',
+  packages_business_connector_poll_unavailable:
+    'Progress is temporarily unavailable. The operation may still be running.',
+  packages_business_connector_impact_changed:
+    'Related tasks have changed. Review the update method again.',
 }
