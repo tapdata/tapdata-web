@@ -1,5 +1,11 @@
 <script setup lang="ts">
 import {
+  deleteAgentProcess,
+  fetchAgentProcesses,
+  fetchAgentProcessTypes,
+  type AgentProcessItem,
+} from '@tap/api/src/core/agent-process'
+import {
   addAgent,
   deleteAgentGroup,
   fetchAgentGroups,
@@ -49,8 +55,11 @@ import { useRoute, useRouter } from 'vue-router'
 import SetTag from '@/views/cluster/SetTag.vue'
 import AddServe from './AddServe.vue'
 import { STATUS_MAP } from './const'
+import Db2LogReaderCard from './log-mining/Db2LogReaderCard.vue'
+import OracleLogParserCard from './log-mining/OracleLogParserCard.vue'
 import TaskRebalanceDrawer from './TaskRebalanceDrawer.vue'
 import UpdateLicense from './UpdateLicense.vue'
+import type { LogMiningMonitor } from './log-mining/types'
 
 const { t } = useI18n()
 const $has = useHas()
@@ -123,28 +132,9 @@ interface ClusterData {
   }
 }
 
-interface LogMiningMonitor {
-  timestamp: string
-  pid: number
-  cpuPercent: number
-  memoryPercent: number
-  state: string
+type OracleLogMiningRawItem = Omit<LogMiningMonitor, 'reportedData'> & {
   dataSource: string
-  serviceId: string
-  isAlive: boolean
-  id: number
-  name: string
-  ip: string
-  startTime: string
-  status: 'running' | 'stopped'
-  cpuUsage: string
-  memoryUsage: string
-  reportedData?: {
-    state: string
-    cpuPercent: number
-    memoryPercent: number
-    createTime?: string
-  }
+  reportedData: NonNullable<LogMiningMonitor['reportedData']>
 }
 
 // Router
@@ -233,6 +223,9 @@ const updateLicenseDialog = reactive({
   serviceId: '',
 })
 const logMiningFirstLoading = ref(false)
+const logMiningAgentTypes = ref<string[]>([])
+const selectedLogMiningAgentType = ref('')
+const latestLogMiningData = ref<LogMiningMonitor[]>([])
 const logMiningCommandLoading = ref<{ [key: string]: boolean }>({})
 // 记录正在操作的服务状态：'starting' | 'stopping'
 const logMiningOperationState = ref<{ [key: string]: 'starting' | 'stopping' }>(
@@ -246,6 +239,26 @@ const DataSourceMap = {
   nineBridge: t('public_oracle_raw_log'),
   OracleLogParser: t('public_oracle_raw_log'),
 } as const
+const LogMiningAgentTypeLabelKeyMap: Record<string, string> = {
+  oraclelogparser: 'cluster_log_mining_type_oracle_log_parser',
+  'db2 for z cdc reader': 'cluster_log_mining_type_db2_z_log_reader',
+}
+const supportedLogMiningAgentTypes = new Set([
+  'oraclelogparser',
+  'db2 for z cdc reader',
+])
+const getLogMiningAgentTypeLabel = (agentType: string) => {
+  const labelKey = LogMiningAgentTypeLabelKeyMap[agentType.trim().toLowerCase()]
+  return labelKey ? t(labelKey) : agentType
+}
+const getLogMiningAgentTypeCardLabel = (agentType: string) => {
+  if (agentType.trim().toLowerCase() === 'db2 for z cdc reader') {
+    return t('cluster_log_mining_card_type_db2_z_log')
+  }
+  return getLogMiningAgentTypeLabel(agentType)
+}
+const isSupportedLogMiningAgentType = (agentType: string) =>
+  supportedLogMiningAgentTypes.has(agentType.trim().toLowerCase())
 
 // Watchers
 watch(
@@ -1005,19 +1018,128 @@ const {
   loading: logMiningLoading,
 } = usePollingRequest<LogMiningMonitor[]>(
   async () => {
-    const data = await findRawServerInfo()
-    const result = data.items
-      .map((item) => {
-        item.timestamp = dayjs(item.timestamp).format('YYYY-MM-DD HH:mm:ss')
-        item.dataSource = DataSourceMap[item.dataSource]
-        item.cpuUsage = (item.reportedData.cpuPercent * 100).toFixed(2)
-        item.memoryUsage = (item.reportedData.memoryPercent * 100).toFixed(2)
-        item.startTime = item.reportedData.createTime
-          ? dayjs(item.reportedData.createTime).format('YYYY-MM-DD HH:mm:ss')
-          : '--'
-        return item
+    if (!selectedLogMiningAgentType.value) return []
+    const requestedAgentType = selectedLogMiningAgentType.value
+
+    if (requestedAgentType === 'OracleLogParser') {
+      const data = await findRawServerInfo()
+      if (requestedAgentType !== selectedLogMiningAgentType.value) {
+        return latestLogMiningData.value
+      }
+
+      const result: LogMiningMonitor[] = (
+        data.items as OracleLogMiningRawItem[]
+      )
+        .map((item) => {
+          item.timestamp = dayjs(item.timestamp).format('YYYY-MM-DD HH:mm:ss')
+          item.dataSource =
+            DataSourceMap[item.dataSource as keyof typeof DataSourceMap]
+          item.cpuUsage = (item.reportedData.cpuPercent * 100).toFixed(2)
+          item.memoryUsage = (item.reportedData.memoryPercent * 100).toFixed(2)
+          item.startTime = item.reportedData.createTime
+            ? dayjs(item.reportedData.createTime).format('YYYY-MM-DD HH:mm:ss')
+            : '--'
+          return item
+        })
+        .sort((a, b) => {
+          const aRunning = a.reportedData?.state === 'sleep'
+          const bRunning = b.reportedData?.state === 'sleep'
+
+          if (aRunning && !bRunning) return -1
+          if (!aRunning && bRunning) return 1
+
+          return a.serviceId.localeCompare(b.serviceId)
+        })
+
+      latestLogMiningData.value = result
+      updateOracleLogParserOperationState(result)
+      return result
+    }
+
+    const pageSize = 100
+    const firstPage = await fetchAgentProcesses({
+      agentType: requestedAgentType,
+      page: 1,
+      pageSize,
+      sortBy: 'lastRegisterTime',
+      sortOrder: 'DESC',
+    })
+    if (requestedAgentType !== selectedLogMiningAgentType.value) {
+      return latestLogMiningData.value
+    }
+    const pageCount = Math.ceil(firstPage.total / pageSize)
+    const otherPages = await Promise.all(
+      Array.from({ length: Math.max(0, pageCount - 1) }, (_, index) =>
+        fetchAgentProcesses({
+          agentType: requestedAgentType,
+          page: index + 2,
+          pageSize,
+          sortBy: 'lastRegisterTime',
+          sortOrder: 'DESC',
+        }),
+      ),
+    )
+    if (requestedAgentType !== selectedLogMiningAgentType.value) {
+      return latestLogMiningData.value
+    }
+    const agentProcessItems = [
+      ...firstPage.items,
+      ...otherPages.flatMap((page) => page.items),
+    ]
+    const result: LogMiningMonitor[] = agentProcessItems
+      .map((item: AgentProcessItem, index) => {
+        const processStatus = item.status || ''
+        const timestamp = item.statusReportTime || item.lastRegisterTime
+        const startTime = item.startTime
+        const isAlive = item.statusReportTime
+          ? dayjs().diff(dayjs(item.statusReportTime)) <= 3 * 60 * 1000
+          : false
+        return {
+          id: item.proxyProcessId || index,
+          proxyProcessId: item.proxyProcessId,
+          serviceId: item.agentName || item.agentId,
+          agentType: item.agentType,
+          dataSource: item.agentType,
+          timestamp: timestamp
+            ? dayjs(timestamp).format('YYYY-MM-DD HH:mm:ss')
+            : '--',
+          pid: item.pid,
+          cpuPercent: item.cpuUsage,
+          memoryPercent: item.memoryUsage,
+          state: processStatus,
+          isAlive,
+          name: item.agentName || item.agentId,
+          ip: item.advertiseIp || '',
+          address: [item.advertiseIp, item.advertisePort]
+            .filter(
+              (part) => part !== undefined && part !== null && part !== '',
+            )
+            .join(':'),
+          startTime: startTime
+            ? dayjs(startTime).format('YYYY-MM-DD HH:mm:ss')
+            : '--',
+          status: (item.status === 'RUNNING' ? 'running' : 'stopped') as
+            | 'running'
+            | 'stopped',
+          processStatus,
+          errorReason: item.errorReason,
+          cpuUsage: item.cpuUsage == null ? '--' : item.cpuUsage.toFixed(2),
+          memoryUsage:
+            item.memoryUsage == null ? '--' : item.memoryUsage.toFixed(2),
+          reportedData: {
+            state:
+              item.status === 'RUNNING'
+                ? 'sleep'
+                : item.status === 'OFFLINE'
+                  ? 'notExists'
+                  : 'failed',
+            cpuPercent: item.cpuUsage || 0,
+            memoryPercent: item.memoryUsage || 0,
+            createTime: startTime,
+          },
+        }
       })
-      .sort((a: any, b: any) => {
+      .sort((a, b) => {
         const aRunning = a.reportedData?.state === 'sleep'
         const bRunning = b.reportedData?.state === 'sleep'
 
@@ -1027,27 +1149,7 @@ const {
         return a.serviceId.localeCompare(b.serviceId)
       })
 
-    // 检查操作状态是否已完成
-    if (result && result.length) {
-      Object.keys(logMiningOperationState.value).forEach((serviceId) => {
-        const operationState = logMiningOperationState.value[serviceId]
-        const item = result.find((d: any) => d.serviceId === serviceId)
-
-        if (item) {
-          const isRunning = item.reportedData?.state === 'sleep'
-
-          // 如果正在启动，且状态已变为运行中，清除操作状态
-          if (operationState === 'starting' && isRunning) {
-            delete logMiningOperationState.value[serviceId]
-          }
-          // 如果正在停止，且状态已变为停止，清除操作状态
-          else if (operationState === 'stopping' && !isRunning) {
-            delete logMiningOperationState.value[serviceId]
-          }
-        }
-      })
-    }
-
+    latestLogMiningData.value = result
     return result
   },
   {
@@ -1061,13 +1163,76 @@ const {
 const handleTabChange = (tab: any) => {
   if (tab === 'logMining') {
     logMiningFirstLoading.value = true
-    fetchLogMiningData().finally(() => {
-      logMiningFirstLoading.value = false
-      fetchLogMiningLicense()
-    })
+    fetchAgentProcessTypes()
+      .then((types) => {
+        logMiningAgentTypes.value = (types || []).filter(
+          isSupportedLogMiningAgentType,
+        )
+        if (
+          !logMiningAgentTypes.value.includes(selectedLogMiningAgentType.value)
+        ) {
+          selectedLogMiningAgentType.value = logMiningAgentTypes.value[0] || ''
+        }
+        return fetchLogMiningData()
+      })
+      .finally(() => {
+        logMiningFirstLoading.value = false
+        if (selectedLogMiningAgentType.value === 'OracleLogParser') {
+          fetchLogMiningLicense()
+        }
+      })
   } else {
     cancelFetchLogMiningData()
   }
+}
+
+const handleLogMiningAgentTypeChange = (agentType: string) => {
+  cancelFetchLogMiningData()
+  latestLogMiningData.value = []
+  logMiningData.value = []
+  selectedLogMiningAgentType.value = agentType
+  licenseExpireDays.value = {}
+  licenseExpireDate.value = {}
+  logMiningFirstLoading.value = true
+  fetchLogMiningData().finally(() => {
+    logMiningFirstLoading.value = false
+    if (
+      agentType === 'OracleLogParser' &&
+      selectedLogMiningAgentType.value === 'OracleLogParser'
+    ) {
+      fetchLogMiningLicense()
+    }
+  })
+}
+
+const updateOracleLogParserOperationState = (result: LogMiningMonitor[]) => {
+  if (!result.length) return
+
+  Object.keys(logMiningOperationState.value).forEach((serviceId) => {
+    const operationState = logMiningOperationState.value[serviceId]
+    const item = result.find((row) => row.serviceId === serviceId)
+
+    if (!item) return
+
+    const isRunning = item.reportedData?.state === 'sleep'
+    if (
+      (operationState === 'starting' && isRunning) ||
+      (operationState === 'stopping' && !isRunning)
+    ) {
+      delete logMiningOperationState.value[serviceId]
+    }
+  })
+}
+
+const deleteReaderProcess = async (row: LogMiningMonitor) => {
+  if (!row.proxyProcessId) return
+
+  const confirmed = await Modal.confirm(t('cluster_delete_confirm'))
+  if (!confirmed) return
+
+  await deleteAgentProcess(row.proxyProcessId)
+  await fetchLogMiningData()
+  ElMessage.success(t('public_message_operation_success'))
 }
 
 const updateLicenseExpireDays = (serverId: string, item: any) => {
@@ -1079,7 +1244,9 @@ const updateLicenseExpireDays = (serverId: string, item: any) => {
 }
 
 const fetchLogMiningLicense = () => {
-  const serviceIds = logMiningData.value.map((item) => item.serviceId)
+  if (selectedLogMiningAgentType.value !== 'OracleLogParser') return
+
+  const serviceIds = (logMiningData.value || []).map((item) => item.serviceId)
   const fetchIds = serviceIds.filter((id) => !(id in licenseExpireDays.value))
 
   Object.keys(licenseExpireDays.value).forEach((id) => {
@@ -1090,7 +1257,10 @@ const fetchLogMiningLicense = () => {
   })
 
   if (fetchIds.length) {
+    const requestedAgentType = selectedLogMiningAgentType.value
     Promise.all(fetchIds.map((id) => getNieBridgeLicense(id))).then((res) => {
+      if (selectedLogMiningAgentType.value !== requestedAgentType) return
+
       res.forEach((item, i) => updateLicenseExpireDays(fetchIds[i]!, item))
     })
   }
@@ -1179,6 +1349,8 @@ const updateLogMiningLicense = (row: any) => {
 }
 
 const onUpdateLicenseSuccess = () => {
+  if (selectedLogMiningAgentType.value !== 'OracleLogParser') return
+
   fetchLogMiningData()
   getNieBridgeLicense(updateLicenseDialog.serviceId).then((res) =>
     updateLicenseExpireDays(updateLicenseDialog.serviceId, res),
@@ -1222,6 +1394,29 @@ const onUpdateLicenseSuccess = () => {
         </template>
       </el-tab-pane>
     </el-tabs>
+
+    <div v-if="viewType === 'logMining'" class="flex align-center gap-2 mb-4">
+      <el-tag
+        v-for="agentType in logMiningAgentTypes"
+        :key="agentType"
+        :type="selectedLogMiningAgentType === agentType ? 'primary' : 'info'"
+        effect="plain"
+        class="log-mining-agent-type-tag"
+        :class="{
+          'log-mining-agent-type-tag--active':
+            selectedLogMiningAgentType === agentType,
+        }"
+        @click="handleLogMiningAgentTypeChange(agentType)"
+      >
+        {{ getLogMiningAgentTypeLabel(agentType) }}
+        <el-icon
+          v-if="selectedLogMiningAgentType === agentType"
+          class="log-mining-agent-type-tag__check"
+        >
+          <i-lucide-check />
+        </el-icon>
+      </el-tag>
+    </div>
 
     <section class="clusterManagement-container">
       <div class="section-wrap-box">
@@ -2050,234 +2245,32 @@ const onUpdateLicenseSuccess = () => {
             :gutter="24"
             style="row-gap: 24px"
           >
-            <div
-              v-for="item in logMiningData"
-              :key="item.id"
-              class="grid-content list-box border rounded-xl mb-6 logMining-card"
-            >
-              <div class="list-box-header justify-content-start gap-3">
-                <div class="list-box-header-left">
-                  <img
-                    class="mr-4 rounded-xl"
-                    src="../../assets/static/serve.svg"
-                  />
-                  <div class="list-box-header-main">
-                    <h2 class="name fs-6 mb-1 flex align-center gap-2">
-                      <i
-                        class="circular"
-                        :class="!item.isAlive ? 'bgred' : 'bggreen'"
-                      />
-                      {{ item.serviceId }}
-                    </h2>
-                    <span class="ip">{{ item.dataSource }}</span>
-                  </div>
-                </div>
-                <div
-                  class="flex flex-column align-items-end justify-content-between flex-1"
-                  style="--btn-space: 0"
-                >
-                  <div class="flex align-center gap-2 mb-1">
-                    <el-tag
-                      v-if="item.reportedData.state === 'sleep'"
-                      type="success"
-                    >
-                      <el-tooltip
-                        v-if="!item.isAlive"
-                        :content="$t('cluster_launcher_offline')"
-                        :enterable="false"
-                        placement="top"
-                      >
-                        <el-icon class="color-warning"
-                          ><i-lucide-triangle-alert
-                        /></el-icon>
-                      </el-tooltip>
-                      {{ $t('public_status_running') }}</el-tag
-                    >
-                    <el-tag
-                      v-else-if="item.reportedData.state === 'notExists'"
-                      type="info"
-                      >{{ $t('public_agent_status_offline') }}</el-tag
-                    >
-                    <el-tag v-else type="danger">{{
-                      $t('public_status_stop')
-                    }}</el-tag>
-                    <ElButton
-                      v-if="item.reportedData.state === 'sleep'"
-                      text
-                      type="danger"
-                      :loading="
-                        logMiningCommandLoading[item.serviceId] ||
-                        !!logMiningOperationState[item.serviceId]
-                      "
-                      :disabled="
-                        !item.isAlive ||
-                        !!logMiningOperationState[item.serviceId]
-                      "
-                      @click="stopLogMining(item)"
-                    >
-                      <template #icon>
-                        <i-lucide-square />
-                      </template>
-                      <span>{{ $t('public_button_stop') }}</span>
-                    </ElButton>
-                    <ElButton
-                      v-else
-                      text
-                      type="primary"
-                      :loading="
-                        logMiningCommandLoading[item.serviceId] ||
-                        !!logMiningOperationState[item.serviceId]
-                      "
-                      :disabled="
-                        !item.isAlive ||
-                        !!logMiningOperationState[item.serviceId]
-                      "
-                      @click="startLogMining(item)"
-                    >
-                      <template #icon>
-                        <i-lucide-play />
-                      </template>
-                      <span>{{ $t('public_button_start') }}</span>
-                    </ElButton>
-                    <el-dropdown
-                      @command="handleLogMiningCommand($event, item)"
-                    >
-                      <el-button text>
-                        <template #icon>
-                          <i-lucide-ellipsis />
-                        </template>
-                      </el-button>
-
-                      <template #dropdown>
-                        <el-dropdown-menu>
-                          <el-dropdown-item
-                            :disabled="
-                              !item.isAlive ||
-                              logMiningCommandLoading[item.serviceId]
-                            "
-                            command="restart"
-                          >
-                            <el-icon class="mr-2" size="16">
-                              <i-lucide-rotate-cw />
-                            </el-icon>
-                            {{ $t('public_button_restart') }}</el-dropdown-item
-                          >
-                          <el-dropdown-item
-                            :disabled="!item.isAlive"
-                            command="updateLicense"
-                          >
-                            <el-icon class="mr-2" size="16">
-                              <i-lucide-file-key />
-                            </el-icon>
-                            {{ $t('license_renew_dialog') }}</el-dropdown-item
-                          >
-                          <el-dropdown-item
-                            :disabled="item.reportedData.state === 'sleep'"
-                            divided
-                            class="is-danger"
-                            command="delete"
-                          >
-                            <el-icon class="mr-2" size="16">
-                              <i-lucide-trash-2 />
-                            </el-icon>
-                            {{ $t('public_button_delete') }}</el-dropdown-item
-                          >
-                        </el-dropdown-menu>
-                      </template>
-                    </el-dropdown>
-                  </div>
-
-                  <div class="text-xs flex align-center">
-                    <span class="font-color-sslight inline-flex flex-wrap gap-1"
-                      ><span
-                        >{{ $t('packages_business_task_preview_startTime') }}:
-                      </span>
-                      {{ item.startTime }}</span
-                    ><template v-if="licenseExpireDate[item.serviceId]"
-                      ><el-divider direction="vertical" />
-                      <span
-                        class="font-color-sslight inline-flex flex-wrap gap-1"
-                        ><span>{{ $t('license_expire_date') }}: </span>
-                        {{ licenseExpireDate[item.serviceId] }}</span
-                      ></template
-                    >
-                  </div>
-                </div>
-              </div>
-              <div
-                v-if="licenseExpireDays[item.serviceId] < 8"
-                class="px-4 pb-4"
-              >
-                <el-alert
-                  v-if="licenseExpireDays[item.serviceId] < 1"
-                  :closable="false"
-                  type="error"
-                  show-icon
-                  class="fit-content"
-                >
-                  <template #title>
-                    <div class="flex align-center justify-content-between">
-                      <span>
-                        {{
-                          licenseExpireDays[item.serviceId] === 0
-                            ? $t('license_expired_today')
-                            : $t('license_expired_days', {
-                                val: Math.abs(
-                                  licenseExpireDays[item.serviceId],
-                                ),
-                              })
-                        }}
-                      </span>
-                      <el-button
-                        type="primary"
-                        text
-                        @click="updateLogMiningLicense(item)"
-                      >
-                        <el-icon>
-                          <i-lucide-upload />
-                        </el-icon>
-                        <span>
-                          {{ $t('license_renew_dialog') }}
-                        </span>
-                      </el-button>
-                    </div>
-                  </template>
-                </el-alert>
-                <el-alert
-                  v-else
-                  :closable="false"
-                  type="warning"
-                  show-icon
-                  class="fit-content"
-                >
-                  <template #title>
-                    <div class="flex align-center justify-content-between">
-                      <span>
-                        {{
-                          $t('license_expire_days', {
-                            val: licenseExpireDays[item.serviceId],
-                          })
-                        }}
-                      </span>
-                      <el-button text @click="updateLogMiningLicense(item)">
-                        {{ $t('license_renew_dialog') }}
-                      </el-button>
-                    </div>
-                  </template>
-                </el-alert>
-              </div>
-              <div class="list-box-main">
-                <div class="usageRate">
-                  <div class="fs-5 pb-1 fw-bolder">{{ item.cpuUsage }}%</div>
-                  {{ $t('cluster_cpu_usage') }}
-                </div>
-                <div class="line" />
-                <div class="usageRate">
-                  <div class="fs-5 pb-1 fw-bolder">{{ item.memoryUsage }}%</div>
-                  {{ $t('cluster_heap_memory_usage') }}
-                </div>
-              </div>
-            </div>
+            <template v-for="item in logMiningData" :key="item.id">
+              <OracleLogParserCard
+                v-if="selectedLogMiningAgentType === 'OracleLogParser'"
+                :key="`oracle-${item.id}`"
+                :item="item"
+                :license-expire-days="licenseExpireDays[item.serviceId]"
+                :license-expire-date="licenseExpireDate[item.serviceId]"
+                :command-loading="!!logMiningCommandLoading[item.serviceId]"
+                :operation-state="logMiningOperationState[item.serviceId]"
+                @start="startLogMining(item)"
+                @stop="stopLogMining(item)"
+                @command="handleLogMiningCommand($event, item)"
+                @update-license="updateLogMiningLicense(item)"
+              />
+              <Db2LogReaderCard
+                v-else
+                :key="`reader-${item.id}`"
+                :item="item"
+                :type-label="
+                  getLogMiningAgentTypeCardLabel(
+                    item.agentType || selectedLogMiningAgentType,
+                  )
+                "
+                @delete="deleteReaderProcess(item)"
+              />
+            </template>
           </div>
 
           <el-empty v-else />
@@ -2831,7 +2824,50 @@ const onUpdateLicenseSuccess = () => {
   column-count: 2; /* 两列 */
   column-gap: 24px;
 }
+.log-mining-agent-type-tag {
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease;
+
+  &:not(.log-mining-agent-type-tag--active) {
+    background: var(--el-fill-color-light);
+    border-color: var(--el-border-color-lighter);
+    color: var(--el-text-color-regular);
+
+    &:hover {
+      border-color: var(--el-color-primary-light-5);
+      color: var(--el-color-primary);
+    }
+  }
+
+  &--active {
+    background: var(--el-color-primary) !important;
+    border-color: var(--el-color-primary) !important;
+    color: var(--el-color-white) !important;
+    box-shadow: 0 2px 7px rgb(64 118 255 / 24%);
+    font-weight: 600;
+  }
+
+  &__check {
+    margin-left: 5px;
+    color: inherit;
+  }
+}
 .logMining-card {
   break-inside: avoid; /* 防止卡片被分割到两列 */
+}
+
+@media (max-width: 600px) {
+  .logMining-container {
+    column-count: 1;
+  }
 }
 </style>
