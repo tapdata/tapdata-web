@@ -209,9 +209,11 @@ export function batchUpdateTaskAlarm(params: {
 export function fetchAlarmReceiverCandidates(params?: {
   taskId?: string
   taskIds?: string[] | string
+  inspectScope?: boolean
 }) {
   const query: Record<string, string> = {}
   if (params?.taskId) query.taskId = params.taskId
+  if (params?.inspectScope) query.inspectScope = 'true'
   if (params?.taskIds) {
     query.taskIds = Array.isArray(params.taskIds)
       ? params.taskIds.filter(Boolean).join(',')
@@ -227,6 +229,22 @@ export function fetchAlarmReceiverPreview(taskId: string) {
   return requestClient.get<AlarmReceiverPreview>(
     `${BASE_URL}/receiverPreview`,
     { params: { taskId } },
+  )
+}
+
+export interface InspectReceiverPreviewRequest {
+  inspectId?: string
+  flowId?: string
+  alarmReceivers?: AlarmReceiver[] | null
+  emailReceivers?: string[] | null
+}
+
+export function fetchInspectReceiverPreview(
+  params: InspectReceiverPreviewRequest,
+) {
+  return requestClient.post<AlarmReceiverPreview>(
+    `${BASE_URL}/receiverPreview/inspect`,
+    params,
   )
 }
 
