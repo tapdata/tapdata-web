@@ -734,6 +734,8 @@ export default {
   packages_business_verification_form_alarm_receivers_system:
     '使用系統預設接收人',
   packages_business_verification_form_alarm_receivers_custom: '自訂接收人',
+  packages_business_verification_form_receiver_preview_restricted:
+    '基於隱私保護，此接收人組合無法預覽郵箱數，但可以儲存。',
   packages_business_verification_form_task_alarm_when_error:
     '當校驗任務出錯時進行告警',
   packages_business_verification_form_task_alarm_when_diff_result_over_count1:

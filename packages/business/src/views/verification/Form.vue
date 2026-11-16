@@ -39,6 +39,7 @@ import {
   initialInspectAlarm,
   inspectReceiverPreviewEmailCount,
   inspectReceiverPreviewRequest,
+  shouldResetInspectReceivers,
 } from './alarm-receivers'
 
 import type { SelectV2Instance } from 'element-plus'
@@ -241,9 +242,11 @@ const alarmReceiverMode = computed({
   get: () => (form.alarmReceivers === null ? 'SYSTEM_DEFAULT' : 'CUSTOM'),
   set: (mode: 'SYSTEM_DEFAULT' | 'CUSTOM') => {
     if (mode === 'SYSTEM_DEFAULT') {
+      resetInspectReceivers.value = Boolean(form.id)
       form.alarmReceivers = null
       form.emailReceivers = null
     } else if (form.alarmReceivers === null) {
+      resetInspectReceivers.value = false
       form.alarmReceivers = []
       form.emailReceivers = []
     }
@@ -332,8 +335,10 @@ const baseForm = ref(null)
 const conditionBox = ref(null)
 const activePanel = ref('condition')
 const alarmReceiverInvalid = ref(false)
+const resetInspectReceivers = ref(false)
 const receiverPreviewCount = ref<number | null>(null)
 const receiverPreviewFailed = ref(false)
+const receiverPreviewRestricted = ref(false)
 const receiverPreviewStale = ref(false)
 const receiverPreviewReady = ref(false)
 let receiverPreviewTimer: ReturnType<typeof setTimeout> | undefined
@@ -342,6 +347,7 @@ let receiverPreviewVersion = 0
 const loadReceiverPreview = async () => {
   const version = ++receiverPreviewVersion
   receiverPreviewFailed.value = false
+  receiverPreviewRestricted.value = false
   try {
     const preview = await fetchInspectReceiverPreview(
       inspectReceiverPreviewRequest(form),
@@ -351,8 +357,13 @@ const loadReceiverPreview = async () => {
     receiverPreviewFailed.value = false
     receiverPreviewStale.value = false
   } catch (error) {
-    console.error(error)
     if (version !== receiverPreviewVersion) return
+    const code =
+      (error as any)?.response?.data?.code ||
+      (error as any)?.response?.data?.errorCode ||
+      (error as any)?.code
+    receiverPreviewRestricted.value = code === 'insufficient.permissions'
+    if (!receiverPreviewRestricted.value) console.error(error)
     receiverPreviewCount.value = null
     receiverPreviewFailed.value = true
     receiverPreviewStale.value = false
@@ -363,10 +374,12 @@ watch(
   () => [form.id, form.flowId, form.alarmReceivers, form.emailReceivers],
   () => {
     if (!receiverPreviewReady.value) return
+    // Invalidate an in-flight request immediately; its response must not win during debounce.
+    receiverPreviewVersion += 1
     receiverPreviewStale.value = true
     if (receiverPreviewTimer) clearTimeout(receiverPreviewTimer)
     receiverPreviewTimer = setTimeout(() => {
-      void loadReceiverPreview()
+      loadReceiverPreview()
     }, 300)
   },
   { deep: true, immediate: true },
@@ -380,7 +393,7 @@ onBeforeUnmount(() => {
 const saveDisabled = computed(() => {
   return (
     errorMessageLevel.value === 'error' ||
-    alarmReceiverInvalid.value ||
+    (alarmReceiverMode.value === 'CUSTOM' && alarmReceiverInvalid.value) ||
     autoAddTableLoading.value ||
     loading.value
   )
@@ -399,13 +412,13 @@ onMounted(() => {
 
   const id = route.params.id
   if (id) {
-    void getData(id).finally(() => {
+    getData(id).finally(() => {
       receiverPreviewReady.value = true
-      void loadReceiverPreview()
+      loadReceiverPreview()
     })
   } else {
     receiverPreviewReady.value = true
-    void loadReceiverPreview()
+    loadReceiverPreview()
   }
 })
 
@@ -499,6 +512,7 @@ const applyTask = (task: any, cb?: () => void, inheritReceivers = true) => {
   isDbClone.value = task.syncType === 'migrate'
   if (inheritReceivers && !form.id && form.taskMode === 'pipeline') {
     const alarm = initialInspectAlarm(task)
+    resetInspectReceivers.value = false
     form.alarmReceivers = cloneDeep(alarm.alarmReceivers)
     form.emailReceivers = alarm.emailReceivers
   }
@@ -718,7 +732,10 @@ const save = async (saveOnly = false) => {
           browserTimezoneOffset: new Date().getTimezoneOffset(),
           alarmSettings,
           alarmReceivers: form.alarmReceivers,
-          useSystemDefaultReceivers: form.alarmReceivers === null,
+          useSystemDefaultReceivers: shouldResetInspectReceivers(
+            Boolean(form.id),
+            resetInspectReceivers.value,
+          ),
         }),
       )
       ElMessage.success(t('public_message_save_ok'))
@@ -1236,7 +1253,6 @@ provide('ConnectorMap', ConnectorMap)
               <AlarmReceiverSelector
                 v-if="alarmReceiverMode === 'CUSTOM'"
                 v-model="customAlarmReceivers"
-                :task-id="form.flowId || undefined"
                 :task-name="taskName"
                 inspect-scope
                 @invalid-change="alarmReceiverInvalid = $event"
@@ -1256,9 +1272,18 @@ provide('ConnectorMap', ConnectorMap)
                 class="flex align-center gap-2 fs-7"
               >
                 <span>{{
-                  $t('packages_dag_alarm_receiver_preview_failed')
+                  $t(
+                    receiverPreviewRestricted
+                      ? 'packages_business_verification_form_receiver_preview_restricted'
+                      : 'packages_dag_alarm_receiver_preview_failed',
+                  )
                 }}</span>
-                <ElButton text type="primary" @click="loadReceiverPreview">
+                <ElButton
+                  v-if="!receiverPreviewRestricted"
+                  text
+                  type="primary"
+                  @click="loadReceiverPreview"
+                >
                   {{ $t('public_button_retry') }}
                 </ElButton>
               </div>

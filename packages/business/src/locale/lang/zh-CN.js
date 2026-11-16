@@ -733,6 +733,8 @@ export default {
   packages_business_verification_form_alarm_receivers_system:
     '使用系统默认接收人',
   packages_business_verification_form_alarm_receivers_custom: '自定义接收人',
+  packages_business_verification_form_receiver_preview_restricted:
+    '基于隐私保护，此接收人组合无法预览邮箱数，但可以保存。',
   packages_business_verification_form_task_alarm_when_error:
     '当校验任务出错时进行告警',
   packages_business_verification_form_task_alarm_when_diff_result_over_count1:

@@ -61,3 +61,10 @@ export function inspectReceiverPreviewEmailCount(
 ) {
   return Array.isArray(preview?.emails) ? preview.emails.length : 0
 }
+
+export function shouldResetInspectReceivers(
+  isEditing: boolean,
+  explicitlySelectedSystemDefault: boolean,
+) {
+  return isEditing && explicitlySelectedSystemDefault
+}

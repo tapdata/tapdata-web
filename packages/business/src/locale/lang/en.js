@@ -809,6 +809,8 @@ export default {
     'Use system default recipients',
   packages_business_verification_form_alarm_receivers_custom:
     'Custom recipients',
+  packages_business_verification_form_receiver_preview_restricted:
+    'Email count preview is unavailable for this recipient combination for privacy reasons. You can still save it.',
   packages_business_verification_form_task_alarm_when_error:
     'Alert when the validation task encounters an error',
   packages_business_verification_form_task_alarm_when_diff_result_over_count1:

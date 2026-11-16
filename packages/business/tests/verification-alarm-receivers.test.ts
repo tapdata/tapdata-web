@@ -4,6 +4,7 @@ import {
   initialInspectAlarm,
   inspectReceiverPreviewEmailCount,
   inspectReceiverPreviewRequest,
+  shouldResetInspectReceivers,
 } from '../src/views/verification/alarm-receivers.ts'
 
 test('copies pipeline user and group recipients as an independent initial selection', () => {
@@ -83,4 +84,14 @@ test('uses the resolved unique email list length for the preview count', () => {
   )
   assert.equal(inspectReceiverPreviewEmailCount({ emails: [] }), 0)
   assert.equal(inspectReceiverPreviewEmailCount(null), 0)
+})
+
+test('does not reset legacy recipients on an unchanged edit', () => {
+  const legacy = initialInspectAlarm({ emailReceivers: ['legacy@example.com'] })
+  assert.deepEqual(legacy.alarmReceivers, [
+    { type: 'EMAIL', email: 'legacy@example.com' },
+  ])
+  assert.equal(shouldResetInspectReceivers(true, false), false)
+  assert.equal(shouldResetInspectReceivers(true, true), true)
+  assert.equal(shouldResetInspectReceivers(false, true), false)
 })
