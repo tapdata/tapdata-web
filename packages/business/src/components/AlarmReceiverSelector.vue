@@ -31,6 +31,7 @@ const props = withDefaults(
     taskIds?: string[]
     taskName?: string
     disabled?: boolean
+    inspectScope?: boolean
   }>(),
   {
     modelValue: () => [],
@@ -38,6 +39,7 @@ const props = withDefaults(
     taskIds: () => [],
     taskName: '',
     disabled: false,
+    inspectScope: false,
   },
 )
 
@@ -181,6 +183,7 @@ async function loadCandidates() {
     const data = await fetchAlarmReceiverCandidates({
       taskId: props.taskId || undefined,
       taskIds: props.taskIds.length ? props.taskIds : undefined,
+      inspectScope: props.inspectScope,
     })
     users.value = Array.isArray(data?.users) ? data.users : []
     groups.value = Array.isArray(data?.groups) ? data.groups : []
