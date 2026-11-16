@@ -71,7 +71,7 @@ const showSettingButton = computed(() => {
   return (
     !import.meta.env.VUE_APP_HIDE_SETTING_BUTTON &&
     getSettingByKey('SHOW_SETTING_BUTTON') &&
-    (hasPermissionByCode?.('home_notice_settings') ||
+    (hasPermissionByCode?.('v2_alarm_settings_menu') ||
       (hasPermissionByCode?.('system_settings') &&
         hasPermissionByCode?.('system_settings_menu')))
   )
@@ -128,9 +128,9 @@ const command = (command: string) => {
         name: 'settingCenter',
       })
       break
-    case 'setting':
+    case 'alarmSetting':
       router.push({
-        name: 'notificationSetting',
+        name: 'alarmSetting',
       })
       break
     case 'help':
@@ -352,9 +352,9 @@ defineExpose({
               >{{ $t('page_title_setting') }}
             </ElDropdownItem>
             <ElDropdownItem
-              v-if="hasPermissionByCode('home_notice_settings')"
-              command="setting"
-              >{{ $t('notify_setting') }}
+              v-if="hasPermissionByCode?.('v2_alarm_settings_menu')"
+              command="alarmSetting"
+              >{{ $t('daas_setting_settingcenter_gaojingshezhi') }}
             </ElDropdownItem>
           </ElDropdownMenu>
         </template>

@@ -43,8 +43,16 @@ const menusGroup = ref<MenuGroup>({
   bottom: [],
 })
 
-// Getters
+// Getter for menus
 const isMenuEnabled = computed(() => store.getters['feature/isMenuEnabled'])
+
+// 当前激活子菜单所在的父级菜单需要自动展开，例如从铃铛进入操作审计
+const openedMenus = computed(() => {
+  const parent = menus.value.find((menu) =>
+    menu.children?.some((child) => child.name === activeMenu.value),
+  )
+  return parent ? [parent.name] : []
+})
 
 // Methods
 const getMenus = (hideMenuMap: Record<string, boolean> = {}) => {
@@ -136,6 +144,7 @@ onMounted(() => {
         unique-opened
         class="flex flex-column flex-1 gap-2 border-end-0"
         :default-active="activeMenu"
+        :default-openeds="openedMenus"
         :collapse-transition="false"
         @select="menuHandler"
       >

@@ -57,21 +57,11 @@ export const MENU = [
   },
 
   {
-    name: 'opsCenter',
-    label: 'page_title_ops_center',
-    icon: 'warning',
-    group: 'bottom',
-    children: [{ name: 'alarmEvents' }],
-  },
-  {
     name: 'messageCenter',
-    label: 'page_title_message_center',
+    label: 'page_title_alarm_notification',
     icon: 'notice-system-notice',
     group: 'bottom',
-    children: [
-      { name: 'notificationRecords' },
-      { name: 'notificationSetting' },
-    ],
+    children: [{ name: 'notificationRecords' }, { name: 'alarmEvents' }],
   },
   {
     name: 'advancedFeatures',
@@ -136,13 +126,13 @@ export const MENU = [
     children: [
       { name: 'roleList', code: 'v2_role_management', parent: 'roles' },
       { name: 'users', code: 'v2_user_management_menu', parent: 'users' },
+      { name: 'operationAudit' },
       {
         name: 'clusterManagement',
         code: 'v2_cluster-management_menu',
         hidden: isCommunity,
       },
       { name: 'externalStorage', code: 'v2_external-storage_menu' },
-      { name: 'operationAudit' },
     ],
   },
 ]
@@ -156,12 +146,6 @@ export const DropdownList = [
 ]
 
 export const SettingList = [
-  {
-    icon: 'bells',
-    name: 'notify_setting',
-    key: 'notificationSetting',
-    size: 20,
-  },
   {
     icon: 'alert-filled',
     name: 'packages_dag_migration_configpanel_gaojingshezhi',

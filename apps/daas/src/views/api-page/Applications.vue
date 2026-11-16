@@ -5,12 +5,14 @@ import {
   fetchApiClients,
   updateApiClient,
 } from '@tap/api/src/core/api-client'
+import { revealClientSecret } from '@tap/api/src/core/audit-events'
 import { fetchRoles } from '@tap/api/src/core/roles'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import { useHas } from '@tap/business/src/composables'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import i18n from '@tap/i18n'
+import { copyToClipboard } from '@tap/shared/src/util'
 import { cloneDeep, escapeRegExp } from 'lodash-es'
 import { h, nextTick, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
@@ -61,6 +63,13 @@ const createForm = reactive<CreateForm>({
 })
 const $has = useHas()
 
+// 客户端密钥列表只显示掩码；复制时经服务端接口取得，以便记录敏感读取审计
+async function copySecret(row: { id: string }) {
+  const secret = await revealClientSecret(row.id)
+  copyToClipboard(secret)
+  ElMessage.success(t('public_message_copy_success'))
+}
+
 // 获取角色
 const getRoles = () => {
   const filter = {
@@ -102,6 +111,7 @@ const edit = (item: Record<string, any>) => {
     formRef.value?.clearValidate()
   })
   Object.assign(createForm, item)
+  createForm.clientSecret = ''
 }
 
 // 移除
@@ -125,6 +135,7 @@ const createApplication = () => {
   params.responseTypes = ['token']
   params.redirectUris = params.redirectUrisStr?.split(',') || []
   delete params.redirectUrisStr
+  if (params.id && !params.clientSecret) delete params.clientSecret
 
   // 如果clientId为空，则不传递该字段
   if (!params.clientId || params.clientId.trim() === '') {
@@ -267,12 +278,25 @@ watch(
       </el-table-column>
       <el-table-column
         :label="$t('application_header_client_secret')"
-        :show-overflow-tooltip="true"
         prop="clientSecret"
-        sortable="clientSecret"
         min-width="160"
         max-width="300"
-      />
+      >
+        <template #default="{ row }">
+          <span class="align-middle">{{
+            row.clientSecretConfigured ? '********' : ''
+          }}</span>
+          <el-button
+            v-if="row.clientSecretConfigured"
+            text
+            type="primary"
+            size="small"
+            class="ml-1"
+            @click.stop="copySecret(row)"
+            >{{ $t('public_button_copy') }}</el-button
+          >
+        </template>
+      </el-table-column>
       <el-table-column
         :label="$t('application_header_redirect_uri')"
         :show-overflow-tooltip="true"
@@ -371,7 +395,7 @@ watch(
         </ElFormItem>
         <ElFormItem
           :label="$t('application_header_client_secret')"
-          required
+          :required="!createForm.id"
           prop="clientSecret"
         >
           <template #label>

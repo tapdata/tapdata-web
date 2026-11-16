@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { useI18n } from '@tap/i18n'
 import { Cookie } from '@tap/shared'
-import { computed } from 'vue'
+import { ElMessage } from 'element-plus'
+import { computed, inject, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { SettingList } from '@/router/menu'
@@ -9,6 +11,26 @@ import Wrapper from './Wrapper.vue'
 const store = useStore()
 const router = useRouter()
 const route = useRoute()
+const { t } = useI18n()
+const hasPermissionByCode = inject<(code: string) => boolean>(
+  'hasPermissionByCode',
+)
+
+watch(
+  () => [route.name, route.query.from],
+  () => {
+    if (
+      route.name !== 'alarmSetting' ||
+      route.query.from !== 'notificationSetting'
+    )
+      return
+    ElMessage.info(t('notification_setting_offline_notice'))
+    const query = { ...route.query }
+    delete query.from
+    router.replace({ name: 'alarmSetting', query })
+  },
+  { immediate: true },
+)
 
 const isMenuEnabled = computed(() => store.getters['feature/isMenuEnabled'])
 
@@ -25,7 +47,13 @@ const settingList = computed(() => {
   }
 
   return list.concat(
-    SettingList.filter((item) => !item.hidden && isMenuEnabled.value(item.key)),
+    SettingList.filter(
+      (item) =>
+        !item.hidden &&
+        isMenuEnabled.value(item.key) &&
+        (item.key !== 'alarmSetting' ||
+          hasPermissionByCode?.('v2_alarm_settings_menu')),
+    ),
   )
 })
 

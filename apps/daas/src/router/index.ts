@@ -53,8 +53,9 @@ router.beforeEach(async (to, from, next) => {
         next()
       }
     } else if (from.name === 'login') {
-      //from为login 上一次重定向无权限跳转到 控制台
+      //from为login 上一次重定向无权限跳转到 控制台（返回后不再继续执行后续 next，避免两次跳转相互取消而页面空白）
       next('/')
+      return
     } else {
       Message.error({
         message: i18n.global.t('app_signIn_permission_denied'),

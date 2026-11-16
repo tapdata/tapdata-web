@@ -1,5 +1,6 @@
 <script>
 import { EditPen, Refresh } from '@element-plus/icons-vue'
+import { revealAccessCode } from '@tap/api/src/core/audit-events'
 import {
   changeUserPassword,
   getUserById,
@@ -76,7 +77,7 @@ export default {
         },
         {
           label: this.$t('account_accessCode'),
-          value: '',
+          value: '********',
           key: 'accessCode',
           icon: Refresh,
         },
@@ -147,9 +148,14 @@ export default {
     this.handleGetData()
   },
   methods: {
-    handleCopy(value) {
+    // 访问码经服务端接口取得后复制，以便记录敏感读取审计；页面只显示掩码
+    async handleCopy() {
+      const value = await revealAccessCode()
       copyToClipboard(value)
       this.$message.success(this.$t('public_message_copy_success'))
+    },
+    displayValue(item) {
+      return item.key === 'accessCode' ? '********' : item.value
     },
     // 获取当前信息
     async handleGetData() {
@@ -158,7 +164,7 @@ export default {
       if (data) {
         this.infoList.forEach((item) => {
           Object.keys(data).forEach((key) => {
-            if (item.key === key) {
+            if (item.key === key && key !== 'accessCode') {
               item.value = data[key]
             }
           })
@@ -188,9 +194,7 @@ export default {
             },
           ).then((res) => {
             if (res) {
-              refreshAccessCode().then((data) => {
-                this.infoList.find((item) => item.key === 'accessCode').value =
-                  data
+              refreshAccessCode().then(() => {
                 this.$message({
                   type: 'success',
                   message: this.$t('account_accessCode_success'),
@@ -290,13 +294,13 @@ export default {
           >
             <span class="label">{{ item.label }}</span>
             <span class="text">
-              <span class="align-middle">{{ item.value }}</span>
+              <span class="align-middle">{{ displayValue(item) }}</span>
               <IconButton
                 v-if="item.key === 'accessCode'"
                 primary
                 class="align-middle ml-2"
                 sm
-                @click="handleCopy(item.value)"
+                @click="handleCopy"
                 >copy</IconButton
               >
             </span>

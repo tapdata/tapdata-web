@@ -461,6 +461,9 @@ export interface TaskDashboardQuery {
   top: number
   startAt: number
   endAt: number
+  physicalNodeId?: string
+  intervalSeconds?: number
+  trendSchemaVersion?: number
 }
 
 export interface TaskDashboardActiveTasks {
@@ -493,7 +496,19 @@ export interface TaskDashboardApiRequests {
 
 export interface TaskDashboardTrendSeries {
   ts: number[]
-  values: number[]
+  values: Array<number | null>
+  status?: 'ok' | 'no_data' | 'component_not_deployed'
+  traceability?: 'complete' | 'partial' | 'untraceable'
+  coverage?: 'complete' | 'partial' | 'unknown'
+  hasUnattributedData?: boolean
+}
+
+export interface TaskDashboardNodeOption {
+  physicalNodeId: string
+  label: string
+  status: 'running' | 'offline'
+  engineDeployed: boolean
+  apiServerDeployed: boolean
 }
 
 export interface TaskDashboardTopTask {
@@ -526,14 +541,24 @@ export interface TaskDashboardVo {
 }
 
 export interface TaskDashboardParams {
-  type?: 'minute' | 'hours' | 'days'
+  type?: 'minute' | 'hours' | 'days' | 'range'
   step?: number
   dashboardType?: string
   top?: number
+  physicalNodeId?: string
+  startAt?: number
+  endAt?: number
+  trendSchemaVersion?: 2
 }
 
 export function fetchTaskDashboard(params?: TaskDashboardParams) {
   return requestClient.get<TaskDashboardVo>(`${BASE_URL}/dashboard`, {
     params,
   })
+}
+
+export function fetchTaskDashboardNodes() {
+  return requestClient.get<TaskDashboardNodeOption[]>(
+    `${BASE_URL}/dashboard/nodes`,
+  )
 }

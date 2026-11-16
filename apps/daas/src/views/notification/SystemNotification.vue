@@ -134,7 +134,7 @@ export default {
   },
   methods: {
     handleSetting() {
-      this.$router.push({ name: 'notificationSetting' })
+      this.$router.push({ name: 'alarmSetting' })
     },
     getData() {
       const { search, msg, system, serverName } = this.searchParams
@@ -363,10 +363,10 @@ export default {
             $t('notify_mask_read_all')
           }}</ElButton>
           <ElButton
-            v-readonlybtn="'home_notice_settings'"
+            v-readonlybtn="'v2_alarm_settings_menu'"
             @click="handleSetting"
           >
-            {{ $t('notify_setting') }}
+            {{ $t('daas_setting_settingcenter_gaojingshezhi') }}
           </ElButton>
         </div>
       </div>
