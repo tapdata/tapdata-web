@@ -20,6 +20,13 @@ interface ConnectionRow {
   shareCdcEnable?: boolean
 }
 
+const props = defineProps<{
+  loading?: boolean
+  title?: string
+  subtitleKey?: string
+  allowedAgentProcessIds?: string[] | null
+}>()
+
 const emit = defineEmits<{
   submit: [payload: BatchAgentSettingsPayload]
 }>()
@@ -28,6 +35,7 @@ const { t } = useI18n()
 const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 const visible = ref(false)
 const selectedConnections = ref<ConnectionRow[]>([])
+const selectedAllowedAgentProcessIds = ref<string[] | null>()
 const schemaForm = ref<InstanceType<typeof SchemaToForm> | null>(null)
 const formValues = ref<Record<string, any>>({})
 const formKey = ref(0)
@@ -88,11 +96,21 @@ const formScope = {
       )
     }
   },
-  loadAccessNode: loadAccessNodeOptions,
+  loadAccessNode: (field: unknown, others: { value?: string } = {}) =>
+    loadAccessNodeOptions(field, {
+      ...others,
+      allowedAgentProcessIds: selectedAllowedAgentProcessIds.value,
+    }),
 }
 
-const open = (connections: ConnectionRow[]) => {
+const open = (
+  connections: ConnectionRow[],
+  allowedAgents = props.allowedAgentProcessIds,
+) => {
   selectedConnections.value = [...connections]
+  selectedAllowedAgentProcessIds.value = allowedAgents
+    ? [...allowedAgents]
+    : allowedAgents
   const hasSharedCdcConnection = connections.some(
     (connection) => connection.shareCdcEnable,
   )
@@ -158,16 +176,18 @@ defineExpose({ open, close: handleClose })
 <template>
   <ElDialog
     v-model="visible"
-    :title="t('packages_business_agent_settings_dialog_title')"
+    :title="title || t('packages_business_agent_settings_dialog_title')"
     width="560px"
     :close-on-click-modal="false"
+    :close-on-press-escape="!loading"
+    :show-close="!loading"
     append-to-body
     destroy-on-close
     @closed="handleClose"
   >
     <div class="mb-4 text-muted">
       {{
-        t('packages_business_agent_settings_dialog_subtitle', {
+        t(subtitleKey || 'packages_business_agent_settings_dialog_subtitle', {
           count: selectedConnections.length,
         })
       }}
@@ -186,9 +206,12 @@ defineExpose({ open, close: handleClose })
       />
     </ElConfigProvider>
     <template #footer>
-      <ElButton @click="handleClose">{{ t('public_button_cancel') }}</ElButton>
+      <ElButton :disabled="loading" @click="handleClose">{{
+        t('public_button_cancel')
+      }}</ElButton>
       <ElButton
         type="primary"
+        :loading="loading"
         :disabled="!selectedConnections.length"
         @click="handleSubmit"
       >

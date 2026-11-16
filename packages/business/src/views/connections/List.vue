@@ -3,6 +3,7 @@ import {
   batchUpdateConnectionTags,
   batchUpdateConnectionAgentSettings,
   checkConnectionTask,
+  checkConnectionAgentSettings,
   copyConnection,
   deleteConnection,
   exportConnections,
@@ -39,6 +40,8 @@ import TablePage from '../../components/TablePage.vue'
 import UploadDialog from '../../components/UploadDialog.vue'
 import BatchTagDialog from '../../components/BatchTagDialog.vue'
 import BatchAgentSettingsDialog from './BatchAgentSettingsDialog.vue'
+import AgentTaskConflictDialog from './AgentTaskConflictDialog.vue'
+import { saveConnectionWithConflictRetry } from './connectionAgentConflicts'
 import type { BatchAgentSettingsPayload } from './agentSettingsSchema'
 import { useHas } from '../../composables'
 import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '../../shared'
@@ -483,18 +486,39 @@ const handleBatchOperation = (command: string) => {
   }
 }
 
+const agentConflictDialog = ref<InstanceType<
+  typeof AgentTaskConflictDialog
+> | null>(null)
+const batchAgentSubmitting = ref(false)
+
 const handleBatchAgentSettingsSubmit = async (
   payload: BatchAgentSettingsPayload,
 ) => {
+  if (batchAgentSubmitting.value) return
+  batchAgentSubmitting.value = true
   try {
-    await batchUpdateConnectionAgentSettings(payload)
+    const report = await checkConnectionAgentSettings(payload)
+    if (
+      report.hasConflicts &&
+      !(await agentConflictDialog.value?.open(payload, report))
+    )
+      return
+    const saved = await saveConnectionWithConflictRetry(
+      payload,
+      () => batchUpdateConnectionAgentSettings(payload),
+      (settings, nextReport) =>
+        agentConflictDialog.value?.open(settings, nextReport) ||
+        Promise.resolve(false),
+    )
+    if (!saved) return
     batchAgentSettingsDialog.value?.close()
     table.value?.clearSelection?.()
     await table.value?.fetch()
     ElMessage.success(i18n.t('public_message_save_ok'))
-  } catch (error) {
-    console.error(error)
+  } catch {
     ElMessage.error(i18n.t('packages_business_message_saveFail'))
+  } finally {
+    batchAgentSubmitting.value = false
   }
 }
 
@@ -1085,6 +1109,7 @@ onUnmounted(() => {
     />
     <BatchAgentSettingsDialog
       ref="batchAgentSettingsDialog"
+      :loading="batchAgentSubmitting"
       @submit="handleBatchAgentSettingsSubmit"
     />
     <Preview
@@ -1105,6 +1130,7 @@ onUnmounted(() => {
       :connection="testData"
       @return-test-data="returnTestData"
     />
+    <AgentTaskConflictDialog ref="agentConflictDialog" />
     <UsedTaskDialog v-model="connectionTaskDialog" :data="connectionTaskData" />
     <PermissionseSettingsCreate ref="permissionseSettingsCreate" />
     <UploadDialog
