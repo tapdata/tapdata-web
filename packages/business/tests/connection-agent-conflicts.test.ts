@@ -7,6 +7,10 @@ import {
   taskAgentEdits,
   conflictTaskDestination,
   automaticConflictTasks,
+  commonAllowedAgentProcessIds,
+  filterAllowedAgentOptions,
+  saveConnectionWithConflictRetry,
+  snapshotConflictTasks,
 } from '../src/views/connections/connectionAgentConflicts.ts'
 
 test('automatic allocation clears stale manual and priority values without mutating the form', () => {
@@ -155,4 +159,137 @@ test('automatic action requires a positive server prediction and editability', (
     automaticConflictTasks(rows).map((row) => row.id),
     ['eligible'],
   )
+})
+
+test('editing snapshots task ids and revisions without changing table selection', () => {
+  const rows = [
+    {
+      id: 'task-a',
+      name: 'Task A',
+      revision: 123,
+      editable: true,
+      allowedAgentProcessIds: ['agent-a'],
+    },
+  ]
+  const snapshot = snapshotConflictTasks(rows)
+  rows[0].id = 'task-b'
+  rows[0].revision = 456
+  rows[0].allowedAgentProcessIds.push('agent-b')
+  assert.deepEqual(snapshot, [
+    {
+      id: 'task-a',
+      name: 'Task A',
+      revision: 123,
+      editable: true,
+      allowedAgentProcessIds: ['agent-a'],
+    },
+  ])
+})
+
+test('common allowed Agents are intersected and unrestricted tasks do not widen the set', () => {
+  assert.deepEqual(
+    commonAllowedAgentProcessIds([
+      { allowedAgentProcessIds: ['a', 'b'] },
+      { allowedAgentProcessIds: ['b', 'c'] },
+      { allowedAgentProcessIds: null },
+    ]),
+    ['b'],
+  )
+  assert.equal(
+    commonAllowedAgentProcessIds([{ allowedAgentProcessIds: null }]),
+    null,
+  )
+  assert.deepEqual(
+    commonAllowedAgentProcessIds([
+      { allowedAgentProcessIds: ['a'] },
+      { allowedAgentProcessIds: ['b'] },
+    ]),
+    [],
+  )
+})
+
+test('Agent selector filters individual Agents and group members to the allowed intersection', () => {
+  const options = [
+    { value: 'a', accessNodeType: 'MANUALLY_SPECIFIED_BY_THE_USER' },
+    { value: 'b', accessNodeType: 'MANUALLY_SPECIFIED_BY_THE_USER' },
+    {
+      value: 'group-1',
+      accessNodeType: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP',
+      children: [{ value: 'a' }, { value: 'b' }],
+    },
+    {
+      value: 'group-2',
+      accessNodeType: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP',
+      children: [{ value: 'c' }],
+    },
+  ]
+  assert.deepEqual(filterAllowedAgentOptions(options, ['b']), [
+    { value: 'b', accessNodeType: 'MANUALLY_SPECIFIED_BY_THE_USER' },
+    {
+      value: 'group-1',
+      accessNodeType: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP',
+      children: [{ value: 'b' }],
+    },
+  ])
+})
+
+test('connection save retries original settings only after conflict resolution is confirmed', async () => {
+  const payload = {
+    requestId: 'request-1',
+    connectionIds: ['connection-1'],
+    settings: {
+      accessNodeType: 'MANUALLY_SPECIFIED_BY_THE_USER',
+      accessNodeProcessId: 'agent-b',
+      priorityProcessId: null,
+    },
+  }
+  const report = {
+    items: [],
+    total: 1,
+    hiddenCount: 0,
+    hasConflicts: true,
+  }
+  let saves = 0
+  let opens = 0
+  const saved = await saveConnectionWithConflictRetry(
+    payload,
+    () => {
+      saves += 1
+      if (saves === 1) throw { data: report }
+      return Promise.resolve()
+    },
+    (receivedPayload, receivedReport) => {
+      opens += 1
+      assert.equal(receivedPayload, payload)
+      assert.deepEqual(receivedReport, report)
+      return Promise.resolve(true)
+    },
+  )
+  assert.equal(saved, true)
+  assert.equal(saves, 2)
+  assert.equal(opens, 1)
+})
+
+test('canceling conflict resolution does not retry the connection save', async () => {
+  let saves = 0
+  const saved = await saveConnectionWithConflictRetry(
+    {
+      requestId: 'request-1',
+      connectionIds: ['connection-1'],
+      settings: {
+        accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
+        accessNodeProcessId: null,
+        priorityProcessId: null,
+      },
+    },
+    () => {
+      saves += 1
+      throw {
+        data: { items: [], total: 1, hiddenCount: 0, hasConflicts: true },
+      }
+    },
+    () => Promise.resolve(false),
+  )
+  assert.equal(saved, false)
+  assert.equal(saves, 1)
 })

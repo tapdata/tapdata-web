@@ -43,7 +43,7 @@ import UsedTaskDialog from './UsedTaskDialog.vue'
 import AgentTaskConflictDialog from './AgentTaskConflictDialog.vue'
 import {
   agentCheckPayload,
-  agentConflictReport,
+  saveConnectionWithConflictRetry,
 } from './connectionAgentConflicts'
 import { getConnectionIcon } from './util'
 
@@ -269,29 +269,34 @@ export default {
               return
             }
           }
-          let promise = null
+          let saveConnection
           if (id) {
             params.id = id
-            promise = updateConnectionById(id, params)
+            saveConnection = () => updateConnectionById(id, params)
           } else {
             const { commandCallbackFunctionId } = this
             params.status = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
-            promise = createConnection(params, {
-              id: commandCallbackFunctionId,
-            })
+            saveConnection = () =>
+              createConnection(params, { id: commandCallbackFunctionId })
           }
-          promise
-            .then(() => {
+          const savePromise = agentPayload
+            ? saveConnectionWithConflictRetry(
+                agentPayload,
+                saveConnection,
+                (payload, report) =>
+                  this.$refs.agentTaskConflictDialog.open(payload, report),
+              )
+            : saveConnection().then(() => true)
+          savePromise
+            .then((saved) => {
+              if (!saved) return
               this.buried('connectionSubmit', '', {
                 result: true,
               })
               this.$message.success(this.$t('public_message_save_ok'))
               this.gotoBackPath()
             })
-            .catch((error) => {
-              const report = agentConflictReport(error)
-              if (agentPayload && report?.hasConflicts)
-                this.$refs.agentTaskConflictDialog.open(agentPayload, report)
+            .catch(() => {
               this.buried('connectionSubmit', '', {
                 result: false,
               })

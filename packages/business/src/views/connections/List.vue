@@ -41,7 +41,7 @@ import UploadDialog from '../../components/UploadDialog.vue'
 import BatchTagDialog from '../../components/BatchTagDialog.vue'
 import BatchAgentSettingsDialog from './BatchAgentSettingsDialog.vue'
 import AgentTaskConflictDialog from './AgentTaskConflictDialog.vue'
-import { agentConflictReport } from './connectionAgentConflicts'
+import { saveConnectionWithConflictRetry } from './connectionAgentConflicts'
 import type { BatchAgentSettingsPayload } from './agentSettingsSchema'
 import { useHas } from '../../composables'
 import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '../../shared'
@@ -503,15 +503,20 @@ const handleBatchAgentSettingsSubmit = async (
       !(await agentConflictDialog.value?.open(payload, report))
     )
       return
-    await batchUpdateConnectionAgentSettings(payload)
+    const saved = await saveConnectionWithConflictRetry(
+      payload,
+      () => batchUpdateConnectionAgentSettings(payload),
+      (settings, nextReport) =>
+        agentConflictDialog.value?.open(settings, nextReport) ||
+        Promise.resolve(false),
+    )
+    if (!saved) return
     batchAgentSettingsDialog.value?.close()
     table.value?.clearSelection?.()
     await table.value?.fetch()
     ElMessage.success(i18n.t('public_message_save_ok'))
-  } catch (error) {
-    const report = agentConflictReport(error)
-    if (report?.hasConflicts) agentConflictDialog.value?.open(payload, report)
-    else ElMessage.error(i18n.t('packages_business_message_saveFail'))
+  } catch {
+    ElMessage.error(i18n.t('packages_business_message_saveFail'))
   } finally {
     batchAgentSubmitting.value = false
   }

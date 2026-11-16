@@ -58,6 +58,7 @@ export interface ConnectionAgentConflictReport {
     autoResolvable: boolean
     blockedReason: string | null
     revision: number | null
+    allowedAgentProcessIds?: string[] | null
     code: string
     reason: string
     connections: Array<{ id: string; name: string }>

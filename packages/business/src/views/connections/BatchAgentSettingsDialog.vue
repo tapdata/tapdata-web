@@ -20,7 +20,12 @@ interface ConnectionRow {
   shareCdcEnable?: boolean
 }
 
-defineProps<{ loading?: boolean; title?: string; subtitleKey?: string }>()
+const props = defineProps<{
+  loading?: boolean
+  title?: string
+  subtitleKey?: string
+  allowedAgentProcessIds?: string[] | null
+}>()
 
 const emit = defineEmits<{
   submit: [payload: BatchAgentSettingsPayload]
@@ -30,6 +35,7 @@ const { t } = useI18n()
 const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 const visible = ref(false)
 const selectedConnections = ref<ConnectionRow[]>([])
+const selectedAllowedAgentProcessIds = ref<string[] | null>()
 const schemaForm = ref<InstanceType<typeof SchemaToForm> | null>(null)
 const formValues = ref<Record<string, any>>({})
 const formKey = ref(0)
@@ -90,11 +96,21 @@ const formScope = {
       )
     }
   },
-  loadAccessNode: loadAccessNodeOptions,
+  loadAccessNode: (field: unknown, others: { value?: string } = {}) =>
+    loadAccessNodeOptions(field, {
+      ...others,
+      allowedAgentProcessIds: selectedAllowedAgentProcessIds.value,
+    }),
 }
 
-const open = (connections: ConnectionRow[]) => {
+const open = (
+  connections: ConnectionRow[],
+  allowedAgents = props.allowedAgentProcessIds,
+) => {
   selectedConnections.value = [...connections]
+  selectedAllowedAgentProcessIds.value = allowedAgents
+    ? [...allowedAgents]
+    : allowedAgents
   const hasSharedCdcConnection = connections.some(
     (connection) => connection.shareCdcEnable,
   )

@@ -14,6 +14,8 @@ import {
   taskAgentEdits,
   conflictTaskDestination,
   automaticConflictTasks,
+  commonAllowedAgentProcessIds,
+  snapshotConflictTasks,
 } from './connectionAgentConflicts'
 import { STATUS_MAP } from '../../shared'
 
@@ -32,6 +34,7 @@ const report = ref<ConnectionAgentConflictReport>({
 let payload: BatchUpdateConnectionAgentSettingsParams | null = null
 let generation = 0
 const selectedTasks = ref<ConnectionAgentConflictReport['items']>([])
+const editingTasks = ref<ReturnType<typeof snapshotConflictTasks>>([])
 const taskSettingsDialog = ref<InstanceType<
   typeof BatchAgentSettingsDialog
 > | null>(null)
@@ -46,8 +49,12 @@ function settle(value: boolean) {
   finish = null
 }
 
-function editTasks() {
-  taskSettingsDialog.value?.open(selectedTasks.value)
+function editTasks(rows = selectedTasks.value) {
+  editingTasks.value = snapshotConflictTasks(rows)
+  taskSettingsDialog.value?.open(
+    editingTasks.value,
+    commonAllowedAgentProcessIds(editingTasks.value),
+  )
 }
 
 const automaticRows = computed(() =>
@@ -94,10 +101,10 @@ async function saveAutomatically() {
 
 async function saveTasks(
   settings: BatchUpdateConnectionAgentSettingsParams,
-  rows = selectedTasks.value,
+  rows = editingTasks.value,
 ) {
   if (!payload || taskSaving.value) return
-  const tasks = [...rows]
+  const tasks = snapshotConflictTasks(rows)
   taskSaving.value = true
   tasks.forEach(({ id, name }) => taskNames.set(id, name))
   try {
@@ -110,13 +117,13 @@ async function saveTasks(
     failures.value = result.failures
     taskSettingsDialog.value?.close()
     selectedTasks.value = []
-    await changePage(1)
+    await changePage(1, true)
   } catch {
     failures.value = tasks.map(({ id }) => ({
       id,
       code: 'Task.AgentUpdateResultUnknown',
     }))
-    await changePage(1)
+    await changePage(1, true)
   } finally {
     taskSaving.value = false
   }
@@ -161,8 +168,8 @@ function open(
   })
 }
 
-async function changePage(nextPage: number) {
-  if (!payload || loading.value) return
+async function changePage(nextPage: number, afterSave = false) {
+  if (!payload || loading.value || (taskSaving.value && !afterSave)) return
   const current = generation
   loading.value = true
   try {
@@ -194,8 +201,7 @@ function category(item: ConnectionAgentConflictReport['items'][number]) {
 }
 
 function editOneTask(item: ConnectionAgentConflictReport['items'][number]) {
-  selectedTasks.value = [item]
-  editTasks()
+  editTasks([item])
 }
 
 function openTask(item: ConnectionAgentConflictReport['items'][number]) {
@@ -385,7 +391,7 @@ defineExpose({ open })
     <ElPagination
       v-if="report.total > pageSize"
       class="mt-4"
-      :disabled="loading"
+      :disabled="loading || taskSaving"
       :current-page="page"
       :page-size="pageSize"
       :total="report.total"
