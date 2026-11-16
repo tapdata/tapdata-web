@@ -86,12 +86,20 @@ test('uses the resolved unique email list length for the preview count', () => {
   assert.equal(inspectReceiverPreviewEmailCount(null), 0)
 })
 
-test('does not reset legacy recipients on an unchanged edit', () => {
-  const legacy = initialInspectAlarm({ emailReceivers: ['legacy@example.com'] })
-  assert.deepEqual(legacy.alarmReceivers, [
-    { type: 'EMAIL', email: 'legacy@example.com' },
-  ])
-  assert.equal(shouldResetInspectReceivers(true, false), false)
-  assert.equal(shouldResetInspectReceivers(true, true), true)
-  assert.equal(shouldResetInspectReceivers(false, true), false)
+test('preserves recipients on an unchanged edit but allows an explicit reset', () => {
+  assert.equal(shouldResetInspectReceivers(true, false, null), false)
+  assert.equal(shouldResetInspectReceivers(true, true, null), true)
+  assert.equal(shouldResetInspectReceivers(true, true, []), false)
+})
+
+test('an Inspect created in system-default mode opts out of pipeline inheritance', () => {
+  assert.equal(shouldResetInspectReceivers(false, true, null), true)
+  assert.equal(shouldResetInspectReceivers(false, false, null), true)
+  assert.equal(shouldResetInspectReceivers(false, false, []), false)
+  assert.equal(
+    shouldResetInspectReceivers(false, false, [
+      { type: 'EMAIL', email: 'ops@example.com' },
+    ]),
+    false,
+  )
 })

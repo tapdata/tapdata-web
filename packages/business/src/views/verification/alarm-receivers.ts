@@ -65,6 +65,11 @@ export function inspectReceiverPreviewEmailCount(
 export function shouldResetInspectReceivers(
   isEditing: boolean,
   explicitlySelectedSystemDefault: boolean,
+  alarmReceivers: AlarmReceiver[] | null,
 ) {
-  return isEditing && explicitlySelectedSystemDefault
+  // Creates must opt out of server-side inheritance when the form shows defaults.
+  // An unchanged edit must preserve legacy recipients hidden by the read API.
+  return (
+    alarmReceivers === null && (!isEditing || explicitlySelectedSystemDefault)
+  )
 }

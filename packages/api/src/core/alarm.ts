@@ -245,6 +245,7 @@ export function fetchInspectReceiverPreview(
   return requestClient.post<AlarmReceiverPreview>(
     `${BASE_URL}/receiverPreview/inspect`,
     params,
+    { skipErrorHandler: true },
   )
 }
 

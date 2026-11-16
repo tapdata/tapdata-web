@@ -242,6 +242,7 @@ const alarmReceiverMode = computed({
   get: () => (form.alarmReceivers === null ? 'SYSTEM_DEFAULT' : 'CUSTOM'),
   set: (mode: 'SYSTEM_DEFAULT' | 'CUSTOM') => {
     if (mode === 'SYSTEM_DEFAULT') {
+      alarmReceiverInvalid.value = false
       resetInspectReceivers.value = Boolean(form.id)
       form.alarmReceivers = null
       form.emailReceivers = null
@@ -735,6 +736,7 @@ const save = async (saveOnly = false) => {
           useSystemDefaultReceivers: shouldResetInspectReceivers(
             Boolean(form.id),
             resetInspectReceivers.value,
+            form.alarmReceivers,
           ),
         }),
       )
@@ -1268,7 +1270,7 @@ provide('ConnectorMap', ConnectorMap)
                 }}
               </div>
               <div
-                v-if="receiverPreviewFailed"
+                v-if="receiverPreviewFailed && !receiverPreviewStale"
                 class="flex align-center gap-2 fs-7"
               >
                 <span>{{
