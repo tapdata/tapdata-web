@@ -18,6 +18,7 @@ import {
   getProxyId,
   subscribeProxy,
 } from '@tap/api/src/core/proxy'
+import { loadAgentProcessCommandList } from '@tap/api/src/core/agent-process-command'
 import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 import i18n from '@tap/i18n'
 import { submitForm, uuid } from '@tap/shared'
@@ -132,6 +133,7 @@ export default {
               }) || []
           )
         },
+        loadAgentProcessCommandList,
         loadCommandList: async (filter, val) => {
           try {
             const { $values, command, where = {}, page, size } = filter
