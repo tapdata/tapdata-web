@@ -10,6 +10,7 @@ import { useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 
 import { defineComponent, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { useDataflowStore } from '../../../stores/dataflow.store'
 import './style.scss'
 
@@ -18,6 +19,7 @@ export const loadSchemaTree = observer(
     props: ['findParentNode', 'value', 'tableNameField'],
     setup(props) {
       const dataflowStore = useDataflowStore()
+      const route = useRoute()
       const formRef = useForm()
       const form = formRef.value
       const loading = ref(false)
@@ -39,20 +41,39 @@ export const loadSchemaTree = observer(
 
       async function getTask() {
         const taskId = dataflowStore.dataflow?.taskId
-        const { parent_task_sign } = this.$route.query || {}
+        const { parent_task_sign } = route.query || {}
         return await getTaskById(taskId, {}, { parent_task_sign })
       }
 
-      let timer
+      let timer: ReturnType<typeof setTimeout> | undefined
+      let saveTimer: ReturnType<typeof setTimeout> | undefined
 
-      async function getSchemaData(check = false) {
+      async function getSchemaData(check = false, retry = 0) {
         if (check) {
-          const { transformed } = (await getTask()) || {}
-          isTransformed.value = !!transformed
+          try {
+            const { transformed } = (await getTask()) || {}
+            isTransformed.value = !!transformed
+          } catch (error) {
+            loadStatus.value = true
+            errorMsg.value =
+              error?.data?.message ||
+              i18n.t('packages_form_load_schema_tree_load_fail')
+            loading.value = false
+            return
+          }
+
           if (!isTransformed.value) {
+            if (retry >= 15) {
+              loadStatus.value = true
+              errorMsg.value = i18n.t(
+                'packages_form_load_schema_tree_load_fail',
+              )
+              loading.value = false
+              return
+            }
             timer && clearTimeout(timer)
             timer = setTimeout(() => {
-              getSchemaData(check)
+              getSchemaData(check, retry + 1)
             }, 2000)
             return
           }
@@ -61,9 +82,45 @@ export const loadSchemaTree = observer(
           .then((data) => {
             fieldList.value = data?.[0]?.fields || []
           })
+          .catch((error) => {
+            loadStatus.value = true
+            errorMsg.value =
+              error?.data?.message ||
+              i18n.t('packages_form_load_schema_tree_load_fail')
+          })
           .finally(() => {
             loading.value = false
           })
+      }
+
+      function refreshSchemaAfterTaskSave() {
+        let saveStarted = dataflowStore.taskSaving
+        const unwatchSaving = watch(
+          () => dataflowStore.taskSaving,
+          (saving) => {
+            if (saving) {
+              saveStarted = true
+            } else if (saveStarted) {
+              clearTimeout(saveTimer)
+              saveTimer = undefined
+              unwatchSaving()
+              getSchemaData(true)
+            }
+          },
+        )
+        saveTimer = setTimeout(() => {
+          unwatchSaving()
+          saveTimer = undefined
+          loadStatus.value = true
+          errorMsg.value = i18n.t(
+            'packages_form_load_schema_tree_load_fail',
+          )
+          loading.value = false
+        }, 30000)
+
+        if (!saveStarted) {
+          dataflowStore.patchDataflowDebounce()
+        }
       }
 
       function handleLoadSchema() {
@@ -130,20 +187,12 @@ export const loadSchemaTree = observer(
                         errorMsg.value = ''
 
                         if (form.getValuesIn(fieldName) === table) {
-                          getSchemaData(true)
+                          refreshSchemaAfterTaskSave()
                           return
                         }
 
-                        const unwatchSaving = watch(
-                          () => dataflowStore.taskSaving,
-                          (v) => {
-                            if (!v) {
-                              getSchemaData(true)
-                              unwatchSaving()
-                            }
-                          },
-                        )
                         form.setValuesIn(fieldName, table)
+                        refreshSchemaAfterTaskSave()
                       })
                       .catch((error) => {
                         loadStatus.value = true
@@ -178,6 +227,7 @@ export const loadSchemaTree = observer(
 
       onUnmounted(() => {
         timer && clearTimeout(timer)
+        saveTimer && clearTimeout(saveTimer)
       })
 
       const loadStatusDom = () => {
