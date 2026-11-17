@@ -115,23 +115,43 @@ export const loadSchemaTree = observer(
                     fetchMetadataInstances(filter)
                       .then((metaData) => {
                         const table = metaData.items?.[0]?.original_name
-                        form.setValuesIn(tableNameField || 'tableName', '')
-                        setTimeout(() => {
-                          form.setValuesIn(tableNameField || 'tableName', table)
-                          isTransformed.value = false
-                          const unwatchSaving = watch(
-                            () => dataflowStore.taskSaving,
-                            (v) => {
-                              if (!v) {
-                                getSchemaData(true)
-                                unwatchSaving()
-                              }
-                            },
+                        const fieldName = tableNameField || 'tableName'
+
+                        if (!table) {
+                          loadStatus.value = true
+                          errorMsg.value = i18n.t(
+                            'packages_form_load_schema_tree_load_fail',
                           )
-                        }, 3000)
-                      })
-                      .finally(() => {
+                          loading.value = false
+                          return
+                        }
+
                         loadStatus.value = false
+                        errorMsg.value = ''
+
+                        if (form.getValuesIn(fieldName) === table) {
+                          getSchemaData(true)
+                          return
+                        }
+
+                        const unwatchSaving = watch(
+                          () => dataflowStore.taskSaving,
+                          (v) => {
+                            if (!v) {
+                              getSchemaData(true)
+                              unwatchSaving()
+                            }
+                          },
+                        )
+                        form.setValuesIn(fieldName, table)
+                      })
+                      .catch((error) => {
+                        loadStatus.value = true
+                        const msg = error?.data?.message
+                        errorMsg.value = msg
+                        if (msg) {
+                          ElMessage.error(msg)
+                        }
                         loading.value = false
                       })
                   }
