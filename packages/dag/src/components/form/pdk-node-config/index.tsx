@@ -40,9 +40,8 @@ export const PdkNodeConfig = observer(
       const schemaRef = useFieldSchema()
       const formRef = useForm()
       const nodeId = formRef.value.values.id
-      const formSchema = buildPerTableSchema(
-        schemaRef.value.properties!.nodeConfig as Schema,
-      )
+      const nodeSchema = schemaRef.value.properties!.nodeConfig as Schema
+      const formSchema = buildPerTableSchema(nodeSchema)
       const showTableConfigBtn = computed(() => {
         const schema = schemaRef.value.toJSON()
         const properties = schema.properties as Record<string, any> | undefined
@@ -109,6 +108,7 @@ export const PdkNodeConfig = observer(
             v-model={dialogVisible.value}
             nodeId={nodeId}
             form={formRef.value}
+            nodeSchema={nodeSchema}
           >
             {{
               default: (tableName: string) => (
