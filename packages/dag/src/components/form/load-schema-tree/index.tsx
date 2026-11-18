@@ -40,7 +40,11 @@ export const loadSchemaTree = observer(
       )
 
       async function getTask() {
-        const taskId = dataflowStore.dataflow?.taskId
+        const taskId =
+          dataflowStore.dataflow?.taskId || dataflowStore.dataflow?.id
+        if (!taskId) {
+          throw new Error('Task id is unavailable')
+        }
         const { parent_task_sign } = route.query || {}
         return await getTaskById(taskId, {}, { parent_task_sign })
       }
@@ -57,6 +61,7 @@ export const loadSchemaTree = observer(
             loadStatus.value = true
             errorMsg.value =
               error?.data?.message ||
+              error?.message ||
               i18n.t('packages_form_load_schema_tree_load_fail')
             loading.value = false
             return
