@@ -2381,7 +2381,7 @@ export default {
     'Data source protocol connection takes time',
   daas_setting_setting_shujuyuanwanglu: 'Data source network connection time',
   daas_setting_setting_renwudezengliang: 'Replication delay for tasks',
-  daas_setting_settingcenter_gaojingshezhi: 'Alert settings',
+  daas_setting_settingcenter_gaojingshezhi: 'Alert Settings',
   packages_nodeDesign_custom_node_name_required: 'Please enter the node name',
   packages_nodeDesign_message_save_ok: 'Save Successfully',
   share_detail_title: 'Mining table details',
@@ -2785,9 +2785,9 @@ export default {
   // TAP-13052 告警事件 / 通知记录 / 操作审计
   page_title_ops_center: 'Operations',
   page_title_message_center: 'Messages & Notifications',
-  page_title_alarm_notification: 'Alarms & Notifications',
-  page_title_alarm_events: 'Alarm Events',
-  page_title_notification_records: 'Notification Records',
+  page_title_alarm_notification: 'Alert Center',
+  page_title_alarm_events: 'Alerts',
+  page_title_notification_records: 'Notifications',
   page_title_operation_audit: 'Audit Logs',
   notification_modular_alarm: 'alarm event',
   notification_operation_unread: 'marked as unread',
@@ -2796,6 +2796,7 @@ export default {
   alarm_event_stats_severe: 'Critical/Emergency',
   alarm_event_stats_today_new: 'New Today',
   alarm_event_stats_today_recovered: 'Recovered Today',
+  alarm_event_status_all: 'All statuses',
   alarm_event_object_type: 'Object Type',
   alarm_object_type_TASK: 'Task',
   alarm_object_type_NODE: 'Node',
@@ -2816,8 +2817,8 @@ export default {
   alarm_event_close_hint:
     'Closing only stops tracking this alarm; it does not mean the problem has recovered',
   alarm_event_close_confirm:
-    'Closing stops tracking the selected alarms. It does not mean the problem has recovered, and it will be recorded in the operation audit. Close them?',
-  alarm_event_detail: 'Alarm Details',
+    'Closing stops tracking the selected alarms. It does not mean the problem has recovered, and it will be recorded in the audit logs. Close them?',
+  alarm_event_detail: 'Alert Details',
   alarm_event_overview: 'Overview',
   alarm_event_id: 'Alarm ID',
   alarm_event_type: 'Alarm Type',
@@ -2836,7 +2837,7 @@ export default {
   alarm_event_open_setting: 'Open Alarm Settings',
   alarm_event_notification_overview: 'Notification Overview',
   alarm_event_latest_notify: 'Last notified',
-  alarm_event_view_notifications: 'View notification records',
+  alarm_event_view_notifications: 'View Notifications',
   delivery_channel_system: 'In-app message',
   delivery_channel_email: 'Email',
   delivery_channel_webhook: 'Webhook',
@@ -2889,7 +2890,7 @@ export default {
   notification_record_detail: 'Notification Details',
   notification_record_read_at: 'Read at',
   notification_record_basic: 'Basic Information',
-  notification_record_view_alarm: 'View Alarm Event',
+  notification_record_view_alarm: 'View Alert',
   notification_record_deliveries: 'Deliveries',
   notification_record_no_delivery:
     'No delivery details (historical record or no external channel)',
@@ -2903,7 +2904,7 @@ export default {
   notification_bell_title: 'Unread ({0})',
   notification_platform_license:
     'License expires in {0} days, please renew in time',
-  notification_view_all_records: 'View all notification records',
+  notification_view_all_records: 'View All Notifications',
   notification_setting_retired_tip:
     'In-app system notifications are retired. Task errors, validation errors and Agent status are now notified by alarm rules; configure channels and recipients in Alarm Settings. Existing email notifications below still apply.',
   // TAP-13018 审计日志

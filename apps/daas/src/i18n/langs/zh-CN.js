@@ -2631,8 +2631,8 @@ export default {
   // TAP-13052 告警事件 / 通知记录 / 操作审计
   page_title_ops_center: '运维中心',
   page_title_message_center: '消息与通知',
-  page_title_alarm_notification: '告警与通知',
-  page_title_alarm_events: '告警事件',
+  page_title_alarm_notification: '告警中心',
+  page_title_alarm_events: '告警列表',
   page_title_notification_records: '通知记录',
   page_title_operation_audit: '审计日志',
   notification_modular_alarm: '告警事件',
@@ -2642,6 +2642,7 @@ export default {
   alarm_event_stats_severe: '严重/紧急',
   alarm_event_stats_today_new: '今日新增',
   alarm_event_stats_today_recovered: '今日已恢复',
+  alarm_event_status_all: '全部状态',
   alarm_event_object_type: '对象类型',
   alarm_object_type_TASK: '任务',
   alarm_object_type_NODE: '节点',
@@ -2661,7 +2662,7 @@ export default {
   alarm_event_go_task: '前往任务',
   alarm_event_close_hint: '关闭只表示结束对该告警的跟踪，不代表问题已恢复',
   alarm_event_close_confirm:
-    '关闭后将结束对所选告警的跟踪，不代表问题已恢复，且会记录到操作审计。确定关闭吗？',
+    '关闭后将结束对所选告警的跟踪，不代表问题已恢复，且会记录到审计日志。确定关闭吗？',
   alarm_event_detail: '告警详情',
   alarm_event_overview: '告警概览',
   alarm_event_id: '告警 ID',
@@ -2681,7 +2682,7 @@ export default {
   alarm_event_open_setting: '打开告警设置',
   alarm_event_notification_overview: '通知概览',
   alarm_event_latest_notify: '最近通知时间',
-  alarm_event_view_notifications: '查看全部通知记录',
+  alarm_event_view_notifications: '查看通知记录',
   delivery_channel_system: '站内消息',
   delivery_channel_email: '邮件',
   delivery_channel_webhook: 'Webhook',
@@ -2730,7 +2731,7 @@ export default {
   notification_record_detail: '通知详情',
   notification_record_read_at: '读取时间',
   notification_record_basic: '基本信息',
-  notification_record_view_alarm: '查看告警事件',
+  notification_record_view_alarm: '查看告警',
   notification_record_deliveries: '发送明细',
   notification_record_no_delivery:
     '该通知没有发送明细（历史记录或未配置外部渠道）',
@@ -2743,7 +2744,7 @@ export default {
     '邮件“成功”表示邮件服务器已接收，不代表收件人已打开；同一次发送的收件人共用同一结果，服务器明确拒收的地址会单独标记失败。',
   notification_bell_title: '未读通知（{0}）',
   notification_platform_license: 'License 还有 {0} 天到期，请及时续期',
-  notification_view_all_records: '查看全部通知记录',
+  notification_view_all_records: '查看全部通知',
   notification_setting_retired_tip:
     '站内系统通知已下线：任务异常、校验异常、Agent 状态等提醒统一由告警规则产生，请在告警设置中配置渠道与接收人；下方已配置的邮件提醒仍然生效。',
   // TAP-13018 审计日志

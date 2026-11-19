@@ -163,7 +163,10 @@ export default {
           label: i18n.t('daas_notification_systemalarm_gaojingzhuangtai'),
           key: 'status',
           type: 'select-inner',
+          // 默认展示「全部状态」，明确列表同时包含告警中、已恢复和已关闭的告警
+          placeholder: i18n.t('alarm_event_status_all'),
           items: [
+            { label: i18n.t('alarm_event_status_all'), value: '' },
             {
               label: i18n.t('packages_business_shared_const_gaojingzhong'),
               value: 'ING',

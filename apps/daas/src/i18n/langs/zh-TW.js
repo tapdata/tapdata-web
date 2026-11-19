@@ -2617,10 +2617,10 @@ export default {
   // TAP-13052 告警事件 / 通知记录 / 操作审计
   page_title_ops_center: '運維中心',
   page_title_message_center: '訊息與通知',
-  page_title_alarm_notification: '告警與通知',
-  page_title_alarm_events: '告警事件',
+  page_title_alarm_notification: '告警中心',
+  page_title_alarm_events: '告警列表',
   page_title_notification_records: '通知記錄',
-  page_title_operation_audit: '稽核日誌',
+  page_title_operation_audit: '審計日誌',
   notification_modular_alarm: '告警事件',
   notification_operation_unread: '標記為未讀',
   notification_operation_close: '關閉了',
@@ -2628,6 +2628,7 @@ export default {
   alarm_event_stats_severe: '嚴重/緊急',
   alarm_event_stats_today_new: '今日新增',
   alarm_event_stats_today_recovered: '今日已恢復',
+  alarm_event_status_all: '全部狀態',
   alarm_event_object_type: '對象類型',
   alarm_object_type_TASK: '任務',
   alarm_object_type_NODE: '節點',
@@ -2647,7 +2648,7 @@ export default {
   alarm_event_go_task: '前往任務',
   alarm_event_close_hint: '關閉只表示結束對該告警的追蹤，不代表問題已恢復',
   alarm_event_close_confirm:
-    '關閉後將結束對所選告警的追蹤，不代表問題已恢復，且會記錄到操作審計。確定關閉嗎？',
+    '關閉後將結束對所選告警的追蹤，不代表問題已恢復，且會記錄到審計日誌。確定關閉嗎？',
   alarm_event_detail: '告警詳情',
   alarm_event_overview: '告警概覽',
   alarm_event_id: '告警 ID',
@@ -2667,7 +2668,7 @@ export default {
   alarm_event_open_setting: '打開告警設置',
   alarm_event_notification_overview: '通知概覽',
   alarm_event_latest_notify: '最近通知時間',
-  alarm_event_view_notifications: '查看全部通知記錄',
+  alarm_event_view_notifications: '查看通知記錄',
   delivery_channel_system: '站內訊息',
   delivery_channel_email: '郵件',
   delivery_channel_webhook: 'Webhook',
@@ -2717,7 +2718,7 @@ export default {
   notification_record_detail: '通知詳情',
   notification_record_read_at: '讀取時間',
   notification_record_basic: '基本資訊',
-  notification_record_view_alarm: '查看告警事件',
+  notification_record_view_alarm: '查看告警',
   notification_record_deliveries: '發送明細',
   notification_record_no_delivery:
     '該通知沒有發送明細（歷史記錄或未配置外部渠道）',
@@ -2730,7 +2731,7 @@ export default {
     '郵件「成功」表示郵件伺服器已接收，不代表收件人已開啟；同一次發送的收件人共用同一結果，伺服器明確拒收的地址會單獨標記失敗。',
   notification_bell_title: '未讀通知（{0}）',
   notification_platform_license: 'License 還有 {0} 天到期，請及時續期',
-  notification_view_all_records: '查看全部通知記錄',
+  notification_view_all_records: '查看全部通知',
   notification_setting_retired_tip:
     '站內系統通知已下線：任務異常、校驗異常、Agent 狀態等提醒統一由告警規則產生，請在告警設置中配置渠道與接收人；下方已配置的郵件提醒仍然生效。',
   // TAP-13018 审计日志
