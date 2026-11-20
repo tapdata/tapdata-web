@@ -2972,6 +2972,7 @@ export default {
   audit_query_outcome: '操作结果',
   audit_query_all: '全部',
   audit_query_more: '更多筛选',
+  audit_query_more_count: '更多筛选（{count}）',
   audit_query_search: '查询',
   audit_query_reset: '重置',
   audit_query_source: '来源',
@@ -2986,7 +2987,8 @@ export default {
   audit_query_applied: '已选条件',
   audit_query_pending: '条件已修改，待查询',
   audit_query_refresh: '刷新',
-  audit_query_remove_tag: '移除条件 {0}',
+  audit_query_remove_tag: '移除条件 {name}',
+  audit_query_tag: '{label}：{value}',
   audit_query_empty: '暂无匹配的日志',
   audit_query_invalid_range:
     '请填写有效的起止时间，且开始时间不能晚于结束时间。',

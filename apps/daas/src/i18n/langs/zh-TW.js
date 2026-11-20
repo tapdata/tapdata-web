@@ -2959,6 +2959,7 @@ export default {
   audit_query_outcome: '操作結果',
   audit_query_all: '全部',
   audit_query_more: '更多篩選',
+  audit_query_more_count: '更多篩選（{count}）',
   audit_query_search: '查詢',
   audit_query_reset: '重置',
   audit_query_source: '來源',
@@ -2973,7 +2974,8 @@ export default {
   audit_query_applied: '已選條件',
   audit_query_pending: '條件已修改，待查詢',
   audit_query_refresh: '重新整理',
-  audit_query_remove_tag: '移除條件 {0}',
+  audit_query_remove_tag: '移除條件 {name}',
+  audit_query_tag: '{label}：{value}',
   audit_query_empty: '暫無符合的日誌',
   audit_query_invalid_range:
     '請填寫有效的起訖時間，且開始時間不能晚於結束時間。',

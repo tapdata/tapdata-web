@@ -3137,6 +3137,7 @@ export default {
   audit_query_outcome: 'Result',
   audit_query_all: 'All',
   audit_query_more: 'More filters',
+  audit_query_more_count: 'More filters ({count})',
   audit_query_search: 'Search',
   audit_query_reset: 'Reset',
   audit_query_source: 'Source',
@@ -3151,7 +3152,8 @@ export default {
   audit_query_applied: 'Filters',
   audit_query_pending: 'Changes not applied',
   audit_query_refresh: 'Refresh',
-  audit_query_remove_tag: 'Remove filter {0}',
+  audit_query_remove_tag: 'Remove filter {name}',
+  audit_query_tag: '{label}: {value}',
   audit_query_empty: 'No matching logs',
   audit_query_invalid_range:
     'Enter a valid time range. Start time must not be later than end time.',

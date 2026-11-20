@@ -303,190 +303,212 @@ export default {
       :closable="false"
       :title="$t('audit_write_failure_alert', [status.writeFailures])"
     />
-    <section class="audit-query">
-      <form class="audit-query__form" @submit.prevent="search">
-        <div class="audit-query__field audit-query__range-preset">
-          <span class="audit-query__label">{{
-            $t('audit_query_quick_range')
-          }}</span>
-          <el-select v-model="range" @change="onQuickRangeChange">
-            <el-option
-              v-for="item in quickRanges"
-              :key="item"
-              :label="$t(`audit_query_range_${item}`)"
-              :value="item"
-            />
-          </el-select>
-        </div>
-        <div class="audit-query__field audit-query__time-range">
-          <span class="audit-query__label">{{
-            $t('audit_query_time_range')
-          }}</span>
-          <el-date-picker
-            v-model="timeRange"
-            type="datetimerange"
-            value-format="x"
-            format="YYYY-MM-DD HH:mm:ss"
-            :clearable="false"
-            :start-placeholder="$t('public_start_time')"
-            :end-placeholder="$t('public_end_time')"
-            :aria-label="$t('audit_query_time_range')"
-          />
-        </div>
-        <div class="audit-query__field audit-query__keyword">
-          <span class="audit-query__label">{{
-            $t('audit_query_keyword')
-          }}</span>
-          <el-input
-            v-model="draft.keyword"
-            clearable
-            :placeholder="$t('audit_query_keyword_placeholder')"
-            @keyup.enter="search"
-          >
-            <template #prefix>
-              <el-icon><i-lucide-search /></el-icon>
-            </template>
-          </el-input>
-        </div>
-        <div class="audit-query__field audit-query__event-type">
-          <span class="audit-query__label">{{
-            $t('audit_query_event_type')
-          }}</span>
-          <el-select
-            v-model="draft.eventType"
-            clearable
-            :placeholder="$t('audit_query_all')"
-          >
-            <el-option
-              v-for="item in eventTypes"
-              :key="item"
-              :label="$t(`audit_event_type_${item.toLowerCase()}`)"
-              :value="item"
-            />
-          </el-select>
-        </div>
-        <div class="audit-query__field audit-query__outcome">
-          <span class="audit-query__label">{{
-            $t('audit_query_outcome')
-          }}</span>
-          <el-select
-            v-model="draft.outcome"
-            clearable
-            :placeholder="$t('audit_query_all')"
-          >
-            <el-option
-              v-for="item in outcomes"
-              :key="item"
-              :label="$t(`audit_outcome_${item.toLowerCase()}`)"
-              :value="item"
-            />
-          </el-select>
-        </div>
-        <div class="audit-query__actions">
-          <el-button
-            :class="{ 'is-active': advancedVisible }"
-            :aria-expanded="String(advancedVisible)"
-            aria-controls="audit-query-advanced"
-            @click="advancedVisible = !advancedVisible"
-          >
-            {{ $t('audit_query_more') }}
-            <template v-if="advancedCount">({{ advancedCount }})</template>
-            <el-icon class="el-icon--right audit-query__chevron"
-              ><i-lucide-chevron-down
-            /></el-icon>
-          </el-button>
-          <el-button type="primary" native-type="submit">{{
-            $t('audit_query_search')
-          }}</el-button>
-          <el-button text @click="resetFilters">{{
-            $t('audit_query_reset')
-          }}</el-button>
-        </div>
-        <div
-          v-show="advancedVisible"
-          id="audit-query-advanced"
-          class="audit-query__advanced"
-        >
-          <div class="audit-query__field">
-            <span class="audit-query__label">{{
-              $t('audit_query_source')
-            }}</span>
-            <el-select
-              v-model="draft.source"
-              clearable
-              :placeholder="$t('audit_query_all')"
-            >
-              <el-option
-                v-for="item in sources"
-                :key="item"
-                :label="$t(`audit_source_${item.toLowerCase()}`)"
-                :value="item"
+    <TablePage
+      ref="table"
+      class="audit-log-table"
+      row-key="id"
+      :remote-method="getData"
+      @row-click="openDetail"
+    >
+      <template #search>
+        <section class="audit-query">
+          <form class="audit-query__form" @submit.prevent="search">
+            <div class="audit-query__field audit-query__range-preset">
+              <span class="audit-query__label">{{
+                $t('audit_query_quick_range')
+              }}</span>
+              <el-select v-model="range" @change="onQuickRangeChange">
+                <el-option
+                  v-for="item in quickRanges"
+                  :key="item"
+                  :label="$t(`audit_query_range_${item}`)"
+                  :value="item"
+                />
+              </el-select>
+            </div>
+            <div class="audit-query__field audit-query__time-range">
+              <span class="audit-query__label">{{
+                $t('audit_query_time_range')
+              }}</span>
+              <el-date-picker
+                v-model="timeRange"
+                type="datetimerange"
+                value-format="x"
+                format="YYYY-MM-DD HH:mm:ss"
+                :clearable="false"
+                :start-placeholder="$t('public_start_time')"
+                :end-placeholder="$t('public_end_time')"
+                :aria-label="$t('audit_query_time_range')"
               />
-            </el-select>
-          </div>
-          <div class="audit-query__field">
-            <span class="audit-query__label">{{ $t('audit_query_user') }}</span>
-            <el-input
-              v-model="draft.user"
-              clearable
-              :placeholder="$t('audit_query_user_placeholder')"
-              @keyup.enter="search"
-            />
-          </div>
-          <div class="audit-query__field">
-            <span class="audit-query__label">{{
-              $t('audit_query_source_ip')
-            }}</span>
-            <el-input
-              v-model="draft.sourceIp"
-              clearable
-              :placeholder="$t('audit_query_source_ip_placeholder')"
-              @keyup.enter="search"
-            />
-          </div>
-          <div class="audit-query__field">
-            <span class="audit-query__label">{{
-              $t('audit_query_action')
-            }}</span>
-            <el-select
-              v-model="draft.action"
-              clearable
-              filterable
-              :placeholder="$t('audit_query_action_placeholder')"
-            >
-              <el-option-group
-                v-for="group in actionGroups"
-                :key="group.eventType"
-                :label="$t(`audit_event_type_${group.eventType.toLowerCase()}`)"
+            </div>
+            <div class="audit-query__field audit-query__keyword">
+              <span class="audit-query__label">{{
+                $t('audit_query_keyword')
+              }}</span>
+              <el-input
+                v-model="draft.keyword"
+                clearable
+                :placeholder="$t('audit_query_keyword_placeholder')"
+                @keyup.enter="search"
+              >
+                <template #prefix>
+                  <el-icon><i-lucide-search /></el-icon>
+                </template>
+              </el-input>
+            </div>
+            <div class="audit-query__field audit-query__event-type">
+              <span class="audit-query__label">{{
+                $t('audit_query_event_type')
+              }}</span>
+              <el-select
+                v-model="draft.eventType"
+                clearable
+                :placeholder="$t('audit_query_all')"
               >
                 <el-option
-                  v-for="action in group.actions"
-                  :key="action"
-                  :label="actionLabel(action)"
-                  :value="action"
+                  v-for="item in eventTypes"
+                  :key="item"
+                  :label="$t(`audit_event_type_${item.toLowerCase()}`)"
+                  :value="item"
                 />
-              </el-option-group>
-            </el-select>
-          </div>
-          <div class="audit-query__field">
-            <span class="audit-query__label">{{
-              $t('audit_query_object')
-            }}</span>
-            <el-input
-              v-model="draft.object"
-              clearable
-              :placeholder="$t('audit_query_object_placeholder')"
-              @keyup.enter="search"
-            />
-          </div>
-        </div>
-        <p v-if="rangeError" class="audit-query__error" role="alert">
-          {{ $t('audit_query_invalid_range') }}
-        </p>
-      </form>
-      <div class="audit-query__status">
-        <div class="audit-query__tags">
-          <template v-if="tags.length">
+              </el-select>
+            </div>
+            <div class="audit-query__field audit-query__outcome">
+              <span class="audit-query__label">{{
+                $t('audit_query_outcome')
+              }}</span>
+              <el-select
+                v-model="draft.outcome"
+                clearable
+                :placeholder="$t('audit_query_all')"
+              >
+                <el-option
+                  v-for="item in outcomes"
+                  :key="item"
+                  :label="$t(`audit_outcome_${item.toLowerCase()}`)"
+                  :value="item"
+                />
+              </el-select>
+            </div>
+            <div class="audit-query__actions">
+              <el-button
+                :class="{ 'is-active': advancedVisible }"
+                :aria-expanded="String(advancedVisible)"
+                aria-controls="audit-query-advanced"
+                @click="advancedVisible = !advancedVisible"
+              >
+                {{
+                  advancedCount
+                    ? $t('audit_query_more_count', { count: advancedCount })
+                    : $t('audit_query_more')
+                }}
+                <el-icon class="el-icon--right audit-query__chevron"
+                  ><i-lucide-chevron-down
+                /></el-icon>
+              </el-button>
+              <el-button type="primary" native-type="submit">{{
+                $t('audit_query_search')
+              }}</el-button>
+              <el-button text @click="resetFilters">{{
+                $t('audit_query_reset')
+              }}</el-button>
+            </div>
+            <div class="audit-query__meta">
+              <span v-if="dirty" class="audit-query__muted">{{
+                $t('audit_query_pending')
+              }}</span>
+              <el-button text @click="refresh">
+                <el-icon class="el-icon--left"><i-lucide-rotate-cw /></el-icon>
+                {{ $t('audit_query_refresh') }}
+              </el-button>
+            </div>
+            <div
+              v-show="advancedVisible"
+              id="audit-query-advanced"
+              class="audit-query__advanced"
+            >
+              <div class="audit-query__field">
+                <span class="audit-query__label">{{
+                  $t('audit_query_source')
+                }}</span>
+                <el-select
+                  v-model="draft.source"
+                  clearable
+                  :placeholder="$t('audit_query_all')"
+                >
+                  <el-option
+                    v-for="item in sources"
+                    :key="item"
+                    :label="$t(`audit_source_${item.toLowerCase()}`)"
+                    :value="item"
+                  />
+                </el-select>
+              </div>
+              <div class="audit-query__field">
+                <span class="audit-query__label">{{
+                  $t('audit_query_user')
+                }}</span>
+                <el-input
+                  v-model="draft.user"
+                  clearable
+                  :placeholder="$t('audit_query_user_placeholder')"
+                  @keyup.enter="search"
+                />
+              </div>
+              <div class="audit-query__field">
+                <span class="audit-query__label">{{
+                  $t('audit_query_source_ip')
+                }}</span>
+                <el-input
+                  v-model="draft.sourceIp"
+                  clearable
+                  :placeholder="$t('audit_query_source_ip_placeholder')"
+                  @keyup.enter="search"
+                />
+              </div>
+              <div class="audit-query__field">
+                <span class="audit-query__label">{{
+                  $t('audit_query_action')
+                }}</span>
+                <el-select
+                  v-model="draft.action"
+                  clearable
+                  filterable
+                  :placeholder="$t('audit_query_action_placeholder')"
+                >
+                  <el-option-group
+                    v-for="group in actionGroups"
+                    :key="group.eventType"
+                    :label="
+                      $t(`audit_event_type_${group.eventType.toLowerCase()}`)
+                    "
+                  >
+                    <el-option
+                      v-for="action in group.actions"
+                      :key="action"
+                      :label="actionLabel(action)"
+                      :value="action"
+                    />
+                  </el-option-group>
+                </el-select>
+              </div>
+              <div class="audit-query__field">
+                <span class="audit-query__label">{{
+                  $t('audit_query_object')
+                }}</span>
+                <el-input
+                  v-model="draft.object"
+                  clearable
+                  :placeholder="$t('audit_query_object_placeholder')"
+                  @keyup.enter="search"
+                />
+              </div>
+            </div>
+            <p v-if="rangeError" class="audit-query__error" role="alert">
+              {{ $t('audit_query_invalid_range') }}
+            </p>
+          </form>
+          <div v-if="tags.length" class="audit-query__tags">
             <span class="audit-query__muted">{{
               $t('audit_query_applied')
             }}</span>
@@ -495,29 +517,15 @@ export default {
               :key="tag.key"
               closable
               disable-transitions
-              :aria-label="$t('audit_query_remove_tag', [tag.label])"
+              :aria-label="$t('audit_query_remove_tag', { name: tag.label })"
               @close="removeTag(tag.key)"
-              >{{ tag.label }}: {{ tag.text }}</el-tag
+              >{{
+                $t('audit_query_tag', { label: tag.label, value: tag.text })
+              }}</el-tag
             >
-          </template>
-        </div>
-        <div class="audit-query__meta">
-          <span v-if="dirty" class="audit-query__muted">{{
-            $t('audit_query_pending')
-          }}</span>
-          <el-button text @click="refresh">
-            <el-icon class="el-icon--left"><i-lucide-rotate-cw /></el-icon>
-            {{ $t('audit_query_refresh') }}
-          </el-button>
-        </div>
-      </div>
-    </section>
-    <TablePage
-      ref="table"
-      row-key="id"
-      :remote-method="getData"
-      @row-click="openDetail"
-    >
+          </div>
+        </section>
+      </template>
       <template #noDataText>
         {{ $t('audit_query_empty') }}
       </template>
@@ -589,8 +597,20 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+.audit-log-table {
+  :deep(.table-page-topbar) {
+    align-items: flex-start;
+  }
+
+  :deep(.table-page-search-bar) {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
 .audit-query {
-  margin-bottom: 16px;
+  flex: 1;
+  min-width: 0;
 
   &__form {
     display: flex;
@@ -638,7 +658,8 @@ export default {
     flex: 0 0 120px;
   }
 
-  &__actions {
+  &__actions,
+  &__meta {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -646,10 +667,14 @@ export default {
     .el-button + .el-button {
       margin-left: 0;
     }
+  }
 
-    .is-active .audit-query__chevron {
-      transform: rotate(180deg);
-    }
+  &__actions .is-active .audit-query__chevron {
+    transform: rotate(180deg);
+  }
+
+  &__meta {
+    margin-left: auto;
   }
 
   &__advanced {
@@ -670,22 +695,12 @@ export default {
     color: var(--el-color-danger);
   }
 
-  &__status {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px 12px;
-    margin-top: 12px;
-    min-height: 32px;
-  }
-
-  &__tags,
-  &__meta {
+  &__tags {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 8px;
+    margin-top: 12px;
   }
 
   &__muted {

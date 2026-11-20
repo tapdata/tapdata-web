@@ -336,6 +336,9 @@ test('every action and query label is translated in all languages', () => {
     'audit_query_range_last24h',
     'audit_query_range_custom',
     'audit_query_pending',
+    'audit_query_more_count',
+    'audit_query_tag',
+    'audit_query_remove_tag',
   ]
   for (const lang of ['en', 'zh-CN', 'zh-TW']) {
     const text = readFileSync(
