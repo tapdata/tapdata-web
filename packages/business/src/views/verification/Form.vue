@@ -655,6 +655,7 @@ const save = async (saveOnly = false) => {
               modeType,
               sortFields,
               fieldMappingText,
+              customQueryConfig,
             }) => {
               if (modeType === 'all') {
                 source.columns = null
@@ -694,6 +695,9 @@ const save = async (saveOnly = false) => {
 
               return {
                 taskId,
+                customQueryConfig: customQueryConfig
+                  ? { ...customQueryConfig, detailLimit: form.limit.keep }
+                  : undefined,
                 source: newSource,
                 target: newTarget,
                 fullMatch,
@@ -1304,7 +1308,10 @@ provide('ConnectorMap', ConnectorMap)
             </ElSelect>
           </ElFormItem>
 
-          <ElFormItem v-if="!isCountOrHash" class="form-item">
+          <ElFormItem
+            v-if="!isCountOrHash && form.inspectMethod !== 'custom_query'"
+            class="form-item"
+          >
             <template #label>
               <span class="align-middle mr-1">{{
                 $t('packages_business_ignoreTimePrecision')
@@ -1337,7 +1344,10 @@ provide('ConnectorMap', ConnectorMap)
             </div>
           </ElFormItem>
 
-          <ElFormItem v-if="!isCountOrHash" class="form-item">
+          <ElFormItem
+            v-if="!isCountOrHash && form.inspectMethod !== 'custom_query'"
+            class="form-item"
+          >
             <template #label>
               <span class="align-middle mr-1">{{
                 $t('packages_business_treatEmptyStringAsNull')
