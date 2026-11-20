@@ -38,6 +38,8 @@ import { DatabaseIcon } from '../../../components/DatabaseIcon'
 import { CONNECTION_STATUS_MAP } from '../../../shared/const'
 import { inspectMethod as inspectMethodMap } from '../const.js'
 import CollateMap from './CollateMap.vue'
+import CustomQueryEditor from './CustomQueryEditor.vue'
+import { queryError, type QueryConfig, type QuerySnapshot } from './customQuery'
 import { DATA_NODE_TYPES, META_INSTANCE_FIELDS, TABLE_PARAMS } from './const'
 import DocsDrawer from './DocsDrawer.vue'
 import FieldDialog from './FieldDialog.vue'
@@ -52,6 +54,9 @@ interface TableParams {
   currentLabel?: string
   databaseType?: string
   customQuery?: string
+  querySnapshot?: QuerySnapshot | null
+  queryKind?: string
+  queryTimezone?: string
   table?: string
   sortColumn?: string
   fields?: any[]
@@ -71,6 +76,7 @@ interface ConditionItem {
   webScript: string
   jsEngineName: string
   modeType: 'all' | 'custom'
+  customQueryConfig?: QueryConfig
   fieldMappingText?: string
   // Raw comma-separated text while editing; Form.vue parses it into an array on save.
   sortFields?: string[] | string
@@ -1067,41 +1073,9 @@ const validate = async () => {
       updateErrorMsg(message, 'error')
       return message
     }
-    const invalidMapping = tasks.some((task) => {
-      const lines = (task.fieldMappingText || '')
-        .split('\n')
-        .map((line) => line.trim())
-        .filter(Boolean)
-      const parsed: Array<[string, string] | null> = lines.map((line) => {
-        const separator = line.indexOf('=')
-        return separator <= 0 || separator === line.length - 1
-          ? null
-          : ([
-              line.slice(0, separator).trim(),
-              line.slice(separator + 1).trim(),
-            ] as [string, string])
-      })
-      if (
-        parsed.some(
-          (mapping) => !mapping || !mapping[0].trim() || !mapping[1].trim(),
-        )
-      ) {
-        return true
-      }
-      const validMappings = parsed.filter(
-        (mapping): mapping is [string, string] => mapping !== null,
-      )
-      return (
-        new Set(validMappings.map((mapping) => mapping[0])).size !==
-          validMappings.length ||
-        new Set(validMappings.map((mapping) => mapping[1])).size !==
-          validMappings.length
-      )
-    })
-    if (invalidMapping) {
-      message = i18n.t(
-        'packages_business_verification_custom_query_field_mapping_invalid',
-      )
+    const problem = tasks.map((task) => queryError(task)).find(Boolean)
+    if (problem) {
+      message = i18n.t(`packages_business_verification_cq_${problem}`)
       updateErrorMsg(message, 'error')
       return message
     }
@@ -1733,73 +1707,7 @@ watch(conditionList, () => {
             </div>
 
             <template v-if="inspectMethod === 'custom_query'">
-              <div class="grid gap-4 grid-cols-2 mt-3">
-                <el-form-item
-                  class="col-start-1"
-                  :label="
-                    $t('packages_business_verification_custom_query_source_sql')
-                  "
-                >
-                  <SqlEditor
-                    v-model:value="item.source.customQuery"
-                    @update:value="debounceValidate"
-                  />
-                </el-form-item>
-                <el-form-item
-                  class="col-start-2"
-                  :label="
-                    $t('packages_business_verification_custom_query_target_sql')
-                  "
-                >
-                  <SqlEditor
-                    v-model:value="item.target.customQuery"
-                    @update:value="debounceValidate"
-                  />
-                </el-form-item>
-              </div>
-              <div class="grid gap-4 grid-cols-2">
-                <el-form-item
-                  class="col-start-1"
-                  :label="
-                    $t(
-                      'packages_business_verification_custom_query_sort_fields',
-                    )
-                  "
-                >
-                  <ElInput
-                    :model-value="
-                      Array.isArray(item.sortFields)
-                        ? item.sortFields.join(', ')
-                        : item.sortFields
-                    "
-                    :placeholder="
-                      $t(
-                        'packages_business_verification_custom_query_sort_fields_placeholder',
-                      )
-                    "
-                    @update:model-value="item.sortFields = $event"
-                  />
-                </el-form-item>
-                <el-form-item
-                  class="col-start-2"
-                  :label="
-                    $t(
-                      'packages_business_verification_custom_query_field_mapping',
-                    )
-                  "
-                >
-                  <ElInput
-                    v-model="item.fieldMappingText"
-                    type="textarea"
-                    :rows="3"
-                    :placeholder="
-                      $t(
-                        'packages_business_verification_custom_query_field_mapping_placeholder',
-                      )
-                    "
-                  />
-                </el-form-item>
-              </div>
+              <CustomQueryEditor :key="item.id" :item="item" />
             </template>
             <template v-else>
               <div class="flex gap-4">

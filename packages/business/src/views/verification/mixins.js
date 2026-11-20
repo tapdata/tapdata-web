@@ -20,10 +20,11 @@ export default {
       const taskId = this.taskId
       const task = this.inspect.tasks?.find((item) => item.taskId === taskId)
       if (task) {
-        const showAdvancedVerification = task.showAdvancedVerification
+        const inspectMethod = this.inspect.inspectMethod
+        const showAdvancedVerification =
+          inspectMethod !== 'custom_query' && task.showAdvancedVerification
         const sourceSortColumn = task.source?.sortColumn?.split(',')
         const targetSortColumn = task.target?.sortColumn?.split(',')
-        const inspectMethod = this.inspect.inspectMethod
         const statsInfo = this.tableData.find(
           (item) => item.taskId === this.taskId,
         )
@@ -41,7 +42,7 @@ export default {
         return fetchInspectDetails(filter).then((data) => {
           let resultList = []
           const items = data?.items || []
-          if (showAdvancedVerification) {
+          if (showAdvancedVerification || inspectMethod === 'custom_query') {
             resultList = items
           } else {
             resultList = this.handleOtherVerify(items)
@@ -66,7 +67,7 @@ export default {
       const findOne = this.tableData.find((t) => t.taskId === this.taskId)
       const sourceColumns = findOne.source?.columns || []
       const targetColumns = findOne.target?.columns || []
-      data.map((item) => {
+      data.forEach((item) => {
         const source = item.source || {}
         const target = item.target || {}
         const sourceKeys = Object.keys(source)

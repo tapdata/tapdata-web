@@ -75,3 +75,15 @@ export function downloadRecoverSql(inspectId: string, inspectResultId: string) {
     },
   )
 }
+
+export function testInspectQuery(data: {
+  connectionId?: string
+  query?: string
+  kind?: string
+  collection?: string
+  timezone?: string
+  timeoutSeconds: number
+  ignoreCase?: boolean
+}) {
+  return requestClient.post(`${BASE_URL}/custom-query/test`, data)
+}
