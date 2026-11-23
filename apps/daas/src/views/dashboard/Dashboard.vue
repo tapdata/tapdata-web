@@ -1131,13 +1131,10 @@ onBeforeUnmount(() => {
             </div>
           </div>
           <div
-            class="flex align-items-center justify-content-between gap-3 flex-wrap mb-5"
+            v-if="trendsTimeRange === 'custom'"
+            class="flex align-items-center justify-content-end gap-3 flex-wrap mb-5"
           >
-            <span class="fs-7 text-secondary">
-              {{ t('dashboard_odh_timezone', { timezone: browserTimezone }) }}
-            </span>
             <div
-              v-if="trendsTimeRange === 'custom'"
               @keydown.capture="onManualTrendKeydown"
               @input.capture="onManualTrendInput"
             >

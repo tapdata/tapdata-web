@@ -10,10 +10,57 @@ export const AUDIT_FILTER_KEYS = [
   'action',
   'object',
   'outcome',
+  'keyword',
+  // 无输入框，仅兼容旧审计链接；出现时以已生效标签展示
   'eventId',
   'operationId',
-  'keyword',
 ] as const
+
+/** 「更多筛选」中的条件；角标只统计这些键中已生效的条件。 */
+export const AUDIT_ADVANCED_KEYS = [
+  'source',
+  'user',
+  'sourceIp',
+  'action',
+  'object',
+] as const
+
+/** 已选条件标签展示顺序：非时间条件。 */
+export const AUDIT_TAG_KEYS = [
+  'keyword',
+  'eventType',
+  'outcome',
+  'source',
+  'user',
+  'sourceIp',
+  'action',
+  'object',
+  'eventId',
+  'operationId',
+] as const
+
+/** 查询区条件文案键。 */
+export const AUDIT_QUERY_LABEL_KEYS: Record<string, string> = {
+  keyword: 'audit_query_keyword',
+  eventType: 'audit_query_event_type',
+  outcome: 'audit_query_outcome',
+  source: 'audit_query_source',
+  user: 'audit_query_user',
+  sourceIp: 'audit_query_source_ip',
+  action: 'audit_query_action',
+  object: 'audit_query_object',
+  eventId: 'audit_field_event_id',
+  operationId: 'audit_field_operation_id',
+}
+
+export const AUDIT_QUICK_RANGES = [
+  'last7d',
+  'today',
+  'last24h',
+  'custom',
+] as const
+export type AuditQuickRange = (typeof AUDIT_QUICK_RANGES)[number]
+export const AUDIT_DEFAULT_RANGE: AuditQuickRange = 'last7d'
 
 export const AUDIT_EVENT_TYPES = [
   'AUTH',
@@ -38,6 +85,369 @@ export const AUDIT_EVENT_TYPES = [
 ]
 export const AUDIT_OUTCOMES = ['SUCCESS', 'FAILED', 'ACCEPTED', 'PARTIAL']
 export const AUDIT_SOURCES = ['UI', 'OPENAPI', 'SYSTEM']
+
+/** 与后端 AuditAction 一致的操作枚举，按事件类型分组；新增后端操作时需同步维护。 */
+export const AUDIT_ACTIONS_BY_EVENT_TYPE: Record<string, string[]> = {
+  AUTH: [
+    'auth.login',
+    'auth.logout',
+    'auth.session_terminate',
+    'auth.api_authenticate',
+  ],
+  ACCESS_CONTROL: ['access.denied'],
+  USER: [
+    'user.create',
+    'user.update',
+    'user.enable',
+    'user.disable',
+    'user.delete',
+    'user.change_password',
+    'user.reset_password',
+    'user.reset_access_code',
+    'user.view_access_code',
+    'user.update_contact',
+    'user.update_tags',
+    'user.import',
+    'user_group.create',
+    'user_group.update',
+    'user_group.delete',
+  ],
+  ROLE: [
+    'role.create',
+    'role.update',
+    'role.delete',
+    'role.grant',
+    'role.revoke',
+    'permission.update',
+    'permission.data_update',
+  ],
+  DATASOURCE: [
+    'datasource.create',
+    'datasource.update',
+    'datasource.copy',
+    'datasource.delete',
+    'datasource.import',
+    'datasource.export',
+    'datasource.test',
+    'datasource.update_tags',
+    'datasource.update_agent',
+  ],
+  EXTERNAL_STORAGE: [
+    'external_storage.create',
+    'external_storage.update',
+    'external_storage.delete',
+    'external_storage.test',
+    'external_storage.set_default',
+  ],
+  TASK: [
+    'task.create',
+    'task.update',
+    'task.rename',
+    'task.copy',
+    'task.delete',
+    'task.start',
+    'task.stop',
+    'task.force_stop',
+    'task.reset',
+    'task.import',
+    'task.export',
+    'task.update_tags',
+    'task.update_alarm',
+    'task.download_log',
+    'task.test_run',
+    'data.preview',
+  ],
+  INSPECT: [
+    'inspect.create',
+    'inspect.update',
+    'inspect.delete',
+    'inspect.start',
+    'inspect.stop',
+    'inspect.import',
+    'inspect.repair',
+    'inspect.export_result',
+    'inspect.update_config',
+    'inspect.delete_result',
+  ],
+  LOG_CACHE: [
+    'log_cache.update',
+    'log_cache.update_config',
+    'log_cache.create',
+    'log_cache.stop_tables',
+    'log_cache.resume_tables',
+    'log_cache.cancel_merge',
+  ],
+  LIVE_CACHE: [
+    'live_cache.create',
+    'live_cache.update',
+    'live_cache.delete',
+    'live_cache.copy',
+  ],
+  DATA_API: [
+    'api_app.create',
+    'api_app.update',
+    'api_app.delete',
+    'api.create',
+    'api.update',
+    'api.copy',
+    'api.delete',
+    'api.publish',
+    'api.unpublish',
+    'api.import',
+    'api.export',
+    'api.update_security',
+    'api.debug',
+    'api.export_doc',
+    'api_client.create',
+    'api_client.update',
+    'api_client.delete',
+    'api_client.view_secret',
+  ],
+  SETTINGS: [
+    'settings.update',
+    'settings.test',
+    'sso.update',
+    'sso.test',
+    'ldap.test',
+    'customer.update',
+  ],
+  NOTIFICATION: [
+    'alarm.rule_update',
+    'alarm.receiver_update',
+    'alarm.close',
+    'webhook.create',
+    'webhook.update',
+    'webhook.enable',
+    'webhook.disable',
+    'webhook.delete',
+    'webhook.test',
+    'notification.update',
+  ],
+  LICENSE: ['license.import'],
+  CONNECTOR: ['connector.install', 'connector.update', 'connector.delete'],
+  CLUSTER: [
+    'agent.create',
+    'agent.delete',
+    'agent.unbind',
+    'agent_group.update',
+    'agent_group.delete',
+    'cluster.node_remove',
+    'cluster.monitor_update',
+  ],
+  SERVICE: [
+    'service.start',
+    'service.stop',
+    'service.restart',
+    'service.upgrade',
+    'service.start_failed',
+    'service.abnormal_stop',
+    'service.disconnect',
+    'service.reconnect',
+  ],
+  AUDIT: ['audit.retention_update', 'audit.export', 'audit.access_denied'],
+  MESSAGE: ['message.read', 'message.delete'],
+}
+
+export const AUDIT_ACTIONS = Object.values(AUDIT_ACTIONS_BY_EVENT_TYPE).flat()
+
+/** 操作文案键：auth.login → audit_action_auth_login。 */
+export function auditActionLabelKey(action: string) {
+  return `audit_action_${action.replaceAll('.', '_')}`
+}
+
+/** 操作内容下拉分组：已选事件类型时只返回该类型的操作。 */
+export function auditActionGroups(eventType?: string) {
+  return AUDIT_EVENT_TYPES.filter(
+    (type) => !eventType || type === eventType,
+  ).map((type) => ({
+    eventType: type,
+    actions: AUDIT_ACTIONS_BY_EVENT_TYPE[type] || [],
+  }))
+}
+
+/** 操作内容是否属于事件类型；切换事件类型后不匹配的操作内容应清空。 */
+export function actionMatchesEventType(action?: string, eventType?: string) {
+  if (!action || !eventType) return true
+  return (AUDIT_ACTIONS_BY_EVENT_TYPE[eventType] || []).includes(action)
+}
+
+/** 快捷范围按传入的当前时间计算毫秒时间戳；自定义返回 null。 */
+export function quickRangeTimes(
+  range: string,
+  now: number = Date.now(),
+): [number, number] | null {
+  const day = new Date(now)
+  const startOfDay = (offsetDays: number) =>
+    new Date(
+      day.getFullYear(),
+      day.getMonth(),
+      day.getDate() - offsetDays,
+      0,
+      0,
+      0,
+      0,
+    ).getTime()
+  const endOfToday = new Date(
+    day.getFullYear(),
+    day.getMonth(),
+    day.getDate(),
+    23,
+    59,
+    59,
+    999,
+  ).getTime()
+  if (range === 'last7d') return [startOfDay(6), endOfToday]
+  if (range === 'today') return [startOfDay(0), endOfToday]
+  if (range === 'last24h') return [now - 24 * 60 * 60 * 1000, now]
+  return null
+}
+
+/** 路由中的快捷范围；缺失时有起止时间视为自定义，否则为默认最近 7 天。 */
+export function parseQuickRange(query: Record<string, any> = {}) {
+  if ((AUDIT_QUICK_RANGES as readonly string[]).includes(query.range)) {
+    return query.range as AuditQuickRange
+  }
+  return query.start || query.end || hasIdFilter(query)
+    ? 'custom'
+    : AUDIT_DEFAULT_RANGE
+}
+
+/** 旧审计链接按事件 ID / 操作 ID 定位。 */
+export function hasIdFilter(query: Record<string, any> = {}) {
+  return !!(query.eventId || query.operationId)
+}
+
+/** 仅带 ID 的旧链接不限定时间：用最长保留期覆盖全部可查日志。 */
+export function retentionRangeTimes(
+  now: number = Date.now(),
+): [number, number] {
+  const day = new Date(now)
+  return [
+    new Date(
+      day.getFullYear(),
+      day.getMonth(),
+      day.getDate() - RETENTION_MAX,
+      0,
+      0,
+      0,
+      0,
+    ).getTime(),
+    new Date(
+      day.getFullYear(),
+      day.getMonth(),
+      day.getDate(),
+      23,
+      59,
+      59,
+      999,
+    ).getTime(),
+  ]
+}
+
+/** 起止时间必填，且开始时间不能晚于结束时间。 */
+export function isValidTimeRange(start: unknown, end: unknown) {
+  if (start === '' || end === '' || start == null || end == null) return false
+  const s = Number(start)
+  const e = Number(end)
+  return Number.isFinite(s) && Number.isFinite(e) && s <= e
+}
+
+/** 起止时间缺失或无效时补默认快捷范围；其它条件保持不变。 */
+export function withDefaultTimeRange<T extends Record<string, any>>(
+  params: T,
+  now: number = Date.now(),
+): T {
+  if (isValidTimeRange(params.start, params.end)) return params
+  const [start, end] = hasIdFilter(params)
+    ? retentionRangeTimes(now)
+    : (quickRangeTimes(AUDIT_DEFAULT_RANGE, now) as [number, number])
+  return { ...params, start, end }
+}
+
+const pad = (n: number) => String(n).padStart(2, '0')
+
+/** 毫秒时间戳 → datetime-local 值（本地时间，精确到秒）。 */
+export function toDateTimeInput(value: unknown) {
+  const n = Number(value)
+  if (value === '' || value == null || !Number.isFinite(n)) return ''
+  const d = new Date(n)
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
+    d.getHours(),
+  )}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+}
+
+/** datetime-local 值 → 毫秒；结束时间取该秒末尾，与快捷范围的 .999 一致。 */
+export function parseDateTimeInput(value: string, edge: 'start' | 'end') {
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/.exec(
+    value || '',
+  )
+  if (!m) return null
+  const [y, mo, d, h, mi, sec] = m.slice(1).map((part) => Number(part ?? 0))
+  const date = new Date(
+    y ?? 0,
+    (mo ?? 1) - 1,
+    d,
+    h,
+    mi,
+    sec,
+    edge === 'end' ? 999 : 0,
+  )
+  return Number.isNaN(date.getTime()) ? null : date.getTime()
+}
+
+/** 日期面板确认：起止必填且开始不晚于结束，否则不接受本次范围。 */
+export function confirmRangeInput(start: string, end: string) {
+  const s = parseDateTimeInput(start, 'start')
+  const e = parseDateTimeInput(end, 'end')
+  if (s === null || e === null || s > e) return null
+  return [s, e] as [number, number]
+}
+
+/** 相对快捷范围按当前时间重算；自定义范围保持原起止时间。 */
+export function refreshRangeTimes<T extends Record<string, any>>(
+  params: T,
+  range: string,
+  now: number = Date.now(),
+): T {
+  const times = quickRangeTimes(range, now)
+  if (!times) return params
+  return { ...params, start: times[0], end: times[1] }
+}
+
+function normalizedQuery(params: Record<string, any> = {}) {
+  return Object.fromEntries(
+    Object.entries(buildAuditQuery(params)).map(([key, value]) => [
+      key,
+      String(value),
+    ]),
+  )
+}
+
+/** 编辑中的条件与已生效条件是否不同（用于「条件已修改，待查询」）。 */
+export function isQueryDirty(
+  draft: Record<string, any> = {},
+  applied: Record<string, any> = {},
+) {
+  return (
+    JSON.stringify(normalizedQuery(draft)) !==
+    JSON.stringify(normalizedQuery(applied))
+  )
+}
+
+/** 已生效的更多筛选条件数量。 */
+export function advancedFilterCount(applied: Record<string, any> = {}) {
+  const query = buildAuditQuery(applied)
+  return AUDIT_ADVANCED_KEYS.filter((key) => key in query).length
+}
+
+/** 已生效的非时间条件，按固定顺序生成标签。 */
+export function appliedFilterTags(applied: Record<string, any> = {}) {
+  const query = buildAuditQuery(applied)
+  return AUDIT_TAG_KEYS.filter((key) => key in query).map((key) => ({
+    key,
+    value: String(query[key]),
+  }))
+}
 
 export const RETENTION_MIN = 30
 export const RETENTION_MAX = 3650
