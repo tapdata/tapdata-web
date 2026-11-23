@@ -223,13 +223,16 @@ function goAlarm() {
           >
             {{ t('alarm_event_go_task') }}
           </el-button>
+          <!-- 无关联告警、历史记录或告警已清除时不展示无效跳转 -->
           <el-button
-            v-if="canViewAlarm"
+            v-if="
+              canViewAlarm &&
+              !detail.legacy &&
+              !detail.alarmEventMissing &&
+              !noRelatedAlarm
+            "
             text
             type="primary"
-            :disabled="
-              detail.legacy || detail.alarmEventMissing || noRelatedAlarm
-            "
             @click="goAlarm"
           >
             {{ t('notification_record_view_alarm') }}

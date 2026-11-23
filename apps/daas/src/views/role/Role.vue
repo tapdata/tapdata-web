@@ -9,6 +9,7 @@ import { ElMessage } from 'element-plus'
 import { computed, onMounted, reactive, ref } from 'vue'
 
 import { useRoute, useRouter } from 'vue-router'
+import { PERMISSION_TITLE_KEYS } from './permission-titles'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -24,7 +25,6 @@ const MODULE_ICONS: Record<string, string> = {
   v2_data_pipeline: 'migrate',
   v2_advanced_features: 'vip-one',
   'v2_data-server': 'apiServer_navbar',
-  'v2_ops-center': 'warning',
   'v2_message-center': 'notice-system-notice',
   'v2_system-management': 'setting',
 }
@@ -430,9 +430,11 @@ const pageSort = [
       },
     ],
   },
+  // 与左侧菜单一致：告警中心下依次为通知记录、告警列表，不再单独显示运维中心
   {
-    name: 'v2_ops-center',
+    name: 'v2_message-center',
     children: [
+      { name: 'v2_notification_record' },
       {
         name: 'v2_alarm_event',
         buttons: [
@@ -444,10 +446,6 @@ const pageSort = [
         ],
       },
     ],
-  },
-  {
-    name: 'v2_message-center',
-    children: [{ name: 'v2_notification_record' }],
   },
   {
     name: 'v2_system-management',
@@ -690,6 +688,8 @@ function getPermission() {
           return items.map((item) => {
             const page = pageMap[item.name]
             const menu = Object.assign({}, item, page)
+            const titleKey = PERMISSION_TITLE_KEYS[item.name]
+            if (titleKey) menu.description = t(titleKey)
             if (menu.children) {
               menu.children = pageMenu(menu.children)
             }

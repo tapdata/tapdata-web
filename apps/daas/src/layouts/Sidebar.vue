@@ -18,6 +18,7 @@ interface MenuItem {
   code?: string
   parent?: string
   to?: { name: string }
+  openFirstChild?: boolean
 }
 
 interface MenuGroup {
@@ -130,6 +131,16 @@ const menuHandler = (name: string) => {
   })
 }
 
+// 仅作容器的一级菜单展开时进入第一个可见子页面；已在其子页面内时只展开不跳转
+const openHandler = (name: string) => {
+  const menu = menus.value.find((item) => item.name === name)
+  if (!menu?.openFirstChild || !menu.children) return
+  const visibleChildren = menu.children.filter((child) => !child.hidden)
+  if (visibleChildren.some((child) => child.name === activeMenu.value)) return
+  const first = visibleChildren[0]
+  if (first) menuHandler(first.name)
+}
+
 // Setup the component
 onMounted(() => {
   getMenus()
@@ -147,6 +158,7 @@ onMounted(() => {
         :default-openeds="openedMenus"
         :collapse-transition="false"
         @select="menuHandler"
+        @open="openHandler"
       >
         <template v-for="menu in menusGroup.top" :key="menu.name">
           <ElSubMenu

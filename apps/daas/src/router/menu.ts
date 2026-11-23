@@ -61,6 +61,8 @@ export const MENU = [
     label: 'page_title_alarm_notification',
     icon: 'notice-system-notice',
     group: 'bottom',
+    // 告警中心仅作为菜单容器，展开时默认进入第一个可见子页面（通知记录）
+    openFirstChild: true,
     children: [{ name: 'notificationRecords' }, { name: 'alarmEvents' }],
   },
   {
