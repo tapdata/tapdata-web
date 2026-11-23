@@ -2966,6 +2966,7 @@ export default {
   audit_query_range_today: '今天',
   audit_query_range_last24h: '最近 24 小时',
   audit_query_range_custom: '自定义',
+  audit_query_range_apply: '确定',
   audit_query_keyword: '关键词',
   audit_query_keyword_placeholder: '搜索操作人、对象或操作内容',
   audit_query_event_type: '事件类型',

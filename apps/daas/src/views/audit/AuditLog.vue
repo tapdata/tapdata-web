@@ -25,6 +25,7 @@ import {
   auditActionLabelKey,
   batchSummary,
   buildAuditQuery,
+  confirmRangeInput,
   displayValue,
   isQueryDirty,
   isValidTimeRange,
@@ -33,6 +34,7 @@ import {
   parseQuickRange,
   quickRangeTimes,
   refreshRangeTimes,
+  toDateTimeInput,
   withDefaultTimeRange,
 } from './audit-log'
 
@@ -82,6 +84,10 @@ export default {
       appliedRange: range,
       range,
       skipInitialFetch: false,
+      keepPage: false,
+      rangePanelVisible: false,
+      rangeEdit: { start: '', end: '' },
+      rangeEditError: false,
       advancedVisible: false,
       rangeError: false,
       pendingRoute: '',
@@ -102,18 +108,10 @@ export default {
     canExport() {
       return this.hasPermissionByCode?.('v2_audit_log_export') ?? false
     },
-    timeRange: {
-      get() {
-        const { start, end } = this.draft
-        return start === '' || end === '' ? [] : [start, end]
-      },
-      set(value) {
-        const [start = '', end = ''] = value || []
-        this.draft.start = start === '' ? '' : Number(start)
-        this.draft.end = end === '' ? '' : Number(end)
-        this.range = 'custom'
-        this.rangeError = false
-      },
+    rangeText() {
+      const fmt = (value) =>
+        value === '' ? '' : dayjs(Number(value)).format('YYYY-MM-DD HH:mm:ss')
+      return { start: fmt(this.draft.start), end: fmt(this.draft.end) }
     },
     actionGroups() {
       return auditActionGroups(this.draft.eventType)
@@ -151,7 +149,7 @@ export default {
         return
       }
       this.skipInitialFetch = false
-      this.table?.fetch?.(1)
+      this.fetchTable()
     },
     'draft.eventType': function (eventType) {
       if (!actionMatchesEventType(this.draft.action, eventType)) {
@@ -195,11 +193,42 @@ export default {
       if (routeKey(query) === routeKey(this.$route.query)) {
         this.applied = parseApplied(query)
         this.appliedRange = range
-        this.table?.fetch?.(1)
+        this.fetchTable()
         return
       }
       this.pendingRoute = routeKey(query)
       this.$router.replace({ name: this.$route.name, query })
+    },
+    /** 新条件回到第 1 页；刷新推进相对时间时保留当前页。 */
+    fetchTable() {
+      const keep = this.keepPage
+      this.keepPage = false
+      if (keep) this.table?.fetch?.()
+      else this.table?.fetch?.(1)
+    },
+    /** 打开日期面板：编辑副本，未确认的修改不进入草稿。 */
+    openRangePanel() {
+      this.rangeEdit = {
+        start: toDateTimeInput(this.draft.start),
+        end: toDateTimeInput(this.draft.end),
+      }
+      this.rangeEditError = false
+      this.$nextTick(() => this.$refs.rangeStart?.focus?.())
+    },
+    closeRangePanel() {
+      this.rangePanelVisible = false
+      this.$nextTick(() => this.$refs.rangeTrigger?.focus?.())
+    },
+    confirmRangePanel() {
+      const times = confirmRangeInput(this.rangeEdit.start, this.rangeEdit.end)
+      if (!times) {
+        this.rangeEditError = true
+        return
+      }
+      ;[this.draft.start, this.draft.end] = times
+      this.range = 'custom'
+      this.rangeError = false
+      this.closeRangePanel()
     },
     search() {
       if (this.range !== 'custom') {
@@ -223,6 +252,8 @@ export default {
         this.draft.start = applied.start
         this.draft.end = applied.end
       }
+      // 刷新只推进相对时间，保留当前页
+      this.keepPage = true
       this.applyQuery(applied, this.appliedRange)
     },
     resetFilters() {
@@ -233,7 +264,10 @@ export default {
     },
     removeTag(key) {
       const applied = { ...this.applied, [key]: '' }
-      this.draft[key] = ''
+      // 只取消已生效条件；草稿已改成新值时保留
+      if (String(this.draft[key] ?? '').trim() === String(this.applied[key])) {
+        this.draft[key] = ''
+      }
       this.applyQuery(applied, this.appliedRange)
     },
     getData({ page }) {
@@ -353,16 +387,84 @@ export default {
               <span class="audit-query__label">{{
                 $t('audit_query_time_range')
               }}</span>
-              <el-date-picker
-                v-model="timeRange"
-                type="datetimerange"
-                value-format="x"
-                format="YYYY-MM-DD HH:mm:ss"
-                :clearable="false"
-                :start-placeholder="$t('public_start_time')"
-                :end-placeholder="$t('public_end_time')"
-                :aria-label="$t('audit_query_time_range')"
-              />
+              <el-popover
+                v-model:visible="rangePanelVisible"
+                trigger="click"
+                placement="bottom-start"
+                :width="520"
+                popper-class="audit-range-popper"
+                @show="openRangePanel"
+              >
+                <template #reference>
+                  <button
+                    ref="rangeTrigger"
+                    type="button"
+                    class="audit-query__range-trigger"
+                    aria-haspopup="dialog"
+                    :aria-expanded="String(rangePanelVisible)"
+                    :aria-label="`${$t('audit_query_time_range')}: ${rangeText.start} — ${rangeText.end}`"
+                  >
+                    <span class="audit-query__range-value">{{
+                      rangeText.start
+                    }}</span>
+                    <span class="audit-query__muted" aria-hidden="true">—</span>
+                    <span class="audit-query__range-value">{{
+                      rangeText.end
+                    }}</span>
+                    <el-icon class="audit-query__muted"
+                      ><i-lucide-calendar-days
+                    /></el-icon>
+                  </button>
+                </template>
+                <div
+                  class="audit-range-panel"
+                  role="dialog"
+                  :aria-label="$t('audit_query_time_range')"
+                  @keydown.enter.prevent.stop="confirmRangePanel"
+                  @keydown.esc.prevent.stop="closeRangePanel"
+                >
+                  <div class="audit-range-panel__editors">
+                    <div class="audit-query__field">
+                      <span class="audit-query__label">{{
+                        $t('public_start_time')
+                      }}</span>
+                      <el-input
+                        ref="rangeStart"
+                        v-model="rangeEdit.start"
+                        type="datetime-local"
+                        step="1"
+                        @input="rangeEditError = false"
+                      />
+                    </div>
+                    <div class="audit-query__field">
+                      <span class="audit-query__label">{{
+                        $t('public_end_time')
+                      }}</span>
+                      <el-input
+                        v-model="rangeEdit.end"
+                        type="datetime-local"
+                        step="1"
+                        @input="rangeEditError = false"
+                      />
+                    </div>
+                  </div>
+                  <p
+                    v-if="rangeEditError"
+                    class="audit-query__error audit-range-panel__error"
+                    role="alert"
+                  >
+                    {{ $t('audit_query_invalid_range') }}
+                  </p>
+                  <div class="audit-range-panel__buttons">
+                    <el-button @click="closeRangePanel">{{
+                      $t('public_button_cancel')
+                    }}</el-button>
+                    <el-button type="primary" @click="confirmRangePanel">{{
+                      $t('audit_query_range_apply')
+                    }}</el-button>
+                  </div>
+                </div>
+              </el-popover>
             </div>
             <div class="audit-query__field audit-query__keyword">
               <span class="audit-query__label">{{
@@ -636,6 +738,39 @@ export default {
   flex: 1;
   min-width: 0;
 
+  &__range-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    height: 32px;
+    padding: 0 11px;
+    border: 1px solid var(--el-border-color);
+    border-radius: var(--el-border-radius-base);
+    background: var(--el-fill-color-blank);
+    color: var(--el-text-color-regular);
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: left;
+
+    &:hover,
+    &[aria-expanded='true'] {
+      border-color: var(--el-color-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--el-color-primary);
+      outline-offset: 1px;
+    }
+  }
+
+  &__range-value {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
   &__form {
     display: flex;
     flex-wrap: wrap;
@@ -662,10 +797,6 @@ export default {
   &__time-range {
     flex: 0 0 400px;
     max-width: 100%;
-
-    :deep(.el-date-editor) {
-      width: 100%;
-    }
   }
 
   &__keyword {
@@ -748,6 +879,36 @@ export default {
 
   .audit-query__advanced {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+</style>
+
+<style lang="scss">
+.audit-range-popper {
+  max-width: calc(100vw - 32px);
+}
+
+.audit-range-panel {
+  &__editors {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  &__error {
+    margin: 12px 0 0;
+  }
+
+  &__buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .audit-range-panel__editors {
+    grid-template-columns: 1fr;
   }
 }
 </style>

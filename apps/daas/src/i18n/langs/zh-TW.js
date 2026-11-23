@@ -2953,6 +2953,7 @@ export default {
   audit_query_range_today: '今天',
   audit_query_range_last24h: '最近 24 小時',
   audit_query_range_custom: '自訂',
+  audit_query_range_apply: '確定',
   audit_query_keyword: '關鍵詞',
   audit_query_keyword_placeholder: '搜尋操作人、對象或操作內容',
   audit_query_event_type: '事件類型',

@@ -3131,6 +3131,7 @@ export default {
   audit_query_range_today: 'Today',
   audit_query_range_last24h: 'Last 24 hours',
   audit_query_range_custom: 'Custom',
+  audit_query_range_apply: 'Apply',
   audit_query_keyword: 'Keyword',
   audit_query_keyword_placeholder: 'Search operator, object or action',
   audit_query_event_type: 'Event type',

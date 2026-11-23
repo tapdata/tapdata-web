@@ -11,6 +11,9 @@ export const AUDIT_FILTER_KEYS = [
   'object',
   'outcome',
   'keyword',
+  // 无输入框，仅兼容旧审计链接；出现时以已生效标签展示
+  'eventId',
+  'operationId',
 ] as const
 
 /** 「更多筛选」中的条件；角标只统计这些键中已生效的条件。 */
@@ -32,6 +35,8 @@ export const AUDIT_TAG_KEYS = [
   'sourceIp',
   'action',
   'object',
+  'eventId',
+  'operationId',
 ] as const
 
 /** 查询区条件文案键。 */
@@ -44,6 +49,8 @@ export const AUDIT_QUERY_LABEL_KEYS: Record<string, string> = {
   sourceIp: 'audit_query_source_ip',
   action: 'audit_query_action',
   object: 'audit_query_object',
+  eventId: 'audit_field_event_id',
+  operationId: 'audit_field_operation_id',
 }
 
 export const AUDIT_QUICK_RANGES = [
@@ -300,7 +307,41 @@ export function parseQuickRange(query: Record<string, any> = {}) {
   if ((AUDIT_QUICK_RANGES as readonly string[]).includes(query.range)) {
     return query.range as AuditQuickRange
   }
-  return query.start || query.end ? 'custom' : AUDIT_DEFAULT_RANGE
+  return query.start || query.end || hasIdFilter(query)
+    ? 'custom'
+    : AUDIT_DEFAULT_RANGE
+}
+
+/** 旧审计链接按事件 ID / 操作 ID 定位。 */
+export function hasIdFilter(query: Record<string, any> = {}) {
+  return !!(query.eventId || query.operationId)
+}
+
+/** 仅带 ID 的旧链接不限定时间：用最长保留期覆盖全部可查日志。 */
+export function retentionRangeTimes(
+  now: number = Date.now(),
+): [number, number] {
+  const day = new Date(now)
+  return [
+    new Date(
+      day.getFullYear(),
+      day.getMonth(),
+      day.getDate() - RETENTION_MAX,
+      0,
+      0,
+      0,
+      0,
+    ).getTime(),
+    new Date(
+      day.getFullYear(),
+      day.getMonth(),
+      day.getDate(),
+      23,
+      59,
+      59,
+      999,
+    ).getTime(),
+  ]
 }
 
 /** 起止时间必填，且开始时间不能晚于结束时间。 */
@@ -317,11 +358,49 @@ export function withDefaultTimeRange<T extends Record<string, any>>(
   now: number = Date.now(),
 ): T {
   if (isValidTimeRange(params.start, params.end)) return params
-  const [start, end] = quickRangeTimes(AUDIT_DEFAULT_RANGE, now) as [
-    number,
-    number,
-  ]
+  const [start, end] = hasIdFilter(params)
+    ? retentionRangeTimes(now)
+    : (quickRangeTimes(AUDIT_DEFAULT_RANGE, now) as [number, number])
   return { ...params, start, end }
+}
+
+const pad = (n: number) => String(n).padStart(2, '0')
+
+/** 毫秒时间戳 → datetime-local 值（本地时间，精确到秒）。 */
+export function toDateTimeInput(value: unknown) {
+  const n = Number(value)
+  if (value === '' || value == null || !Number.isFinite(n)) return ''
+  const d = new Date(n)
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
+    d.getHours(),
+  )}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+}
+
+/** datetime-local 值 → 毫秒；结束时间取该秒末尾，与快捷范围的 .999 一致。 */
+export function parseDateTimeInput(value: string, edge: 'start' | 'end') {
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/.exec(
+    value || '',
+  )
+  if (!m) return null
+  const [y, mo, d, h, mi, sec] = m.slice(1).map((part) => Number(part ?? 0))
+  const date = new Date(
+    y ?? 0,
+    (mo ?? 1) - 1,
+    d,
+    h,
+    mi,
+    sec,
+    edge === 'end' ? 999 : 0,
+  )
+  return Number.isNaN(date.getTime()) ? null : date.getTime()
+}
+
+/** 日期面板确认：起止必填且开始不晚于结束，否则不接受本次范围。 */
+export function confirmRangeInput(start: string, end: string) {
+  const s = parseDateTimeInput(start, 'start')
+  const e = parseDateTimeInput(end, 'end')
+  if (s === null || e === null || s > e) return null
+  return [s, e] as [number, number]
 }
 
 /** 相对快捷范围按当前时间重算；自定义范围保持原起止时间。 */
