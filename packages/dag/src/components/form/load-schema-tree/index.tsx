@@ -117,9 +117,7 @@ export const loadSchemaTree = observer(
           unwatchSaving()
           saveTimer = undefined
           loadStatus.value = true
-          errorMsg.value = i18n.t(
-            'packages_form_load_schema_tree_load_fail',
-          )
+          errorMsg.value = i18n.t('packages_form_load_schema_tree_load_fail')
           loading.value = false
         }, 30000)
 
