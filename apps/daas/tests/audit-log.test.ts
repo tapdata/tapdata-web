@@ -27,6 +27,8 @@ import {
   outcomeView,
   parseQuickRange,
   quickRangeTimes,
+  refreshRangeTimes,
+  withDefaultTimeRange,
 } from '../src/views/audit/audit-log.ts'
 
 const t = (key: string, args?: any[]) =>
@@ -349,4 +351,36 @@ test('every action and query label is translated in all languages', () => {
       assert.match(text, new RegExp(`^  ${key}:\\s`, 'm'), `${lang} ${key}`)
     }
   }
+})
+
+test('fills the default range when route time is missing and keeps other filters', () => {
+  const now = new Date(2026, 10, 19, 15, 30, 0).getTime()
+  const [start, end] = quickRangeTimes('last7d', now)
+  assert.deepEqual(
+    withDefaultTimeRange({ start: '', end: '', eventType: 'TASK' }, now),
+    { start, end, eventType: 'TASK' },
+  )
+  assert.deepEqual(
+    withDefaultTimeRange({ start: 5, end: 1, outcome: 'FAILED' }, now),
+    { start, end, outcome: 'FAILED' },
+  )
+  const valid = { start: 1, end: 2, keyword: 'k' }
+  assert.equal(withDefaultTimeRange(valid, now), valid)
+})
+
+test('moves relative quick ranges to the current time and keeps custom ranges', () => {
+  const later = new Date(2026, 10, 19, 11, 1, 0).getTime()
+  const params = { start: 1, end: 2, keyword: 'k' }
+  assert.deepEqual(refreshRangeTimes(params, 'last24h', later), {
+    start: later - 24 * 60 * 60 * 1000,
+    end: later,
+    keyword: 'k',
+  })
+  const [start, end] = quickRangeTimes('today', later)
+  assert.deepEqual(refreshRangeTimes(params, 'today', later), {
+    start,
+    end,
+    keyword: 'k',
+  })
+  assert.equal(refreshRangeTimes(params, 'custom', later), params)
 })

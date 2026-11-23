@@ -32,6 +32,8 @@ import {
   outcomeView,
   parseQuickRange,
   quickRangeTimes,
+  refreshRangeTimes,
+  withDefaultTimeRange,
 } from './audit-log'
 
 const tr = (key, args) => i18n.t(key, args)
@@ -46,7 +48,7 @@ function parseApplied(query = {}) {
   for (const key of ['start', 'end']) {
     if (params[key] !== '') params[key] = Number(params[key])
   }
-  return params
+  return withDefaultTimeRange(params)
 }
 
 /** 路由查询的稳定比较键：值统一为字符串、键排序。 */
@@ -72,15 +74,14 @@ export default {
   },
   inject: ['hasPermissionByCode'],
   data() {
-    const hasTime = this.$route.query.start || this.$route.query.end
-    const applied = hasTime ? parseApplied(this.$route.query) : defaultParams()
+    const applied = parseApplied(this.$route.query)
+    const range = parseQuickRange(this.$route.query)
     return {
       applied,
       draft: { ...applied },
-      appliedRange: hasTime
-        ? parseQuickRange(this.$route.query)
-        : AUDIT_DEFAULT_RANGE,
-      range: hasTime ? parseQuickRange(this.$route.query) : AUDIT_DEFAULT_RANGE,
+      appliedRange: range,
+      range,
+      skipInitialFetch: false,
       advancedVisible: false,
       rangeError: false,
       pendingRoute: '',
@@ -144,6 +145,12 @@ export default {
         this.draft = { ...this.applied }
         this.range = this.appliedRange
       }
+      // 首次补齐默认时间的路由替换不重复请求：表格挂载时已按相同条件查询。
+      if (this.skipInitialFetch && !external) {
+        this.skipInitialFetch = false
+        return
+      }
+      this.skipInitialFetch = false
       this.table?.fetch?.(1)
     },
     'draft.eventType': function (eventType) {
@@ -156,7 +163,10 @@ export default {
     fetchAuditStatus()
       .then((status) => (this.status = status))
       .catch(() => {})
-    if (!this.$route.query.start && !this.$route.query.end) this.applyQuery()
+    if (!this.$route.query.start && !this.$route.query.end) {
+      this.skipInitialFetch = true
+      this.applyQuery()
+    }
   },
   methods: {
     valueText(key, value) {
@@ -192,6 +202,9 @@ export default {
       this.$router.replace({ name: this.$route.name, query })
     },
     search() {
+      if (this.range !== 'custom') {
+        this.draft = refreshRangeTimes(this.draft, this.range)
+      }
       if (!isValidTimeRange(this.draft.start, this.draft.end)) {
         this.rangeError = true
         return
@@ -199,8 +212,18 @@ export default {
       this.rangeError = false
       this.applyQuery()
     },
+    /** 按已生效条件重新获取；相对快捷范围推进到当前时间。 */
     refresh() {
-      this.table?.fetch?.()
+      if (this.appliedRange === 'custom') {
+        this.table?.fetch?.()
+        return
+      }
+      const applied = refreshRangeTimes(this.applied, this.appliedRange)
+      if (this.range === this.appliedRange) {
+        this.draft.start = applied.start
+        this.draft.end = applied.end
+      }
+      this.applyQuery(applied, this.appliedRange)
     },
     resetFilters() {
       this.draft = defaultParams()
@@ -349,7 +372,6 @@ export default {
                 v-model="draft.keyword"
                 clearable
                 :placeholder="$t('audit_query_keyword_placeholder')"
-                @keyup.enter="search"
               >
                 <template #prefix>
                   <el-icon><i-lucide-search /></el-icon>
@@ -452,7 +474,6 @@ export default {
                   v-model="draft.user"
                   clearable
                   :placeholder="$t('audit_query_user_placeholder')"
-                  @keyup.enter="search"
                 />
               </div>
               <div class="audit-query__field">
@@ -463,7 +484,6 @@ export default {
                   v-model="draft.sourceIp"
                   clearable
                   :placeholder="$t('audit_query_source_ip_placeholder')"
-                  @keyup.enter="search"
                 />
               </div>
               <div class="audit-query__field">
@@ -500,7 +520,6 @@ export default {
                   v-model="draft.object"
                   clearable
                   :placeholder="$t('audit_query_object_placeholder')"
-                  @keyup.enter="search"
                 />
               </div>
             </div>
@@ -598,6 +617,11 @@ export default {
 
 <style lang="scss" scoped>
 .audit-log-table {
+  // el-empty 未传 description 时默认显示「暂无数据」，与本页空结果文案重复
+  :deep(.el-empty__description) {
+    display: none;
+  }
+
   :deep(.table-page-topbar) {
     align-items: flex-start;
   }

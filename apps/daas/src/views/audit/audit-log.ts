@@ -311,6 +311,30 @@ export function isValidTimeRange(start: unknown, end: unknown) {
   return Number.isFinite(s) && Number.isFinite(e) && s <= e
 }
 
+/** 起止时间缺失或无效时补默认快捷范围；其它条件保持不变。 */
+export function withDefaultTimeRange<T extends Record<string, any>>(
+  params: T,
+  now: number = Date.now(),
+): T {
+  if (isValidTimeRange(params.start, params.end)) return params
+  const [start, end] = quickRangeTimes(AUDIT_DEFAULT_RANGE, now) as [
+    number,
+    number,
+  ]
+  return { ...params, start, end }
+}
+
+/** 相对快捷范围按当前时间重算；自定义范围保持原起止时间。 */
+export function refreshRangeTimes<T extends Record<string, any>>(
+  params: T,
+  range: string,
+  now: number = Date.now(),
+): T {
+  const times = quickRangeTimes(range, now)
+  if (!times) return params
+  return { ...params, start: times[0], end: times[1] }
+}
+
 function normalizedQuery(params: Record<string, any> = {}) {
   return Object.fromEntries(
     Object.entries(buildAuditQuery(params)).map(([key, value]) => [
