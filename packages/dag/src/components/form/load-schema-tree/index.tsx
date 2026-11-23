@@ -66,6 +66,34 @@ export const loadSchemaTree = observer(
           })
       }
 
+      function refreshSchemaAfterTaskSave() {
+        let saveStarted = dataflowStore.taskSaving
+        const unwatchSaving = watch(
+          () => dataflowStore.taskSaving,
+          (saving) => {
+            if (saving) {
+              saveStarted = true
+            } else if (saveStarted) {
+              clearTimeout(saveTimer)
+              saveTimer = undefined
+              unwatchSaving()
+              getSchemaData(true)
+            }
+          },
+        )
+        saveTimer = setTimeout(() => {
+          unwatchSaving()
+          saveTimer = undefined
+          loadStatus.value = true
+          errorMsg.value = i18n.t('packages_form_load_schema_tree_load_fail')
+          loading.value = false
+        }, 30000)
+
+        if (!saveStarted) {
+          dataflowStore.patchDataflowDebounce()
+        }
+      }
+
       function handleLoadSchema() {
         const getState = form.getState()
         const formValues = getState?.values || {}
