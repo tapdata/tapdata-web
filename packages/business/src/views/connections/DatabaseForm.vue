@@ -2,6 +2,7 @@
 import { action } from '@formily/reactive'
 import {
   createConnection,
+  checkConnectionAgentSettings,
   getUsingDigginTaskByConnectionId,
   patchConnectionById,
   updateConnectionById,
@@ -39,6 +40,11 @@ import {
   loadAccessNodeOptions,
 } from './agentSettingsSchema'
 import UsedTaskDialog from './UsedTaskDialog.vue'
+import AgentTaskConflictDialog from './AgentTaskConflictDialog.vue'
+import {
+  agentCheckPayload,
+  saveConnectionWithAgentConflictCheck,
+} from './connectionAgentConflicts'
 import { getConnectionIcon } from './util'
 
 export default {
@@ -51,6 +57,7 @@ export default {
     SchemaToForm,
     ConnectionDebug,
     UsedTaskDialog,
+    AgentTaskConflictDialog,
     JsDebug,
     PageContainer,
   },
@@ -211,14 +218,14 @@ export default {
       this.pdkFormModel = this.$refs.schemaToForm?.getForm?.()
       this.schemaFormInstance?.validate().then(
         () => {
+          if (this.submitBtnLoading) return
           this.submitBtnLoading = true
           // 保存数据源
           const id = this.$route.params?.id
           const { pdkOptions } = this
-          const formValues = this.$refs.schemaToForm?.getFormValues?.()
-          const { __TAPDATA } = formValues
+          const { __TAPDATA, ...formValues } =
+            this.$refs.schemaToForm?.getFormValues?.() || {}
           formValues.__connectionType = __TAPDATA.connection_type
-          delete formValues.__TAPDATA
           const params = Object.assign(
             {
               ...__TAPDATA,
@@ -239,19 +246,35 @@ export default {
               config: formValues,
             },
           )
-          let promise = null
+          const agentPayload =
+            id && __TAPDATA.accessNodeType
+              ? agentCheckPayload([id], __TAPDATA, uuid())
+              : null
+          if (agentPayload) {
+            Object.assign(params, agentPayload.settings)
+          }
+          let saveConnection
           if (id) {
             params.id = id
-            promise = updateConnectionById(id, params)
+            saveConnection = () => updateConnectionById(id, params)
           } else {
             const { commandCallbackFunctionId } = this
             params.status = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
-            promise = createConnection(params, {
-              id: commandCallbackFunctionId,
-            })
+            saveConnection = () =>
+              createConnection(params, { id: commandCallbackFunctionId })
           }
-          promise
-            .then(() => {
+          const savePromise = agentPayload
+            ? saveConnectionWithAgentConflictCheck(
+                agentPayload,
+                checkConnectionAgentSettings,
+                saveConnection,
+                (payload, report) =>
+                  this.$refs.agentTaskConflictDialog.open(payload, report),
+              )
+            : saveConnection().then(() => true)
+          savePromise
+            .then((saved) => {
+              if (!saved) return
               this.buried('connectionSubmit', '', {
                 result: true,
               })
@@ -1640,6 +1663,7 @@ export default {
         :data="connectionLogCollectorTaskData"
       />
     </div>
+    <AgentTaskConflictDialog ref="agentTaskConflictDialog" />
   </PageContainer>
 </template>
 

@@ -39,6 +39,7 @@ import TablePage from '../../components/TablePage.vue'
 import TaskStatus from '../../components/TaskStatus.vue'
 import { makeStatusAndDisabled } from '../../shared'
 import { formatTaskMetricInfo } from '../../shared/task-metric'
+import { canEditTaskStatus } from '../../shared/task-edit-status.js'
 import Editor from './Editor.vue'
 
 const { t } = useI18n()
@@ -418,10 +419,29 @@ watch(
 )
 
 onBeforeMount(() => {
-  Object.assign(searchParams.value, route.query)
+  const { editTaskId: _editTaskId, ...filters } = route.query
+  Object.assign(searchParams.value, filters)
 })
 
+async function openLinkedTaskEditor() {
+  const id = route.query.editTaskId
+  if (typeof id !== 'string' || !/^[a-f0-9]{24}$/i.test(id)) return
+  try {
+    const data = await fetchLogcollector({ where: { id }, limit: 1 })
+    const task = data?.items?.find((item: any) => item.id === id)
+    if (!task) return
+    if (havePermission(task, 'Edit') && canEditTaskStatus(task.status)) {
+      editor.value?.open(id)
+    } else {
+      handleDetails(task)
+    }
+  } catch {
+    // The request client reports inaccessible or missing tasks.
+  }
+}
+
 onMounted(() => {
+  openLinkedTaskEditor()
   timer = setInterval(() => {
     withPassive(() => table.value?.fetch(null, 0, true))
   }, 8000)

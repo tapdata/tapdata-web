@@ -2,6 +2,7 @@
 import { action } from '@formily/reactive'
 import { findAccessNodeInfo } from '@tap/api/src/core/cluster'
 import {
+  checkConnectionAgentSettings,
   createConnection,
   getUsingDigginTaskByConnectionId,
   patchConnectionById,
@@ -24,8 +25,13 @@ import resize from '@tap/component/src/directives/resize'
 
 import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 import i18n from '@tap/i18n'
-import { checkConnectionName, openUrl, submitForm } from '@tap/shared'
+import { checkConnectionName, openUrl, submitForm, uuid } from '@tap/shared'
 import { cloneDeep, isEmpty } from 'lodash-es'
+import AgentTaskConflictDialog from '../../views/connections/AgentTaskConflictDialog.vue'
+import {
+  agentCheckPayload,
+  saveConnectionWithAgentConflictCheck,
+} from '../../views/connections/connectionAgentConflicts'
 import Test from '../../views/connections/Test'
 import { getConnectionIcon } from '../../views/connections/util'
 import ConnectorDoc from '../ConnectorDoc'
@@ -33,7 +39,7 @@ import mixins from './mixins'
 
 export default {
   name: 'SceneForm',
-  components: { ConnectorDoc, Test, SchemaToForm },
+  components: { AgentTaskConflictDialog, ConnectorDoc, Test, SchemaToForm },
   directives: {
     resize,
   },
@@ -203,6 +209,7 @@ export default {
       this.buried('connectionSubmit')
       this.pdkFormModel = this.$refs.schemaToForm?.getForm?.()
       this.schemaFormInstance?.validate().then(() => {
+        if (this.submitBtnLoading) return
         if (!addNext) this.submitBtnLoading = true
 
         // 正在引导
@@ -233,29 +240,48 @@ export default {
           pdkType: 'pdk',
           config: formValues,
         }
-        if (this.showSystemConfig) {
-          //打开挖掘配置
-          const digSettingForm = {
-            persistenceMode: 'MongoDB',
-            persistenceMongodb_uri_db: params.persistenceMongodb_uri_db,
-            persistenceMongodb_collection: params.persistenceMongodb_collection,
-            share_cdc_ttl_day: params.share_cdc_ttl_day,
-          }
-          this.saveSetting(digSettingForm)
+        const agentPayload =
+          id && __TAPDATA.accessNodeType
+            ? agentCheckPayload([id], __TAPDATA, uuid())
+            : null
+        if (agentPayload) {
+          Object.assign(params, agentPayload.settings)
         }
-        let promise = null
         if (id) {
           params.id = id
-          promise = updateConnectionById(id, params)
         } else {
-          const { commandCallbackFunctionId } = this
           params.status = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
-          promise = createConnection(params, {
-            id: commandCallbackFunctionId,
-          })
         }
+        const { commandCallbackFunctionId } = this
+        let saveSystemConfig = this.showSystemConfig
+        let data
+        const saveConnection = async () => {
+          if (saveSystemConfig) {
+            saveSystemConfig = false
+            this.saveSetting({
+              persistenceMode: 'MongoDB',
+              persistenceMongodb_uri_db: params.persistenceMongodb_uri_db,
+              persistenceMongodb_collection:
+                params.persistenceMongodb_collection,
+              share_cdc_ttl_day: params.share_cdc_ttl_day,
+            })
+          }
+          data = id
+            ? await updateConnectionById(id, params)
+            : await createConnection(params, { id: commandCallbackFunctionId })
+        }
+        const promise = agentPayload
+          ? saveConnectionWithAgentConflictCheck(
+              agentPayload,
+              checkConnectionAgentSettings,
+              saveConnection,
+              (payload, report) =>
+                this.$refs.agentTaskConflictDialog.open(payload, report),
+            )
+          : saveConnection().then(() => true)
         promise
-          .then((data) => {
+          .then((saved) => {
+            if (!saved) return
             data.isDemo = this.params.isDemo // 标记是否是demo数据源
             this.buried('connectionSubmit', '', {
               result: true,
@@ -1732,6 +1758,7 @@ export default {
         </span>
       </template>
     </el-dialog>
+    <AgentTaskConflictDialog ref="agentTaskConflictDialog" />
   </div>
 </template>
 
