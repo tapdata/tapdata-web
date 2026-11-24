@@ -251,7 +251,7 @@ async function test(side: 'source' | 'target') {
       v-for="field in ['absoluteTolerance', 'relativeTolerance'] as const"
       :key="field"
       :label="$t(`packages_business_verification_cq_${field}`)"
-      min-width="160"
+      width="160"
     >
       <template #default="{ row }">
         <el-input
