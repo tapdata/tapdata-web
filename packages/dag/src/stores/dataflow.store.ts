@@ -321,14 +321,39 @@ export const useDataflowStore = defineStore('dataflow', () => {
   }
 
   const taskSaving = ref(false)
-  async function patchDataflow() {
+  let pendingSave: Promise<boolean> | undefined
+
+  function patchDataflow() {
+    const taskId = dataflow.id
+    const version = pageVersion.value
+    const isCurrent = () =>
+      dataflow.id === taskId && pageVersion.value === version
+    const save = () => saveDataflow(taskId, version, isCurrent)
+
     taskSaving.value = true
+    const request = pendingSave ? pendingSave.then(save, save) : save()
+    pendingSave = request
+    return request.finally(() => {
+      if (pendingSave === request) {
+        pendingSave = undefined
+        taskSaving.value = false
+      }
+    })
+  }
+
+  async function saveDataflow(
+    taskId: string,
+    version: string,
+    isCurrent: () => boolean,
+  ) {
+    if (!isCurrent()) return false
+
     try {
       const data = await patchTask(
         {
-          id: dataflow.id,
+          id: taskId,
           editVersion: editVersion.value,
-          pageVersion: pageVersion.value,
+          pageVersion: version,
           dag: dag.value,
         },
         {
@@ -336,12 +361,13 @@ export const useDataflowStore = defineStore('dataflow', () => {
         },
       )
 
+      if (!isCurrent()) return false
       editVersion.value = data?.editVersion || editVersion.value
+      return true
     } catch (error) {
+      if (!isCurrent() || isCancel(error)) return false
+
       console.error(error)
-
-      if (isCancel(error)) return
-
       if (error?.code === 'Task.OldVersion') {
         const confirmed = await Modal.confirm(
           t('packages_dag_task_old_version_confirm'),
@@ -349,17 +375,22 @@ export const useDataflowStore = defineStore('dataflow', () => {
             confirmButtonText: t('public_button_refresh'),
           },
         )
-        if (confirmed) {
+        if (confirmed && isCurrent()) {
           location.reload()
         }
       } else if (error?.message) {
         ElMessage.error(error.message)
       }
+      return false
     }
-    taskSaving.value = false
   }
 
   const patchDataflowDebounce = debounce(patchDataflow, 100)
+
+  function saveDataflowNow() {
+    patchDataflowDebounce.cancel()
+    return patchDataflow()
+  }
 
   function addProcessorNode(nodes) {
     processorNodeTypes.value.push(...nodes)
@@ -883,6 +914,8 @@ export const useDataflowStore = defineStore('dataflow', () => {
    * dataflow 的数据由 fetchDataflow / setDataflow 负责覆盖
    */
   function $reset() {
+    patchDataflowDebounce.cancel()
+    pendingSave = undefined
     resetDataflow()
     // UI / 交互状态归零
     selectedNode.value = null
@@ -928,6 +961,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     fetchDataflow,
     patchDataflow,
     patchDataflowDebounce,
+    saveDataflowNow,
     processorNodeTypes,
     selectedNode,
     locatedNodeId,
