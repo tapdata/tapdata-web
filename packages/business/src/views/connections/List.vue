@@ -41,7 +41,7 @@ import UploadDialog from '../../components/UploadDialog.vue'
 import BatchTagDialog from '../../components/BatchTagDialog.vue'
 import BatchAgentSettingsDialog from './BatchAgentSettingsDialog.vue'
 import AgentTaskConflictDialog from './AgentTaskConflictDialog.vue'
-import { saveConnectionWithConflictRetry } from './connectionAgentConflicts'
+import { saveConnectionWithAgentConflictCheck } from './connectionAgentConflicts'
 import type { BatchAgentSettingsPayload } from './agentSettingsSchema'
 import { useHas } from '../../composables'
 import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '../../shared'
@@ -497,14 +497,9 @@ const handleBatchAgentSettingsSubmit = async (
   if (batchAgentSubmitting.value) return
   batchAgentSubmitting.value = true
   try {
-    const report = await checkConnectionAgentSettings(payload)
-    if (
-      report.hasConflicts &&
-      !(await agentConflictDialog.value?.open(payload, report))
-    )
-      return
-    const saved = await saveConnectionWithConflictRetry(
+    const saved = await saveConnectionWithAgentConflictCheck(
       payload,
+      checkConnectionAgentSettings,
       () => batchUpdateConnectionAgentSettings(payload),
       (settings, nextReport) =>
         agentConflictDialog.value?.open(settings, nextReport) ||

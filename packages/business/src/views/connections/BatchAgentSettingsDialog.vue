@@ -4,6 +4,7 @@ import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 import { useI18n } from '@tap/i18n'
 import { uuid } from '@tap/shared'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { commonAllowedAgentProcessIds } from './connectionAgentConflicts'
 import {
   AGENT_GROUP_ALLOCATION,
   AUTOMATIC_AGENT_ALLOCATION,
@@ -20,11 +21,10 @@ interface ConnectionRow {
   shareCdcEnable?: boolean
 }
 
-const props = defineProps<{
+defineProps<{
   loading?: boolean
   title?: string
   subtitleKey?: string
-  allowedAgentProcessIds?: string[] | null
 }>()
 
 const emit = defineEmits<{
@@ -35,7 +35,10 @@ const { t } = useI18n()
 const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 const visible = ref(false)
 const selectedConnections = ref<ConnectionRow[]>([])
-const selectedAllowedAgentProcessIds = ref<string[] | null>()
+const restrictedAgentSets = ref<string[][]>([])
+const hasNoCommonAgent = computed(
+  () => commonAllowedAgentProcessIds(restrictedAgentSets.value)?.length === 0,
+)
 const schemaForm = ref<InstanceType<typeof SchemaToForm> | null>(null)
 const formValues = ref<Record<string, any>>({})
 const formKey = ref(0)
@@ -99,18 +102,16 @@ const formScope = {
   loadAccessNode: (field: unknown, others: { value?: string } = {}) =>
     loadAccessNodeOptions(field, {
       ...others,
-      allowedAgentProcessIds: selectedAllowedAgentProcessIds.value,
+      restrictedAgentSets: restrictedAgentSets.value,
     }),
 }
 
 const open = (
   connections: ConnectionRow[],
-  allowedAgents = props.allowedAgentProcessIds,
+  requiredAgentSets: string[][] = [],
 ) => {
   selectedConnections.value = [...connections]
-  selectedAllowedAgentProcessIds.value = allowedAgents
-    ? [...allowedAgents]
-    : allowedAgents
+  restrictedAgentSets.value = requiredAgentSets
   const hasSharedCdcConnection = connections.some(
     (connection) => connection.shareCdcEnable,
   )
@@ -192,6 +193,13 @@ defineExpose({ open, close: handleClose })
         })
       }}
     </div>
+    <ElAlert
+      v-if="hasNoCommonAgent"
+      class="mb-4"
+      type="info"
+      :closable="false"
+      :title="t('packages_business_agent_tasks_no_common_agent')"
+    />
     <ElConfigProvider :z-index="3000">
       <SchemaToForm
         :key="formKey"

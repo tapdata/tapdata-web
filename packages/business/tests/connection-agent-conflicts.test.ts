@@ -9,6 +9,7 @@ import {
   automaticConflictTasks,
   commonAllowedAgentProcessIds,
   filterAllowedAgentOptions,
+  saveConnectionWithAgentConflictCheck,
   saveConnectionWithConflictRetry,
   snapshotConflictTasks,
 } from '../src/views/connections/connectionAgentConflicts.ts'
@@ -143,8 +144,36 @@ test('direct task links use IDs, editors for editable tasks and viewers otherwis
     'HeartbeatMonitor',
   )
   assert.equal(
-    conflictTaskDestination({ ...item, syncType: 'inspect' })?.name,
+    conflictTaskDestination({
+      ...item,
+      syncType: 'inspect',
+      status: 'done',
+      editable: false,
+    })?.name,
     'dataVerificationEdit',
+  )
+  assert.equal(
+    conflictTaskDestination({
+      ...item,
+      syncType: 'inspect',
+      status: 'running',
+      editable: false,
+    })?.name,
+    'dataVerifyDetails',
+  )
+  assert.equal(
+    conflictTaskDestination({
+      ...item,
+      syncType: 'migrate',
+      status: 'complete',
+      editable: false,
+    })?.name,
+    'MigrateEditor',
+  )
+  assert.equal(
+    conflictTaskDestination({ ...item, status: 'error', editable: false })
+      ?.name,
+    'DataflowEditor',
   )
 })
 
@@ -168,20 +197,20 @@ test('editing snapshots task ids and revisions without changing table selection'
       name: 'Task A',
       revision: 123,
       editable: true,
-      allowedAgentProcessIds: ['agent-a'],
+      allowedAgentProcessIdSets: [['agent-a']],
     },
   ]
   const snapshot = snapshotConflictTasks(rows)
   rows[0].id = 'task-b'
   rows[0].revision = 456
-  rows[0].allowedAgentProcessIds.push('agent-b')
+  rows[0].allowedAgentProcessIdSets[0].push('agent-b')
   assert.deepEqual(snapshot, [
     {
       id: 'task-a',
       name: 'Task A',
       revision: 123,
       editable: true,
-      allowedAgentProcessIds: ['agent-a'],
+      allowedAgentProcessIdSets: [['agent-a']],
     },
   ])
 })
@@ -189,23 +218,14 @@ test('editing snapshots task ids and revisions without changing table selection'
 test('common allowed Agents are intersected and unrestricted tasks do not widen the set', () => {
   assert.deepEqual(
     commonAllowedAgentProcessIds([
-      { allowedAgentProcessIds: ['a', 'b'] },
-      { allowedAgentProcessIds: ['b', 'c'] },
-      { allowedAgentProcessIds: null },
+      ['a', 'b'],
+      ['b', 'c'],
     ]),
     ['b'],
   )
-  assert.equal(
-    commonAllowedAgentProcessIds([{ allowedAgentProcessIds: null }]),
-    null,
-  )
-  assert.deepEqual(
-    commonAllowedAgentProcessIds([
-      { allowedAgentProcessIds: ['a'] },
-      { allowedAgentProcessIds: ['b'] },
-    ]),
-    [],
-  )
+  assert.equal(commonAllowedAgentProcessIds([]), null)
+  assert.deepEqual(commonAllowedAgentProcessIds([['a'], ['b']]), [])
+  assert.deepEqual(commonAllowedAgentProcessIds([['a'], []]), [])
 })
 
 test('Agent selector filters individual Agents and group members to the allowed intersection', () => {
@@ -223,7 +243,7 @@ test('Agent selector filters individual Agents and group members to the allowed 
       children: [{ value: 'c' }],
     },
   ]
-  assert.deepEqual(filterAllowedAgentOptions(options, ['b']), [
+  assert.deepEqual(filterAllowedAgentOptions(options, [['a', 'b'], ['b']]), [
     { value: 'b', accessNodeType: 'MANUALLY_SPECIFIED_BY_THE_USER' },
     {
       value: 'group-1',
@@ -231,6 +251,59 @@ test('Agent selector filters individual Agents and group members to the allowed 
       children: [{ value: 'b' }],
     },
   ])
+  assert.deepEqual(filterAllowedAgentOptions(options, [['a'], ['b']]), [
+    {
+      value: 'group-1',
+      accessNodeType: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP',
+      children: [],
+    },
+  ])
+  assert.deepEqual(filterAllowedAgentOptions(options, [[], ['b']]), [])
+  assert.equal(filterAllowedAgentOptions(options, []), options)
+})
+
+test('connection save waits for preview approval and handles save-time conflicts', async () => {
+  const payload = agentCheckPayload(['connection-1'], {}, 'request-1')
+  const report = { items: [], total: 1, hiddenCount: 0, hasConflicts: true }
+  const calls: string[] = []
+  let attempts = 0
+  const saved = await saveConnectionWithAgentConflictCheck(
+    payload,
+    (receivedPayload) => {
+      assert.equal(receivedPayload, payload)
+      calls.push('preview')
+      return Promise.resolve(report)
+    },
+    () => {
+      calls.push('save')
+      if (++attempts === 1) throw { data: report }
+      return Promise.resolve()
+    },
+    (receivedPayload, receivedReport) => {
+      assert.equal(receivedPayload, payload)
+      assert.deepEqual(receivedReport, report)
+      calls.push('open')
+      return Promise.resolve(true)
+    },
+  )
+  assert.equal(saved, true)
+  assert.deepEqual(calls, ['preview', 'open', 'save', 'open', 'save'])
+})
+
+test('canceling the preview prevents the connection write', async () => {
+  const saved = await saveConnectionWithAgentConflictCheck(
+    agentCheckPayload(['connection-1'], {}, 'request-1'),
+    () =>
+      Promise.resolve({
+        items: [],
+        total: 1,
+        hiddenCount: 0,
+        hasConflicts: true,
+      }),
+    () => assert.fail('connection must not be written'),
+    () => Promise.resolve(false),
+  )
+  assert.equal(saved, false)
 })
 
 test('connection save retries original settings only after conflict resolution is confirmed', async () => {

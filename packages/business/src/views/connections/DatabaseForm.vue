@@ -43,7 +43,7 @@ import UsedTaskDialog from './UsedTaskDialog.vue'
 import AgentTaskConflictDialog from './AgentTaskConflictDialog.vue'
 import {
   agentCheckPayload,
-  saveConnectionWithConflictRetry,
+  saveConnectionWithAgentConflictCheck,
 } from './connectionAgentConflicts'
 import { getConnectionIcon } from './util'
 
@@ -217,7 +217,7 @@ export default {
       this.buried('connectionSubmit')
       this.pdkFormModel = this.$refs.schemaToForm?.getForm?.()
       this.schemaFormInstance?.validate().then(
-        async () => {
+        () => {
           if (this.submitBtnLoading) return
           this.submitBtnLoading = true
           // 保存数据源
@@ -252,22 +252,6 @@ export default {
               : null
           if (agentPayload) {
             Object.assign(params, agentPayload.settings)
-            try {
-              const report = await checkConnectionAgentSettings(agentPayload)
-              if (report.hasConflicts) {
-                const proceed = await this.$refs.agentTaskConflictDialog.open(
-                  agentPayload,
-                  report,
-                )
-                if (!proceed) {
-                  this.submitBtnLoading = false
-                  return
-                }
-              }
-            } catch {
-              this.submitBtnLoading = false
-              return
-            }
           }
           let saveConnection
           if (id) {
@@ -280,8 +264,9 @@ export default {
               createConnection(params, { id: commandCallbackFunctionId })
           }
           const savePromise = agentPayload
-            ? saveConnectionWithConflictRetry(
+            ? saveConnectionWithAgentConflictCheck(
                 agentPayload,
+                checkConnectionAgentSettings,
                 saveConnection,
                 (payload, report) =>
                   this.$refs.agentTaskConflictDialog.open(payload, report),

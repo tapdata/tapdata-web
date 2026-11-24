@@ -26,6 +26,8 @@ export default {
     'Edit task Agent settings and check again',
 
   packages_business_agent_tasks_selected: 'Selected {count} tasks',
+  packages_business_agent_tasks_no_common_agent:
+    'No single Agent is allowed for all selected tasks before and after the connection change. Use automatic allocation or choose a compatible Agent group.',
 
   packages_business_agent_tasks_retry:
     'The task changed, is not editable, or its save result is unknown. Refresh and retry.',

@@ -39,6 +39,7 @@ import TablePage from '../../components/TablePage.vue'
 import TaskStatus from '../../components/TaskStatus.vue'
 import { makeStatusAndDisabled } from '../../shared'
 import { formatTaskMetricInfo } from '../../shared/task-metric'
+import { canEditTaskStatus } from '../../shared/task-edit-status.js'
 import Editor from './Editor.vue'
 
 const { t } = useI18n()
@@ -429,10 +430,7 @@ async function openLinkedTaskEditor() {
     const data = await fetchLogcollector({ where: { id }, limit: 1 })
     const task = data?.items?.find((item: any) => item.id === id)
     if (!task) return
-    if (
-      havePermission(task, 'Edit') &&
-      ['edit', 'ready', 'stop', 'wait_start', 'stopped'].includes(task.status)
-    ) {
+    if (havePermission(task, 'Edit') && canEditTaskStatus(task.status)) {
       editor.value?.open(id)
     } else {
       handleDetails(task)

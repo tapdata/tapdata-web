@@ -253,7 +253,7 @@ export function createAgentSettingsProperties(
 
 export async function loadAccessNodeOptions(
   _field: unknown,
-  others: { value?: string; allowedAgentProcessIds?: string[] | null } = {},
+  others: { value?: string; restrictedAgentSets?: string[][] } = {},
 ): Promise<AgentOption[]> {
   const data: AgentInfo[] = await findAccessNodeInfo({})
 
@@ -290,5 +290,5 @@ export async function loadAccessNodeOptions(
         }
         return mapAgent(item)
       }) || []
-  return filterAllowedAgentOptions(options, others.allowedAgentProcessIds)
+  return filterAllowedAgentOptions(options, others.restrictedAgentSets)
 }

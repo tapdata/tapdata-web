@@ -6,7 +6,7 @@ import {
   type ConnectionAgentConflictReport,
 } from '@tap/api/src/core/connections'
 import { useI18n } from '@tap/i18n'
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { ElMessageBox } from 'element-plus'
 import BatchAgentSettingsDialog from './BatchAgentSettingsDialog.vue'
 import { useRouter } from 'vue-router'
@@ -14,7 +14,6 @@ import {
   taskAgentEdits,
   conflictTaskDestination,
   automaticConflictTasks,
-  commonAllowedAgentProcessIds,
   snapshotConflictTasks,
 } from './connectionAgentConflicts'
 import { STATUS_MAP } from '../../shared'
@@ -49,11 +48,15 @@ function settle(value: boolean) {
   finish = null
 }
 
+onBeforeUnmount(() => settle(false))
+
 function editTasks(rows = selectedTasks.value) {
   editingTasks.value = snapshotConflictTasks(rows)
   taskSettingsDialog.value?.open(
     editingTasks.value,
-    commonAllowedAgentProcessIds(editingTasks.value),
+    editingTasks.value.flatMap(
+      (task) => task.allowedAgentProcessIdSets ?? [[]],
+    ),
   )
 }
 
@@ -297,7 +300,7 @@ defineExpose({ open })
     <ElButton
       class="mt-3"
       :disabled="!selectedTasks.length || taskSaving || loading"
-      @click="editTasks"
+      @click="editTasks()"
     >
       {{ t('packages_business_agent_tasks_edit') }}
     </ElButton>

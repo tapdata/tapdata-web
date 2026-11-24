@@ -22,6 +22,8 @@ export default {
     '请手动调整任务 Agent 后重新检查',
 
   packages_business_agent_tasks_selected: '已选择 {count} 个任务',
+  packages_business_agent_tasks_no_common_agent:
+    '连接变更前后，没有一个 Agent 同时适用于所有选中的任务。请使用平台自动分配，或选择兼容的 Agent 分组。',
 
   packages_business_agent_tasks_retry:
     '任务已变化、不可编辑或保存结果不确定，请刷新确认后重试。',

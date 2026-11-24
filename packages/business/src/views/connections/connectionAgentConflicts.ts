@@ -2,6 +2,10 @@ import type {
   BatchUpdateConnectionAgentSettingsParams,
   ConnectionAgentConflictReport,
 } from '@tap/api/src/core/connections'
+import {
+  canEditInspectionStatus,
+  canEditTaskStatus,
+} from '../../shared/task-edit-status.js'
 
 type ConflictTask = ConnectionAgentConflictReport['items'][number]
 
@@ -9,32 +13,29 @@ export function snapshotConflictTasks(
   items: Array<
     Pick<
       ConflictTask,
-      'id' | 'name' | 'revision' | 'editable' | 'allowedAgentProcessIds'
+      'id' | 'name' | 'revision' | 'editable' | 'allowedAgentProcessIdSets'
     >
   >,
 ) {
   return items.map(
-    ({ id, name, revision, editable, allowedAgentProcessIds }) => ({
+    ({ id, name, revision, editable, allowedAgentProcessIdSets }) => ({
       id,
       name,
       revision,
       editable,
-      allowedAgentProcessIds: allowedAgentProcessIds
-        ? [...allowedAgentProcessIds]
-        : allowedAgentProcessIds,
+      allowedAgentProcessIdSets: allowedAgentProcessIdSets?.map((ids) => [
+        ...ids,
+      ]),
     }),
   )
 }
 
 export function commonAllowedAgentProcessIds(
-  items: Array<{ allowedAgentProcessIds?: string[] | null }>,
+  restrictedAgentSets: string[][],
 ): string[] | null {
-  const restricted = items
-    .map((item) => item.allowedAgentProcessIds)
-    .filter((ids): ids is string[] => Array.isArray(ids))
-  if (!restricted.length) return null
-  return restricted[0].filter((id) =>
-    restricted.every((ids) => ids.includes(id)),
+  if (!restrictedAgentSets.length) return null
+  return restrictedAgentSets[0].filter((id) =>
+    restrictedAgentSets.every((ids) => ids.includes(id)),
   )
 }
 
@@ -44,18 +45,24 @@ export function filterAllowedAgentOptions<
     accessNodeType?: string
     children?: T[]
   },
->(options: T[], allowedAgentProcessIds?: string[] | null): T[] {
-  if (!allowedAgentProcessIds) return options
+>(options: T[], restrictedAgentSets: string[][] = []): T[] {
+  const commonAgentIds = commonAllowedAgentProcessIds(restrictedAgentSets)
+  if (!commonAgentIds) return options
   return options.flatMap((option) => {
     if (
       option.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
     ) {
-      const children = option.children?.filter((child) =>
-        allowedAgentProcessIds.includes(child.value),
+      const members = option.children || []
+      const coversEveryPolicy = restrictedAgentSets.every((ids) =>
+        members.some((member) => ids.includes(member.value)),
       )
-      return children?.length ? [{ ...option, children }] : []
+      if (!coversEveryPolicy) return []
+      const children = members.filter((member) =>
+        commonAgentIds.includes(member.value),
+      )
+      return [{ ...option, children }]
     }
-    return allowedAgentProcessIds.includes(option.value) ? [option] : []
+    return commonAgentIds.includes(option.value) ? [option] : []
   })
 }
 
@@ -115,6 +122,22 @@ export function agentConflictReport(
   }
 }
 
+export async function saveConnectionWithAgentConflictCheck(
+  payload: BatchUpdateConnectionAgentSettingsParams,
+  check: (
+    payload: BatchUpdateConnectionAgentSettingsParams,
+  ) => Promise<ConnectionAgentConflictReport>,
+  save: () => Promise<unknown>,
+  openDialog: (
+    payload: BatchUpdateConnectionAgentSettingsParams,
+    report: ConnectionAgentConflictReport,
+  ) => Promise<boolean>,
+): Promise<boolean> {
+  const report = await check(payload)
+  if (report.hasConflicts && !(await openDialog(payload, report))) return false
+  return saveConnectionWithConflictRetry(payload, save, openDialog)
+}
+
 export async function saveConnectionWithConflictRetry(
   payload: BatchUpdateConnectionAgentSettingsParams,
   save: () => Promise<unknown>,
@@ -158,10 +181,16 @@ export function conflictTaskDestination(item: {
   canEdit?: boolean
   status: string
 }) {
-  const editable =
-    item.canEdit &&
-    ['edit', 'ready', 'stop', 'wait_start', 'stopped'].includes(item.status)
-  if (editable) {
+  if (item.canEdit) {
+    if (item.syncType === 'inspect' && canEditInspectionStatus(item.status))
+      return {
+        name: 'dataVerificationEdit',
+        params: { id: item.id },
+        query: { taskMode: 'random' },
+      }
+    if (item.syncType === 'connHeartbeat' && item.editable) return null
+  }
+  if (item.canEdit && canEditTaskStatus(item.status)) {
     if (item.syncType === 'sync' || item.syncType === 'migrate')
       return {
         name: item.syncType === 'sync' ? 'DataflowEditor' : 'MigrateEditor',
@@ -170,10 +199,6 @@ export function conflictTaskDestination(item: {
       }
     if (item.syncType === 'logCollector')
       return { name: 'sharedMiningList', query: { editTaskId: item.id } }
-    if (item.syncType === 'inspect')
-      return { name: 'dataVerificationEdit', params: { id: item.id } }
-    // Heartbeat has no dedicated editor; use the inline Agent editor.
-    if (item.syncType === 'connHeartbeat') return null
   }
   const viewers: Record<string, string> = {
     sync: 'TaskMonitor',
