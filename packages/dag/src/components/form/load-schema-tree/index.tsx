@@ -1,3 +1,4 @@
+import { LifeCycleTypes } from '@formily/core'
 import { observer } from '@formily/reactive-vue'
 import { getConnectionNoSchema } from '@tap/api/src/core/connections'
 import {
@@ -14,6 +15,13 @@ import { useRoute } from 'vue-router'
 import { useDataflowStore } from '../../../stores/dataflow.store'
 import './style.scss'
 
+function getErrorMessage(error: unknown) {
+  const details = error as
+    | { data?: { message?: string }; message?: string }
+    | undefined
+  return details?.data?.message || details?.message
+}
+
 export const loadSchemaTree = observer(
   defineComponent({
     props: ['findParentNode', 'value', 'tableNameField'],
@@ -28,9 +36,10 @@ export const loadSchemaTree = observer(
       const title = i18n.t('packages_form_load_schema_tree_button_title')
       const nodeId = form.getValuesIn('id')
       const errorMsg = ref('')
-      const loadStatus = ref('')
-      const isTransformed = ref(true)
+      const loadStatus = ref(false)
       const formIsChange = ref(false)
+      let unmounted = false
+      let cancelPollDelay: (() => void) | undefined
 
       watch(
         () => dataflowStore.editVersion,
@@ -39,198 +48,174 @@ export const loadSchemaTree = observer(
         },
       )
 
-      async function getTask() {
-        const taskId =
-          dataflowStore.dataflow?.taskId || dataflowStore.dataflow?.id
-        if (!taskId) {
-          throw new Error('Task id is unavailable')
-        }
+      function getTask(taskId: string) {
         const { parent_task_sign } = route.query || {}
-        return await getTaskById(taskId, {}, { parent_task_sign })
+        return getTaskById(taskId, {}, { parent_task_sign })
       }
 
-      let timer: ReturnType<typeof setTimeout> | undefined
-      let saveTimer: ReturnType<typeof setTimeout> | undefined
+      function showLoadError(message = '') {
+        loadStatus.value = true
+        errorMsg.value = message
+      }
 
-      async function getSchemaData(check = false, retry = 0) {
-        if (check) {
-          try {
-            const { transformed } = (await getTask()) || {}
-            isTransformed.value = !!transformed
-          } catch (error) {
-            loadStatus.value = true
-            errorMsg.value =
-              error?.data?.message ||
-              error?.message ||
-              i18n.t('packages_form_load_schema_tree_load_fail')
-            loading.value = false
-            return
+      async function getSchemaData() {
+        const data = await getNodeSchema(nodeId)
+        if (!unmounted) {
+          fieldList.value = data?.[0]?.fields || []
+        }
+      }
+
+      function waitForNextPoll() {
+        return new Promise<void>((resolve) => {
+          const timer = setTimeout(resolve, 2000)
+          cancelPollDelay = () => {
+            clearTimeout(timer)
+            resolve()
           }
+        })
+      }
 
-          if (!isTransformed.value) {
-            if (retry >= 15) {
-              loadStatus.value = true
-              errorMsg.value = i18n.t(
-                'packages_form_load_schema_tree_load_fail',
-              )
-              loading.value = false
-              return
-            }
-            timer && clearTimeout(timer)
-            timer = setTimeout(() => {
-              getSchemaData(check, retry + 1)
-            }, 2000)
-            return
+      async function waitForTransform(
+        taskId: string,
+        previousTransformUuid: string | null | undefined,
+        isCurrent: () => boolean,
+      ) {
+        for (let attempt = 0; attempt <= 15 && isCurrent(); attempt++) {
+          const task = await getTask(taskId)
+          if (!isCurrent()) return false
+          if (
+            task?.transformed &&
+            task.transformUuid &&
+            task.transformUuid !== previousTransformUuid
+          ) {
+            return true
           }
+          if (attempt < 15) await waitForNextPoll()
         }
-        getNodeSchema(nodeId)
-          .then((data) => {
-            fieldList.value = data?.[0]?.fields || []
-          })
-          .catch((error) => {
-            loadStatus.value = true
-            errorMsg.value =
-              error?.data?.message ||
-              i18n.t('packages_form_load_schema_tree_load_fail')
-          })
-          .finally(() => {
-            loading.value = false
-          })
+        return false
       }
 
-      function refreshSchemaAfterTaskSave() {
-        let saveStarted = dataflowStore.taskSaving
-        const unwatchSaving = watch(
-          () => dataflowStore.taskSaving,
-          (saving) => {
-            if (saving) {
-              saveStarted = true
-            } else if (saveStarted) {
-              clearTimeout(saveTimer)
-              saveTimer = undefined
-              unwatchSaving()
-              getSchemaData(true)
-            }
-          },
-        )
-        saveTimer = setTimeout(() => {
-          unwatchSaving()
-          saveTimer = undefined
-          loadStatus.value = true
-          errorMsg.value = i18n.t('packages_form_load_schema_tree_load_fail')
-          loading.value = false
-        }, 30000)
+      async function handleLoadSchema() {
+        if (loading.value) return
 
-        if (!saveStarted) {
-          dataflowStore.patchDataflowDebounce()
-        }
-      }
-
-      function handleLoadSchema() {
-        const getState = form.getState()
-        const formValues = getState?.values || {}
-        const { nodeConfig, connectionId } = formValues
-        const { tableNameField } = props
-        const params = {
-          className: 'DiscoverSchemaService',
-          method: 'discoverSchema',
-          nodeId,
-          args: [
-            connectionId,
-            Object.assign({ file: 'file', nodeId }, nodeConfig),
-          ],
-        }
+        const pageVersion = dataflowStore.pageVersion
+        const isCurrent = () =>
+          !unmounted && dataflowStore.pageVersion === pageVersion
+        const { nodeConfig, connectionId } = form.getState()?.values || {}
+        const fieldName = props.tableNameField || 'tableName'
         loading.value = true
-        isTransformed.value = true
-        form
-          .validate()
-          .then(() => {
-            callProxy(params)
-              .then(() => {
-                const filter = {
-                  where: {
-                    'source.id': connectionId,
-                    meta_type: {
-                      in: ['collection', 'table', 'view'],
-                    },
-                    is_deleted: false,
-                    sourceType: 'SOURCE',
-                    original_name: {
-                      neq: '',
-                    },
-                  },
-                  page: 1,
-                  size: 20,
-                  fields: {
-                    original_name: true,
-                  },
-                  order: ['original_name ASC'],
-                }
-                getConnectionNoSchema(connectionId).then((con) => {
-                  if (con.loadFieldErrMsg) {
-                    errorMsg.value = con.loadFieldErrMsg
-                    loadStatus.value = true
-                    loading.value = false
-                  } else {
-                    fetchMetadataInstances(filter)
-                      .then((metaData) => {
-                        const table = metaData.items?.[0]?.original_name
-                        const fieldName = tableNameField || 'tableName'
+        loadStatus.value = false
+        errorMsg.value = ''
 
-                        if (!table) {
-                          loadStatus.value = true
-                          errorMsg.value = i18n.t(
-                            'packages_form_load_schema_tree_load_fail',
-                          )
-                          loading.value = false
-                          return
-                        }
+        try {
+          try {
+            await form.validate()
+          } catch {
+            if (isCurrent()) {
+              ElMessage.error(i18n.t('packages_form_qingjianchajiedian'))
+            }
+            return
+          }
+          if (!isCurrent()) return
 
-                        loadStatus.value = false
-                        errorMsg.value = ''
-
-                        if (form.getValuesIn(fieldName) === table) {
-                          refreshSchemaAfterTaskSave()
-                          return
-                        }
-
-                        form.setValuesIn(fieldName, table)
-                        refreshSchemaAfterTaskSave()
-                      })
-                      .catch((error) => {
-                        loadStatus.value = true
-                        const msg = error?.data?.message
-                        errorMsg.value = msg
-                        if (msg) {
-                          ElMessage.error(msg)
-                        }
-                        loading.value = false
-                      })
-                  }
-                })
-              })
-              .catch((error) => {
-                loadStatus.value = true
-                const msg = error?.data?.message
-                errorMsg.value = msg
-                ElMessage.error(msg)
-                loading.value = false
-              })
+          await callProxy({
+            className: 'DiscoverSchemaService',
+            method: 'discoverSchema',
+            nodeId,
+            args: [
+              connectionId,
+              Object.assign({ file: 'file', nodeId }, nodeConfig),
+            ],
           })
-          .catch(() => {
-            ElMessage.error(i18n.t('packages_form_qingjianchajiedian'))
+          if (!isCurrent()) return
+
+          const connection = await getConnectionNoSchema(connectionId)
+          if (!isCurrent()) return
+          if (connection.loadFieldErrMsg) {
+            showLoadError(connection.loadFieldErrMsg)
+            return
+          }
+
+          const metadata = await fetchMetadataInstances({
+            where: {
+              'source.id': connectionId,
+              meta_type: { in: ['collection', 'table', 'view'] },
+              is_deleted: false,
+              sourceType: 'SOURCE',
+              original_name: { neq: '' },
+            },
+            page: 1,
+            size: 20,
+            fields: { original_name: true },
+            order: ['original_name ASC'],
+          })
+          if (!isCurrent()) return
+
+          const table = metadata?.items?.[0]?.original_name
+          const taskId =
+            dataflowStore.dataflow?.taskId || dataflowStore.dataflow?.id
+          if (!table || !taskId) {
+            showLoadError()
+            return
+          }
+
+          const previousTask = await getTask(taskId)
+          if (!isCurrent()) return
+
+          const previousTable = form.getValuesIn(fieldName)
+          if (previousTable !== table) {
+            form.setValuesIn(fieldName, table)
+          }
+          form.notify(LifeCycleTypes.ON_FORM_INPUT_CHANGE)
+          const saved = await dataflowStore.saveDataflowNow()
+          if (!isCurrent()) return
+
+          if (!saved) {
+            if (
+              previousTable !== table &&
+              form.getValuesIn(fieldName) === table
+            ) {
+              form.setValuesIn(fieldName, previousTable)
+            }
+            showLoadError()
+            return
+          }
+
+          const transformed = await waitForTransform(
+            taskId,
+            previousTask?.transformUuid,
+            isCurrent,
+          )
+          if (!isCurrent()) return
+          if (!transformed) {
+            showLoadError()
+            return
+          }
+
+          await getSchemaData()
+        } catch (error) {
+          if (isCurrent()) showLoadError(getErrorMessage(error))
+        } finally {
+          if (!unmounted) {
             loading.value = false
-          })
+          }
+        }
       }
 
       onMounted(() => {
         loading.value = true
         getSchemaData()
+          .catch((error) => {
+            if (!unmounted) showLoadError(getErrorMessage(error))
+          })
+          .finally(() => {
+            if (!unmounted) loading.value = false
+          })
       })
 
       onUnmounted(() => {
-        timer && clearTimeout(timer)
-        saveTimer && clearTimeout(saveTimer)
+        unmounted = true
+        cancelPollDelay?.()
       })
 
       const loadStatusDom = () => {
