@@ -13,6 +13,13 @@ export default {
     'Without a result key, each side may return at most one row. Multiple rows require unique keys. Map or explicitly ignore every output column and select at least one comparison field. Numbers compare exactly; NULL differs from an empty string.',
   packages_business_verification_cq_paimon:
     'Paimon supports a single-table SQL subset: filtering, aggregation, grouping and sorting. JOIN, CTE and subqueries are unsupported.',
+  packages_business_verification_cq_absoluteTolerance: 'Absolute tolerance',
+  packages_business_verification_cq_relativeTolerance: 'Relative tolerance',
+  packages_business_verification_cq_exact: 'Exact comparison (default)',
+  packages_business_verification_cq_toleranceHelp:
+    'For finite numbers only: values match when the difference ≤ max(absolute tolerance, relative tolerance × the larger absolute value). Leave blank for exact comparison. Result keys always compare exactly. Scientific notation is supported; relative tolerance is a ratio (0.01 means 1%).',
+  packages_business_verification_cq_toleranceInvalid:
+    'Tolerances apply only to comparison fields and must be nonnegative decimals with at most 100 significant digits and a scale (including the exponent) between -100 and 100.',
   packages_business_verification_cq_role: 'Field role',
   packages_business_verification_cq_key: 'Result key',
   packages_business_verification_cq_compare: 'Comparison value',

@@ -12,6 +12,13 @@ export default {
     '无结果键时每侧最多一行；多行必须配置唯一结果键。全部输出列必须映射或明确忽略，至少一个比较字段。数值精确比较，NULL与空字符串不同。',
   packages_business_verification_cq_paimon:
     'Paimon仅支持单表SQL子集：过滤、聚合、分组和排序；不支持JOIN、CTE或子查询。',
+  packages_business_verification_cq_absoluteTolerance: '绝对容差',
+  packages_business_verification_cq_relativeTolerance: '相对容差',
+  packages_business_verification_cq_exact: '精确比较（默认）',
+  packages_business_verification_cq_toleranceHelp:
+    '容差仅用于有限数值比较。差值 ≤ max(绝对容差, 相对容差 × 两侧绝对值的较大值) 时视为相等；留空保持精确比较，结果键始终精确比较。支持科学计数法，相对容差为比例（0.01 表示 1%）。',
+  packages_business_verification_cq_toleranceInvalid:
+    '容差仅可配置在比较字段，必须为非负十进制数，最多 100 位有效数字，小数位数（含指数）须在 -100 至 100 之间。',
   packages_business_verification_cq_role: '字段用途',
   packages_business_verification_cq_key: '结果键',
   packages_business_verification_cq_compare: '比较值',

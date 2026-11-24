@@ -12,6 +12,13 @@ export default {
     '無結果鍵時每側最多一列；多列必須設定唯一結果鍵。全部輸出欄位必須對應或明確忽略，至少一個比較欄位。數值精確比較，NULL與空字串不同。',
   packages_business_verification_cq_paimon:
     'Paimon僅支援單表SQL子集：篩選、彙總、分組與排序；不支援JOIN、CTE或子查詢。',
+  packages_business_verification_cq_absoluteTolerance: '絕對容差',
+  packages_business_verification_cq_relativeTolerance: '相對容差',
+  packages_business_verification_cq_exact: '精確比較（預設）',
+  packages_business_verification_cq_toleranceHelp:
+    '容差僅用於有限數值比較。差值 ≤ max(絕對容差, 相對容差 × 兩側絕對值的較大值) 時視為相等；留空維持精確比較，結果鍵一律精確比較。支援科學記號，相對容差為比例（0.01 表示 1%）。',
+  packages_business_verification_cq_toleranceInvalid:
+    '容差僅可設定於比較欄位，必須為非負十進位數，最多 100 位有效數字，小數位數（含指數）須介於 -100 與 100 之間。',
   packages_business_verification_cq_role: '欄位用途',
   packages_business_verification_cq_key: '結果鍵',
   packages_business_verification_cq_compare: '比較值',

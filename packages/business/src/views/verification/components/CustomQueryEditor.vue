@@ -2,7 +2,12 @@
 import { testInspectQuery } from '@tap/api/src/core/inspects'
 import { SqlEditor } from '@tap/form/src/components/sql-editor'
 import { reactive, watch } from 'vue'
-import { autoMappings, defaultQueryConfig, type QueryItem } from './customQuery'
+import {
+  autoMappings,
+  defaultQueryConfig,
+  type QueryMapping,
+  type QueryItem,
+} from './customQuery'
 const props = defineProps<{ item: QueryItem }>()
 const sides = ['source', 'target'] as const
 const busy = reactive({ source: false, target: false })
@@ -55,6 +60,20 @@ watch(
   },
   { flush: 'sync' },
 )
+function setTolerance(
+  row: QueryMapping,
+  field: 'absoluteTolerance' | 'relativeTolerance',
+  value: string,
+) {
+  if (value.trim() === '') delete row[field]
+  else row[field] = value.trim()
+}
+function changeRole(row: QueryMapping) {
+  if (row.role !== 'compare') {
+    delete row.absoluteTolerance
+    delete row.relativeTolerance
+  }
+}
 async function test(side: 'source' | 'target') {
   const s = item[side]
   const current = identity(side)
@@ -181,6 +200,12 @@ async function test(side: 'source' | 'target') {
     :closable="false"
     :title="$t('packages_business_verification_cq_rules')"
   />
+  <el-alert
+    class="my-3"
+    type="info"
+    :closable="false"
+    :title="$t('packages_business_verification_cq_toleranceHelp')"
+  />
   <el-table
     v-if="item.source.querySnapshot && item.target.querySnapshot"
     :data="item.customQueryConfig!.mappings"
@@ -212,7 +237,7 @@ async function test(side: 'source' | 'target') {
     </el-table-column>
     <el-table-column :label="$t('packages_business_verification_cq_role')">
       <template #default="{ row }"
-        ><el-select v-model="row.role"
+        ><el-select v-model="row.role" @change="changeRole(row)"
           ><el-option
             v-for="role in ['key', 'compare', 'ignore']"
             :key="role"
@@ -221,6 +246,22 @@ async function test(side: 'source' | 'target') {
               $t(`packages_business_verification_cq_${role}`)
             " /></el-select
       ></template>
+    </el-table-column>
+    <el-table-column
+      v-for="field in ['absoluteTolerance', 'relativeTolerance'] as const"
+      :key="field"
+      :label="$t(`packages_business_verification_cq_${field}`)"
+      min-width="160"
+    >
+      <template #default="{ row }">
+        <el-input
+          v-if="row.role === 'compare'"
+          :model-value="row[field]"
+          :placeholder="$t('packages_business_verification_cq_exact')"
+          clearable
+          @update:model-value="setTolerance(row, field, $event)"
+        />
+      </template>
     </el-table-column>
     <el-table-column width="80"
       ><template #default="{ $index }"

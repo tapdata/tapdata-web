@@ -14,6 +14,8 @@ export interface QueryMapping {
   source?: string
   target?: string
   role: 'key' | 'compare' | 'ignore'
+  absoluteTolerance?: string | null
+  relativeTolerance?: string | null
 }
 export interface QueryConfig {
   version: number
@@ -45,9 +47,24 @@ export const defaultQueryConfig = (): QueryConfig => ({
   ignoreCase: true,
   mappings: [],
 })
+// Match BigDecimal's precision/scale limits without converting thresholds to JS numbers.
+export function validTolerance(value: string | null | undefined): boolean {
+  if (value == null) return true
+  if (typeof value !== 'string') return false
+  const match = /^\+?(\d+(?:\.\d*)?|\.\d+)(?:e([+-]?\d+))?$/i.exec(value)
+  if (!match) return false
+  const digits = match[1].replace('.', '').replace(/^0+/, '')
+  const scale = (match[1].split('.')[1]?.length || 0) - Number(match[2] || 0)
+  return Math.max(digits.length, 1) <= 100 && scale >= -100 && scale <= 100
+}
 export function queryError(
   item: QueryItem,
-): 'testRequired' | 'mappingInvalid' | 'limitsInvalid' | undefined {
+):
+  | 'testRequired'
+  | 'mappingInvalid'
+  | 'limitsInvalid'
+  | 'toleranceInvalid'
+  | undefined {
   const c = item.customQueryConfig
   if (
     !c ||
@@ -64,6 +81,16 @@ export function queryError(
     c.timeoutSeconds > 3600
   )
     return 'limitsInvalid'
+  if (
+    c.mappings.some(
+      (m) =>
+        !validTolerance(m.absoluteTolerance) ||
+        !validTolerance(m.relativeTolerance) ||
+        (m.role !== 'compare' &&
+          (m.absoluteTolerance != null || m.relativeTolerance != null)),
+    )
+  )
+    return 'toleranceInvalid'
   const name = (s: string) => (c.ignoreCase ? s.toLowerCase() : s)
   const covered = (side: 'source' | 'target') => {
     const columns = item[side].querySnapshot!.columns.map((f) => name(f.name))
