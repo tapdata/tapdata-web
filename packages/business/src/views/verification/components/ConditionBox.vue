@@ -1048,10 +1048,6 @@ const getPrimaryKeyFieldStr = (data: any[] = []) => {
     .join(',')
 }
 
-const debounceValidate = debounce(() => {
-  validate()
-}, 200)
-
 const validate = async () => {
   const tasks = getList()
 
@@ -1079,8 +1075,6 @@ const validate = async () => {
       updateErrorMsg(message, 'error')
       return message
     }
-    message = validateCapabilities(tasks, 'execute_command_function')
-    if (message) return message
     updateErrorMsg('')
     return
   }
@@ -1516,6 +1510,14 @@ const handleSearch = debounce((value: string) => {
 watch(conditionList, () => {
   handleSearch(searchValue.value)
 })
+
+watch(
+  () => (props.inspectMethod === 'custom_query' ? conditionList.value : null),
+  () => {
+    if (props.inspectMethod === 'custom_query') validate()
+  },
+  { deep: true, immediate: true },
+)
 </script>
 
 <template>
