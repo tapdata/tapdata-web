@@ -63,3 +63,8 @@
 - For bulk operations that overwrite, delete, or clear existing task configuration, show a clear UI warning. If an empty array is a valid action, such as clearing receivers, do not disable save only because the array is empty.
 - Commit messages must include the Jira key, for example `feat(TAP-12226): short summary`.
 - PR descriptions should include a concise summary, validation actually run, and any remaining risks or unrelated worktree changes.
+
+## Jira context for pull request reviews
+
+- When a pull request title contains a Jira key matching `TAP-<number>`, retrieve that issue through the Atlassian Jira integration before reviewing the code. Use the issue description and linked requirements or acceptance criteria as review context.
+- If Jira context cannot be retrieved, state that limitation in the review.

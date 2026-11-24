@@ -1,5 +1,6 @@
 import { findAccessNodeInfo } from '@tap/api/src/core/cluster'
 import i18n from '@tap/i18n'
+import { filterAllowedAgentOptions } from './connectionAgentConflicts'
 
 export const AUTOMATIC_AGENT_ALLOCATION = 'AUTOMATIC_PLATFORM_ALLOCATION'
 export const MANUAL_AGENT_ALLOCATION = 'MANUALLY_SPECIFIED_BY_THE_USER'
@@ -252,7 +253,7 @@ export function createAgentSettingsProperties(
 
 export async function loadAccessNodeOptions(
   _field: unknown,
-  others: { value?: string } = {},
+  others: { value?: string; restrictedAgentSets?: string[][] } = {},
 ): Promise<AgentOption[]> {
   const data: AgentInfo[] = await findAccessNodeInfo({})
 
@@ -267,7 +268,7 @@ export async function loadAccessNodeOptions(
     accessNodeType: item.accessNodeType,
   })
 
-  return (
+  const options =
     data
       ?.filter(
         (item) =>
@@ -289,5 +290,5 @@ export async function loadAccessNodeOptions(
         }
         return mapAgent(item)
       }) || []
-  )
+  return filterAllowedAgentOptions(options, others.restrictedAgentSets)
 }

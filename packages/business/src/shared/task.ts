@@ -3,6 +3,7 @@ import i18n from '@tap/i18n'
 import { getConnectionIcon } from '../views/connections/util'
 // 获取子任务状态统计
 import { ETL_STATUS_MAP, ETL_SUB_STATUS_MAP } from './const'
+import { taskEditStatuses } from './task-edit-status.js'
 
 export const TASK_SETTINGS = {
   name: '', // 任务名称
@@ -194,7 +195,7 @@ export const STATUS_MERGE = Object.entries(STATUS_MAP).reduce(
 //'renewing' 不可以删除
 const BUTTON_WITH_STATUS = {
   start: ['wait_start', 'complete', 'error', 'stop'],
-  edit: ['edit', 'wait_start', 'complete', 'error', 'stop', 'renew_failed'],
+  edit: taskEditStatuses,
   delete: ['edit', 'wait_start', 'complete', 'error', 'stop', 'renew_failed'],
   stop: ['running'],
   forceStop: ['stopping'],

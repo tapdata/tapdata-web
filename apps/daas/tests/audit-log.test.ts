@@ -1,17 +1,38 @@
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import test from 'node:test'
 import {
+  actionMatchesEventType,
+  advancedFilterCount,
+  appliedFilterTags,
+  AUDIT_ACTIONS,
+  AUDIT_ACTIONS_BY_EVENT_TYPE,
+  AUDIT_EVENT_TYPES,
+  AUDIT_QUERY_LABEL_KEYS,
+  AUDIT_TAG_KEYS,
+  auditActionGroups,
+  auditActionLabelKey,
   batchSummary,
   buildAuditQuery,
+  confirmRangeInput,
   changeText,
   createAuditDetailLoader,
   displayValue,
   hasUnresolvedPlaceholder,
+  isQueryDirty,
   isRetentionShortened,
   isValidRetention,
+  isValidTimeRange,
+  parseDateTimeInput,
   nodeText,
   operatorText,
   outcomeView,
+  parseQuickRange,
+  quickRangeTimes,
+  refreshRangeTimes,
+  retentionRangeTimes,
+  toDateTimeInput,
+  withDefaultTimeRange,
 } from '../src/views/audit/audit-log.ts'
 
 const t = (key: string, args?: any[]) =>
@@ -27,8 +48,10 @@ test('builds query with known filter keys and drops blanks', () => {
       keyword: null,
       unknown: 'x',
       operationId: 'op-1',
+      eventId: 'ev-1',
+      range: 'custom',
     }),
-    { start: 1, end: 2, user: 'ops', operationId: 'op-1' },
+    { start: 1, end: 2, user: 'ops', operationId: 'op-1', eventId: 'ev-1' },
   )
 })
 
@@ -201,4 +224,219 @@ test('renders service node with instance and ip so same-host instances differ', 
     'Engine / node-1',
   )
   assert.equal(nodeText(undefined), '')
+})
+
+test('quick ranges use the real current time', () => {
+  const now = new Date(2026, 10, 19, 15, 30, 45, 123).getTime()
+  assert.deepEqual(quickRangeTimes('last7d', now), [
+    new Date(2026, 10, 13, 0, 0, 0, 0).getTime(),
+    new Date(2026, 10, 19, 23, 59, 59, 999).getTime(),
+  ])
+  assert.deepEqual(quickRangeTimes('today', now), [
+    new Date(2026, 10, 19, 0, 0, 0, 0).getTime(),
+    new Date(2026, 10, 19, 23, 59, 59, 999).getTime(),
+  ])
+  assert.deepEqual(quickRangeTimes('last24h', now), [
+    now - 24 * 60 * 60 * 1000,
+    now,
+  ])
+  assert.equal(quickRangeTimes('custom', now), null)
+})
+
+test('quick range across a month boundary keeps seven calendar days', () => {
+  const now = new Date(2026, 2, 3, 8, 0, 0).getTime()
+  const [start] = quickRangeTimes('last7d', now)
+  assert.equal(start, new Date(2026, 1, 25, 0, 0, 0, 0).getTime())
+})
+
+test('parses quick range from route query', () => {
+  assert.equal(parseQuickRange({}), 'last7d')
+  assert.equal(parseQuickRange({ range: 'today', start: '1' }), 'today')
+  assert.equal(parseQuickRange({ start: '1', end: '2' }), 'custom')
+  assert.equal(parseQuickRange({ range: 'bogus', start: '1' }), 'custom')
+  assert.equal(parseQuickRange({ eventId: 'ev-1' }), 'custom')
+})
+
+test('validates required time range and start not later than end', () => {
+  assert.equal(isValidTimeRange(1, 2), true)
+  assert.equal(isValidTimeRange('5', '5'), true)
+  assert.equal(isValidTimeRange(3, 2), false)
+  assert.equal(isValidTimeRange('', 2), false)
+  assert.equal(isValidTimeRange(1, null), false)
+  assert.equal(isValidTimeRange('x', 2), false)
+})
+
+test('detects changes not applied regardless of value types', () => {
+  const applied = { start: 1, end: 2, keyword: 'ops', source: '' }
+  assert.equal(
+    isQueryDirty({ start: '1', end: '2', keyword: ' ops ' }, applied),
+    false,
+  )
+  assert.equal(isQueryDirty({ ...applied, outcome: 'FAILED' }, applied), true)
+  assert.equal(isQueryDirty({ ...applied, start: 0 }, applied), true)
+})
+
+test('counts only applied advanced filters', () => {
+  assert.equal(
+    advancedFilterCount({
+      keyword: 'k',
+      eventType: 'TASK',
+      source: 'UI',
+      user: ' ',
+      sourceIp: '10.0.0.1',
+      action: 'task.start',
+    }),
+    3,
+  )
+  assert.equal(advancedFilterCount({}), 0)
+})
+
+test('builds applied filter tags without time conditions', () => {
+  assert.deepEqual(
+    appliedFilterTags({
+      start: 1,
+      end: 2,
+      object: 'orders',
+      keyword: 'sync',
+      outcome: 'FAILED',
+      user: '',
+    }),
+    [
+      { key: 'keyword', value: 'sync' },
+      { key: 'outcome', value: 'FAILED' },
+      { key: 'object', value: 'orders' },
+    ],
+  )
+  for (const key of AUDIT_TAG_KEYS) {
+    assert.ok(AUDIT_QUERY_LABEL_KEYS[key], key)
+  }
+})
+
+test('groups actions by event type and narrows by selected type', () => {
+  assert.equal(AUDIT_ACTIONS.length, 135)
+  assert.equal(new Set(AUDIT_ACTIONS).size, AUDIT_ACTIONS.length)
+  assert.deepEqual(
+    Object.keys(AUDIT_ACTIONS_BY_EVENT_TYPE).sort(),
+    [...AUDIT_EVENT_TYPES].sort(),
+  )
+  const all = auditActionGroups()
+  assert.equal(all.length, AUDIT_EVENT_TYPES.length)
+  const task = auditActionGroups('TASK')
+  assert.equal(task.length, 1)
+  assert.ok(task[0].actions.includes('task.start'))
+  assert.equal(auditActionLabelKey('auth.login'), 'audit_action_auth_login')
+})
+
+test('clears action that does not belong to the selected event type', () => {
+  assert.equal(actionMatchesEventType('task.start', 'TASK'), true)
+  assert.equal(actionMatchesEventType('auth.login', 'TASK'), false)
+  assert.equal(actionMatchesEventType('auth.login', ''), true)
+  assert.equal(actionMatchesEventType('', 'TASK'), true)
+})
+
+test('every action and query label is translated in all languages', () => {
+  const keys = [
+    ...AUDIT_ACTIONS.map(auditActionLabelKey),
+    ...Object.values(AUDIT_QUERY_LABEL_KEYS),
+    'audit_query_range_last7d',
+    'audit_query_range_today',
+    'audit_query_range_last24h',
+    'audit_query_range_custom',
+    'audit_query_pending',
+    'audit_query_more_count',
+    'audit_query_tag',
+    'audit_query_remove_tag',
+    'audit_query_range_apply',
+  ]
+  for (const lang of ['en', 'zh-CN', 'zh-TW']) {
+    const text = readFileSync(
+      new URL(`../src/i18n/langs/${lang}.js`, import.meta.url),
+      'utf8',
+    )
+    for (const key of keys) {
+      assert.match(text, new RegExp(`^  ${key}:\\s`, 'm'), `${lang} ${key}`)
+    }
+  }
+})
+
+test('fills the default range when route time is missing and keeps other filters', () => {
+  const now = new Date(2026, 10, 19, 15, 30, 0).getTime()
+  const [start, end] = quickRangeTimes('last7d', now)
+  assert.deepEqual(
+    withDefaultTimeRange({ start: '', end: '', eventType: 'TASK' }, now),
+    { start, end, eventType: 'TASK' },
+  )
+  assert.deepEqual(
+    withDefaultTimeRange({ start: 5, end: 1, outcome: 'FAILED' }, now),
+    { start, end, outcome: 'FAILED' },
+  )
+  const valid = { start: 1, end: 2, keyword: 'k' }
+  assert.equal(withDefaultTimeRange(valid, now), valid)
+})
+
+test('moves relative quick ranges to the current time and keeps custom ranges', () => {
+  const later = new Date(2026, 10, 19, 11, 1, 0).getTime()
+  const params = { start: 1, end: 2, keyword: 'k' }
+  assert.deepEqual(refreshRangeTimes(params, 'last24h', later), {
+    start: later - 24 * 60 * 60 * 1000,
+    end: later,
+    keyword: 'k',
+  })
+  const [start, end] = quickRangeTimes('today', later)
+  assert.deepEqual(refreshRangeTimes(params, 'today', later), {
+    start,
+    end,
+    keyword: 'k',
+  })
+  assert.equal(refreshRangeTimes(params, 'custom', later), params)
+})
+
+test('keeps old event or operation ID links filtered over the full retention period', () => {
+  const now = new Date(2026, 10, 19, 15, 0, 0).getTime()
+  const [start, end] = retentionRangeTimes(now)
+  assert.equal(start, new Date(2026, 10, 19 - 3650, 0, 0, 0, 0).getTime())
+  assert.equal(end, new Date(2026, 10, 19, 23, 59, 59, 999).getTime())
+  assert.deepEqual(
+    withDefaultTimeRange({ start: '', end: '', eventId: 'ev-1' }, now),
+    { start, end, eventId: 'ev-1' },
+  )
+  assert.deepEqual(appliedFilterTags({ start, end, operationId: 'op-1' }), [
+    { key: 'operationId', value: 'op-1' },
+  ])
+  assert.equal(advancedFilterCount({ eventId: 'ev-1' }), 0)
+})
+
+test('converts between timestamps and datetime-local values to the second', () => {
+  const ms = new Date(2026, 10, 14, 8, 5, 9, 999).getTime()
+  assert.equal(toDateTimeInput(ms), '2026-11-14T08:05:09')
+  assert.equal(toDateTimeInput(''), '')
+  assert.equal(
+    parseDateTimeInput('2026-11-14T08:05:09', 'start'),
+    new Date(2026, 10, 14, 8, 5, 9, 0).getTime(),
+  )
+  assert.equal(
+    parseDateTimeInput('2026-11-14T08:05', 'end'),
+    new Date(2026, 10, 14, 8, 5, 0, 999).getTime(),
+  )
+  assert.equal(parseDateTimeInput('', 'start'), null)
+  assert.equal(parseDateTimeInput('2026-11-14', 'start'), null)
+})
+
+test('date panel confirms only a complete range with start not after end', () => {
+  assert.deepEqual(
+    confirmRangeInput('2026-11-14T00:00:00', '2026-11-20T23:59:59'),
+    [
+      new Date(2026, 10, 14, 0, 0, 0, 0).getTime(),
+      new Date(2026, 10, 20, 23, 59, 59, 999).getTime(),
+    ],
+  )
+  assert.notEqual(
+    confirmRangeInput('2026-11-20T10:00:00', '2026-11-20T10:00:00'),
+    null,
+  )
+  assert.equal(
+    confirmRangeInput('2026-12-01T00:00:00', '2026-11-20T23:59:59'),
+    null,
+  )
+  assert.equal(confirmRangeInput('', '2026-11-20T23:59:59'), null)
 })

@@ -3,6 +3,7 @@ import {
   fetchInspectDetails,
 } from '@tap/api/src/core/inspect-details'
 import { downloadBlob } from '@tap/shared'
+import { isCustomQueryResult } from './components/customQuery'
 
 export default {
   data() {
@@ -23,8 +24,8 @@ export default {
         const inspectMethod = this.inspect.inspectMethod
         const showAdvancedVerification =
           inspectMethod !== 'custom_query' && task.showAdvancedVerification
-        const sourceSortColumn = task.source?.sortColumn?.split(',')
-        const targetSortColumn = task.target?.sortColumn?.split(',')
+        const sourceSortColumn = task.source?.sortColumn?.split(',') || []
+        const targetSortColumn = task.target?.sortColumn?.split(',') || []
         const statsInfo = this.tableData.find(
           (item) => item.taskId === this.taskId,
         )
@@ -42,7 +43,10 @@ export default {
         return fetchInspectDetails(filter).then((data) => {
           let resultList = []
           const items = data?.items || []
-          if (showAdvancedVerification || inspectMethod === 'custom_query') {
+          if (
+            showAdvancedVerification ||
+            isCustomQueryResult(inspectMethod, statsInfo, items)
+          ) {
             resultList = items
           } else {
             resultList = this.handleOtherVerify(items)

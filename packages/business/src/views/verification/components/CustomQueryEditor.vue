@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { testInspectQuery } from '@tap/api/src/core/inspects'
 import { SqlEditor } from '@tap/form/src/components/sql-editor'
-import { reactive, watch } from 'vue'
+import { onBeforeUnmount, reactive, watch } from 'vue'
 import {
   autoMappings,
   defaultQueryConfig,
@@ -12,7 +12,14 @@ const props = defineProps<{ item: QueryItem }>()
 const sides = ['source', 'target'] as const
 const busy = reactive({ source: false, target: false })
 const errors = reactive({ source: '', target: '' })
-let applyingTimezone = false
+const requests = { source: 0, target: 0 }
+function invalidate(side: 'source' | 'target') {
+  requests[side]++
+  busy[side] = false
+}
+onBeforeUnmount(() => {
+  for (const side of sides) invalidate(side)
+})
 const item = props.item
 const columnIdentity = (snapshot: QueryItem['source']['querySnapshot']) =>
   JSON.stringify(snapshot?.columns.map(({ name, type }) => [name, type]).sort())
@@ -43,7 +50,7 @@ for (const side of sides) {
   watch(
     () => identity(side),
     () => {
-      if (applyingTimezone) return
+      invalidate(side)
       s.querySnapshot = null
       testedColumns[side] = columnIdentity(null)
       item.customQueryConfig!.mappings = []
@@ -56,7 +63,10 @@ watch(
   () => item.customQueryConfig!.ignoreCase,
   () => {
     // Alias uniqueness depends on this policy; confirm both schemas under the new policy.
-    for (const side of sides) item[side].querySnapshot = null
+    for (const side of sides) {
+      invalidate(side)
+      item[side].querySnapshot = null
+    }
   },
   { flush: 'sync' },
 )
@@ -76,6 +86,7 @@ function changeRole(row: QueryMapping) {
 }
 async function test(side: 'source' | 'target') {
   const s = item[side]
+  const request = ++requests[side]
   const current = identity(side)
   const ignoreCase = item.customQueryConfig!.ignoreCase
   busy[side] = true
@@ -92,6 +103,7 @@ async function test(side: 'source' | 'target') {
       ignoreCase,
     })
     if (
+      request !== requests[side] ||
       current !== identity(side) ||
       ignoreCase !== item.customQueryConfig!.ignoreCase
     )
@@ -99,12 +111,6 @@ async function test(side: 'source' | 'target') {
     if (testedColumns[side] !== columnIdentity(result))
       item.customQueryConfig!.mappings = []
     testedColumns[side] = columnIdentity(result)
-    applyingTimezone = true
-    try {
-      s.queryTimezone = result.timezone || s.queryTimezone
-    } finally {
-      applyingTimezone = false
-    }
     s.querySnapshot = result
     if (
       item.source.querySnapshot &&
@@ -114,12 +120,13 @@ async function test(side: 'source' | 'target') {
       item.customQueryConfig!.mappings = autoMappings(item)
   } catch (error: any) {
     if (
+      request === requests[side] &&
       current === identity(side) &&
       ignoreCase === item.customQueryConfig!.ignoreCase
     )
       errors[side] = error?.message || String(error)
   } finally {
-    busy[side] = false
+    if (request === requests[side]) busy[side] = false
   }
 }
 </script>

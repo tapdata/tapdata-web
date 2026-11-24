@@ -30,6 +30,7 @@ import BatchTagDialog from '../../components/BatchTagDialog.vue'
 import PageContainer from '../../components/PageContainer.vue'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create.vue'
 import TablePage from '../../components/TablePage.vue'
+import { canEditInspectionStatus } from '../../shared/task-edit-status.js'
 import { inspectMethod, statusMap, typeList as verifyTypeList } from './const'
 
 import type { UploadUserFile } from 'element-plus'
@@ -933,7 +934,7 @@ onUnmounted(() => {
               v-if="havePermission(row.permissionActions, 'Edit')"
               text
               type="primary"
-              :disabled="['running', 'scheduling'].includes(row.status)"
+              :disabled="!canEditInspectionStatus(row.status)"
               @click="goEdit(row.id, row.flowId)"
               >{{ $t('packages_business_verification_configurationTip') }}
             </ElButton>

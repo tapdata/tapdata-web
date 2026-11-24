@@ -21,6 +21,8 @@ const hasPermissionByCode = inject<(code: string) => boolean>(
 )
 const canViewNotifications =
   hasPermissionByCode?.('v2_notification_record') ?? false
+const canOpenAlarmSetting =
+  hasPermissionByCode?.('v2_alarm_settings_menu') ?? false
 
 const loading = ref(false)
 const detail = ref<AlarmEvent | null>(null)
@@ -195,6 +197,7 @@ function openNotifications() {
             >{{ t('alarm_event_open_monitor') }}</el-button
           >
           <el-button
+            v-if="canOpenAlarmSetting"
             text
             type="primary"
             @click="router.push({ name: 'alarmSetting' })"

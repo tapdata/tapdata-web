@@ -2,10 +2,11 @@ import { observer } from '@formily/reactive-vue'
 import { useForm } from '@tap/form'
 
 import i18n from '@tap/i18n'
-import { defineComponent, ref } from 'vue'
+import type { CheckboxGroupValueType } from 'element-plus'
+import { computed, defineComponent, ref, type PropType } from 'vue'
 import { useDataflowStore } from '../../../stores/dataflow.store'
 
-const EVENT_MAP = {
+const EVENT_MAP: Partial<Record<string, string>> = {
   alter_field_name_event: i18n.t(
     'packages_form_ddl_event_checkbox_index_xiugaiziduanming',
   ),
@@ -43,53 +44,51 @@ const EVENT_MAP = {
 
 export const DdlEventCheckbox = observer(
   defineComponent({
-    props: ['value', 'disabled', 'formValues'],
+    props: {
+      value: Array as PropType<string[]>,
+      disabled: { type: Boolean, default: undefined },
+      formValues: Object,
+    },
+    emits: ['change'],
     setup(props, { emit }) {
       const dataflowStore = useDataflowStore()
       const formRef = useForm()
-      const form = formRef.value
-      const events = ref([])
-      const selected = ref([])
-      const values = props.formValues || form.values
-      const unselected = ref(props.value || [])
-
-      events.value = dataflowStore
+      const values = props.formValues ?? formRef.value.values
+      const events: string[] = dataflowStore
         .getCapabilitiesByType(values, 10)
         .filter((item) => item.id !== 'clear_table_event')
         .map((item) => item.id)
 
-      selected.value = unselected.value.length
-        ? events.value.filter((name) => !unselected.value.includes(name))
-        : [...events.value]
+      const selected = computed(() =>
+        events.filter((event) => !props.value?.includes(event)),
+      )
 
-      return () => {
-        return (
-          <ElCheckboxGroup
-            disabled={props.disabled}
-            modelValue={selected.value}
-            onInput={(value) => {
-              selected.value = value
-            }}
-          >
-            {events.value.map((name) => (
-              <ElCheckbox
-                label={name}
-                onChange={(value) => {
-                  const i = unselected.value.indexOf(name)
-                  if (value) {
-                    ~i && unselected.value.splice(i, 1)
-                  } else {
-                    !~i && unselected.value.push(name)
-                  }
-                  emit('change', unselected.value)
-                }}
-              >
-                {EVENT_MAP[name]}
-              </ElCheckbox>
-            ))}
-          </ElCheckboxGroup>
-        )
+      function updateSelection(nextSelected: CheckboxGroupValueType) {
+        // Preserve exclusions for events this connector does not offer.
+        const disabledEvents = new Set(props.value)
+        for (const event of events) {
+          if (nextSelected.includes(event)) {
+            disabledEvents.delete(event)
+          } else {
+            disabledEvents.add(event)
+          }
+        }
+        emit('change', [...disabledEvents])
       }
+
+      return () => (
+        <ElCheckboxGroup
+          disabled={props.disabled}
+          modelValue={selected.value}
+          onUpdate:modelValue={updateSelection}
+        >
+          {events.map((name) => (
+            <ElCheckbox key={name} value={name}>
+              {EVENT_MAP[name]}
+            </ElCheckbox>
+          ))}
+        </ElCheckboxGroup>
+      )
     },
   }),
 )
@@ -125,7 +124,8 @@ export const DdlEventList = defineComponent({
         const disabledEvents = parent.disabledEvents || []
         const events = Object.values(dataflowStore.getCapabilitiesMap(parent))
           .filter((item) => {
-            if (item.type !== 10 || disabledEvents.includes(item.id)) return
+            if (item.type !== 10 || disabledEvents.includes(item.id))
+              return false
             const functionName = item.id.replace(/_event$/, '_function')
             return functions.includes(functionName)
           })

@@ -30,6 +30,8 @@ export interface Task {
   id: string
   name: string
   status: string
+  transformed?: boolean | null
+  transformUuid?: string | null
   [key: string]: any
   dag: Dag
 }

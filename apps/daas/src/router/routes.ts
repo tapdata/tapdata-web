@@ -1003,6 +1003,12 @@ export const routes = [
       },
     ],
   },
+  /* ---------- 告警中心（菜单容器，默认进入通知记录）  ----------*/
+  {
+    path: '/alert-center',
+    name: 'alertCenter',
+    redirect: { name: 'notificationRecords' },
+  },
   /* ---------- 通知模块（旧入口，重定向至 §4.1 新入口）  ----------*/
   {
     path: '/notification',

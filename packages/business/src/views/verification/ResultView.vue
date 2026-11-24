@@ -2,6 +2,7 @@
 import { checkEllipsisActive } from '@tap/shared'
 import JsonViewer from 'vue-json-viewer'
 import CustomQuerySummary from './components/CustomQuerySummary.vue'
+import { isCustomQueryResult } from './components/customQuery'
 import { ErrorMessage } from '../../components/error-message'
 export default {
   components: {
@@ -45,6 +46,13 @@ export default {
     }
   },
   computed: {
+    hasCustomQuerySummary() {
+      return isCustomQueryResult(
+        this.inspectMethod,
+        this.statsInfo,
+        this.resultList,
+      )
+    },
     filterResultList() {
       return this.resultList?.filter((t) => !!t.details) || []
     },
@@ -166,7 +174,7 @@ export default {
         v-if="
           statsInfo.result !== 'passed' &&
           inspectMethod !== 'jointField' &&
-          inspectMethod !== 'custom_query'
+          !hasCustomQuerySummary
         "
         :model-value="showType"
         :options="filterOptions"
@@ -176,7 +184,7 @@ export default {
     </div>
     <div class="main">
       <CustomQuerySummary
-        v-if="inspectMethod === 'custom_query'"
+        v-if="hasCustomQuerySummary"
         :stats="statsInfo"
         :details="resultList"
       />
@@ -207,9 +215,7 @@ export default {
         </template>
       </el-alert>
 
-      <template
-        v-if="statsInfo.result !== 'passed' && inspectMethod !== 'custom_query'"
-      >
+      <template v-if="statsInfo.result !== 'passed' && !hasCustomQuerySummary">
         <div
           v-if="!showAdvancedVerification"
           class="flex-fill flex flex-column"

@@ -133,10 +133,26 @@ export function autoMappings(item: QueryItem): QueryMapping[] {
     (s) => {
       const target = targets.find((t) => name(s.name) === name(t.name))?.name
       if (target) used.add(target)
-      return { source: s.name, target, role: target ? 'compare' : 'ignore' }
+      return { source: s.name, target, role: 'compare' }
     },
   )
   for (const t of targets)
-    if (!used.has(t.name)) result.push({ target: t.name, role: 'ignore' })
+    if (!used.has(t.name)) result.push({ target: t.name, role: 'compare' })
   return result
+}
+
+// Historical custom_query batches predate per-side query stats and typed differences.
+export function isCustomQueryResult(
+  inspectMethod: string,
+  stats: { sourceQuery?: unknown; targetQuery?: unknown } | null | undefined,
+  details: { differenceType?: string }[] = [],
+): boolean {
+  return (
+    inspectMethod === 'custom_query' &&
+    !!(
+      stats?.sourceQuery ||
+      stats?.targetQuery ||
+      details.some((d) => d.differenceType)
+    )
+  )
 }
