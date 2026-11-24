@@ -1,4 +1,61 @@
 export default {
+  packages_business_verification_cq_collection: 'Collection',
+  packages_business_verification_cq_pipeline: 'Read-only Mongo pipeline (JSON)',
+  packages_business_verification_cq_sql: 'Read-only SQL',
+  packages_business_verification_cq_timezone:
+    'Query timezone (blank uses connection settings)',
+  packages_business_verification_cq_test: 'Test query',
+  packages_business_verification_cq_testRequired:
+    'Test both queries after changing the connection, query, collection, timezone or field-name case policy. Map unmatched columns or explicitly select Ignore before saving.',
+  packages_business_verification_cq_preview:
+    'Preview of up to 20 rows; this does not prove key uniqueness or result completeness.',
+  packages_business_verification_cq_rules:
+    'Without a result key, each side may return at most one row. Multiple rows require unique keys. Map or explicitly ignore every output column and select at least one comparison field. Numbers compare exactly; NULL differs from an empty string.',
+  packages_business_verification_cq_paimon:
+    'Paimon supports a single-table SQL subset: filtering, aggregation, grouping and sorting. JOIN, CTE and subqueries are unsupported.',
+  packages_business_verification_cq_absoluteTolerance: 'Absolute tolerance',
+  packages_business_verification_cq_relativeTolerance: 'Relative tolerance',
+  packages_business_verification_cq_exact: 'Exact comparison (default)',
+  packages_business_verification_cq_toleranceHelp:
+    'For finite numbers only: values match when the difference ≤ max(absolute tolerance, relative tolerance × the larger absolute value). Leave blank for exact comparison. Result keys always compare exactly. Scientific notation is supported; relative tolerance is a ratio (0.01 means 1%).',
+  packages_business_verification_cq_toleranceInvalid:
+    'Tolerances apply only to comparison fields and must be nonnegative decimals with at most 100 significant digits and a scale (including the exponent) between -100 and 100.',
+  packages_business_verification_cq_role: 'Field role',
+  packages_business_verification_cq_key: 'Result key',
+  packages_business_verification_cq_compare: 'Comparison value',
+  packages_business_verification_cq_ignore: 'Explicitly ignored',
+  packages_business_verification_cq_addMapping: 'Add field mapping',
+  packages_business_verification_cq_timeout: 'Timeout per side (seconds)',
+  packages_business_verification_cq_maxRows: 'Maximum rows per side',
+  packages_business_verification_cq_ignoreCase: 'Ignore column name case',
+  packages_business_verification_cq_mappingInvalid:
+    'Map each column once or explicitly ignore it. Choose at least one comparison field and a key for multiple rows.',
+  packages_business_verification_cq_limitsInvalid:
+    'Maximum rows must be 1–10000 and timeout must be 1–3600 seconds.',
+  packages_business_verification_cq_summary: 'Query execution summary',
+  packages_business_verification_cq_differentFields: 'Different fields',
+  packages_business_verification_cq_differentRows: 'Rows with differing values',
+  packages_business_verification_cq_matched: 'Matching rows',
+  packages_business_verification_cq_sourceOnly: 'Source only',
+  packages_business_verification_cq_targetOnly: 'Target only',
+  packages_business_verification_cq_bothEmpty: 'Both queries returned no data',
+  packages_business_verification_cq_duration: 'Duration (ms)',
+  packages_business_verification_cq_rows: 'Returned rows',
+  packages_business_verification_cq_status: 'Execution status',
+  packages_business_verification_cq_resultKey: 'Result key',
+  packages_business_verification_cq_field: 'Source / target field',
+  packages_business_verification_cq_sourceValue: 'Source value',
+  packages_business_verification_cq_targetValue: 'Target value',
+  packages_business_verification_cq_VALUE_MISMATCH: 'Different field values',
+  packages_business_verification_cq_SOURCE_ONLY: 'Source only',
+  packages_business_verification_cq_TARGET_ONLY: 'Target only',
+  packages_business_verification_cq_success: 'Success',
+  packages_business_verification_cq_pending: 'Pending',
+  packages_business_verification_cq_running: 'Running',
+  packages_business_verification_cq_cancelled: 'Cancelled',
+  packages_business_verification_cq_timeoutState: 'Timed out',
+  packages_business_verification_cq_error: 'Execution failed',
+  packages_business_verification_cq_ignored: 'Columns excluded from comparison',
   packages_business_agent_edit_one: 'Edit task Agent',
 
   packages_business_agent_recheck: 'Check again',

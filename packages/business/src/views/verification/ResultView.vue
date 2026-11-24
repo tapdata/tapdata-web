@@ -1,10 +1,13 @@
 <script>
 import { checkEllipsisActive } from '@tap/shared'
 import JsonViewer from 'vue-json-viewer'
+import CustomQuerySummary from './components/CustomQuerySummary.vue'
+import { isCustomQueryResult } from './components/customQuery'
 import { ErrorMessage } from '../../components/error-message'
 export default {
   components: {
     JsonViewer,
+    CustomQuerySummary,
   },
   props: {
     remoteMethod: Function,
@@ -43,6 +46,13 @@ export default {
     }
   },
   computed: {
+    hasCustomQuerySummary() {
+      return isCustomQueryResult(
+        this.inspectMethod,
+        this.statsInfo,
+        this.resultList,
+      )
+    },
     filterResultList() {
       return this.resultList?.filter((t) => !!t.details) || []
     },
@@ -62,6 +72,7 @@ export default {
       if (this.errorMsg) {
         return this.errorMsg.split('\n').shift()
       }
+      return ''
     },
   },
   methods: {
@@ -160,7 +171,11 @@ export default {
       </span>
 
       <el-segmented
-        v-if="statsInfo.result !== 'passed' && inspectMethod !== 'jointField'"
+        v-if="
+          statsInfo.result !== 'passed' &&
+          inspectMethod !== 'jointField' &&
+          !hasCustomQuerySummary
+        "
         :model-value="showType"
         :options="filterOptions"
         class="ml-auto"
@@ -168,6 +183,12 @@ export default {
       />
     </div>
     <div class="main">
+      <CustomQuerySummary
+        v-if="hasCustomQuerySummary"
+        :stats="statsInfo"
+        :details="resultList"
+      />
+
       <el-result
         v-if="statsInfo.result === 'passed'"
         icon="success"
@@ -194,7 +215,7 @@ export default {
         </template>
       </el-alert>
 
-      <template v-if="statsInfo.result !== 'passed'">
+      <template v-if="statsInfo.result !== 'passed' && !hasCustomQuerySummary">
         <div
           v-if="!showAdvancedVerification"
           class="flex-fill flex flex-column"

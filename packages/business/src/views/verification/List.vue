@@ -784,7 +784,11 @@ onUnmounted(() => {
                 >
                   {{ $t('packages_business_verification_inconsistent') }}
                 </span>
-                <span v-if="scope.row.inspectMethod === 'field'">
+                <span
+                  v-if="
+                    ['field', 'custom_query'].includes(scope.row.inspectMethod)
+                  "
+                >
                   {{ $t('packages_business_verification_contConsistent') }}
                   {{ scope.row.difference_number }}
                 </span>
