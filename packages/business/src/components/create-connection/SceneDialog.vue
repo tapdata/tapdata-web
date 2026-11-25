@@ -84,7 +84,9 @@ export default {
   data() {
     const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
     const isCommunity = import.meta.env.VUE_APP_MODE === 'community'
+    const usesConnectorCatalog = import.meta.env.VUE_APP_MODE !== 'OP'
     return {
+      usesConnectorCatalog,
       isDaas,
       isCommunity,
       search: '',
@@ -242,8 +244,8 @@ export default {
           'packages_business_create_connection_mongodbatlas_desc',
         ),
       },
-      currentScene: isDaas && !isCommunity ? 'installed' : 'recommend',
-      lockedTypes:
+      currentScene: usesConnectorCatalog ? 'installed' : 'recommend',
+      communityPaidConnectors:
         import.meta.env.VUE_APP_MODE === 'community'
           ? [
               {
@@ -506,8 +508,8 @@ export default {
   },
   computed: {
     ...mapGetters('feature', ['isControlEnabled', 'connectors']),
-    usesConnectorCatalog() {
-      return this.isDaas && !this.isCommunity
+    lockedTypes() {
+      return this.database.filter((item) => item.licenseLocked)
     },
     installedConnectorCount() {
       return this.database.filter((item) => !item.requiresDownload).length
@@ -656,10 +658,9 @@ export default {
 
     showDemoConnection() {
       return (
-        !this.usesConnectorCatalog &&
         this.startingTour &&
         !this.pausedGuide &&
-        this.currentScene === 'recommend' &&
+        ['installed', 'recommend'].includes(this.currentScene) &&
         !this.search
       )
     },
@@ -700,7 +701,7 @@ export default {
     },
   },
   mounted() {
-    if (this.isDaas && !this.isCommunity) this.restoreConnectorJobs()
+    if (this.usesConnectorCatalog) this.restoreConnectorJobs()
     const { type, pdkHash, pdkId } = this.$route.query
 
     // add-source/add-target
@@ -817,14 +818,15 @@ export default {
         this.openLocked()
         return
       }
-      const job = this.getConnectorJob(item)
-      if (job && !['completed', 'failed'].includes(job.status)) {
-        this.handleReleaseAction(item)
-        return
-      }
-      if (item.requiresDownload) {
-        this.handleReleaseAction(item)
-        return
+      if (this.usesConnectorCatalog) {
+        const job = this.getConnectorJob(item)
+        if (
+          item.requiresDownload ||
+          (job && !['completed', 'failed'].includes(job.status))
+        ) {
+          this.handleReleaseAction(item)
+          return
+        }
       }
 
       if (item.locked) {
@@ -930,6 +932,11 @@ export default {
     },
 
     showConnectorAction(item) {
+      if (
+        !this.usesConnectorCatalog ||
+        (item.licenseLocked && !item.releaseAvailable)
+      )
+        return false
       const job = this.getConnectorJob(item)
       return (
         job?.status !== 'completed' &&
@@ -1241,16 +1248,22 @@ export default {
               (t) =>
                 t.connectionType.includes(this.selectorType) && !!t.pdkHash,
             ) || []
-          : res
+          : res || []
 
-      let data = registeredData
-      const enterpriseCatalog = this.isDaas && !this.isCommunity
-      const releaseRequestId = enterpriseCatalog
+      const releaseRequestId = this.usesConnectorCatalog
         ? ++this.connectorReleaseRequestId
         : 0
-      if (enterpriseCatalog) {
-        data = this.buildEnterpriseConnectorList(res || [])
-      }
+      const data = this.usesConnectorCatalog
+        ? this.buildConnectorList(res || [])
+        : registeredData.map((item) => {
+            const licenseLocked =
+              this.isControlEnabled && !this.connectors.includes(item.type)
+            return {
+              ...item,
+              licenseLocked,
+              locked: licenseLocked || item.locked,
+            }
+          })
 
       this.databaseTypeMap = data.reduce(
         (map, db) => ((map[db.type] = db), map),
@@ -1273,59 +1286,24 @@ export default {
         return o1Level - o2Level
       }
 
-      if (this.isDaas && !this.isCommunity) {
-        this.lockedTypes = data.filter((item) => item.licenseLocked)
-      } else if (this.isControlEnabled) {
-        this.lockedTypes = data.filter((item) => {
-          const enabled = this.connectors.includes(item.type)
-
-          if (!enabled) {
-            item.locked = true
-          }
-
-          return !enabled
-        })
-      } else {
-        // 过滤掉已注册的
-        this.lockedTypes = this.lockedTypes
-          .filter((item) => {
-            item.locked = true // 标记上锁
-            return (
-              !this.databaseTypeMap[item.type] &&
-              ((this.selectorType !== 'source_and_target' &&
-                item.connectionType.includes(this.selectorType)) ||
-                this.selectorType === 'source_and_target')
-            )
-          })
-          .sort(sortFn)
-
-        // 合并到已注册
-        data.push(...this.lockedTypes)
-      }
-
       this.database = data.sort(sortFn)
 
-      if (this.selectorType === 'source') {
-        this.demoDatabase = [data.find((t) => t.pdkId === 'mysql')]
-      } else if (this.selectorType === 'target') {
-        this.demoDatabase = [data.find((t) => t.pdkId === 'mongodb')]
-      }
+      const demoId = { source: 'mysql', target: 'mongodb' }[this.selectorType]
+      this.demoDatabase = data.filter(
+        (item) => demoId && item.pdkId === demoId && !item.requiresDownload,
+      )
 
       this.loading = false
 
       // Nexus is optional for rendering the connection list. Fetch its release
       // metadata after the locally available connectors are already usable.
-      if (enterpriseCatalog) {
+      if (this.usesConnectorCatalog) {
         this.connectorCatalogLoading = true
         getConnectorReleases()
           .then((releases) => {
             if (releaseRequestId !== this.connectorReleaseRequestId) return
-            this.database = this.buildEnterpriseConnectorList(
-              res || [],
-              releases,
-            ).sort(sortFn)
-            this.lockedTypes = this.database.filter(
-              (item) => item.licenseLocked,
+            this.database = this.buildConnectorList(res || [], releases).sort(
+              sortFn,
             )
             this.databaseTypeMap = this.database.reduce(
               (map, db) => ((map[db.type] = db), map),
@@ -1346,7 +1324,7 @@ export default {
       }
     },
 
-    buildEnterpriseConnectorList(registeredData, releases = []) {
+    buildConnectorList(registeredData, releases = []) {
       const installedById = new Map(
         registeredData.map((item) => [item.pdkId, item]),
       )
@@ -1378,13 +1356,23 @@ export default {
       const unlistedInstalled = registeredData.filter(
         (item) => !knownPdkIds.has(item.pdkId),
       )
-      return [...catalogItems, ...unlistedInstalled]
+      const available = [...catalogItems, ...unlistedInstalled].filter(
+        (item) =>
+          !item.requiresDownload ||
+          item.releaseAvailable ||
+          !!this.connectorJobs[item.pdkId],
+      )
+      // Community lists paid connectors even when Nexus has no release for them.
+      const paidTypes = new Set(
+        this.communityPaidConnectors.map((item) => item.type),
+      )
+      const availableTypes = new Set(available.map((item) => item.type))
+      const paidOnly = this.communityPaidConnectors
         .filter(
-          (item) =>
-            !item.requiresDownload ||
-            item.releaseAvailable ||
-            !!this.connectorJobs[item.pdkId],
+          (item) => !this.isControlEnabled && !availableTypes.has(item.type),
         )
+        .map((item) => ({ ...item, requiresDownload: true }))
+      return [...available, ...paidOnly]
         .filter(
           (item) =>
             this.selectorType === 'source_and_target' ||
@@ -1392,8 +1380,9 @@ export default {
               (item.requiresDownload || !!item.pdkHash)),
         )
         .map((item) => {
-          const licenseLocked =
-            this.isControlEnabled && !this.connectors.includes(item.type)
+          const licenseLocked = this.isControlEnabled
+            ? !this.connectors.includes(item.type)
+            : item.requiresDownload && paidTypes.has(item.type)
           return {
             ...item,
             licenseLocked,
@@ -1667,7 +1656,7 @@ export default {
                 <ConnectorQualityBadge :quality="item.qcType" />
                 <div class="flex gap-3">
                   <DatabaseIcon
-                    v-if="!item.locked || !item.icon.includes('.')"
+                    v-if="!item.locked || !item.icon?.includes('.')"
                     :size="38"
                     :item="item"
                     :class="{
@@ -1690,10 +1679,6 @@ export default {
                       :class="{
                         'connector-item-title--updatable':
                           showConnectorAction(item),
-                        'connector-item-title--versioned':
-                          item.pdkHash &&
-                          !item.requiresDownload &&
-                          item.version,
                       }"
                     >
                       <span class="connector-item-name ellipsis">{{
@@ -1701,7 +1686,10 @@ export default {
                       }}</span>
                       <span
                         v-if="
-                          item.pdkHash && !item.requiresDownload && item.version
+                          usesConnectorCatalog &&
+                          item.pdkHash &&
+                          !item.requiresDownload &&
+                          item.version
                         "
                         class="connector-item-version"
                         >{{ item.version }}</span
@@ -1974,31 +1962,12 @@ export default {
     transition: box-shadow 0.2s;
 
     &-title {
+      gap: 12px;
       font-size: 15px;
       line-height: 38px;
 
-      &--versioned {
-        gap: 12px;
-      }
-
-      &--updatable {
-        > .connector-item-name {
-          padding-right: 88px;
-        }
-
-        &.connector-item-title--versioned {
-          flex-wrap: wrap;
-          gap: 0;
-          line-height: 20px;
-
-          > .connector-item-name {
-            flex-basis: 100%;
-          }
-
-          > .connector-item-version {
-            line-height: 18px;
-          }
-        }
+      &--updatable > .connector-item-name {
+        padding-right: 88px;
       }
     }
 
@@ -2009,6 +1978,7 @@ export default {
     }
 
     &-version {
+      display: none;
       flex: none;
       font-size: 12px;
       font-weight: 400;
@@ -2028,6 +1998,24 @@ export default {
         0 1px 2px -2px rgba(0, 0, 0, 0.16),
         0 3px 6px 0 rgba(0, 0, 0, 0.12),
         0 5px 12px 4px rgba(0, 0, 0, 0.09);
+
+      .connector-item-version {
+        display: block;
+      }
+
+      .connector-item-title--updatable:has(> .connector-item-version) {
+        flex-wrap: wrap;
+        gap: 0;
+        line-height: 20px;
+
+        > .connector-item-name {
+          flex-basis: 100%;
+        }
+
+        > .connector-item-version {
+          line-height: 18px;
+        }
+      }
     }
   }
 }
