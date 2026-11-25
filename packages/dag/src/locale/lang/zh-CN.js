@@ -1188,4 +1188,18 @@ export default {
   packages_dag_data_capture_event_id: '事件ID',
   packages_dag_data_capture_original_data: '原始数据',
   packages_dag_locate_selected_node: '滚动至选中节点',
+  packages_dag_task_throttle_estimated_data_rate: '估算同步数据速率 (MB/s)',
+  packages_dag_task_throttle_estimated_data_rate_tip:
+    '按统一 event-v1 口径持续估算任务字节速率（全量取同批首条事件估算字节乘批条数；增量按表 × DML 类型样本均值估算）。支持区分样本积累中、缺测与历史计量口径。',
+  packages_dag_task_throttle_applied_limit_series: '已应用上限',
+  packages_dag_task_throttle_sidebar_title: '限速与流量状态',
+  packages_dag_task_throttle_sample_interval_label:
+    '增量采样间隔：{seconds} 秒',
+  packages_dag_task_throttle_meter_version_label: '计量口径：{version}',
+  packages_dag_task_throttle_view_changes: '查看变更记录',
+  packages_dag_task_throttle_tab_changes: '限速变更记录',
+  packages_dag_task_throttle_save_blocked_start:
+    '限速策略校验或保存失败，已阻止启动任务。请在修复参数或重试保存后重新启动。',
+  packages_dag_task_throttle_wait_reasons: '当前等待原因',
+  packages_dag_task_throttle_log_status_label: '日志保留状态',
 }

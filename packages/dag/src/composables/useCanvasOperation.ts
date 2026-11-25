@@ -1732,6 +1732,15 @@ export function useCanvasOperation() {
       const result = await saveTask(data)
       reformDataflow(result)
 
+      if (dataflowStore.throttleSaveHandler) {
+        const throttleOk = await dataflowStore.throttleSaveHandler(result.id)
+        if (!throttleOk) {
+          ElMessage.error(t('packages_dag_task_throttle_save_blocked_start'))
+          isSaving.value = false
+          return false
+        }
+      }
+
       if (needStart) {
         if (['edit', 'wait_start'].includes(result.status)) {
           const dropTableEnabled = await validateDropTableEnabled()

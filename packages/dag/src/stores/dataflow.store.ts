@@ -125,6 +125,15 @@ export const useDataflowStore = defineStore('dataflow', () => {
   const schemaRefreshing = ref(false)
   const materializedViewVisible = ref(false)
   const needsAutoLayout = ref(false)
+  const throttleSaveHandler = ref<
+    ((targetTaskId?: string) => Promise<boolean>) | null
+  >(null)
+
+  function setThrottleSaveHandler(
+    handler: ((targetTaskId?: string) => Promise<boolean>) | null,
+  ) {
+    throttleSaveHandler.value = handler
+  }
 
   const buttonShowMap = reactive({
     View: true,
@@ -943,6 +952,7 @@ export const useDataflowStore = defineStore('dataflow', () => {
     taskSaving.value = false
     materializedViewVisible.value = false
     needsAutoLayout.value = false
+    throttleSaveHandler.value = null
 
     processorNodeTypes.value = []
 
@@ -989,6 +999,8 @@ export const useDataflowStore = defineStore('dataflow', () => {
     schemaRefreshing,
     materializedViewVisible,
     needsAutoLayout,
+    throttleSaveHandler,
+    setThrottleSaveHandler,
     buttonShowMap,
     showBottom,
     editVersion,

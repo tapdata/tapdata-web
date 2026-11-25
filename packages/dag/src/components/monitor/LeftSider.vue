@@ -2,6 +2,28 @@
 import { getExternalStorage } from '@tap/api/src/core/external-storage'
 import { getLogcollectorDetail } from '@tap/api/src/core/logcollector'
 import { findOneSharedCache } from '@tap/api/src/core/shared-cache'
+import {
+  getLogCollectorThrottleOverview,
+  getTaskThrottlePolicy,
+  getTaskThrottleSampleConfig,
+  listTaskThrottleChanges,
+  type LogCollectorThrottleOverviewView,
+  type LogPositionStatus,
+  type TaskThrottleChangeLogEntry,
+  type TaskThrottlePolicyView,
+  type TaskThrottleSampleConfigView,
+  type ThrottlePhase,
+  type ThrottleWaitReason,
+} from '@tap/api/src/core/task-throttle'
+import { withPassive } from '@tap/api/src/request'
+import LogCollectorThrottleOverview from '@tap/business/src/components/task-throttle/LogCollectorThrottleOverview.vue'
+import TaskThrottleBadge from '@tap/business/src/components/task-throttle/TaskThrottleBadge.vue'
+import {
+  buildThrottleLimitSeries,
+  formatMbPerSec,
+  normalizeThrottleTaskKind,
+  THROTTLE_METER_VERSION,
+} from '@tap/business/src/components/task-throttle/utils'
 import { EXTERNAL_STORAGE_TYPE_MAP } from '@tap/business/src/shared/const'
 import { IconButton } from '@tap/component/src/icon-button'
 import TimeSelect from '@tap/component/src/TimeSelect.vue'
@@ -25,6 +47,7 @@ const emit = defineEmits<{
   (e: 'verifyDetails'): void
   (e: 'changeTimeSelect', val: any, isTime: any, source: any): void
   (e: 'changeFrequency', val: any): void
+  (e: 'openThrottleChanges'): void
 }>()
 
 const props = defineProps({
@@ -57,6 +80,128 @@ const timeSelectLabel = ref('')
 const infoList = ref<any[]>([])
 const qpsChartsType = ref('count')
 const isUpdatingTimeSelect = ref(false)
+
+const throttlePolicy = ref<TaskThrottlePolicyView | null>(null)
+const throttleChanges = ref<TaskThrottleChangeLogEntry[]>([])
+const throttleSampleConfig = ref<TaskThrottleSampleConfigView | null>(null)
+const logCollectorOverview = ref<LogCollectorThrottleOverviewView | null>(null)
+let lastThrottleFetchAt = 0
+
+const normalizedThrottleKind = computed(() =>
+  normalizeThrottleTaskKind(dataflow.value?.syncType),
+)
+
+const isThrottleEnabled = computed(() => {
+  const desired = throttlePolicy.value?.desiredPhases
+  const applied = throttlePolicy.value?.appliedPhases
+  return Boolean(
+    desired?.FULL?.enabled ||
+      desired?.CDC?.enabled ||
+      applied?.FULL?.enabled ||
+      applied?.CDC?.enabled,
+  )
+})
+
+const activeThrottleWaits = computed(
+  () => throttlePolicy.value?.liveStatus?.activeWaits || [],
+)
+
+function throttleWaitReasonLabel(reason?: ThrottleWaitReason | null): string {
+  switch (reason) {
+    case 'RATE_WAIT':
+      return t('packages_business_task_throttle_wait_rate')
+    case 'SAMPLE_WAIT':
+      return t('packages_business_task_throttle_wait_sample')
+    case 'BUFFER_WAIT':
+      return t('packages_business_task_throttle_wait_buffer')
+    case 'WRITE_IO_WAIT':
+      return t('packages_business_task_throttle_wait_write_io')
+    case 'LOG_RISK_WAIT':
+      return t('packages_business_task_throttle_wait_log_risk')
+    case 'BACKPRESSURE_WAIT':
+      return t('packages_business_task_throttle_wait_backpressure')
+    default:
+      return t('packages_business_task_throttle_wait_none')
+  }
+}
+
+function throttleLogStatusLabel(status?: LogPositionStatus | null): string {
+  switch (status) {
+    case 'WARN_70':
+      return t('packages_business_task_throttle_log_warn_70')
+    case 'CRITICAL_90':
+      return t('packages_business_task_throttle_log_critical_90')
+    case 'UNKNOWN':
+      return t('packages_business_task_throttle_log_unknown')
+    case 'EXPIRED':
+      return t('packages_business_task_throttle_log_expired')
+    default:
+      return t('packages_business_task_throttle_log_normal')
+  }
+}
+
+function formatAppliedLimitLine(phase: ThrottlePhase): string {
+  const limit = throttlePolicy.value?.appliedPhases?.[phase]
+  if (!limit?.enabled) {
+    return t('packages_business_task_throttle_phase_summary_off')
+  }
+  const parts: string[] = []
+  if (limit.bytesPerSec && limit.bytesPerSec > 0) {
+    parts.push(`${formatMbPerSec(limit.bytesPerSec)} MB/s`)
+  }
+  if (limit.eventsPerSec && limit.eventsPerSec > 0) {
+    parts.push(`${limit.eventsPerSec} QPS`)
+  }
+  return (
+    parts.join(' / ') || t('packages_business_task_throttle_phase_summary_off')
+  )
+}
+
+async function fetchThrottleMonitorData(force = false) {
+  const kind = normalizedThrottleKind.value
+  const taskId = dataflow.value?.id
+  if (!kind || !taskId) return
+  const now = Date.now()
+  if (!force && now - lastThrottleFetchAt < 5000) return
+  lastThrottleFetchAt = now
+
+  const silent = { skipErrorMessage: true, skipErrorHandler: true }
+  const [policy, changes, sampleCfg, overview] = await withPassive(() =>
+    Promise.all([
+      getTaskThrottlePolicy(kind, taskId, silent).catch(() => null),
+      listTaskThrottleChanges(
+        kind,
+        taskId,
+        { page: 0, size: 100 },
+        silent,
+      ).catch(() => []),
+      getTaskThrottleSampleConfig(silent).catch(() => null),
+      kind === 'logCollector'
+        ? getLogCollectorThrottleOverview(taskId, silent).catch(() => null)
+        : Promise.resolve(null),
+    ]),
+  )
+  if (policy) throttlePolicy.value = policy
+  if (Array.isArray(changes)) throttleChanges.value = changes
+  if (sampleCfg) throttleSampleConfig.value = sampleCfg
+  if (kind === 'logCollector') {
+    logCollectorOverview.value = overview
+  }
+}
+
+watch(
+  () => [dataflow.value?.id, dataflow.value?.syncType],
+  () => {
+    fetchThrottleMonitorData(true)
+  },
+)
+
+watch(
+  () => props.quota,
+  () => {
+    fetchThrottleMonitorData(false)
+  },
+)
 
 const cpuUsageOptions = {
   tooltip: {
@@ -245,6 +390,59 @@ const qpsMap = computed(() => {
     ),
   }
 
+  const phaseResolver: ThrottlePhase | ((ts: number) => ThrottlePhase) =
+    normalizedThrottleKind.value === 'logCollector' ||
+    dataflow.value?.type === 'cdc'
+      ? 'CDC'
+      : dataflow.value?.type === 'initial_sync'
+        ? 'FULL'
+        : typeof snapshotDoneAt === 'number' && snapshotDoneAt > 0
+          ? (ts: number) => (ts < snapshotDoneAt ? 'FULL' : 'CDC')
+          : 'FULL'
+
+  const countLimitSeries = buildThrottleLimitSeries(
+    time,
+    throttleChanges.value,
+    throttlePolicy.value,
+    'count',
+    phaseResolver,
+  )
+  const sizeLimitSeries = buildThrottleLimitSeries(
+    time,
+    throttleChanges.value,
+    throttlePolicy.value,
+    'size',
+    phaseResolver,
+  )
+
+  const countSerieOptions = [...opt.serieOptions]
+  if (countLimitSeries.some((v) => v !== null)) {
+    countSerieOptions[countValues.length] = {
+      areaStyle: undefined,
+      symbol: 'none',
+      step: 'end',
+      connectNulls: false,
+      itemStyle: { color: '#F56C6C' },
+      lineStyle: { type: 'dashed', width: 1.5, color: '#F56C6C' },
+    } as any
+    countValues.push(countLimitSeries)
+    countNames.push(t('packages_dag_task_throttle_applied_limit_series'))
+  }
+
+  const sizeSerieOptions = [...opt.serieOptions]
+  if (sizeLimitSeries.some((v) => v !== null)) {
+    sizeSerieOptions[sizeValues.length] = {
+      areaStyle: undefined,
+      symbol: 'none',
+      step: 'end',
+      connectNulls: false,
+      itemStyle: { color: '#F56C6C' },
+      lineStyle: { type: 'dashed', width: 1.5, color: '#F56C6C' },
+    } as any
+    sizeValues.push(sizeLimitSeries)
+    sizeNames.push(t('packages_dag_task_throttle_applied_limit_series'))
+  }
+
   if (dataflow.value?.type === 'initial_sync+cdc') {
     ;(opt as any).markLine = [
       {
@@ -264,10 +462,12 @@ const qpsMap = computed(() => {
     count: Object.assign(cloneDeep(opt), {
       value: countValues,
       name: countNames,
+      serieOptions: countSerieOptions,
     }),
     size: Object.assign(cloneDeep(opt), {
       value: sizeValues,
       name: sizeNames,
+      serieOptions: sizeSerieOptions,
     }),
   }
 })
@@ -659,6 +859,7 @@ watch(
 
 onMounted(() => {
   timeSelectLabel.value = timeSelectRef.value?.getPeriod()?.label
+  fetchThrottleMonitorData(true)
 })
 </script>
 
@@ -933,6 +1134,87 @@ onMounted(() => {
         </div>
       </div>
 
+      <div v-if="normalizedThrottleKind" class="info-box">
+        <div class="flex justify-content-between align-center mb-2">
+          <span class="fw-sub fs-7 font-color-normal">
+            {{ $t('packages_dag_task_throttle_sidebar_title') }}
+          </span>
+          <ElButton
+            text
+            type="primary"
+            size="small"
+            @click="emit('openThrottleChanges')"
+          >
+            {{ $t('packages_dag_task_throttle_view_changes') }}
+          </ElButton>
+        </div>
+        <div class="flex justify-content-between align-center mb-2 fs-8">
+          <TaskThrottleBadge
+            :task-status="dataflow.status"
+            :live-status="throttlePolicy?.liveStatus"
+            compact
+          />
+          <span class="font-color-light">
+            {{
+              $t('packages_dag_task_throttle_sample_interval_label', {
+                seconds: throttleSampleConfig?.intervalSeconds ?? 30,
+              })
+            }}
+          </span>
+        </div>
+        <div
+          v-if="throttlePolicy && throttlePolicy.appliedVersion > 0"
+          class="fs-8 font-color-light mb-2"
+        >
+          <span
+            >{{ $t('packages_dag_task_throttle_applied_limit_series') }}:</span
+          >
+          <span class="ml-1 font-color-dark">
+            {{
+              throttlePolicy.appliedPhases?.CDC?.enabled
+                ? formatAppliedLimitLine('CDC')
+                : formatAppliedLimitLine('FULL')
+            }}
+          </span>
+          <span class="ml-1"> (v{{ throttlePolicy.appliedVersion }}) </span>
+        </div>
+        <div
+          v-if="activeThrottleWaits.length"
+          class="flex flex-column gap-1 mb-2 fs-8"
+        >
+          <div class="font-color-normal fw-sub">
+            {{ $t('packages_dag_task_throttle_wait_reasons') }}:
+          </div>
+          <div
+            v-for="(waitItem, wIdx) in activeThrottleWaits"
+            :key="wIdx"
+            class="flex justify-content-between font-color-light"
+          >
+            <span>{{ waitItem.phase }} / {{ waitItem.direction }}</span>
+            <span>
+              {{ throttleWaitReasonLabel(waitItem.waitReason) }} ·
+              {{ throttleLogStatusLabel(waitItem.logPositionStatus) }}
+            </span>
+          </div>
+        </div>
+        <ElAlert
+          v-if="isThrottleEnabled"
+          type="warning"
+          :closable="false"
+          show-icon
+          class="mb-1"
+        >
+          <span class="fs-8">
+            {{ $t('packages_business_task_throttle_risk_notice') }}
+          </span>
+        </ElAlert>
+      </div>
+
+      <LogCollectorThrottleOverview
+        v-if="dataflow.syncType === 'logCollector'"
+        :overview="logCollectorOverview"
+      />
+
       <div class="info-box">
         <div class="flex justify-content-between mb-2">
           <span class="fs-7 fw-sub font-color-normal">{{
@@ -954,6 +1236,24 @@ onMounted(() => {
             <ElTooltip transition="tooltip-fade-in" placement="top">
               <template #content>
                 <div>
+                  <div
+                    v-if="qpsChartsType === 'size'"
+                    class="mb-1"
+                    style="max-width: 320px"
+                  >
+                    <div class="mb-1">
+                      {{
+                        $t('packages_dag_task_throttle_estimated_data_rate_tip')
+                      }}
+                    </div>
+                    <div class="fs-8" style="color: #d0d3d6">
+                      {{
+                        $t('packages_dag_task_throttle_meter_version_label', {
+                          version: THROTTLE_METER_VERSION,
+                        })
+                      }}
+                    </div>
+                  </div>
                   <div>
                     {{
                       $t(
@@ -977,7 +1277,13 @@ onMounted(() => {
                 </div>
               </template>
               <span class="inline-flex align-items-center">
-                <span class="mr-2 font-color-dark fw-sub">QPS(Q/S)</span>
+                <span class="mr-2 font-color-dark fw-sub">
+                  {{
+                    qpsChartsType === 'size'
+                      ? $t('packages_dag_task_throttle_estimated_data_rate')
+                      : 'QPS(Q/S)'
+                  }}
+                </span>
                 <VIcon size="16" class="color-primary">info</VIcon>
               </span>
             </ElTooltip>
@@ -1189,11 +1495,17 @@ onMounted(() => {
             :content="
               qpsChartsType === 'count'
                 ? $t('packages_dag_monitor_leftsider_qpSshizhi')
-                : $t('packages_dag_monitor_leftsider_qpSshizhi2')
+                : `${$t('packages_dag_task_throttle_estimated_data_rate_tip')} (${THROTTLE_METER_VERSION})`
             "
           >
             <span class="inline-flex align-items-center">
-              <span class="mr-2 font-color-dark fw-sub">QPS(Q/S)</span>
+              <span class="mr-2 font-color-dark fw-sub">
+                {{
+                  qpsChartsType === 'size'
+                    ? $t('packages_dag_task_throttle_estimated_data_rate')
+                    : 'QPS(Q/S)'
+                }}
+              </span>
               <VIcon size="16" class="color-primary">info</VIcon>
             </span>
           </ElTooltip>

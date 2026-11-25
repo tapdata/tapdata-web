@@ -8,15 +8,18 @@ import {
 import { getTaskById, patchTask } from '@tap/api/src/core/task'
 import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 import dayjs from 'dayjs'
+import TaskThrottlePanel from '../../components/task-throttle/TaskThrottlePanel.vue'
 
 export default {
   name: 'Editor',
-  components: { SchemaToForm },
+  components: { SchemaToForm, TaskThrottlePanel },
   emits: ['success'],
   data() {
     return {
       visible: false,
       taskId: '',
+      taskStatus: '',
+      advancedCollapse: [],
       loading: false,
       editForm: {
         id: '',
@@ -70,6 +73,7 @@ export default {
       this.loading = true
       getLogcollectorDetail(this.taskId)
         .then((task) => {
+          this.taskStatus = task.status || ''
           this.editForm.name = task.name
           this.editForm.storageTime = task.storageTime
           const syncPoints = task.syncPoints
@@ -213,22 +217,35 @@ export default {
       this.visible = false
     },
 
-    handleSave(...args) {
-      this.$refs.form?.validate((valid) => {
-        if (valid) {
-          patchLogcollectorId(this.taskId, this.editForm).then(() => {
-            this.$emit('success', ...args)
-            this.$message.success(
-              this.$t('packages_business_shared_cdc_setting_message_edit_save'),
-            )
-            this.init()
-            this.handleClose()
-          })
+    async handleSave(...args) {
+      const valid = await this.$refs.form
+        ?.validate()
+        .then(() => true)
+        .catch(() => false)
+      if (!valid) return
 
-          // 保存到目标节点
-          this.saveTaskDag()
-        }
-      })
+      const throttleErrors =
+        this.$refs.throttlePanelRef?.validateDraft?.() || []
+      if (throttleErrors.length > 0) {
+        this.advancedCollapse = ['throttle']
+        return
+      }
+
+      await patchLogcollectorId(this.taskId, this.editForm)
+      await this.saveTaskDag()
+      const throttleOk =
+        (await this.$refs.throttlePanelRef?.saveIfNeeded?.(this.taskId)) ?? true
+      if (!throttleOk) {
+        this.advancedCollapse = ['throttle']
+        return
+      }
+
+      this.$emit('success', ...args)
+      this.$message.success(
+        this.$t('packages_business_shared_cdc_setting_message_edit_save'),
+      )
+      this.init()
+      this.handleClose()
     },
 
     getPickerOptions(val, item) {
@@ -266,6 +283,7 @@ export default {
 
     saveTaskDag() {
       const { dag } = this
+      if (!dag?.nodes?.length) return Promise.resolve()
       const { cdcConcurrent, cdcConcurrentWriteNum, increaseReadSize } =
         this.dagForm
 
@@ -285,7 +303,7 @@ export default {
           })
         }
       })
-      patchTask({
+      return patchTask({
         id: this.taskId,
         dag,
       })
@@ -387,6 +405,21 @@ export default {
         label-width="160"
         class="scheme-to-form"
       />
+      <ElCollapse v-model="advancedCollapse" class="mt-4">
+        <ElCollapseItem
+          name="throttle"
+          :title="`${$t('public_advanced_settings')} · ${$t('packages_business_task_throttle_title')}`"
+        >
+          <TaskThrottlePanel
+            ref="throttlePanelRef"
+            :task-id="taskId"
+            task-kind="logCollector"
+            sync-mode="cdc"
+            :task-status="taskStatus"
+            :standalone="false"
+          />
+        </ElCollapseItem>
+      </ElCollapse>
     </ElForm>
     <template #footer>
       <span class="dialog-footer">

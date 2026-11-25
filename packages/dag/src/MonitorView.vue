@@ -13,7 +13,7 @@ import { useI18n } from '@tap/i18n'
 import Time from '@tap/shared/src/time'
 import { useDark } from '@vueuse/core'
 import { debounce } from 'lodash-es'
-import { computed, onUnmounted, provide, ref, watch } from 'vue'
+import { computed, nextTick, onUnmounted, provide, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Canvas from './Canvas.vue'
 import ConsolePanel from './components/migration/ConsolePanel.vue'
@@ -45,6 +45,7 @@ const timeFormat = ref('HH:mm:ss')
 const nodeDetailDialog = ref(false)
 const nodeDetailDialogId = ref('')
 const leftSiderRef = ref<InstanceType<typeof LeftSider> | null>(null)
+const bottomPanel = ref<InstanceType<typeof BottomPanel> | null>(null)
 const { t } = useI18n()
 
 const {
@@ -580,6 +581,13 @@ function handleOpenDetail(node: any) {
   nodeDetailDialog.value = true
 }
 
+function handleOpenThrottleChanges() {
+  dataflowStore.showBottom = true
+  nextTick(() => {
+    bottomPanel.value?.changeTab('throttleChanges', {})
+  })
+}
+
 let pollingTimer: ReturnType<typeof setTimeout> | null = null
 
 async function pollTaskDetail() {
@@ -754,6 +762,7 @@ provide('isSaving', isSaving)
           @change-time-select="handleChangeTimeSelect"
           @change-frequency="handleChangeFrequency"
           @verify-details="handleVerifyDetails"
+          @open-throttle-changes="handleOpenThrottleChanges"
         />
       </template>
       <template #bottom>

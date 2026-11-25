@@ -2,6 +2,8 @@
 import { taskConsoleRelations } from '@tap/api/src/core/task'
 import NodeLog from '@tap/business/src/components/logs/NodeLog'
 import MilestoneList from '@tap/business/src/components/milestone/List'
+import TaskThrottleChangeLog from '@tap/business/src/components/task-throttle/TaskThrottleChangeLog.vue'
+import { normalizeThrottleTaskKind } from '@tap/business/src/components/task-throttle/utils'
 import RelationList from '@tap/business/src/views/task/relation/List.vue'
 import vResize from '@tap/component/src/directives/resize'
 import { computed, nextTick, onMounted, ref, useAttrs, watch } from 'vue'
@@ -25,6 +27,7 @@ type BottomPanelTab =
   | 'alert'
   | 'relation'
   | 'inspect'
+  | 'throttleChanges'
   | 'skipErrorTable'
 
 const defaultTabs: BottomPanelTab[] = [
@@ -34,6 +37,7 @@ const defaultTabs: BottomPanelTab[] = [
   'alert',
   'relation',
   'inspect',
+  'throttleChanges',
   'skipErrorTable',
 ]
 
@@ -74,6 +78,10 @@ const hasSkipErrorTable = computed(() => {
   )
 })
 
+const throttleKind = computed(() =>
+  normalizeThrottleTaskKind(attrs.dataflow?.syncType),
+)
+
 const enabledTabs = computed(() => new Set(tabs.value))
 const visibleTabs = computed(() => {
   return defaultTabs.filter((tab) => {
@@ -82,6 +90,7 @@ const visibleTabs = computed(() => {
     if (tab === 'alert') return showAlert.value
     if (tab === 'relation') return !!relationCount.value
     if (tab === 'inspect') return isDaas && !isCommunity
+    if (tab === 'throttleChanges') return Boolean(throttleKind.value)
     if (tab === 'skipErrorTable') return hasSkipErrorTable.value
     return true
   })
@@ -266,6 +275,22 @@ defineExpose({
             style="min-width: 1000px"
             :current-tab="currentTab"
             @open-inspect="emit('open-inspect')"
+          />
+        </ElTabPane>
+        <ElTabPane v-if="hasTab('throttleChanges')" name="throttleChanges">
+          <template #label>
+            <span>
+              {{ $t('packages_dag_task_throttle_tab_changes') }}
+            </span>
+          </template>
+          <TaskThrottleChangeLog
+            v-if="
+              currentTab === 'throttleChanges' &&
+              throttleKind &&
+              $attrs.dataflow?.id
+            "
+            :task-id="$attrs.dataflow.id"
+            :task-kind="throttleKind"
           />
         </ElTabPane>
         <SkipErrorTable

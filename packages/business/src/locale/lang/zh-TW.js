@@ -1887,4 +1887,161 @@ export default {
     '暫時無法取得進度，背景操作可能仍在進行。',
   packages_business_connector_impact_changed:
     '關聯任務已變更，請重新確認更新方式。',
+  packages_business_task_throttle_title: '同步限速',
+  packages_business_task_throttle_phase_full: '全量階段',
+  packages_business_task_throttle_phase_cdc: '增量階段',
+  packages_business_task_throttle_not_applicable: '不適用',
+  packages_business_task_throttle_not_applicable_tip:
+    '目前任務模式不包含此階段，執行時將自動略過，原有填寫值仍會保留。',
+  packages_business_task_throttle_enable_phase: '啟用此階段限速',
+  packages_business_task_throttle_data_rate_label: '同步資料速率上限 (MB/s)',
+  packages_business_task_throttle_data_rate_short: '同步資料速率',
+  packages_business_task_throttle_data_rate_placeholder:
+    '0.001 – 10000，最多 3 位小數',
+  packages_business_task_throttle_qps_label: 'QPS 上限 (事件/s)',
+  packages_business_task_throttle_qps_short: 'QPS',
+  packages_business_task_throttle_qps_placeholder: '1 – 10000000 的正整數',
+  packages_business_task_throttle_direction_note:
+    '同一階段僅設定一組上限，輸入與輸出方向各自獨立計量並分別執行此上限。',
+  packages_business_task_throttle_err_at_least_one:
+    '{phase}開啟後至少啟用資料速率或 QPS 中的一項',
+  packages_business_task_throttle_err_bytes_required:
+    '請填寫{phase}的同步資料速率上限',
+  packages_business_task_throttle_err_bytes_format:
+    '{phase}同步資料速率必須為有效正數',
+  packages_business_task_throttle_err_bytes_precision:
+    '{phase}同步資料速率最多支援 3 位小數',
+  packages_business_task_throttle_err_bytes_range:
+    '{phase}同步資料速率必須在 0.001 到 10000 MB/s 之間',
+  packages_business_task_throttle_err_qps_required: '請填寫{phase}的 QPS 上限',
+  packages_business_task_throttle_err_qps_integer:
+    '{phase}的 QPS 上限必須為正整數（不支援小數）',
+  packages_business_task_throttle_err_qps_range:
+    '{phase}的 QPS 上限必須在 1 到 10000000 之間',
+  packages_business_task_throttle_risk_notice:
+    '開啟限速可能降低同步速度、延長全量耗時並增加增量延遲。增量所需日誌超過源庫或共享日誌保留視窗時，任務可能中斷，需要人工恢復。',
+  packages_business_task_throttle_logcollector_risk_notice:
+    '共享挖掘限速會減慢源端採集或共享日誌寫入，可能同時增加多個下游依賴任務的增量延遲並拉長源端與共享日誌保留需求。',
+  packages_business_task_throttle_logcollector_deps_summary:
+    '目前共 {total} 個下游依賴任務（可見 {visible} 個），共享日誌保留 {days} 天。',
+  packages_business_task_throttle_desired_section: '期望設定',
+  packages_business_task_throttle_applied_section:
+    '已套用上限（Agent 實效回執）',
+  packages_business_task_throttle_not_applied_yet: '尚未套用',
+  packages_business_task_throttle_apply_on_start: '啟動時套用',
+  packages_business_task_throttle_status_none: '未設定策略',
+  packages_business_task_throttle_status_pending: '設定生效中',
+  packages_business_task_throttle_status_applied: '已生效',
+  packages_business_task_throttle_status_failed: '套用失敗',
+  packages_business_task_throttle_status_waiting_agent: '等待相容 Agent',
+  packages_business_task_throttle_version_label: 'v{version}',
+  packages_business_task_throttle_applied_time: '生效時間：{time}',
+  packages_business_task_throttle_apply_reason: '原因：{reason}',
+  packages_business_task_throttle_running_readonly_tip:
+    '執行中僅支援調整同步限速欄位，其餘任務設定維持唯讀。',
+  packages_business_task_throttle_save_btn: '儲存限速設定',
+  packages_business_task_throttle_retry_save_btn: '重試儲存',
+  packages_business_task_throttle_cancel_btn: '取消變更',
+  packages_business_task_throttle_save_success:
+    '限速策略已儲存（期望版本 v{version}）',
+  packages_business_task_throttle_save_failed:
+    '限速策略儲存失敗，請檢查參數後重試',
+  packages_business_task_throttle_conflict_msg:
+    '限速設定已被其他使用者更新至最新版本 v{version}，已為您重新整理最新狀態，請核對後重新提交。',
+  packages_business_task_throttle_stop_gate_title: '等待確認舊執行已停止',
+  packages_business_task_throttle_stop_gate_meta:
+    '舊 Agent：{agent} ｜ 舊執行代次：{epoch}',
+  packages_business_task_throttle_stop_gate_submit_btn: '提交停止確認證據',
+  packages_business_task_throttle_stop_gate_dialog_title:
+    '提交舊執行停止確認證據',
+  packages_business_task_throttle_stop_gate_evidence_ref: '停止核驗依據',
+  packages_business_task_throttle_stop_gate_evidence_ref_placeholder:
+    '例如：宿主機程序 PID 退出日誌 / 容器銷毀確認單號',
+  packages_business_task_throttle_stop_gate_process_exited:
+    '已核實舊 Agent 程序或任務執行緒徹底退出',
+  packages_business_task_throttle_stop_gate_write_settled:
+    '已核實目標端殘餘在途寫入已完全收尾',
+  packages_business_task_throttle_stop_gate_note: '核查備註（選填）',
+  packages_business_task_throttle_stop_gate_validation_err:
+    '請填寫停止核驗依據並同時確認舊程序退出與目標寫入收尾',
+  packages_business_task_throttle_stop_gate_success:
+    '停止確認證據已提交並通過核驗',
+  packages_business_task_throttle_badge_active: '限速中',
+  packages_business_task_throttle_badge_unknown: '狀態未知',
+  packages_business_task_throttle_badge_unknown_tip:
+    '超過 15 秒未收到該執行代次的有效限速遙測報告。',
+  packages_business_task_throttle_rule_bytes: '同步資料速率限速',
+  packages_business_task_throttle_rule_qps: 'QPS 限速',
+  packages_business_task_throttle_phase_rule_line: '{phase} · {rules}',
+  packages_business_task_throttle_filter_label: '限速狀態',
+  packages_business_task_throttle_filter_all: '全部',
+  packages_business_task_throttle_filter_throttling: '限速中',
+  packages_business_task_throttle_filter_configured_idle: '已設定未觸發',
+  packages_business_task_throttle_filter_disabled: '未啟用',
+  packages_business_task_throttle_filter_unknown: '狀態未知',
+  packages_business_task_throttle_wait_none: '無等待',
+  packages_business_task_throttle_wait_rate: '額度等待',
+  packages_business_task_throttle_wait_sample: '等待採樣',
+  packages_business_task_throttle_wait_buffer: '緩衝高水位暫停新讀',
+  packages_business_task_throttle_wait_write_io: '目標寫入 I/O 等待',
+  packages_business_task_throttle_wait_log_risk: '源日誌保留風險',
+  packages_business_task_throttle_wait_backpressure: '下游寫限速背壓',
+  packages_business_task_throttle_log_normal: '日誌保留正常',
+  packages_business_task_throttle_log_warn_70: '日誌視窗預警（已用 ≥70%）',
+  packages_business_task_throttle_log_critical_90: '日誌視窗緊急（已用 ≥90%）',
+  packages_business_task_throttle_log_unknown: '日誌保留餘量未知',
+  packages_business_task_throttle_log_expired: '增量日誌已過期，需恢復',
+  packages_business_task_throttle_chg_type: '事件類型',
+  packages_business_task_throttle_chg_type_all: '全部類型',
+  packages_business_task_throttle_chg_type_policy: '策略變更',
+  packages_business_task_throttle_chg_type_receipt: '套用回執',
+  packages_business_task_throttle_chg_type_stop: '停止確認證據',
+  packages_business_task_throttle_chg_window_all: '全部時間',
+  packages_business_task_throttle_chg_window_24h: '最近 24 小時',
+  packages_business_task_throttle_chg_window_7d: '最近 7 天',
+  packages_business_task_throttle_chg_time: '發生時間',
+  packages_business_task_throttle_chg_operator: '操作者 / Agent',
+  packages_business_task_throttle_chg_version: '代次 / 版本',
+  packages_business_task_throttle_chg_before: '變更前策略',
+  packages_business_task_throttle_chg_after: '變更後策略',
+  packages_business_task_throttle_chg_outcome: '結果與說明',
+  packages_business_task_throttle_chg_skipped: '已合併略過：{versions}',
+  packages_business_task_throttle_phase_summary_off: '關閉',
+  packages_business_task_throttle_lc_overview_title: '共享挖掘限速與保留監控',
+  packages_business_task_throttle_lc_source_capture: '源端採集',
+  packages_business_task_throttle_lc_log_write: '共享日誌寫入',
+  packages_business_task_throttle_lc_retention_days: '共享日誌保留：{days} 天',
+  packages_business_task_throttle_lc_oldest_replay:
+    '最老需重讀位點時間：{time}',
+  packages_business_task_throttle_lc_consumers_title:
+    '下游依賴任務 ({visible}/{total})',
+  packages_business_task_throttle_lc_consumer_delay: '消費延遲',
+  packages_business_task_throttle_lc_consumer_output: '輸出速率',
+  packages_business_task_throttle_lc_hidden_consumers:
+    '另有 {count} 個無權限檢視的依賴任務，僅納入總依賴數統計。',
+  packages_business_cdc_sample_title: '增量資料大小採樣間隔',
+  packages_business_cdc_sample_unit_sec: '秒',
+  packages_business_cdc_sample_purpose:
+    '系統抽取少量增量事件來估算資料大小，供任務監控與速率排行使用。啟用任務同步資料速率上限後，系統亦使用此估算值計算每批資料佔用的額度。',
+  packages_business_cdc_sample_when_title: '什麼時候重新採樣？',
+  packages_business_cdc_sample_when_example:
+    '以預設 30 秒為例：系統依表分別記錄新增、更新與刪除事件的樣本大小。一張表的更新樣本滿 30 秒後，等下一批包含該表更新事件的資料到達時進入重新採樣，實際採樣依預算錯峰執行；新增表或事件類型、結構變更與異常波動仍依既有規則觸發補樣。',
+  packages_business_cdc_sample_cpu_hint:
+    '資料大小變化頻繁時，縮短間隔能讓估算更快跟上變化，但更頻繁的採樣可能增加 CPU 開銷。',
+  packages_business_cdc_sample_err_required: '請輸入採樣間隔',
+  packages_business_cdc_sample_err_integer: '採樣間隔必須為正整數',
+  packages_business_cdc_sample_err_range: '採樣間隔必須在 5 到 300 秒之間',
+  packages_business_cdc_sample_save_success:
+    '增量採樣間隔已儲存（設定版本 v{version}）',
+  packages_business_cdc_sample_meta:
+    '目前設定版本：v{version} ｜ 最後更新：{time}',
+  packages_business_cdc_sample_partial_warn:
+    '部分 Agent 尚未完成熱更新或版本不支援，未生效 Agent 將保留原本機生效值或舊指標口徑。',
+  packages_business_cdc_sample_agent_id: 'Agent 識別碼',
+  packages_business_cdc_sample_agent_status: '生效狀態',
+  packages_business_cdc_sample_agent_detail: '詳情 / 原因',
+  packages_business_cdc_sample_status_applied: '目前使用 {seconds} 秒',
+  packages_business_cdc_sample_status_applying: '正在套用',
+  packages_business_cdc_sample_status_legacy: '舊版不支援',
+  packages_business_cdc_sample_no_agents: '暫無已註冊的能力 Agent',
 }

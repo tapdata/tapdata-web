@@ -1195,6 +1195,43 @@ export default defineComponent({
                     },
                   },
                 },
+                throttleCollapse: {
+                  type: 'void',
+                  'x-component': 'FormCollapse',
+                  'x-component-props': {
+                    activeKey: [],
+                    expandIconPosition: 'left',
+                    class: 'mt-4',
+                    style: {
+                      '--collapse-padding-primary': '0',
+                    },
+                  },
+                  properties: {
+                    item: {
+                      type: 'void',
+                      'x-component': 'FormCollapse.Item',
+                      'x-component-props': {
+                        title: i18n.t('packages_business_task_throttle_title'),
+                      },
+                      properties: {
+                        taskThrottleSection: {
+                          type: 'void',
+                          'x-editable': true,
+                          'x-component': 'TaskThrottlePanel',
+                          'x-component-props': {
+                            taskId: '{{$values.id}}',
+                            taskKind: 'migrate',
+                            syncMode: '{{$values.type}}',
+                            taskStatus: '{{$values.status}}',
+                            canEdit: '{{$canEditTaskThrottle()}}',
+                            runningMode: true,
+                            standalone: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
               },
             },
           },
@@ -1527,6 +1564,10 @@ export default defineComponent({
     }
     const scope = {
       $settings: props.task,
+      $canEditTaskThrottle: () => {
+        const actions = props.task?.permissionActions
+        return !Array.isArray(actions) || actions.includes('Edit')
+      },
       useAsyncOptions: (service, ...serviceParams) => {
         return (field) => {
           field.loading = true

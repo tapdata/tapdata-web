@@ -2108,4 +2108,174 @@ export default {
     'Progress is temporarily unavailable. The operation may still be running.',
   packages_business_connector_impact_changed:
     'Related tasks have changed. Review the update method again.',
+  packages_business_task_throttle_title: 'Sync Throttling',
+  packages_business_task_throttle_phase_full: 'Full Sync Phase',
+  packages_business_task_throttle_phase_cdc: 'CDC Phase',
+  packages_business_task_throttle_not_applicable: 'N/A',
+  packages_business_task_throttle_not_applicable_tip:
+    'Not applicable to the current sync mode; saved values remain preserved.',
+  packages_business_task_throttle_enable_phase:
+    'Enable throttling for this phase',
+  packages_business_task_throttle_data_rate_label: 'Data Rate Limit (MB/s)',
+  packages_business_task_throttle_data_rate_short: 'Data Rate',
+  packages_business_task_throttle_data_rate_placeholder:
+    '0.001 – 10000 (up to 3 decimals)',
+  packages_business_task_throttle_qps_label: 'QPS Limit (events/s)',
+  packages_business_task_throttle_qps_short: 'QPS',
+  packages_business_task_throttle_qps_placeholder:
+    'Positive integer (1 – 10000000)',
+  packages_business_task_throttle_direction_note:
+    'One limit per phase applies independently to both input and output metering and admission.',
+  packages_business_task_throttle_err_at_least_one:
+    'Enable at least Data Rate or QPS for {phase}',
+  packages_business_task_throttle_err_bytes_required:
+    'Please enter Data Rate limit for {phase}',
+  packages_business_task_throttle_err_bytes_format:
+    'Data Rate limit for {phase} must be a valid positive number',
+  packages_business_task_throttle_err_bytes_precision:
+    'Data Rate limit for {phase} supports up to 3 decimals',
+  packages_business_task_throttle_err_bytes_range:
+    'Data Rate limit for {phase} must be between 0.001 and 10000 MB/s',
+  packages_business_task_throttle_err_qps_required:
+    'Please enter QPS limit for {phase}',
+  packages_business_task_throttle_err_qps_integer:
+    'QPS limit for {phase} must be a positive integer',
+  packages_business_task_throttle_err_qps_range:
+    'QPS limit for {phase} must be between 1 and 10000000',
+  packages_business_task_throttle_risk_notice:
+    'Enabling throttling may reduce sync throughput, extend full-sync duration, and increase CDC replication lag. If required logs exceed source or shared-log retention, the task may fail and require manual recovery.',
+  packages_business_task_throttle_logcollector_risk_notice:
+    'Throttling shared mining slows source capture or log writes, which may increase CDC lag for multiple downstream consumers and raise log retention pressure.',
+  packages_business_task_throttle_logcollector_deps_summary:
+    'Currently {total} downstream consumers ({visible} visible), log retention {days} days.',
+  packages_business_task_throttle_desired_section: 'Desired Policy',
+  packages_business_task_throttle_applied_section:
+    'Applied Limits (Agent Receipt)',
+  packages_business_task_throttle_not_applied_yet: 'Not Applied Yet',
+  packages_business_task_throttle_apply_on_start: 'Apply on Start',
+  packages_business_task_throttle_status_none: 'Not Configured',
+  packages_business_task_throttle_status_pending: 'Applying',
+  packages_business_task_throttle_status_applied: 'Applied',
+  packages_business_task_throttle_status_failed: 'Apply Failed',
+  packages_business_task_throttle_status_waiting_agent:
+    'Waiting Compatible Agent',
+  packages_business_task_throttle_version_label: 'v{version}',
+  packages_business_task_throttle_applied_time: 'Applied at: {time}',
+  packages_business_task_throttle_apply_reason: 'Reason: {reason}',
+  packages_business_task_throttle_running_readonly_tip:
+    'While running, only sync throttling fields can be edited; all other task fields remain read-only.',
+  packages_business_task_throttle_save_btn: 'Save Throttling',
+  packages_business_task_throttle_retry_save_btn: 'Retry Save',
+  packages_business_task_throttle_cancel_btn: 'Revert',
+  packages_business_task_throttle_save_success:
+    'Throttling policy saved (desired v{version})',
+  packages_business_task_throttle_save_failed:
+    'Failed to save throttling policy; please check inputs and retry',
+  packages_business_task_throttle_conflict_msg:
+    'Policy was updated by another user to v{version}. Latest state has been refreshed; please review and submit again.',
+  packages_business_task_throttle_stop_gate_title:
+    'Waiting for Stop Confirmation',
+  packages_business_task_throttle_stop_gate_meta:
+    'Old Agent: {agent} | Old Run Epoch: {epoch}',
+  packages_business_task_throttle_stop_gate_submit_btn: 'Submit Stop Evidence',
+  packages_business_task_throttle_stop_gate_dialog_title:
+    'Submit Old Execution Stop Evidence',
+  packages_business_task_throttle_stop_gate_evidence_ref: 'Evidence Reference',
+  packages_business_task_throttle_stop_gate_evidence_ref_placeholder:
+    'e.g., host PID exit log or container termination ticket',
+  packages_business_task_throttle_stop_gate_process_exited:
+    'Verified old Agent process / task runner has exited',
+  packages_business_task_throttle_stop_gate_write_settled:
+    'Verified residual target writes have settled',
+  packages_business_task_throttle_stop_gate_note:
+    'Verification Note (Optional)',
+  packages_business_task_throttle_stop_gate_validation_err:
+    'Please enter an evidence reference and confirm both process exit and write settlement',
+  packages_business_task_throttle_stop_gate_success:
+    'Stop evidence submitted and verified',
+  packages_business_task_throttle_badge_active: 'Throttling',
+  packages_business_task_throttle_badge_unknown: 'Status Unknown',
+  packages_business_task_throttle_badge_unknown_tip:
+    'No valid throttling telemetry received for this run epoch for over 15 seconds.',
+  packages_business_task_throttle_rule_bytes: 'Data Rate Limit',
+  packages_business_task_throttle_rule_qps: 'QPS Limit',
+  packages_business_task_throttle_phase_rule_line: '{phase}: {rules}',
+  packages_business_task_throttle_filter_label: 'Throttling',
+  packages_business_task_throttle_filter_all: 'All',
+  packages_business_task_throttle_filter_throttling: 'Throttling',
+  packages_business_task_throttle_filter_configured_idle: 'Configured (Idle)',
+  packages_business_task_throttle_filter_disabled: 'Disabled',
+  packages_business_task_throttle_filter_unknown: 'Unknown',
+  packages_business_task_throttle_wait_none: 'None',
+  packages_business_task_throttle_wait_rate: 'Token Wait',
+  packages_business_task_throttle_wait_sample: 'Waiting for Sample',
+  packages_business_task_throttle_wait_buffer:
+    'Buffer High Watermark (Paused Read)',
+  packages_business_task_throttle_wait_write_io: 'Target Write I/O',
+  packages_business_task_throttle_wait_log_risk: 'Log Retention Risk',
+  packages_business_task_throttle_wait_backpressure: 'Downstream Backpressure',
+  packages_business_task_throttle_log_normal: 'Normal',
+  packages_business_task_throttle_log_warn_70: 'Log Window Warning (>=70%)',
+  packages_business_task_throttle_log_critical_90:
+    'Log Window Critical (>=90%)',
+  packages_business_task_throttle_log_unknown: 'Log Retention Unknown',
+  packages_business_task_throttle_log_expired:
+    'CDC Log Expired (Recovery Needed)',
+  packages_business_task_throttle_chg_type: 'Event Type',
+  packages_business_task_throttle_chg_type_all: 'All Events',
+  packages_business_task_throttle_chg_type_policy: 'Policy Change',
+  packages_business_task_throttle_chg_type_receipt: 'Apply Receipt',
+  packages_business_task_throttle_chg_type_stop: 'Stop Evidence',
+  packages_business_task_throttle_chg_window_all: 'All Time',
+  packages_business_task_throttle_chg_window_24h: 'Last 24h',
+  packages_business_task_throttle_chg_window_7d: 'Last 7d',
+  packages_business_task_throttle_chg_time: 'Time',
+  packages_business_task_throttle_chg_operator: 'Operator / Agent',
+  packages_business_task_throttle_chg_version: 'Epoch / Ver',
+  packages_business_task_throttle_chg_before: 'Before',
+  packages_business_task_throttle_chg_after: 'After',
+  packages_business_task_throttle_chg_outcome: 'Outcome & Reason',
+  packages_business_task_throttle_chg_skipped: 'Skipped: {versions}',
+  packages_business_task_throttle_phase_summary_off: 'Off',
+  packages_business_task_throttle_lc_overview_title:
+    'Shared Mining Throttle & Retention',
+  packages_business_task_throttle_lc_source_capture: 'Source Capture',
+  packages_business_task_throttle_lc_log_write: 'Shared Log Write',
+  packages_business_task_throttle_lc_retention_days: 'Log Retention: {days} d',
+  packages_business_task_throttle_lc_oldest_replay:
+    'Oldest Replay Time: {time}',
+  packages_business_task_throttle_lc_consumers_title:
+    'Downstream Consumers ({visible}/{total})',
+  packages_business_task_throttle_lc_consumer_delay: 'Consumer Lag',
+  packages_business_task_throttle_lc_consumer_output: 'Output Rate',
+  packages_business_task_throttle_lc_hidden_consumers:
+    '{count} additional downstream task(s) are hidden due to permissions and counted in totals only.',
+  packages_business_cdc_sample_title: 'CDC Data Size Sampling Interval',
+  packages_business_cdc_sample_unit_sec: 's',
+  packages_business_cdc_sample_purpose:
+    'Samples a small subset of CDC events to estimate record sizes for task monitoring, data-rate ranking, and per-batch byte quota accounting.',
+  packages_business_cdc_sample_when_title: 'When does re-sampling happen?',
+  packages_business_cdc_sample_when_example:
+    'For example, with a 30s interval, samples are cached per table and DML type. Once an UPDATE sample reaches 30s, the next batch with UPDATE events for that table enters staggered re-sampling; new tables/DMLs, DDLs, and anomalies still trigger replenishment.',
+  packages_business_cdc_sample_cpu_hint:
+    'Shorter intervals track size shifts faster when data shapes change frequently, at the cost of higher sampling CPU overhead.',
+  packages_business_cdc_sample_err_required: 'Please enter sampling interval',
+  packages_business_cdc_sample_err_integer:
+    'Sampling interval must be an integer',
+  packages_business_cdc_sample_err_range:
+    'Sampling interval must be between 5 and 300 seconds',
+  packages_business_cdc_sample_save_success:
+    'CDC sampling interval saved (config v{version})',
+  packages_business_cdc_sample_meta:
+    'Config Version: v{version} | Updated: {time}',
+  packages_business_cdc_sample_partial_warn:
+    'Some Agents are still applying the setting or run legacy versions and retain their previous local behavior.',
+  packages_business_cdc_sample_agent_id: 'Agent ID',
+  packages_business_cdc_sample_agent_status: 'Rollout Status',
+  packages_business_cdc_sample_agent_detail: 'Details',
+  packages_business_cdc_sample_status_applied: 'Using {seconds}s',
+  packages_business_cdc_sample_status_applying: 'Applying',
+  packages_business_cdc_sample_status_legacy: 'Legacy Unsupported',
+  packages_business_cdc_sample_no_agents:
+    'No registered Agents with throttling capabilities',
 }
