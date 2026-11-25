@@ -10,11 +10,11 @@ const connectorCatalog = JSON.parse(
   readFileSync(new URL('./connectorCatalog.json', import.meta.url), 'utf8'),
 )
 
-function createDialog(overrides = {}, api = {}) {
+function createDialog(overrides = {}, api = {}, env = {}) {
   const script = source
     .match(/<script>([\s\S]*?)<\/script>/)[1]
     .replaceAll(/^import[\s\S]*?from ['"][^'"]+['"]\n/gm, '')
-    .replaceAll('import.meta.env', '{}')
+    .replaceAll('import.meta.env', 'env')
     .replace('export default', 'return')
   const storage = new Map()
   const dependencies = {
@@ -25,6 +25,8 @@ function createDialog(overrides = {}, api = {}) {
         removeItem: (key) => storage.delete(key),
       },
     },
+    env,
+    i18n: { t: (key) => key },
     connectorCatalog,
     mapGetters: () => ({}),
     ...Object.fromEntries(
@@ -48,28 +50,19 @@ function createDialog(overrides = {}, api = {}) {
   )
   const dialog = {
     selectorType: 'target',
-    isDaas: true,
-    isCommunity: false,
+    ...component.data.call({ $t: (key) => key }),
     isControlEnabled: false,
     connectors: [],
-    connectorJobs: {},
-    connectorJobTimers: {},
-    connectorReleaseRequestId: 0,
-    connectorCatalogLoading: false,
-    currentScene: 'installed',
-    sceneList: [],
-    tagList: [],
     startingTour: false,
     pausedGuide: false,
-    lockedTypes: [],
     $t: (key) => key,
     $message: { error() {}, success() {}, info() {} },
     $i18n: { locale: 'zh-CN' },
+    $route: { query: {} },
+    mount() {
+      component.mounted.call(this)
+    },
     storage,
-    connectorJobsStorageKey: 'tapdata.connectorRegistrationJobs',
-    releaseImpactRequestId: 0,
-    releaseImpact: { tasks: [], inspects: [] },
-    database: [],
     ...overrides,
   }
   for (const [key, method] of Object.entries(component.methods)) {
@@ -83,7 +76,7 @@ function createDialog(overrides = {}, api = {}) {
   return dialog
 }
 
-test('enterprise browsing defaults to installed while other sidebar categories and search include the full catalog', () => {
+test('catalog browsing defaults to installed while other sidebar categories and search include the full catalog', () => {
   const dialog = createDialog({
     selectorType: 'source_and_target',
     tagList: [
@@ -161,7 +154,7 @@ test('enterprise browsing defaults to installed while other sidebar categories a
   )
 })
 
-test('enterprise target filters use connector types and keep the API creation entry', () => {
+test('catalog target filters use connector types and keep the API creation entry', () => {
   const dialog = createDialog({
     tagList: [{ key: 'all' }, { key: 'SaaS' }],
     sceneList: [{ key: 'api', hidden: false }],
@@ -223,31 +216,102 @@ test('installed, type and search empty states share recovery to the full catalog
   assert.equal(dialog.currentScene, 'all')
 })
 
-test('Cloud and community keep their existing recommendation and target-scenario browsing', () => {
-  for (const platform of [
-    { isDaas: false, isCommunity: false },
-    { isDaas: true, isCommunity: true },
-  ]) {
+for (const [edition, env] of [
+  ['OP', { VUE_APP_PLATFORM: 'DAAS', VUE_APP_MODE: 'OP' }],
+  ['community', { VUE_APP_PLATFORM: 'DAAS', VUE_APP_MODE: 'community' }],
+  ['cloud', {}],
+]) {
+  test(`${edition} uses its expected connector menu, endpoints and actions`, async () => {
+    const calls = []
     const mysql = {
       pdkId: 'mysql',
       name: 'MySQL',
       type: 'Mysql',
       pdkHash: 'hash',
+      version: '1.0',
+      connectionType: 'source_and_target',
     }
-    const dialog = createDialog({
-      ...platform,
-      sceneList: [{ key: 'recommend', types: ['Mysql'] }, { key: 'api' }],
-      database: [mysql],
-      databaseTypeMap: { Mysql: mysql },
-    })
+    const dialog = createDialog(
+      {
+        selectorType: 'source',
+        startingTour: true,
+        restoreConnectorJobs: () => calls.push('restore'),
+      },
+      {
+        fetchDatabases: () => {
+          calls.push('databases')
+          return Promise.resolve([mysql])
+        },
+        getConnectorReleases: () => {
+          calls.push('releases')
+          return Promise.resolve(
+            ['mysql', 'mongodb', 'oracle'].map((id) => ({
+              artifactId: `${id}-connector`,
+              version: '2.0',
+            })),
+          )
+        },
+      },
+      env,
+    )
+    const useCatalog = edition !== 'OP'
+    const defaultScene = useCatalog ? 'installed' : 'recommend'
+    assert.equal(dialog.usesConnectorCatalog, useCatalog)
+    assert.equal(dialog.currentScene, defaultScene)
+    dialog.mount()
+    dialog.handleSelectScene({ key: 'all' })
     dialog.resetConnectorBrowser()
-    assert.equal(dialog.usesConnectorCatalog, false)
-    assert.equal(dialog.currentScene, 'recommend')
-    assert.deepEqual(dialog.sceneDatabases, [mysql])
-    assert.equal(dialog.connectorSections.length, 1)
-    assert.ok(dialog.options.some((item) => item.key === 'api'))
-  }
-})
+    assert.equal(dialog.currentScene, defaultScene)
+    await dialog.getData()
+    assert.deepEqual(
+      calls,
+      useCatalog ? ['restore', 'databases', 'releases'] : ['databases'],
+    )
+    assert.deepEqual(
+      dialog.sceneDatabases.map((item) => item.pdkId),
+      ['mysql'],
+    )
+
+    assert.equal(dialog.showDemoConnection, true)
+    assert.deepEqual(
+      dialog.demoDatabase.map((item) => item.pdkId),
+      ['mysql'],
+    )
+
+    if (useCatalog) {
+      assert.equal(
+        dialog.showConnectorAction(dialog.databaseTypeMap.Mysql),
+        true,
+      )
+      const installable = dialog.database.find(
+        (item) => item.pdkId === 'mongodb',
+      )
+      assert.equal(installable.requiresDownload, true)
+      assert.equal(dialog.showConnectorAction(installable), true)
+      if (edition === 'community') {
+        assert.ok(dialog.lockedTypes.some((item) => item.type === 'Oracle'))
+        assert.ok(
+          dialog.connectorActionDisabledReason(dialog.databaseTypeMap.Oracle),
+        )
+      }
+    } else {
+      assert.deepEqual(
+        dialog.database.map((item) => item.pdkId),
+        ['mysql'],
+      )
+      for (const flags of [
+        { updateAvailable: true },
+        { requiresDownload: true },
+      ]) {
+        const item = { ...mysql, ...flags }
+        assert.equal(dialog.showConnectorAction(item), false)
+        await dialog.handleSelect(item)
+        assert.equal(dialog.showForm, true)
+        assert.equal(dialog.releaseDialogVisible, false)
+      }
+    }
+  })
+}
 
 test('a pending release catalog keeps local entries usable and waits before showing empty category or search results', async () => {
   let resolveReleases
@@ -455,7 +519,7 @@ test('preserves entitlements after Nexus refresh and guards selection and upgrad
     }
     await dialog.handleReleaseAction(forbidden)
     assert.equal(impactRequests, 0)
-    assert.equal(dialog.releaseDialogVisible, undefined)
+    assert.equal(dialog.releaseDialogVisible, false)
   }
   await dialog.getData()
   await check()
@@ -848,10 +912,10 @@ test('only published installable connectors are added to the installed catalog',
     { pdkId: 'private-connector', type: 'Custom', pdkHash: 'custom-hash' },
   ]
   assert.deepEqual(
-    dialog.buildEnterpriseConnectorList(installed).map((item) => item.pdkId),
+    dialog.buildConnectorList(installed).map((item) => item.pdkId),
     ['mysql', 'private-connector'],
   )
-  const available = dialog.buildEnterpriseConnectorList(installed, [
+  const available = dialog.buildConnectorList(installed, [
     { artifactId: 'hazelcast-connector', version: '2.1.0' },
   ])
   assert.ok(available.some((item) => item.pdkId === 'mysql'))
@@ -869,7 +933,7 @@ test('only published installable connectors are added to the installed catalog',
   }
   assert.ok(
     dialog
-      .buildEnterpriseConnectorList(installed)
+      .buildConnectorList(installed)
       .some((item) => item.pdkId === 'hazelcast'),
   )
 })
