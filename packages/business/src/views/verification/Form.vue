@@ -1523,17 +1523,18 @@ provide('ConnectorMap', ConnectorMap)
   max-height: 180px;
   overflow: auto;
   margin: 4px 0 0;
-  padding: 0 12px;
+  padding: 4px 8px;
   list-style: none;
+  border-radius: 4px;
+  background: var(--el-fill-color-lighter);
 }
 
 .inspect-receiver-preview-item {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
   align-items: center;
-  gap: 8px;
-  padding: 6px 0;
-  border-top: 1px solid var(--el-border-color-lighter);
+  gap: 12px;
+  padding: 2px 0;
   line-height: 18px;
 }
 
