@@ -1520,19 +1520,21 @@ provide('ConnectorMap', ConnectorMap)
 
 <style lang="scss" scoped>
 .inspect-receiver-preview-list {
-  margin: 0;
-  padding: 8px 12px;
+  max-height: 180px;
+  overflow: auto;
+  margin: 4px 0 0;
+  padding: 0 12px;
   list-style: none;
-  background: var(--el-fill-color-lighter);
-  border-radius: 4px;
 }
 
 .inspect-receiver-preview-item {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 4px 0;
+  gap: 8px;
+  padding: 6px 0;
+  border-top: 1px solid var(--el-border-color-lighter);
+  line-height: 18px;
 }
 
 .inspect-receiver-preview-email,
@@ -1544,11 +1546,10 @@ provide('ConnectorMap', ConnectorMap)
 }
 
 .inspect-receiver-preview-email {
-  flex: 1 1 auto;
+  text-align: left;
 }
 
 .inspect-receiver-preview-source {
-  flex: 0 1 50%;
   text-align: right;
 }
 
