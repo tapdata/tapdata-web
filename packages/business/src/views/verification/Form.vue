@@ -1298,8 +1298,17 @@ provide('ConnectorMap', ConnectorMap)
                   :key="item.email"
                   class="inspect-receiver-preview-item"
                 >
-                  <span>{{ item.email }}</span>
-                  <small v-if="item.sources?.length" class="text-secondary">
+                  <span
+                    class="inspect-receiver-preview-email"
+                    :title="item.email"
+                  >
+                    {{ item.email }}
+                  </span>
+                  <small
+                    v-if="item.sources?.length"
+                    class="inspect-receiver-preview-source text-secondary"
+                    :title="item.sources.join('、')"
+                  >
                     {{ item.sources.join('、') }}
                   </small>
                 </li>
@@ -1520,10 +1529,27 @@ provide('ConnectorMap', ConnectorMap)
 
 .inspect-receiver-preview-item {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   padding: 4px 0;
-  overflow-wrap: anywhere;
+}
+
+.inspect-receiver-preview-email,
+.inspect-receiver-preview-source {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inspect-receiver-preview-email {
+  flex: 1 1 auto;
+}
+
+.inspect-receiver-preview-source {
+  flex: 0 1 50%;
+  text-align: right;
 }
 
 .only-one.el-collapse {
