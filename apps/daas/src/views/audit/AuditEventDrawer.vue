@@ -10,9 +10,12 @@ import { computed, ref, watch } from 'vue'
 import UserOperation from '@/views/notification/UserOperation.vue'
 import {
   batchSummary,
+  buildLegacyRecord,
   changeText,
   createAuditDetailLoader,
   displayValue,
+  formatLegacyActionText,
+  hasLegacyOperationContent,
   nodeText,
   operatorText,
   outcomeView,
@@ -57,12 +60,7 @@ const initiator = computed(() => operation.value?.initiator)
 
 /** 历史记录交给原操作日志渲染组件，占位符与对象链接按原逻辑替换。 */
 function legacyRecord(e: AuditEvent) {
-  return {
-    ...(e.legacyFields || {}),
-    username: e.username,
-    userId: e.userId,
-    i18nMessage: e.legacyMessage,
-  }
+  return buildLegacyRecord(e)
 }
 
 function message(key?: string) {
@@ -98,12 +96,7 @@ function requiredRows(
       displayValue(e.sourceIp, legacy, tr) +
         (e.sourceIpNote ? ` (${message(e.sourceIpNote)})` : ''),
     ],
-    [
-      'audit_field_action',
-      e.legacy
-        ? e.legacyMessage || displayValue(null, true, tr)
-        : e.actionName || displayValue(e.action, false, tr),
-    ],
+    ['audit_field_action', formatLegacyActionText(e, tr)],
     [
       'audit_field_object',
       displayValue(e.objectName || e.objectId, legacy, tr),
@@ -132,7 +125,14 @@ function requiredRows(
             :key="label"
             :label="t(label)"
           >
-            {{ value }}
+            <UserOperation
+              v-if="
+                label === 'audit_field_action' &&
+                hasLegacyOperationContent(initiator)
+              "
+              :record="legacyRecord(initiator)"
+            />
+            <template v-else>{{ value }}</template>
           </el-descriptions-item>
           <el-descriptions-item
             v-if="initiator.reason"

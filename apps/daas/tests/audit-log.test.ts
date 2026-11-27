@@ -14,10 +14,13 @@ import {
   auditActionLabelKey,
   batchSummary,
   buildAuditQuery,
+  buildLegacyRecord,
   confirmRangeInput,
   changeText,
   createAuditDetailLoader,
   displayValue,
+  formatLegacyActionText,
+  hasLegacyOperationContent,
   hasUnresolvedPlaceholder,
   isQueryDirty,
   isRetentionShortened,
@@ -439,4 +442,104 @@ test('date panel confirms only a complete range with start not after end', () =>
     null,
   )
   assert.equal(confirmRangeInput('', '2026-11-20T23:59:59'), null)
+})
+
+test('TAP-13350 legacy audit record builds UserOperation props and checks renderable content', () => {
+  const sampleEvent = {
+    id: '6a955b5e01948c97e014116b',
+    legacy: true,
+    username: 'admin',
+    userId: 'user-1',
+    legacyMessage: '{user} updated {parameter1} to {parameter2}',
+    legacyFields: {
+      parameter1: 'MySQL_Source',
+      parameter2: 'MySQL_Source_V2',
+      sourceId: 'conn-1',
+      modular: 'connection',
+      operation: 'update',
+    },
+  }
+
+  assert.equal(hasLegacyOperationContent(sampleEvent), true)
+  assert.deepEqual(buildLegacyRecord(sampleEvent), {
+    parameter1: 'MySQL_Source',
+    parameter2: 'MySQL_Source_V2',
+    sourceId: 'conn-1',
+    modular: 'connection',
+    operation: 'update',
+    username: 'admin',
+    userId: 'user-1',
+    i18nMessage: '{user} updated {parameter1} to {parameter2}',
+  })
+  assert.equal(
+    formatLegacyActionText(sampleEvent, t),
+    '{user} updated {parameter1} to {parameter2}',
+  )
+
+  const modularOnlyEvent = {
+    legacy: true,
+    username: 'ops',
+    legacyFields: {
+      modular: 'task',
+      operation: 'start',
+      sourceName: 'SyncJob1',
+    },
+  }
+  assert.equal(hasLegacyOperationContent(modularOnlyEvent), true)
+  assert.equal(buildLegacyRecord(modularOnlyEvent).username, 'ops')
+})
+
+test('TAP-13350 empty legacy and non-legacy action text respect trilingual fallback', () => {
+  const emptyLegacyEvent = {
+    legacy: true,
+    legacyMessage: '',
+    legacyFields: {},
+  }
+  assert.equal(hasLegacyOperationContent(emptyLegacyEvent), false)
+
+  const locales: Record<string, string> = {
+    'zh-CN': 'zh-CN-legacy-empty',
+    'zh-TW': 'zh-TW-legacy-empty',
+    en: 'en-legacy-empty',
+  }
+  for (const [locale, expected] of Object.entries(locales)) {
+    const tr = (key: string) =>
+      key === 'audit_legacy_empty_value' || key === 'public_empty_value'
+        ? expected
+        : `${locale}:${key}`
+    assert.equal(
+      formatLegacyActionText(emptyLegacyEvent, tr),
+      displayValue(null, true, tr),
+    )
+  }
+
+  const modernEvent = {
+    legacy: false,
+    action: 'TASK_START',
+    actionName: 'Start Task',
+  }
+  assert.equal(hasLegacyOperationContent(modernEvent), false)
+  assert.equal(formatLegacyActionText(modernEvent, t), 'Start Task')
+  assert.equal(
+    formatLegacyActionText({ legacy: false, action: 'TASK_STOP' }, t),
+    'TASK_STOP',
+  )
+  assert.equal(
+    formatLegacyActionText({ legacy: false }, t),
+    displayValue(undefined, false, t),
+  )
+})
+
+test('TAP-13350 AuditEventDrawer renders UserOperation for overview action row when legacy content exists', () => {
+  const drawerSource = readFileSync(
+    new URL('../src/views/audit/AuditEventDrawer.vue', import.meta.url),
+    'utf8',
+  )
+  assert.match(drawerSource, /hasLegacyOperationContent/)
+  assert.match(drawerSource, /buildLegacyRecord/)
+  assert.match(drawerSource, /formatLegacyActionText/)
+  assert.match(
+    drawerSource,
+    /<UserOperation[\s\S]*label === 'audit_field_action' &&[\s\S]*hasLegacyOperationContent\(initiator\)[\s\S]*:record="legacyRecord\(initiator\)"/,
+  )
 })
