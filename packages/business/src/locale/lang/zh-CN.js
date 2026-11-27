@@ -1901,4 +1901,177 @@ export default {
     '暂时无法获取进度，后台操作可能仍在进行。',
   packages_business_connector_impact_changed:
     '关联任务发生变化，请重新确认更新方式。',
+  packages_business_task_throttle_title: '同步限速',
+  packages_business_task_throttle_phase_full: '全量阶段',
+  packages_business_task_throttle_phase_cdc: '增量阶段',
+  packages_business_task_throttle_not_applicable: '不适用',
+  packages_business_task_throttle_not_applicable_tip:
+    '当前任务模式不包含该阶段，执行时自动跳过，原有填写值将保留。',
+  packages_business_task_throttle_enable_phase: '启用该阶段限速',
+  packages_business_task_throttle_data_rate_label: '同步数据速率上限 (MB/s)',
+  packages_business_task_throttle_data_rate_short: '同步数据速率',
+  packages_business_task_throttle_data_rate_placeholder:
+    '0.001 – 10000，最多 3 位小数',
+  packages_business_task_throttle_qps_label: 'QPS 上限 (事件/s)',
+  packages_business_task_throttle_qps_short: 'QPS',
+  packages_business_task_throttle_qps_placeholder: '1 – 10000000 的正整数',
+  packages_business_task_throttle_direction_note:
+    '同一阶段只配置一组上限，输入与输出方向各自独立计量并分别执行该上限。',
+  packages_business_task_throttle_err_at_least_one:
+    '{phase}开启后至少启用数据速率或 QPS 中的一项',
+  packages_business_task_throttle_err_bytes_required:
+    '请填写{phase}的同步数据速率上限',
+  packages_business_task_throttle_err_bytes_format:
+    '{phase}同步数据速率必须为有效正数',
+  packages_business_task_throttle_err_bytes_precision:
+    '{phase}同步数据速率最多支持 3 位小数',
+  packages_business_task_throttle_err_bytes_range:
+    '{phase}同步数据速率必须在 0.001 到 10000 MB/s 之间',
+  packages_business_task_throttle_err_qps_required: '请填写{phase}的 QPS 上限',
+  packages_business_task_throttle_err_qps_integer:
+    '{phase}的 QPS 上限必须为正整数（不支持小数）',
+  packages_business_task_throttle_err_qps_range:
+    '{phase}的 QPS 上限必须在 1 到 10000000 之间',
+  packages_business_task_throttle_risk_notice:
+    '开启限速可能降低同步速度、延长全量耗时并增加增量延迟。增量所需日志超过源库或共享日志保留窗口时，任务可能中断，需要人工恢复。',
+  packages_business_task_throttle_logcollector_risk_notice:
+    '共享挖掘限速会减慢源端采集或共享日志写入，可能同时增加多个下游依赖任务的增量延迟并拉长源端与共享日志保留需求。',
+  packages_business_task_throttle_logcollector_deps_summary:
+    '当前共 {total} 个下游依赖任务（可见 {visible} 个），共享日志保留 {days} 天。',
+  packages_business_task_throttle_desired_section: '期望配置',
+  packages_business_task_throttle_applied_section:
+    '已应用上限（Agent 实效回执）',
+  packages_business_task_throttle_not_applied_yet: '尚未应用',
+  packages_business_task_throttle_apply_on_start: '启动时应用',
+  packages_business_task_throttle_status_none: '未配置策略',
+  packages_business_task_throttle_status_pending: '配置生效中',
+  packages_business_task_throttle_status_applied: '已生效',
+  packages_business_task_throttle_status_failed: '应用失败',
+  packages_business_task_throttle_status_waiting_agent: '等待兼容 Agent',
+  packages_business_task_throttle_version_label: 'v{version}',
+  packages_business_task_throttle_applied_time: '生效时间：{time}',
+  packages_business_task_throttle_applied_time_label: '生效时间',
+  packages_business_task_throttle_apply_reason: '原因：{reason}',
+  packages_business_task_throttle_running_readonly_tip:
+    '运行中仅支持调整同步限速字段，其余任务配置保持只读。',
+  packages_business_task_throttle_save_btn: '保存限速配置',
+  packages_business_task_throttle_retry_save_btn: '重试保存',
+  packages_business_task_throttle_cancel_btn: '取消更改',
+  packages_business_task_throttle_save_success:
+    '限速策略已保存（期望版本 v{version}）',
+  packages_business_task_throttle_save_failed:
+    '限速策略保存失败，请检查参数后重试',
+  packages_business_task_throttle_conflict_msg:
+    '限速配置已被其他用户更新至最新版本 v{version}，已为您刷新最新状态，请核对后重新提交。',
+  packages_business_task_throttle_stop_gate_title: '等待确认旧执行已停止',
+  packages_business_task_throttle_stop_gate_meta:
+    '旧 Agent：{agent} ｜ 旧运行代次：{epoch}',
+  packages_business_task_throttle_stop_gate_submit_btn: '提交停止确认证据',
+  packages_business_task_throttle_stop_gate_dialog_title:
+    '提交旧执行停止确认证据',
+  packages_business_task_throttle_stop_gate_evidence_ref: '停止核验依据',
+  packages_business_task_throttle_stop_gate_evidence_ref_placeholder:
+    '例如：宿主机进程 PID 退出日志 / 容器销毁确认单号',
+  packages_business_task_throttle_stop_gate_process_exited:
+    '已核实旧 Agent 进程或任务线程彻底退出',
+  packages_business_task_throttle_stop_gate_write_settled:
+    '已核实目标侧残余在途写入已完全收尾',
+  packages_business_task_throttle_stop_gate_note: '核查备注（选填）',
+  packages_business_task_throttle_stop_gate_validation_err:
+    '请填写停止核验依据并同时确认旧进程退出与目标写入收尾',
+  packages_business_task_throttle_stop_gate_success:
+    '停止确认证据已提交并通过核验',
+  packages_business_task_throttle_badge_active: '限速中',
+  packages_business_task_throttle_badge_unknown: '状态未知',
+  packages_business_task_throttle_badge_unknown_tip:
+    '超过 15 秒未收到该运行代次的有效限速遥测报告。',
+  packages_business_task_throttle_rule_bytes: '同步数据速率限速',
+  packages_business_task_throttle_rule_qps: 'QPS 限速',
+  packages_business_task_throttle_phase_rule_line: '{phase} · {rules}',
+  packages_business_task_throttle_filter_label: '限速状态',
+  packages_business_task_throttle_filter_all: '全部',
+  packages_business_task_throttle_filter_throttling: '限速中',
+  packages_business_task_throttle_filter_configured_idle: '已配置未触发',
+  packages_business_task_throttle_filter_disabled: '未启用',
+  packages_business_task_throttle_filter_unknown: '状态未知',
+  packages_business_task_throttle_wait_none: '无等待',
+  packages_business_task_throttle_wait_rate: '额度等待',
+  packages_business_task_throttle_wait_sample: '等待采样',
+  packages_business_task_throttle_wait_buffer: '缓冲高水位暂停新读',
+  packages_business_task_throttle_wait_write_io: '目标写 I/O 等待',
+  packages_business_task_throttle_wait_log_risk: '源日志保留风险',
+  packages_business_task_throttle_wait_backpressure: '下游写限速背压',
+  packages_business_task_throttle_log_normal: '日志保留正常',
+  packages_business_task_throttle_log_warn_70: '日志窗口预警（已用 ≥70%）',
+  packages_business_task_throttle_log_critical_90: '日志窗口紧急（已用 ≥90%）',
+  packages_business_task_throttle_log_unknown: '日志保留余量未知',
+  packages_business_task_throttle_log_expired: '增量日志已过期，需恢复',
+  packages_business_task_throttle_chg_type: '事件类型',
+  packages_business_task_throttle_chg_type_all: '全部类型',
+  packages_business_task_throttle_chg_type_policy: '策略变更',
+  packages_business_task_throttle_chg_type_receipt: '应用回执',
+  packages_business_task_throttle_chg_type_stop: '停止确认证据',
+  packages_business_task_throttle_chg_window_all: '全部时间',
+  packages_business_task_throttle_chg_window_24h: '最近 24 小时',
+  packages_business_task_throttle_chg_window_7d: '最近 7 天',
+  packages_business_task_throttle_chg_time: '发生时间',
+  packages_business_task_throttle_chg_operator: '操作者 / Agent',
+  packages_business_task_throttle_chg_version: '代次 / 版本',
+  packages_business_task_throttle_chg_before: '变更前策略',
+  packages_business_task_throttle_chg_after: '变更后策略',
+  packages_business_task_throttle_chg_outcome: '结果与说明',
+  packages_business_task_throttle_chg_skipped: '已合并跳过：{versions}',
+  packages_business_task_throttle_chg_total_records: '共 {count} 条',
+  packages_business_task_throttle_chg_phase_tag_full: '全量',
+  packages_business_task_throttle_chg_phase_tag_cdc: '增量',
+  packages_business_task_throttle_chg_outcome_committed: '已保存',
+  packages_business_task_throttle_chg_outcome_applied: '已生效',
+  packages_business_task_throttle_chg_outcome_failed: '应用失败',
+  packages_business_task_throttle_chg_outcome_skipped: '已跳过',
+  packages_business_task_throttle_chg_outcome_graceful: '正常停止',
+  packages_business_task_throttle_chg_outcome_manual: '人工确认',
+  packages_business_task_throttle_chg_outcome_rejected: '已拒绝',
+  packages_business_task_throttle_phase_summary_off: '关闭',
+  packages_business_task_throttle_lc_overview_title: '共享挖掘限速与保留监控',
+  packages_business_task_throttle_lc_source_capture: '源端采集',
+  packages_business_task_throttle_lc_log_write: '共享日志写入',
+  packages_business_task_throttle_lc_retention_days: '共享日志保留：{days} 天',
+  packages_business_task_throttle_lc_oldest_replay:
+    '最老需重读位点时间：{time}',
+  packages_business_task_throttle_lc_consumers_title:
+    '下游依赖任务 ({visible}/{total})',
+  packages_business_task_throttle_lc_consumer_delay: '消费延迟',
+  packages_business_task_throttle_lc_consumer_output: '输出速率',
+  packages_business_task_throttle_lc_consumer_throttled: '已配限速',
+  packages_business_task_throttle_lc_hidden_consumers:
+    '另有 {count} 个无权限查看的依赖任务，仅纳入总依赖数统计。',
+  packages_business_cdc_sample_title: '增量数据大小采样间隔',
+  packages_business_cdc_sample_unit_sec: '秒',
+  packages_business_cdc_sample_purpose:
+    '系统抽取少量增量事件来估算数据大小，供任务监控和速率排行使用。启用任务同步数据速率上限后，系统也用这个估算值计算每批数据占用的额度。',
+  packages_business_cdc_sample_when_title: '什么时候重新采样？',
+  packages_business_cdc_sample_when_example:
+    '以默认 30 秒为例：系统按表分别记录新增、更新和删除事件的样本大小。一张表的更新样本满 30 秒后，等下一批包含该表更新事件的数据到达时进入重新采样，实际采样按预算错峰执行；新增表或事件类型、结构变化和异常波动仍按既有规则触发补样。',
+  packages_business_cdc_sample_cpu_hint:
+    '数据大小变化频繁时，缩短间隔能让估算更快跟上变化，但更频繁的采样可能增加 CPU 开销。',
+  packages_business_cdc_sample_err_required: '请输入采样间隔',
+  packages_business_cdc_sample_err_integer: '采样间隔必须为正整数',
+  packages_business_cdc_sample_err_range: '采样间隔必须在 5 到 300 秒之间',
+  packages_business_cdc_sample_save_success:
+    '增量采样间隔已保存（配置版本 v{version}）',
+  packages_business_cdc_sample_meta:
+    '当前配置版本：v{version} ｜ 最后更新：{time}',
+  packages_business_cdc_sample_partial_warn:
+    '部分 Agent 尚未完成热更新或版本不支持，未生效 Agent 将保留原本地生效值或旧指标口径。',
+  packages_business_cdc_sample_agent_id: 'Agent 标识',
+  packages_business_cdc_sample_agent_status: '生效状态',
+  packages_business_cdc_sample_agent_detail: '详情 / 原因',
+  packages_business_cdc_sample_status_applied: '当前使用 {seconds} 秒',
+  packages_business_cdc_sample_status_applying: '正在应用',
+  packages_business_cdc_sample_status_legacy: '旧版不支持',
+  packages_business_cdc_sample_no_agents: '暂无已注册的能力 Agent',
+  packages_business_task_throttle_load_required_before_save:
+    '未能确认当前任务限速策略版本，请刷新后再保存限速配置。',
+  packages_business_task_throttle_partial_save_warn:
+    '基础配置已保存，但限速策略保存失败，请检查后单独保存限速配置或重试。',
 }

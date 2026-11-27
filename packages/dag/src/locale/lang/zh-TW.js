@@ -1154,4 +1154,26 @@ export default {
   packages_dag_data_capture_event_id: '事件ID',
   packages_dag_data_capture_original_data: '原始數據',
   packages_dag_locate_selected_node: '捲動至選取節點',
+  packages_dag_task_throttle_estimated_data_rate: '估算同步資料速率 (MB/s)',
+  packages_dag_task_throttle_estimated_data_rate_tip:
+    '依統一 event-v1 口徑持續估算任務位元組速率（全量取同批首筆事件估算位元組乘批筆數；增量依表 × DML 類型樣本均值估算）。支援區分樣本積累中、缺測與歷史計量口徑。',
+  packages_dag_task_throttle_applied_limit_series: '已套用上限',
+  packages_dag_task_throttle_sidebar_title: '限速與流量狀態',
+  packages_dag_task_throttle_sample_interval_label:
+    '增量採樣間隔：{seconds} 秒',
+  packages_dag_task_throttle_sample_interval_title: '增量採樣間隔',
+  packages_dag_task_throttle_sample_interval_value: '{seconds} 秒',
+  packages_dag_task_throttle_limit_off: '未啟用',
+  packages_dag_task_throttle_meter_version_label: '計量口徑：{version}',
+  packages_dag_task_throttle_view_changes: '檢視變更記錄',
+  packages_dag_task_throttle_tab_changes: '限速變更記錄',
+  packages_dag_task_throttle_save_blocked_start:
+    '限速策略校驗或儲存失敗，已阻止啟動任務。請在修正參數或重試儲存後重新啟動。',
+  packages_dag_task_throttle_wait_reasons: '目前等待原因',
+  packages_dag_task_throttle_log_status_label: '日誌保留狀態',
+  packages_dag_task_throttle_partial_save_warn:
+    '任務基礎設定已儲存，但限速策略儲存失敗，請修正後重試儲存限速設定。',
+  packages_dag_task_throttle_sample_interval_unavailable: '不可用',
+  packages_dag_task_throttle_rate_quality_partial:
+    '部分時段樣本缺失或已回退為歷史指標口徑',
 }

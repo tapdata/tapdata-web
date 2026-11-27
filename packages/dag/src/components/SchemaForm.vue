@@ -1,6 +1,7 @@
 <script>
 import { components, createSchemaField, Form as FormilyForm } from '@tap/form'
 import SystemAlarmDependencyNotice from '@tap/business/src/components/SystemAlarmDependencyNotice.vue'
+import TaskThrottlePanel from '@tap/business/src/components/task-throttle/TaskThrottlePanel.vue'
 import * as _components from '../components/form'
 
 const { SchemaField } = createSchemaField({
@@ -8,6 +9,7 @@ const { SchemaField } = createSchemaField({
     ...components,
     ..._components,
     SystemAlarmDependencyNotice,
+    TaskThrottlePanel,
   },
 })
 

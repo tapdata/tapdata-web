@@ -17,12 +17,17 @@ export function calcUnit(val: any, type?: any, fix = 1, sp = [1000]) {
   } else {
     // 内置单位数组
     switch (String(type).toLowerCase()) {
-      // 内存
+      // 内存 / 二进制字节
       case '1':
       case 'b':
       case 'kb':
       case 'byte':
         sp = [1024]
+        list = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
+        break
+      // 十进制字节（速率/吞吐量）
+      case 'byte_decimal':
+        sp = [1000]
         list = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
         break
       // 时间

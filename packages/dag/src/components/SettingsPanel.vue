@@ -18,6 +18,7 @@ import {
 import { getUserRoles } from '@tap/api/src/core/users'
 import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
 import SystemAlarmDependencyNotice from '@tap/business/src/components/SystemAlarmDependencyNotice.vue'
+import TaskThrottlePanel from '@tap/business/src/components/task-throttle/TaskThrottlePanel.vue'
 import { useSystemAlarmStatus } from '@tap/business/src/composables/useSystemAlarmStatus'
 import { TextEditable } from '@tap/component/src/base/text-editable'
 import * as components from '@tap/form/src/components'
@@ -64,6 +65,7 @@ const { SchemaField } = createSchemaField({
     ...components,
     ..._components,
     SystemAlarmDependencyNotice,
+    TaskThrottlePanel,
   },
 })
 
@@ -135,6 +137,11 @@ interface FormScope {
   $getTaskAgentOptions: (accessNodeType: string) => any[]
   $getTaskAgentConnectionCount: () => number
   $refreshTaskAgentConfigs: () => Promise<void>
+  $registerThrottleSaveHandler: (
+    fn: ((targetTaskId?: string) => Promise<boolean>) | null,
+  ) => void
+  $canEditTaskThrottle: () => boolean
+  $isRunningThrottleMode: () => boolean
 }
 
 // Store
@@ -600,6 +607,15 @@ const formScope: FormScope = {
     })
     dataflowStore.dataflow.syncPoints = [...syncPoints]
   },
+  $registerThrottleSaveHandler: (fn) => {
+    dataflowStore.setThrottleSaveHandler(fn)
+  },
+  $registerThrottleValidateHandler: (fn) => {
+    dataflowStore.setThrottleValidateHandler(fn)
+  },
+  $canEditTaskThrottle: () =>
+    Boolean(buttonShowMap.Edit) && route.name !== 'MigrationMonitorViewer',
+  $isRunningThrottleMode: () => Boolean(dataflowStore.stateIsReadonly),
 }
 
 // Computed
@@ -744,6 +760,9 @@ watch(stateIsReadonly, (v) => {
       pattern: 'editable',
     })
   }
+  form.setFieldState('taskThrottleSection', {
+    pattern: 'editable',
+  })
   if (v) {
     form.setFieldState('*(accessNodeType,accessNodeProcessId)', {
       disabled: true,
@@ -835,6 +854,9 @@ onMounted(() => {
         disabled: !buttonShowMap.Edit,
       })
     }
+    form.setFieldState('taskThrottleSection', {
+      pattern: 'editable',
+    })
 
     // loadAlarmChannels()
   })
@@ -924,6 +946,7 @@ const schema = {
                   'x-decorator': 'FormItem',
                   'x-component': 'FormCollapse',
                   'x-component-props': {
+                    activeKey: [],
                     expandIconPosition: 'left',
                     style: {
                       '--collapse-padding-primary': '0',
@@ -1423,6 +1446,78 @@ const schema = {
                           type: 'string',
                           default: '',
                           'x-display': 'hidden',
+                        },
+                        taskThrottleCollapse: {
+                          type: 'void',
+                          'x-component': 'FormCollapse',
+                          'x-component-props': {
+                            activeKey: [],
+                            expandIconPosition: 'left',
+                            style: {
+                              '--collapse-padding-primary': '0',
+                            },
+                          },
+                          'x-reactions': {
+                            dependencies: ['syncType'],
+                            fulfill: {
+                              state: {
+                                visible:
+                                  "{{['sync', 'migrate', 'logCollector'].includes($values.syncType)}}",
+                              },
+                            },
+                          },
+                          properties: {
+                            item: {
+                              type: 'void',
+                              'x-component': 'FormCollapse.Item',
+                              'x-component-props': {
+                                title: t(
+                                  'packages_business_task_throttle_title',
+                                ),
+                              },
+                              properties: {
+                                taskThrottleSection: {
+                                  type: 'void',
+                                  'x-editable': true,
+                                  'x-component': 'TaskThrottlePanel',
+                                  'x-component-props': {
+                                    taskId: '{{$values.id}}',
+                                    taskKind: '{{$values.syncType}}',
+                                    syncMode: '{{$values.type}}',
+                                    taskStatus: '{{$values.status}}',
+                                    canEdit: '{{$canEditTaskThrottle()}}',
+                                    runningMode: '{{$isRunningThrottleMode()}}',
+                                    standalone: true,
+                                    registerSaveHandler:
+                                      formScope.$registerThrottleSaveHandler,
+                                    registerValidateHandler:
+                                      formScope.$registerThrottleValidateHandler,
+                                  },
+                                  'x-reactions': {
+                                    dependencies: [
+                                      'id',
+                                      'syncType',
+                                      'type',
+                                      'status',
+                                    ],
+                                    fulfill: {
+                                      state: {
+                                        componentProps: {
+                                          taskId: '{{$deps[0]}}',
+                                          taskKind: '{{$deps[1]}}',
+                                          syncMode: '{{$deps[2]}}',
+                                          taskStatus: '{{$deps[3]}}',
+                                          canEdit: '{{$canEditTaskThrottle()}}',
+                                          runningMode:
+                                            '{{$isRunningThrottleMode()}}',
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
                         },
                       },
                     },

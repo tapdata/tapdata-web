@@ -1347,4 +1347,26 @@ export default {
   packages_dag_data_capture_event_id: 'Event ID',
   packages_dag_data_capture_original_data: 'Original Data',
   packages_dag_locate_selected_node: 'Locate Selected Node',
+  packages_dag_task_throttle_estimated_data_rate: 'Estimated Data Rate (MB/s)',
+  packages_dag_task_throttle_estimated_data_rate_tip:
+    'Continuously estimates task data rate using event-v1 bytes (full-sync: first event per batch x count; CDC: per-table x DML sample average). Distinguishes accumulating, missing, and legacy metrics.',
+  packages_dag_task_throttle_applied_limit_series: 'Applied Limit',
+  packages_dag_task_throttle_sidebar_title: 'Throttling & Traffic Status',
+  packages_dag_task_throttle_sample_interval_label:
+    'CDC Sample Interval: {seconds}s',
+  packages_dag_task_throttle_sample_interval_title: 'CDC Sample Interval',
+  packages_dag_task_throttle_sample_interval_value: '{seconds}s',
+  packages_dag_task_throttle_limit_off: 'Disabled',
+  packages_dag_task_throttle_meter_version_label: 'Meter: {version}',
+  packages_dag_task_throttle_view_changes: 'View Change Log',
+  packages_dag_task_throttle_tab_changes: 'Throttle Changes',
+  packages_dag_task_throttle_save_blocked_start:
+    'Throttling policy validation or save failed; task start blocked. Fix parameters or retry saving before starting.',
+  packages_dag_task_throttle_wait_reasons: 'Active Wait Causes',
+  packages_dag_task_throttle_log_status_label: 'Log Retention Status',
+  packages_dag_task_throttle_partial_save_warn:
+    'Task settings were saved, but the throttling policy failed to save. Fix or retry saving throttling before starting.',
+  packages_dag_task_throttle_sample_interval_unavailable: 'Unavailable',
+  packages_dag_task_throttle_rate_quality_partial:
+    'Some sampling points are missing or fell back to legacy metrics.',
 }

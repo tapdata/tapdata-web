@@ -81,11 +81,19 @@ export default defineComponent({
     const pageVersionRef = inject('pageVersion')
     const lockedFeature = inject('lockedFeature')
     const openLocked = inject('openLocked')
+    const throttleSaveHandler = ref(null)
+    const throttleValidateHandler = ref(null)
     useSystemAlarmStatus(() => taskRef?.value?.id)
     const scope = {
       lockedFeature,
       $isDaas: isDaas,
       $settings: taskRef.value,
+      $registerThrottleSaveHandler: (fn) => {
+        throttleSaveHandler.value = fn
+      },
+      $registerThrottleValidateHandler: (fn) => {
+        throttleValidateHandler.value = fn
+      },
       hasFeature: (feature) => {
         return !isDaas || store.getters['feature/hasFeature']?.(feature)
       },
@@ -1681,6 +1689,58 @@ export default defineComponent({
                     },
                   },
                 },
+                throttleCollapse: {
+                  type: 'void',
+                  'x-component': 'FormCollapse',
+                  'x-component-props': {
+                    activeKey: [],
+                    expandIconPosition: 'left',
+                    class: 'mt-4',
+                    style: {
+                      '--collapse-padding-primary': '0',
+                    },
+                  },
+                  properties: {
+                    item: {
+                      type: 'void',
+                      'x-component': 'FormCollapse.Item',
+                      'x-component-props': {
+                        title: i18n.t('packages_business_task_throttle_title'),
+                      },
+                      properties: {
+                        taskThrottleSection: {
+                          type: 'void',
+                          'x-editable': true,
+                          'x-component': 'TaskThrottlePanel',
+                          'x-component-props': {
+                            taskId: '{{$values.id}}',
+                            taskKind: 'migrate',
+                            syncMode: '{{$values.type}}',
+                            taskStatus: '{{$values.status}}',
+                            canEdit: true,
+                            standalone: true,
+                            registerSaveHandler:
+                              scope.$registerThrottleSaveHandler,
+                            registerValidateHandler:
+                              scope.$registerThrottleValidateHandler,
+                          },
+                          'x-reactions': {
+                            dependencies: ['id', 'type', 'status'],
+                            fulfill: {
+                              state: {
+                                componentProps: {
+                                  taskId: '{{$deps[0]}}',
+                                  syncMode: '{{$deps[1]}}',
+                                  taskStatus: '{{$deps[2]}}',
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
               },
             },
           },
@@ -2232,6 +2292,22 @@ export default defineComponent({
       let isOk = false
 
       try {
+        if (throttleValidateHandler.value && !throttleValidateHandler.value()) {
+          starting.value = false
+          return false
+        }
+
+        if (throttleSaveHandler.value) {
+          const throttleOk = await throttleSaveHandler.value(taskRef.value?.id)
+          if (!throttleOk) {
+            Message.error(
+              i18n.t('packages_dag_task_throttle_save_blocked_start'),
+            )
+            starting.value = false
+            return false
+          }
+        }
+
         await saveAndStartTask(
           {
             ...taskRef.value,

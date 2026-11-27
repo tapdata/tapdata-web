@@ -17,7 +17,7 @@ import {
   showErrorMessage,
 } from '@tap/business/src/components/error-message'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-
+import CdcSampleRefreshSetting from '@tap/business/src/components/task-throttle/CdcSampleRefreshSetting.vue'
 import EmailTemplateDialog from '@tap/business/src/views/setting/EmailTemplateDialog.vue'
 import { AdminOutlined } from '@tap/component/src/icon'
 import { TextFileReader } from '@tap/form/src/components/text-file-reader'
@@ -40,9 +40,15 @@ import {
 
 export default {
   name: 'Setting',
+  inject: {
+    hasPermissionByCode: {
+      default: () => () => false,
+    },
+  },
   components: {
     TextFileReader,
     PageContainer,
+    CdcSampleRefreshSetting,
     EmailTemplateDialog,
     AdminOutlined,
   },
@@ -212,6 +218,15 @@ export default {
     isSettingVisible(setting) {
       return isSettingDependencyVisible(setting, this.settingsByKey)
     },
+    async handleSampleConfigSaved() {
+      try {
+        const settings = await fetchSettings()
+        setSettings(settings)
+        localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(settings))
+      } catch {
+        // Ignore background settings cache refresh failure
+      }
+    },
     // 获取设置数据
     getData() {
       let auth_data = []
@@ -261,7 +276,11 @@ export default {
         })
         items.map((item) => {
           const values = data.filter((childItem) => {
-            return childItem.category === item && childItem.user_visible
+            return (
+              childItem.category === item &&
+              childItem.user_visible &&
+              childItem.key !== 'cdcSampleRefreshIntervalSeconds'
+            )
           })
           values.sort((a, b) => {
             return a.sort < b.sort ? -1 : 1
@@ -289,12 +308,13 @@ export default {
           })
           return Object.assign(value, item)
         })
+        vals.push({
+          category: 'SyncDataRateStatistics',
+          category_sort: 25,
+          items: [],
+        })
         vals.sort((a, b) => {
-          return a.category_sort > b.category_sort
-            ? 1
-            : a.category_sort < b.category_sort
-              ? -1
-              : 0
+          return Number(a.category_sort) - Number(b.category_sort)
         })
 
         const Appearance = vals.find((item) => {
@@ -796,6 +816,16 @@ export default {
               </template>
             </el-row>
           </div>
+          <div v-else-if="activePanel === 'SyncDataRateStatistics'" class="box">
+            <CdcSampleRefreshSetting
+              :can-edit="
+                email === 'admin@admin.com' ||
+                Boolean(hasPermissionByCode?.('v2_system_settings_menu')) ||
+                Boolean(hasPermissionByCode?.('system_settings_modification'))
+              "
+              @saved="handleSampleConfigSaved"
+            />
+          </div>
           <template v-else>
             <div
               v-for="(childItem, childIndex) in formItems"
@@ -1002,7 +1032,10 @@ export default {
         class="footer border-top position-sticky py-6 bottom-0 bg-white z-10 dark:bg-transparent dark:backdrop-blur-md"
       >
         <el-button
-          v-if="email === 'admin@admin.com'"
+          v-if="
+            email === 'admin@admin.com' &&
+            activePanel !== 'SyncDataRateStatistics'
+          "
           type="primary"
           @click="save"
           >{{ $t('public_button_save') }}</el-button

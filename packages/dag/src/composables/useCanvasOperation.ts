@@ -1722,6 +1722,14 @@ export function useCanvasOperation() {
       return
     }
 
+    if (
+      dataflowStore.throttleValidateHandler &&
+      !dataflowStore.throttleValidateHandler()
+    ) {
+      isSaving.value = false
+      return false
+    }
+
     dataflowStore.showConsole = true
     dataflowStore.consoleAutoLoadType = 'checkDag'
 
@@ -1731,6 +1739,16 @@ export function useCanvasOperation() {
     try {
       const result = await saveTask(data)
       reformDataflow(result)
+
+      if (dataflowStore.throttleSaveHandler) {
+        const throttleOk = await dataflowStore.throttleSaveHandler(result.id)
+        if (!throttleOk) {
+          ElMessage.warning(t('packages_dag_task_throttle_partial_save_warn'))
+          dataflowStore.editVersion = result.editVersion
+          isSaving.value = false
+          return false
+        }
+      }
 
       if (needStart) {
         if (['edit', 'wait_start'].includes(result.status)) {

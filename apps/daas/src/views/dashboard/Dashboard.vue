@@ -11,9 +11,17 @@ import {
   type TaskDashboardTopTask,
   type TaskDashboardVo,
 } from '@tap/api/src/core/task'
+import {
+  getTaskThrottleRanking,
+  type TaskThrottleRankingItem,
+  type TaskThrottleRankingResponse,
+  type ThrottleDirection,
+} from '@tap/api/src/core/task-throttle'
 import { fetchWorkers, getProcessInfo } from '@tap/api/src/core/workers'
 import { withPassiveAsync } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import TaskThrottleBadge from '@tap/business/src/components/task-throttle/TaskThrottleBadge.vue'
+import { THROTTLE_METER_VERSION } from '@tap/business/src/components/task-throttle/utils'
 import Chart from '@tap/component/src/chart/Chart.vue'
 import CountUp from '@tap/component/src/CountUp.vue'
 import { useI18n } from '@tap/i18n'
@@ -21,7 +29,7 @@ import { calcTimeUnit, calcUnit } from '@tap/shared/src/number'
 import dayjs from 'dayjs'
 import { ElMessage } from 'element-plus'
 import { isNumber } from 'lodash-es'
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { STATUS_MAP as DASHBOARD_STATUS_MAP } from './const'
 
@@ -93,10 +101,11 @@ const visibleTrendsResult = computed(() => {
 })
 
 // Top Tasks state
-const topTaskTab = ref<'lagging' | 'throughput'>('lagging')
+const topTaskTab = ref<'lagging' | 'throughput' | 'dataRate'>('lagging')
 const topTaskTabOptions = computed(() => [
   { label: t('dashboard_odh_most_lagging'), value: 'lagging' },
   { label: t('dashboard_odh_highest_throughput'), value: 'throughput' },
+  { label: t('dashboard_odh_estimated_data_rate'), value: 'dataRate' },
 ])
 const topTaskLimit = ref<5 | 10 | 20>(5)
 const topTaskLimitOptions = computed(() => [
@@ -104,6 +113,20 @@ const topTaskLimitOptions = computed(() => [
   { label: t('dashboard_odh_top_n', [10]), value: 10 },
   { label: t('dashboard_odh_top_n', [20]), value: 20 },
 ])
+const dataRateDirection = ref<ThrottleDirection>('OUTPUT')
+const dataRateWindow = ref<300 | 3600>(300)
+const dataRateDirectionOptions = computed(() => [
+  { label: t('dashboard_odh_direction_output'), value: 'OUTPUT' },
+  { label: t('dashboard_odh_direction_input'), value: 'INPUT' },
+])
+const dataRateWindowOptions = computed(() => [
+  { label: t('dashboard_odh_window_5m'), value: 300 },
+  { label: t('dashboard_odh_window_1h'), value: 3600 },
+])
+const dataRateRanking = ref<TaskThrottleRankingResponse | null>(null)
+const dataRateLoading = ref(false)
+const dataRateError = ref(false)
+let dataRateRequestSeq = 0
 
 // Cluster / Agent data
 interface AgentNode extends ClusterState {
@@ -465,14 +488,85 @@ const topTasks = computed<TaskDashboardTopTask[]>(() => {
   return (list || []).slice(0, topTaskLimit.value)
 })
 
-function goToMonitor(task: TaskDashboardTopTask) {
-  const route =
+function goToMonitor(task: { taskId: string; syncType?: string }) {
+  const routeName =
     task.syncType === 'migrate'
-      ? { name: 'MigrationMonitor', params: { id: task.taskId } }
-      : { name: 'TaskMonitor', params: { id: task.taskId } }
+      ? 'MigrationMonitor'
+      : task.syncType === 'logCollector'
+        ? 'SharedMiningMonitor'
+        : 'TaskMonitor'
+  const route = { name: routeName, params: { id: task.taskId } }
   const href = router.resolve(route).href
   window.open(href, '_blank')
 }
+
+function taskKindLabel(kind?: string): string {
+  if (kind === 'migrate') return t('dashboard_odh_kind_migrate')
+  if (kind === 'logCollector') return t('dashboard_odh_kind_logCollector')
+  return t('dashboard_odh_kind_sync')
+}
+
+function excludedReasonLabel(reason: string): string {
+  if (reason === 'COVERAGE_BELOW_90_PERCENT') {
+    return t('dashboard_odh_excluded_coverage')
+  }
+  if (reason === 'CLOCK_UNALIGNED') {
+    return t('dashboard_odh_excluded_clock')
+  }
+  return t('dashboard_odh_excluded_sample')
+}
+
+const dataRateItems = computed<TaskThrottleRankingItem[]>(
+  () => dataRateRanking.value?.items || [],
+)
+
+async function fetchDataRateRanking() {
+  const direction = dataRateDirection.value
+  const windowSeconds = dataRateWindow.value
+  const top = topTaskLimit.value
+  const reqId = ++dataRateRequestSeq
+  dataRateLoading.value = true
+  dataRateError.value = false
+  try {
+    const res = await getTaskThrottleRanking(
+      {
+        direction,
+        windowSeconds,
+        top,
+      },
+      { skipErrorMessage: true, skipErrorHandler: true, skipAuthExpire: true },
+    )
+    if (
+      reqId !== dataRateRequestSeq ||
+      dataRateDirection.value !== direction ||
+      dataRateWindow.value !== windowSeconds ||
+      topTaskLimit.value !== top
+    ) {
+      return
+    }
+    dataRateRanking.value = res
+  } catch {
+    if (
+      reqId === dataRateRequestSeq &&
+      dataRateDirection.value === direction &&
+      dataRateWindow.value === windowSeconds &&
+      topTaskLimit.value === top
+    ) {
+      dataRateRanking.value = null
+      dataRateError.value = true
+    }
+  } finally {
+    if (reqId === dataRateRequestSeq) {
+      dataRateLoading.value = false
+    }
+  }
+}
+
+watch([topTaskTab, dataRateDirection, dataRateWindow], () => {
+  if (topTaskTab.value === 'dataRate') {
+    fetchDataRateRanking()
+  }
+})
 
 function latencyClass(ms: number): string {
   const s = ms / 1000
@@ -880,6 +974,9 @@ function onApiTimeRangeChange() {
 
 function onTopTaskLimitChange() {
   fetchPartial('tops', trendsTimeRange.value, topTaskLimit.value)
+  if (topTaskTab.value === 'dataRate') {
+    fetchDataRateRanking()
+  }
 }
 
 // ── Navigation ─────────────────────────────────────────
@@ -905,6 +1002,9 @@ async function refreshAll() {
       fetchTrends(),
       fetchTrendNodes(),
       fetchPartial('tops', trendsTimeRange.value, topTaskLimit.value),
+      topTaskTab.value === 'dataRate'
+        ? fetchDataRateRanking()
+        : Promise.resolve(),
       fetchClusterData(),
     ])
   } finally {
@@ -920,6 +1020,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   trendRequestId += 1
+  dataRateRequestSeq += 1
   if (refreshTimer) clearInterval(refreshTimer)
 })
 </script>
@@ -1213,8 +1314,10 @@ onBeforeUnmount(() => {
 
         <!-- ═══ Top Tasks ═══ -->
         <div class="dashboard__card bg-card p-5 mb-6">
-          <div class="flex justify-content-between align-items-center mb-4">
-            <div class="flex align-items-center gap-3">
+          <div
+            class="flex justify-content-between align-items-center mb-4 flex-wrap gap-3"
+          >
+            <div class="flex align-items-center gap-3 flex-wrap">
               <h2 class="fs-5 font-semibold m-0">
                 {{ t('dashboard_odh_top_tasks') }}
               </h2>
@@ -1223,6 +1326,18 @@ onBeforeUnmount(() => {
                 :options="topTaskTabOptions"
                 size="small"
               />
+              <template v-if="topTaskTab === 'dataRate'">
+                <el-segmented
+                  v-model="dataRateDirection"
+                  :options="dataRateDirectionOptions"
+                  size="small"
+                />
+                <el-segmented
+                  v-model="dataRateWindow"
+                  :options="dataRateWindowOptions"
+                  size="small"
+                />
+              </template>
             </div>
             <el-segmented
               v-model="topTaskLimit"
@@ -1232,45 +1347,180 @@ onBeforeUnmount(() => {
             />
           </div>
 
-          <div v-if="topTasks.length" class="dashboard__table-wrap">
-            <table class="dashboard__table w-100">
-              <thead>
-                <tr>
-                  <th class="text-start">#</th>
-                  <th class="text-start">{{ t('dashboard_odh_task_name') }}</th>
-                  <th class="text-end">{{ t('dashboard_odh_latency') }}</th>
-                  <th class="text-end">{{ t('dashboard_odh_throughput') }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(task, idx) in topTasks" :key="task.taskId">
-                  <td class="text-secondary">{{ idx + 1 }}</td>
-                  <td class="font-semibold">
-                    <a
-                      class="color-primary cursor-pointer text-decoration-none"
-                      @click="goToMonitor(task)"
-                      >{{ task.taskName }}</a
+          <template v-if="topTaskTab === 'dataRate'">
+            <div v-loading="dataRateLoading">
+              <div v-if="dataRateItems.length" class="dashboard__table-wrap">
+                <table class="dashboard__table w-100">
+                  <thead>
+                    <tr>
+                      <th class="text-start">#</th>
+                      <th class="text-start">
+                        {{ t('dashboard_odh_task_name') }}
+                      </th>
+                      <th class="text-start">
+                        {{ t('dashboard_odh_task_type') }}
+                      </th>
+                      <th class="text-end">
+                        {{ t('dashboard_odh_estimated_data_rate') }}
+                      </th>
+                      <th class="text-end">
+                        {{ t('dashboard_odh_coverage') }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(item, idx) in dataRateItems" :key="item.taskId">
+                      <td class="text-secondary">{{ idx + 1 }}</td>
+                      <td class="font-semibold">
+                        <div class="inline-flex align-center gap-2 flex-wrap">
+                          <a
+                            class="color-primary cursor-pointer text-decoration-none"
+                            @click="
+                              goToMonitor({
+                                taskId: item.taskId,
+                                syncType: item.taskKind,
+                              })
+                            "
+                            >{{ item.taskName }}</a
+                          >
+                          <TaskThrottleBadge
+                            v-if="item.liveStatus"
+                            :task-status="
+                              item.liveStatus?.throttlingActive ||
+                              item.liveStatus?.statusUnknown
+                                ? 'running'
+                                : ''
+                            "
+                            :live-status="item.liveStatus"
+                            compact
+                          />
+                        </div>
+                      </td>
+                      <td class="text-secondary">
+                        {{ taskKindLabel(item.taskKind) }}
+                      </td>
+                      <td class="text-end font-mono">
+                        {{
+                          `${Number(item.estimatedMbPerSec ?? 0).toFixed(3)} MB/s`
+                        }}
+                      </td>
+                      <td class="text-end font-mono">
+                        {{ `${Math.round((item.coverageRatio ?? 0) * 100)}%` }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <el-alert
+                v-else-if="dataRateError"
+                type="error"
+                :closable="false"
+                show-icon
+                class="my-2"
+              >
+                <div class="flex align-center justify-content-between gap-2">
+                  <span>{{ t('dashboard_odh_trend_request_failed') }}</span>
+                  <el-button
+                    size="small"
+                    type="primary"
+                    link
+                    @click="fetchDataRateRanking"
+                  >
+                    {{ t('public_button_refresh') }}
+                  </el-button>
+                </div>
+              </el-alert>
+              <el-empty
+                v-else
+                :description="t('dashboard_odh_no_task_data')"
+                :image-size="60"
+              />
+              <div class="mt-3 fs-8 text-secondary">
+                {{
+                  t('dashboard_odh_data_rate_rule', {
+                    version:
+                      dataRateRanking?.meterVersion || THROTTLE_METER_VERSION,
+                    pct: Math.round(
+                      (dataRateRanking?.minCoverageRatio ?? 0.9) * 100,
+                    ),
+                  })
+                }}
+              </div>
+              <el-collapse
+                v-if="dataRateRanking?.excluded?.length"
+                class="mt-2"
+              >
+                <el-collapse-item
+                  name="excluded"
+                  :title="
+                    t('dashboard_odh_data_rate_excluded_title', {
+                      count: dataRateRanking.excluded.length,
+                    })
+                  "
+                >
+                  <div class="flex flex-column gap-1 fs-8 text-secondary">
+                    <div
+                      v-for="ex in dataRateRanking.excluded"
+                      :key="ex.taskId"
+                      class="flex justify-content-between"
                     >
-                  </td>
-                  <td class="text-end">
-                    <span
-                      class="dashboard__badge"
-                      :class="latencyClass(task.latency ?? 0)"
-                      >{{ calcTimeUnit(task.latency ?? 0) }}</span
-                    >
-                  </td>
-                  <td class="text-end font-mono">
-                    {{ formatThroughput(task.throughput ?? 0) }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <el-empty
-            v-else
-            :description="t('dashboard_odh_no_task_data')"
-            :image-size="60"
-          />
+                      <span>{{ ex.taskName || ex.taskId }}</span>
+                      <span>
+                        {{ excludedReasonLabel(ex.reason) }} ({{
+                          `${Math.round((ex.coverageRatio ?? 0) * 100)}%`
+                        }})
+                      </span>
+                    </div>
+                  </div>
+                </el-collapse-item>
+              </el-collapse>
+            </div>
+          </template>
+          <template v-else>
+            <div v-if="topTasks.length" class="dashboard__table-wrap">
+              <table class="dashboard__table w-100">
+                <thead>
+                  <tr>
+                    <th class="text-start">#</th>
+                    <th class="text-start">
+                      {{ t('dashboard_odh_task_name') }}
+                    </th>
+                    <th class="text-end">{{ t('dashboard_odh_latency') }}</th>
+                    <th class="text-end">
+                      {{ t('dashboard_odh_throughput') }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(task, idx) in topTasks" :key="task.taskId">
+                    <td class="text-secondary">{{ idx + 1 }}</td>
+                    <td class="font-semibold">
+                      <a
+                        class="color-primary cursor-pointer text-decoration-none"
+                        @click="goToMonitor(task)"
+                        >{{ task.taskName }}</a
+                      >
+                    </td>
+                    <td class="text-end">
+                      <span
+                        class="dashboard__badge"
+                        :class="latencyClass(task.latency ?? 0)"
+                        >{{ calcTimeUnit(task.latency ?? 0) }}</span
+                      >
+                    </td>
+                    <td class="text-end font-mono">
+                      {{ formatThroughput(task.throughput ?? 0) }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <el-empty
+              v-else
+              :description="t('dashboard_odh_no_task_data')"
+              :image-size="60"
+            />
+          </template>
         </div>
 
         <!-- ═══ Agent Cluster Status ═══ -->

@@ -15,6 +15,10 @@ import {
   forceStopTask,
   taskConsoleRelations,
 } from '@tap/api/src/core/task'
+import {
+  getTaskThrottleLiveStatuses,
+  type TaskThrottleLiveStatusView,
+} from '@tap/api/src/core/task-throttle'
 import { requestClient, withPassive } from '@tap/api/src/request'
 import { VTable } from '@tap/component/src/base/v-table'
 import { FilterBar } from '@tap/component/src/filter-bar'
@@ -37,6 +41,7 @@ import { useRoute, useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
 import TaskStatus from '../../components/TaskStatus.vue'
+import TaskThrottleBadge from '../../components/task-throttle/TaskThrottleBadge.vue'
 import { makeStatusAndDisabled } from '../../shared'
 import { formatTaskMetricInfo } from '../../shared/task-metric'
 import { canEditTaskStatus } from '../../shared/task-edit-status.js'
@@ -65,7 +70,11 @@ const searchParams = ref({
   connectionName: '',
   status: '',
   agentId: '',
+  throttleStatus: '',
 })
+const throttleLiveStatusMap = ref<Record<string, TaskThrottleLiveStatusView>>(
+  {},
+)
 
 const order = ref('createTime DESC')
 const spacer = h(ElDivider, { direction: 'vertical', class: 'mx-1' })
@@ -116,6 +125,30 @@ const filterItems = ref<any[]>([
       { label: t('public_status_running'), value: 'running' },
       { label: t('public_status_stop'), value: 'stop' },
       { label: t('public_status_error'), value: 'error' },
+    ],
+  },
+  {
+    label: t('packages_business_task_throttle_filter_label'),
+    key: 'throttleStatus',
+    type: 'select-inner',
+    items: [
+      { label: t('packages_business_task_throttle_filter_all'), value: '' },
+      {
+        label: t('packages_business_task_throttle_filter_throttling'),
+        value: 'throttling',
+      },
+      {
+        label: t('packages_business_task_throttle_filter_configured_idle'),
+        value: 'configured_idle',
+      },
+      {
+        label: t('packages_business_task_throttle_filter_disabled'),
+        value: 'disabled',
+      },
+      {
+        label: t('packages_business_task_throttle_filter_unknown'),
+        value: 'unknown',
+      },
     ],
   },
   {
@@ -181,6 +214,9 @@ const getData = async ({
   if (agentId) {
     where.agentId = agentId
   }
+  if (searchParams.value.throttleStatus) {
+    where.throttleStatus = searchParams.value.throttleStatus
+  }
 
   const filter = {
     order: order.value,
@@ -190,32 +226,41 @@ const getData = async ({
   }
   const data = await fetchLogcollector(filter)
   const list: any[] = data?.items || []
+  const liveStatusMap = list.length
+    ? await withPassive(() =>
+        getTaskThrottleLiveStatuses(list.map((i) => i.id).filter(Boolean)),
+      ).catch(() => ({}))
+    : {}
+  throttleLiveStatusMap.value = liveStatusMap || {}
+
   const pointTime = new Date()
+  const mappedList = list.map((item) => {
+    if (item.syncTimePoint === 'current') {
+      item.pointTime = dayjs(pointTime).format('YYYY-MM-DD HH:mm:ss')
+    } else {
+      item.pointTime = item.syncTimeZone
+    }
+    item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+    item.logTime = item.logTime
+      ? dayjs(item.logTime).format('YYYY-MM-DD HH:mm:ss')
+      : '-'
+    item.delayTime =
+      item.delayTime < 0 || typeof item.delayTime !== 'number'
+        ? '-'
+        : calcTimeUnit(item.delayTime, 2, { autoHideMs: true })
+    makeStatusAndDisabled(item)
+    if (item.status === 'edit') {
+      item.btnDisabled.start = false
+    }
+    if (item.metricInfo) {
+      item.metricInfo = formatTaskMetricInfo(item.metricInfo, t, calcUnit)
+    }
+    return item
+  })
+
   return {
     total: data?.total || 0,
-    data: list.map((item) => {
-      if (item.syncTimePoint === 'current') {
-        item.pointTime = dayjs(pointTime).format('YYYY-MM-DD HH:mm:ss')
-      } else {
-        item.pointTime = item.syncTimeZone
-      }
-      item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-      item.logTime = item.logTime
-        ? dayjs(item.logTime).format('YYYY-MM-DD HH:mm:ss')
-        : '-'
-      item.delayTime =
-        item.delayTime < 0 || typeof item.delayTime !== 'number'
-          ? '-'
-          : calcTimeUnit(item.delayTime, 2, { autoHideMs: true })
-      makeStatusAndDisabled(item)
-      if (item.status === 'edit') {
-        item.btnDisabled.start = false
-      }
-      if (item.metricInfo) {
-        item.metricInfo = formatTaskMetricInfo(item.metricInfo, t, calcUnit)
-      }
-      return item
-    }),
+    data: mappedList,
   }
 }
 
@@ -560,12 +605,19 @@ onUnmounted(() => {
         sortable
       />
       <el-table-column
-        min-width="110"
+        min-width="150"
         prop="status"
         :label="$t('packages_business_shared_list_status')"
       >
         <template #default="{ row }">
-          <TaskStatus :task="row" />
+          <div class="inline-flex align-center gap-1 flex-wrap">
+            <TaskStatus :task="row" />
+            <TaskThrottleBadge
+              :task-status="row.status"
+              :live-status="throttleLiveStatusMap[row.id]"
+              compact
+            />
+          </div>
         </template>
       </el-table-column>
       <el-table-column

@@ -12,6 +12,7 @@ import {
   forceStopTask,
   updateTask,
 } from '@tap/api/src/core/task'
+import { getTaskThrottleLiveStatuses } from '@tap/api/src/core/task-throttle'
 import { getTaskUsedAgent } from '@tap/api/src/core/workers'
 import { withPassive } from '@tap/api/src/request'
 import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
@@ -30,6 +31,7 @@ import PermissionseSettingsCreate from '../../components/permissionse-settings/C
 import SyncStatus from '../../components/SyncStatus.vue'
 import TablePage from '../../components/TablePage.vue'
 import TaskStatus from '../../components/TaskStatus.vue'
+import TaskThrottleBadge from '../../components/task-throttle/TaskThrottleBadge.vue'
 import UpgradeCharges from '../../components/UpgradeCharges.vue'
 import UpgradeFee from '../../components/UpgradeFee.vue'
 import Upload from '../../components/UploadDialog.vue'
@@ -54,6 +56,7 @@ export default {
     Upload,
     BatchTagDialog,
     TaskStatus,
+    TaskThrottleBadge,
     PermissionseSettingsCreate,
     UpgradeCharges,
     UpgradeFee,
@@ -125,7 +128,9 @@ export default {
         status: '',
         type: '',
         syncStatus: '',
+        throttleStatus: '',
       },
+      throttleLiveStatusMap: {},
       //删除任务 pg数据源 slot 删除失败 自定义dialog 提示
       dialogDelMsgVisible: false,
       copySelectSql: `SELECT slot_name FROM pg_replication_slots WHERE slot_name like 'tapdata_cdc_%' and active='false';`,
@@ -319,6 +324,9 @@ export default {
       if (syncStatus) {
         where.syncStatus = syncStatus
       }
+      if (this.searchParams.throttleStatus) {
+        where.throttleStatus = this.searchParams.throttleStatus
+      }
       const filter = {
         order: this.order,
         limit: size,
@@ -326,7 +334,7 @@ export default {
         skip: (current - 1) * size,
         where,
       }
-      return fetchTasks(filter).then((data) => {
+      return fetchTasks(filter).then(async (data) => {
         const errorTaskIds = []
         const list = (data?.items || []).map((item) => {
           if (item.errorEvents?.length) {
@@ -353,13 +361,24 @@ export default {
           return item
         })
 
+        const liveStatusMap = list.length
+          ? await withPassive(() =>
+              getTaskThrottleLiveStatuses(
+                list.map((item) => item.id).filter(Boolean),
+              ),
+            ).catch(() => ({}))
+          : {}
+        this.throttleLiveStatusMap = liveStatusMap || {}
+
+        const finalList = list
+
         /*if (!this.isDaas) {
           this.loadTaskErrorCause(errorTaskIds)
         }*/
 
         // 有选中行，列表刷新后无法更新行数据，比如状态
-        if (this.multipleSelection.length && list.length) {
-          const tempMap = list.reduce((map, item) => {
+        if (this.multipleSelection.length && finalList.length) {
+          const tempMap = finalList.reduce((map, item) => {
             map[item.id] = item
             return map
           }, {})
@@ -375,13 +394,13 @@ export default {
           deleted.forEach((item) => {
             this.table.toggleRowSelection(item, false)
           })
-        } else if (!list.length) {
+        } else if (!finalList.length) {
           this.table.clearSelection()
         }
 
         return {
-          total: data.total,
-          data: list,
+          total: data?.total || 0,
+          data: finalList,
         }
       })
     },
@@ -446,6 +465,38 @@ export default {
           ],
           width: 240,
           id: 'sync-status-filter-select',
+        },
+        {
+          label: this.$t('packages_business_task_throttle_filter_label'),
+          key: 'throttleStatus',
+          type: 'select-inner',
+          items: [
+            {
+              label: this.$t('packages_business_task_throttle_filter_all'),
+              value: '',
+            },
+            {
+              label: this.$t(
+                'packages_business_task_throttle_filter_throttling',
+              ),
+              value: 'throttling',
+            },
+            {
+              label: this.$t(
+                'packages_business_task_throttle_filter_configured_idle',
+              ),
+              value: 'configured_idle',
+            },
+            {
+              label: this.$t('packages_business_task_throttle_filter_disabled'),
+              value: 'disabled',
+            },
+            {
+              label: this.$t('packages_business_task_throttle_filter_unknown'),
+              value: 'unknown',
+            },
+          ],
+          id: 'throttle-status-filter-select',
         },
         {
           label: i18n.t('public_agent_name'),
@@ -1321,11 +1372,18 @@ export default {
         class-name="task-status-cell"
       >
         <template #default="{ row }">
-          <TaskStatus
-            :task="row"
-            :agent-map="agentMap"
-            :error-cause="taskErrorCause[row.id]"
-          />
+          <div class="inline-flex align-center gap-1 flex-wrap">
+            <TaskStatus
+              :task="row"
+              :agent-map="agentMap"
+              :error-cause="taskErrorCause[row.id]"
+            />
+            <TaskThrottleBadge
+              :task-status="row.status"
+              :live-status="throttleLiveStatusMap[row.id]"
+              compact
+            />
+          </div>
         </template>
       </el-table-column>
       <el-table-column

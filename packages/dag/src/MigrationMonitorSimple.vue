@@ -1163,6 +1163,9 @@ export default {
             'replicateLag',
             'inputSizeQps',
             'outputSizeQps',
+            'estimatedInputBytesRate',
+            'estimatedOutputBytesRate',
+            'throttleSampleQualityCode',
             'qpsType',
           ],
           type: 'continuous', // 连续数据

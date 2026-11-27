@@ -214,6 +214,12 @@ export function initRequestClient() {
   requestClient.addResponseInterceptor(
     errorMessageResponseInterceptor(
       (msg: string, error) => {
+        if (
+          (error?.config as any)?.skipErrorMessage ||
+          (error?.response?.config as any)?.skipErrorMessage
+        ) {
+          return
+        }
         // 这里可以根据业务进行定制,你可以拿到 error 内的信息进行定制化处理，根据不同的 code 做不同的提示，而不是直接使用 message.error 提示 msg
         const responseData = error?.response?.data ?? {}
         const errorMessage = responseData?.message ?? responseData?.msg
@@ -229,7 +235,13 @@ export function initRequestClient() {
         })
       },
       {
-        401: () => {
+        401: (error: any) => {
+          if (
+            error?.config?.skipAuthExpire ||
+            error?.response?.config?.skipAuthExpire
+          ) {
+            return i18n.global.t('public_message_401')
+          }
           const isSingleSession = getSettingByKey(
             'login.single.session',
             'open',
