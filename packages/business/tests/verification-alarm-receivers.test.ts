@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
+  formatInspectReceiverPreviewSource,
   initialInspectAlarm,
   inspectReceiverPreviewEmailCount,
   inspectReceiverPreviewRequest,
@@ -84,6 +85,36 @@ test('uses the resolved unique email list length for the preview count', () => {
   )
   assert.equal(inspectReceiverPreviewEmailCount({ emails: [] }), 0)
   assert.equal(inspectReceiverPreviewEmailCount(null), 0)
+})
+
+test('localizes legacy preview sources while preserving masked names', () => {
+  const translate = (key: string, params: Record<string, string>) =>
+    JSON.stringify({ key, params })
+  const cases = [
+    ['系统默认', 'packages_dag_alarm_receiver_status_system', {}],
+    ['邮箱', 'packages_dag_alarm_receiver_type_email', {}],
+    [
+      '用户a***@example.com',
+      'packages_business_verification_form_preview_source_user',
+      { name: 'a***@example.com' },
+    ],
+    [
+      '用户组 / 用户支持 / 用户a***@example.com',
+      'packages_business_verification_form_preview_source_group_user',
+      { group: '用户组 / 用户支持', name: 'a***@example.com' },
+    ],
+  ] as const
+
+  for (const [source, key, params] of cases) {
+    assert.equal(
+      formatInspectReceiverPreviewSource(source, translate),
+      translate(key, params),
+    )
+  }
+  assert.equal(
+    formatInspectReceiverPreviewSource('Unknown source', () => assert.fail()),
+    'Unknown source',
+  )
 })
 
 test('preserves recipients on an unchanged edit but allows an explicit reset', () => {

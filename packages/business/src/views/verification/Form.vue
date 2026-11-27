@@ -9,6 +9,7 @@ import {
 import {
   fetchInspectReceiverPreview,
   type AlarmReceiver,
+  type AlarmReceiverPreviewEmail,
 } from '@tap/api/src/core/alarm'
 import { getTaskById } from '@tap/api/src/core/task'
 import { useRequest } from '@tap/api/src/request'
@@ -36,6 +37,7 @@ import ConditionBox from './components/ConditionBox.vue'
 import { TABLE_PARAMS } from './components/const.js'
 import { inspectMethod as inspectMethodMap } from './const.js'
 import {
+  formatInspectReceiverPreviewSource,
   initialInspectAlarm,
   inspectReceiverPreviewEmailCount,
   inspectReceiverPreviewRequest,
@@ -103,7 +105,7 @@ interface Task {
 
 const router = useRouter()
 const route = useRoute()
-const { t } = useI18n()
+const { locale, t } = useI18n()
 useSystemAlarmStatus(
   () => (route.params.id ? String(route.params.id) : undefined),
   'inspect',
@@ -338,10 +340,23 @@ const activePanel = ref('condition')
 const alarmReceiverInvalid = ref(false)
 const resetInspectReceivers = ref(false)
 const receiverPreviewCount = ref<number | null>(null)
+const receiverPreviewEmails = ref<AlarmReceiverPreviewEmail[]>([])
+const receiverPreviewDetailsOpen = ref(false)
 const receiverPreviewFailed = ref(false)
 const receiverPreviewRestricted = ref(false)
 const receiverPreviewStale = ref(false)
 const receiverPreviewReady = ref(false)
+const receiverPreviewRows = computed(() => {
+  const formatter = new Intl.ListFormat(locale.value)
+  return receiverPreviewEmails.value.map(({ email, sources }) => ({
+    email,
+    sourceLabel: formatter.format(
+      (sources ?? []).map((source) =>
+        formatInspectReceiverPreviewSource(source, t),
+      ),
+    ),
+  }))
+})
 let receiverPreviewTimer: ReturnType<typeof setTimeout> | undefined
 let receiverPreviewVersion = 0
 
@@ -355,6 +370,9 @@ const loadReceiverPreview = async () => {
     )
     if (version !== receiverPreviewVersion) return
     receiverPreviewCount.value = inspectReceiverPreviewEmailCount(preview)
+    receiverPreviewEmails.value = Array.isArray(preview?.emails)
+      ? preview.emails
+      : []
     receiverPreviewFailed.value = false
     receiverPreviewStale.value = false
   } catch (error) {
@@ -366,6 +384,7 @@ const loadReceiverPreview = async () => {
     receiverPreviewRestricted.value = code === 'insufficient.permissions'
     if (!receiverPreviewRestricted.value) console.error(error)
     receiverPreviewCount.value = null
+    receiverPreviewEmails.value = []
     receiverPreviewFailed.value = true
     receiverPreviewStale.value = false
   }
@@ -1272,7 +1291,51 @@ provide('ConnectorMap', ConnectorMap)
                     count: receiverPreviewCount,
                   })
                 }}
+                <ElButton
+                  v-if="receiverPreviewEmails.length"
+                  text
+                  type="primary"
+                  @click="
+                    receiverPreviewDetailsOpen = !receiverPreviewDetailsOpen
+                  "
+                >
+                  {{
+                    $t(
+                      receiverPreviewDetailsOpen
+                        ? 'packages_dag_alarm_receiver_preview_hide'
+                        : 'packages_dag_alarm_receiver_preview_detail',
+                    )
+                  }}
+                </ElButton>
               </div>
+              <ul
+                v-if="
+                  receiverPreviewDetailsOpen &&
+                  !receiverPreviewStale &&
+                  receiverPreviewEmails.length
+                "
+                class="inspect-receiver-preview-list"
+              >
+                <li
+                  v-for="item in receiverPreviewRows"
+                  :key="item.email"
+                  class="inspect-receiver-preview-item"
+                >
+                  <span
+                    class="inspect-receiver-preview-email"
+                    :title="item.email"
+                  >
+                    {{ item.email }}
+                  </span>
+                  <small
+                    v-if="item.sourceLabel"
+                    class="inspect-receiver-preview-source text-secondary"
+                    :title="item.sourceLabel"
+                  >
+                    {{ item.sourceLabel }}
+                  </small>
+                </li>
+              </ul>
               <div
                 v-if="receiverPreviewFailed && !receiverPreviewStale"
                 class="flex align-center gap-2 fs-7"
@@ -1485,6 +1548,41 @@ provide('ConnectorMap', ConnectorMap)
 </template>
 
 <style lang="scss" scoped>
+.inspect-receiver-preview-list {
+  max-height: 180px;
+  overflow: auto;
+  margin: 4px 0 0;
+  padding: 4px 8px;
+  list-style: none;
+  border-radius: 4px;
+  background: var(--el-fill-color-lighter);
+}
+
+.inspect-receiver-preview-item {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  align-items: center;
+  gap: 12px;
+  padding: 2px 0;
+  line-height: 18px;
+}
+
+.inspect-receiver-preview-email,
+.inspect-receiver-preview-source {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inspect-receiver-preview-email {
+  text-align: left;
+}
+
+.inspect-receiver-preview-source {
+  text-align: right;
+}
+
 .only-one.el-collapse {
   :deep(.el-collapse-item.is-active) {
     .el-collapse-item__wrap {

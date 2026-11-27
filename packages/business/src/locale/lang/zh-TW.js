@@ -827,6 +827,9 @@ export default {
   packages_business_verification_form_alarm_receivers_system:
     '使用系統預設接收人',
   packages_business_verification_form_alarm_receivers_custom: '自訂接收人',
+  packages_business_verification_form_preview_source_user: '用戶 {name}',
+  packages_business_verification_form_preview_source_group_user:
+    '{group} / 用戶 {name}',
   packages_business_verification_form_receiver_preview_restricted:
     '基於隱私保護，此接收人組合無法預覽郵箱數，但可以儲存。',
   packages_business_verification_form_task_alarm_when_error:
