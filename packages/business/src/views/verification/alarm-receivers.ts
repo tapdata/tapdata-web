@@ -9,6 +9,12 @@ type SyncTaskAlarm = {
   emailReceivers?: unknown
 }
 
+// The preview API returns these fixed source labels around already-masked names.
+const SYSTEM_SOURCE = '系统默认' // i18n-ignore: legacy API label
+const EMAIL_SOURCE = '邮箱' // i18n-ignore: legacy API label
+const USER_SOURCE_PREFIX = '用户' // i18n-ignore: legacy API prefix
+const GROUP_USER_SEPARATOR = ' / 用户' // i18n-ignore: legacy API separator
+
 export function initialInspectAlarm(task?: SyncTaskAlarm | null): {
   alarmReceivers: AlarmReceiver[] | null
   emailReceivers: string[] | null
@@ -60,6 +66,35 @@ export function inspectReceiverPreviewEmailCount(
   preview?: AlarmReceiverPreview | null,
 ) {
   return Array.isArray(preview?.emails) ? preview.emails.length : 0
+}
+
+export function formatInspectReceiverPreviewSource(
+  source: string,
+  t: (key: string, params: Record<string, string>) => string,
+) {
+  if (source === SYSTEM_SOURCE) {
+    return t('packages_dag_alarm_receiver_status_system', {})
+  }
+  if (source === EMAIL_SOURCE) {
+    return t('packages_dag_alarm_receiver_type_email', {})
+  }
+
+  const groupEnd = source.lastIndexOf(GROUP_USER_SEPARATOR)
+  if (groupEnd > 0 && groupEnd + GROUP_USER_SEPARATOR.length < source.length) {
+    return t('packages_business_verification_form_preview_source_group_user', {
+      group: source.slice(0, groupEnd),
+      name: source.slice(groupEnd + GROUP_USER_SEPARATOR.length),
+    })
+  }
+  if (
+    source.startsWith(USER_SOURCE_PREFIX) &&
+    source.length > USER_SOURCE_PREFIX.length
+  ) {
+    return t('packages_business_verification_form_preview_source_user', {
+      name: source.slice(USER_SOURCE_PREFIX.length),
+    })
+  }
+  return source
 }
 
 export function shouldResetInspectReceivers(
