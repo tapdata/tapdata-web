@@ -34,6 +34,8 @@ export interface ThrottlePhaseDraft {
   mbPerSecInput: string
   qpsEnabled: boolean
   eventsPerSecInput: string
+  originalBytesPerSec?: number | null
+  originalMbPerSecInput?: string
 }
 
 export type ThrottlePolicyDraft = Record<ThrottlePhase, ThrottlePhaseDraft>
@@ -157,12 +159,15 @@ function createEmptyPhaseDraft(
     typeof bytesVal === 'number' && Number.isFinite(bytesVal) && bytesVal > 0
   const hasQps =
     typeof qpsVal === 'number' && Number.isFinite(qpsVal) && qpsVal > 0
+  const formattedBytes = hasBytes ? formatMbPerSec(bytesVal) : ''
   return {
     enabled: Boolean(limit?.enabled),
     bytesEnabled: hasBytes,
-    mbPerSecInput: hasBytes ? formatMbPerSec(bytesVal) : '',
+    mbPerSecInput: formattedBytes,
     qpsEnabled: hasQps,
     eventsPerSecInput: hasQps ? String(Math.round(qpsVal)) : '',
+    originalBytesPerSec: hasBytes ? Math.round(bytesVal) : null,
+    originalMbPerSecInput: formattedBytes,
   }
 }
 
@@ -270,7 +275,19 @@ export function validateThrottleDraft(
   return errors
 }
 
-function parsePreservedBytesOrNull(rawInput: string): number | null {
+function parsePreservedBytesOrNull(
+  phaseDraft: ThrottlePhaseDraft,
+): number | null {
+  const rawInput = phaseDraft.mbPerSecInput
+  if (
+    typeof phaseDraft.originalBytesPerSec === 'number' &&
+    Number.isFinite(phaseDraft.originalBytesPerSec) &&
+    phaseDraft.originalBytesPerSec >= THROTTLE_MIN_BYTES_PER_SEC &&
+    phaseDraft.originalBytesPerSec <= THROTTLE_MAX_BYTES_PER_SEC &&
+    (rawInput || '').trim() === (phaseDraft.originalMbPerSecInput ?? '').trim()
+  ) {
+    return Math.round(phaseDraft.originalBytesPerSec)
+  }
   if (validatePositiveBytesMbInput(rawInput) !== null) {
     return null
   }
@@ -307,7 +324,7 @@ export function draftToUpdateRequest(
       phases[phase] = {
         enabled: true,
         bytesPerSec: phaseDraft.bytesEnabled
-          ? mbPerSecToBytesPerSec(phaseDraft.mbPerSecInput)
+          ? parsePreservedBytesOrNull(phaseDraft)
           : null,
         eventsPerSec: phaseDraft.qpsEnabled
           ? parsePreservedEventsOrNull(phaseDraft.eventsPerSecInput)
@@ -316,7 +333,7 @@ export function draftToUpdateRequest(
     } else {
       phases[phase] = {
         enabled: false,
-        bytesPerSec: parsePreservedBytesOrNull(phaseDraft.mbPerSecInput),
+        bytesPerSec: parsePreservedBytesOrNull(phaseDraft),
         eventsPerSec: parsePreservedEventsOrNull(phaseDraft.eventsPerSecInput),
       }
     }

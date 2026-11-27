@@ -1722,6 +1722,14 @@ export function useCanvasOperation() {
       return
     }
 
+    if (
+      dataflowStore.throttleValidateHandler &&
+      !dataflowStore.throttleValidateHandler()
+    ) {
+      isSaving.value = false
+      return false
+    }
+
     dataflowStore.showConsole = true
     dataflowStore.consoleAutoLoadType = 'checkDag'
 
@@ -1735,7 +1743,8 @@ export function useCanvasOperation() {
       if (dataflowStore.throttleSaveHandler) {
         const throttleOk = await dataflowStore.throttleSaveHandler(result.id)
         if (!throttleOk) {
-          ElMessage.error(t('packages_dag_task_throttle_save_blocked_start'))
+          ElMessage.warning(t('packages_dag_task_throttle_partial_save_warn'))
+          dataflowStore.editVersion = result.editVersion
           isSaving.value = false
           return false
         }

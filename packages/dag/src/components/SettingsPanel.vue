@@ -610,6 +610,9 @@ const formScope: FormScope = {
   $registerThrottleSaveHandler: (fn) => {
     dataflowStore.setThrottleSaveHandler(fn)
   },
+  $registerThrottleValidateHandler: (fn) => {
+    dataflowStore.setThrottleValidateHandler(fn)
+  },
   $canEditTaskThrottle: () =>
     Boolean(buttonShowMap.Edit) && route.name !== 'MigrationMonitorViewer',
   $isRunningThrottleMode: () => Boolean(dataflowStore.stateIsReadonly),
@@ -1487,6 +1490,8 @@ const schema = {
                                     standalone: true,
                                     registerSaveHandler:
                                       formScope.$registerThrottleSaveHandler,
+                                    registerValidateHandler:
+                                      formScope.$registerThrottleValidateHandler,
                                   },
                                   'x-reactions': {
                                     dependencies: [

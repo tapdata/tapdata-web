@@ -545,3 +545,33 @@ test('draftToUpdateRequest drops invalid dormant inputs while keeping valid dorm
   assert.equal(req.phases.CDC?.enabled, true)
   assert.equal(req.phases.CDC?.eventsPerSec, 250)
 })
+
+test('draftToUpdateRequest preserves exact non-round byte limits like 1501 B/s when only QPS changes', () => {
+  const view = {
+    taskKey: 't:sync:task-1501',
+    tenantId: 't',
+    taskKind: 'sync' as const,
+    taskId: 'task-1501',
+    desiredVersion: 3,
+    desiredPhases: {
+      CDC: { enabled: true, bytesPerSec: 1501, eventsPerSec: 100 },
+    },
+    appliedVersion: 3,
+    applyStatus: 'APPLIED' as const,
+    currentRunEpoch: 1,
+    protectedRunActive: true,
+    stopGateStatus: 'NONE' as const,
+  }
+  const draft = policyViewToDraft(view)
+  assert.equal(draft.CDC.mbPerSecInput, '0.002')
+  // User edits only QPS while leaving the byte limit field untouched
+  draft.CDC.eventsPerSecInput = '200'
+  const unchangedByteReq = draftToUpdateRequest(draft, ['CDC'], 3)
+  assert.equal(unchangedByteReq.phases.CDC?.bytesPerSec, 1501)
+  assert.equal(unchangedByteReq.phases.CDC?.eventsPerSec, 200)
+
+  // Once user explicitly edits the byte limit field, recalculate from MB/s input
+  draft.CDC.mbPerSecInput = '0.003'
+  const changedByteReq = draftToUpdateRequest(draft, ['CDC'], 3)
+  assert.equal(changedByteReq.phases.CDC?.bytesPerSec, 3000)
+})

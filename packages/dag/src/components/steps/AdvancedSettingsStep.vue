@@ -82,6 +82,7 @@ export default defineComponent({
     const lockedFeature = inject('lockedFeature')
     const openLocked = inject('openLocked')
     const throttleSaveHandler = ref(null)
+    const throttleValidateHandler = ref(null)
     useSystemAlarmStatus(() => taskRef?.value?.id)
     const scope = {
       lockedFeature,
@@ -89,6 +90,9 @@ export default defineComponent({
       $settings: taskRef.value,
       $registerThrottleSaveHandler: (fn) => {
         throttleSaveHandler.value = fn
+      },
+      $registerThrottleValidateHandler: (fn) => {
+        throttleValidateHandler.value = fn
       },
       hasFeature: (feature) => {
         return !isDaas || store.getters['feature/hasFeature']?.(feature)
@@ -1717,6 +1721,8 @@ export default defineComponent({
                             standalone: true,
                             registerSaveHandler:
                               scope.$registerThrottleSaveHandler,
+                            registerValidateHandler:
+                              scope.$registerThrottleValidateHandler,
                           },
                           'x-reactions': {
                             dependencies: ['id', 'type', 'status'],
@@ -2286,6 +2292,11 @@ export default defineComponent({
       let isOk = false
 
       try {
+        if (throttleValidateHandler.value && !throttleValidateHandler.value()) {
+          starting.value = false
+          return false
+        }
+
         if (throttleSaveHandler.value) {
           const throttleOk = await throttleSaveHandler.value(taskRef.value?.id)
           if (!throttleOk) {

@@ -18,39 +18,91 @@ const props = defineProps<{
 
 const { t } = useI18n()
 
+const PAGE_SIZE = 50
 const loading = ref(false)
+const loadingMore = ref(false)
+const hasMore = ref(false)
+const currentPage = ref(0)
 const rows = ref<TaskThrottleChangeLogEntry[]>([])
 const filterType = ref<string>('ALL')
 const filterWindow = ref<'ALL' | '24H' | '7D'>('ALL')
+let loadSeq = 0
 
-async function loadChanges() {
+function buildQueryParams(page: number) {
+  const now = Date.now()
+  const startAt =
+    filterWindow.value === '24H'
+      ? now - 24 * 3600 * 1000
+      : filterWindow.value === '7D'
+        ? now - 7 * 24 * 3600 * 1000
+        : undefined
+  const eventType =
+    filterType.value === 'POLICY_CHANGE' || filterType.value === 'STOP_EVIDENCE'
+      ? filterType.value
+      : filterType.value === 'RECEIPT_APPLIED' ||
+          filterType.value === 'RECEIPT_FAILED'
+        ? 'APPLY_RECEIPT'
+        : undefined
+  return {
+    page,
+    size: PAGE_SIZE,
+    ...(startAt !== undefined ? { startAt } : {}),
+    ...(eventType ? { eventType } : {}),
+  }
+}
+
+async function loadChanges(reset = true) {
   if (!props.taskId || !props.taskKind) {
     rows.value = []
+    hasMore.value = false
     return
   }
-  loading.value = true
+  const seq = ++loadSeq
+  const nextPage = reset ? 0 : currentPage.value + 1
+  if (reset) {
+    loading.value = true
+  } else {
+    loadingMore.value = true
+  }
   try {
-    const data = await listTaskThrottleChanges(props.taskKind, props.taskId, {
-      page: 0,
-      size: 100,
-    })
-    rows.value = Array.isArray(data) ? data : []
+    const data = await listTaskThrottleChanges(
+      props.taskKind,
+      props.taskId,
+      buildQueryParams(nextPage),
+    )
+    if (seq !== loadSeq) return
+    const list = Array.isArray(data) ? data : []
+    if (reset) {
+      rows.value = list
+      currentPage.value = 0
+    } else {
+      const seen = new Set(rows.value.map((r) => r.id))
+      rows.value = [...rows.value, ...list.filter((r) => !seen.has(r.id))]
+      currentPage.value = nextPage
+    }
+    hasMore.value = list.length >= PAGE_SIZE
   } catch {
-    rows.value = []
+    if (seq === loadSeq && reset) {
+      rows.value = []
+      hasMore.value = false
+    }
   } finally {
-    loading.value = false
+    if (seq === loadSeq) {
+      loading.value = false
+      loadingMore.value = false
+    }
   }
 }
 
 watch(
-  () => [props.taskId, props.taskKind],
+  () => [props.taskId, props.taskKind, filterType.value, filterWindow.value],
   () => {
-    loadChanges()
+    loadChanges(true)
   },
 )
 
 onMounted(() => {
-  loadChanges()
+  loadChanges(true)
 })
 
 const filteredRows = computed(() => {
@@ -232,7 +284,7 @@ function getOutcomeBadge(outcome?: string | null): {
 }
 
 defineExpose({
-  refresh: loadChanges,
+  refresh: () => loadChanges(true),
 })
 </script>
 
@@ -285,7 +337,7 @@ defineExpose({
             })
           }}
         </span>
-        <el-button size="small" :loading="loading" @click="loadChanges">
+        <el-button size="small" :loading="loading" @click="loadChanges(true)">
           {{ t('public_button_refresh') }}
         </el-button>
       </div>
@@ -444,6 +496,15 @@ defineExpose({
           </template>
         </el-table-column>
       </el-table>
+    </div>
+    <div v-if="hasMore" class="flex justify-center pt-1">
+      <el-button
+        size="small"
+        :loading="loadingMore"
+        @click="loadChanges(false)"
+      >
+        {{ t('public_button_load_more') }}
+      </el-button>
     </div>
   </div>
 </template>

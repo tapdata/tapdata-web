@@ -1171,4 +1171,9 @@ export default {
     '限速策略校驗或儲存失敗，已阻止啟動任務。請在修正參數或重試儲存後重新啟動。',
   packages_dag_task_throttle_wait_reasons: '目前等待原因',
   packages_dag_task_throttle_log_status_label: '日誌保留狀態',
+  packages_dag_task_throttle_partial_save_warn:
+    '任務基礎設定已儲存，但限速策略儲存失敗，請修正後重試儲存限速設定。',
+  packages_dag_task_throttle_sample_interval_unavailable: '不可用',
+  packages_dag_task_throttle_rate_quality_partial:
+    '部分時段樣本缺失或已回退為歷史指標口徑',
 }

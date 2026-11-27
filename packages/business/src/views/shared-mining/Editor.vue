@@ -209,11 +209,18 @@ export default {
 
     open(id) {
       this.taskId = id
+      this.advancedCollapse = []
       this.init()
       this.visible = true
+      this.$nextTick(() => {
+        this.$refs.throttlePanelRef?.reload?.()
+      })
     },
 
     handleClose() {
+      this.$refs.throttlePanelRef?.resetDraft?.()
+      this.advancedCollapse = []
+      this.taskId = ''
       this.visible = false
     },
 
@@ -237,6 +244,9 @@ export default {
         (await this.$refs.throttlePanelRef?.saveIfNeeded?.(this.taskId)) ?? true
       if (!throttleOk) {
         this.advancedCollapse = ['throttle']
+        this.$message.warning(
+          this.$t('packages_business_task_throttle_partial_save_warn'),
+        )
         return
       }
 

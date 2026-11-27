@@ -1364,4 +1364,9 @@ export default {
     'Throttling policy validation or save failed; task start blocked. Fix parameters or retry saving before starting.',
   packages_dag_task_throttle_wait_reasons: 'Active Wait Causes',
   packages_dag_task_throttle_log_status_label: 'Log Retention Status',
+  packages_dag_task_throttle_partial_save_warn:
+    'Task settings were saved, but the throttling policy failed to save. Fix or retry saving throttling before starting.',
+  packages_dag_task_throttle_sample_interval_unavailable: 'Unavailable',
+  packages_dag_task_throttle_rate_quality_partial:
+    'Some sampling points are missing or fell back to legacy metrics.',
 }

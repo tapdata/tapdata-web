@@ -125,6 +125,8 @@ const dataRateWindowOptions = computed(() => [
 ])
 const dataRateRanking = ref<TaskThrottleRankingResponse | null>(null)
 const dataRateLoading = ref(false)
+const dataRateError = ref(false)
+let dataRateRequestSeq = 0
 
 // Cluster / Agent data
 interface AgentNode extends ClusterState {
@@ -519,21 +521,44 @@ const dataRateItems = computed<TaskThrottleRankingItem[]>(
 )
 
 async function fetchDataRateRanking() {
+  const direction = dataRateDirection.value
+  const windowSeconds = dataRateWindow.value
+  const top = topTaskLimit.value
+  const reqId = ++dataRateRequestSeq
   dataRateLoading.value = true
+  dataRateError.value = false
   try {
     const res = await getTaskThrottleRanking(
       {
-        direction: dataRateDirection.value,
-        windowSeconds: dataRateWindow.value,
-        top: topTaskLimit.value,
+        direction,
+        windowSeconds,
+        top,
       },
-      { skipErrorMessage: true, skipErrorHandler: true },
+      { skipErrorMessage: true, skipErrorHandler: true, skipAuthExpire: true },
     )
+    if (
+      reqId !== dataRateRequestSeq ||
+      dataRateDirection.value !== direction ||
+      dataRateWindow.value !== windowSeconds ||
+      topTaskLimit.value !== top
+    ) {
+      return
+    }
     dataRateRanking.value = res
   } catch {
-    // Keep previous ranking if background fetch fails
+    if (
+      reqId === dataRateRequestSeq &&
+      dataRateDirection.value === direction &&
+      dataRateWindow.value === windowSeconds &&
+      topTaskLimit.value === top
+    ) {
+      dataRateRanking.value = null
+      dataRateError.value = true
+    }
   } finally {
-    dataRateLoading.value = false
+    if (reqId === dataRateRequestSeq) {
+      dataRateLoading.value = false
+    }
   }
 }
 
@@ -995,6 +1020,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   trendRequestId += 1
+  dataRateRequestSeq += 1
   if (refreshTimer) clearInterval(refreshTimer)
 })
 </script>
@@ -1385,6 +1411,25 @@ onBeforeUnmount(() => {
                   </tbody>
                 </table>
               </div>
+              <el-alert
+                v-else-if="dataRateError"
+                type="error"
+                :closable="false"
+                show-icon
+                class="my-2"
+              >
+                <div class="flex align-center justify-content-between gap-2">
+                  <span>{{ t('dashboard_odh_trend_request_failed') }}</span>
+                  <el-button
+                    size="small"
+                    type="primary"
+                    link
+                    @click="fetchDataRateRanking"
+                  >
+                    {{ t('public_button_refresh') }}
+                  </el-button>
+                </div>
+              </el-alert>
               <el-empty
                 v-else
                 :description="t('dashboard_odh_no_task_data')"

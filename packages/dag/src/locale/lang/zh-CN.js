@@ -1205,4 +1205,9 @@ export default {
     '限速策略校验或保存失败，已阻止启动任务。请在修复参数或重试保存后重新启动。',
   packages_dag_task_throttle_wait_reasons: '当前等待原因',
   packages_dag_task_throttle_log_status_label: '日志保留状态',
+  packages_dag_task_throttle_partial_save_warn:
+    '任务基础配置已保存，但限速策略保存失败，请修复后重试保存限速配置。',
+  packages_dag_task_throttle_sample_interval_unavailable: '不可用',
+  packages_dag_task_throttle_rate_quality_partial:
+    '部分时段样本缺失或已回退为历史指标口径',
 }

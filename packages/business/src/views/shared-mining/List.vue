@@ -42,7 +42,6 @@ import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
 import TaskStatus from '../../components/TaskStatus.vue'
 import TaskThrottleBadge from '../../components/task-throttle/TaskThrottleBadge.vue'
-import { classifyTaskThrottleFilter } from '../../components/task-throttle/utils'
 import { makeStatusAndDisabled } from '../../shared'
 import { formatTaskMetricInfo } from '../../shared/task-metric'
 import { canEditTaskStatus } from '../../shared/task-edit-status.js'
@@ -215,6 +214,9 @@ const getData = async ({
   if (agentId) {
     where.agentId = agentId
   }
+  if (searchParams.value.throttleStatus) {
+    where.throttleStatus = searchParams.value.throttleStatus
+  }
 
   const filter = {
     order: order.value,
@@ -256,24 +258,9 @@ const getData = async ({
     return item
   })
 
-  const throttleFilter = searchParams.value.throttleStatus
-  const finalList = throttleFilter
-    ? mappedList.filter(
-        (item) =>
-          classifyTaskThrottleFilter(
-            {
-              status: item.status,
-              syncType: item.syncType || 'logCollector',
-              type: item.type || 'cdc',
-            },
-            throttleLiveStatusMap.value[item.id],
-          ) === throttleFilter,
-      )
-    : mappedList
-
   return {
-    total: throttleFilter ? finalList.length : data?.total || 0,
-    data: finalList,
+    total: data?.total || 0,
+    data: mappedList,
   }
 }
 

@@ -24,6 +24,10 @@ const props = withDefaults(
   },
 )
 
+const emit = defineEmits<{
+  saved: [config: TaskThrottleSampleConfigView]
+}>()
+
 const { t } = useI18n()
 
 const loading = ref(false)
@@ -103,6 +107,7 @@ async function handleSave() {
     const updated = await updateTaskThrottleSampleConfig(check.value)
     configView.value = updated
     intervalInput.value = String(updated.intervalSeconds)
+    emit('saved', updated)
     ElMessage.success(
       t('packages_business_cdc_sample_save_success', {
         version: updated.configVersion,

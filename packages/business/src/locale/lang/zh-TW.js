@@ -2056,4 +2056,8 @@ export default {
   packages_business_cdc_sample_status_applying: '正在套用',
   packages_business_cdc_sample_status_legacy: '舊版不支援',
   packages_business_cdc_sample_no_agents: '暫無已註冊的能力 Agent',
+  packages_business_task_throttle_load_required_before_save:
+    '未能確認目前任務限速策略版本，請重新整理後再儲存限速設定。',
+  packages_business_task_throttle_partial_save_warn:
+    '基本設定已儲存，但限速策略儲存失敗，請檢查後單獨儲存或重試。',
 }

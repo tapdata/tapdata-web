@@ -5,13 +5,11 @@ import { findOneSharedCache } from '@tap/api/src/core/shared-cache'
 import {
   getLogCollectorThrottleOverview,
   getTaskThrottlePolicy,
-  getTaskThrottleSampleConfig,
   listTaskThrottleChanges,
   type LogCollectorThrottleOverviewView,
   type LogPositionStatus,
   type TaskThrottleChangeLogEntry,
   type TaskThrottlePolicyView,
-  type TaskThrottleSampleConfigView,
   type ThrottlePhase,
   type ThrottleWaitReason,
 } from '@tap/api/src/core/task-throttle'
@@ -33,7 +31,15 @@ import { calcTimeUnit, calcUnit, getSettingByKey } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash-es'
-import { computed, inject, onMounted, ref, watch, type Ref } from 'vue'
+import {
+  computed,
+  inject,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+  type Ref,
+} from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import Frequency from './components/Frequency.vue'
@@ -83,9 +89,45 @@ const isUpdatingTimeSelect = ref(false)
 
 const throttlePolicy = ref<TaskThrottlePolicyView | null>(null)
 const throttleChanges = ref<TaskThrottleChangeLogEntry[]>([])
-const throttleSampleConfig = ref<TaskThrottleSampleConfigView | null>(null)
 const logCollectorOverview = ref<LogCollectorThrottleOverviewView | null>(null)
 let lastThrottleFetchAt = 0
+let throttlePollTimer: ReturnType<typeof setInterval> | null = null
+let throttleFetchSeq = 0
+
+const THROTTLE_TERMINAL_STATUSES = [
+  'edit',
+  'error',
+  'schedule_failed',
+  'stop',
+  'complete',
+  'wait_start',
+]
+
+const throttleSampleIntervalSeconds = computed<number | null>(() => {
+  const sec = throttlePolicy.value?.cdcSampleRefreshIntervalSeconds
+  return typeof sec === 'number' && Number.isFinite(sec) && sec > 0 ? sec : null
+})
+
+const hasThrottleRateQualityGap = computed(() => {
+  const data = props.quota?.samples?.lineChartData?.[0]
+  if (!data) return false
+  const hasEstimated =
+    Array.isArray(data.estimatedInputBytesRate) ||
+    Array.isArray(data.estimatedOutputBytesRate)
+  if (!hasEstimated) return true
+  const qualityCodes: any[] = data.throttleSampleQualityCode || []
+  if (
+    qualityCodes.some((c) => c !== null && c !== undefined && Number(c) !== 1)
+  ) {
+    return true
+  }
+  const inArr: any[] = data.estimatedInputBytesRate || []
+  const outArr: any[] = data.estimatedOutputBytesRate || []
+  return (
+    inArr.some((v) => v === null || v === undefined) ||
+    outArr.some((v) => v === null || v === undefined)
+  )
+})
 
 const normalizedThrottleKind = computed(() =>
   normalizeThrottleTaskKind(dataflow.value?.syncType),
@@ -172,9 +214,14 @@ async function fetchThrottleMonitorData(force = false) {
   const now = Date.now()
   if (!force && now - lastThrottleFetchAt < 5000) return
   lastThrottleFetchAt = now
+  const seq = ++throttleFetchSeq
 
-  const silent = { skipErrorMessage: true, skipErrorHandler: true }
-  const [policy, changes, sampleCfg, overview] = await withPassive(() =>
+  const silent = {
+    skipErrorMessage: true,
+    skipErrorHandler: true,
+    skipAuthExpire: true,
+  }
+  const [policy, changes, overview] = await withPassive(() =>
     Promise.all([
       getTaskThrottlePolicy(kind, taskId, silent).catch(() => null),
       listTaskThrottleChanges(
@@ -183,24 +230,50 @@ async function fetchThrottleMonitorData(force = false) {
         { page: 0, size: 100 },
         silent,
       ).catch(() => []),
-      getTaskThrottleSampleConfig(silent).catch(() => null),
       kind === 'logCollector'
         ? getLogCollectorThrottleOverview(taskId, silent).catch(() => null)
         : Promise.resolve(null),
     ]),
   )
+  if (seq !== throttleFetchSeq || dataflow.value?.id !== taskId) {
+    return
+  }
   if (policy) throttlePolicy.value = policy
   if (Array.isArray(changes)) throttleChanges.value = changes
-  if (sampleCfg) throttleSampleConfig.value = sampleCfg
   if (kind === 'logCollector') {
     logCollectorOverview.value = overview
   }
 }
 
+function stopThrottlePoll() {
+  if (throttlePollTimer) {
+    clearInterval(throttlePollTimer)
+    throttlePollTimer = null
+  }
+}
+
+function ensureThrottlePoll() {
+  const kind = normalizedThrottleKind.value
+  const taskId = dataflow.value?.id
+  const status = String(dataflow.value?.status || '').toLowerCase()
+  const shouldPollThrottle =
+    Boolean(kind && taskId) && !THROTTLE_TERMINAL_STATUSES.includes(status)
+  if (shouldPollThrottle) {
+    if (!throttlePollTimer) {
+      throttlePollTimer = setInterval(() => {
+        fetchThrottleMonitorData(true)
+      }, 5000)
+    }
+  } else {
+    stopThrottlePoll()
+  }
+}
+
 watch(
-  () => [dataflow.value?.id, dataflow.value?.syncType],
+  () => [dataflow.value?.id, dataflow.value?.syncType, dataflow.value?.status],
   () => {
     fetchThrottleMonitorData(true)
+    ensureThrottlePoll()
   },
 )
 
@@ -210,6 +283,11 @@ watch(
     fetchThrottleMonitorData(false)
   },
 )
+
+onBeforeUnmount(() => {
+  throttleFetchSeq++
+  stopThrottlePoll()
+})
 
 const cpuUsageOptions = {
   tooltip: {
@@ -281,11 +359,22 @@ const qpsMap = computed(() => {
       markLine: [{ data: [] }],
     }
   }
+  const absOrNull = (arr?: any[]) =>
+    arr?.map((v) =>
+      v === null || v === undefined ? null : Math.abs(Number(v)),
+    )
+  const hasEstimatedSeries =
+    Array.isArray(data.estimatedInputBytesRate) ||
+    Array.isArray(data.estimatedOutputBytesRate)
   const { time = [] } = props.quota as any
-  const inputQps = data.inputQps?.map(Math.abs)
-  const outputQps = data.outputQps?.map(Math.abs)
-  const inputSizeQps = data.inputSizeQps?.map(Math.abs)
-  const outputSizeQps = data.outputSizeQps?.map(Math.abs)
+  const inputQps = absOrNull(data.inputQps)
+  const outputQps = absOrNull(data.outputQps)
+  const inputSizeQps = hasEstimatedSeries
+    ? absOrNull(data.estimatedInputBytesRate)
+    : absOrNull(data.inputSizeQps)
+  const outputSizeQps = hasEstimatedSeries
+    ? absOrNull(data.estimatedOutputBytesRate)
+    : absOrNull(data.outputSizeQps)
   const inputQps95th = data.inputQps95th
   const inputQps99th = data.inputQps99th
   const outputQps95th = data.outputQps95th
@@ -868,6 +957,7 @@ watch(
 onMounted(() => {
   timeSelectLabel.value = timeSelectRef.value?.getPeriod()?.label
   fetchThrottleMonitorData(true)
+  ensureThrottlePoll()
 })
 </script>
 
@@ -1171,9 +1261,11 @@ onMounted(() => {
           </span>
           <span class="font-color-dark tabular-nums">
             {{
-              $t('packages_dag_task_throttle_sample_interval_value', {
-                seconds: throttleSampleConfig?.intervalSeconds ?? 30,
-              })
+              throttleSampleIntervalSeconds !== null
+                ? $t('packages_dag_task_throttle_sample_interval_value', {
+                    seconds: throttleSampleIntervalSeconds,
+                  })
+                : $t('packages_dag_task_throttle_sample_interval_unavailable')
             }}
           </span>
         </div>
@@ -1352,10 +1444,16 @@ onMounted(() => {
             :data="qpsMap[qpsChartsType]"
             :color="qpsColors"
             :time-format="timeFormat"
-            :label-unit-type="qpsChartsType === 'size' ? 'byte' : ''"
+            :label-unit-type="qpsChartsType === 'size' ? 'byte_decimal' : ''"
             auto-scale
             class="line-chart"
           />
+          <div
+            v-if="qpsChartsType === 'size' && hasThrottleRateQualityGap"
+            class="fs-8 font-color-sslight mt-1"
+          >
+            {{ $t('packages_dag_task_throttle_rate_quality_partial') }}
+          </div>
         </div>
         <div class="line-chart__box mb-2">
           <div class="flex align-center gap-2">
@@ -1572,7 +1670,7 @@ onMounted(() => {
         :data="qpsMap[qpsChartsType]"
         :color="qpsColors"
         :time-format="timeFormat"
-        :label-unit-type="qpsChartsType === 'size' ? 'byte' : ''"
+        :label-unit-type="qpsChartsType === 'size' ? 'byte_decimal' : ''"
         :options="{
           legend: {
             show: true,

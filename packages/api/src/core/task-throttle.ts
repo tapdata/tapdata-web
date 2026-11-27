@@ -37,6 +37,7 @@ export type ThrottleStopGateStatus =
 
 export type ThrottleRequestConfig = RequestClientConfig & {
   skipErrorMessage?: boolean
+  skipAuthExpire?: boolean
 }
 
 export interface ThrottlePhaseLimit {
@@ -86,6 +87,8 @@ export interface TaskThrottlePolicyView {
   protectedRunActive: boolean
   stopGateStatus: ThrottleStopGateStatus
   stopGateReason?: string | null
+  cdcSampleRefreshIntervalSeconds?: number | null
+  sampleConfigVersion?: number | null
   liveStatus?: TaskThrottleLiveStatusView | null
 }
 
@@ -242,7 +245,13 @@ export function updateTaskThrottlePolicy(
 export function listTaskThrottleChanges(
   kind: ThrottleTaskKind,
   taskId: string,
-  params?: { page?: number; size?: number },
+  params?: {
+    page?: number
+    size?: number
+    startAt?: number
+    endAt?: number
+    eventType?: string
+  },
   config?: ThrottleRequestConfig,
 ) {
   return requestClient.get<TaskThrottleChangeLogEntry[]>(

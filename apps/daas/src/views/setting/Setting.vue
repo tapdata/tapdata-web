@@ -40,6 +40,11 @@ import {
 
 export default {
   name: 'Setting',
+  inject: {
+    hasPermissionByCode: {
+      default: () => () => false,
+    },
+  },
   components: {
     TextFileReader,
     PageContainer,
@@ -212,6 +217,15 @@ export default {
     },
     isSettingVisible(setting) {
       return isSettingDependencyVisible(setting, this.settingsByKey)
+    },
+    async handleSampleConfigSaved() {
+      try {
+        const settings = await fetchSettings()
+        setSettings(settings)
+        localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(settings))
+      } catch {
+        // Ignore background settings cache refresh failure
+      }
     },
     // 获取设置数据
     getData() {
@@ -803,7 +817,14 @@ export default {
             </el-row>
           </div>
           <div v-else-if="activePanel === 'SyncDataRateStatistics'" class="box">
-            <CdcSampleRefreshSetting :can-edit="email === 'admin@admin.com'" />
+            <CdcSampleRefreshSetting
+              :can-edit="
+                email === 'admin@admin.com' ||
+                Boolean(hasPermissionByCode?.('v2_system_settings_menu')) ||
+                Boolean(hasPermissionByCode?.('system_settings_modification'))
+              "
+              @saved="handleSampleConfigSaved"
+            />
           </div>
           <template v-else>
             <div

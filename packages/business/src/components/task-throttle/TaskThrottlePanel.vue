@@ -40,6 +40,7 @@ const props = withDefaults(
     registerSaveHandler?:
       | ((fn: ((targetTaskId?: string) => Promise<boolean>) | null) => void)
       | null
+    registerValidateHandler?: ((fn: (() => boolean) | null) => void) | null
   }>(),
   {
     taskId: '',
@@ -51,6 +52,7 @@ const props = withDefaults(
     runningMode: false,
     logCollectorOverview: null,
     registerSaveHandler: null,
+    registerValidateHandler: null,
   },
 )
 
@@ -78,6 +80,10 @@ const saveErrorMessage = ref('')
 const conflictBanner = ref('')
 
 const policyView = ref<TaskThrottlePolicyView | null>(null)
+const draftBaseVersion = ref<number>(0)
+const policyLoaded = ref(false)
+const policyLoadError = ref(false)
+let activeLoadSeq = 0
 const savedDraftSnapshot = ref<ThrottlePolicyDraft>(
   createDefaultThrottleDraft(),
 )
@@ -225,16 +231,28 @@ function ensurePendingPoll() {
 }
 
 async function pollPolicyStatusOnly() {
-  if (!resolvedTaskId.value || !normalizedKind.value) return
+  const targetTaskId = resolvedTaskId.value
+  const targetKind = normalizedKind.value
+  if (!targetTaskId || !targetKind) return
+  const seqSnapshot = activeLoadSeq
   try {
-    const fresh = await getTaskThrottlePolicy(
-      normalizedKind.value,
-      resolvedTaskId.value,
-      { skipErrorMessage: true, skipErrorHandler: true },
-    )
+    const fresh = await getTaskThrottlePolicy(targetKind, targetTaskId, {
+      skipErrorMessage: true,
+      skipErrorHandler: true,
+    })
+    if (
+      seqSnapshot !== activeLoadSeq ||
+      resolvedTaskId.value !== targetTaskId ||
+      normalizedKind.value !== targetKind
+    ) {
+      return
+    }
     const wasDirty = dirty.value
     policyView.value = fresh
+    policyLoaded.value = true
+    policyLoadError.value = false
     if (!wasDirty) {
+      draftBaseVersion.value = fresh?.desiredVersion ?? 0
       savedDraftSnapshot.value = policyViewToDraft(fresh)
       draft.value = policyViewToDraft(fresh)
     }
@@ -246,42 +264,55 @@ async function pollPolicyStatusOnly() {
 
 async function reload() {
   stopPendingPoll()
-  if (!resolvedTaskId.value || !normalizedKind.value) {
-    policyView.value = null
-    savedDraftSnapshot.value = createDefaultThrottleDraft()
-    draft.value = createDefaultThrottleDraft()
-    fetchedOverview.value = null
+  const seq = ++activeLoadSeq
+  const targetTaskId = resolvedTaskId.value
+  const targetKind = normalizedKind.value
+  policyView.value = null
+  draftBaseVersion.value = 0
+  policyLoaded.value = false
+  policyLoadError.value = false
+  savedDraftSnapshot.value = createDefaultThrottleDraft()
+  draft.value = createDefaultThrottleDraft()
+  fetchedOverview.value = null
+  validationErrors.value = []
+  conflictBanner.value = ''
+  saveFailed.value = false
+  saveErrorMessage.value = ''
+  if (!targetTaskId || !targetKind) {
     return
   }
   loading.value = true
   try {
-    const view = await getTaskThrottlePolicy(
-      normalizedKind.value,
-      resolvedTaskId.value,
-      { skipErrorMessage: true },
-    )
+    const view = await getTaskThrottlePolicy(targetKind, targetTaskId, {
+      skipErrorMessage: true,
+    })
+    if (seq !== activeLoadSeq) return
     policyView.value = view
+    draftBaseVersion.value = view?.desiredVersion ?? 0
+    policyLoaded.value = true
+    policyLoadError.value = false
     const nextDraft = policyViewToDraft(view)
     savedDraftSnapshot.value = nextDraft
     draft.value = policyViewToDraft(view)
-    validationErrors.value = []
-    conflictBanner.value = ''
-    saveFailed.value = false
-    saveErrorMessage.value = ''
 
-    if (
-      normalizedKind.value === 'logCollector' &&
-      !props.logCollectorOverview
-    ) {
-      fetchedOverview.value = await getLogCollectorThrottleOverview(
-        resolvedTaskId.value,
+    if (targetKind === 'logCollector' && !props.logCollectorOverview) {
+      const overview = await getLogCollectorThrottleOverview(
+        targetTaskId,
       ).catch(() => null)
+      if (seq === activeLoadSeq) {
+        fetchedOverview.value = overview
+      }
     }
     ensurePendingPoll()
   } catch {
-    // Leave existing draft usable if initial policy read fails
+    if (seq === activeLoadSeq) {
+      policyLoaded.value = false
+      policyLoadError.value = true
+    }
   } finally {
-    loading.value = false
+    if (seq === activeLoadSeq) {
+      loading.value = false
+    }
   }
 }
 
@@ -292,9 +323,17 @@ function validateDraft(): ThrottleValidationError[] {
 }
 
 function resetDraft() {
-  draft.value = policyView.value
-    ? policyViewToDraft(policyView.value)
-    : createDefaultThrottleDraft()
+  activeLoadSeq++
+  stopPendingPoll()
+  if (policyView.value && policyLoaded.value) {
+    draftBaseVersion.value = policyView.value.desiredVersion ?? 0
+    savedDraftSnapshot.value = policyViewToDraft(policyView.value)
+    draft.value = policyViewToDraft(policyView.value)
+  } else {
+    draftBaseVersion.value = 0
+    savedDraftSnapshot.value = createDefaultThrottleDraft()
+    draft.value = createDefaultThrottleDraft()
+  }
   validationErrors.value = []
   saveFailed.value = false
   saveErrorMessage.value = ''
@@ -313,6 +352,15 @@ async function savePolicy(
   if (!props.canEdit) {
     return true
   }
+  if (policyLoadError.value || (resolvedTaskId.value && !policyLoaded.value)) {
+    const loadErrMsg = t(
+      'packages_business_task_throttle_load_required_before_save',
+    )
+    saveFailed.value = true
+    saveErrorMessage.value = loadErrMsg
+    ElMessage.error(loadErrMsg)
+    return false
+  }
 
   const errs = validateDraft()
   if (errs.length > 0) {
@@ -320,7 +368,7 @@ async function savePolicy(
     return false
   }
 
-  const expectedVersion = policyView.value?.desiredVersion ?? 0
+  const expectedVersion = draftBaseVersion.value
   const payload = draftToUpdateRequest(
     draft.value,
     applicablePhases.value,
@@ -333,6 +381,9 @@ async function savePolicy(
   try {
     const updated = await updateTaskThrottlePolicy(kind, taskId, payload)
     policyView.value = updated
+    draftBaseVersion.value = updated?.desiredVersion ?? 0
+    policyLoaded.value = true
+    policyLoadError.value = false
     savedDraftSnapshot.value = policyViewToDraft(updated)
     draft.value = policyViewToDraft(updated)
     saveFailed.value = false
@@ -354,6 +405,9 @@ async function savePolicy(
       })
       if (conflict.latestView) {
         policyView.value = conflict.latestView
+        draftBaseVersion.value = conflict.latestView.desiredVersion ?? 0
+        policyLoaded.value = true
+        policyLoadError.value = false
         savedDraftSnapshot.value = policyViewToDraft(conflict.latestView)
         draft.value = policyViewToDraft(conflict.latestView)
       }
@@ -376,6 +430,15 @@ async function savePolicy(
 
 async function saveIfNeeded(targetTaskId?: string): Promise<boolean> {
   if (!normalizedKind.value || !props.canEdit) {
+    return true
+  }
+  if (policyLoadError.value || (resolvedTaskId.value && !policyLoaded.value)) {
+    if (dirty.value) {
+      ElMessage.error(
+        t('packages_business_task_throttle_load_required_before_save'),
+      )
+      return false
+    }
     return true
   }
   const errs = validateDraft()
@@ -535,13 +598,36 @@ watch(
   },
 )
 
+function validateBeforeTaskSave(): boolean {
+  if (!normalizedKind.value || !props.canEdit) {
+    return true
+  }
+  const errs = validateDraft()
+  if (errs.length > 0) {
+    ElMessage.error(formatValidationError(errs[0]))
+    return false
+  }
+  if (
+    dirty.value &&
+    (policyLoadError.value || (resolvedTaskId.value && !policyLoaded.value))
+  ) {
+    ElMessage.error(
+      t('packages_business_task_throttle_load_required_before_save'),
+    )
+    return false
+  }
+  return true
+}
+
 onMounted(() => {
   props.registerSaveHandler?.(saveIfNeeded)
+  props.registerValidateHandler?.(validateBeforeTaskSave)
 })
 
 onBeforeUnmount(() => {
   stopPendingPoll()
   props.registerSaveHandler?.(null)
+  props.registerValidateHandler?.(null)
 })
 
 defineExpose({

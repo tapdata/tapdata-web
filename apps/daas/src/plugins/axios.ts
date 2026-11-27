@@ -235,7 +235,13 @@ export function initRequestClient() {
         })
       },
       {
-        401: () => {
+        401: (error: any) => {
+          if (
+            error?.config?.skipAuthExpire ||
+            error?.response?.config?.skipAuthExpire
+          ) {
+            return i18n.global.t('public_message_401')
+          }
           const isSingleSession = getSettingByKey(
             'login.single.session',
             'open',

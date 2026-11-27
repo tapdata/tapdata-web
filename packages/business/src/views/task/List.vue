@@ -32,7 +32,6 @@ import SyncStatus from '../../components/SyncStatus.vue'
 import TablePage from '../../components/TablePage.vue'
 import TaskStatus from '../../components/TaskStatus.vue'
 import TaskThrottleBadge from '../../components/task-throttle/TaskThrottleBadge.vue'
-import { classifyTaskThrottleFilter } from '../../components/task-throttle/utils'
 import UpgradeCharges from '../../components/UpgradeCharges.vue'
 import UpgradeFee from '../../components/UpgradeFee.vue'
 import Upload from '../../components/UploadDialog.vue'
@@ -325,6 +324,9 @@ export default {
       if (syncStatus) {
         where.syncStatus = syncStatus
       }
+      if (this.searchParams.throttleStatus) {
+        where.throttleStatus = this.searchParams.throttleStatus
+      }
       const filter = {
         order: this.order,
         limit: size,
@@ -368,16 +370,7 @@ export default {
           : {}
         this.throttleLiveStatusMap = liveStatusMap || {}
 
-        const throttleFilter = this.searchParams.throttleStatus
-        const finalList = throttleFilter
-          ? list.filter(
-              (item) =>
-                classifyTaskThrottleFilter(
-                  item,
-                  this.throttleLiveStatusMap[item.id],
-                ) === throttleFilter,
-            )
-          : list
+        const finalList = list
 
         /*if (!this.isDaas) {
           this.loadTaskErrorCause(errorTaskIds)
@@ -406,7 +399,7 @@ export default {
         }
 
         return {
-          total: throttleFilter ? finalList.length : data.total,
+          total: data?.total || 0,
           data: finalList,
         }
       })

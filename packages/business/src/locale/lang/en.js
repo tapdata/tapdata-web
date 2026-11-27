@@ -2259,7 +2259,8 @@ export default {
     'Downstream Consumers ({visible}/{total})',
   packages_business_task_throttle_lc_consumer_delay: 'Consumer Lag',
   packages_business_task_throttle_lc_consumer_output: 'Output Rate',
-  packages_business_task_throttle_lc_consumer_throttled: 'Throttled',
+  packages_business_task_throttle_lc_consumer_throttled:
+    'Throttling configured',
   packages_business_task_throttle_lc_hidden_consumers:
     '{count} additional downstream task(s) are hidden due to permissions and counted in totals only.',
   packages_business_cdc_sample_title: 'CDC Data Size Sampling Interval',
@@ -2290,4 +2291,8 @@ export default {
   packages_business_cdc_sample_status_legacy: 'Legacy Unsupported',
   packages_business_cdc_sample_no_agents:
     'No registered Agents with throttling capabilities',
+  packages_business_task_throttle_load_required_before_save:
+    'Unable to confirm current throttling policy version. Refresh and try saving again.',
+  packages_business_task_throttle_partial_save_warn:
+    'Base settings were saved, but the throttling policy failed to save. Fix or retry saving it separately.',
 }
