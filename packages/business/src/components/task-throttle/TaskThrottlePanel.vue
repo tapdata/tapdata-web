@@ -172,6 +172,34 @@ function clearPhaseErrors(
   saveErrorMessage.value = ''
 }
 
+function validateField(
+  phase: ThrottlePhase,
+  field: 'bytesPerSec' | 'eventsPerSec',
+) {
+  const phaseDraft = draft.value?.[phase]
+  if (!phaseDraft?.enabled) {
+    clearPhaseErrors(phase, field)
+    return
+  }
+  if (field === 'bytesPerSec' && !phaseDraft.bytesEnabled) {
+    clearPhaseErrors(phase, field)
+    return
+  }
+  if (field === 'eventsPerSec' && !phaseDraft.qpsEnabled) {
+    clearPhaseErrors(phase, field)
+    return
+  }
+  const singleFieldErrors = validateThrottleDraft(draft.value, [phase]).filter(
+    (e) => e.phase === phase && e.field === field,
+  )
+  validationErrors.value = [
+    ...validationErrors.value.filter(
+      (e) => e.phase !== phase || e.field !== field,
+    ),
+    ...singleFieldErrors,
+  ]
+}
+
 function stopPendingPoll() {
   if (pendingTimer) {
     clearInterval(pendingTimer)
@@ -531,42 +559,101 @@ defineExpose({
   <div v-if="normalizedKind" v-loading="loading" class="task-throttle-panel">
     <el-form :disabled="!props.canEdit" @submit.prevent>
       <div class="flex flex-column gap-3">
-        <div class="flex justify-content-between align-center flex-wrap gap-2">
-          <span class="fs-8 font-color-light">
+        <!-- 顶部规则说明 + 生效状态胶囊 -->
+        <div class="throttle-top-bar">
+          <span class="throttle-top-note">
             {{ t('packages_business_task_throttle_direction_note') }}
           </span>
-          <el-tag :type="statusSummary.type" size="small" effect="light">
+          <el-tag
+            :type="statusSummary.type"
+            size="small"
+            effect="light"
+            class="throttle-status-tag"
+          >
             {{ statusSummary.text }}
           </el-tag>
         </div>
 
-        <el-alert
+        <!-- 运行中只读锁说明 -->
+        <div
           v-if="props.runningMode && props.canEdit"
-          type="info"
-          :closable="false"
-          show-icon
+          class="throttle-banner throttle-banner--info"
         >
-          <span class="fs-8">
+          <svg
+            class="throttle-banner__icon"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <circle
+              cx="8"
+              cy="8"
+              r="6.5"
+              stroke="currentColor"
+              stroke-width="1.4"
+            />
+            <path
+              d="M8 7.2v4M8 4.8h.01"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+          </svg>
+          <span class="throttle-banner__text">
             {{ t('packages_business_task_throttle_running_readonly_tip') }}
           </span>
-        </el-alert>
+        </div>
 
-        <el-alert
+        <!-- CAS 版本冲突提醒 -->
+        <div
           v-if="conflictBanner"
-          type="warning"
-          :closable="false"
-          show-icon
+          class="throttle-banner throttle-banner--warning"
         >
-          <span class="fs-8">{{ conflictBanner }}</span>
-        </el-alert>
+          <svg
+            class="throttle-banner__icon"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M7.14 2.86 1.65 12.2a1 1 0 0 0 .86 1.5h10.98a1 1 0 0 0 .86-1.5L8.86 2.86a1 1 0 0 0-1.72 0Z"
+              stroke="currentColor"
+              stroke-width="1.35"
+            />
+            <path
+              d="M8 6.2v3.3M8 11.4h.01"
+              stroke="currentColor"
+              stroke-width="1.45"
+              stroke-linecap="round"
+            />
+          </svg>
+          <span class="throttle-banner__text">{{ conflictBanner }}</span>
+        </div>
 
-        <el-alert
+        <!-- 防双写停止门禁横幅 -->
+        <div
           v-if="policyView?.stopGateStatus === 'WAITING_STOP_EVIDENCE'"
-          type="warning"
-          :closable="false"
-          show-icon
+          class="throttle-banner throttle-banner--warning"
         >
-          <div class="flex flex-column gap-1 fs-8">
+          <svg
+            class="throttle-banner__icon"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M7.14 2.86 1.65 12.2a1 1 0 0 0 .86 1.5h10.98a1 1 0 0 0 .86-1.5L8.86 2.86a1 1 0 0 0-1.72 0Z"
+              stroke="currentColor"
+              stroke-width="1.35"
+            />
+            <path
+              d="M8 6.2v3.3M8 11.4h.01"
+              stroke="currentColor"
+              stroke-width="1.45"
+              stroke-linecap="round"
+            />
+          </svg>
+          <div class="throttle-banner__body">
             <div class="fw-sub">
               {{ t('packages_business_task_throttle_stop_gate_title') }}
             </div>
@@ -592,17 +679,27 @@ defineExpose({
               </el-button>
             </div>
           </div>
-        </el-alert>
+        </div>
 
-        <!-- 期望策略配置（按阶段） -->
+        <!-- 期望策略配置（按阶段卡片） -->
         <div
           v-for="phase in phaseList"
           :key="phase"
-          class="p-3 rounded-lg border bg-light flex flex-column gap-2"
+          class="throttle-phase-card"
+          :class="{
+            'is-active': isPhaseApplicable(phase) && draft[phase].enabled,
+            'is-inactive': !isPhaseApplicable(phase),
+          }"
         >
-          <div class="flex justify-content-between align-center gap-2">
+          <div class="throttle-phase-card__head">
             <div class="flex align-center gap-2">
-              <span class="fw-sub fs-7 font-color-dark">
+              <span
+                class="throttle-phase-dot"
+                :class="{
+                  'is-on': isPhaseApplicable(phase) && draft[phase].enabled,
+                }"
+              />
+              <span class="throttle-phase-card__title">
                 {{ phaseLabel(phase) }}
               </span>
               <el-tag
@@ -621,79 +718,92 @@ defineExpose({
             />
           </div>
 
-          <div v-if="!isPhaseApplicable(phase)" class="fs-8 font-color-sslight">
+          <div
+            v-if="!isPhaseApplicable(phase)"
+            class="fs-8 font-color-sslight mt-2"
+          >
             {{ t('packages_business_task_throttle_not_applicable_tip') }}
           </div>
 
           <div
             v-else-if="draft[phase].enabled"
-            class="flex flex-column gap-3 mt-1 pt-2 border-top"
+            class="throttle-phase-card__body"
           >
             <div v-if="getFieldError(phase, 'phase')" class="color-danger fs-8">
               {{ getFieldError(phase, 'phase') }}
             </div>
 
             <!-- 同步数据速率（MB/s） -->
-            <div class="flex flex-column gap-1">
-              <div class="flex justify-content-between align-center gap-2">
-                <span class="fs-8 font-color-normal">
-                  {{ t('packages_business_task_throttle_data_rate_label') }}
-                </span>
-                <el-switch
+            <div class="throttle-metric-group">
+              <div class="throttle-metric-row">
+                <el-checkbox
                   v-model="draft[phase].bytesEnabled"
-                  size="small"
                   :disabled="!props.canEdit"
+                  class="throttle-metric-check"
                   @change="clearPhaseErrors(phase, 'bytesPerSec')"
-                />
+                >
+                  {{ t('packages_business_task_throttle_data_rate_short') }}
+                </el-checkbox>
+                <el-input
+                  v-model="draft[phase].mbPerSecInput"
+                  size="small"
+                  class="throttle-metric-input"
+                  :class="{
+                    'is-field-error': Boolean(
+                      getFieldError(phase, 'bytesPerSec'),
+                    ),
+                  }"
+                  :disabled="!props.canEdit || !draft[phase].bytesEnabled"
+                  :placeholder="
+                    t('packages_business_task_throttle_data_rate_placeholder')
+                  "
+                  @input="clearPhaseErrors(phase, 'bytesPerSec')"
+                  @blur="validateField(phase, 'bytesPerSec')"
+                >
+                  <template #append>MB/s</template>
+                </el-input>
               </div>
-              <el-input
-                v-if="draft[phase].bytesEnabled"
-                v-model="draft[phase].mbPerSecInput"
-                size="small"
-                :disabled="!props.canEdit"
-                :placeholder="
-                  t('packages_business_task_throttle_data_rate_placeholder')
-                "
-                @input="clearPhaseErrors(phase, 'bytesPerSec')"
-              >
-                <template #append>MB/s</template>
-              </el-input>
               <div
                 v-if="getFieldError(phase, 'bytesPerSec')"
-                class="color-danger fs-8"
+                class="throttle-metric-error color-danger fs-8"
               >
                 {{ getFieldError(phase, 'bytesPerSec') }}
               </div>
             </div>
 
             <!-- QPS（事件/s） -->
-            <div class="flex flex-column gap-1">
-              <div class="flex justify-content-between align-center gap-2">
-                <span class="fs-8 font-color-normal">
-                  {{ t('packages_business_task_throttle_qps_label') }}
-                </span>
-                <el-switch
+            <div class="throttle-metric-group">
+              <div class="throttle-metric-row">
+                <el-checkbox
                   v-model="draft[phase].qpsEnabled"
-                  size="small"
                   :disabled="!props.canEdit"
+                  class="throttle-metric-check"
                   @change="clearPhaseErrors(phase, 'eventsPerSec')"
-                />
+                >
+                  {{ t('packages_business_task_throttle_qps_short') }}
+                </el-checkbox>
+                <el-input
+                  v-model="draft[phase].eventsPerSecInput"
+                  size="small"
+                  class="throttle-metric-input"
+                  :class="{
+                    'is-field-error': Boolean(
+                      getFieldError(phase, 'eventsPerSec'),
+                    ),
+                  }"
+                  :disabled="!props.canEdit || !draft[phase].qpsEnabled"
+                  :placeholder="
+                    t('packages_business_task_throttle_qps_placeholder')
+                  "
+                  @input="clearPhaseErrors(phase, 'eventsPerSec')"
+                  @blur="validateField(phase, 'eventsPerSec')"
+                >
+                  <template #append>/s</template>
+                </el-input>
               </div>
-              <el-input
-                v-if="draft[phase].qpsEnabled"
-                v-model="draft[phase].eventsPerSecInput"
-                size="small"
-                :disabled="!props.canEdit"
-                :placeholder="
-                  t('packages_business_task_throttle_qps_placeholder')
-                "
-                @input="clearPhaseErrors(phase, 'eventsPerSec')"
-              >
-                <template #append>/s</template>
-              </el-input>
               <div
                 v-if="getFieldError(phase, 'eventsPerSec')"
-                class="color-danger fs-8"
+                class="throttle-metric-error color-danger fs-8"
               >
                 {{ getFieldError(phase, 'eventsPerSec') }}
               </div>
@@ -702,13 +812,29 @@ defineExpose({
         </div>
 
         <!-- 启用限速统一风险提示（AC-35） -->
-        <el-alert
+        <div
           v-if="anyEnabledApplicable"
-          type="warning"
-          :closable="false"
-          show-icon
+          class="throttle-banner throttle-banner--warning"
         >
-          <div class="flex flex-column gap-1 fs-8">
+          <svg
+            class="throttle-banner__icon"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M7.14 2.86 1.65 12.2a1 1 0 0 0 .86 1.5h10.98a1 1 0 0 0 .86-1.5L8.86 2.86a1 1 0 0 0-1.72 0Z"
+              stroke="currentColor"
+              stroke-width="1.35"
+            />
+            <path
+              d="M8 6.2v3.3M8 11.4h.01"
+              stroke="currentColor"
+              stroke-width="1.45"
+              stroke-linecap="round"
+            />
+          </svg>
+          <div class="throttle-banner__body">
             <div>{{ t('packages_business_task_throttle_risk_notice') }}</div>
             <div v-if="normalizedKind === 'logCollector'">
               {{
@@ -728,18 +854,15 @@ defineExpose({
               }}
             </div>
           </div>
-        </el-alert>
+        </div>
 
         <!-- 已应用上限对照摘要区（AC-10 / AC-16） -->
-        <div
-          v-if="resolvedTaskId"
-          class="p-3 rounded-lg border bg-subtle flex flex-column gap-1 fs-8"
-        >
-          <div class="flex justify-content-between align-center">
+        <div v-if="resolvedTaskId" class="throttle-applied-card fs-8">
+          <div class="throttle-applied-card__head">
             <span class="fw-sub font-color-dark">
               {{ t('packages_business_task_throttle_applied_section') }}
             </span>
-            <span v-if="hasConfirmedApplied" class="font-color-light">
+            <span v-if="hasConfirmedApplied" class="throttle-version-pill">
               {{
                 t('packages_business_task_throttle_version_label', {
                   version: policyView?.appliedVersion,
@@ -752,24 +875,31 @@ defineExpose({
           </div>
 
           <template v-if="hasConfirmedApplied">
-            <div
-              v-for="phase in applicablePhases"
-              :key="`applied-${phase}`"
-              class="flex justify-content-between font-color-normal"
-            >
-              <span>{{ phaseLabel(phase) }}</span>
-              <span class="fw-sub">{{ formatAppliedPhaseSummary(phase) }}</span>
-            </div>
-            <div class="font-color-light">
-              {{
-                t('packages_business_task_throttle_applied_time', {
-                  time: formatTime(policyView?.appliedAt),
-                })
-              }}
+            <div class="throttle-applied-card__rows">
+              <div
+                v-for="phase in applicablePhases"
+                :key="`applied-${phase}`"
+                class="throttle-applied-card__row"
+              >
+                <span class="font-color-light">{{ phaseLabel(phase) }}</span>
+                <span class="fw-sub font-color-dark tabular-nums">
+                  {{ formatAppliedPhaseSummary(phase) }}
+                </span>
+              </div>
+              <div
+                class="throttle-applied-card__row throttle-applied-card__time"
+              >
+                <span class="font-color-light">
+                  {{ t('packages_business_task_throttle_applied_time_label') }}
+                </span>
+                <span class="font-color-normal tabular-nums">
+                  {{ formatTime(policyView?.appliedAt) }}
+                </span>
+              </div>
             </div>
           </template>
 
-          <div v-if="policyView?.lastApplyReason" class="color-danger">
+          <div v-if="policyView?.lastApplyReason" class="color-danger mt-1">
             {{
               t('packages_business_task_throttle_apply_reason', {
                 reason: policyView.lastApplyReason,
@@ -872,3 +1002,232 @@ defineExpose({
     </el-dialog>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.task-throttle-panel {
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.throttle-top-bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  background-color: #f5f7fa;
+  border-radius: 6px;
+}
+
+.throttle-top-note {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #606266;
+}
+
+.throttle-status-tag {
+  flex-shrink: 0;
+}
+
+.throttle-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+
+  &--info {
+    background-color: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1e40af;
+
+    .throttle-banner__icon {
+      color: #3b82f6;
+    }
+  }
+
+  &--warning {
+    background-color: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #92400e;
+
+    .throttle-banner__icon {
+      color: #d97706;
+    }
+  }
+
+  &__icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  &__text,
+  &__body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+}
+
+.throttle-phase-card {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e4e7ed;
+  background-color: #fafbfc;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+
+  &.is-active {
+    background-color: #ffffff;
+    border-color: #d6e4ff;
+  }
+
+  &.is-inactive {
+    background-color: #f8fafc;
+    border-color: #ebeef5;
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  &__title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #e5e7eb;
+  }
+}
+
+.throttle-phase-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #cbd5e1;
+  flex-shrink: 0;
+
+  &.is-on {
+    background-color: #2c65ff;
+  }
+}
+
+.throttle-metric-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.throttle-metric-row {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+}
+
+.throttle-metric-check {
+  margin-right: 0;
+  height: auto;
+
+  :deep(.el-checkbox__label) {
+    font-size: 12px;
+    color: #475569;
+    padding-left: 6px;
+  }
+}
+
+.throttle-metric-input {
+  :deep(.el-input__wrapper) {
+    font-variant-numeric: tabular-nums;
+  }
+
+  :deep(.el-input-group__append) {
+    min-width: 54px;
+    padding: 0 8px;
+    justify-content: center;
+    font-size: 12px;
+    color: #64748b;
+    background-color: #f8fafc;
+  }
+
+  &.is-field-error {
+    :deep(.el-input__wrapper) {
+      box-shadow: 0 0 0 1px var(--el-color-danger) inset;
+    }
+  }
+}
+
+.throttle-metric-error {
+  padding-left: 122px;
+  line-height: 1.4;
+}
+
+.throttle-applied-card {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e4e7ed;
+  background-color: #f8fafc;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  &__rows {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #e2e8f0;
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    line-height: 1.4;
+  }
+
+  &__time {
+    padding-top: 4px;
+    border-top: 1px solid #f1f5f9;
+  }
+}
+
+.throttle-version-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background-color: #eef2ff;
+  color: #3730a3;
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+</style>

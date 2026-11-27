@@ -1161,6 +1161,9 @@ export default {
   packages_dag_task_throttle_sidebar_title: '限速與流量狀態',
   packages_dag_task_throttle_sample_interval_label:
     '增量採樣間隔：{seconds} 秒',
+  packages_dag_task_throttle_sample_interval_title: '增量採樣間隔',
+  packages_dag_task_throttle_sample_interval_value: '{seconds} 秒',
+  packages_dag_task_throttle_limit_off: '未啟用',
   packages_dag_task_throttle_meter_version_label: '計量口徑：{version}',
   packages_dag_task_throttle_view_changes: '檢視變更記錄',
   packages_dag_task_throttle_tab_changes: '限速變更記錄',

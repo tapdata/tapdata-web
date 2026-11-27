@@ -1354,6 +1354,9 @@ export default {
   packages_dag_task_throttle_sidebar_title: 'Throttling & Traffic Status',
   packages_dag_task_throttle_sample_interval_label:
     'CDC Sample Interval: {seconds}s',
+  packages_dag_task_throttle_sample_interval_title: 'CDC Sample Interval',
+  packages_dag_task_throttle_sample_interval_value: '{seconds}s',
+  packages_dag_task_throttle_limit_off: 'Disabled',
   packages_dag_task_throttle_meter_version_label: 'Meter: {version}',
   packages_dag_task_throttle_view_changes: 'View Change Log',
   packages_dag_task_throttle_tab_changes: 'Throttle Changes',

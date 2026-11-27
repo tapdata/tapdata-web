@@ -153,9 +153,17 @@ function formatAppliedLimitLine(phase: ThrottlePhase): string {
     parts.push(`${limit.eventsPerSec} QPS`)
   }
   return (
-    parts.join(' / ') || t('packages_business_task_throttle_phase_summary_off')
+    parts.join(' · ') || t('packages_business_task_throttle_phase_summary_off')
   )
 }
+
+const appliedThrottlePhases = computed<ThrottlePhase[]>(() => {
+  const applied = throttlePolicy.value?.appliedPhases
+  if (!applied) return []
+  return (['FULL', 'CDC'] as ThrottlePhase[]).filter((p) =>
+    Boolean(applied[p]?.enabled),
+  )
+})
 
 async function fetchThrottleMonitorData(force = false) {
   const kind = normalizedThrottleKind.value
@@ -1134,80 +1142,127 @@ onMounted(() => {
         </div>
       </div>
 
-      <div v-if="normalizedThrottleKind" class="info-box">
+      <div v-if="normalizedThrottleKind" class="info-box throttle-sider-box">
         <div class="flex justify-content-between align-center mb-2">
-          <span class="fw-sub fs-7 font-color-normal">
-            {{ $t('packages_dag_task_throttle_sidebar_title') }}
-          </span>
+          <div class="flex align-center gap-1 min-w-0">
+            <span class="fw-sub fs-7 font-color-normal">
+              {{ $t('packages_dag_task_throttle_sidebar_title') }}
+            </span>
+            <TaskThrottleBadge
+              :task-status="dataflow.status"
+              :live-status="throttlePolicy?.liveStatus"
+              compact
+            />
+          </div>
           <ElButton
             text
             type="primary"
             size="small"
+            class="throttle-sider-action"
             @click="emit('openThrottleChanges')"
           >
             {{ $t('packages_dag_task_throttle_view_changes') }}
           </ElButton>
         </div>
-        <div class="flex justify-content-between align-center mb-2 fs-8">
-          <TaskThrottleBadge
-            :task-status="dataflow.status"
-            :live-status="throttlePolicy?.liveStatus"
-            compact
-          />
+
+        <div class="throttle-sider-kv mb-2">
           <span class="font-color-light">
+            {{ $t('packages_dag_task_throttle_sample_interval_title') }}
+          </span>
+          <span class="font-color-dark tabular-nums">
             {{
-              $t('packages_dag_task_throttle_sample_interval_label', {
+              $t('packages_dag_task_throttle_sample_interval_value', {
                 seconds: throttleSampleConfig?.intervalSeconds ?? 30,
               })
             }}
           </span>
         </div>
-        <div
-          v-if="throttlePolicy && throttlePolicy.appliedVersion > 0"
-          class="fs-8 font-color-light mb-2"
-        >
-          <span
-            >{{ $t('packages_dag_task_throttle_applied_limit_series') }}:</span
+
+        <template v-if="throttlePolicy && throttlePolicy.appliedVersion > 0">
+          <div class="throttle-sider-kv mb-1">
+            <span class="font-color-light">
+              {{ $t('packages_dag_task_throttle_applied_limit_series') }}
+            </span>
+            <span class="throttle-sider-ver">
+              v{{ throttlePolicy.appliedVersion }}
+            </span>
+          </div>
+          <div
+            v-if="appliedThrottlePhases.length"
+            class="throttle-sider-limits mb-2"
           >
-          <span class="ml-1 font-color-dark">
-            {{
-              throttlePolicy.appliedPhases?.CDC?.enabled
-                ? formatAppliedLimitLine('CDC')
-                : formatAppliedLimitLine('FULL')
-            }}
-          </span>
-          <span class="ml-1"> (v{{ throttlePolicy.appliedVersion }}) </span>
-        </div>
+            <div
+              v-for="phase in appliedThrottlePhases"
+              :key="`sider-${phase}`"
+              class="throttle-sider-kv"
+            >
+              <span class="font-color-light">
+                {{
+                  $t(
+                    phase === 'FULL'
+                      ? 'packages_business_task_throttle_phase_full'
+                      : 'packages_business_task_throttle_phase_cdc',
+                  )
+                }}
+              </span>
+              <span class="font-color-dark fw-sub tabular-nums">
+                {{ formatAppliedLimitLine(phase) }}
+              </span>
+            </div>
+          </div>
+          <div v-else class="throttle-sider-kv mb-2">
+            <span class="font-color-sslight">-</span>
+            <span class="font-color-sslight">
+              {{ $t('packages_dag_task_throttle_limit_off') }}
+            </span>
+          </div>
+        </template>
+
         <div
           v-if="activeThrottleWaits.length"
-          class="flex flex-column gap-1 mb-2 fs-8"
+          class="throttle-sider-waits mb-2 fs-8"
         >
-          <div class="font-color-normal fw-sub">
-            {{ $t('packages_dag_task_throttle_wait_reasons') }}:
+          <div class="font-color-normal fw-sub mb-1">
+            {{ $t('packages_dag_task_throttle_wait_reasons') }}
           </div>
           <div
             v-for="(waitItem, wIdx) in activeThrottleWaits"
             :key="wIdx"
-            class="flex justify-content-between font-color-light"
+            class="throttle-sider-kv"
           >
-            <span>{{ waitItem.phase }} / {{ waitItem.direction }}</span>
-            <span>
+            <span class="font-color-light">
+              {{ waitItem.phase }} / {{ waitItem.direction }}
+            </span>
+            <span class="font-color-dark">
               {{ throttleWaitReasonLabel(waitItem.waitReason) }} ·
               {{ throttleLogStatusLabel(waitItem.logPositionStatus) }}
             </span>
           </div>
         </div>
-        <ElAlert
-          v-if="isThrottleEnabled"
-          type="warning"
-          :closable="false"
-          show-icon
-          class="mb-1"
-        >
-          <span class="fs-8">
+
+        <div v-if="isThrottleEnabled" class="throttle-sider-risk">
+          <svg
+            class="throttle-sider-risk__icon"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M7.14 2.86 1.65 12.2a1 1 0 0 0 .86 1.5h10.98a1 1 0 0 0 .86-1.5L8.86 2.86a1 1 0 0 0-1.72 0Z"
+              stroke="currentColor"
+              stroke-width="1.35"
+            />
+            <path
+              d="M8 6.2v3.3M8 11.4h.01"
+              stroke="currentColor"
+              stroke-width="1.45"
+              stroke-linecap="round"
+            />
+          </svg>
+          <span class="throttle-sider-risk__text">
             {{ $t('packages_business_task_throttle_risk_notice') }}
           </span>
-        </ElAlert>
+        </div>
       </div>
 
       <LogCollectorThrottleOverview
@@ -1677,6 +1732,82 @@ onMounted(() => {
   .line-chart {
     margin-top: 8px;
     height: 110px;
+  }
+}
+
+.throttle-sider-box {
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.throttle-sider-action {
+  padding: 2px 4px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.throttle-sider-kv {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.throttle-sider-ver {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 6px;
+  border-radius: 999px;
+  background-color: #eef2ff;
+  color: #3730a3;
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.throttle-sider-limits {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background-color: #f8fafc;
+  border: 1px solid #eef2f7;
+}
+
+.throttle-sider-waits {
+  padding: 6px 8px;
+  border-radius: 6px;
+  background-color: #fff7ed;
+  border: 1px solid #fed7aa;
+}
+
+.throttle-sider-risk {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background-color: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #92400e;
+  font-size: 11.5px;
+  line-height: 1.45;
+
+  &__icon {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: #d97706;
+  }
+
+  &__text {
+    flex: 1;
+    min-width: 0;
   }
 }
 </style>

@@ -185,13 +185,28 @@ function formatTs(ts?: number | null): string {
           <span class="fw-sub text-truncate font-color-dark">
             {{ consumer.taskName || consumer.taskId }}
           </span>
-          <TaskThrottleBadge
-            :task-status="consumer.status"
-            :live-status="consumer.liveStatus"
-            compact
-          />
+          <div class="flex align-center gap-1 shrink-0">
+            <TaskThrottleBadge
+              :task-status="consumer.status"
+              :live-status="consumer.liveStatus"
+              compact
+            />
+            <el-tag
+              v-if="
+                consumer.throttleEnabled &&
+                !consumer.liveStatus?.throttlingActive
+              "
+              size="small"
+              type="info"
+              effect="plain"
+            >
+              {{ t('packages_business_task_throttle_lc_consumer_throttled') }}
+            </el-tag>
+          </div>
         </div>
-        <div class="flex justify-content-between align-center font-color-light">
+        <div
+          class="flex justify-content-between align-center font-color-light tabular-nums"
+        >
           <span>
             {{ t('packages_business_task_throttle_lc_consumer_delay') }}:
             {{

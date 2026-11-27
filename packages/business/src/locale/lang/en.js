@@ -2161,6 +2161,7 @@ export default {
     'Waiting Compatible Agent',
   packages_business_task_throttle_version_label: 'v{version}',
   packages_business_task_throttle_applied_time: 'Applied at: {time}',
+  packages_business_task_throttle_applied_time_label: 'Applied At',
   packages_business_task_throttle_apply_reason: 'Reason: {reason}',
   packages_business_task_throttle_running_readonly_tip:
     'While running, only sync throttling fields can be edited; all other task fields remain read-only.',
@@ -2236,6 +2237,16 @@ export default {
   packages_business_task_throttle_chg_after: 'After',
   packages_business_task_throttle_chg_outcome: 'Outcome & Reason',
   packages_business_task_throttle_chg_skipped: 'Skipped: {versions}',
+  packages_business_task_throttle_chg_total_records: '{count} records',
+  packages_business_task_throttle_chg_phase_tag_full: 'Full',
+  packages_business_task_throttle_chg_phase_tag_cdc: 'CDC',
+  packages_business_task_throttle_chg_outcome_committed: 'Committed',
+  packages_business_task_throttle_chg_outcome_applied: 'Applied',
+  packages_business_task_throttle_chg_outcome_failed: 'Apply Failed',
+  packages_business_task_throttle_chg_outcome_skipped: 'Skipped',
+  packages_business_task_throttle_chg_outcome_graceful: 'Graceful Stop',
+  packages_business_task_throttle_chg_outcome_manual: 'Manual Verified',
+  packages_business_task_throttle_chg_outcome_rejected: 'Rejected',
   packages_business_task_throttle_phase_summary_off: 'Off',
   packages_business_task_throttle_lc_overview_title:
     'Shared Mining Throttle & Retention',
@@ -2248,6 +2259,7 @@ export default {
     'Downstream Consumers ({visible}/{total})',
   packages_business_task_throttle_lc_consumer_delay: 'Consumer Lag',
   packages_business_task_throttle_lc_consumer_output: 'Output Rate',
+  packages_business_task_throttle_lc_consumer_throttled: 'Throttled',
   packages_business_task_throttle_lc_hidden_consumers:
     '{count} additional downstream task(s) are hidden due to permissions and counted in totals only.',
   packages_business_cdc_sample_title: 'CDC Data Size Sampling Interval',
