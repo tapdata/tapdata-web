@@ -623,3 +623,50 @@ export function isRetentionShortened(before: unknown, after: unknown) {
 export function hasUnresolvedPlaceholder(text: string | undefined) {
   return !!text && /\{[a-z_]\w*\}/i.test(text)
 }
+
+export interface LegacyOperationSource {
+  legacy?: boolean
+  legacyFields?: Record<string, unknown>
+  legacyMessage?: string
+  username?: string
+  userId?: string
+}
+
+export interface LegacyOperationActionSource extends LegacyOperationSource {
+  action?: string
+  actionName?: string
+}
+
+/** 构造历史审计操作渲染记录，统一列表与详情抽屉字段映射。 */
+export function buildLegacyRecord(e: LegacyOperationSource) {
+  return {
+    ...(e.legacyFields || {}),
+    username: e.username,
+    userId: e.userId,
+    i18nMessage: e.legacyMessage,
+  }
+}
+
+/** 仅当历史记录包含模板消息或可拼接的模块/操作字段时交由 UserOperation 插值渲染。 */
+export function hasLegacyOperationContent(e?: LegacyOperationSource | null) {
+  if (!e?.legacy) return false
+  const fields = e.legacyFields || {}
+  return Boolean(
+    e.legacyMessage ||
+      (typeof fields.operation === 'string' &&
+        fields.operation &&
+        typeof fields.modular === 'string' &&
+        fields.modular),
+  )
+}
+
+/** 统一生成审计操作文本；缺失历史文案或动作名时走缺省兜底。 */
+export function formatLegacyActionText(
+  e: LegacyOperationActionSource,
+  tr: Translate,
+) {
+  if (e.legacy) {
+    return e.legacyMessage || displayValue(null, true, tr)
+  }
+  return e.actionName || displayValue(e.action, false, tr)
+}

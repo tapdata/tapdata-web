@@ -25,8 +25,10 @@ import {
   auditActionLabelKey,
   batchSummary,
   buildAuditQuery,
+  buildLegacyRecord,
   confirmRangeInput,
   displayValue,
+  formatLegacyActionText,
   isQueryDirty,
   isValidTimeRange,
   operatorText,
@@ -300,17 +302,8 @@ export default {
           ? tr(`audit_source_${e.source.toLowerCase()}`)
           : displayValue(null, legacy, tr),
         sourceIpText: displayValue(e.sourceIp, legacy, tr),
-        actionText: legacy
-          ? e.legacyMessage || displayValue(null, true, tr)
-          : e.actionName || e.action,
-        legacyRecord: legacy
-          ? {
-              ...(e.legacyFields || {}),
-              username: e.username,
-              userId: e.userId,
-              i18nMessage: e.legacyMessage,
-            }
-          : undefined,
+        actionText: formatLegacyActionText({ ...e, legacy }, tr),
+        legacyRecord: legacy ? buildLegacyRecord(e) : undefined,
         objectText: displayValue(e.objectName || e.objectId, legacy, tr),
         batchText: batchSummary(e.batch, tr),
         outcomeText: op.pending
