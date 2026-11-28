@@ -18,6 +18,10 @@ export function commandProxy(params: any) {
   return requestClient.post(`${BASE_URL}/command`, params)
 }
 
+export function commandAgentProcessList(params: any) {
+  return commandProxy(params)
+}
+
 export function getSupervisor(pid: string) {
   return requestClient.get(`${BASE_URL}/supervisor?pid=${pid}`)
 }

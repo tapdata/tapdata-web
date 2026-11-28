@@ -1,6 +1,7 @@
 import { PreviewText } from '@formily/element-plus'
 import { connect, mapProps, mapReadPretty } from '@formily/vue'
 import { transformComponent } from '../../shared/transform'
+import AgentProcessSelect from './AgentProcessSelect.vue'
 import InfiniteSelect from './InfiniteSelect.vue'
 
 const AsyncSelect = InfiniteSelect
@@ -23,3 +24,18 @@ const InnerAsyncSelect = connect(
 export { InnerAsyncSelect as AsyncSelect }
 
 export { InfiniteSelect }
+
+const TransformAgentProcessSelect = transformComponent(AgentProcessSelect, {
+  change: 'update:modelValue',
+})
+
+const InnerAgentProcessSelect = connect(
+  TransformAgentProcessSelect,
+  mapProps({
+    value: 'modelValue',
+    readOnly: 'readonly',
+  }),
+  mapReadPretty(PreviewText.Input),
+)
+
+export { InnerAgentProcessSelect as AgentProcessSelect }
